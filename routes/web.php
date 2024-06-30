@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\UserController;
+use App\Models\Clients;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -21,6 +23,16 @@ Route::controller(UserController::class)
     ->name('user.')
     ->group(function () {
         Route::post('/', 'store')->name('store');
+    });
+
+
+
+// Empleado
+Route::controller(ClientsController::class)
+    ->prefix('client')
+    ->name('client.')
+    ->group(function () {
+        Route::get('/','create')->name('create');
     });
 
 
