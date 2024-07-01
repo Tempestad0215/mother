@@ -58,7 +58,7 @@ const submit = () => {
                 <form
                     @submit.prevent="submit">
                     <div>
-                        <InputLabel for="name" value="Nombre" />
+                        <InputLabel for="name" value="Nombre *" />
                         <TextInput
                             id="name"
                             v-model="form.name"
@@ -71,7 +71,7 @@ const submit = () => {
                     </div>
 
                     <div class="mt-4">
-                        <InputLabel for="email" value="Correo" />
+                        <InputLabel for="email" value="Correo *" />
                         <TextInput
                             id="email"
                             v-model="form.email"
@@ -83,7 +83,7 @@ const submit = () => {
                     </div>
 
                     <div class="mt-4">
-                        <InputLabel for="password" value="Contraseña" />
+                        <InputLabel for="password" value="Contraseña *" />
                         <TextInput
                             id="password"
                             v-model="form.password"
@@ -95,7 +95,7 @@ const submit = () => {
                     </div>
 
                     <div class="mt-4">
-                        <InputLabel for="password_confirmation" value="Confirmar contraseña" />
+                        <InputLabel for="password_confirmation" value="Confirmar contraseña *" />
                         <TextInput
                             id="password_confirmation"
                             v-model="form.password_confirmation"
@@ -108,7 +108,7 @@ const submit = () => {
 
                     <!-- Rol de usuarios -->
                     <div class="mt-4">
-                        <InputLabel for="role" value="Rol"  />
+                        <InputLabel for="role" value="Rol *"  />
 
                         <div class=" flex justify-between">
                             <!-- Usuarios -->

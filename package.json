@@ -22,6 +22,7 @@
         "vue": "^3.3.13"
     },
     "dependencies": {
+        "@types/vue-the-mask": "^0.11.5",
         "vue-the-mask": "^0.11.1"
     }
 }

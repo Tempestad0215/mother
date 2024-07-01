@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name',75);
             $table->string('phone',20);
-            $table->string('email',150);
+            $table->string('email',150)->nullable();
             $table->string('address',120)->nullable();
             $table->boolean('status')->default(false);
             $table->timestamps();

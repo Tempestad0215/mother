@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\UserController;
-use App\Models\Clients;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -33,6 +32,10 @@ Route::controller(ClientsController::class)
     ->name('client.')
     ->group(function () {
         Route::get('/','create')->name('create');
+        Route::post('/','store')->name('store');
+        Route::get('/show','show')->name('show');
+        Route::get('/edit/{client}','edit')->name('edit');
+        Route::patch('/destroy/{client}','destroy')->name('destroy');
     });
 
 

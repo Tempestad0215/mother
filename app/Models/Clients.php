@@ -15,5 +15,10 @@ class Clients extends Model
         'email',
         'addres',
         'status',
-    ] ;
+    ];
+
+
+    protected $casts = [
+        'status'=> 'boolean',
+    ];
 }
