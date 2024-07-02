@@ -5,9 +5,11 @@ import HeaderBox from '@/Components/HeaderBox.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import NavLink from '@/Components/NavLink.vue';
 import TextInput from '@/Components/TextInput.vue';
+import { successHttp } from '@/Global/Alert';
 import { clientI } from '@/Interfaces/ClientInterface';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Head, router, useForm } from '@inertiajs/vue3';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import Swal from 'sweetalert2';
 import { PropType } from 'vue';
 
 // Datos del backend
@@ -55,6 +57,25 @@ const edit = (id:number) => {
 const destroy = (id:number) => {
 
     // Enviar los datos
+    Swal.fire({
+        title: "Desea eliminar este registro?",
+        text: "Los cambios realizados son irreversible!",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Si, eliminar!",
+        cancelButtonText: "Cancelar",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            router.patch(route('client.destroy', id),{},{
+                onSuccess:()=>{
+                    // Mensaje de exito
+                    successHttp('Datos eliminado correctamente');
+                }
+            })
+        }
+});
 
 }
 
@@ -78,16 +99,17 @@ const destroy = (id:number) => {
                 </h2>
 
                 <!-- Links -->
-                <div>
+                <template #link>
                     <NavLink
                         :href="route('client.create')" >
                         Registrar
                     </NavLink>
                     <NavLink
+                        :active="true"
                         :href="route('client.create')" >
-                        Registrar
+                        Mostrar
                     </NavLink>
-                </div>
+                </template>
             </HeaderBox>
 
         </template>
@@ -124,32 +146,74 @@ const destroy = (id:number) => {
 
                     <!-- Contenido -->
                     <tbody>
-                        <tr v-for="(item, index) in props.clients.data" :key="index" >
-                            <td>
+                        <tr
+                            class=" border-b odd:bg-gray-100"
+                            v-for="(item, index) in props.clients.data" :key="index" >
+                            <td class=" px-2">
                                 {{ item.id }}
                             </td>
-                            <td>
+                            <td class=" px-2">
                                 {{item.name}}
                             </td>
-                            <td>
+                            <td class=" px-2">
                                 {{item.email ? item.email : 'N/A'}}
                             </td>
-                            <td>
+                            <td class=" px-2">
                                 {{ item.phone }}
                             </td>
                             <!-- Botones -->
                             <td class="text-xl space-x-5 w-[100px]">
                                 <i
                                     @click="edit(item.id)"
-                                    class="fa-solid fa-pen-to-square"></i>
+                                    class=" icon-efect fa-solid fa-pen-to-square"></i>
                                 <i
                                     @click="destroy(item.id)"
-                                    class="fa-solid fa-trash"></i>
+                                    class=" icon-efect fa-solid fa-trash"></i>
                             </td>
                         </tr>
                     </tbody>
                 </table>
 
+                <!-- PAginacion de todo -->
+                <div class=" mt-5 flex justify-between items-center border-t pt-2">
+                    <div>
+                        <!-- Pagina -->
+                        <span>
+                            <strong>
+                                Página :
+                            </strong>
+                            {{ props.clients.current_page }}
+                        </span>
+
+                        <!-- Total -->
+                        <span>
+                            <strong>
+                                Total :
+                            </strong>
+                            {{ props.clients.to }}
+                        </span>
+                    </div>
+
+                    <!-- Paginacion -->
+                    <div class=" text-3xl space-x-5">
+                        <!-- Anterior -->
+                        <Link
+                            :href="props.clients.prev_page_url ? props.clients.prev_page_url : '' ">
+                            <i
+                                class="fa-solid fa-circle-arrow-left"></i>
+
+                        </Link>
+
+                        <!-- Siguiente -->
+                        <Link
+                            :href="props.clients.prev_page_url ? props.clients.prev_page_url : '' ">
+                            <i
+                                class="fa-solid fa-circle-arrow-right"></i>
+                        </Link>
+
+                    </div>
+
+                </div>
             </ContentBox>
 
         </div>

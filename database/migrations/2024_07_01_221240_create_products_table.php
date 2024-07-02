@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Supplier;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,12 +12,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('clients', function (Blueprint $table) {
+        Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name',75);
-            $table->string('phone',20);
-            $table->string('email',150)->nullable()->unique();
-            $table->string('address',120)->nullable();
+            $table->string('description',255);
+            $table->enum('unit',[1,2,3,4,5,6,7,8,9,10]);
+            $table->enum('use',[1,2]);
+            $table->float('stock')->default(0);
+            $table->float('cost')->default(0);
+            $table->foreignIdFor(Supplier::class, 'supplier_id');
             $table->boolean('status')->default(false);
             $table->timestamps();
         });
@@ -27,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('clients');
+        Schema::dropIfExists('products');
     }
 };

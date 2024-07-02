@@ -5,3 +5,10 @@
 [x-cloak] {
     display: none;
 }
+
+
+@layer components{
+    .icon-efect {
+        @apply hover:scale-125 duration-300 ease-out hover:animate-pulse;
+    }
+}

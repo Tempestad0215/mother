@@ -106,7 +106,17 @@ class ClientsController extends Controller
      */
     public function update(UpdateClientsRequest $request, Clients $client)
     {
-        //
+        try {
+
+            // Actualizar todos los datos
+            $client->update($request->validated());
+
+            // Devolver hacia atras
+            return back();
+
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 
     /**

@@ -11,13 +11,15 @@ import PrimaryButton from '@components/PrimaryButton.vue';
 import ActionMessage from '@components/ActionMessage.vue';
 import { onMounted, PropType } from 'vue';
 import { clienteEditI } from '@/Interfaces/ClientInterface';
+import { successHttp } from '@/Global/Alert';
 
 const props = defineProps({
     clientEdit:{
         type: Object as PropType<clienteEditI>,
     },
     update: {
-        type: Boolean
+        type: Boolean,
+        default: false
     }
 });
 
@@ -25,6 +27,7 @@ const props = defineProps({
 onMounted(()=>{
     if(props.clientEdit)
     {
+        form.id = props.clientEdit.id;
         form.name = props.clientEdit.name;
         form.phone = props.clientEdit.phone;
         form.email = props.clientEdit.email ? props.clientEdit.email : '' ;
@@ -36,6 +39,7 @@ onMounted(()=>{
 
 
 const form = useForm({
+    id:0,
     name:"",
     phone:"",
     email:"",
@@ -47,12 +51,25 @@ const form = useForm({
 // funciones
 const submit = () => {
 
-    // Enviar los datos
-    form.post(route('client.store'),{
-        onSuccess:()=>{
-            form.reset();
-        }
-    });
+    // Si es actualziar
+    if(props.update)
+    {
+        form.patch(route('client.update', form.id),{
+            onSuccess:()=>{
+                successHttp('Datos actualizado correctamente');
+            }
+        })
+    }else{
+
+        // Enviar los datos
+        form.post(route('client.store'),{
+            onSuccess:()=>{
+                successHttp('Datos registrado correctamente');
+                form.reset();
+            }
+        });
+    }
+
 }
 
 </script>
@@ -73,17 +90,17 @@ const submit = () => {
                 </h2>
 
                 <!-- Link de navegacion -->
-                <div>
-                    <NavLink
-                        :href="route('client.create')" >
-                        Registrar
-                    </NavLink>
-                    <NavLink
-                        :href="route('client.show')" >
-                        Mostrar
-                    </NavLink>
-                </div>
-
+                 <template #link>
+                     <NavLink
+                         :active="true"
+                         :href="route('client.create')" >
+                         Registrar
+                     </NavLink>
+                     <NavLink
+                         :href="route('client.show')" >
+                         Mostrar
+                     </NavLink>
+                 </template>
             </HeaderBox>
         </template>
 
@@ -166,7 +183,7 @@ const submit = () => {
                     <div class="mt-4 flex justify-end items-center space-x-5">
                         <!-- Mensaje al crear -->
                         <ActionMessage :on="form.recentlySuccessful" >
-                            ! Registrado
+                            {{ props.update ? ' !Actualizado' :  '! Registrado'}}
                         </ActionMessage>
                         <PrimaryButton>
                             {{ props.update ? 'Actualizar' :  'Registrar'}}

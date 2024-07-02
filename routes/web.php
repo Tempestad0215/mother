@@ -35,6 +35,7 @@ Route::controller(ClientsController::class)
         Route::post('/','store')->name('store');
         Route::get('/show','show')->name('show');
         Route::get('/edit/{client}','edit')->name('edit');
+        Route::patch('/{client}','update')->name('update');
         Route::patch('/destroy/{client}','destroy')->name('destroy');
     });
 
