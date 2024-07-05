@@ -7,6 +7,19 @@
 }
 
 
+/* Estilo para la transition */
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+
+
+
 @layer components{
     .icon-efect {
         @apply hover:scale-125 duration-300 ease-out hover:animate-pulse;

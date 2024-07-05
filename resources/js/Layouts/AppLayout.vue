@@ -1,12 +1,15 @@
 <script setup>
 import { ref } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import ApplicationMark from '@/Components/ApplicationMark.vue';
 import Banner from '@/Components/Banner.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+
+
+const page = usePage();
 
 defineProps({
     title: String,
@@ -51,8 +54,13 @@ const logout = () => {
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                                     Tablero
                                 </NavLink>
-                                <NavLink :href="route('client.create')" :active="route().current('dashboard')">
+                                <NavLink
+                                    :href="route('client.create')" :active="page.url.startsWith('/client')">
                                     Clientes
+                                </NavLink>
+                                <NavLink
+                                    :href="route('product.create')" :active="page.url.startsWith('/product')">
+                                    Productos
                                 </NavLink>
                             </div>
                         </div>

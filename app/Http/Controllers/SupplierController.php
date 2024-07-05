@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Supplier;
 use App\Http\Requests\StoreSupplierRequest;
 use App\Http\Requests\UpdateSupplierRequest;
+use Inertia\Inertia;
 
 class SupplierController extends Controller
 {
@@ -21,7 +22,13 @@ class SupplierController extends Controller
      */
     public function create()
     {
-        //
+        try {
+
+            return Inertia::render("Suppliers/Create");
+
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 
     /**

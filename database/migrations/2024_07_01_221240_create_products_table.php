@@ -16,8 +16,7 @@ return new class extends Migration
             $table->id();
             $table->string('name',75);
             $table->string('description',255);
-            $table->enum('unit',[1,2,3,4,5,6,7,8,9,10]);
-            $table->enum('use',[1,2]);
+            $table->string('unit',20);
             $table->float('stock')->default(0);
             $table->float('cost')->default(0);
             $table->foreignIdFor(Supplier::class, 'supplier_id');

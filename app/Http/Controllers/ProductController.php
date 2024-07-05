@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use Inertia\Inertia;
 
 class ProductController extends Controller
 {
@@ -21,7 +22,13 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        try {
+
+            return Inertia::render('Products/Create');
+
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 
     /**
@@ -29,7 +36,17 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-        //
+        try {
+
+            // Guardar los datos del productos
+            Product::create($request->validated());
+
+            // Devolver hacia atras
+            return back();
+
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 
     /**
