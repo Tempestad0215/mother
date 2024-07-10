@@ -2,6 +2,7 @@
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
+import { successHttp } from '@/Global/Alert';
 import PrimaryButton from '@components/PrimaryButton.vue';
 import { useForm } from '@inertiajs/vue3';
 
@@ -12,12 +13,27 @@ const form = useForm({
     email:"",
 });
 
+
+// Funciones
+const submit = () =>{
+    form.post(route('supplier.store'),{
+        onSuccess:()=>{
+            successHttp('Datos registrado correctamente');
+            form.reset();
+
+        },
+        preserveScroll: true,
+        preserveState: true
+    });
+}
+
 </script>
 
 
 <template>
     <div class=" bg-gray-200 p-5 w-2/5 rounded-md">
-        <form class="" >
+        <form
+            @submit.prevent="submit" >
             <h3 class="text-2xl font-bold text-center">
                 Registro de Proveedores
             </h3>
@@ -25,9 +41,10 @@ const form = useForm({
             <div class=" mt-4">
                 <InputLabel
                     for="company_name"
-                    value="Contacto"/>
+                    value="Empresa * "/>
                 <TextInput
                     class="w-full"
+                    required
                     v-model="form.company_name"
                     placeholder="Empresa"
                     />
@@ -36,8 +53,8 @@ const form = useForm({
 
             <div class="mt-4">
                 <InputLabel
-                    for="company_name"
-                    value="Empresa *"/>
+                    for="contact"
+                    value="Contacto"/>
                 <TextInput
                     class="w-full"
                     v-model="form.contact"

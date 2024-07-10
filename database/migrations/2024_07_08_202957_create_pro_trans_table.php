@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Supplier;
+use App\Models\Product;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,14 +12,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('products', function (Blueprint $table) {
+        Schema::create('pro_trans', function (Blueprint $table) {
             $table->id();
-            $table->string('name',75);
-            $table->string('description',255)->nullable();
-            $table->string('unit',20);
-            $table->float('stock')->default(0);
-            $table->float('cost')->default(0);
-            $table->foreignIdFor(Supplier::class, 'supplier_id');
+            $table->foreignIdFor(Product::class,'product_id');
+            $table->float('stock',2);
+            $table->float('price',2);
+            $table->enum('type',[1,2,3,4,5]);
             $table->boolean('status')->default(false);
             $table->timestamps();
         });
@@ -30,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('products');
+        Schema::dropIfExists('pro_trans');
     }
 };

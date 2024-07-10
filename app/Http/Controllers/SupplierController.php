@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Supplier;
 use App\Http\Requests\StoreSupplierRequest;
 use App\Http\Requests\UpdateSupplierRequest;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class SupplierController extends Controller
@@ -36,7 +37,16 @@ class SupplierController extends Controller
      */
     public function store(StoreSupplierRequest $request)
     {
-        //
+        try {
+
+
+            Supplier::create($request->validated());
+
+            return back();
+
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 
     /**
@@ -69,5 +79,34 @@ class SupplierController extends Controller
     public function destroy(Supplier $supplier)
     {
         //
+    }
+
+
+    // Obtener los suplidores por empreesa
+    public function get(Request $request)
+    {
+        try {
+
+            $request->validate([
+                'search' => ['required','string','min:2','max:75']
+            ]);
+
+            $search = $request->get('search');
+
+            // $data = Supplier::where('status',false)
+            //     ->where('company_name', 'LIKE','%'.$search.'%')
+            //     ->limit(10)
+            //     ->get();
+
+            $data = Supplier::orderBy('company_name','asc')
+                ->get();
+
+            return response()->json($data);
+
+
+
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 }

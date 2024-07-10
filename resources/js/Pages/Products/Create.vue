@@ -11,19 +11,51 @@ import { successHttp } from '@/Global/Alert';
 import SecondaryButton from '@components/SecondaryButton.vue';
 import Float from '@/Pages/Suppliers/Float.vue'
 import FloatBox from '@/Components/FloatBox.vue'
-import { ref } from 'vue';
+import InputSelect from '@/Components/InputSelect.vue'
+import { onMounted, PropType, ref } from 'vue';
+import axios from 'axios';
+import { supplierI } from '@/Interfaces/Supplier';
+import NavLink from '@components/NavLink.vue';
+import type { proSupResI } from '@/Interfaces/Product';
+
+
+const props = defineProps({
+    productEdit: {
+        type: Object as PropType<proSupResI>,
+    },
+    update: {
+        type: Boolean
+    }
+})
 
 
 // Datos del formulario
 const form = useForm({
     name: "",
-    description:"",
-    unit: ""
+    description: "",
+    unit: "",
+    supplier_id:0,
+    search:"",
 });
-
 
 // Cons datos de la ventana
 const showSupplierForm = ref(false);
+const dataSelect = ref<supplierI[]>([]);
+
+onMounted(()=>{
+    // actualizar los suplidores
+    getSupplier();
+    // Pasar los datos a editar
+    if(props.productEdit?.data)
+    {
+        form.name = props.productEdit.data.name
+        form.description = <string>props.productEdit.data.description
+        form.unit = props.productEdit.data.unit
+        form.supplier_id = props.productEdit.data.supplier.id
+        form.search = props.productEdit.data.supplier.name
+    }
+})
+
 
 
 // Funciones
@@ -33,8 +65,24 @@ const submit = () => {
         onSuccess:()=>{
             // Datos de la alerta
             successHttp('Datos registrado correctamente');
+            form.reset();
         }
-    })
+    });
+}
+
+// conseguir los nuevos suplidores
+const getSupplier = () =>{
+    axios.get(route('supplier.get', {search: 'hola'}))
+        .then((res)=>{
+            dataSelect.value = res.data
+
+        }).catch((err)=>{
+            console.log('error', err)
+        })
+}
+
+const getValueSelect = (supplierId:number) =>{
+    form.supplier_id = supplierId;
 }
 
 </script>
@@ -54,7 +102,19 @@ const submit = () => {
                 </h2>
 
                 <template #link>
-
+                    <NavLink
+                        :active="true"
+                        :href="route('product.create')" >
+                        Registrar
+                    </NavLink>
+                    <NavLink
+                        :href="route('product.show')" >
+                        Mostrar
+                    </NavLink>
+                    <NavLink
+                        :href="route('product.create')" >
+                        Entrada
+                    </NavLink>
 
 
                 </template>
@@ -65,12 +125,13 @@ const submit = () => {
         <!-- Contenido de la ventana de los productos -->
         <div>
             <ContentBox>
-                <form @submit.prevent="submit" >
+                <form
+                    @submit.prevent="submit" >
                     <!-- Nombre -->
                     <div>
                         <InputLabel
                             for="name"
-                            value="Nombre"/>
+                            value="Nombre *"/>
                         <TextInput
                             class=" w-full"
                             name="name"
@@ -98,7 +159,7 @@ const submit = () => {
                     <div class="mt-4">
                         <InputLabel
                             for="name"
-                            value="Nombre"/>
+                            value="Nombre *"/>
                         <select
                             v-model="form.unit"
                             class=" w-full border-gray-300 rounded-md ">
@@ -116,18 +177,19 @@ const submit = () => {
                     <!-- Proveedor -->
                     <div class="mt-4">
                         <InputLabel
-                            for="name"
-                            value="Proveedor"/>
+                            for="supplier_id"
+                            value="Proveedor *"/>
 
                         <div class=" flex space-x-3">
-                            <select
-                                v-model="form.unit"
-                                class=" w-full border-gray-300 rounded-md ">
-                                <option selected disabled value="">
-                                    --- Seleccione el Proveedor ---
-                                </option>
-                                <option value="ONZA">OZ</option>
-                            </select>
+                            <InputSelect
+                                field="company_name"
+                                :read="true"
+                                :data="dataSelect"
+                                :model-value="form.search"
+                                @send-value="getValueSelect"
+                                @update-data="getSupplier()"
+                                v-model="form.search"
+                                class=" w-full" />
                             <SecondaryButton
                                 @click=" showSupplierForm = true"
                                 type="button">
@@ -136,7 +198,7 @@ const submit = () => {
                         </div>
 
                         <!-- Error -->
-                        <InputError :message="form.errors.name" />
+                        <InputError :message="form.errors.search" />
                     </div>
 
                     <!-- Botones -->
@@ -150,14 +212,16 @@ const submit = () => {
 
             </ContentBox>
 
+            <Transition>
+                <!-- Formulario para Agregar el suplidor -->
+                <FloatBox
+                    v-if="showSupplierForm"
+                    @close=" showSupplierForm = !showSupplierForm "  >
+                    <Float
+                        />
 
-            <!-- Formulario para Agregar el suplidor -->
-            <FloatBox
-                v-if="showSupplierForm"
-                @close=" showSupplierForm = !showSupplierForm "  >
-                <Float/>
-
-            </FloatBox>
+                </FloatBox>
+            </Transition>
         </div>
     </AppLayout>
 

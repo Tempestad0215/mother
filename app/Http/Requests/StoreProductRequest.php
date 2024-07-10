@@ -24,7 +24,8 @@ class StoreProductRequest extends FormRequest
         return [
             'name' => ['required','string','min:3','max:75'],
             'description' => ['nullable','string','max:150'],
-            'unit' => ['required','string',]
+            'unit' => ['required','string',],
+            'supplier_id' => ['required','numeric','exists:suppliers,id']
         ];
     }
 }

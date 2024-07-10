@@ -59,7 +59,8 @@ const logout = () => {
                                     Clientes
                                 </NavLink>
                                 <NavLink
-                                    :href="route('product.create')" :active="page.url.startsWith('/product')">
+                                    :href="route('product.create')"
+                                    :active="page.url.startsWith('/product')">
                                     Productos
                                 </NavLink>
                             </div>

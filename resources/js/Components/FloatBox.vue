@@ -7,6 +7,8 @@ const emit = defineEmits(['close']);
 
 
 <template>
+
+
     <div class=" bg-black bg-opacity-80  absolute top-0 w-full h-screen flex items-center justify-center">
 
         <i

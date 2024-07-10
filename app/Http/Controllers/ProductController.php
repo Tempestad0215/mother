@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Http\Resources\ProSupRes;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ProductController extends Controller
@@ -52,9 +54,27 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Product $product)
+    public function show(Request $request)
     {
-        //
+        try {
+            $request->validate([
+                'search' => ['nullable','max:50','string']
+            ]);
+
+            $search = $request->get('search');
+
+            $data = Product::where('status', false)
+                ->where('name','LIKE', '%'. $search.'%')
+                ->latest()
+                ->simplePaginate();
+
+            return Inertia::render('Products/Show',[
+                'products' => $data
+            ]);
+
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 
     /**
@@ -62,7 +82,18 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        //
+        try {
+
+            $data = new ProSupRes($product);
+
+            return Inertia::render('Products/Create',[
+                'productEdit' => $data,
+                'update' => true
+            ]);
+
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 
     /**

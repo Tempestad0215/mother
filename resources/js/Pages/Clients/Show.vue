@@ -5,20 +5,22 @@ import HeaderBox from '@/Components/HeaderBox.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import NavLink from '@/Components/NavLink.vue';
 import TextInput from '@/Components/TextInput.vue';
+import Pagination from '@/Components/Pagination.vue';
 import { successHttp } from '@/Global/Alert';
-import { clientI } from '@/Interfaces/ClientInterface';
+import type { clientI } from '@/Interfaces/ClientInterface';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import { Head, router, useForm } from '@inertiajs/vue3';
 import Swal from 'sweetalert2';
-import { PropType } from 'vue';
+import type { PropType } from 'vue';
+
 
 // Datos del backend
 const props = defineProps({
-    clients: {
+    clients:{
         type: Object as PropType<clientI>,
         required: true
     }
-});
+})
 
 
 // Formulario
@@ -47,14 +49,14 @@ const submit = () => {
 }
 
 // Editar
-const edit = (id:number) => {
+const edit = (id:Number) => {
 
     // Hacer la peticion
     router.get(route('client.edit', id));
 }
 
 // Eliminar el resistros
-const destroy = (id:number) => {
+const destroy = (id:Number) => {
 
     // Enviar los datos
     Swal.fire({
@@ -148,7 +150,7 @@ const destroy = (id:number) => {
                     <tbody>
                         <tr
                             class=" border-b odd:bg-gray-100"
-                            v-for="(item, index) in props.clients.data" :key="index" >
+                            v-for="(item, index) in props.clients?.data" :key="index" >
                             <td class=" px-2">
                                 {{ item.id }}
                             </td>
@@ -175,45 +177,12 @@ const destroy = (id:number) => {
                 </table>
 
                 <!-- PAginacion de todo -->
-                <div class=" mt-5 flex justify-between items-center border-t pt-2">
-                    <div>
-                        <!-- Pagina -->
-                        <span>
-                            <strong>
-                                Página :
-                            </strong>
-                            {{ props.clients.current_page }}
-                        </span>
+                <Pagination
+                    :current-page="props.clients.current_page"
+                    :total-page="props.clients.to"
+                    :prev="props.clients.prev_page_url ? props.clients.prev_page_url : '' "
+                    :next="props.clients.next_page_url ? props.clients.next_page_url : '' " />
 
-                        <!-- Total -->
-                        <span>
-                            <strong>
-                                Total :
-                            </strong>
-                            {{ props.clients.to }}
-                        </span>
-                    </div>
-
-                    <!-- Paginacion -->
-                    <div class=" text-3xl space-x-5">
-                        <!-- Anterior -->
-                        <Link
-                            :href="props.clients.prev_page_url ? props.clients.prev_page_url : '' ">
-                            <i
-                                class="fa-solid fa-circle-arrow-left"></i>
-
-                        </Link>
-
-                        <!-- Siguiente -->
-                        <Link
-                            :href="props.clients.prev_page_url ? props.clients.prev_page_url : '' ">
-                            <i
-                                class="fa-solid fa-circle-arrow-right"></i>
-                        </Link>
-
-                    </div>
-
-                </div>
             </ContentBox>
 
         </div>
