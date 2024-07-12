@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductInController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
@@ -15,7 +16,6 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
-
 
 // La ruita de registro bloquerar
 
@@ -77,6 +77,21 @@ Route::middleware([
         Route::get('/','create')->name('create');
         Route::post('/','store')->name('store');
         Route::get('/edit/{product}','edit')->name('edit');
+        Route::patch('/{product}','update')->name('update');
+        Route::get('/get','get')->name('get');
     });
+
+    //Entrada de los productos
+    Route::controller(ProductInController::class)
+        ->prefix('product-in')
+        ->name('product-in.')
+        ->group(function(){
+            Route::get('/','index')->name('create');
+            Route::patch('/{productIn}','store')->name('store');
+            Route::get('/edit/{productIn}','edit')->name('edit');
+            Route::patch('/update/{productIn}','update')->name('update');
+            Route::patch('/destroy/{productIn}','destroy')->name('destroy');
+
+        });
 
 });

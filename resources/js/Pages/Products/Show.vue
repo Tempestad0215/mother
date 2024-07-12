@@ -59,7 +59,7 @@ const edit = (id:number) => {
                         Mostrar
                     </NavLink>
                     <NavLink
-                        :href="route('product.create')" >
+                        :href="route('product-in.create')" >
                         Entrada
                     </NavLink>
 
@@ -83,7 +83,8 @@ const edit = (id:number) => {
                             <th>Id</th>
                             <th>Nombre</th>
                             <th>Uni.</th>
-                            <th>Stock</th>
+                            <th>Disp.</th>
+                            <th>Precio</th>
                             <th class=" max-w-[200px]">Atc</th>
                         </tr>
                     </thead>
@@ -93,6 +94,7 @@ const edit = (id:number) => {
                             <td>{{item.name}}</td>
                             <td>{{item.unit}}</td>
                             <td>{{item.stock}}</td>
+                            <td>{{item.price}}</td>
                             <td class=" w-[200px] max-w-[200px] truncate  text-xl px-3">
                                 <div class=" flex justify-between">
                                     <!-- Entrada de producto -->

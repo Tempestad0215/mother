@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('unit',20);
             $table->float('stock')->default(0);
             $table->float('cost')->default(0);
+            $table->float('price')->default(0);
             $table->foreignIdFor(Supplier::class, 'supplier_id');
             $table->boolean('status')->default(false);
             $table->timestamps();

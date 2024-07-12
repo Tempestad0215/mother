@@ -18,9 +18,12 @@ export interface productDataI {
     name: string;
     description: string | null;
     unit: string;
-    stock: number;
-    cost: number;
+    stock: string;
+    cost: string;
+    price: string;
     supplier_id: number;
+    updated_at: string
+    created_at: string
 }
 
 export interface proSupResI{

@@ -5,7 +5,9 @@ import { createApp, h, DefineComponent } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/src/js/index';
-import VueTheMask from 'vue-the-mask'
+import VueTheMask from 'vue-the-mask';
+import money from 'v-money';
+
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
 
@@ -17,6 +19,7 @@ createInertiaApp({
             .use(plugin)
             .use(ZiggyVue, Ziggy)
             .use(VueTheMask as any)
+            .use(money as any)
             .mount(el);
     },    progress: {
         color: '#4B5563',

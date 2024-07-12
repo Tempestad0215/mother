@@ -19,11 +19,14 @@
         "tailwindcss": "^3.4.0",
         "typescript": "^5.5.2",
         "vite": "^5.0",
-        "vue": "^3.3.13"
+        "vue": "^3.3.13",
+        "vue-tsc": "^2.0.26"
     },
     "dependencies": {
         "@types/vue-the-mask": "^0.11.5",
         "sweetalert2": "^11.12.1",
+        "v-money": "^0.8.1",
+        "v-money3": "^3.24.1",
         "vue-the-mask": "^0.11.1"
     }
 }

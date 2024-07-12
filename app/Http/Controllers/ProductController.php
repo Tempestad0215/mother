@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
-use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProSupRes;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -99,9 +98,19 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProductRequest $request, Product $product)
+    public function update(StoreProductRequest $request, Product $product)
     {
-        //
+        try {
+
+            // Actualizar los datos validados
+            $product->update($request->validated());
+
+            // devolver hacia atras
+            return back();
+
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 
     /**
@@ -111,4 +120,29 @@ class ProductController extends Controller
     {
         //
     }
+
+
+    //    Conseguir los productos
+    public function get(Request $request)
+    {
+        try {
+
+        // Conseguir los datos del searhc
+        $search = $request->get('search');
+
+        // conseguir los datos con el where
+        $data = Product::where('status', false)
+            ->where('name','LIKE', '%'. $search.'%')
+            ->latest()
+            ->limit(10)
+            ->get();
+
+        // Devolver los datos de la respuesta
+        return response()->json($data);
+
+        }catch (\Throwable $th) {
+            return $th;
+        }
+    }
+
 }

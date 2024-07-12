@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class ProTrans extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'product_id',
+        'stock',
+        'price',
+        'type'
+    ];
 }
