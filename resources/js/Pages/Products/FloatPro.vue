@@ -11,8 +11,9 @@ import SecondaryButton from '@components/SecondaryButton.vue';
 import { useForm } from '@inertiajs/vue3';
 import axios from 'axios';
 import { onMounted, PropType, ref } from 'vue';
-
-
+import {taxeI} from "@/Interfaces/Global";
+import {moneyConfig} from "@/Global/Helpers";
+import {categoryI} from "@/Interfaces/Categories";
 
 
 const props = defineProps({
@@ -34,13 +35,43 @@ const form = useForm({
     name: "",
     description: "",
     unit: "",
+    category_id:0,
+    category_name:"",
     supplier_id:0,
     search:"",
+    tax_rate: 0,
+    tax_tex: "",
+    weigth:"",
+    bar_code:"",
+    sku:"",
+    brand:"",
+    dimensions:""
+
+
 });
 
 // Cons datos de la ventana
-ref(false);
 const dataSelect = ref<supplierI[]>([]);
+const taxes = ref<taxeI[]>([
+    {
+        value: 0,
+        name: 'Ex.'
+    },
+    {
+        value: 0.16,
+        name: '16%'
+    },
+    {
+        value: 0.18,
+        name: '18%'
+    },
+]);
+
+
+const showTax = ref<boolean>(false);
+const showCategory = ref<boolean>(false);
+const dataUnit = ref(["UNIDAD","CAJA","KG","LIBRA","LITRO","ONZA","GALON"]);
+const categoryData = ref<categoryI[]>([]);
 
 onMounted(()=>{
     // actualizar los suplidores
@@ -48,12 +79,15 @@ onMounted(()=>{
     // Pasar los datos a editar
     if(props.productEdit?.data)
     {
-        form.id = props.productEdit.data.id
-        form.name = props.productEdit.data.name
-        form.description = <string>props.productEdit.data.description
-        form.unit = props.productEdit.data.unit
-        form.supplier_id = props.productEdit.data.supplier.id
-        form.search = props.productEdit.data.supplier.name
+        form.id = props.productEdit.data.id;
+        form.name = props.productEdit.data.name;
+        form.description = <string>props.productEdit.data.description;
+        form.category_name = props.productEdit.data.category.name;
+        form.category_id = props.productEdit.data.category.id;
+        form.tax_rate = props.productEdit.data.tax_rate;
+        form.unit = props.productEdit.data.unit;
+        form.supplier_id = props.productEdit.data.supplier.id;
+        form.search = props.productEdit.data.supplier.name;
     }
 })
 
@@ -85,7 +119,7 @@ const submit = () => {
 
 // conseguir los nuevos suplidores
 const getSupplier = () =>{
-    axios.get(route('supplier.get', {search: 'hola'}))
+    axios.get(route('supplier.get.json', {search: form.search}))
         .then((res)=>{
             dataSelect.value = res.data
 
@@ -99,6 +133,27 @@ const getValueSelect = (supplierId:number) =>{
 }
 
 
+const getCategory = () => {
+    if(form.category_name.length < 2)
+    {
+        return false;
+    }else{
+        axios.get(route('category.get.json',{search: form.category_name}))
+            .then((res) =>{
+                categoryData.value = res.data;
+            }).catch(()=>{
+
+        });
+    }
+
+}
+
+const selectCategory = (item:categoryI) => {
+    form.category_id = item.id;
+    form.category_name = item.name;
+    showCategory.value = false;
+}
+
 </script>
 
 
@@ -110,88 +165,223 @@ const getValueSelect = (supplierId:number) =>{
             <h3 class="text-2xl font-bold text-center">
                 Registro de producto
             </h3>
-            <!-- Nombre -->
-            <div>
-                <InputLabel
-                    for="name"
-                    value="Nombre *"/>
-                <TextInput
-                    class=" w-full"
-                    name="name"
-                    v-model="form.name"
-                    placeholder="Nombre del producto"
-                    />
-                <!-- Error -->
-                <InputError :message="form.errors.name" />
-            </div>
-            <!-- Descricion -->
-            <div class="mt-4">
-                <InputLabel
-                    for="name"
-                    value="Descripción"/>
-                <TextInput
-                    class=" w-full"
-                    name="name"
-                    v-model="form.description"
-                    placeholder="Descripcion"
-                    />
-                <!-- Error -->
-                <InputError :message="form.errors.description" />
-            </div>
-            <!-- Unidad -->
-            <div class="mt-4">
-                <InputLabel
-                    for="name"
-                    value="Nombre *"/>
-                <select
-                    v-model="form.unit"
-                    class=" w-full border-gray-300 rounded-md ">
-                    <option selected disabled value="">
-                        --- Seleccione la unidad ---
-                    </option>
-                    <option value="ONZA">OZ</option>
-                    <option value="CAJA">CAJ</option>
-                    <option value="UNIDAD">UND</option>
-                </select>
-                <!-- Error -->
-                <InputError :message="form.errors.name" />
-            </div>
 
-            <!-- Proveedor -->
-            <div class="mt-4">
-                <InputLabel
-                    for="supplier_id"
-                    value="Proveedor *"/>
+            <div class="">
+                <fieldset class=" grid grid-cols-4 gap-3 field-box">
+                    <legend>
+                        Informacion
+                    </legend>
 
-                <div class=" flex space-x-3">
-                    <InputSelect
-                        field="company_name"
-                        :read="true"
-                        :info="dataSelect"
-                        @send-value="getValueSelect"
-                        @update-data="getSupplier()"
-                        v-model="form.search"
-                        class=" w-full" />
-                    <SecondaryButton
-                        @click="emit('showSupplier')"
-                        type="button">
-                        Agre.
-                    </SecondaryButton>
+
+                    <!-- Nombre -->
+                    <div>
+                        <InputLabel
+                            for="name"
+                            value="Nombre *"/>
+                        <TextInput
+                            class=" w-full"
+                            name="name"
+                            required
+                            v-model="form.name"
+                            placeholder="Nombre del producto"
+                        />
+                        <!-- Error -->
+                        <InputError :message="form.errors.name" />
+                    </div>
+
+
+                    <!-- Descricion -->
+                    <div class="">
+                        <InputLabel
+                            for="name"
+                            value="Descripción"/>
+                        <TextInput
+                            class=" w-full"
+                            name="name"
+                            v-model="form.description"
+                            placeholder="Descripcion"
+                        />
+                        <!-- Error -->
+                        <InputError :message="form.errors.description" />
+                    </div>
+
+                    <div>
+                        <InputLabel for="category" value="Categoria" />
+                        <div class="relative">
+                            <TextInput
+                                @focus="showCategory = true"
+                                @input="getCategory"
+                                v-model="form.category_name"
+                                class=" w-full"
+                            />
+                            <i
+                                class="icon-rotate fa-solid fa-circle-arrow-down"
+                                :class="{'rotate-180' : showCategory}"></i>
+
+                            <div
+                                class="bg-gray-100 rounded-md absolute w-full border-2 border-gray-800 "
+                                v-if="showCategory">
+                                <ol>
+                                   <li
+                                       class="list-data"
+                                       v-for="(item,index) in categoryData" :key="index"
+                                       @click="selectCategory(item)">
+                                       {{item.name}}
+                                   </li>
+                                </ol>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Proveedor -->
+                    <div class="">
+                        <InputLabel
+                            for="supplier_id"
+                            value="Proveedor *"/>
+
+                        <div class=" flex space-x-3">
+                            <InputSelect
+                                field="company_name"
+                                :info="dataSelect"
+                                @send-value="getValueSelect"
+                                @update-data="getSupplier()"
+                                v-model="form.search"
+                                class=" w-full" />
+                            <SecondaryButton
+                                @click="emit('showSupplier')"
+                                type="button">
+                                Agre.
+                            </SecondaryButton>
+                        </div>
+
+                        <!-- Error -->
+                        <InputError :message="form.errors.search" />
+                    </div>
+                </fieldset>
+
+                <div class=" grid grid-cols-2 gap-4 mt-3">
+                    <fieldset class=" grid grid-cols-2 gap-3 field-box">
+                        <legend>
+                            Extra
+                        </legend>
+                        <div>
+                            <InputLabel
+                                for="sku"
+                                value="Cod. Externo"/>
+                            <TextInput
+                                v-model="form.sku"
+                                class="w-full"
+                            />
+                        </div>
+                        <div>
+                            <InputLabel
+                                for="bar_code"
+                                value="Codigo de Barra"/>
+                            <TextInput
+                                v-model="form.bar_code"
+                                class="w-full"
+                            />
+                        </div>
+                    </fieldset>
+
+
+                    <fieldset class=" grid grid-cols-2 gap-3 field-box">
+                        <legend>
+                            Datalles
+                        </legend>
+                        <div>
+                            <InputLabel
+                                for="tax_rate"
+                                value="Impuesto" />
+                            <div class=" relative">
+                                <select
+                                    class=" w-full border-gray-300 rounded-md "
+                                    name="tax_rate"
+                                    v-model="form.tax_rate">
+                                    <option value="">--- Seleccione El Itbis  ---</option>
+                                    <option
+                                        v-for="item in taxes"
+                                        :value="item.value">
+                                        {{item.name}}
+                                    </option>
+                                </select>
+
+
+                            </div>
+
+                            <InputError :message="form.errors.tax_rate" />
+                        </div>
+                        <!-- Unidad -->
+                        <div class="">
+                            <InputLabel
+                                for="unit"
+                                value="Unidad *"/>
+                            <select
+                                name="unit"
+                                v-model="form.unit"
+                                class=" w-full border-gray-300 rounded-md ">
+                                <option selected disabled value="">
+                                    --- Seleccione la unidad ---
+                                </option>
+                                <option v-for="item in dataUnit"
+                                    :value="item">
+                                    {{item}}
+                                </option>
+                            </select>
+                            <!-- Error -->
+                            <InputError :message="form.errors.name" />
+                        </div>
+                        <div>
+                            <InputLabel
+                                for="weight"
+                                value="Peso"/>
+                            <TextInput
+                                v-money3="moneyConfig"
+                                v-model="form.weigth"
+                                class="w-full"
+                                name="waight"/>
+                        </div>
+                        <div>
+                            <InputLabel
+                                for="brand"
+                                value="Rama"/>
+                            <TextInput
+                                class="w-full"
+                                v-model="form.brand"
+                                name="brand"/>
+                            <InputError :message="form.errors.name" />
+                        </div>
+                        <div class="col-span-full">
+                            <InputLabel
+                                for="dimension"
+                                value="Dimensiones"/>
+                            <TextInput
+                                class="w-full"
+                                v-model="form.dimensions"
+                                name="dimension"/>
+                            <InputError :message="form.errors.name" />
+                        </div>
+                    </fieldset>
                 </div>
 
-                <!-- Error -->
-                <InputError :message="form.errors.search" />
+
             </div>
+
 
             <!-- Botones -->
             <div class="mt-4 text-right">
                 <PrimaryButton
                     :disabled="form.processing">
-                    Registrar
+                    {{props.update ? 'Actualizar' : 'Registrar'}}
                 </PrimaryButton>
             </div>
         </form>
+
+
+        <div>
+<!--            <FloatShowPro -->
+<!--                :products=""/>-->
+        </div>
     </div>
-
-
 </template>

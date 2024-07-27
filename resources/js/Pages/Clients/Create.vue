@@ -1,17 +1,15 @@
 <script setup lang="ts">
-import { Head, useForm } from '@inertiajs/vue3';
+import { useForm } from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
-import HeaderBox from '@/Components/HeaderBox.vue';
-import NavLink from '@/Components/NavLink.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@components/TextInput.vue';
 import InputError from '@components/InputError.vue';
-import ContentBox from '@components/ContentBox.vue';
 import PrimaryButton from '@components/PrimaryButton.vue';
 import ActionMessage from '@components/ActionMessage.vue';
 import { onMounted, PropType } from 'vue';
 import { clienteEditI } from '@/Interfaces/ClientInterface';
 import { successHttp } from '@/Global/Alert';
+import LinkHeader from "@components/LinkHeader.vue";
 
 const props = defineProps({
     clientEdit:{
@@ -77,123 +75,109 @@ const submit = () => {
 
 
 <template>
-    <!-- Titulo -->
-    <Head title="Cliente"/>
-
     <!-- Contenido -->
-    <AppLayout>
+    <AppLayout
+        title="Cliente">
         <template #header >
-            <!-- Caja de la cabecera -->
-            <HeaderBox>
-                <h2>
-                    Cliente
-                </h2>
+            <LinkHeader
+                :active="true"
+                :href="route('client.create')">
+                Registrar
+            </LinkHeader>
 
-                <!-- Link de navegacion -->
-                 <template #link>
-                     <NavLink
-                         :active="true"
-                         :href="route('client.create')" >
-                         Registrar
-                     </NavLink>
-                     <NavLink
-                         :href="route('client.show')" >
-                         Mostrar
-                     </NavLink>
-                 </template>
-            </HeaderBox>
+            <LinkHeader
+                :href="route('client.show')">
+                Mostrar
+            </LinkHeader>
         </template>
 
         <!-- Formulario de registro -->
         <div>
+            <form
+                class=" bg-gray-200 rounded-md p-5 md:max-w-3xl mx-auto"
+                @submit.prevent="submit">
 
-            <!-- Contenido de todo -->
-            <ContentBox>
-                <form @submit.prevent="submit">
+                <h2 class=" text-2xl font-bold text-center mb-4">
+                    {{ props.update ? 'Actualización' :  'Registro'}} de cliente
+                </h2>
 
-                    <h2 class=" text-2xl font-bold text-center mb-4">
-                        {{ props.update ? 'Actualización' :  'Registro'}} de cliente
-                    </h2>
+                <!-- Nombre -->
+                <div>
+                    <InputLabel
+                        for="name"
+                        value="Nombre *"/>
+                    <TextInput
+                        class=" w-full"
+                        v-model="form.name"
+                        placeholder="Nombre completo"
+                        type="text"/>
 
-                    <!-- Nombre -->
-                    <div>
-                        <InputLabel
-                            for="name"
-                            value="Nombre *"/>
-                        <TextInput
-                            class=" w-full"
-                            v-model="form.name"
-                            placeholder="Nombre completo"
-                            type="text"/>
+                    <!-- Error -->
+                    <InputError :message="form.errors.name" />
+                </div>
 
-                        <!-- Error -->
-                        <InputError :message="form.errors.name" />
-                    </div>
+                <!-- Telefono -->
+                <div class="mt-4">
+                    <InputLabel
+                        for="phone"
+                        value="Teléfono *"/>
+                    <TextInput
+                        class=" w-full"
+                        name="phone"
+                        v-model="form.phone"
+                        placeholder="(849) 425-8568"
+                        v-mask="'(###) ###-####'"
+                        type="text"/>
 
-                    <!-- Telefono -->
-                    <div class="mt-4">
-                        <InputLabel
-                            for="phone"
-                            value="Teléfono *"/>
-                        <TextInput
-                            class=" w-full"
-                            name="phone"
-                            v-model="form.phone"
-                            placeholder="(849) 425-8568"
-                            v-mask="'(###) ###-####'"
-                            type="text"/>
+                    <!-- Error -->
+                    <InputError :message="form.errors.phone" />
+                </div>
 
-                        <!-- Error -->
-                        <InputError :message="form.errors.phone" />
-                    </div>
+                <!-- correo -->
+                <div class="mt-4">
+                    <InputLabel
+                        for="phone"
+                        value="Correo"/>
+                    <TextInput
+                        class=" w-full"
+                        name="email"
+                        placeholder="ejemplo@ejemplo.com"
+                        v-model="form.email"
+                        type="email"/>
 
-                    <!-- correo -->
-                    <div class="mt-4">
-                        <InputLabel
-                            for="phone"
-                            value="Correo"/>
-                        <TextInput
-                            class=" w-full"
-                            name="email"
-                            placeholder="ejemplo@ejemplo.com"
-                            v-model="form.email"
-                            type="email"/>
+                    <!-- Error -->
+                    <InputError :message="form.errors.email" />
+                </div>
 
-                        <!-- Error -->
-                        <InputError :message="form.errors.email" />
-                    </div>
+                <!-- direccion -->
+                <div class="mt-4">
+                    <InputLabel
+                        for="phone"
+                        value="Dirección"/>
+                    <TextInput
+                        class=" w-full"
+                        name="address"
+                        placeholder="Puerto Plata"
+                        v-model="form.address"
+                        type="text"/>
 
-                    <!-- direccion -->
-                    <div class="mt-4">
-                        <InputLabel
-                            for="phone"
-                            value="Dirección"/>
-                        <TextInput
-                            class=" w-full"
-                            name="address"
-                            placeholder="Puerto Plata"
-                            v-model="form.address"
-                            type="text"/>
+                    <!-- Error -->
+                    <InputError :message="form.errors.address" />
+                </div>
 
-                        <!-- Error -->
-                        <InputError :message="form.errors.address" />
-                    </div>
+                <!-- Botones para enviar -->
+                <div class="mt-4 flex justify-end items-center space-x-5">
+                    <!-- Mensaje al crear -->
+                    <ActionMessage :on="form.recentlySuccessful" >
+                        {{ props.update ? ' !Actualizado' :  '! Registrado'}}
+                    </ActionMessage>
+                    <PrimaryButton>
+                        {{ props.update ? 'Actualizar' :  'Registrar'}}
+                    </PrimaryButton>
 
-                    <!-- Botones para enviar -->
-                    <div class="mt-4 flex justify-end items-center space-x-5">
-                        <!-- Mensaje al crear -->
-                        <ActionMessage :on="form.recentlySuccessful" >
-                            {{ props.update ? ' !Actualizado' :  '! Registrado'}}
-                        </ActionMessage>
-                        <PrimaryButton>
-                            {{ props.update ? 'Actualizar' :  'Registrar'}}
-                        </PrimaryButton>
+                </div>
 
-                    </div>
-
-                </form>
-
-            </ContentBox>
+            </form>
         </div>
     </AppLayout>
 </template>

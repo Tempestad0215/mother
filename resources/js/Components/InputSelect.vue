@@ -2,23 +2,24 @@
 import { supplierI } from '@/Interfaces/Supplier';
 import {  PropType, ref } from 'vue';
 import {productDataI } from "@/Interfaces/Product";
+import {taxeI} from "@/Interfaces/Global";
 
 
 const props = defineProps({
     modelValue:{
-        type: String
+        type:[ String , Number]
     },
     info: {
-        type: Array as PropType<Array< supplierI | productDataI>>,
+        type: Array as PropType<Array< supplierI | productDataI | taxeI>>,
         required: false,
     },
     field:{
-        type: String as PropType<keyof supplierI | keyof productDataI>,
-        default: 'name' as keyof supplierI | keyof productDataI
+        type: String as PropType<keyof supplierI | keyof productDataI | keyof taxeI>,
+        default: 'name' as keyof supplierI | keyof productDataI | keyof taxeI,
     },
     fieldValue:{
-        type: String as PropType<keyof supplierI | keyof productDataI>,
-        default: 'id' as keyof supplierI | keyof productDataI
+        type: String as PropType<keyof supplierI | keyof productDataI | keyof taxeI>,
+        default: 'id' as keyof supplierI | keyof productDataI | keyof taxeI,
     },
     read:{
         type: Boolean,
@@ -37,12 +38,16 @@ const showData = ref(false);
 
 
 // Funciones
-const isSupplier = (item:supplierI | productDataI): item is supplierI => {
+const isSupplier = (item:supplierI | productDataI | taxeI): item is supplierI => {
     return isDefined((item as supplierI).company_name)
 }
 
-const isProduct = (item:supplierI | productDataI): item is productDataI => {
+const isProduct = (item:supplierI | productDataI | taxeI): item is productDataI => {
     return isDefined((item as productDataI).name)
+}
+
+const isTaxe = (item:supplierI | productDataI | taxeI):item is taxeI => {
+    return  isDefined((item as taxeI).name)
 }
 
 // Para guardar el tipo de datos
@@ -62,7 +67,7 @@ const sendData = (e:Event) => {
 }
 
 //
-const selectData = (item:supplierI | productDataI) => {
+const selectData = (item:supplierI | productDataI | taxeI) => {
 
     // Tomar el input
     const input:HTMLInputElement = document.getElementById('input-select') as HTMLInputElement;
@@ -74,9 +79,28 @@ const selectData = (item:supplierI | productDataI) => {
     } else if (isProduct(item)) {
         input.value = item[props.field as keyof productDataI] as string;
         emit('sendValue', item[props.fieldValue as keyof productDataI]);
+    }else if(isTaxe(item))
+    {
+        input.value = item[props.field as keyof taxeI] as string;
+        emit('sendValue', item[props.fieldValue as keyof taxeI]);
     }
 
 }
+
+const showValue = (item: supplierI | productDataI | taxeI) =>{
+    if(isProduct(item)){
+        return item[props.field as keyof productDataI] as string;
+    }else if(isSupplier(item))
+    {
+        return  item[props.field as keyof supplierI] as string;
+    }else if(isTaxe(item))
+    {
+        return item[props.field as keyof taxeI] as string;
+    }
+
+
+}
+
 
 const update = () => {
     showData.value = true;
@@ -119,7 +143,7 @@ const update = () => {
                         class=" odd:bg-gray-300 px-5 py-1 hover:bg-gray-400 duration-300 ease-in select-none "
                         v-for="(item, index) in props.info" :key="index"
                         @click="selectData(item)" >
-                        {{isSupplier(item) ? item[props.field as keyof supplierI] : item[props.field as keyof productDataI] }}
+                        {{ showValue(item) }}
                     </li>
                 </ol>
             </div>

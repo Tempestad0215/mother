@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductInController;
@@ -32,8 +33,6 @@ Route::middleware([
         return Inertia::render('Auth/Register');
     })->name('register');
 
-
-
     // Ruta de usuario
     Route::controller(UserController::class)
     ->prefix('user')
@@ -41,8 +40,6 @@ Route::middleware([
     ->group(function () {
         Route::post('/', 'store')->name('store');
     });
-
-
 
     // Cliente
     Route::controller(ClientsController::class)
@@ -57,14 +54,28 @@ Route::middleware([
         Route::patch('/destroy/{client}','destroy')->name('destroy');
     });
 
+    //Categoria
+    Route::controller(CategoryController::class)
+        ->prefix('category')
+        ->name('category.')
+        ->group(function () {
+            Route::get('/','create')->name('create');
+            Route::post('/','store')->name('store');
+            Route::patch('/{category}','update')->name('update');
+            Route::patch('/destroy/{category}','destroy')->name('destroy');
+            Route::get('/get','getJson')->name('get.json');
+        });
+
     // Suplidoress
     Route::controller(SupplierController::class)
     ->prefix('supplier')
     ->name('supplier.')
     ->group(function(){
-        // Route::get('/','create')->name('create');
+         Route::get('/','create')->name('create');
         Route::post('/','store')->name('store');
-        Route::get('/get','get')->name('get');
+        Route::get('/get','getJson')->name('get.json');
+        Route::patch('/{supplier}','update')->name('update');
+        Route::patch('/destroy/{supplier}','destroy')->name('destroy');
 
     });
 
@@ -79,6 +90,8 @@ Route::middleware([
         Route::get('/edit/{product}','edit')->name('edit');
         Route::patch('/{product}','update')->name('update');
         Route::get('/get','get')->name('get');
+        Route::get('/get/json','getJson')->name('get.json');
+        Route::get('/sale','saleIndex')->name('sale');
     });
 
     //Entrada de los productos
@@ -93,5 +106,7 @@ Route::middleware([
             Route::patch('/destroy/{productIn}','destroy')->name('destroy');
 
         });
+
+
 
 });

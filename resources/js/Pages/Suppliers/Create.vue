@@ -1,47 +1,35 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
-import HeaderBox from '@/Components/HeaderBox.vue';
-import NavLink from '@/Components/NavLink.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import { onMounted, PropType } from 'vue';
-import { clienteEditI } from '@/Interfaces/ClientInterface';
 import { successHttp } from '@/Global/Alert';
 import AppLayout from '@layout/AppLayout.vue';
-import ContentBox from '@components/ContentBox.vue';
 import TextInput from '@components/TextInput.vue';
 import InputError from '@components/InputError.vue';
 import ActionMessage from '@components/ActionMessage.vue';
 import PrimaryButton from '@components/PrimaryButton.vue';
+import LinkHeader from "@components/LinkHeader.vue";
+import FormSearch from "@components/FormSearch.vue";
+import {supplierI, supplierPaginationI} from "@/Interfaces/Supplier";
+import Pagination from "@components/Pagination.vue";
+import Swal from "sweetalert2";
 
 const props = defineProps({
-    clientEdit:{
-        type: Object as PropType<clienteEditI>,
-    },
-    update: {
-        type: Boolean,
-        default: false
+    suppliers:{
+        type: Object as PropType<supplierPaginationI>
     }
-});
 
-// Al momento de cargar
-onMounted(()=>{
-    if(props.clientEdit)
-    {
-        form.id = props.clientEdit.id;
-        form.name = props.clientEdit.name;
-        form.phone = props.clientEdit.phone;
-        form.email = props.clientEdit.email ? props.clientEdit.email : '' ;
-    }
-})
+});
 
 
 
 const form = useForm({
     id:0,
-    name:"",
+    contact:"",
     company_name:"",
     phone:"",
     email:"",
+    update: false,
 });
 
 
@@ -50,9 +38,9 @@ const form = useForm({
 const submit = () => {
 
     // Si es actualziar
-    if(props.update)
+    if(form.update)
     {
-        form.patch(route('client.update', form.id),{
+        form.patch(route('supplier.update', {supplier: form.id}),{
             onSuccess:()=>{
                 successHttp('Datos actualizado correctamente');
             }
@@ -60,7 +48,7 @@ const submit = () => {
     }else{
 
         // Enviar los datos
-        form.post(route('client.store'),{
+        form.post(route('supplier.store'),{
             onSuccess:()=>{
                 successHttp('Datos registrado correctamente');
                 form.reset();
@@ -69,6 +57,40 @@ const submit = () => {
     }
 
 }
+
+const edit = (item:supplierI) => {
+    form.update = true;
+    form.id = item.id;
+    form.contact = item.contact ? item.contact : "";
+    form.company_name = item.company_name;
+    form.phone = item.phone ? item.phone : "";
+    form.email = item.email ? item.email : "";
+}
+
+const destroy = (item:supplierI) => {
+    form.id = item.id;
+
+    Swal.fire({
+        title: `Desea Eliminar el suplidor : ${item.company_name}?`,
+        text: "Los cambios realizados son irreversible!",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Si, eliminar!",
+        cancelButtonText: "Cancelar"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            form.patch(route('supplier.destroy',{supplier: form.id}),{
+                onSuccess: ()=>{
+                    successHttp('Datos eliminado correctamente');
+                }
+            })
+        }
+    });
+}
+
+
 
 </script>
 
@@ -81,55 +103,36 @@ const submit = () => {
     <!-- Contenido -->
     <AppLayout>
         <template #header >
-            <!-- Caja de la cabecera -->
-            <HeaderBox>
-                <h2>
-                    Cliente
-                </h2>
+<!--            <LinkHeader-->
+<!--                :href="route('supplier.create')"-->
+<!--                :active="true">-->
+<!--                Registrar-->
+<!--            </LinkHeader>-->
+<!--            <LinkHeader-->
+<!--                :href="route('supplier.show')"-->
+<!--                :active="true">-->
+<!--                Mostrar-->
+<!--            </LinkHeader>-->
 
-                <!-- Link de navegacion -->
-                 <template #link>
-                     <NavLink
-                         :active="true"
-                         :href="route('client.create')" >
-                         Registrar
-                     </NavLink>
-                     <NavLink
-                         :href="route('client.show')" >
-                         Mostrar
-                     </NavLink>
-                 </template>
-            </HeaderBox>
+
         </template>
 
         <!-- Formulario de registro -->
         <div>
 
-            <!-- Contenido de todo -->
-            <ContentBox>
-                <form @submit.prevent="submit">
+            <form
+                class=" bg-gray-200 rounded-md p-5"
+                @submit.prevent="submit">
 
-                    <h2 class=" text-2xl font-bold text-center mb-4">
-                        {{ props.update ? 'Actualización' :  'Registro'}} de Suplidor
-                    </h2>
+                <h2 class=" text-2xl font-bold text-center mb-4">
+                    {{ form.update ? 'Actualización' :  'Registro'}} de Suplidor
+                </h2>
 
-                    <!-- Nombre -->
-                    <div>
-                        <InputLabel
-                            for="name"
-                            value="Nombre *"/>
-                        <TextInput
-                            class=" w-full"
-                            v-model="form.name"
-                            placeholder="Nombre completo"
-                            type="text"/>
 
-                        <!-- Error -->
-                        <InputError :message="form.errors.name" />
-                    </div>
 
+                <div class=" grid grid-cols-2 gap-3 ">
                     <!-- Nombre de la empresa -->
-                    <div class="mt-4">
+                    <div class="">
                         <InputLabel
                             for="name"
                             value="Nombre de la empresa *"/>
@@ -142,12 +145,28 @@ const submit = () => {
                         <!-- Error -->
                         <InputError :message="form.errors.company_name" />
                     </div>
+                    <!-- Nombre -->
+                    <div>
+                        <InputLabel
+                            for="name"
+                            value="Representante"/>
+                        <TextInput
+                            class=" w-full"
+                            v-model="form.contact"
+                            placeholder="Nombre completo"
+                            type="text"/>
+
+                        <!-- Error -->
+                        <InputError :message="form.errors.contact" />
+                    </div>
+
+
 
                     <!-- Telefono -->
-                    <div class="mt-4">
+                    <div class="">
                         <InputLabel
                             for="phone"
-                            value="Teléfono *"/>
+                            value="Teléfono"/>
                         <TextInput
                             class=" w-full"
                             name="phone"
@@ -161,7 +180,7 @@ const submit = () => {
                     </div>
 
                     <!-- correo -->
-                    <div class="mt-4">
+                    <div class="">
                         <InputLabel
                             for="phone"
                             value="Correo"/>
@@ -175,23 +194,72 @@ const submit = () => {
                         <!-- Error -->
                         <InputError :message="form.errors.email" />
                     </div>
+                </div>
 
 
-                    <!-- Botones para enviar -->
-                    <div class="mt-4 flex justify-end items-center space-x-5">
-                        <!-- Mensaje al crear -->
-                        <ActionMessage :on="form.recentlySuccessful" >
-                            {{ props.update ? ' !Actualizado' :  '! Registrado'}}
-                        </ActionMessage>
-                        <PrimaryButton>
-                            {{ props.update ? 'Actualizar' :  'Registrar'}}
-                        </PrimaryButton>
 
-                    </div>
+                <!-- Botones para enviar -->
+                <div class="mt-4 flex justify-end items-center space-x-5">
+                    <!-- Mensaje al crear -->
+                    <ActionMessage :on="form.recentlySuccessful" >
+                        {{ form.update ? ' !Actualizado' :  '! Registrado'}}
+                    </ActionMessage>
+                    <PrimaryButton>
+                        {{ form.update ? 'Actualizar' :  'Registrar'}}
+                    </PrimaryButton>
 
+                </div>
+
+            </form>
+
+
+            <div class="bg-gray-200 mt-5 rounded-md p-5">
+                <h3 class="text-2xl font-bold text-center">
+                    Tabla de Suplidores
+                </h3>
+                <form>
+                    <FormSearch
+                        />
                 </form>
 
-            </ContentBox>
+                <table class=" text-left w-full table-auto">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Empresa</th>
+                            <th>Representante</th>
+                            <th>telefono</th>
+                            <th>Correo</th>
+                            <th>Atc</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(item,index) in props.suppliers?.data" :key="index">
+                            <td>{{item.id}}</td>
+                            <td>{{item.company_name}}</td>
+                            <td>{{item.contact ? item.contact : "N/A" }}</td>
+                            <td>{{item.phone ? item.phone : 'N/A'}}</td>
+                            <td>{{item.email ? item.email : 'N/A'}}</td>
+                            <td class="w-16 space-x-3">
+                                <i
+                                    @click="edit(item)"
+                                    class=" icon-efect fa-solid fa-pen-to-square"></i>
+                                <i
+                                    @click="destroy(item)"
+                                    class=" icon-efect fa-solid fa-trash"></i>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <Pagination
+                    :next="props.suppliers?.next_page_url"
+                    :prev="props.suppliers?.prev_page_url"
+                    :total-page="props.suppliers?.to"
+                    :current-page="props.suppliers?.current_page"
+                    />
+
+            </div>
+
         </div>
     </AppLayout>
 </template>

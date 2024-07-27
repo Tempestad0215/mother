@@ -115,7 +115,7 @@ class ProductInController extends Controller
             $created_at  = Carbon::parse($productIn->created_at);
             $now = Carbon::now();
 
-
+            // Evitar que sea mas grande
             if($created_at->greaterThan($now))
             {
                 return 'No se puede actualizar el registro';

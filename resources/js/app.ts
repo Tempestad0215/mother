@@ -4,9 +4,9 @@ import '../css/app.css';
 import { createApp, h, DefineComponent } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import { ZiggyVue } from '../../vendor/tightenco/ziggy/src/js/index';
+import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import VueTheMask from 'vue-the-mask';
-import money from 'v-money';
+import money from 'v-money3'
 
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';

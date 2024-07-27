@@ -11,7 +11,7 @@ class UpdateSupplierRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,10 @@ class UpdateSupplierRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
-        ];
+            'contact' => ['nullable','string','max:75'],
+            'company_name' => ['required','string','min:3','max:75'],
+            'phone' => ['nullable','string','max:25'],
+            'email' => ['nullable','string','max:150','unique:suppliers,email']
+        ];;
     }
 }

@@ -19,102 +19,102 @@ class ProductController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Summary of create
+     * @param \Illuminate\Http\Request $request
+     * @return \Inertia\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        try {
 
-            return Inertia::render('Products/Create');
+        $data = $this->get($request);
 
-        } catch (\Throwable $th) {
-            throw $th;
-        }
+
+
+        return Inertia::render('Products/Create',[
+            'products' => $data
+        ]);
+
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Summary of store
+     * @param \App\Http\Requests\StoreProductRequest $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(StoreProductRequest $request)
     {
-        try {
 
-            // Guardar los datos del productos
-            Product::create($request->validated());
+        // Guardar los datos del productos
+        Product::create($request->validated());
 
-            // Devolver hacia atras
-            return back();
+        // Devolver hacia atras
+        return back();
 
-        } catch (\Throwable $th) {
-            throw $th;
-        }
     }
 
     /**
-     * Display the specified resource.
+     * Summary of show
+     * @param \Illuminate\Http\Request $request
+     * @return \Inertia\Response
      */
     public function show(Request $request)
     {
-        try {
-            $request->validate([
-                'search' => ['nullable','max:50','string']
-            ]);
 
-            $search = $request->get('search');
+        $request->validate([
+            'search' => ['nullable','max:50','string']
+        ]);
 
-            $data = Product::where('status', false)
-                ->where('name','LIKE', '%'. $search.'%')
-                ->latest()
-                ->simplePaginate();
+        $search = $request->get('search');
 
-            return Inertia::render('Products/Show',[
-                'products' => $data
-            ]);
+        $data = Product::where('status', false)
+            ->where('name','LIKE', '%'. $search.'%')
+            ->latest()
+            ->simplePaginate();
 
-        } catch (\Throwable $th) {
-            throw $th;
-        }
+        return Inertia::render('Products/Show',[
+            'products' => $data
+        ]);
+
     }
 
     /**
      * Show the form for editing the specified resource.
+     * @param Product $product
+     * @param Request $request
      */
-    public function edit(Product $product)
+    public function edit(Product $product, Request $request)
     {
-        try {
 
-            $data = new ProSupRes($product);
+        $dataProducts = $this->get($request);
+        $dataEdit = new ProSupRes($product);
 
-            return Inertia::render('Products/Create',[
-                'productEdit' => $data,
-                'update' => true
-            ]);
+        return Inertia::render('Products/Create',[
+            'productEdit' => $dataEdit,
+            'products' => $dataProducts,
+            'update' => true
+        ]);
 
-        } catch (\Throwable $th) {
-            throw $th;
-        }
     }
 
     /**
      * Update the specified resource in storage.
+     * @param StoreProductRequest $request
+     * @param Product $product
      */
     public function update(StoreProductRequest $request, Product $product)
     {
-        try {
 
-            // Actualizar los datos validados
-            $product->update($request->validated());
+        // Actualizar los datos validados
+        $product->update($request->validated());
 
-            // devolver hacia atras
-            return back();
-
-        } catch (\Throwable $th) {
-            throw $th;
-        }
+        // devolver hacia atras
+        return back();
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Summary of destroy
+     * @param \App\Models\Product $product
+     * @return void
      */
     public function destroy(Product $product)
     {
@@ -122,27 +122,30 @@ class ProductController extends Controller
     }
 
 
-    //    Conseguir los productos
-    public function get(Request $request)
+    // Para crear la entrada de producto
+    public function in()
     {
-        try {
 
-        // Conseguir los datos del searhc
-        $search = $request->get('search');
+        return Inertia::render('Products/In');
 
-        // conseguir los datos con el where
-        $data = Product::where('status', false)
-            ->where('name','LIKE', '%'. $search.'%')
-            ->latest()
-            ->limit(10)
-            ->get();
-
-        // Devolver los datos de la respuesta
-        return response()->json($data);
-
-        }catch (\Throwable $th) {
-            return $th;
-        }
     }
 
+    // Conseguir todo los productos
+    /**
+     * Summary of get
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Contracts\Pagination\Paginator
+     */
+    public function get(Request $request)
+    {
+
+        $search = $request->get('search');
+
+        $data = Product::where('status', false)
+            ->where('name','LIKE','%'.$search.'%')
+            ->latest()
+            ->simplePaginate(15);
+
+        return $data;
+    }
 }

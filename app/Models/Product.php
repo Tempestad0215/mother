@@ -8,25 +8,32 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property mixed|true $status
+ * @property boolean $status
  * @property string $name
  * @property null|string $description
  * @property string $unit
  * @property float $stock
  * @property float $cost
  * @property float $price
+ * @property string $sku
+ * @property string $bar_code
+ * @property float $weight
+ * @property string $dimensions
+ * @property string $brand
+ * @property float $discount
+ * @property float $tax_rate
  * @property  int $supplier_id
+ * @property int $category_id
  * @property string $created_at
  * @property string $updated_at
+ *
+ * @method static create(mixed $validated)
  */
 class Product extends Model
 {
     use HasFactory;
 
 
-    /**
-     * @var mixed|true
-     */
 
     protected $fillable = [
         'name',
@@ -36,6 +43,14 @@ class Product extends Model
         'cost',
         'price',
         'supplier_id',
+        'category_id',
+        'sku',
+        'bar_code',
+        'weight',
+        'dimensions',
+        'brand',
+        'discount',
+        'tax_rate',
         'status'
     ];
 
@@ -51,7 +66,9 @@ class Product extends Model
         'status' => 'boolean'
     ];
 
-    //Formatear los datos
+
+
+
     protected function price():Attribute
     {
         return Attribute::make(
@@ -73,14 +90,29 @@ class Product extends Model
         );
     }
 
+    protected function  weight():Attribute
+    {
+        return Attribute::make(
+            get: fn(float $value) => number_format($value,2)
+        );
+    }
+
 
 
     // Relaciones
 
 
+    /**
+     * @return BelongsTo
+     */
     public function supplier():BelongsTo
     {
         return $this->belongsTo(Supplier::class);
+    }
+
+    public function category():BelongsTo
+    {
+        return $this->belongsTo(Category::class);
     }
 
 }

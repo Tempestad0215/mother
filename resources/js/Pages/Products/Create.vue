@@ -1,23 +1,28 @@
 <script setup lang="ts">
-import HeaderBox from '@/Components/HeaderBox.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import ContentBox from '@components/ContentBox.vue';
 import { Head } from '@inertiajs/vue3';
 import Float from '@/Pages/Suppliers/FloatSupp.vue'
 import FloatBox from '@/Components/FloatBox.vue'
-import {  PropType, ref } from 'vue';
-import NavLink from '@components/NavLink.vue';
-import type { proSupResI } from '@/Interfaces/Product';
+import {PropType, ref} from 'vue';
 import FloatProduct from '@/Pages/Products/FloatPro.vue';
+import LinkHeader from "@components/LinkHeader.vue";
+import FloatShowPro from "@/Pages/Products/FloatShowPro.vue";
+import {productI, proSupResI} from "@/Interfaces/Product";
 
 
 
-defineProps({
+
+const props = defineProps({
+   products: {
+       type: Object as PropType<productI>,
+       required: true
+   },
     productEdit: {
         type: Object as PropType<proSupResI>,
     },
-    update: {
-        type: Boolean
+    update:{
+       type: Boolean,
+        default: false
     }
 });
 
@@ -37,39 +42,39 @@ const showSupplierForm = ref(false);
     <AppLayout>
         <!-- cabecera -->
         <template #header >
-            <HeaderBox>
-                <h2>
-                    Registro de productos
-                </h2>
-
-                <template #link>
-                    <NavLink
-                        :active="true"
-                        :href="route('product.create')" >
-                        Registrar
-                    </NavLink>
-                    <NavLink
-                        :href="route('product.show')" >
-                        Mostrar
-                    </NavLink>
-                    <NavLink
-                        :href="route('product-in.create')" >
-                        Entrada
-                    </NavLink>
+            <LinkHeader
+                :active="true"
+                :href="route('product.create')">
+                Registrar
+            </LinkHeader>
+            <LinkHeader
+                :active="true"
+                :href="route('product.sale')">
+                Venta
+            </LinkHeader>
+            <LinkHeader
+                :active="true"
+                :href="route('product-in.create')">
+                Entrada
+            </LinkHeader>
 
 
-                </template>
-
-            </HeaderBox>
         </template>
 
         <!-- Contenido de la ventana de los productos -->
         <div>
-            <ContentBox>
+           <div
+               class="bg-gray-200 p-5 rounded-md">
+               <FloatProduct
+                   :product-edit="props.productEdit"
+                   :update="props.update"
+                   @show-supplier="showSupplierForm = true"/>
+           </div>
 
-                <FloatProduct
-                    @show-supplier="showSupplierForm = true"/>
-            </ContentBox>
+            <div>
+                <FloatShowPro
+                    :products="products"/>
+            </div>
 
             <Transition>
                 <!-- Formulario para Agregar el suplidor -->
@@ -77,11 +82,13 @@ const showSupplierForm = ref(false);
                     v-if="showSupplierForm"
                     @close=" showSupplierForm = !showSupplierForm "  >
                     <Float
-                        />
+                    />
 
                 </FloatBox>
             </Transition>
+
         </div>
+
     </AppLayout>
 
 </template>

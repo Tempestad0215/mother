@@ -12,6 +12,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head, router, useForm } from '@inertiajs/vue3';
 import Swal from 'sweetalert2';
 import type { PropType } from 'vue';
+import LinkHeader from "@components/LinkHeader.vue";
 
 
 // Datos del backend
@@ -94,31 +95,20 @@ const destroy = (id:Number) => {
     <AppLayout>
         <!-- Cabecera de la ventana -->
         <template #header>
-            <!-- Cabecera -->
-            <HeaderBox>
-                <h2>
-                    Mostrar Cliente
-                </h2>
-
-                <!-- Links -->
-                <template #link>
-                    <NavLink
-                        :href="route('client.create')" >
-                        Registrar
-                    </NavLink>
-                    <NavLink
-                        :active="true"
-                        :href="route('client.create')" >
-                        Mostrar
-                    </NavLink>
-                </template>
-            </HeaderBox>
-
+            <LinkHeader
+                :href="route('client.create')">
+                Registrar
+            </LinkHeader>
+            <LinkHeader
+                :active="true"
+                :href="route('client.create')">
+                Mostrar
+            </LinkHeader>
         </template>
 
         <!-- Contenido principal -->
         <div>
-            <ContentBox class="md:max-w-full mx-5" >
+            <div class=" bg-gray-200 p-5 rounded-md">
                 <div class=" mb-4">
                     <form
                         @submit.prevent="submit"
@@ -136,43 +126,43 @@ const destroy = (id:Number) => {
 
                 <table class=" table-auto w-full">
                     <thead class=" border-b-2 text-left">
-                        <tr class=" border-b-2">
-                            <th>Id</th>
-                            <th>Nombre</th>
-                            <th>Correo</th>
-                            <th>Telefono</th>
-                            <th>Atc</th>
+                    <tr class=" border-b-2">
+                        <th>Id</th>
+                        <th>Nombre</th>
+                        <th>Correo</th>
+                        <th>Telefono</th>
+                        <th>Atc</th>
 
-                        </tr>
+                    </tr>
                     </thead>
 
                     <!-- Contenido -->
                     <tbody>
-                        <tr
-                            class=" border-b odd:bg-gray-100"
-                            v-for="(item, index) in props.clients?.data" :key="index" >
-                            <td class=" px-2">
-                                {{ item.id }}
-                            </td>
-                            <td class=" px-2">
-                                {{item.name}}
-                            </td>
-                            <td class=" px-2">
-                                {{item.email ? item.email : 'N/A'}}
-                            </td>
-                            <td class=" px-2">
-                                {{ item.phone }}
-                            </td>
-                            <!-- Botones -->
-                            <td class="text-xl space-x-5 w-[100px]">
-                                <i
-                                    @click="edit(item.id)"
-                                    class=" icon-efect fa-solid fa-pen-to-square"></i>
-                                <i
-                                    @click="destroy(item.id)"
-                                    class=" icon-efect fa-solid fa-trash"></i>
-                            </td>
-                        </tr>
+                    <tr
+                        class=" border-b odd:bg-gray-100"
+                        v-for="(item, index) in props.clients?.data" :key="index" >
+                        <td class=" px-2">
+                            {{ item.id }}
+                        </td>
+                        <td class=" px-2">
+                            {{item.name}}
+                        </td>
+                        <td class=" px-2">
+                            {{item.email ? item.email : 'N/A'}}
+                        </td>
+                        <td class=" px-2">
+                            {{ item.phone }}
+                        </td>
+                        <!-- Botones -->
+                        <td class="text-xl space-x-5 w-[100px]">
+                            <i
+                                @click="edit(item.id)"
+                                class=" icon-efect fa-solid fa-pen-to-square"></i>
+                            <i
+                                @click="destroy(item.id)"
+                                class=" icon-efect fa-solid fa-trash"></i>
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
 
@@ -182,8 +172,7 @@ const destroy = (id:Number) => {
                     :total-page="props.clients.to"
                     :prev="props.clients.prev_page_url ? props.clients.prev_page_url : '' "
                     :next="props.clients.next_page_url ? props.clients.next_page_url : '' " />
-
-            </ContentBox>
+            </div>
 
         </div>
     </AppLayout>

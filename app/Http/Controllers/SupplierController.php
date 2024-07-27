@@ -21,11 +21,16 @@ class SupplierController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
         try {
 
-            return Inertia::render("Suppliers/Create");
+            $data = $this->get($request);
+
+
+            return Inertia::render("Suppliers/Create",[
+                'suppliers' => $data
+            ]);
 
         } catch (\Throwable $th) {
             throw $th;
@@ -38,7 +43,6 @@ class SupplierController extends Controller
     public function store(StoreSupplierRequest $request)
     {
         try {
-
 
             Supplier::create($request->validated());
 
@@ -70,7 +74,15 @@ class SupplierController extends Controller
      */
     public function update(UpdateSupplierRequest $request, Supplier $supplier)
     {
-        //
+        try {
+
+            $supplier->update($request->validated());
+
+            return back();
+
+        }catch (\Throwable $th) {
+            throw $th;
+        }
     }
 
     /**
@@ -78,28 +90,32 @@ class SupplierController extends Controller
      */
     public function destroy(Supplier $supplier)
     {
-        //
+        try {
+
+            $supplier->update([
+                'status' => true
+            ]);
+
+            return back();
+
+        }catch (\Throwable $th) {
+            throw $th;
+        }
     }
 
 
     // Obtener los suplidores por empreesa
-    public function get(Request $request)
+    public function getJson(Request $request)
     {
         try {
 
-            $request->validate([
-                'search' => ['required','string','min:2','max:75']
-            ]);
-
             $search = $request->get('search');
 
-            // $data = Supplier::where('status',false)
-            //     ->where('company_name', 'LIKE','%'.$search.'%')
-            //     ->limit(10)
-            //     ->get();
+             $data = Supplier::where('status',false)
+                 ->where('company_name', 'LIKE','%'.$search.'%')
+                 ->limit(10)
+                 ->get();
 
-            $data = Supplier::orderBy('company_name','asc')
-                ->get();
 
             return response()->json($data);
 
@@ -108,5 +124,20 @@ class SupplierController extends Controller
         } catch (\Throwable $th) {
             throw $th;
         }
+    }
+
+    private function get(Request $request)
+    {
+        $search = $request->get('search');
+
+        return Supplier::where('status',false)
+            ->where(function($query) use ($search){
+                $query->where('company_name', 'LIKE','%'.$search.'%')
+                    ->orWhere('phone', 'LIKE','%'.$search.'%')
+                    ->orWhere('email', 'LIKE','%'.$search.'%')
+                    ->orWhere('contact', 'LIKE','%'.$search.'%');
+            })->latest()
+            ->paginate(15);
+
     }
 }

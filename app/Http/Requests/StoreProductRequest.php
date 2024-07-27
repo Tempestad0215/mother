@@ -25,7 +25,14 @@ class StoreProductRequest extends FormRequest
             'name' => ['required','string','min:3','max:75'],
             'description' => ['nullable','string','max:150'],
             'unit' => ['required','string',],
-            'supplier_id' => ['required','numeric','exists:suppliers,id']
+            'supplier_id' => ['required','numeric','exists:suppliers,id'],
+            'category_id' => ['required','numeric','exists:categories,id'],
+            'bar_code' => ['nullable','string','max:100'],
+            'sku' => ['nullable','string','max:75'],
+            'tax_rate' => ['required','numeric'],
+            'branch' => ['nullable','string','max:75'],
+            'weight' => ['nullable','numeric'],
+            'dimensions' => ['nullable','string','max:255'],
         ];
     }
 }

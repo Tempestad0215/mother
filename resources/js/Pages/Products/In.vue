@@ -21,6 +21,7 @@ import FormSearch from "@components/FormSearch.vue";
 import {productDataI, productI} from "@/Interfaces/Product";
 import Pagination from "@components/Pagination.vue";
 import Swal from "sweetalert2";
+import LinkHeader from '@components/LinkHeader.vue';
 
 const props = defineProps({
     products: {
@@ -57,6 +58,7 @@ const productData = ref([]);
 
 //Al momento de crearse
 onMounted(()=>{
+    // Para los datos a editar
     if(props.productEdit)
     {
         form.product_id = props.productEdit.id;
@@ -94,7 +96,7 @@ const getValue = (id:number)=>{
 
 // Enviar formulario
 const submit = () => {
-
+    //Para editar
     if(props.update)
     {
         form.transform((data) =>({
@@ -116,11 +118,6 @@ const submit = () => {
             }
         });
     }
-
-
-
-
-
 }
 
 const search = () => {
@@ -163,52 +160,45 @@ const destroy = (id:number) => {
     <Head title="Entrada" />
     <AppLayout>
         <template #header >
-            <HeaderBox>
-                <h2>
-                    Entrada de producto
-                </h2>
-                <template #link >
-                    <NavLink
-                        :href="route('product.create')" >
-                        Registrar
-                    </NavLink>
-                    <NavLink
-                        :href="route('product.show')" >
-                        Mostrar
-                    </NavLink>
-                    <NavLink
-                        :active="true"
-                        :href="route('product-in.create')" >
-                        Entrada
-                    </NavLink>
-                </template>
-            </HeaderBox>
+            <LinkHeader
+                :href="route('product.create')">
+                Registrar
+            </LinkHeader>
+            <LinkHeader
+                :href="route('product.show')">
+                Mostrar
+            </LinkHeader>
+            <LinkHeader
+                :href="route('product-in.create')">
+                Entrada
+            </LinkHeader>
+
         </template>
 
         <!-- Contenido de la pagina -->
-        <div class="px-10">
-            <ContentBox class=" md:max-w-full mx-5 ">
+        <div class="">
+
                 <form
+                    class=" p-5 rounded-md bg-gray-200"
                     @submit.prevent="submit">
                     <h3 class=" text-2xl font-bold text-center ">
                         Entrada de producto
                     </h3>
                     <!-- Seleccionar el producto -->
-                    <div class="mt-4">
+                    <div class="mt-4 max-w-2xl ">
                         <InputLabel
                             for="product" value="Producto"/>
                         <div class=" flex space-x-5">
-                            <InputSelect
-                                :read="props.products ? true : false"
-                                @get-data="getProduct()"
-                                :info="productData"
-                                @send-value="getValue"
-                                field="name"
-                                field-value="id"
-                                holder=" -- Busque el producto y seleccione --"
-                                v-model="form.product_name"
-                                class=" flex-1"
-                                 />
+                            <div class="relative flex-1">
+                                <TextInput
+                                    class=" w-full"
+                                    name="product" />
+                                <i
+                                    class=" absolute inset-y-0 right-3 flex items-center fa-solid fa-circle-arrow-down">
+                                </i>
+
+                            </div>
+
                             <SecondaryButton
                                 :disable="form.processing"
                                 @click="registerProduct = !registerProduct"
@@ -228,7 +218,7 @@ const destroy = (id:number) => {
                             <TextInput
                                 class="w-full"
                                 name="stock"
-                                v-money="moneyConfig"
+                                v-money3="moneyConfig"
                                 v-model.lazy="form.stock"
                                 type="text"/>
 
@@ -245,7 +235,7 @@ const destroy = (id:number) => {
                             <TextInput
                                 class="w-full"
                                 name="cost"
-                                v-money="moneyConfig"
+                                v-money3="moneyConfig"
                                 v-model.lazy="form.cost"
                                 type="text"/>
 
@@ -262,7 +252,7 @@ const destroy = (id:number) => {
                             <TextInput
                                 class=" w-full"
                                 name="price"
-                                v-money="moneyConfig"
+                                v-money3="moneyConfig"
                                 v-model.lazy="form.price"
                                 type="text"/>
 
@@ -283,13 +273,8 @@ const destroy = (id:number) => {
 
                 </form>
 
-                <div class="mt-5">
-                    <hr>
-                </div>
-
-
 <!--                //Crear la tabla para mostrar las entrada-->
-                <div class=" mt-10">
+                <div class=" mt-5 bg-gray-200 p-5 rounded-md">
                     <form
                         @submit.prevent="search" >
                         <FormSearch
@@ -309,7 +294,9 @@ const destroy = (id:number) => {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="item in props.products?.data">
+                            <tr
+                                class=" odd:bg-gray-400"
+                                v-for="item in props.products?.data">
                                 <td>{{item.id}}</td>
                                 <td>{{item.name}}</td>
                                 <td>{{item.stock}}</td>
@@ -333,7 +320,7 @@ const destroy = (id:number) => {
                         :current-page="props.products?.current_page"/>
                 </div>
 
-            </ContentBox>
+
 
             <!-- Mostrar regitro de producto -->
             <Transition>

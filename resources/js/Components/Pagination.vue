@@ -3,10 +3,10 @@ import { Link } from '@inertiajs/vue3';
 
 
 interface paginationI {
-    currentPage: number
-    totalPage: number
-    next: string
-    prev: string
+    currentPage?: number
+    totalPage?: number
+    next?: (string|null)
+    prev?: (string|null)
 }
 
 
@@ -17,7 +17,7 @@ const props = defineProps<paginationI>()
 
 <template>
     <!-- PAginacion de todo -->
-    <div class=" mt-5 flex justify-between items-center border-t pt-2">
+    <div class=" mt-5 flex justify-between items-center border-t border-gray-600 pt-2">
         <div>
             <!-- Pagina -->
             <span>
