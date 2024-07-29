@@ -18,6 +18,8 @@ export const formatNumber = (val:string | number):number  =>
         val = parseFloat(limpio);
 
     }
+
+    // Devolver los datos tal cual
     return val;
 
 }

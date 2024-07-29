@@ -101,7 +101,7 @@ Route::middleware([
         ->group(function(){
             Route::get('/','index')->name('create');
             Route::patch('/{productIn}','store')->name('store');
-            Route::get('/edit/{productIn}','edit')->name('edit');
+            Route::get('/entrance/{productIn}','entrance')->name('entrance');
             Route::patch('/update/{productIn}','update')->name('update');
             Route::patch('/destroy/{productIn}','destroy')->name('destroy');
 

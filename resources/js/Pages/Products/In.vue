@@ -1,11 +1,7 @@
 <script setup lang="ts">
-import HeaderBox from '@components/HeaderBox.vue';
-import NavLink from '@components/NavLink.vue';
 import {Head, router, useForm} from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import InputSelect from '@components/InputSelect.vue';
-import ContentBox from '@components/ContentBox.vue';
 import TextInput from '@components/TextInput.vue';
 import {formatNumber, moneyConfig} from '@/Global/Helpers';
 import PrimaryButton from '@components/PrimaryButton.vue';
@@ -28,7 +24,7 @@ const props = defineProps({
         type: Object as PropType<productI>,
         required: true
     },
-    productEdit:{
+    productEntrance:{
         type: Object as PropType<productDataI>
     },
     update:{
@@ -43,7 +39,10 @@ const form = useForm({
     product_name:"",
     stock: "",
     cost:"",
-    price:""
+    price:"",
+    tax: "",
+    tax_price:"",
+    tax_amount:""
 });
 
 const formSearch = useForm({
@@ -59,13 +58,13 @@ const productData = ref([]);
 //Al momento de crearse
 onMounted(()=>{
     // Para los datos a editar
-    if(props.productEdit)
+    if(props.productEntrance)
     {
-        form.product_id = props.productEdit.id;
-        form.product_name = props.productEdit.name;
-        form.stock = props.productEdit.stock;
-        form.cost = props.productEdit.cost;
-        form.price = props.productEdit.price;
+        form.product_id = props.productEntrance.id;
+        form.product_name = props.productEntrance.name;
+        form.stock = props.productEntrance.stock;
+        form.cost = props.productEntrance.cost;
+        form.price = props.productEntrance.price;
     }
 })
 
@@ -153,6 +152,10 @@ const destroy = (id:number) => {
 
 }
 
+const totalTax = () => {
+
+}
+
 </script>
 
 
@@ -218,6 +221,7 @@ const destroy = (id:number) => {
                             <TextInput
                                 class="w-full"
                                 name="stock"
+                                @blur="totalTax"
                                 v-money3="moneyConfig"
                                 v-model.lazy="form.stock"
                                 type="text"/>
@@ -262,6 +266,53 @@ const destroy = (id:number) => {
                         </div>
 
 
+                        <!-- Datos tributario -->
+                        <fieldset class=" col-span-full grid grid-cols-3 gap-3 border-2 border-gray-500 rounded-md p-5">
+
+                            <legend>
+                                Tributario
+                            </legend>
+
+                            <!-- Impuesto -->
+                            <div>
+                                <InputLabel
+                                    for="tax"
+                                    value="Impuesto" />
+                                <TextInput
+                                    readonly
+                                    v-money3="moneyConfig"
+                                    v-model="form.tax"
+                                    class=" w-full"
+                                    name="tax" />
+                            </div>
+
+                            <!-- Impuesto -->
+                            <div>
+                                <InputLabel
+                                    for="price-no-tax"
+                                    value="Precio sin Impuesto" />
+                                <TextInput
+                                    readonly
+                                    v-money3="moneyConfig"
+                                    v-model="form.tax_price"
+                                    class=" w-full"
+                                    name="tax" />
+                            </div>
+
+                            <!-- Impuesto -->
+                            <div>
+                                <InputLabel
+                                    for="tax-aomount"
+                                    value="Total del impuesto" />
+                                <TextInput
+                                    readonly
+                                    v-money3="moneyConfig"
+                                    class=" w-full"
+                                    name="tax" />
+                            </div>
+                        </fieldset>
+
+
                     </div>
 
                     <!-- Boton para el producto -->
@@ -285,8 +336,8 @@ const destroy = (id:number) => {
                     <table class="table-auto w-full mt-3">
                         <thead>
                             <tr class="text-left">
-                                <th>Id</th>
                                 <th>Producto</th>
+                                <th>Descripcion</th>
                                 <th>Cant.</th>
                                 <th>Cost</th>
                                 <th>Precio</th>
@@ -297,15 +348,15 @@ const destroy = (id:number) => {
                             <tr
                                 class=" odd:bg-gray-400"
                                 v-for="item in props.products?.data">
-                                <td>{{item.id}}</td>
                                 <td>{{item.name}}</td>
+                                <td>{{item.description}}</td>
                                 <td>{{item.stock}}</td>
                                 <td>{{item.cost}}</td>
                                 <td>{{item.price}}</td>
                                 <td class="text-xl space-x-3 w-[75px] ">
                                     <i
                                         @click="edit(item.id)"
-                                        class=" icon-efect fa-solid fa-pen-to-square"></i>
+                                        class=" icon-efect fa-solid fa-dolly"></i>
                                     <i
                                         @click="destroy(item.id)"
                                         class="icon-efect fa-solid fa-trash"></i>
