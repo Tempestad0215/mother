@@ -49,8 +49,6 @@ class ProductInController extends Controller
      */
     public function store(StoreProductInRequest $request)
     {
-
-
         DB::transaction(function () use ($request) {
             // Guardar los datos
             $product = Product::where('id', $request['product_id'])
@@ -60,6 +58,7 @@ class ProductInController extends Controller
             $product->stock += $request['stock'];
             $product->cost = $request['cost'];
             $product->price = $request['price'];
+            $product->discount = $request['discount'];
             $product->save();
 
             //Crear la transaction del producto
@@ -102,7 +101,6 @@ class ProductInController extends Controller
         return Inertia::render('Products/In',[
             'products' => $data,
             'productEntrance' => $productIn,
-            'update' => true
         ]);
 
     }
@@ -115,6 +113,8 @@ class ProductInController extends Controller
      */
     public function update(UpdateProductInRequest $request, Product $productIn)
     {
+
+        return $request;
 
         //Tomar las fechas
         $updateDay = config('setting.document-update');

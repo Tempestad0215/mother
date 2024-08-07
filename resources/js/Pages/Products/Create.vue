@@ -36,6 +36,8 @@ const showSupplierForm = ref(false);
 
 
 <template>
+
+    <!--Titulo de la ventana    -->
     <Head title="Productos"/>
 
     <!-- Contenido de la ventana -->
@@ -48,12 +50,10 @@ const showSupplierForm = ref(false);
                 Registrar
             </LinkHeader>
             <LinkHeader
-                :active="true"
-                :href="route('product.sale')">
+                :href="route('product-sale.create')">
                 Venta
             </LinkHeader>
             <LinkHeader
-                :active="true"
                 :href="route('product-in.create')">
                 Entrada
             </LinkHeader>

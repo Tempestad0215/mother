@@ -16,11 +16,19 @@ export interface productI {
 export interface productDataI {
     id: number;
     name: string;
+    sku:string;
+    bar_code: string | null;
+    weight: string;
+    dimensions: string | null;
+    brand: string | null;
     description: string | null;
     unit: string;
-    stock: string;
-    cost: string;
-    price: string;
+    stock: number;
+    cost: number;
+    price: number;
+    discount: number;
+    tax_rate: number;
+    category_id: number;
     supplier_id: number;
     updated_at: string
     created_at: string
@@ -75,8 +83,12 @@ export interface productSupllierI {
 export  interface  productSaleI{
     id: number;
     name: string;
-    price: string;
-    stock: string;
-    amount: string;
-    tax: string;
+    quantity: number;
+    price: number;
+    stock: number;
+    amount: number;
+    tax: number;
+    tax_rate: number;
+    product_tax: number;
+    stockTotal: number;
 }

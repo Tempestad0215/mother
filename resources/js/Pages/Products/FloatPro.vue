@@ -12,7 +12,6 @@ import { useForm } from '@inertiajs/vue3';
 import axios from 'axios';
 import { onMounted, PropType, ref } from 'vue';
 import {taxeI} from "@/Interfaces/Global";
-import {moneyConfig} from "@/Global/Helpers";
 import {categoryI} from "@/Interfaces/Categories";
 
 
@@ -68,7 +67,6 @@ const taxes = ref<taxeI[]>([
 ]);
 
 
-const showTax = ref<boolean>(false);
 const showCategory = ref<boolean>(false);
 const dataUnit = ref(["UNIDAD","CAJA","KG","LIBRA","LITRO","ONZA","GALON"]);
 const categoryData = ref<categoryI[]>([]);
@@ -337,7 +335,6 @@ const selectCategory = (item:categoryI) => {
                                 for="weight"
                                 value="Peso"/>
                             <TextInput
-                                v-money3="moneyConfig"
                                 v-model="form.weigth"
                                 class="w-full"
                                 name="waight"/>

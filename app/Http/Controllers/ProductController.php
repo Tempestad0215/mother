@@ -148,4 +148,6 @@ class ProductController extends Controller
 
         return $data;
     }
+
+
 }

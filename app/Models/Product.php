@@ -69,33 +69,33 @@ class Product extends Model
 
 
 
-    protected function price():Attribute
-    {
-        return Attribute::make(
-            get: fn(float $value) => number_format($value,2)
-        );
-    }
-
-    protected function  cost():Attribute
-    {
-        return Attribute::make(
-            get: fn(float $value) => number_format($value,2)
-        );
-    }
-
-    protected function  stock():Attribute
-    {
-        return Attribute::make(
-            get: fn(float $value) => number_format($value,2)
-        );
-    }
-
-    protected function  weight():Attribute
-    {
-        return Attribute::make(
-            get: fn(float $value) => number_format($value,2)
-        );
-    }
+//    protected function price():Attribute
+//    {
+//        return Attribute::make(
+//            get: fn(float $value) => number_format($value,2)
+//        );
+//    }
+//
+//    protected function  cost():Attribute
+//    {
+//        return Attribute::make(
+//            get: fn(float $value) => number_format($value,2)
+//        );
+//    }
+//
+//    protected function  stock():Attribute
+//    {
+//        return Attribute::make(
+//            get: fn(float $value) => number_format($value,2)
+//        );
+//    }
+//
+//    protected function  weight():Attribute
+//    {
+//        return Attribute::make(
+//            get: fn(float $value) => number_format($value,2)
+//        );
+//    }
 
 
 

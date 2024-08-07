@@ -23,3 +23,10 @@ export const formatNumber = (val:string | number):number  =>
     return val;
 
 }
+
+export const getMoney = (value:number) => {
+    return new Intl.NumberFormat('es-DO',{
+        style: 'currency',
+        currency: 'DOP',
+    }).format(value);
+}

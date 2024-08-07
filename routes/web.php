@@ -6,6 +6,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductInController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProductSaleController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -52,6 +53,7 @@ Route::middleware([
         Route::get('/edit/{client}','edit')->name('edit');
         Route::patch('/{client}','update')->name('update');
         Route::patch('/destroy/{client}','destroy')->name('destroy');
+        Route::get('/get','getJson')->name('get.json');
     });
 
     //Categoria
@@ -91,8 +93,16 @@ Route::middleware([
         Route::patch('/{product}','update')->name('update');
         Route::get('/get','get')->name('get');
         Route::get('/get/json','getJson')->name('get.json');
-        Route::get('/sale','saleIndex')->name('sale');
     });
+
+    //Ventas de productos
+    Route::controller(ProductSaleController::class)
+        ->prefix('product-sale')
+        ->name('product-sale.')
+        ->group(function(){
+           Route::get('/','create')->name('create');
+           Route::get('/get','getJson')->name('get.json');
+        });
 
     //Entrada de los productos
     Route::controller(ProductInController::class)

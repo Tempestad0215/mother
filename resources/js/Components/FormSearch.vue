@@ -30,7 +30,7 @@ const sendData = (e:Event) => {
             for="search"
             value="Buscar" />
         <input
-            class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+            class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-[400px] max-w-sm"
             :value="props.modelValue"
             @input="sendData($event)"
             :placeholder="props.holder"

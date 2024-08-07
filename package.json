@@ -25,7 +25,6 @@
     "dependencies": {
         "@types/vue-the-mask": "^0.11.5",
         "sweetalert2": "^11.12.1",
-        "v-money": "^0.8.1",
         "v-money3": "^3.24.1",
         "vue-the-mask": "^0.11.1"
     }
