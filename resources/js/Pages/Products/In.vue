@@ -6,7 +6,6 @@ import TextInput from '@components/TextInput.vue';
 import {formatNumber, getMoney} from '@/Global/Helpers';
 import PrimaryButton from '@components/PrimaryButton.vue';
 import InputError from '@components/InputError.vue';
-import SecondaryButton from '@components/SecondaryButton.vue';
 import FloatBox from '@components/FloatBox.vue';
 import {computed, onMounted, PropType, reactive, ref} from 'vue';
 import FloatProduct from '@/Pages/Products/FloatPro.vue';
@@ -16,7 +15,6 @@ import {successHttp} from "@/Global/Alert";
 import FormSearch from "@components/FormSearch.vue";
 import {productDataI, productI} from "@/Interfaces/Product";
 import Pagination from "@components/Pagination.vue";
-import Swal from "sweetalert2";
 import LinkHeader from '@components/LinkHeader.vue';
 
 
@@ -43,12 +41,12 @@ const form = useForm({
     stock: "",
     cost: "",
     price: "",
-    tax: "",
-    tax_price:"",
-    product_no_tax:"",
-    tax_amount:"",
-    discount:"",
-    total:""
+    tax: 0.00,
+    tax_price: 0.00,
+    product_no_tax: 0.00,
+    tax_amount: 0.00,
+    discount: "",
+    total: 0.00
 });
 
 // Para la busqueda
@@ -79,10 +77,9 @@ onMounted(()=>{
     {
         form.product_id = props.productEntrance.id;
         form.product_name = props.productEntrance.name;
-        form.stock = props.productEntrance.stock || "";
-        form.cost = props.productEntrance.stock || "";
-        form.price = props.productEntrance.stock || ""
-        ;
+        form.stock = (props.productEntrance.stock || 0).toFixed(2);
+        form.cost = (props.productEntrance.stock || 0).toFixed(2);
+        form.price = (props.productEntrance.stock || 0).toFixed(2);
     }
 })
 
@@ -206,11 +203,11 @@ const totalTax = () => {
     taxData.discount = taxData.total * discount;
 
     // Pasar la info al
-    form.tax = (taxData.tax).toFixed(2);
-    form.tax_amount = (taxData.tax_amount).toFixed(2);
+    form.tax = taxData.tax;
+    form.tax_amount = taxData.tax_amount;
     form.discount = (taxData.discount).toFixed(2);
-    form.product_no_tax = (taxData.product_no_tax).toFixed(2);
-    form.total = (taxData.total).toFixed(2);
+    form.product_no_tax = taxData.product_no_tax;
+    form.total = taxData.total;
 
 }
 
@@ -285,7 +282,7 @@ const totalTax = () => {
                                 name="stock"
                                 :readonly="isSelected"
                                 @blur="totalTax"
-                                v-model="form.stock"
+                                v-model.number="form.stock"
                                 type="number"/>
 
                             <!-- Error -->
