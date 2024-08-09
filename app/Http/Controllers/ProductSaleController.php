@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ClientHelper;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
@@ -9,21 +10,41 @@ use Inertia\Inertia;
 
 class ProductSaleController extends Controller
 {
+    private $clientHelper;
+
+    public function __construct()
+    {
+        $this->clientHelper = new ClientHelper();
+    }
+
+
     /**
      * Crear la ventas de productos
      */
     public function create(Request $request)
     {
 
+
         //Obtener los datos
         $products = $this->get($request);
+        $clients = $this->clientHelper->get($request);
 
 
         //DEvolver la vista y los datos
         return Inertia::render('ProductSale/Create',[
-            'products' => $products
+            'products' => $products,
+            'clients' => $clients
         ]);
     }
+
+
+    public function store(Request $request)
+    {
+
+    }
+
+
+
 
 
     /**

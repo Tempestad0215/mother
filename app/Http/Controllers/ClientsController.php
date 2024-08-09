@@ -128,13 +128,13 @@ class ClientsController extends Controller
         $search = $request->get('search');
 
         //Buscar los datos de todo
-        $data = Client::where('status',false)
+        $data = Clients::where('status',false)
             ->where(function ($query) use ($search) {
                 $query->where('name','like','%'. $search .'%')
                     ->orWhere('phone','like','%'. $search .'%');
             })
             ->latest()
-            ->limit(10)
+            ->limit(5)
             ->get();
 
         //Devolver los datos en json

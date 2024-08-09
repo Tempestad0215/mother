@@ -5,52 +5,79 @@ import InputLabel from "@components/InputLabel.vue";
 import TextInput from "@components/TextInput.vue";
 import SecondaryButton from "@components/SecondaryButton.vue";
 import FloatBox from "@components/FloatBox.vue";
-import FloatShow from "@/Pages/Products/FloatShowPro.vue";
+import FloatShowPro from "@/Pages/Products/FloatShowPro.vue";
 import {PropType, ref} from "vue";
 import {productDataI, productI, productSaleI} from "@/Interfaces/Product";
 import {formatNumber, getMoney} from "@/Global/Helpers";
 import LinkHeader from "@components/LinkHeader.vue";
 import Swal from "sweetalert2";
+import InputError from "@components/InputError.vue";
+import {clientDataI, clientI} from "@/Interfaces/ClientInterface";
+import FloatShowCli from "@/Pages/Clients/FloatShow.vue";
 
 
-
+/**
+ * Datos del back end
+ */
 const props = defineProps({
     products: {
         type: Object as PropType<productI>,
         required: true
+    },
+    clients: {
+        type: Object as PropType<clientI>,
+        required: true
     }
 });
 
+
+/**
+ * Datos de la ventana
+ */
+const showClient = ref<boolean>(false);
+const showProduct = ref(false);
+
+
+/**
+ * Formulario
+ */
 const form = useForm({
     client_name:"",
-    client_id:"",
-    products:[] as productSaleI[],
+    client_id: 0,
+    info:[] as productSaleI[],
     tax: 0.00,
+    discount: 0.00,
     amount: 0.00,
     sub_total: 0.00,
     total: 0.00
 
 });
 
-const showProduct = ref(false);
 
+/**
+ * Funciones
+ */
 
+/**
+ * funciones para obtener los datos de productos
+ * @param item
+ */
 //Funciones
 const getData = (item:productDataI) => {
 
     //Obtener los datos de productos
-    let products = form.products.find((el) => el.id === item.id);
+    let info = form.info.find((el) => el.id === item.id);
 
     // Verificar si el producto exite en todo
-    if (products?.id  === item.id)
+    if (info?.id  === item.id)
     {
-        products.quantity += 1;
+        info.quantity += 1;
         showProduct.value = false;
 
     }else{
         let productTax:number = item.price * item.tax_rate;
 
-        form.products.push({
+        form.info.push({
             id: item.id,
             name: item.name,
             quantity: 1,
@@ -69,13 +96,19 @@ const getData = (item:productDataI) => {
 
 
     //Conseguir el index para poder realizar el calculo
-    let index = form.products.findIndex((el) => el.id === item.id);
+    let index = form.info.findIndex((el) => el.id === item.id);
 
     //Calcular el indice
     totalAmount(index);
 
 }
 
+
+/**
+ * Eliminar datos de la venta
+ * @param name
+ * @param index
+ */
 const deleteItem =(name:string , index:number) => {
     Swal.fire({
         title: `Desea eliminar registro : ${name}?`,
@@ -90,16 +123,20 @@ const deleteItem =(name:string , index:number) => {
         if (result.isConfirmed)
         {
             //Eliminar el producto seleccionado
-            form.products.splice(index);
+            form.info.splice(index);
         }
 
     });
 }
 
+/**
+ * Calcular el  itbis y otros datos de la ventana
+ * @param index
+ */
 const totalAmount = (index:number) => {
 
     // Sacar los datos del produtos
-    let info:productSaleI = form.products[index];
+    let info:productSaleI = form.info[index];
 
     //Pasar los datos al formulario
     info.tax = info.product_tax * info.quantity;
@@ -110,24 +147,37 @@ const totalAmount = (index:number) => {
 
 }
 
+/**
+ * Calculo el total de venta
+ */
 // Calculo de los datos finales
 const totalSale = () => {
     let totalTax:number = 0.00;
     let subTotal:number = 0.00;
 
     //Recorrer el array para realizar el calcuclo
-    form.products.forEach((el, index) =>{
+    form.info.forEach((el) =>{
         totalTax += formatNumber(el.tax);
         subTotal += formatNumber(el.amount);
     });
 
-    console.log(subTotal);
 
     //Calcular el total de todo
     form.tax = totalTax;
     form.sub_total = subTotal;
     form.total = totalTax + subTotal;
 
+}
+
+/**
+ * Seleccionar el cliente
+ * @param item
+ */
+//Seleccionar el cliente
+const selectClient = (item:clientDataI) =>  {
+    form.client_name = item.name;
+    form.client_id = item.id;
+    showClient.value = false;
 }
 
 </script>
@@ -169,19 +219,32 @@ const totalSale = () => {
                         <input-label
                             for="product"
                             value="Cliente" />
-                        <div class="flex space-x-5 ">
-                            <TextInput
-                                class=" w-[400px]"
-                                placeholder="Cliente"/>
-                            <SecondaryButton>
-                                Clie...
-                            </SecondaryButton>
-                            <SecondaryButton
-                                @click="showProduct = !showProduct">
-                                Prod..
-                            </SecondaryButton>
+
+                        <div>
+                            <div class="flex space-x-5 ">
+
+                                <div class="relative">
+                                    <TextInput
+                                        class=" w-[400px]"
+                                        v-model="form.client_name"
+                                        placeholder="Cliente"/>
+                                </div>
+
+                                <SecondaryButton
+                                    @click="showClient = !showClient">
+                                    Clie...
+                                </SecondaryButton>
+                                <SecondaryButton
+                                    @click="showProduct = !showProduct">
+                                    Prod..
+                                </SecondaryButton>
+
+                            </div>
+
+                            <InputError :message="form.errors.client_name"/>
 
                         </div>
+
 
                         <div>
                             <table
@@ -192,7 +255,7 @@ const totalSale = () => {
                                     <th>#</th>
                                     <th>Producto</th>
                                     <th>Cantidad</th>
-                                    <th>Precio</th>
+                                    <th>Precio sin Itbis</th>
                                     <th>Itbis</th>
                                     <th>Importe</th>
                                     <th>Atc</th>
@@ -201,7 +264,7 @@ const totalSale = () => {
                                 <tbody>
                                 <tr
                                     class=" odd:bg-gray-200"
-                                    v-for="(item, index) in form.products" :key="index">
+                                    v-for="(item, index) in form.info" :key="index">
                                     <td>{{index+1}}</td>
                                     <td>{{item.name}}</td>
                                     <td
@@ -210,7 +273,7 @@ const totalSale = () => {
                                             class=" border-none bg-transparent rounded-md h-8 bg-white w-4/5"
                                             @blur="totalAmount(index)"
                                             v-model="item.quantity"
-                                            type="text">
+                                            type="number">
                                     </td>
                                     <td
                                         class=" w-[150px]">
@@ -268,12 +331,28 @@ const totalSale = () => {
 
             </div>
 
+
+            <!-- Mostrar flotante los clientes --->
+            <Transition>
+                <FloatBox
+                    @close="showClient = false"
+                    v-if="showClient">
+                    <FloatShowCli
+                        class=" bg-amber-50 w-4/5 rounded-md px-10 py-5"
+                        @get-data="selectClient"
+                        :clients="props.clients"/>
+
+                </FloatBox>
+            </Transition>
+
+
+
             <!-- Ventana flotante -->
             <Transition>
                 <FloatBox
                     @close="showProduct = false"
                     v-if="showProduct">
-                    <FloatShow
+                    <FloatShowPro
                         class=" bg-amber-50 w-4/5 rounded-md px-10 py-5"
                         @select="getData"
                         :products="props.products"/>

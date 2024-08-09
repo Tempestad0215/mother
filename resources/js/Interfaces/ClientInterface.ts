@@ -27,7 +27,7 @@ export interface clienteEditI
 }
 
 
-interface clientDataI {
+export interface clientDataI {
     address: (string | null)
     createed_at: string
     email: (string|null)
