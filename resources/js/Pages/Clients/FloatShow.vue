@@ -157,7 +157,7 @@ const destroy = (id:Number) => {
             </tbody>
         </table>
 
-        <!-- PAginacion de todo -->
+        <!-- PAginacion -->
         <Pagination
             :current-page="props.clients.current_page"
             :total-page="props.clients.to"
