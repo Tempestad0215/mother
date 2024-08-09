@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { clientI } from '@/Interfaces/ClientInterface';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Head, router } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
 import type { PropType } from 'vue';
 import LinkHeader from "@components/LinkHeader.vue";
 import FloatShowCli from "@/Pages/Clients/FloatShow.vue";
