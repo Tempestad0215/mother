@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @property boolean $status
+ * @property string $code
  * @property string $name
  * @property null|string $description
  * @property string $unit
@@ -113,6 +115,48 @@ class Product extends Model
     public function category():BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+
+    /**
+     * @return void
+     */
+    protected static function boot()
+    {
+        // Llamar el metodo principal
+        parent::boot();
+
+        //Generar el codigo en todo
+        static::creating(function ($product) {
+            $product->code = self::generateCode();
+        });
+    }
+
+
+
+    /**
+     * @return string
+     */
+    private static function generateCode()
+    {
+
+        //codigo de producto
+        $code = config('Setting.proCode');
+
+        // Sacar el ultimo producto
+        $lastProduct = DB::table('products')->latest('id')->first();
+
+        //Verificar si existe
+        if($lastProduct){
+            //Extraer el numero secuencial
+            $lastNumber = (int)substr($lastProduct->code, 3);
+            $newNumber = str_pad(++$lastNumber, 8, "0", STR_PAD_LEFT);
+        }else{
+            $newNumber = '000001';
+        }
+
+        // Generar el nuevo codigo
+        return $code . $newNumber;
     }
 
 }

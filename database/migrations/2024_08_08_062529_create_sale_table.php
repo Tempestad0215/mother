@@ -14,11 +14,12 @@ return new class extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
+            $table->string('code',30);
             $table->string('client_name');
             $table->foreignIdFor(Clients::class,'client_id')->nullable();
             $table->json('info');
             $table->float('discount')->default(0);
-            $table->float('itbis');
+            $table->float('tax');
             $table->float('sub_total');
             $table->float('total');
             $table->boolean('status')->default(0);

@@ -2,10 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ProductTypeEnum;
 use App\Helpers\ClientHelper;
+use App\Http\Requests\StoreProductSaleRequest;
 use App\Models\Product;
+use App\Models\ProTrans;
+use App\Models\Sale;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class ProductSaleController extends Controller
@@ -19,7 +25,7 @@ class ProductSaleController extends Controller
 
 
     /**
-     * Crear la ventas de productos
+     * Crear la ventas de productoss
      */
     public function create(Request $request)
     {
@@ -38,8 +44,50 @@ class ProductSaleController extends Controller
     }
 
 
-    public function store(Request $request)
+    /**
+     * @param StoreProductSaleRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function store(StoreProductSaleRequest $request)
     {
+
+        // Evitar que se realicen 2 operaciones al mismo tiempo
+        Cache::lock('sale', 3)->get(function () use ($request) {
+            //Para asegurar que se cumplan los registro
+            DB::transaction(function () use ($request) {
+
+                // Registrar la ventas
+                $sale = Sale::create($request->validated());
+
+                //Recorrer la ventas para descontar los productos
+                foreach ($request->info as $key => $value)
+                {
+                    // Actualizar cada producto
+                    $product = Product::where('id', $value['id'])
+                        ->decrement('stock', $value['quantity']);
+
+
+                    //Crea la transaction
+                    ProTrans::create([
+                        'product_id' => $value['id'],
+                        'sale_id' => $sale->id,
+                        'stock' => $value['quantity'],
+                        'price' => $value['price'],
+//                        'discount' => $value['discount'],
+                        'tax' => $value['tax'],
+                        'amount' => $value['amount'],
+                        'type' => ProductTypeEnum::SALIDA
+                    ]);
+
+                }
+
+
+
+            });
+        });
+
+        //DEvolver hacia atras
+        return back();
 
     }
 

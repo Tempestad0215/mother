@@ -22,9 +22,15 @@ class StoreProductSaleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'client_name' => ['required', 'string','min:3','max:75'],
-            'client_id' => ['nullable','integer','exists:clients,id'],
-            'info' => ['required','json'],
+            'client_name' => ['nullable', 'string','min:3','max:75'],
+            'client_id' => ['nullable','integer'],
+            'info' => ['required','array'],
+            'info.*.name' => ['required','string','min:3','max:75'],
+            'info.*.quantity' => ['required','numeric'],
+            'info.*.price' => ['required','numeric'],
+            'info.*.tax' => ['required','numeric'],
+            'info.*.tax_rate' => ['required','numeric'],
+            'info.*.amount' => ['required','numeric'],
             'tax' => ['required','numeric'],
             'amount' => ['required','numeric'],
             'sub_total' => ['required','numeric'],

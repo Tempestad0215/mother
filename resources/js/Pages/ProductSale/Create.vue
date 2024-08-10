@@ -14,6 +14,8 @@ import Swal from "sweetalert2";
 import InputError from "@components/InputError.vue";
 import {clientDataI, clientI} from "@/Interfaces/ClientInterface";
 import FloatShowCli from "@/Pages/Clients/FloatShow.vue";
+import PrimaryButton from "@components/PrimaryButton.vue";
+import {successHttp} from "@/Global/Alert";
 
 
 /**
@@ -180,6 +182,15 @@ const selectClient = (item:clientDataI) =>  {
     showClient.value = false;
 }
 
+
+const submit = () => {
+    form.post(route('product-sale.store'),{
+        onSuccess:()=>{
+            successHttp('Venta cerrada correctamente');
+        }
+    })
+}
+
 </script>
 
 <template>
@@ -304,7 +315,7 @@ const selectClient = (item:clientDataI) =>  {
                             </div>
 
                             <div class=" flex justify-end">
-                                <table class="">
+                                <table class=" w-1/3">
                                     <tbody>
                                     <tr>
                                         <th class=" text-left">Itbis :</th>
@@ -324,6 +335,19 @@ const selectClient = (item:clientDataI) =>  {
                                 </table>
                             </div>
 
+                        </div>
+
+
+                        <div class=" text-right mt-5 space-x-3">
+                            <SecondaryButton
+                                type="button">
+                                Limpiar
+                            </SecondaryButton>
+                            <PrimaryButton
+                                @click="submit()"
+                                type="button">
+                                Cerrar venta
+                            </PrimaryButton>
                         </div>
 
                     </div>

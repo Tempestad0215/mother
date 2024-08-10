@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -14,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('pro_trans', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(Sale::class,'sale_id');
             $table->foreignIdFor(Product::class,'product_id');
             $table->float('stock',2);
             $table->float('price',2);
