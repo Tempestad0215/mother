@@ -44,7 +44,7 @@ class ProTrans extends Model
     /**
      * @return void
      */
-    protected static function boot()
+    protected static function boot():void
     {
         // Llamar el metodo principal
         parent::boot();
@@ -60,7 +60,7 @@ class ProTrans extends Model
     /**
      * @return string
      */
-    private static function generateCode()
+    private static function generateCode():string
     {
 
         //codigo de producto

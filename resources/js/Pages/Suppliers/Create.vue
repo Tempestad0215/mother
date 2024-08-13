@@ -243,9 +243,11 @@ const destroy = (item:supplierI) => {
                             <td class="w-16 space-x-3">
                                 <i
                                     @click="edit(item)"
+                                    title="Editar"
                                     class=" icon-efect fa-solid fa-pen-to-square"></i>
                                 <i
                                     @click="destroy(item)"
+                                    title="Eliminar"
                                     class=" icon-efect fa-solid fa-trash"></i>
                             </td>
                         </tr>

@@ -12,13 +12,13 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class ProductInController extends Controller
 {
     /**
-     * Summary of index
-     * @param \Illuminate\Http\Request $request
-     * @return \Inertia\Response
+     * @param Request $request
+     * @return Response
      */
     public function index(Request $request)
     {
@@ -27,7 +27,7 @@ class ProductInController extends Controller
         $data = $this->getProduct($request);
 
         //Devolver la vista con los datos
-        return Inertia::render('Products/In',[
+        return Inertia::render('ProductsIn/In',[
             'products' => $data
         ]);
 
@@ -35,7 +35,7 @@ class ProductInController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * @return void
      */
     public function create()
     {
@@ -43,12 +43,13 @@ class ProductInController extends Controller
     }
 
     /**
-     * Summary of store
-     * @param \App\Http\Requests\StoreProductInRequest $request
+     * @param StoreProductInRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(StoreProductInRequest $request)
+    public function store(StoreProductInRequest $request, Product $productIn)
     {
+
+
         DB::transaction(function () use ($request) {
             // Guardar los datos
             $product = Product::where('id', $request['product_id'])
@@ -65,6 +66,7 @@ class ProductInController extends Controller
             ProTrans::create([
                 'product_id' => $request['product_id'],
                 'stock' => $request['stock'],
+                'sale_id' => 0,
                 'cost' => $request['cost'],
                 'price' => $request['price'],
                 'type' => ProductTypeEnum::ENTRADA
@@ -86,10 +88,9 @@ class ProductInController extends Controller
     // }
 
     /**
-     * Summary of entrance
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Product $productIn
-     * @return \Inertia\Response
+     * @param Request $request
+     * @param Product $productIn
+     * @return Response
      */
     public function entrance(Request $request, Product $productIn)
     {
@@ -98,7 +99,7 @@ class ProductInController extends Controller
         $data = $this->getProduct($request);
 
         // Devolver la vista con los datos
-        return Inertia::render('Products/In',[
+        return Inertia::render('ProductsIn/In',[
             'products' => $data,
             'productEntrance' => $productIn,
         ]);
@@ -106,18 +107,15 @@ class ProductInController extends Controller
     }
 
     /**
-     * Summary of update
-     * @param \App\Http\Requests\UpdateProductInRequest $request
-     * @param \App\Models\Product $productIn
+     * @param UpdateProductInRequest $request
+     * @param Product $productIn
      * @return string
      */
     public function update(UpdateProductInRequest $request, Product $productIn)
     {
 
-        return $request;
-
         //Tomar las fechas
-        $updateDay = config('setting.document-update');
+        $updateDay = config('Setting.document-update');
 
         // Formatear la fecha de creacion
         $created_at  = Carbon::parse($productIn->created_at);
@@ -136,8 +134,7 @@ class ProductInController extends Controller
     }
 
     /**
-     * Summary of destroy
-     * @param \App\Models\Product $productIn
+     * @param Product $productIn
      * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Product $productIn)
@@ -152,20 +149,28 @@ class ProductInController extends Controller
 
     }
 
+
+
+
+
+
+
+
+
     /**
-     * Summary of getProduct
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Pagination\Paginator
+     * @param Request $request
+     * @return Paginator
      */
     private function getProduct(Request $request):Paginator
     {
+        //Obtener los datos de busqueda
         $search = $request->get('search');
 
-        $data = Product::where('status', false)
+        //Devolver los datos
+        return Product::where('status', false)
             ->where('name','LIKE','%'.$search.'%')
             ->latest()
             ->simplePaginate();
 
-        return $data;
     }
 }

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {Head, router, useForm} from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
-import InputLabel from '@/Components/InputLabel.vue';
+import InputLabel from '@components/InputLabel.vue';
 import TextInput from '@components/TextInput.vue';
 import {formatNumber, getMoney} from '@/Global/Helpers';
 import PrimaryButton from '@components/PrimaryButton.vue';
@@ -10,14 +10,15 @@ import FloatBox from '@components/FloatBox.vue';
 import {computed, onMounted, PropType, reactive, ref} from 'vue';
 import FloatProduct from '@/Pages/Products/FloatPro.vue';
 import FloatSupplier from '@/Pages/Suppliers/FloatSupp.vue';
-import axios from "axios";
 import {successHttp} from "@/Global/Alert";
 import FormSearch from "@components/FormSearch.vue";
 import {productDataI, productI} from "@/Interfaces/Product";
 import Pagination from "@components/Pagination.vue";
 import LinkHeader from '@components/LinkHeader.vue';
 
-
+/**
+ * Propiedades de la ventana
+ */
 // Props de la ventana
 const props = defineProps({
     products: {
@@ -33,7 +34,9 @@ const props = defineProps({
     }
 });
 
-
+/**
+ * Formulario para enviar los daots
+ */
 // Datos del formulario
 const form = useForm({
     product_id:0,
@@ -49,12 +52,25 @@ const form = useForm({
     total: 0.00
 });
 
+
+/**
+ * formulario de busquedda
+ */
 // Para la busqueda
 const formSearch = useForm({
     search:""
 });
 
-// Datos de todo
+
+
+
+/**
+ * Datos de la ventnaa
+ */
+// Propiedades de la ventana
+const registerProduct = ref(false);
+const registerSupplier = ref(false);
+// Datos de select impuesto
 const taxData = reactive({
     tax: 0,
     product_no_tax: 0,
@@ -63,13 +79,9 @@ const taxData = reactive({
     total:0,
 });
 
-
-
-// Propiedades de la ventana
-const registerProduct = ref(false);
-const registerSupplier = ref(false);
-const productData = ref([]);
-
+/**
+ * Al momento de cargar
+ */
 //Al momento de crearse
 onMounted(()=>{
     // Para los datos a editar
@@ -78,38 +90,46 @@ onMounted(()=>{
         form.product_id = props.productEntrance.id;
         form.product_name = props.productEntrance.name;
         form.stock = (props.productEntrance.stock || 0).toFixed(2);
-        form.cost = (props.productEntrance.stock || 0).toFixed(2);
-        form.price = (props.productEntrance.stock || 0).toFixed(2);
+        form.cost = (props.productEntrance.cost || 0).toFixed(2);
+        form.price = (props.productEntrance.price || 0).toFixed(2);
+
+        //Calcular los datos
+        totalTax();
     }
 })
 
 
-
+/**
+ * Funciones
+ */
 // Computadas
 const isSelected = computed(() => {
     return !props.productEntrance?.id;
 })
 
 
+/**
+ * Funciones
+ */
 // funciones
-const getProduct = () => {
-    if(form.product_name.length < 2)
-    {
-        return false;
-    }else{
-        axios.get(route('product.get',{search: form.product_name}))
-            .then((res)=>{
-                // Pasar los datos
-                productData.value = res.data;
-
-            });
-    }
-}
+// const getProduct = () => {
+//     if(form.product_name.length < 2)
+//     {
+//         return false;
+//     }else{
+//         axios.get(route('product.get',{search: form.product_name}))
+//             .then((res)=>{
+//                 // Pasar los datos
+//                 productData.value = res.data;
+//
+//             });
+//     }
+// }
 
 //Obtener el valor del select
-const getValue = (id:number)=>{
-    form.product_id = id;
-}
+// const getValue = (id:number)=>{
+//     form.product_id = id;
+// }
 
 // Enviar formulario
 const submit = () => {
@@ -178,6 +198,9 @@ const edit = (id:number)=>{
 //
 // }
 
+/**
+ * Calcular el los impuesto de los ingreos
+ */
 const totalTax = () => {
     // Sacar los datos para el calculo
     let stock = formatNumber(form.stock) || 0.00;
@@ -195,7 +218,7 @@ const totalTax = () => {
 
     // Guardar los datos en el formulario
     taxData.tax = tax;
-    taxData.product_no_tax = (cost - tax);
+    taxData.product_no_tax = (price - tax);
     taxData.tax_amount = tax * stock;
 
     // tamar el calor de stock y cost
@@ -221,14 +244,6 @@ const totalTax = () => {
     <Head title="Entrada" />
     <AppLayout>
         <template #header >
-            <LinkHeader
-                :href="route('product.create')">
-                Registrar
-            </LinkHeader>
-            <LinkHeader
-                :href="route('product-sale.create')">
-                Venta
-            </LinkHeader>
             <LinkHeader
                 :active="true"
                 :href="route('product-in.create')">
@@ -460,6 +475,7 @@ const totalTax = () => {
                                 <td class="text-xl space-x-3 w-[75px] ">
                                     <i
                                         @click="edit(item.id)"
+                                        title="Entrada"
                                         class=" icon-efect fa-solid fa-dolly"></i>
                                 </td>
                             </tr>
@@ -490,7 +506,8 @@ const totalTax = () => {
                     <FloatBox
                         @close=" registerSupplier = false"
                         v-if="registerSupplier">
-                        <FloatSupplier/>
+                        <FloatSupplier
+                            class="w-full"/>
                     </FloatBox>
             </Transition>
         </div>

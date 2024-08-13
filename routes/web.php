@@ -4,6 +4,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductInController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductSaleController;
@@ -93,6 +94,8 @@ Route::middleware([
         Route::patch('/{product}','update')->name('update');
         Route::get('/get','get')->name('get');
         Route::get('/get/json','getJson')->name('get.json');
+        Route::get('/get/code','getByCode')->name('get.code');
+        Route::patch('/delete/{product}','destroy')->name('destroy');
     });
 
     //Ventas de productos
@@ -116,6 +119,16 @@ Route::middleware([
             Route::patch('/update/{productIn}','update')->name('update');
             Route::patch('/destroy/{productIn}','destroy')->name('destroy');
 
+        });
+
+    /**
+     * Reportes
+     */
+    Route::controller(ReportController::class)
+        ->prefix('report')
+        ->name('report.')
+        ->group(function (){
+           Route::get('/','index')->name('index');
         });
 
 

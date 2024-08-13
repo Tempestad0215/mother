@@ -291,7 +291,7 @@ const selectCategory = (item:categoryI) => {
                         <div>
                             <InputLabel
                                 for="tax_rate"
-                                value="Impuesto" />
+                                value="Impuesto *" />
                             <div class=" relative">
                                 <select
                                     class=" w-full border-gray-300 rounded-md "

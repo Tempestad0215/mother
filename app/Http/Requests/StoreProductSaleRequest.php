@@ -36,6 +36,7 @@ class StoreProductSaleRequest extends FormRequest
             'sub_total' => ['required','numeric'],
             'total' => ['required','numeric'],
             'discount' => ['required','numeric'],
+            'comment' => ['required','string','min:3','max:400'],
         ];
     }
 }

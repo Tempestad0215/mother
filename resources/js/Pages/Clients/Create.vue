@@ -7,9 +7,10 @@ import InputError from '@components/InputError.vue';
 import PrimaryButton from '@components/PrimaryButton.vue';
 import ActionMessage from '@components/ActionMessage.vue';
 import { onMounted, PropType } from 'vue';
-import { clienteEditI } from '@/Interfaces/ClientInterface';
+import {clienteEditI, clientI} from '@/Interfaces/ClientInterface';
 import { successHttp } from '@/Global/Alert';
 import LinkHeader from "@components/LinkHeader.vue";
+import FloatShowCli from "@/Pages/Clients/FloatShowCli.vue";
 
 const props = defineProps({
     clientEdit:{
@@ -18,6 +19,10 @@ const props = defineProps({
     update: {
         type: Boolean,
         default: false
+    },
+    clients:{
+        type: Object as PropType<clientI>,
+        required: true
     }
 });
 
@@ -85,19 +90,15 @@ const submit = () => {
                 Registrar
             </LinkHeader>
 
-            <LinkHeader
-                :href="route('client.show')">
-                Mostrar
-            </LinkHeader>
         </template>
 
         <!-- Formulario de registro -->
         <div>
             <form
-                class=" bg-gray-200 rounded-md p-5 md:max-w-3xl mx-auto"
+                class="grid grid-cols-2 gap-3 bg-gray-200 rounded-md p-5 md:max-w-full mx-auto"
                 @submit.prevent="submit">
 
-                <h2 class=" text-2xl font-bold text-center mb-4">
+                <h2 class="col-span-full text-2xl font-bold text-center mb-4">
                     {{ props.update ? 'Actualización' :  'Registro'}} de cliente
                 </h2>
 
@@ -117,7 +118,7 @@ const submit = () => {
                 </div>
 
                 <!-- Telefono -->
-                <div class="mt-4">
+                <div class="">
                     <InputLabel
                         for="phone"
                         value="Teléfono *"/>
@@ -134,7 +135,7 @@ const submit = () => {
                 </div>
 
                 <!-- correo -->
-                <div class="mt-4">
+                <div class="">
                     <InputLabel
                         for="phone"
                         value="Correo"/>
@@ -150,7 +151,7 @@ const submit = () => {
                 </div>
 
                 <!-- direccion -->
-                <div class="mt-4">
+                <div class="">
                     <InputLabel
                         for="phone"
                         value="Dirección"/>
@@ -166,7 +167,7 @@ const submit = () => {
                 </div>
 
                 <!-- Botones para enviar -->
-                <div class="mt-4 flex justify-end items-center space-x-5">
+                <div class=" col-span-full mt-4 flex justify-end items-center space-x-5">
                     <!-- Mensaje al crear -->
                     <ActionMessage :on="form.recentlySuccessful" >
                         {{ props.update ? ' !Actualizado' :  '! Registrado'}}
@@ -178,6 +179,13 @@ const submit = () => {
                 </div>
 
             </form>
+
+            <div class="mt-5">
+                <FloatShowCli
+                    :clients="props.clients"/>
+
+            </div>
+
         </div>
     </AppLayout>
 </template>

@@ -9,6 +9,7 @@ import { PropType } from 'vue';
 import Pagination from '@components/Pagination.vue';
 import NavLink from '@components/NavLink.vue';
 import FloatShow from "@/Pages/Products/FloatShowPro.vue";
+import LinkHeader from "@components/LinkHeader.vue";
 
 
 const props = defineProps({
@@ -25,28 +26,20 @@ const props = defineProps({
     <Head title="Mostrar" />
     <AppLayout>
         <template #header >
-            <HeaderBox>
-                <h2>
-                    Mostrar productos
-                </h2>
-                <template #link>
-                    <NavLink
-                        :href="route('product.create')" >
-                        Registrar
-                    </NavLink>
-                    <NavLink
-                        :active="true"
-                        :href="route('product.show')" >
-                        Mostrar
-                    </NavLink>
-                    <NavLink
-                        :href="route('product-in.create')" >
-                        Entrada
-                    </NavLink>
+            <LinkHeader
+                :href="route('product.create')">
+                Registrar
+            </LinkHeader>
+            <LinkHeader
+                :active="true"
+                :href="route('product.show')">
+                Mostrar
+            </LinkHeader>
+            <LinkHeader
+                :href="route('product-in.create')">
+                Entrada
+            </LinkHeader>
 
-
-                </template>
-            </HeaderBox>
         </template>
 
         <div>

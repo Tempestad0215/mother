@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Resources\ProSupRes;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
 class ProductController extends Controller
@@ -78,9 +79,9 @@ class ProductController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
      * @param Product $product
      * @param Request $request
+     * @return \Inertia\Response
      */
     public function edit(Product $product, Request $request)
     {
@@ -97,9 +98,9 @@ class ProductController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
      * @param StoreProductRequest $request
      * @param Product $product
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(StoreProductRequest $request, Product $product)
     {
@@ -112,13 +113,39 @@ class ProductController extends Controller
     }
 
     /**
-     * Summary of destroy
-     * @param \App\Models\Product $product
-     * @return void
+     * @param Product $product
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Product $product)
     {
-        //
+        //Actulizar los datos
+        $product->status = true;
+        $product->save();
+
+        //Devolver atras
+        return back();
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getByCode(Request $request)
+    {
+        //conseguir los datos a buscar
+        $search = $request->get('search');
+
+
+        //Buscar los datos
+        $data = Product::where('status', false)
+            ->where(function ($query) use ($request, $search) {
+                $query->where('code', $search)
+                    ->orWhere('bar_code', $search);
+            })->firstOrFail();
+
+
+        //DEvolver los datos
+        return response()->json($data);
     }
 
 

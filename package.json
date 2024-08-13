@@ -23,6 +23,8 @@
         "vue-tsc": "^2.0.26"
     },
     "dependencies": {
+        "@fortawesome/fontawesome-svg-core": "^6.6.0",
+        "@fortawesome/vue-fontawesome": "^3.0.8",
         "@types/vue-the-mask": "^0.11.5",
         "sweetalert2": "^11.12.1",
         "v-money3": "^3.24.1",

@@ -41,29 +41,6 @@ const isUrl = (params:string) => {
 
 }
 
-const vOut = {
-    beforeMount(el: HTMLElementWithClickOutside, binding: DirectiveBinding) {
-        el.clickOutsideEvent = function(event: MouseEvent) {
-            // Aquí verificamos si el clic ocurrió fuera del elemento
-            if (!(el == event.target || el.contains(event.target as Node))) {
-                // Si ocurrió fuera, ejecutamos la función que pasamos como valor de la directiva
-                if (binding.value && typeof binding.value === 'function') {
-                    binding.value(event);
-                }
-            }
-        };
-        // Agregamos el evento al document
-        document.addEventListener('click', el.clickOutsideEvent);
-    },
-    unmounted(el: HTMLElementWithClickOutside) {
-        // Eliminamos el evento cuando el elemento se desmonta
-        if (el.clickOutsideEvent) {
-            document.removeEventListener('click', el.clickOutsideEvent);
-        }
-    }
-};
-
-
 
 </script>
 
@@ -81,7 +58,7 @@ const vOut = {
                 alt="Imagen de nombre">
 
             <ol
-                class=" text-4xl space-y-5 text-center mt-5 border-t-2 border-black pt-5">
+                class=" text-2xl space-y-2 text-center mt-5 border-t-2 border-black pt-5">
                 <li>
                     <NavLink
                         title="Clientes"
@@ -107,16 +84,30 @@ const vOut = {
                 </li>
                 <li>
                     <Link
-                        title="Productos"
+                        title="Producto"
                         :href="route('product.create')">
                         <i class="fa-solid fa-box-open"></i>
                     </Link>
                 </li>
                 <li>
                     <Link
+                        title="Entrada"
+                        :href="route('product-in.create')">
+                        <i class="fa-solid fa-dolly"></i>
+                    </Link>
+                </li>
+                <li>
+                    <Link
                         title="Ventas"
-                        :href="route('client.create')">
+                        :href="route('product-sale.create')">
                         <i class="fa-solid fa-cart-shopping"></i>
+                    </Link>
+                </li>
+                <li>
+                    <Link
+                        title="Reportes"
+                        :href="route('report.index')">
+                        <i class="fa-solid fa-chart-pie"></i>
                     </Link>
                 </li>
 

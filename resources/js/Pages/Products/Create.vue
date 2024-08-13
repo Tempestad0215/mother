@@ -49,14 +49,7 @@ const showSupplierForm = ref(false);
                 :href="route('product.create')">
                 Registrar
             </LinkHeader>
-            <LinkHeader
-                :href="route('product-sale.create')">
-                Venta
-            </LinkHeader>
-            <LinkHeader
-                :href="route('product-in.create')">
-                Entrada
-            </LinkHeader>
+
 
 
         </template>

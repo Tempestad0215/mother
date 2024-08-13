@@ -5,10 +5,14 @@ import InputLabel from "@components/InputLabel.vue";
 import Pagination from "@components/Pagination.vue";
 import {PropType} from "vue";
 import {clientDataI, clientI} from "@/Interfaces/ClientInterface";
-import {router, useForm} from "@inertiajs/vue3";
+import {router, useForm, usePage} from "@inertiajs/vue3";
 import Swal from "sweetalert2";
 import {successHttp} from "@/Global/Alert";
 
+/**
+ * Datos de la ventana
+ */
+const page = usePage();
 
 /**
  * Datos del back end
@@ -43,19 +47,14 @@ const form = useForm({
 // Enviar los datos
 const submit = () => {
 
-    if(form.search.length < 2)
-    {
-        form.setError('search', 'El campo debes tener al menos 3 caracter');
-        return false;
-    }else{
-        // Limpiar los errores
-        form.clearErrors();
-        // Enviar el formularios
-        form.get(`?search=${form.search}`,{
-            preserveScroll: true,
-            preserveState: true
-        });
-    }
+    // Limpiar los errores
+    form.clearErrors();
+    // Enviar el formularios
+    form.get(`?search=${form.search}`,{
+        preserveScroll: true,
+        preserveState: true
+    });
+
 
 }
 
@@ -144,12 +143,18 @@ const destroy = (id:Number) => {
                 <!-- Botones -->
                 <td class="text-xl space-x-5 w-[100px]">
                     <i
+                        v-if="page.component !== 'Clients/Create'"
+                        title="Seleccionar"
                         @click="emit('getData',item)"
                         class="fa-solid fa-circle-check"></i>
                     <i
+                        v-if="page.component === 'Clients/Create'"
+                        title="Editar"
                         @click="edit(item.id)"
                         class=" icon-efect fa-solid fa-pen-to-square"></i>
                     <i
+                        v-if="page.component === 'Clients/Create'"
+                        title="Eliminar"
                         @click="destroy(item.id)"
                         class=" icon-efect fa-solid fa-trash"></i>
                 </td>

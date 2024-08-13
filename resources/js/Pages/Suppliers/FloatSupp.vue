@@ -31,10 +31,11 @@ const submit = () =>{
 
 
 <template>
-    <div class=" bg-gray-200 p-5 w-2/5 rounded-md">
+    <div class=" bg-gray-200 p-5 w-full m-8 rounded-md">
         <form
+            class=" grid grid-cols-2 gap-3"
             @submit.prevent="submit" >
-            <h3 class="text-2xl font-bold text-center">
+            <h3 class=" col-span-full text-2xl font-bold text-center ">
                 Registro de Proveedores
             </h3>
 
@@ -88,7 +89,7 @@ const submit = () =>{
                 <InputError :message="form.errors.email"/>
             </div>
 
-            <div class="mt-4 text-right">
+            <div class="mt-4 text-right col-span-full">
                 <PrimaryButton
                     :disabled="form.processing">
                     Registrar

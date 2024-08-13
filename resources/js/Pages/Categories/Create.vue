@@ -171,9 +171,11 @@ const search = () => {
                             <td class="text-xl space-x-3 w-16">
                                 <i
                                     @click="edit(item)"
+                                    title="Editar"
                                     class=" icon-efect fa-solid fa-pen-to-square"></i>
                                 <i
                                     @click="destroy(item)"
+                                    title="Eliminar"
                                     class=" icon-efect fa-solid fa-trash"></i>
                             </td>
                         </tr>

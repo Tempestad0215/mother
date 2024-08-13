@@ -4,7 +4,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import type { PropType } from 'vue';
 import LinkHeader from "@components/LinkHeader.vue";
-import FloatShowCli from "@/Pages/Clients/FloatShow.vue";
+import FloatShowCli from "@/Pages/Clients/FloatShowCli.vue";
 
 
 // Datos del backend

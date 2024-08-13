@@ -21,11 +21,12 @@ class StoreProductInRequest extends FormRequest
      */
     public function rules(): array
     {
+
         return [
-            'product_id' => 'required|exists:products,id',
-            'stock' => 'required|integer|min:1',
-            'cost' => 'required|integer|min:1',
-            'price' => 'required|integer|min:1',
+            'product_id' => ['required','exists:products,id'],
+            'stock' => ['required', 'numeric', 'min:1'],
+            'cost' => ['required', 'numeric', 'min:1'],
+            'price' => ['required', 'numeric', 'min:1'],
         ];
     }
 }
