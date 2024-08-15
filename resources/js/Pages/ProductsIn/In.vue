@@ -299,7 +299,7 @@ const totalTax = () => {
                                 name="stock"
                                 :readonly="isSelected"
                                 @blur="totalTax"
-                                v-model.number="form.stock"
+                                v-model="form.stock"
                                 type="number"/>
 
                             <!-- Error -->

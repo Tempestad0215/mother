@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('brand',75)->nullable();
             $table->string('unit',20);
             $table->float('stock')->default(0);
+            $table->float('reserved')->default(0);
             $table->float('cost')->default(0);
             $table->float('price')->default(0);
             $table->float('discount')->default(0);

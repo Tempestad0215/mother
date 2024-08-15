@@ -1,12 +1,9 @@
 <script setup lang="ts">
-import {DirectiveBinding, ref} from 'vue';
+import {ref} from 'vue';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import NavLink from '@/Components/NavLink.vue';
 import {pageI} from "@/Interfaces/Global";
 
-interface HTMLElementWithClickOutside extends HTMLElement {
-    clickOutsideEvent?: (event: MouseEvent) => void;
-}
 
 
 
@@ -18,17 +15,6 @@ defineProps({
 
 const showOption = ref<boolean>(false);
 
-const optionData = ref([
-    {
-        label: 'Perfil',
-        url: 'profile.show'
-    },
-    {
-        label: 'Salir',
-        url: 'logout'
-    }
-]);
-
 
 
 const logout = () => {
@@ -38,7 +24,10 @@ const logout = () => {
 const isUrl = (params:string) => {
 
     return page.url.startsWith(params);
+}
 
+const profile = () => {
+    router.get(route('profile.show'));
 }
 
 
@@ -54,7 +43,7 @@ const isUrl = (params:string) => {
             <img
                 @click="showOption = !showOption"
                 class="rounded-full mx-auto mt-5"
-                :src="page.props.auth.user.profile_photo_url"
+                :src="page.props.auth.user ? page.props.auth.user.profile_photo_url : ''"
                 alt="Imagen de nombre">
 
             <ol
@@ -103,13 +92,13 @@ const isUrl = (params:string) => {
                         <i class="fa-solid fa-cart-shopping"></i>
                     </Link>
                 </li>
-                <li>
-                    <Link
-                        title="Reportes"
-                        :href="route('report.index')">
-                        <i class="fa-solid fa-chart-pie"></i>
-                    </Link>
-                </li>
+<!--                <li>-->
+<!--                    <Link-->
+<!--                        title="Reportes"-->
+<!--                        :href="route('report.index')">-->
+<!--                        <i class="fa-solid fa-chart-pie"></i>-->
+<!--                    </Link>-->
+<!--                </li>-->
 
 
             </ol>
@@ -119,14 +108,16 @@ const isUrl = (params:string) => {
             <div
                 v-if="showOption"
                 class=" absolute top-14 left-12 w-52 rounded-md bg-gray-200 z-40 border-2 border-gray-500">
-                <ol class=" text-xl space-y-3 text-center">
+                <ol class=" text-xl space-y-3 text-center select-none">
                     <li
-                        class=" rounded-md hover:bg-gray-400 ease-in-out duration-300"
-                        v-for="item in optionData" :key="item.label">
-                        <Link
-                            :href="route(item.url)">
-                            {{item.label}}
-                        </Link>
+                        @click="profile"
+                        class="">
+                        Perfil
+                    </li>
+                    <li
+                        @click="logout"
+                        class="">
+                        Salir
                     </li>
 
                 </ol>

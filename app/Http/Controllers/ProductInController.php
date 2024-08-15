@@ -24,7 +24,9 @@ class ProductInController extends Controller
      */
     public function index(Request $request)
     {
-        Gate::authorize('create', Auth::user());
+
+
+//        Gate::authorize('create', Auth::user());
 
         //conseguir  los datos
         $data = $this->getProduct($request);
@@ -144,7 +146,7 @@ class ProductInController extends Controller
     {
 
         //eliminar el producto
-        Gate::authorize('delete', Auth::user());
+//        Gate::authorize('delete', Auth::user());
 
         //Actualziar los datos
         $productIn->status = true;
