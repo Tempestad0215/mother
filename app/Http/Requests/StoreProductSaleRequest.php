@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\CheckStock;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreProductSaleRequest extends FormRequest
@@ -21,14 +22,21 @@ class StoreProductSaleRequest extends FormRequest
      */
     public function rules(): array
     {
+
+        //Tomar los datos de la info
+        $info = $this->input('info');
+
+        // Crear la validacion de los datos
         return [
             'client_name' => ['nullable', 'string','min:3','max:75'],
             'client_id' => ['nullable','integer'],
-            'info' => ['required','array'],
+            'info' => ['required','array', new CheckStock($info)],
+            'info.*.id' => ['required','numeric','exists:products,id', ],
             'info.*.name' => ['required','string','min:3','max:75'],
             'info.*.quantity' => ['required','numeric'],
             'info.*.price' => ['required','numeric'],
             'info.*.tax' => ['required','numeric'],
+            'info.*.total_tax' => ['required','numeric'],
             'info.*.tax_rate' => ['required','numeric'],
             'info.*.amount' => ['required','numeric'],
             'tax' => ['required','numeric'],
@@ -36,7 +44,8 @@ class StoreProductSaleRequest extends FormRequest
             'sub_total' => ['required','numeric'],
             'total' => ['required','numeric'],
             'discount' => ['required','numeric'],
-            'comment' => ['required','string','min:3','max:400'],
+            'comment' => ['nullable','string','min:3','max:255'],
+            'close_table' => ['required','boolean'],
         ];
     }
 }

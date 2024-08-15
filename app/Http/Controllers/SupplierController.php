@@ -6,6 +6,8 @@ use App\Models\Supplier;
 use App\Http\Requests\StoreSupplierRequest;
 use App\Http\Requests\UpdateSupplierRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class SupplierController extends Controller
@@ -23,18 +25,15 @@ class SupplierController extends Controller
      */
     public function create(Request $request)
     {
-        try {
 
-            $data = $this->get($request);
+        //Tomaar los datos de busqueda
+        $data = $this->get($request);
 
+        //Devolver la vista con los datos
+        return Inertia::render("Suppliers/Create",[
+            'suppliers' => $data
+        ]);
 
-            return Inertia::render("Suppliers/Create",[
-                'suppliers' => $data
-            ]);
-
-        } catch (\Throwable $th) {
-            throw $th;
-        }
     }
 
     /**
@@ -42,15 +41,13 @@ class SupplierController extends Controller
      */
     public function store(StoreSupplierRequest $request)
     {
-        try {
+       // Guardar los datos de supplidor
+        Supplier::create($request->validated());
 
-            Supplier::create($request->validated());
 
-            return back();
+        //Devolver hacia atras
+        return back();
 
-        } catch (\Throwable $th) {
-            throw $th;
-        }
     }
 
     /**
@@ -74,15 +71,13 @@ class SupplierController extends Controller
      */
     public function update(UpdateSupplierRequest $request, Supplier $supplier)
     {
-        try {
 
-            $supplier->update($request->validated());
+        //Actualizar los datos del suplidor
+        $supplier->update($request->validated());
 
-            return back();
+        //Devolver hacia atras
+        return back();
 
-        }catch (\Throwable $th) {
-            throw $th;
-        }
     }
 
     /**
@@ -90,46 +85,44 @@ class SupplierController extends Controller
      */
     public function destroy(Supplier $supplier)
     {
-        try {
+        //Politica de borrado
+        Gate::authorize('delete',Auth::user());
 
-            $supplier->update([
-                'status' => true
-            ]);
+        // Actualizar los datos
+        $supplier->update([
+            'status' => true
+        ]);
 
-            return back();
+        //Devolver hacia atras
+        return back();
 
-        }catch (\Throwable $th) {
-            throw $th;
-        }
     }
 
 
     // Obtener los suplidores por empreesa
     public function getJson(Request $request)
     {
-        try {
+        //Tomar los datos de busquead
+        $search = $request->get('search');
 
-            $search = $request->get('search');
+        //tomar los datos limitado a 10
+         $data = Supplier::where('status',false)
+             ->where('company_name', 'LIKE','%'.$search.'%')
+             ->limit(10)
+             ->get();
 
-             $data = Supplier::where('status',false)
-                 ->where('company_name', 'LIKE','%'.$search.'%')
-                 ->limit(10)
-                 ->get();
+         //Devolver un json
+        return response()->json($data);
 
-
-            return response()->json($data);
-
-
-
-        } catch (\Throwable $th) {
-            throw $th;
-        }
     }
 
     private function get(Request $request)
     {
+
+        //Tomar los datos de busqueda
         $search = $request->get('search');
 
+        //Devolver los datos paginado a 15
         return Supplier::where('status',false)
             ->where(function($query) use ($search){
                 $query->where('company_name', 'LIKE','%'.$search.'%')

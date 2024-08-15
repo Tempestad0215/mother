@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateClientsRequest;
 use http\Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
@@ -112,15 +113,13 @@ class ClientsController extends Controller
     public function destroy(Clients $client)
     {
 
-        $response = Gate::inspect('destroy', $client);
+        //Verificar si el usuario tiene permiso
+        Gate::authorize('destroy', Auth::user());
 
-        if($response->allowed()){
-            // Actualizar los datos
-            $client->status = true;
-            $client->save();
-        }else{
-            throw new AuthorizationException($response->message());
-        }
+
+        // Actualizar los datos
+        $client->status = true;
+        $client->save();
 
 
 

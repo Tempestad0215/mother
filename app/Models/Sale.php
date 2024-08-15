@@ -7,15 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 /**
- * @property int id
- * @property string client_name
- * @property int client_id
- * @property array info
- * @property float discount
- * @property float tax
- * @property float sub_total
- * @property float total
- * @property boolean status
+ * @property int $id
+ * @property string $client_name
+ * @property int $client_id
+ * @property array $info
+ * @property float $discount
+ * @property float $tax
+ * @property float $sub_total
+ * @property float $total
+ * @property boolean $status
+ * @property string $comment
+ * @property bool $close_table
  */
 
 
@@ -38,14 +40,17 @@ class Sale extends Model
         'tax',
         'sub_total',
         'total',
-        'status'
+        'status',
+        'comment',
+        'close_table'
     ];
 
 
     //Formatear los datos
     protected  $casts = [
         'status' => 'boolean',
-        'info' => 'array'
+        'info' => 'array',
+        'close_table' => 'boolean'
     ];
 
 
@@ -74,7 +79,7 @@ class Sale extends Model
     {
 
         //codigo de producto
-        $code = config('Setting.proCode');
+        $code = config('Setting.saleCode');
 
         // Sacar el ultimo producto
         $lastProduct = DB::table('sales')->latest('id')->first();
@@ -85,7 +90,7 @@ class Sale extends Model
             $lastNumber = (int)substr($lastProduct->code, 3);
             $newNumber = str_pad(++$lastNumber, 8, "0", STR_PAD_LEFT);
         }else{
-            $newNumber = '000001';
+            $newNumber = '00000001';
         }
 
         // Generar el nuevo codigo

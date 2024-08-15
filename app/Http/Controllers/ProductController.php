@@ -6,6 +6,8 @@ use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Resources\ProSupRes;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
@@ -118,6 +120,9 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
+        //politica de portal
+        Gate::authorize('delete',Auth::user());
+
         //Actulizar los datos
         $product->status = true;
         $product->save();

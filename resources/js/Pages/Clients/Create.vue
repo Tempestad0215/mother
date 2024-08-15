@@ -109,6 +109,7 @@ const submit = () => {
                         value="Nombre *"/>
                     <TextInput
                         class=" w-full"
+                        maxLength="75"
                         v-model="form.name"
                         placeholder="Nombre completo"
                         type="text"/>
@@ -142,6 +143,7 @@ const submit = () => {
                     <TextInput
                         class=" w-full"
                         name="email"
+                        maxLength="150"
                         placeholder="ejemplo@ejemplo.com"
                         v-model="form.email"
                         type="email"/>
@@ -158,6 +160,7 @@ const submit = () => {
                     <TextInput
                         class=" w-full"
                         name="address"
+                        maxLength="150"
                         placeholder="Puerto Plata"
                         v-model="form.address"
                         type="text"/>

@@ -88,6 +88,7 @@ export  interface  productSaleI{
     stock: number;
     amount: number;
     tax: number;
+    total_tax: number;
     tax_rate: number;
     product_tax: number;
     stockTotal: number;

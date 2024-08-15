@@ -114,6 +114,7 @@ const search = () => {
                     <text-input
                         class="w-full"
                         name="name"
+                        maxLength="75"
                         v-model="form.name"
                         placeholder="Nombre"/>
                     <input-error
@@ -127,6 +128,7 @@ const search = () => {
                     <text-input
                         class="w-full"
                         name="description"
+                        maxLength="255"
                         v-model="form.description"
                         placeholder="Describe brevemente"/>
                     <input-error

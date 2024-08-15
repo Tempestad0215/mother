@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import {Head, router, useForm} from "@inertiajs/vue3";
+import {Head, useForm} from "@inertiajs/vue3";
 import AppLayout from "@layout/AppLayout.vue";
 import InputLabel from "@components/InputLabel.vue";
 import TextInput from "@components/TextInput.vue";
 import SecondaryButton from "@components/SecondaryButton.vue";
 import FloatBox from "@components/FloatBox.vue";
 import FloatShowPro from "@/Pages/Products/FloatShowPro.vue";
-import {onMounted, PropType, ref} from "vue";
+import { PropType, ref} from "vue";
 import {productDataI, productI, productSaleI} from "@/Interfaces/Product";
 import {formatNumber, getMoney, readPDF} from "@/Global/Helpers";
 import LinkHeader from "@components/LinkHeader.vue";
@@ -17,6 +17,8 @@ import FloatShowCli from "@/Pages/Clients/FloatShowCli.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import {successHttp} from "@/Global/Alert";
 import axios from "axios";
+import SaleOpenShow from "@/Pages/ProductsSale/SaleOpenShow.vue";
+import {saleDataI, saleDataPaginationI} from "@/Interfaces/Sale";
 
 
 /**
@@ -34,6 +36,10 @@ const props = defineProps({
     pdf: {
         type: String,
         default: ""
+    },
+    saleOpen:{
+        type: Object as PropType<saleDataPaginationI>,
+        required: true
     }
 });
 
@@ -43,6 +49,8 @@ const props = defineProps({
  */
 const showClient = ref<boolean>(false);
 const showProduct = ref(false);
+const showSaleOpen = ref<boolean>(false);
+const productCheck = ref<productDataI[]>([]);
 
 
 /**
@@ -59,14 +67,9 @@ const form = useForm({
     sub_total: 0.00,
     total: 0.00,
     comment:"",
+    close_table: false
 
 });
-
-
-/**
- * Al momento de carga
- *
- */
 
 
 /**
@@ -83,6 +86,8 @@ const getData = (item:productDataI) => {
     //Obtener los datos de productos
     let info = form.info.find((el) => el.id === item.id);
 
+
+
     // Verificar si el producto exite en todo
     if (info?.id  === item.id)
     {
@@ -92,6 +97,8 @@ const getData = (item:productDataI) => {
     }else{
         let productTax:number = item.price * item.tax_rate;
 
+        console.log(productTax);
+        //Pasar los datos al formulario
         form.info.push({
             id: item.id,
             name: item.name,
@@ -99,7 +106,8 @@ const getData = (item:productDataI) => {
             price: item.price - productTax,
             stock: 0.00,
             amount: 0.00,
-            tax: 0.00,
+            tax: productTax,
+            total_tax: 0.00,
             stockTotal: item.stock,
             tax_rate: item.tax_rate,
             product_tax: productTax
@@ -157,7 +165,7 @@ const totalAmount = (index:number) => {
     let info:productSaleI = form.info[index];
 
     //Pasar los datos al formulario
-    info.tax = info.product_tax * info.quantity;
+    info.total_tax = info.tax * info.quantity;
     info.amount = info.price * info.quantity;
 
     //Calcular los totales
@@ -175,7 +183,9 @@ const totalSale = () => {
 
     //Recorrer el array para realizar el calcuclo
     form.info.forEach((el) =>{
-        totalTax += formatNumber(el.tax);
+
+        console.log( JSON.stringify(el));
+        totalTax += formatNumber(el.total_tax);
         subTotal += formatNumber(el.amount);
     });
 
@@ -232,13 +242,60 @@ const getBycode = () => {
                 form.reset('code_product');
                 form.clearErrors('code_product');
             })
-            .catch((err)=>{
+            .catch(()=>{
                 //Mensjae de que no existe en la base de datos
                 form.setError('code_product','Este Producto no existe en la Base de Datos');
             })
     }
 }
 
+//Obtener los datos de las cuentas abiertas
+const getSaleOpen = (item:saleDataI) => {
+
+    //Colocar la variable en nada al principio
+    form.info = [];
+    //Verificar Pasar los datos a la variable
+    item.info.map((el,index) => {
+        //Busca el product coincidente
+        let propsData = props.products?.data.find((p) => p.id === el.id);
+
+        //Pasar los datos al producto
+        if(propsData)
+        {
+            productCheck.value.push(propsData);
+        }
+
+        //colocar la informacion en la lista
+        form.info.push({
+            id: el.id ? el.id : 0,
+            name: el.name,
+            quantity: el.quantity,
+            price: el.price,
+            stock: productCheck.value[index].stock,
+            amount: el.amount,
+            tax: el.tax,
+            total_tax: el.total_tax,
+            tax_rate: el.tax_rate,
+            stockTotal: 0,
+            product_tax: el.price,
+        });
+
+    });
+
+    //Calcular el total de venta
+    totalSale();
+
+
+    //colocar los datos en el formulario
+    form.client_id = item.client_id;
+    form.client_name = item.client_name;
+    form.close_table = item.close_table;
+    form.comment = item.comment ? item.comment : "";
+
+    //Cerra la ventana
+    showSaleOpen.value = false;
+
+}
 
 
 </script>
@@ -291,6 +348,10 @@ const getBycode = () => {
                                     @click="showProduct = !showProduct">
                                     Prod..
                                 </SecondaryButton>
+                                <SecondaryButton
+                                    @click="showSaleOpen = !showSaleOpen">
+                                    Abierta
+                                </SecondaryButton>
 
                             </div>
 
@@ -299,20 +360,65 @@ const getBycode = () => {
                         </div>
 
 
-                        <div>
-                            <InputLabel
-                                for="Product"
-                                value="Codigo"/>
+                        <div class=" grid grid-cols-3 gap-3 items-center">
+                            <div>
+                                <InputLabel
+                                    for="Product"
+                                    value="Codigo"/>
 
-                            <TextInput
-                                placeholder="Producto"
-                                maxLength="15"
-                                class="w-[400px]"
-                                @blur="getBycode"
-                                v-model="form.code_product"
-                            />
+                                <TextInput
+                                    placeholder="Producto"
+                                    maxLength="15"
+                                    class="w-[400px]"
+                                    @blur="getBycode"
+                                    v-model="form.code_product"
+                                />
 
-                            <InputError :message="form.errors.code_product"/>
+                                <InputError :message="form.errors.code_product"/>
+                            </div>
+
+                            <fieldset class="flex border-2 border-gray-500 p-2 rounded-md max-w-[200px]">
+                                <legend>
+                                    Mesa
+                                </legend>
+                                <div>
+                                    <input
+                                        class="peer hidden"
+                                        type="radio"
+                                        name="open"
+                                        :value="false"
+                                        v-model="form.close_table"
+                                        id="open">
+                                    <label
+                                        class="font-bold border-2 border-gray-500 px-2 py-1 rounded-md peer-checked:bg-gray-600 peer-checked:text-white duration-300"
+                                        for="open">
+                                        Abierta
+                                    </label>
+
+
+                                </div>
+                                <div class="ml-5">
+                                    <input
+                                        class="peer hidden"
+                                        type="radio"
+                                        name="open"
+                                        :value="true"
+                                        v-model="form.close_table"
+                                        id="close">
+                                    <label
+                                        class="font-bold border-2 border-gray-500 px-2 py-1 rounded-md peer-checked:bg-gray-600 peer-checked:text-white duration-300"
+                                        for="close">
+                                        Cerrada
+                                    </label>
+
+                                </div>
+                            </fieldset>
+                            <div class="flex">
+
+
+
+                            </div>
+
 
 
                         </div>
@@ -353,7 +459,7 @@ const getBycode = () => {
                                         </td>
                                         <td class=" w-[150px]">
                                             <span>
-                                                {{ getMoney(item.tax)}}
+                                                {{ getMoney(item.total_tax)}}
                                             </span>
                                         </td>
                                         <td class=" w-[150px]">
@@ -371,6 +477,9 @@ const getBycode = () => {
                                 </tbody>
                             </table>
 
+                            <div>
+                                <InputError :message="form.errors.info"/>
+                            </div>
 
 
                             <div class="grid grid-cols-4 items-center gap-4 mt-5">
@@ -394,7 +503,7 @@ const getBycode = () => {
 
                                         <span
                                             class=" absolute inset-y-0 right-3 text-red-400">
-                                            {{ 300 - form.comment.length }}
+                                            {{ 255 - form.comment.length }}
                                         </span>
 
                                         <InputError :message="form.errors.comment"/>
@@ -434,7 +543,7 @@ const getBycode = () => {
                             <PrimaryButton
                                 @click="submit()"
                                 type="button">
-                                Cerrar venta
+                                {{form.close_table ? 'Cerrar Venta' : 'Registrar'}}
                             </PrimaryButton>
                         </div>
 
@@ -468,6 +577,19 @@ const getBycode = () => {
                         class=" bg-amber-50 w-4/5 rounded-md px-10 py-5"
                         @select="getData"
                         :products="props.products"/>
+                </FloatBox>
+            </Transition>
+
+
+            <!-- Vetana de las ordenes abierta -->
+            <Transition>
+                <FloatBox
+                    v-if="showSaleOpen"
+                    @close="showSaleOpen = false">
+                    <SaleOpenShow
+                        @sen-data="getSaleOpen"
+                        class=" bg-gray-200 w-4/5 rounded-md px-10 py-5"
+                        :sale-open="props.saleOpen"/>
                 </FloatBox>
             </Transition>
 

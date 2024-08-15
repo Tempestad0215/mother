@@ -12,7 +12,7 @@ class ClientsPolicy
     public function destroy (User $user)
     {
 
-        return $user->role != 1 ?
+        return $user->role === 3 ?
             Response::allow() :
             Response::deny('No esta autorizado para realizar esta operacion');
     }

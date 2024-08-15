@@ -28,9 +28,9 @@ class FacturaVentaB extends Fpdf
 
 
 
-    public  function __construct()
+    public  function __construct(int $h=200)
     {
-        parent::__construct('P','mm',array(80,150));
+        parent::__construct('P','mm',array(80, 200));
         $this->imagePath = public_path('storage/images/logo.jpg');
     }
 

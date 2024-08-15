@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
 import InputLabel from '@/Components/InputLabel.vue';
-import { onMounted, PropType } from 'vue';
+import { PropType } from 'vue';
 import { successHttp } from '@/Global/Alert';
 import AppLayout from '@layout/AppLayout.vue';
 import TextInput from '@components/TextInput.vue';
 import InputError from '@components/InputError.vue';
 import ActionMessage from '@components/ActionMessage.vue';
 import PrimaryButton from '@components/PrimaryButton.vue';
-import LinkHeader from "@components/LinkHeader.vue";
 import FormSearch from "@components/FormSearch.vue";
 import {supplierI, supplierPaginationI} from "@/Interfaces/Supplier";
 import Pagination from "@components/Pagination.vue";
@@ -138,6 +137,7 @@ const destroy = (item:supplierI) => {
                             value="Nombre de la empresa *"/>
                         <TextInput
                             class=" w-full"
+                            maxLength="75"
                             v-model="form.company_name"
                             placeholder="Nombre comercial"
                             type="text"/>
@@ -152,6 +152,7 @@ const destroy = (item:supplierI) => {
                             value="Representante"/>
                         <TextInput
                             class=" w-full"
+                            maxLength="75"
                             v-model="form.contact"
                             placeholder="Nombre completo"
                             type="text"/>
@@ -187,6 +188,7 @@ const destroy = (item:supplierI) => {
                         <TextInput
                             class=" w-full"
                             name="email"
+                            maxLength="150"
                             placeholder="ejemplo@ejemplo.com"
                             v-model="form.email"
                             type="email"/>

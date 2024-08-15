@@ -39,12 +39,14 @@ class ProductSaleController extends Controller
         //Obtener los datos
         $products = $this->get($request);
         $clients = $this->clientHelper->get($request);
+        $saleOpen = $this->getSaleOpen($request);
 
 
         //DEvolver la vista y los datos
         return Inertia::render('ProductsSale/Create',[
             'products' => $products,
-            'clients' => $clients
+            'clients' => $clients,
+            'saleOpen' => $saleOpen
         ]);
     }
 
@@ -56,9 +58,22 @@ class ProductSaleController extends Controller
         //Obtener los datos
         $products = $this->get($request);
         $clients = $this->clientHelper->get($request);
+        $saleOpen = $this->getSaleOpen($request);
+
+        //Calcular la altura
+        $tall = 200;
+
+
+        //Para aumentar el tamaño de la ventana
+        for($i = 0; $i < count($request->info); $i++){
+            if(count($request->info) > 2)
+            {
+                $tall += 20;
+            }
+        }
 
         //crear la instancia del PDF
-        $pdf = new FacturaVentaB();
+        $pdf = new FacturaVentaB($tall);
         //Crear la pagina del PDF
         $pdf->AddPage();
         // Poner el tipo de fuente
@@ -76,57 +91,91 @@ class ProductSaleController extends Controller
         $pdf->SetX(5);
         $pdf->MultiCell(70,3, $request->comment, 0, 'L');
 
-
+        //Poner el salto de pagina en no false
         $pdf->SetAutoPageBreak(false);
 
-
+        // Codificar el pdf a base 64
         $pdfString = base64_encode($pdf->Output('S','', true));
 
-        return Inertia::render('ProductsSale/Create',[
-            'pdf' => $pdfString,
-            'products' => $products,
-            'clients' => $clients
-
-        ]);
 
 
         // Evitar que se realicen 2 operaciones al mismo tiempo
-//        Cache::lock('sale', 3)->get(function () use ($request) {
-//            //Para asegurar que se cumplan los registro
-//            DB::transaction(function () use ($request) {
-//
-//                // Registrar la ventas
-//                $sale = Sale::create($request->validated());
-//
-//                //Recorrer la ventas para descontar los productos
-//                foreach ($request->info as $key => $value)
-//                {
-//                    // Actualizar cada producto
-//                    $product = Product::where('id', $value['id'])
-//                        ->decrement('stock', $value['quantity']);
-//
-//
-//                    //Crea la transaction
-//                    ProTrans::create([
-//                        'product_id' => $value['id'],
-//                        'sale_id' => $sale->id,
-//                        'stock' => $value['quantity'],
-//                        'price' => $value['price'],
-////                        'discount' => $value['discount'],
-//                        'tax' => $value['tax'],
-//                        'amount' => $value['amount'],
-//                        'type' => ProductTypeEnum::SALIDA
-//                    ]);
-//
-//                }
-//
-//
-//
-//            });
-//        });
-//
-//        //Devolver hacia atras
-//        return back();
+        Cache::lock('sale', 3)->get(function () use ($request) {
+            //Para asegurar que se cumplan los registro
+            DB::transaction(function () use ($request) {
+
+                // Registrar la ventas
+                $sale = Sale::create($request->validated());
+
+                //Recorrer la ventas para descontar los productos
+                foreach ($request->info as $key => $value)
+                {
+                    //Tomar los datos del producto
+                    $product = Product::find($value['id']);
+
+                    if ($request->close_table) {
+                        // Verifica si el producto estaba previamente reservado
+                        if ($product->reserved >= $value['quantity']) {
+                            // Si la cantidad reservada es mayor o igual a la cantidad actual,
+                            // simplemente resta la cantidad del stock y elimina la reserva.
+                            $product->stock -= $value['quantity'];
+                            $product->reserved -= $value['quantity'];  // Ajustar las reservas
+                        } else {
+                            // Si la cantidad aumentó antes de cerrar la mesa, calcula la diferencia.
+                            $difference = $value['quantity'] - $product->reserved;
+
+                            // Disminuye el stock en base a la cantidad total, no solo la diferencia.
+                            $product->stock -= $difference;
+
+                            // Elimina las reservas.
+                            $product->reserved = 0;
+                        }
+
+                        $product->save();
+                    } else {
+                        // Verifica si la cantidad ha aumentado o disminuido
+                        if ($value['quantity'] > $product->reserved) {
+                            // Si la cantidad ha aumentado, reserva más stock
+                            $difference = $value['quantity'] - $product->reserved;
+                            $product->stock -= $difference;  // Disminuir el stock por la nueva cantidad
+                            $product->reserved += $difference;  // Aumentar la reserva
+                        } elseif ($value['quantity'] < $product->reserved) {
+                            // Si la cantidad ha disminuido, libera parte del stock reservado
+                            $difference = $product->reserved - $value['quantity'];
+                            $product->stock += $difference;  // Aumentar el stock con la diferencia
+                            $product->reserved -= $difference;  // Disminuir la reserva
+                        }
+
+                        $product->save();
+                    }
+
+
+
+                    //Crea la transaction
+                    ProTrans::create([
+                        'product_id' => $value['id'],
+                        'sale_id' => $sale->id,
+                        'stock' => $value['quantity'],
+                        'price' => $value['price'],
+//                        'discount' => $value['discount'],
+                        'tax' => $value['tax'],
+                        'amount' => $value['amount'],
+                        'type' => ProductTypeEnum::SALIDA
+                    ]);
+
+                }
+            });
+        });
+
+
+        //Devolver los datos con el PDF
+        return Inertia::render('ProductsSale/Create',[
+            'pdf' => $pdfString,
+            'products' => $products,
+            'clients' => $clients,
+            'saleOpen' => $saleOpen
+
+        ]);
 
     }
 
@@ -171,6 +220,23 @@ class ProductSaleController extends Controller
 
         //Devolver los datos yla respuesta
         return response()->json($data);
+    }
+
+    private function getSaleOpen(Request $request)
+    {
+        //tomar los datos para buscar
+        $search = $request->get('search');
+
+        //Ralizar la busqueda en la base de datos de Sale cuando el campo close_table sea false
+        return Sale::where([
+            ['status','=', false],
+            ['close_table','=',false]
+        ])->where(function ($query) use ($search) {
+               $query->where('client_name','LIKE','%'.$search.'%');
+            })->latest()
+            ->simplePaginate(15);
+
+
     }
 
 }

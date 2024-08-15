@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
  * @property null|string $description
  * @property string $unit
  * @property float $stock
+ * @property float $reserved
  * @property float $cost
  * @property float $price
  * @property string $sku
@@ -24,6 +25,8 @@ use Illuminate\Support\Facades\DB;
  * @property string $brand
  * @property float $discount
  * @property float $tax_rate
+ * @property string $comment
+ * @property bool $close_table
  * @property  int $supplier_id
  * @property int $category_id
  * @property string $created_at
@@ -36,13 +39,17 @@ class Product extends Model
     use HasFactory;
 
 
-
+    /**
+     * Datos para guardar automatico
+     * @var string[]
+     */
     protected $fillable = [
         'code',
         'name',
         'description',
         'unit',
         'stock',
+        'reserved',
         'cost',
         'price',
         'supplier_id',
@@ -54,10 +61,16 @@ class Product extends Model
         'brand',
         'discount',
         'tax_rate',
-        'status'
+        'status',
+        'comment',
+        'close_table'
     ];
 
 
+    /**
+     * Ocultar los datos
+     * @var string[]
+     */
     protected $hidden = [
         'status',
         'created_at',
@@ -65,8 +78,13 @@ class Product extends Model
     ];
 
 
+    /**
+     * Formatear los datos
+     * @var string[]
+     */
     protected $casts = [
-        'status' => 'boolean'
+        'status' => 'boolean',
+        'close_table' => 'boolean',
     ];
 
 
@@ -153,7 +171,7 @@ class Product extends Model
             $lastNumber = (int)substr($lastProduct->code, 3);
             $newNumber = str_pad(++$lastNumber, 8, "0", STR_PAD_LEFT);
         }else{
-            $newNumber = '000001';
+            $newNumber = '00000001';
         }
 
         // Generar el nuevo codigo

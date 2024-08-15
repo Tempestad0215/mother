@@ -10,7 +10,9 @@ use App\Models\ProTrans;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -22,6 +24,7 @@ class ProductInController extends Controller
      */
     public function index(Request $request)
     {
+        Gate::authorize('create', Auth::user());
 
         //conseguir  los datos
         $data = $this->getProduct($request);
@@ -140,6 +143,9 @@ class ProductInController extends Controller
     public function destroy(Product $productIn)
     {
 
+        //eliminar el producto
+        Gate::authorize('delete', Auth::user());
+
         //Actualziar los datos
         $productIn->status = true;
         $productIn->save();
@@ -148,12 +154,6 @@ class ProductInController extends Controller
         return back();
 
     }
-
-
-
-
-
-
 
 
 

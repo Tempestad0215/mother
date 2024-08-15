@@ -209,12 +209,15 @@ const selectCategory = (item:categoryI) => {
                             <TextInput
                                 @focus="showCategory = true"
                                 @input="getCategory"
+                                aria-required="true"
                                 v-model="form.category_name"
+                                aria-autocomplete="none"
                                 class=" w-full"
                             />
                             <i
                                 class="icon-rotate fa-solid fa-circle-arrow-down"
                                 :class="{'rotate-180' : showCategory}"></i>
+
 
                             <div
                                 class="bg-gray-100 rounded-md absolute w-full border-2 border-gray-800 "
@@ -229,6 +232,7 @@ const selectCategory = (item:categoryI) => {
                                 </ol>
                             </div>
                         </div>
+                        <InputError :message="form.errors.category_id"/>
 
                     </div>
 
@@ -244,6 +248,8 @@ const selectCategory = (item:categoryI) => {
                                 :info="dataSelect"
                                 @send-value="getValueSelect"
                                 @update-data="getSupplier()"
+                                aria-required="true"
+                                autocomplete="false"
                                 v-model="form.search"
                                 class=" w-full" />
                             <SecondaryButton
@@ -271,6 +277,7 @@ const selectCategory = (item:categoryI) => {
                                 v-model="form.sku"
                                 class="w-full"
                             />
+                            <InputError :message="form.errors.sku"/>
                         </div>
                         <div>
                             <InputLabel
@@ -280,6 +287,7 @@ const selectCategory = (item:categoryI) => {
                                 v-model="form.bar_code"
                                 class="w-full"
                             />
+                            <InputError :message="form.errors.bar_code"/>
                         </div>
                     </fieldset>
 
@@ -295,6 +303,7 @@ const selectCategory = (item:categoryI) => {
                             <div class=" relative">
                                 <select
                                     class=" w-full border-gray-300 rounded-md "
+                                    required
                                     name="tax_rate"
                                     v-model="form.tax_rate">
                                     <option value="">--- Seleccione El Itbis  ---</option>
@@ -304,7 +313,6 @@ const selectCategory = (item:categoryI) => {
                                         {{item.name}}
                                     </option>
                                 </select>
-
 
                             </div>
 
@@ -318,6 +326,7 @@ const selectCategory = (item:categoryI) => {
                             <select
                                 name="unit"
                                 v-model="form.unit"
+                                required
                                 class=" w-full border-gray-300 rounded-md ">
                                 <option selected disabled value="">
                                     --- Seleccione la unidad ---
@@ -328,7 +337,7 @@ const selectCategory = (item:categoryI) => {
                                 </option>
                             </select>
                             <!-- Error -->
-                            <InputError :message="form.errors.name" />
+                            <InputError :message="form.errors.unit" />
                         </div>
                         <div>
                             <InputLabel
@@ -338,6 +347,7 @@ const selectCategory = (item:categoryI) => {
                                 v-model="form.weigth"
                                 class="w-full"
                                 name="waight"/>
+                            <InputError :message="form.errors.weigth"/>
                         </div>
                         <div>
                             <InputLabel
@@ -347,7 +357,7 @@ const selectCategory = (item:categoryI) => {
                                 class="w-full"
                                 v-model="form.brand"
                                 name="brand"/>
-                            <InputError :message="form.errors.name" />
+                            <InputError :message="form.errors.brand" />
                         </div>
                         <div class="col-span-full">
                             <InputLabel
@@ -357,7 +367,7 @@ const selectCategory = (item:categoryI) => {
                                 class="w-full"
                                 v-model="form.dimensions"
                                 name="dimension"/>
-                            <InputError :message="form.errors.name" />
+                            <InputError :message="form.errors.dimensions" />
                         </div>
                     </fieldset>
                 </div>
