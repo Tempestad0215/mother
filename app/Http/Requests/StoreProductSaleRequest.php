@@ -28,6 +28,7 @@ class StoreProductSaleRequest extends FormRequest
 
         // Crear la validacion de los datos
         return [
+            'id' => ['nullable', 'numeric'],
             'client_name' => ['nullable', 'string','min:3','max:75'],
             'client_id' => ['nullable','integer'],
             'info' => ['required','array', new CheckStock($info)],
@@ -42,7 +43,6 @@ class StoreProductSaleRequest extends FormRequest
             'tax' => ['required','numeric'],
             'amount' => ['required','numeric'],
             'sub_total' => ['required','numeric'],
-            'total' => ['required','numeric'],
             'discount' => ['required','numeric'],
             'comment' => ['nullable','string','min:3','max:255'],
             'close_table' => ['required','boolean'],

@@ -49,7 +49,7 @@ const form = useForm({
     product_no_tax: 0.00,
     tax_amount: 0.00,
     discount: "",
-    total: 0.00
+    amount: 0.00
 });
 
 
@@ -76,7 +76,7 @@ const taxData = reactive({
     product_no_tax: 0,
     tax_amount: 0,
     discount: 0,
-    total:0,
+    amount:0,
 });
 
 /**
@@ -141,7 +141,7 @@ const submit = () => {
             stock: formatNumber(data.stock),
             cost: formatNumber(data.cost),
             price: formatNumber(data.price),
-            total: formatNumber(data.total),
+            amount: formatNumber(data.amount),
             product_no_tax: formatNumber(data.product_no_tax),
             tax_amount: formatNumber(data.tax_amount),
             discount: formatNumber(data.discount),
@@ -152,7 +152,7 @@ const submit = () => {
             stock: formatNumber(data.stock),
             cost: formatNumber(data.cost),
             price: formatNumber(data.price),
-            total: formatNumber(data.total),
+            amount: formatNumber(data.amount),
             product_no_tax: formatNumber(data.product_no_tax),
             tax_amount: formatNumber(data.tax_amount),
             discount: formatNumber(data.discount),
@@ -204,12 +204,12 @@ const edit = (id:number)=>{
 const totalTax = () => {
     // Sacar los datos para el calculo
     let stock = formatNumber(form.stock) || 0.00;
-    let cost = formatNumber(form.cost) || 0.00;
+    // let cost = formatNumber(form.cost) || 0.00;
     let price = formatNumber(form.price) || 0.00;
-    let tax_rate = props.productEntrance ? props.productEntrance?.tax_rate : 0;
+    let taxRate = props.productEntrance ? props.productEntrance?.tax_rate : 0;
 
     // Tomar los datos para sacar el impuesto
-    let tax = ((cost * 100) * tax_rate) / 100;
+    let tax = ((price * 100) * taxRate) / 100;
 
     // tomar los datos del decuento
     let discount = formatNumber(form.discount) / 100 || 0;
@@ -222,15 +222,17 @@ const totalTax = () => {
     taxData.tax_amount = tax * stock;
 
     // tamar el calor de stock y cost
-    taxData.total = (stock * price);
-    taxData.discount = taxData.total * discount;
+    taxData.amount = (stock * price);
+    taxData.discount = taxData.amount * discount;
 
     // Pasar la info al
     form.tax = taxData.tax;
     form.tax_amount = taxData.tax_amount;
     form.discount = (taxData.discount).toFixed(2);
     form.product_no_tax = taxData.product_no_tax;
-    form.total = taxData.total;
+    form.amount = taxData.amount;
+    taxData.tax_amount = taxData.amount * taxRate;
+    form.tax_amount = taxData.tax_amount;
 
 }
 
@@ -343,23 +345,23 @@ const totalTax = () => {
 
                         </div>
 
-                        <!-- Precio -->
-                        <div>
-                            <InputLabel
-                                for="discount"
-                                value="Descuento"/>
-                            <TextInput
-                                class=" w-full"
-                                name="discount"
-                                :readonly="isSelected"
-                                @blur="totalTax"
-                                v-model="form.discount"
-                                type="number"/>
+                        <!-- Descuento -->
+<!--                        <div>-->
+<!--                            <InputLabel-->
+<!--                                for="discount"-->
+<!--                                value="Descuento"/>-->
+<!--                            <TextInput-->
+<!--                                class=" w-full"-->
+<!--                                name="discount"-->
+<!--                                :readonly="isSelected"-->
+<!--                                @blur="totalTax"-->
+<!--                                v-model="form.discount"-->
+<!--                                type="number"/>-->
 
-                            <!-- Error -->
-                            <InputError :message="form.errors.discount" />
+<!--                            &lt;!&ndash; Error &ndash;&gt;-->
+<!--                            <InputError :message="form.errors.discount" />-->
 
-                        </div>
+<!--                        </div>-->
 
 
                         <!-- Datos tributario -->
@@ -410,14 +412,14 @@ const totalTax = () => {
                             </div>
 
                             <!-- Decuento -->
-                            <div>
-                                <InputLabel
-                                    for="discount"
-                                    value="Descuento" />
-                                <span>
-                                    {{getMoney(taxData.discount)}}
-                                </span>
-                            </div>
+<!--                            <div>-->
+<!--                                <InputLabel-->
+<!--                                    for="discount"-->
+<!--                                    value="Descuento" />-->
+<!--                                <span>-->
+<!--                                    {{getMoney(taxData.discount)}}-->
+<!--                                </span>-->
+<!--                            </div>-->
 
 
                             <!-- Decuento -->
@@ -426,7 +428,7 @@ const totalTax = () => {
                                     for="discount"
                                     value="Total Ingresado" />
                                 <span>
-                                    {{getMoney(taxData.total)}}
+                                    {{getMoney(taxData.amount)}}
                                 </span>
                             </div>
                         </fieldset>

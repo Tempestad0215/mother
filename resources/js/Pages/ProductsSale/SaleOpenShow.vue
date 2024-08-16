@@ -76,7 +76,7 @@ const submit = () => {
                         {{item.client_name ? item.client_name : "N/A"}}
                     </td>
                     <td>
-                        {{ getMoney(item.total)}}
+                        {{ getMoney(item.amount)}}
                     </td>
                     <td>
                         <i

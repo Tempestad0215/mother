@@ -8,13 +8,14 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * @property int $id
+ * @property string $code
  * @property string $client_name
  * @property int $client_id
  * @property array $info
  * @property float $discount
  * @property float $tax
  * @property float $sub_total
- * @property float $total
+ * @property float $amount
  * @property boolean $status
  * @property string $comment
  * @property bool $close_table
@@ -39,7 +40,7 @@ class Sale extends Model
         'discount',
         'tax',
         'sub_total',
-        'total',
+        'amount',
         'status',
         'comment',
         'close_table'
@@ -75,26 +76,20 @@ class Sale extends Model
     /**
      * @return string
      */
+    // funcion para generar el codigo
     private static function generateCode()
     {
+        // Obtener el ultimo registros
+        $last = self::orderBy('id','desc')->first();
 
-        //codigo de producto
-        $code = config('Setting.saleCode');
+        // Generar el proximo ID
+        $nextID = $last ? $last->id + 1 : 1;
 
-        // Sacar el ultimo producto
-        $lastProduct = DB::table('sales')->latest('id')->first();
+        // Devolver los datos
+        $code = config('setting.saleCode');
 
-        //Verificar si existe
-        if($lastProduct){
-            //Extraer el numero secuencial
-            $lastNumber = (int)substr($lastProduct->code, 3);
-            $newNumber = str_pad(++$lastNumber, 8, "0", STR_PAD_LEFT);
-        }else{
-            $newNumber = '00000001';
-        }
-
-        // Generar el nuevo codigo
-        return $code . $newNumber;
+        // craer el codigp
+        return $code.str_pad($nextID, 6,'0', STR_PAD_LEFT);
     }
 
 }

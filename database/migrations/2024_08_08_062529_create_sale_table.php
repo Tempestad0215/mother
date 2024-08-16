@@ -21,7 +21,7 @@ return new class extends Migration
             $table->float('discount')->default(0);
             $table->float('tax');
             $table->float('sub_total');
-            $table->float('total');
+            $table->float('amount');
             $table->text('comment')->nullable();
             $table->boolean('status')->default(0);
             $table->boolean('close_table')->default(0);

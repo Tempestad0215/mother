@@ -57,6 +57,7 @@ const productCheck = ref<productDataI[]>([]);
  * Formulario
  */
 const form = useForm({
+    id: 0,
     code_product:"",
     client_name:"",
     client_id: 0,
@@ -65,9 +66,10 @@ const form = useForm({
     discount: 0.00,
     amount: 0.00,
     sub_total: 0.00,
-    total: 0.00,
     comment:"",
-    close_table: false
+    close_table: false,
+    received: 0,
+    returned: 0
 
 });
 
@@ -87,7 +89,7 @@ const getData = (item:productDataI) => {
     let info = form.info.find((el) => el.id === item.id);
 
 
-
+    form.id = item.id;
     // Verificar si el producto exite en todo
     if (info?.id  === item.id)
     {
@@ -97,7 +99,7 @@ const getData = (item:productDataI) => {
     }else{
         let productTax:number = item.price * item.tax_rate;
 
-        console.log(productTax);
+
         //Pasar los datos al formulario
         form.info.push({
             id: item.id,
@@ -184,7 +186,6 @@ const totalSale = () => {
     //Recorrer el array para realizar el calcuclo
     form.info.forEach((el) =>{
 
-        console.log( JSON.stringify(el));
         totalTax += formatNumber(el.total_tax);
         subTotal += formatNumber(el.amount);
     });
@@ -193,7 +194,7 @@ const totalSale = () => {
     //Calcular el total de todo
     form.tax = totalTax;
     form.sub_total = subTotal;
-    form.total = totalTax + subTotal;
+    form.amount = totalTax + subTotal;
 
 }
 
@@ -213,13 +214,25 @@ const selectClient = (item:clientDataI) =>  {
  * Enviar los datos
  */
 const submit = () => {
-    form.post(route('product-sale.store'),{
-        onSuccess:()=>{
-            successHttp('Venta cerrada correctamente');
-            // form.reset();
-            readPDF(props.pdf);
-        }
-    })
+    //Si van a cerrar verificar que lo recibido sea menor a
+    if(form.received < form.amount && form.close_table)
+    {
+        form.setError('received','El monto recibido no puede ser menor al Total');
+    }else{
+        form.post(route('product-sale.store'),{
+            onSuccess:()=>{
+                successHttp('Venta cerrada correctamente');
+                form.reset();
+                // readPDF(props.pdf);
+                //Actualizar la ventana
+
+
+            },
+            only: ['products','clients','saleOpen'],
+        });
+    }
+
+
 }
 
 
@@ -254,6 +267,7 @@ const getSaleOpen = (item:saleDataI) => {
 
     //Colocar la variable en nada al principio
     form.info = [];
+    form.id = item.id;
     //Verificar Pasar los datos a la variable
     item.info.map((el,index) => {
         //Busca el product coincidente
@@ -298,6 +312,19 @@ const getSaleOpen = (item:saleDataI) => {
 }
 
 
+/**
+ * Devuelta de cambio
+ */
+const returned = () => {
+    form.returned = form.received  - form.amount;
+
+    if(form.returned < 0)
+    {
+        form.setError('returned','El monto recibido no puede ser menor al Total');
+        form.returned = 0;
+    }
+}
+
 </script>
 
 <template>
@@ -319,7 +346,7 @@ const getSaleOpen = (item:saleDataI) => {
 <!--        //contenido-->
         <div>
 
-            <div class=" bg-gray-200 rounded-md p-5 mx-auto">
+            <div class=" bg-gray-200 rounded-md p-5 mx-auto overflow-hidden">
                 <form
                     class=" max-w-3/5"
                     action="">
@@ -526,7 +553,7 @@ const getSaleOpen = (item:saleDataI) => {
                                     <div>
                                         <h5 class="inline font-bold">Total............: </h5>
                                         <span>
-                                            {{getMoney(form.total)}}
+                                            {{getMoney(form.amount)}}
                                         </span>
                                     </div>
                                 </div>
@@ -535,16 +562,43 @@ const getSaleOpen = (item:saleDataI) => {
                         </div>
 
 
-                        <div class=" text-right mt-5 space-x-3">
-                            <SecondaryButton
-                                type="button">
-                                Limpiar
-                            </SecondaryButton>
-                            <PrimaryButton
-                                @click="submit()"
-                                type="button">
-                                {{form.close_table ? 'Cerrar Venta' : 'Registrar'}}
-                            </PrimaryButton>
+                        <div class=" mt-5 w-64 float-right">
+                            <div v-if="form.close_table">
+
+                                <div>
+                                    <strong>
+                                        Devuelta :
+                                    </strong>
+                                    <span>
+                                        {{getMoney(form.returned)}}
+                                    </span>
+                                </div>
+
+                                <InputLabel
+                                    class="text-left"
+                                    for="received"
+                                    value="Monto Recibido"/>
+                                <TextInput
+                                    class="w-full"
+                                    type="number"
+                                    required
+                                    @blur="returned"
+                                    v-model="form.received"/>
+                                <InputError :message="form.errors.received"/>
+                            </div>
+
+                            <div class="mt-5 flex justify-between">
+                                <SecondaryButton
+                                    type="button">
+                                    Limpiar
+                                </SecondaryButton>
+                                <PrimaryButton
+                                    @click="submit()"
+                                    type="button">
+                                    {{form.close_table ? 'Cerrar Venta' : 'Registrar'}}
+                                </PrimaryButton>
+                            </div>
+
                         </div>
 
                     </div>

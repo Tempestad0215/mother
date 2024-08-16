@@ -54,7 +54,6 @@ class ProductInController extends Controller
     public function store(StoreProductInRequest $request, Product $productIn)
     {
 
-
         DB::transaction(function () use ($request) {
             // Guardar los datos
             $product = Product::where('id', $request['product_id'])
@@ -74,6 +73,8 @@ class ProductInController extends Controller
                 'sale_id' => 0,
                 'cost' => $request['cost'],
                 'price' => $request['price'],
+                'tax' => $request['tax'],
+                'amount' => $request['amount'],
                 'type' => ProductTypeEnum::ENTRADA
             ]);
         });

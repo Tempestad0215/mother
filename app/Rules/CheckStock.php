@@ -32,13 +32,22 @@ class CheckStock implements ValidationRule
             //Tomar los datos de la cantidad
             $quantity = $info['quantity'];
 
-            //Realizar la verificacion
-            if($quantity > $product->stock){
-                // Enviar el mensaje de que no puede ser mayor
-                $existsError = true;
-                $errorMessage = 'El Producto "' . $info['name'] . '" no tiene suficiente stock.';
-                break;
+            //Verificar si existe en reservado
+            if($product->reserved > 0)
+            {
+                //Restar la cantidad de la reserva
+                $quantity -= $product->reserved;
+
+                //Realizar la verificacion
+                if($quantity > $product->stock){
+                    // Enviar el mensaje de que no puede ser mayor
+                    $existsError = true;
+                    $errorMessage = 'El Producto "' . $info['name'] . '" no tiene suficiente stock.';
+                    break;
+                }
             }
+
+
         }
 
         //Verificar si existe un mensaje de error

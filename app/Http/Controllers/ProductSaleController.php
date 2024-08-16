@@ -80,7 +80,7 @@ class ProductSaleController extends Controller
         $pdf->SetFont('Courier', '', 8);
 
         //Colocar los datos de ventas
-        $pdf->setSaleInfo($request->tax, $request->sub_total, $request->total, 0, $request->info);
+        $pdf->setSaleInfo($request->tax, $request->sub_total, $request->amount, 0, $request->info);
 
 
         //Colocar el comentario
@@ -104,8 +104,22 @@ class ProductSaleController extends Controller
             //Para asegurar que se cumplan los registro
             DB::transaction(function () use ($request) {
 
-                // Registrar la ventas
-                $sale = Sale::create($request->validated());
+                // Verificar si existe una venta como esa
+                $sale = Sale::find($request->input('id'));
+
+
+
+
+                //Actualizar o crear los productos
+                if(isset($sale))
+                {
+                    //Actualizar los datos
+                    $sale->update($request->validated());
+                }else{
+
+                    $sale = Sale::create($request->validated());
+                }
+
 
                 //Recorrer la ventas para descontar los productos
                 foreach ($request->info as $key => $value)
@@ -115,11 +129,13 @@ class ProductSaleController extends Controller
 
                     if ($request->close_table) {
                         // Verifica si el producto estaba previamente reservado
-                        if ($product->reserved >= $value['quantity']) {
-                            // Si la cantidad reservada es mayor o igual a la cantidad actual,
-                            // simplemente resta la cantidad del stock y elimina la reserva.
+                        if ( $product->reserved > $value['quantity']  ) {
+                            /**
+                             * si la cantidad es mayor quie la reservas, pues se decuenta los productos
+                             * en la base de datos y se pone en cero la reversa
+                             */
                             $product->stock -= $value['quantity'];
-                            $product->reserved -= $value['quantity'];  // Ajustar las reservas
+                            $product->reserved -= $value['quantity'];  //Ajustar las reservas
                         } else {
                             // Si la cantidad aumentó antes de cerrar la mesa, calcula la diferencia.
                             $difference = $value['quantity'] - $product->reserved;
@@ -130,7 +146,7 @@ class ProductSaleController extends Controller
                             // Elimina las reservas.
                             $product->reserved = 0;
                         }
-
+                        //Gudardar los datos en la base de datios
                         $product->save();
                     } else {
                         // Verifica si la cantidad ha aumentado o disminuido
@@ -168,14 +184,16 @@ class ProductSaleController extends Controller
         });
 
 
-        //Devolver los datos con el PDF
-        return Inertia::render('ProductsSale/Create',[
-            'pdf' => $pdfString,
-            'products' => $products,
-            'clients' => $clients,
-            'saleOpen' => $saleOpen
+        return to_route('product-sale.create');
 
-        ]);
+        //Devolver los datos con el PDF
+//        return Inertia::render('ProductsSale/Create',[
+//            'pdf' => $pdfString,
+//            'products' => $products,
+//            'clients' => $clients,
+//            'saleOpen' => $saleOpen
+//
+//        ]);
 
     }
 

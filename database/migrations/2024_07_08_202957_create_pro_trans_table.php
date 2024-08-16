@@ -19,6 +19,8 @@ return new class extends Migration
             $table->foreignIdFor(Sale::class,'sale_id');
             $table->foreignIdFor(Product::class,'product_id');
             $table->float('stock',2);
+            $table->float('tax');
+            $table->float('amount');
             $table->float('price',2);
             $table->float('discount',2)->default(0);
             $table->enum('type',[1,2,3,4,5]);

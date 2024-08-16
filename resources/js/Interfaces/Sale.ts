@@ -24,7 +24,7 @@ export interface saleDataI {
     status: boolean;
     sub_total: number;
     tax: number;
-    total: number;
+    amount: number;
     updated_at: string;
 }
 

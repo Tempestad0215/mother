@@ -236,7 +236,9 @@ const destroy = (item:supplierI) => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(item,index) in props.suppliers?.data" :key="index">
+                        <tr
+                            class="odd:bg-gray-400"
+                            v-for="(item,index) in props.suppliers?.data" :key="index">
                             <td>{{item.id}}</td>
                             <td>{{item.company_name}}</td>
                             <td>{{item.contact ? item.contact : "N/A" }}</td>

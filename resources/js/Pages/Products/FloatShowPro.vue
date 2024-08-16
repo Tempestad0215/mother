@@ -117,7 +117,9 @@ const detroy = (id:Number) => {
             </tr>
             </thead>
             <tbody>
-            <tr v-for="(item, index) in props.products.data" :key="index">
+            <tr
+                class=" odd:bg-gray-400"
+                v-for="(item, index) in props.products.data" :key="index">
                 <td>{{item.id}}</td>
                 <td>{{item.name}}</td>
                 <td>{{item.unit}}</td>
