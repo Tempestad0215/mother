@@ -108,8 +108,6 @@ class ProductSaleController extends Controller
                 $sale = Sale::find($request->input('id'));
 
 
-
-
                 //Actualizar o crear los productos
                 if(isset($sale))
                 {

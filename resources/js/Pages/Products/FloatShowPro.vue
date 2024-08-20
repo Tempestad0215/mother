@@ -109,7 +109,9 @@ const detroy = (id:Number) => {
             <thead>
             <tr class=" text-left">
                 <th>Id</th>
+                <th>Cod. Barr</th>
                 <th>Nombre</th>
+                <th>Descripción</th>
                 <th>Uni.</th>
                 <th>Disp.</th>
                 <th>Precio</th>
@@ -121,7 +123,9 @@ const detroy = (id:Number) => {
                 class=" odd:bg-gray-400"
                 v-for="(item, index) in props.products.data" :key="index">
                 <td>{{item.id}}</td>
+                <td>{{item.bar_code ? item.bar_code : 'N/A'}}</td>
                 <td>{{item.name}}</td>
+                <td>{{item.description}}</td>
                 <td>{{item.unit}}</td>
                 <td>{{item.stock}}</td>
                 <td>{{item.price}}</td>

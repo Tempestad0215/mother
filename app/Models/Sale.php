@@ -51,7 +51,9 @@ class Sale extends Model
     protected  $casts = [
         'status' => 'boolean',
         'info' => 'array',
-        'close_table' => 'boolean'
+        'close_table' => 'boolean',
+        'created_at' => 'Y-m-d H:i:s',
+        'updated_at' => 'Y-m-d H:i:s'
     ];
 
 

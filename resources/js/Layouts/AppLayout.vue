@@ -92,13 +92,13 @@ const profile = () => {
                         <i class="fa-solid fa-cart-shopping"></i>
                     </Link>
                 </li>
-<!--                <li>-->
-<!--                    <Link-->
-<!--                        title="Reportes"-->
-<!--                        :href="route('report.index')">-->
-<!--                        <i class="fa-solid fa-chart-pie"></i>-->
-<!--                    </Link>-->
-<!--                </li>-->
+                <li>
+                    <Link
+                        title="Reportes"
+                        :href="route('report.index')">
+                        <i class="fa-solid fa-chart-pie"></i>
+                    </Link>
+                </li>
 
 
             </ol>

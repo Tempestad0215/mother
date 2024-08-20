@@ -80,6 +80,7 @@ onMounted(()=>{
         form.id = props.productEdit.data.id;
         form.name = props.productEdit.data.name;
         form.description = <string>props.productEdit.data.description;
+        form.bar_code = <string>props.productEdit.data.bar_code;
         form.category_name = props.productEdit.data.category.name;
         form.category_id = props.productEdit.data.category.id;
         form.tax_rate = props.productEdit.data.tax_rate;

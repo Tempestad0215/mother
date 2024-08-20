@@ -457,6 +457,7 @@ const totalTax = () => {
                     <table class="table-auto w-full mt-3">
                         <thead>
                             <tr class="text-left">
+                                <th>Cod. Barr.</th>
                                 <th>Producto</th>
                                 <th>Descripcion</th>
                                 <th>Cant.</th>
@@ -469,6 +470,7 @@ const totalTax = () => {
                             <tr
                                 class=" odd:bg-gray-400"
                                 v-for="item in props.products?.data">
+                                <td>{{item.bar_code ? item.bar_code : 'N/A'}}</td>
                                 <td>{{item.name}}</td>
                                 <td>{{item.description}}</td>
                                 <td>{{item.stock}}</td>

@@ -138,6 +138,7 @@ Route::middleware([
         ->name('report.')
         ->group(function (){
            Route::get('/','index')->name('index');
+           Route::post('/daily','getDailyByDate')->name('getDailyByDate');
         });
 
 

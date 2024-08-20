@@ -8,7 +8,7 @@ import FloatBox from "@components/FloatBox.vue";
 import FloatShowPro from "@/Pages/Products/FloatShowPro.vue";
 import { PropType, ref} from "vue";
 import {productDataI, productI, productSaleI} from "@/Interfaces/Product";
-import {formatNumber, getMoney, readPDF} from "@/Global/Helpers";
+import {formatNumber, getMoney} from "@/Global/Helpers";
 import LinkHeader from "@components/LinkHeader.vue";
 import Swal from "sweetalert2";
 import InputError from "@components/InputError.vue";
@@ -88,8 +88,6 @@ const getData = (item:productDataI) => {
     //Obtener los datos de productos
     let info = form.info.find((el) => el.id === item.id);
 
-
-    form.id = item.id;
     // Verificar si el producto exite en todo
     if (info?.id  === item.id)
     {
@@ -388,7 +386,8 @@ const returned = () => {
 
 
                         <div class=" grid grid-cols-3 gap-3 items-center">
-                            <div>
+                            <form
+                                @submit.prevent="getBycode">
                                 <InputLabel
                                     for="Product"
                                     value="Codigo"/>
@@ -402,7 +401,8 @@ const returned = () => {
                                 />
 
                                 <InputError :message="form.errors.code_product"/>
-                            </div>
+                            </form>
+
 
                             <fieldset class="flex border-2 border-gray-500 p-2 rounded-md max-w-[200px]">
                                 <legend>

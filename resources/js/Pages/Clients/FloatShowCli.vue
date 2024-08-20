@@ -126,7 +126,7 @@ const destroy = (id:Number) => {
             <!-- Contenido -->
             <tbody>
             <tr
-                class=" border-b odd:bg-gray-100"
+                class=" border-b odd:bg-gray-400"
                 v-for="(item, index) in props.clients?.data" :key="index" >
                 <td class=" px-2">
                     {{ item.id }}

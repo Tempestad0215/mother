@@ -24,7 +24,7 @@ class ProSupRes extends JsonResource
             'stock' => $this->stock,
             'cost' => $this->cost,
             'sku' => $this->sku,
-            'bar_code' => $this->barcode,
+            'bar_code' => $this->bar_code,
             'weight' => $this->weight,
             'dimensions' => $this->dimensions,
             'brand' => $this->brand,

@@ -31,6 +31,13 @@ const form = useForm({
     update: false,
 });
 
+/**
+ * Formaulario de busqueda
+ */
+const formSearch = useForm({
+    search:""
+});
+
 
 
 // funciones
@@ -89,6 +96,13 @@ const destroy = (item:supplierI) => {
     });
 }
 
+
+const search = () => {
+    formSearch.get('',{
+        preserveScroll: true,
+        preserveState: true
+    });
+}
 
 
 </script>
@@ -219,8 +233,10 @@ const destroy = (item:supplierI) => {
                 <h3 class="text-2xl font-bold text-center">
                     Tabla de Suplidores
                 </h3>
-                <form>
+                <form
+                    @submit.prevent="search">
                     <FormSearch
+                        v-model="formSearch.search"
                         />
                 </form>
 
