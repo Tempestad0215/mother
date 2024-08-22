@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -52,9 +54,34 @@ class Sale extends Model
         'status' => 'boolean',
         'info' => 'array',
         'close_table' => 'boolean',
-        'created_at' => 'Y-m-d H:i:s',
-        'updated_at' => 'Y-m-d H:i:s'
     ];
+
+
+    //Formatear los datos
+
+    /**
+     * Formatear la fehca de creacion
+     * @return Attribute
+     */
+    protected function createAt ():Attribute
+    {
+        return Attribute::make(
+            get: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i:s'),
+            set: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i:s'),
+        );
+    }
+
+    /**
+     * Formataer la fecha de actualizacion
+     * @return Attribute
+     */
+    protected function updateAt ():Attribute
+    {
+        return Attribute::make(
+            get: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i:s'),
+            set: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i:s'),
+        );
+    }
 
 
 

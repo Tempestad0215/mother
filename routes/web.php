@@ -11,11 +11,16 @@ use App\Http\Controllers\ProductSaleController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Hash;
 
 
 
 // La ruita de registro bloquerar
 
+
+//Route::get('/pass', function () {
+//    return Hash::make('password');
+//});
 
 Route::middleware([
     'auth:sanctum',

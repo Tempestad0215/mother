@@ -27,7 +27,7 @@ class StoreProductInRequest extends FormRequest
             'stock' => ['required', 'numeric', 'min:1'],
             'cost' => ['required', 'numeric', 'min:1'],
             'price' => ['required', 'numeric', 'min:1'],
-            'tax' =>['required', 'numeric', 'min:1'],
+            'tax' =>['required', 'numeric'],
             'amount' => ['required', 'numeric', 'min:1'],
         ];
     }
