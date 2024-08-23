@@ -34,4 +34,11 @@
     .list-data{
         @apply odd:bg-gray-300 rounded-md px-5 hover:bg-gray-500 duration-300;
     }
+
+    /**
+    Link de la imagen
+     */
+    .image-link{
+        @apply block border-b-2 border-gray-400 rounded-md  hover:bg-gray-600 hover:text-white duration-300;
+    }
 }

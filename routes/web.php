@@ -1,5 +1,6 @@
 <?php
 
+use App\Helpers\UserHelper;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\ProductController;
@@ -12,6 +13,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
 
 
 
@@ -45,8 +47,18 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
-    Route::get('/register',function(){
-        return Inertia::render('Auth/Register');
+    Route::get('/register',function(Request $request){
+
+        //Crear la instancia
+        $userHelper = new UserHelper();
+
+        //Obtener los datos desde el helpers
+        $users = $userHelper->getUserPaginator($request);
+
+        //Devolver la vista con los datos
+        return Inertia::render('Auth/Register',[
+            'users' => $users
+        ]);
     })->name('register');
 
     // Ruta de usuario
@@ -55,6 +67,8 @@ Route::middleware([
     ->name('user.')
     ->group(function () {
         Route::post('/', 'store')->name('store');
+        Route::patch('/{user}','update')->name('update');
+        Route::patch('/destroy/{user}', 'destroy')->name('destroy');
     });
 
     // Cliente

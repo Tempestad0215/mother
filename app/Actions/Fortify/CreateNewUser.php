@@ -4,6 +4,7 @@ namespace App\Actions\Fortify;
 
 use App\Enums\UserRoleEnum;
 use App\Models\User;
+use App\Rules\CheckMaxUser;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -21,9 +22,12 @@ class CreateNewUser implements CreatesNewUsers
      */
     public function create(array $input): User
     {
+
+        dd(config('setting.maxUser'));
+
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users', new CheckMaxUser()],
             'password' => $this->passwordRules(),
             'role' => ['required', Rule::enum(UserRoleEnum::class)],
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',

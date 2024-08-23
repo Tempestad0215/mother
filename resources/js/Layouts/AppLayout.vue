@@ -108,17 +108,23 @@ const profile = () => {
             <div
                 v-if="showOption"
                 class=" absolute top-14 left-12 w-52 rounded-md bg-gray-200 z-40 border-2 border-gray-500">
-                <ol class=" text-xl space-y-3 text-center select-none">
-                    <li
-                        @click="profile"
-                        class="">
+                <ol class=" text-xl text-center select-none">
+                    <Link
+                        class="image-link"
+                        :href="route('profile.show')">
                         Perfil
-                    </li>
-                    <li
-                        @click="logout"
-                        class="">
+                    </Link>
+                    <Link
+                        class="image-link"
+                        :href="route('register')">
+                        Usuario
+                    </Link>
+                    <Link
+                        class="image-link"
+                        method="post"
+                        :href="route('logout')">
                         Salir
-                    </li>
+                    </Link>
 
                 </ol>
             </div>

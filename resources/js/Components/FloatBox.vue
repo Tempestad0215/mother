@@ -1,13 +1,16 @@
 <script setup lang="ts">
 
 
-const emit = defineEmits(['close']);
+const emit = defineEmits<{
+    (e: 'close')
+}>();
 
 </script>
 
 
 <template>
-    <div class=" bg-black bg-opacity-80  absolute top-20 w-[calc(100%-7rem)]  h-[calc(100%-6rem)] flex justify-center py-10 rounded-md">
+    <div
+        class=" bg-black bg-opacity-80  absolute top-20 w-[calc(100%-7rem)]  h-[calc(100%-6rem)] flex justify-center py-10 rounded-md">
 
         <i
             @click="$emit('close')"
