@@ -6,6 +6,7 @@ use App\Enums\ProductTypeEnum;
 use App\Helpers\ClientHelper;
 use App\Helpers\FacturaVentaA;
 use App\Helpers\FacturaVentaB;
+use App\Helpers\SaleHelper;
 use App\Http\Requests\StoreProductSaleRequest;
 use App\Models\Product;
 use App\Models\ProTrans;
@@ -51,7 +52,10 @@ class ProductSaleController extends Controller
     }
 
 
-
+    /**
+     * @param StoreProductSaleRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(StoreProductSaleRequest $request)
     {
 
@@ -61,41 +65,41 @@ class ProductSaleController extends Controller
         $saleOpen = $this->getSaleOpen($request);
 
         //Calcular la altura
-        $tall = 200;
-
-
-        //Para aumentar el tamaño de la ventana
-        for($i = 0; $i < count($request->info); $i++){
-            if(count($request->info) > 2)
-            {
-                $tall += 20;
-            }
-        }
-
-        //crear la instancia del PDF
-        $pdf = new FacturaVentaB($tall);
-        //Crear la pagina del PDF
-        $pdf->AddPage();
-        // Poner el tipo de fuente
-        $pdf->SetFont('Courier', '', 8);
-
-        //Colocar los datos de ventas
-        $pdf->setSaleInfo($request->tax, $request->sub_total, $request->amount, 0, $request->info);
-
-
-        //Colocar el comentario
-        $pdf->SetX(2);
-        $pdf->Cell(30,5, 'Comentario',0,0,'L');
-        $pdf->SetX(22);
-        $pdf->Cell(30,5, ':',0,1,'L');
-        $pdf->SetX(5);
-        $pdf->MultiCell(70,3, $request->comment, 0, 'L');
-
-        //Poner el salto de pagina en no false
-        $pdf->SetAutoPageBreak(false);
-
-        // Codificar el pdf a base 64
-        $pdfString = base64_encode($pdf->Output('S','', true));
+//        $tall = 200;
+//
+//
+//        //Para aumentar el tamaño de la ventana
+//        for($i = 0; $i < count($request->info); $i++){
+//            if(count($request->info) > 2)
+//            {
+//                $tall += 20;
+//            }
+//        }
+//
+//        //crear la instancia del PDF
+//        $pdf = new FacturaVentaB($tall);
+//        //Crear la pagina del PDF
+//        $pdf->AddPage();
+//        // Poner el tipo de fuente
+//        $pdf->SetFont('Courier', '', 8);
+//
+//        //Colocar los datos de ventas
+//        $pdf->setSaleInfo($request->tax, $request->sub_total, $request->amount, 0, $request->info);
+//
+//
+//        //Colocar el comentario
+//        $pdf->SetX(2);
+//        $pdf->Cell(30,5, 'Comentario',0,0,'L');
+//        $pdf->SetX(22);
+//        $pdf->Cell(30,5, ':',0,1,'L');
+//        $pdf->SetX(5);
+//        $pdf->MultiCell(70,3, $request->comment, 0, 'L');
+//
+//        //Poner el salto de pagina en no false
+//        $pdf->SetAutoPageBreak(false);
+//
+//        // Codificar el pdf a base 64
+//        $pdfString = base64_encode($pdf->Output('S','', true));
 
 
 
@@ -196,6 +200,23 @@ class ProductSaleController extends Controller
     }
 
 
+    /**
+     * Devolver la vista con los datos
+     * @param Request $request
+     * @return \Inertia\Response
+     */
+    public function show(Request $request)
+    {
+        //Crear la instancia
+        $saleHelper = new SaleHelper();
+
+        //Tomar los datos
+        $sales = $saleHelper->getSalePagination($request);
+
+        return Inertia::render('ProductsSale/Show',[
+            'sales' => $sales
+        ]);
+    }
 
     /**
      * @param Request $request

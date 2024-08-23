@@ -134,6 +134,7 @@ Route::middleware([
            Route::get('/','create')->name('create');
            Route::get('/get','getJson')->name('get.json');
            Route::post('/','store')->name('store');
+           Route::get('/show','show')->name('show');
         });
 
     //Entrada de los productos

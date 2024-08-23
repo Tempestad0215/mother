@@ -339,12 +339,18 @@ const returned = () => {
                 Ventas
             </LinkHeader>
 
+            <LinkHeader
+                :href="route('product-sale.show')">
+                Mostrar
+            </LinkHeader>
+
         </template>
 
 <!--        //contenido-->
         <div>
 
             <div class=" bg-gray-200 rounded-md p-5 mx-auto overflow-hidden">
+
                 <form
                     class=" max-w-3/5"
                     action="">

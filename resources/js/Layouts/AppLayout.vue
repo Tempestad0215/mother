@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref} from 'vue';
+import {computed, ref} from 'vue';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import NavLink from '@/Components/NavLink.vue';
 import {pageI} from "@/Interfaces/Global";
@@ -14,9 +14,25 @@ defineProps({
 });
 
 const showOption = ref<boolean>(false);
+/**
+ * Propiedades computad
+ */
+
+const checkRole = computed(()=>{
+   let role:number = page.props.auth.user.role;
+
+   if(role === 3)
+   {
+       return true
+   }
+
+});
 
 
 
+/**
+ * Funciones
+ */
 const logout = () => {
     router.post(route('logout'));
 };
@@ -37,9 +53,7 @@ const profile = () => {
     <Head :title="title"/>
     <div class="">
         <aside class=" fixed bg-gray-200 w-20 h-screen z-30">
-            <div>
 
-            </div>
             <img
                 @click="showOption = !showOption"
                 class="rounded-full mx-auto mt-5"
@@ -48,7 +62,8 @@ const profile = () => {
 
             <ol
                 class=" text-2xl space-y-2 text-center mt-5 border-t-2 border-black pt-5">
-                <li>
+                <li
+                    v-if="checkRole">
                     <NavLink
                         title="Clientes"
                         :active="isUrl('/client')"
@@ -56,7 +71,7 @@ const profile = () => {
                         <i class="fa-solid fa-users"></i>
                     </NavLink>
                 </li>
-                <li>
+                <li v-if="checkRole">
                     <Link
                         title="Categorias"
                         :active="isUrl('/category')"
@@ -64,21 +79,21 @@ const profile = () => {
                         <i class="fa-solid fa-code-branch"></i>
                     </Link>
                 </li>
-                <li>
+                <li v-if="checkRole">
                     <Link
                         title="Suplidores"
                         :href="route('supplier.create')">
                         <i class="fa-solid fa-truck-field"></i>
                     </Link>
                 </li>
-                <li>
+                <li v-if="checkRole">
                     <Link
                         title="Producto"
                         :href="route('product.create')">
                         <i class="fa-solid fa-box-open"></i>
                     </Link>
                 </li>
-                <li>
+                <li v-if="checkRole">
                     <Link
                         title="Entrada"
                         :href="route('product-in.create')">
@@ -92,7 +107,7 @@ const profile = () => {
                         <i class="fa-solid fa-cart-shopping"></i>
                     </Link>
                 </li>
-                <li>
+                <li v-if="checkRole">
                     <Link
                         title="Reportes"
                         :href="route('report.index')">
