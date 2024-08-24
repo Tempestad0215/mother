@@ -7,16 +7,20 @@ import {salePaginationI} from "@/Interfaces/Sale";
 import {getMoney} from "@/Global/Helpers";
 import Pagination from "@components/Pagination.vue";
 
+
+/**
+ * Propiedades de la ventana
+ */
 const props = defineProps<{
     sales: salePaginationI,
-}>()
+}>();
 
 /**
  * Datos del formulario
  */
 const form = useForm({
     search: ""
-})
+});
 
 //Enviar los datos
 const submit = () => {
@@ -51,24 +55,28 @@ const submit = () => {
                 <FormSearch
                     v-model="form.search"/>
             </form>
-            <table class="w-full table-auto">
-                <thead>
-                    <tr>
+            <table
+                class="w-full table-auto mt-5">
+                <thead >
+                    <tr class=" border-b-2 border-gray-800">
                         <th>ID</th>
                         <th>Cliente</th>
                         <th>Itbis</th>
                         <th>Sub Total</th>
                         <th>Total</th>
+                        <th>Mesa A/C</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr
+                        class="odd:bg-gray-400"
                         v-for="(item,index) in props.sales.data" :key="index">
                         <td>{{item.id}}</td>
                         <td>{{item.client_name}}</td>
                         <td>{{ getMoney(item.tax)}}</td>
                         <td>{{getMoney(item.sub_total)}}</td>
                         <td>{{getMoney(item.amount)}}</td>
+                        <td>{{item.close_table ? 'Cerrada' : 'Abierta'}}</td>
                     </tr>
                 </tbody>
             </table>

@@ -116,6 +116,18 @@ const profile = () => {
                 </li>
 
 
+
+                <li
+                    class="absolute bottom-0 right-8 hover:scale-125 duration-300"
+                    v-if="checkRole">
+                    <Link
+                        title="Reportes"
+                        :href="route('setting.index')">
+                        <i class="fa-solid fa-sliders"></i>
+                    </Link>
+                </li>
+
+
             </ol>
 
         </aside>

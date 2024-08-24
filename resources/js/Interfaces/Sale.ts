@@ -17,6 +17,7 @@ interface saleI{
     tax: number;
     sub_total: number;
     amount: number;
+    close_table: boolean;
 }
 
 export interface saleDataI {

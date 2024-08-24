@@ -9,10 +9,10 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductSaleController;
+use App\Http\Controllers\SettingController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 
 
@@ -41,6 +41,16 @@ Route::middleware([
         ]);
     });
 
+
+    /**
+     * Configuracion de la app
+     */
+    Route::controller(SettingController::class)
+        ->prefix('setting')
+        ->name('setting.')
+        ->group(function () {
+       Route::get('/', 'index')->name('index');
+    });
 
 
 
