@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use app\enums\ClientTypeEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -22,11 +23,18 @@ class StoreClientsRequest extends FormRequest
      */
     public function rules(): array
     {
+        //Tomar el tipo
+        $type = (int) $this->request->get('type');
+        //Convertir a true
+        $isRequired = $type === 2 || $type === 3;
+
         return [
             'name' => ['required','string','min:4','max:75'],
-            'phone' => ['required','string','max:20'],
-            'email'=> ['nullable','string','email','max:150', Rule::unique('clients','email')],
-            'address' => ['nullable','string','max:150'],
+            'phone' => ['string','max:20',Rule::requiredIf($isRequired)],
+            'personal_id' => ['nullable','string','max:50',Rule::requiredIf($isRequired)],
+            'email'=> ['nullable','string','email','max:150', Rule::unique('clients','email'),Rule::requiredIf($isRequired)],
+            'address' => ['nullable','string','max:255',Rule::requiredIf($isRequired)],
+            'type' => ['required', Rule::enum(ClientTypeEnum::class)]
         ];
     }
 }

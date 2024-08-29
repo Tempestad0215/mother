@@ -165,8 +165,8 @@ const totalAmount = (index:number) => {
     let info:productSaleI = form.info[index];
 
     //Pasar los datos al formulario
-    info.total_tax = info.tax * info.quantity;
-    info.amount = info.price * info.quantity;
+    info.total_tax = parseFloat((info.tax  * info.quantity).toFixed(2).toString());
+    info.amount = parseFloat((info.price * info.quantity).toFixed(2).toString());
 
     //Calcular los totales
     totalSale();

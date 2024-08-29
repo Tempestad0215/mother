@@ -2,9 +2,31 @@
 
 namespace App\Models;
 
+use app\enums\ClientTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
+
+
+/**
+ * @property string $code
+ * @property string $name
+ * @property string $phone
+ * @property string $personal_id
+ * @property string $email
+ * @property string $address
+ * @property boolean $status
+ * @property int $type
+ * @property float $credit_limit
+ * @property integer $credit_day
+ * @property float $credit_available
+ * @property float $credit_consumed
+ * @property float $credit_expired
+ * @property float $advance_amount
+ * @property float $advance_date
+ * @property float $advance_expire
+ * @property float $advance_consumed
+ * @property float $advance_available
+ */
 
 class Clients extends Model
 {
@@ -20,6 +42,7 @@ class Clients extends Model
 
 
     protected $casts = [
+        'type' => ClientTypeEnum::class,
         'status'=> 'boolean',
     ];
 
@@ -27,7 +50,7 @@ class Clients extends Model
     /**
      * @return void
      */
-    protected static function boot()
+    protected static function boot():void
     {
         // Llamar el metodo principal
         parent::boot();
@@ -45,7 +68,7 @@ class Clients extends Model
      * @return string
      */
     // funcion para generar el codigo
-    private static function generateCode()
+    private static function generateCode():string
     {
         // Obtener el ultimo registros
         $last = self::orderBy('id','desc')->first();

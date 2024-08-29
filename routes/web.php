@@ -50,6 +50,7 @@ Route::middleware([
         ->name('setting.')
         ->group(function () {
        Route::get('/', 'index')->name('index');
+       Route::post('/','store')->name('store');
     });
 
 

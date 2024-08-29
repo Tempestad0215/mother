@@ -6,7 +6,7 @@ import TextInput from '@components/TextInput.vue';
 import InputError from '@components/InputError.vue';
 import PrimaryButton from '@components/PrimaryButton.vue';
 import ActionMessage from '@components/ActionMessage.vue';
-import { onMounted, PropType } from 'vue';
+import {computed, onMounted, PropType} from 'vue';
 import {clienteEditI, clientI} from '@/Interfaces/ClientInterface';
 import { successHttp } from '@/Global/Alert';
 import LinkHeader from "@components/LinkHeader.vue";
@@ -42,7 +42,25 @@ onMounted(()=>{
         form.email = props.clientEdit.email ? props.clientEdit.email : '' ;
         form.address = props.clientEdit.address ? props.clientEdit.address : '';
     }
-})
+});
+
+/**
+ * Propiedades computada
+ */
+
+//Veriificar si es credito o contado
+const isMandatory = computed(()=>{
+    //Retorna true cuando es credito o anticipo
+   if(form.type === 2 || form.type === 3)
+   {
+       return true;
+   }
+
+   //Retorna true cuando es a contado
+   return false;
+});
+
+
 
 
 /**
@@ -51,9 +69,20 @@ onMounted(()=>{
 const form = useForm({
     id:0,
     name:"",
+    personal_id:"",
     phone:"",
     email:"",
-    address:""
+    address:"",
+    type: 1,
+    credit_limit: "",
+    credit_day:"",
+    credit_available:"",
+    credit_expired:"",
+    advance_amount:"",
+    advance_date:"",
+    advance_available:"",
+    status: false,
+    comment:""
 });
 
 
@@ -106,10 +135,64 @@ const submit = () => {
                 class="bg-gray-200 rounded-md p-5 md:max-w-full mx-auto"
                 @submit.prevent="submit">
 
+<!--                Titulo del formulario-->
                 <h2 class="col-span-full text-2xl font-bold text-center mb-4">
                     {{ props.update ? 'Actualización' :  'Registro'}} de cliente
                 </h2>
 
+<!--                Tipo de cliente-->
+                <fieldset class="flex border-2 border-gray-400 p-5 rounded-md">
+                    <legend>
+                        Tipo de Cliente
+                    </legend>
+                    <div>
+                        <input
+                            class="peer hidden"
+                            type="radio"
+                            v-model="form.type"
+                            :value="1"
+                            name="cli_cash"
+                            id="cli_cash">
+                        <label
+                            class=" border-2 px-2 py-1 rounded-md border-gray-400 peer-checked:bg-gray-800 peer-checked:text-white duration-300 "
+                            for="cli_cash">
+                            Contado
+                        </label>
+
+                    </div>
+                    <div class="ml-5">
+                        <input
+                            class="peer hidden"
+                            v-model="form.type"
+                            :value="2"
+                            type="radio"
+                            name="cli_credit"
+                            id="cli_credit">
+                        <label
+                            class=" border-2 px-2 py-1 rounded-md border-gray-400 peer-checked:bg-gray-800 peer-checked:text-white duration-300 "
+                            for="cli_credit">
+                            Credito
+                        </label>
+                    </div>
+                    <div class="ml-5">
+                        <input
+                            class="peer hidden"
+                            v-model="form.type"
+                            :value="3"
+                            type="radio"
+                            name="cli_advance"
+                            id="cli_advance">
+                        <label
+                            class=" border-2 px-2 py-1 rounded-md border-gray-400 peer-checked:bg-gray-800 peer-checked:text-white duration-300 "
+                            for="cli_advance">
+                            Anticipo
+                        </label>
+                    </div>
+                    <InputError :message="form.errors.type"/>
+                </fieldset>
+
+
+<!--                Datos personales-->
                 <fieldset class="border-2 border-gray-400 p-5 rounded-md grid grid-cols-2 gap-3">
                     <legend>
                         Datos Personales
@@ -132,26 +215,28 @@ const submit = () => {
                     <div>
                         <InputLabel
                             for="personal_id"
-                            value="Cedula / Pasaporte *"/>
+                            value="Cedula / Pasaporte /RNC"/>
                         <TextInput
                             class=" w-full"
                             maxLength="75"
-                            v-model="form.name"
+                            :required="isMandatory"
+                            v-model="form.personal_id"
                             placeholder="Nombre completo"
                             type="text"/>
 
                         <!-- Error -->
-                        <InputError :message="form.errors.name" />
+                        <InputError :message="form.errors.personal_id" />
                     </div>
 
                     <!-- Telefono -->
                     <div class="">
                         <InputLabel
                             for="phone"
-                            value="Teléfono *"/>
+                            value="Teléfono"/>
                         <TextInput
                             class=" w-full"
                             name="phone"
+                            :required="isMandatory"
                             v-model="form.phone"
                             placeholder="(849) 425-8568"
                             v-mask="'(###) ###-####'"
@@ -170,6 +255,7 @@ const submit = () => {
                             class=" w-full"
                             name="email"
                             maxLength="150"
+                            :required="isMandatory"
                             placeholder="ejemplo@ejemplo.com"
                             v-model="form.email"
                             type="email"/>
@@ -187,6 +273,7 @@ const submit = () => {
                             class=" w-full"
                             name="address"
                             maxLength="150"
+                            :required="isMandatory"
                             placeholder="Puerto Plata"
                             v-model="form.address"
                             type="text"/>
@@ -197,8 +284,13 @@ const submit = () => {
                 </fieldset>
                 <!-- Nombre -->
 
+
+
+<!--             Datos de credito-->
                 <div class="grid grid-cols-2 gap-4">
-                    <fieldset class="border-2 border-gray-400 p-5 rounded-md grid grid-cols-2 gap-3">
+                    <fieldset
+                        v-if="form.type === 2"
+                        class="border-2 border-gray-400 p-5 rounded-md grid grid-cols-2 gap-3">
                         <legend>
                             Datos Credito
                         </legend>
@@ -235,7 +327,10 @@ const submit = () => {
                     </fieldset>
 
 
-                    <fieldset class="border-2 border-gray-400 p-5 rounded-md grid grid-cols-2 gap-3">
+<!--                  Datos de anticipo  -->
+                    <fieldset
+                        v-if="form.type === 3"
+                        class="border-2 border-gray-400 p-5 rounded-md grid grid-cols-2 gap-3">
                         <legend>
                             Datos Anticipo
                         </legend>
@@ -268,62 +363,77 @@ const submit = () => {
 
                     </fieldset>
 
+                </div>
 
-                    <div class="flex py-4">
+
+
+                <!-- Datos de comentario y  -->
+                <div class="flex mt-5">
+                    <fieldset class=" border-2 border-gray-400 rounded-md p-2 flex items-center">
+                        <legend>
+                            Comentario
+                        </legend>
+                        <textarea
+                            maxlength="255"
+                            v-model="form.comment"
+                            rows="5"
+                            cols="50"
+                            class="border-gray-200 rounded-md max-w-[400px] min-h-[150px] max-h-[200px]"/>
+                        <InputError :message="form.errors.comment" />
+                    </fieldset>
+                    <div>
+
+                    </div>
+
+                    <!--                Estatus del cliente    -->
+                    <fieldset class="ml-3 p-3 border-2 border-gray-400 rounded-md flex items-center">
+                        <legend>
+                            Estado
+                        </legend>
                         <div>
                             <input
                                 class="peer hidden"
+                                v-model="form.status"
+                                :value="false"
                                 type="radio" name="cli_active" id="cli_active">
-                                <label
-                                    class=" border-2 px-2 py-1 rounded-md border-gray-400 peer-checked:bg-gray-800 peer-checked:text-white duration-300 "
-                                    for="cli_active">
-                                    Activado
-                                </label>
+                            <label
+                                class=" border-2 px-2 py-1 rounded-md border-gray-400 peer-checked:bg-gray-800 peer-checked:text-white duration-300 "
+                                for="cli_active">
+                                Activado
+                            </label>
+
                         </div>
                         <div class="pl-5">
                             <input
                                 class="peer hidden"
-                                type="radio" name="cli_disabled" id="cli_disabled">
+                                v-model="form.status"
+                                :value="true"
+                                type="radio"
+                                name="cli_disabled"
+                                id="cli_disabled">
                             <label
                                 class=" border-2 px-2 py-1 rounded-md border-gray-400 peer-checked:bg-gray-800 peer-checked:text-white duration-300 "
                                 for="cli_disabled">
                                 Desactivado
                             </label>
                         </div>
+                        <InputError :message="form.errors.status" />
+                    </fieldset>
+
+
+
+                    <!-- Botones para enviar -->
+                    <div class="flex flex-1 justify-end items-center space-x-5">
+                        <PrimaryButton>
+                            {{ props.update ? 'Actualizar' :  'Registrar'}}
+                        </PrimaryButton>
 
                     </div>
-
                 </div>
 
 
-
-
-                <div>
-                    <InputLabel for="comment" value="Comentario"/>
-                    <textarea>
-
-                    </textarea>
-                </div>
-
-                <!-- Botones para enviar -->
-                <div class=" col-span-full mt-4 flex justify-end items-center space-x-5">
-                    <!-- Mensaje al crear -->
-                    <ActionMessage :on="form.recentlySuccessful" >
-                        {{ props.update ? ' !Actualizado' :  '! Registrado'}}
-                    </ActionMessage>
-                    <PrimaryButton>
-                        {{ props.update ? 'Actualizar' :  'Registrar'}}
-                    </PrimaryButton>
-
-                </div>
 
             </form>
-
-            <div class="mt-5">
-                <FloatShowCli
-                    :clients="props.clients"/>
-
-            </div>
 
         </div>
     </AppLayout>
