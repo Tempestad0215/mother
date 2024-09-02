@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
 import InputLabel from '@/Components/InputLabel.vue';
-import { PropType } from 'vue';
 import { successHttp } from '@/Global/Alert';
 import AppLayout from '@layout/AppLayout.vue';
 import TextInput from '@components/TextInput.vue';
@@ -13,12 +12,9 @@ import {supplierI, supplierPaginationI} from "@/Interfaces/Supplier";
 import Pagination from "@components/Pagination.vue";
 import Swal from "sweetalert2";
 
-const props = defineProps({
-    suppliers:{
-        type: Object as PropType<supplierPaginationI>
-    }
-
-});
+const props = defineProps<{
+    suppliers: supplierPaginationI
+}>();
 
 
 
@@ -240,10 +236,10 @@ const search = () => {
                         />
                 </form>
 
-                <table class=" text-left w-full table-auto">
-                    <thead>
+                <table class=" mt-5 text-left w-full table-auto">
+                    <thead class="border-b-2 border-gray-800">
                         <tr>
-                            <th>ID</th>
+                            <th>Code</th>
                             <th>Empresa</th>
                             <th>Representante</th>
                             <th>telefono</th>
@@ -255,7 +251,7 @@ const search = () => {
                         <tr
                             class="odd:bg-gray-400"
                             v-for="(item,index) in props.suppliers?.data" :key="index">
-                            <td>{{item.id}}</td>
+                            <td>{{item.code}}</td>
                             <td>{{item.company_name}}</td>
                             <td>{{item.contact ? item.contact : "N/A" }}</td>
                             <td>{{item.phone ? item.phone : 'N/A'}}</td>

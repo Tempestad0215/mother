@@ -1,7 +1,8 @@
 export interface categoryI{
-    id: number
-    name: string
-    description: string
+    id: number;
+    code: string;
+    name: string;
+    description: string | null;
 }
 
 

@@ -72,7 +72,7 @@ class Supplier extends Model
         $nextID = $last ? $last->id + 1 : 1;
 
         // Devolver los datos
-        $code = config('setting.supCode');
+        $code = config('Setting.supCode');
 
         // craer el codigp
         return $code.str_pad($nextID, 6,'0', STR_PAD_LEFT);

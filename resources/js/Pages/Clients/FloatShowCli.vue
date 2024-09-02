@@ -17,7 +17,7 @@ const page = usePage();
  * Datos del back end
  */
 const props = defineProps<{
-    clients: clientI[];
+    clients: clientI;
 }>();
 
 /**
@@ -110,8 +110,9 @@ const destroy = (id:Number) => {
         <table class=" table-auto w-full">
             <thead class=" border-b-2 text-left">
                 <tr class=" border-b-2 border-gray-800">
-                    <th>Id</th>
+                    <th>Code</th>
                     <th>Nombre</th>
+                    <th>Ced./Rnc./Pas.</th>
                     <th>Correo</th>
                     <th>Telefono</th>
                     <th>Atc</th>
@@ -125,10 +126,13 @@ const destroy = (id:Number) => {
                     class=" border-b odd:bg-gray-400"
                     v-for="(item, index) in props.clients?.data" :key="index" >
                     <td class=" px-2">
-                        {{ item.id }}
+                        {{ item.code }}
                     </td>
                     <td class=" px-2">
                         {{item.name}}
+                    </td>
+                    <td class=" px-2">
+                        {{item.personal_id}}
                     </td>
                     <td class=" px-2">
                         {{item.email ? item.email : 'N/A'}}
@@ -139,17 +143,17 @@ const destroy = (id:Number) => {
                     <!-- Botones -->
                     <td class="text-xl space-x-5 w-[100px]">
                         <i
-                            v-if="page.component !== 'Clients/Create'"
+                            v-if="page.component !== 'Clients/Show'"
                             title="Seleccionar"
                             @click="emit('getData',item)"
                             class="fa-solid fa-circle-check"></i>
                         <i
-                            v-if="page.component === 'Clients/Create'"
+                            v-if="page.component === 'Clients/Show'"
                             title="Editar"
                             @click="edit(item.id)"
                             class=" icon-efect fa-solid fa-pen-to-square"></i>
                         <i
-                            v-if="page.component === 'Clients/Create'"
+                            v-if="page.component === 'Clients/Show'"
                             title="Eliminar"
                             @click="destroy(item.id)"
                             class=" icon-efect fa-solid fa-trash"></i>

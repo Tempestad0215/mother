@@ -8,6 +8,9 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
+
+
+
 class SettingHelper
 {
 
@@ -32,6 +35,7 @@ class SettingHelper
                     'website' => $request->website,
                     'company_id' => $request->company_id,
                     'tax' => $request->tax,
+                    'unit' => $request->unit,
                     'fiscal_year' => $request->fiscal_year,
                     'logo' => $imageName
                 ]);
@@ -45,6 +49,7 @@ class SettingHelper
                     'website' => $request->website,
                     'company_id' => $request->company_id,
                     'tax' => $request->tax,
+                    'unit' => $request->unit,
                     'fiscal_year' => $request->fiscal_year,
                     'logo' => $imageName
                 ]);

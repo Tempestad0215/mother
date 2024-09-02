@@ -11,17 +11,38 @@ export interface idI {
 }
 
 export interface taxeI{
-    value: number
+    amount: number
     name: string
 }
 
+
+interface appSetting {
+    id: number;
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+    logo: string;
+    website: string;
+    company_id: string;
+    tax: number[];
+    unit: string[];
+    fiscal_year: string;
+    status: boolean;
+    created_at: string;
+    updated_at: string;
+
+}
+
 export interface pageI {
+
     component: string
     // scrollRegion: any[]
     url: string
     version: string
     // rememberState: any
     props: {
+        appSetting: appSetting,
         auth: {
             user: {
                 id: number

@@ -2,7 +2,7 @@
 
 use App\Helpers\UserHelper;
 use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\ClientsController;
+use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductInController;
 use App\Http\Controllers\ReportController;
@@ -83,7 +83,7 @@ Route::middleware([
     });
 
     // Cliente
-    Route::controller(ClientsController::class)
+    Route::controller(ClientController::class)
     ->prefix('client')
     ->name('client.')
     ->group(function () {

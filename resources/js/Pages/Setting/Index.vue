@@ -17,7 +17,7 @@ import {successHttp} from "@/Global/Alert";
  *
  */
 const props = defineProps<{
-    setting: settingsDataI
+    setting?: settingsDataI
 }>()
 
 
@@ -27,6 +27,8 @@ const props = defineProps<{
  *
  */
 onMounted(() =>{
+
+    //Verificar si existe correctamente
     if(props.setting)
     {
         form.name = props.setting.name;
@@ -35,8 +37,9 @@ onMounted(() =>{
         form.address = props.setting.address;
         form.website = props.setting.website;
         form.company_id = props.setting.company_id;
-        form.tax = props.setting.tax !== null ? props.setting.tax : [];
-        imgName.value = props.setting.logo;
+        form.tax = props.setting.tax.length > 0 ? props.setting.tax : [];
+        form.unit = props.setting.unit.length > 0 ? props.setting.unit : [];
+        imgName.value = props.setting.logo ? props.setting.logo : 'logoexample.png';
     }
 });
 
@@ -44,8 +47,12 @@ onMounted(() =>{
  * Al momento de actualizar
  */
 onUpdated(() =>{
-    //Actualizar la imagen registrad
-    imgName.value = props.setting.logo;
+    if(props.setting.logo)
+    {
+        //Actualizar la imagen registrad
+        imgName.value = props.setting.logo;
+    }
+
 })
 
 
@@ -61,8 +68,11 @@ const form = useForm({
     address:"",
     website:"",
     company_id:"",
+    taxName:"",
     taxValue:"",
     tax: [],
+    unitValue:"",
+    unit:[],
     is_branch: false,
     fiscal_year: "",
     logo:"",
@@ -110,9 +120,12 @@ const addTax = () => {
         //Limpiar los errores
         form.clearErrors('tax');
         // Agregar los datos de impuesto
-        form.tax.push(<number>form.taxValue);
+        form.tax.push({
+            name: form.taxName.toUpperCase(),
+            amount: <number>form.taxValue
+        });
         //Limpiar el campo para agregar otro
-        form.reset('taxValue');
+        form.reset('taxValue','taxName');
     }
 
 }
@@ -136,11 +149,63 @@ const removeTax = (index:number) => {
 
 }
 
+//Agregar Unidad a la lista
+const addUnit = () => {
+    //Verificar si existe
+    let exists = form.tax.find((el) => el == form.taxValue);
+
+    if (form.unitValue === "")
+    {
+        form.setError('unit','EL Campo Unidad No Puede Estar En Blanco ');
+    }
+    else if (exists)
+    {
+        //Poner el error
+        form.setError('unit','El Campo Unidad No Se puede Repetir');
+        return false;
+
+    }else if(form.unit.length > 10)
+    {
+        form.setError('unit','Ha Alcanzado la Cantidad Maxima de Impuesto');
+    }
+    else{
+        //Limpiar los errores
+        form.clearErrors('unit');
+        // Agregar los datos de impuesto
+        form.unit.push(form.unitValue.toUpperCase());
+        //Limpiar el campo para agregar otro
+        form.reset('unitValue');
+    }
+
+}
+
+
+//Eliminar los Itbis
+const removeUnit = (index:number) => {
+    //Eliminar los datos seleccionado
+    Swal.fire({
+        title: "Desea eliminar esta Unidad?",
+        text: "Los Cambios Realizados Son Irreversible!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Si, Eliminar!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            //Eliminar los datos
+            form.unit.splice(index, 1);
+
+        }
+    });
+
+}
+
+
 </script>
 
 <template>
     <Head title="Ajustes" />
     <AppLayout>
+<!--Cabecera de la pagina-->
         <template #header>
             <LinkHeader
                 :active="true"
@@ -154,6 +219,7 @@ const removeTax = (index:number) => {
             class="max-w-2/4 bg-gray-200 rounded-md p-5"
             action="">
 
+<!--Muestra del logo-->
             <div class="">
                 <img
                     class="rounded-full mx-auto"
@@ -162,21 +228,25 @@ const removeTax = (index:number) => {
                     width="150">
             </div>
 
+<!-- Informaicon de la emprea-->
             <fieldset class=" mt-5 grid grid-cols-3 gap-3 border-2 border-gray-400 p-5 rounded-md">
                 <legend>
                     Datos de la Empresa
                 </legend>
+<!-- Nombre-->
                 <div>
                     <InputLabel
                         for="company"
                         value="Nombre *"/>
                     <TextInput
+                        name="name"
                         v-model="form.name"
                         required
                         maxLength="75"
                         class="w-full"/>
                     <InputError :message="form.errors.name"/>
                 </div>
+<!--Correo-->
                 <div>
                     <InputLabel
                         for="email"
@@ -189,11 +259,13 @@ const removeTax = (index:number) => {
                         type="email" />
                     <InputError :message="form.errors.email"/>
                 </div>
+<!--Telefono-->
                 <div>
                     <InputLabel
                         for="phone"
                         value="Teléfono *"/>
                     <TextInput
+                        name="phone"
                         v-model="form.phone"
                         required
                         maxLength="30"
@@ -201,28 +273,33 @@ const removeTax = (index:number) => {
                         type="text" />
                     <InputError :message="form.errors.phone"/>
                 </div>
+<!--Direccion-->
                 <div>
                     <InputLabel
                         for="address"
                         value="Direccion"/>
                     <TextInput
+                        name="address"
                         v-model="form.address"
                         maxLength="255"
                         class="w-full"
                         type="text" />
                     <InputError :message="form.errors.address"/>
                 </div>
+<!--Pagina Web-->
                 <div>
                     <InputLabel
                         for="website"
                         value="Pagina Web"/>
                     <TextInput
+                        name="website"
                         v-model="form.website"
                         maxLength="255"
                         class="w-full"
                         type="text" />
                     <InputError :message="form.errors.website"/>
                 </div>
+<!--Rnc-->
                 <div>
                     <InputLabel
                         for="id"
@@ -235,14 +312,22 @@ const removeTax = (index:number) => {
                         type="text" />
                     <InputError :message="form.errors.company_id"/>
                 </div>
+<!--Itbis-->
                 <div>
                     <InputLabel
                         for="tax"
                         value="Itbis"/>
                     <div class="relative">
                         <TextInput
-                            class="w-full pr-10"
+                            type="text"
+                            name="name"
+                            v-model="form.taxName"
+                            placeholder="Nombre"
+                            class="inline w-[40%] "/>
+                        <TextInput
+                            class=" inline w-[60%] pr-10"
                             name="tax"
+                            placeholder="Valor"
                             v-model="form.taxValue"
                             type="number" />
                         <i
@@ -256,7 +341,7 @@ const removeTax = (index:number) => {
                         v-for="(item, index) in form.tax" :key="item">
                         <p class=" border-b-2 border-gray-400 rounded-md px-5">
                             <span>
-                                {{item}}%
+                                 {{item.name}} - {{item.amount}}%
                             </span>
                             <span class="float-right">
                                 <i
@@ -267,7 +352,42 @@ const removeTax = (index:number) => {
                     </div>
                 </div>
 
+<!--Unidades de medida-->
+                <div>
+                    <InputLabel
+                        for="unit"
+                        value="Unidades"/>
+                    <div class="relative">
+                        <TextInput
+                            :autocomplete="false"
+                            class="w-full pr-10"
+                            name="unit"
+                            v-model="form.unitValue"
+                            type="text" />
+                        <i
+                            @click="addUnit"
+                            class=" absolute inset-y-0 right-0 p-3 bg-gray-300 rounded-tr-md rounded-br-md flex items-center fa-solid fa-circle-plus"></i>
+                    </div>
+                    <InputError :message="form.errors.unit"/>
+                    <div
+                        class=""
+                        v-if="form.unit.length > 0"
+                        v-for="(item, index) in form.unit" :key="item">
+                        <p class=" border-b-2 border-gray-400 rounded-md px-5">
+                            <span>
+                                {{item}}
+                            </span>
+                            <span class="float-right">
+                                <i
+                                    @click="removeUnit(index)"
+                                    class=" text-red-500 fa-solid fa-circle-xmark"></i>
+                            </span>
+                        </p>
+                    </div>
+                </div>
 
+
+<!--Tiempo fiscal-->
                 <div>
                     <InputLabel
                         for="fiscal_year"
@@ -280,7 +400,7 @@ const removeTax = (index:number) => {
                     <InputError :message="form.errors.fiscal_year"/>
                 </div>
 
-
+<!--Logo-->
                 <div>
                     <InputLabel for="logo" value="Logo"/>
                     <TextInput
@@ -290,13 +410,10 @@ const removeTax = (index:number) => {
                         type="file"/>
                     <InputError/>
                 </div>
-
-
-
-
             </fieldset>
 
 
+<!--Botones-->
             <div class="text-right mt-5">
                 <PrimaryButton>
                     Registrar

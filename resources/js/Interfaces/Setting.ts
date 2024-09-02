@@ -16,10 +16,16 @@ export  interface settingsDataI {
     logo: string;
     website: string;
     company_id: string | null;
-    tax: Array<number>;
+    tax: taxI[];
+    unit: string[];
     fiscal_year: string | null;
     status: boolean;
     created_at: string;
     updated_at: string;
 
+}
+
+interface taxI {
+    name: string;
+    value: number;
 }

@@ -21,7 +21,7 @@ const showOption = ref<boolean>(false);
 const checkRole = computed(()=>{
    let role:number = page.props.auth.user.role;
 
-   if(role === 3)
+   if(role !== 'user')
    {
        return true
    }

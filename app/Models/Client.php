@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
-use app\enums\ClientTypeEnum;
+use App\Enums\ClientTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+
 
 
 /**
@@ -28,16 +30,18 @@ use Illuminate\Database\Eloquent\Model;
  * @property float $advance_available
  */
 
-class Clients extends Model
+class Client extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'name',
+        'personal_id',
         'phone',
         'email',
-        'addres',
+        'address',
         'status',
+        'type'
     ];
 
 
@@ -45,6 +49,16 @@ class Clients extends Model
         'type' => ClientTypeEnum::class,
         'status'=> 'boolean',
     ];
+
+
+    /**
+     * Relaciones
+     */
+    public function comment():MorphOne
+    {
+        return $this->morphOne(Comment::class, 'commentable');
+    }
+
 
 
     /**
@@ -77,7 +91,7 @@ class Clients extends Model
         $nextID = $last ? $last->id + 1 : 1;
 
         // Devolver los datos
-        $code = config('setting.cliCode');
+        $code = config('Setting.cliCode');
 
         // craer el codigp
         return $code.str_pad($nextID, 6,'0', STR_PAD_LEFT);

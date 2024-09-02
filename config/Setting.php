@@ -24,6 +24,9 @@ return  [
     'transCode' => 'TRA',
     'cliCode' => 'CLI',
     'catCode' => 'CAT',
-    'supCode' => 'SUP'
+    'supCode' => 'SUP',
+    'creCode' => 'CRE',
+    'advCode' =>  'ADV',
+    'coCode' => 'COM',
 
 ];

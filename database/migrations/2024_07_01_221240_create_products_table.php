@@ -33,6 +33,8 @@ return new class extends Migration
             $table->float('tax_rate')->default(0);
             $table->foreignIdFor(Category::class,'category_id');
             $table->foreignIdFor(Supplier::class, 'supplier_id');
+            $table->enum('type',['articulo','servicio'])->default('articulo');
+            $table->boolean('inventoried')->default(true);
             $table->boolean('status')->default(false);
             $table->timestamps();
         });

@@ -1,10 +1,10 @@
 <?php
 
 
-namespace app\enums;
+namespace App\Enums;
 
-Enum ClientTypeEnum:int {
-    CASE CONTADO = 1;
-    CASE CREDITO = 2;
-    CASE ANTICIPO = 3;
+Enum ClientTypeEnum:string {
+    CASE CONTADO = 'contado';
+    CASE CREDITO = 'credito';
+    CASE ANTICIPO = 'anticipo';
 }

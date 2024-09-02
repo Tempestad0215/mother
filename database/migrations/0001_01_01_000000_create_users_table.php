@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->boolean('status')->default(false);
-            $table->enum('role',[1,2,3])->default(1);
+            $table->enum('role',['user','supervisor','admin'])->default('user');
             $table->foreignId('current_team_id')->nullable();
             $table->string('profile_photo_path', 2048)->nullable();
             $table->timestamps();

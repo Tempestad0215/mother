@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('email',150)->nullable()->unique();
             $table->string('address',255)->nullable();
             $table->boolean('status')->default(false);
-            $table->enum('type',[1,2,3])->default(1);
+            $table->enum('type',['contado','credito','anticipo'])->default('contado');
 
             $table->timestamps();
         });

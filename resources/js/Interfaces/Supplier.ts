@@ -1,7 +1,8 @@
-import {categoryI} from "@/Interfaces/Categories";
+
 
 
 export interface supplierI {
+    code: string;
     company_name: string;
     contact: string | null;
     created_at: string;

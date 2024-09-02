@@ -8,27 +8,36 @@ import { proSupResI } from '@/Interfaces/Product';
 import { supplierI } from '@/Interfaces/Supplier';
 import InputSelect from '@components/InputSelect.vue';
 import SecondaryButton from '@components/SecondaryButton.vue';
-import { useForm } from '@inertiajs/vue3';
+import {useForm, usePage} from '@inertiajs/vue3';
 import axios from 'axios';
-import { onMounted, PropType, ref } from 'vue';
-import {taxeI} from "@/Interfaces/Global";
+import { onMounted, ref } from 'vue';
+import {pageI, taxeI} from "@/Interfaces/Global";
 import {categoryI} from "@/Interfaces/Categories";
 
 
-const props = defineProps({
-    productEdit: {
-        type: Object as PropType<proSupResI>,
-    },
-    update: {
-        type: Boolean
-    }
-});
+/**
+ * Info general
+ */
+const page:pageI = usePage();
+
+/**
+ * Propiedades de la ventana
+ */
+const props = defineProps<{
+    productEdit? : proSupResI,
+    update? : boolean
+}>();
 
 
+/**
+ * Emitir eventos
+ */
 const emit = defineEmits(['showSupplier']);
 
 
-// Datos del formulario
+/**
+ * Datos del formulario
+ */
 const form = useForm({
     id: 0,
     name: "",
@@ -49,29 +58,24 @@ const form = useForm({
 
 });
 
-// Cons datos de la ventana
+/**
+ *Datos de la ventana
+ */
 const dataSelect = ref<supplierI[]>([]);
-const taxes = ref<taxeI[]>([
-    {
-        value: 0,
-        name: 'Ex.'
-    },
-    {
-        value: 0.16,
-        name: '16%'
-    },
-    {
-        value: 0.18,
-        name: '18%'
-    },
-]);
+const taxes = ref<taxeI[]>(page.props.appSetting.tax);
 
 
 const showCategory = ref<boolean>(false);
-const dataUnit = ref(["UNIDAD","CAJA","KG","LIBRA","LITRO","ONZA","GALON"]);
+const dataUnit = ref(page.props.appSetting.unit);
 const categoryData = ref<categoryI[]>([]);
 
+
+/**
+ * Al momento de cargar
+ */
 onMounted(()=>{
+
+
     // actualizar los suplidores
     getSupplier();
     // Pasar los datos a editar
@@ -91,8 +95,9 @@ onMounted(()=>{
 })
 
 
-
-// Funciones
+/**
+ * Funciones
+ */
 const submit = () => {
 
     if(props.update)
@@ -158,13 +163,18 @@ const selectCategory = (item:categoryI) => {
 
 
 <template>
+<!--Formulario-->
     <div  >
         <form
             @submit.prevent="submit" >
+
+<!--Titulo-->
             <h3 class="text-2xl font-bold text-center">
                 Registro de producto
             </h3>
 
+
+<!--Informacion General-->
             <div class="">
                 <fieldset class=" grid grid-cols-4 gap-3 field-box">
                     <legend>
@@ -290,9 +300,45 @@ const selectCategory = (item:categoryI) => {
                             />
                             <InputError :message="form.errors.bar_code"/>
                         </div>
+
+
+<!--Opciones de producto, si sera producto o servicio-->
+                        <div class=" flex justify-between">
+                            <div>
+                                <input
+                                    class="peer hidden"
+                                    type="radio"
+                                    v-model="form.type"
+                                    :value="1"
+                                    name="cli_cash"
+                                    id="cli_cash">
+                                <label
+                                    class=" border-2 px-2 py-1 rounded-md border-gray-400 peer-checked:bg-gray-800 peer-checked:text-white duration-300 "
+                                    for="cli_cash">
+                                    Contado
+                                </label>
+
+                            </div>
+                            <div class="">
+                                <input
+                                    class="peer hidden"
+                                    v-model="form.type"
+                                    :value="2"
+                                    type="radio"
+                                    name="cli_credit"
+                                    id="cli_credit">
+                                <label
+                                    class=" border-2 px-2 py-1 rounded-md border-gray-400 peer-checked:bg-gray-800 peer-checked:text-white duration-300 "
+                                    for="cli_credit">
+                                    Credito
+                                </label>
+                            </div>
+                            <InputError :message="form.errors.type"/>
+                        </div>
+
                     </fieldset>
 
-
+<!--Detalle del producto-->
                     <fieldset class=" grid grid-cols-2 gap-3 field-box">
                         <legend>
                             Datalles
@@ -307,10 +353,10 @@ const selectCategory = (item:categoryI) => {
                                     required
                                     name="tax_rate"
                                     v-model="form.tax_rate">
-                                    <option value="">--- Seleccione El Itbis  ---</option>
+                                    <option value="" selected>--- Seleccione El Itbis  ---</option>
                                     <option
                                         v-for="item in taxes"
-                                        :value="item.value">
+                                        :value="item.amount">
                                         {{item.name}}
                                     </option>
                                 </select>
