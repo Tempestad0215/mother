@@ -2,9 +2,11 @@
 
 namespace App\Enums;
 
-Enum ProductTransType:int {
-    CASE  ENTRADA = 1;
-    CASE  SALIDA = 2;
-    CASE  INTERNO = 3;
-    CASE  OTRO = 4;
+Enum ProductTransType:string {
+    CASE  ENTRADA = 'entrada';
+    CASE VENTAS = 'ventas';
+    CASE  SALIDA = 'salida';
+    CASE  INTERNO = 'interno';
+    CASE  AJUSTE = 'ajuste';
+    CASE  OTROS = 'otros';
 }

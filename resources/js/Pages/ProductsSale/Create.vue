@@ -6,9 +6,9 @@ import TextInput from "@components/TextInput.vue";
 import SecondaryButton from "@components/SecondaryButton.vue";
 import FloatBox from "@components/FloatBox.vue";
 import FloatShowPro from "@/Pages/Products/FloatShowPro.vue";
-import { PropType, ref} from "vue";
-import {productDataI, productI, productSaleI} from "@/Interfaces/Product";
-import {formatNumber, getMoney} from "@/Global/Helpers";
+import {ref} from "vue";
+import {productDataI, productI} from "@/Interfaces/Product";
+import {getMoney} from "@/Global/Helpers";
 import LinkHeader from "@components/LinkHeader.vue";
 import Swal from "sweetalert2";
 import InputError from "@components/InputError.vue";
@@ -18,30 +18,18 @@ import PrimaryButton from "@components/PrimaryButton.vue";
 import {successHttp} from "@/Global/Alert";
 import axios from "axios";
 import SaleOpenShow from "@/Pages/ProductsSale/SaleOpenShow.vue";
-import {saleDataI, saleDataPaginationI} from "@/Interfaces/Sale";
+import {saleDataI, saleDataPaginationI, saleInfoI} from "@/Interfaces/Sale";
 
 
 /**
  * Datos del back end
  */
-const props = defineProps({
-    products: {
-        type: Object as PropType<productI>,
-        required: true
-    },
-    clients: {
-        type: Object as PropType<clientI>,
-        required: true
-    },
-    pdf: {
-        type: String,
-        default: ""
-    },
-    saleOpen:{
-        type: Object as PropType<saleDataPaginationI>,
-        required: true
-    }
-});
+const props = defineProps<{
+    products: productI,
+    clients: clientI,
+    pdf? : string,
+    saleOpen : saleDataPaginationI
+}>();
 
 
 /**
@@ -50,8 +38,6 @@ const props = defineProps({
 const showClient = ref<boolean>(false);
 const showProduct = ref(false);
 const showSaleOpen = ref<boolean>(false);
-const productCheck = ref<productDataI[]>([]);
-
 
 /**
  * Formulario
@@ -61,18 +47,17 @@ const form = useForm({
     code_product:"",
     client_name:"",
     client_id: 0,
-    info:[] as productSaleI[],
+    info:[] as saleInfoI[],
     tax: 0.00,
-    discount: 0.00,
+    discount_amount: 0.00,
     amount: 0.00,
     sub_total: 0.00,
     comment:"",
     close_table: false,
     received: 0,
-    returned: 0
-
+    returned: 0,
+    general:"",
 });
-
 
 /**
  * Funciones
@@ -95,22 +80,22 @@ const getData = (item:productDataI) => {
         showProduct.value = false;
 
     }else{
-        let productTax:number = item.price * item.tax_rate;
-
 
         //Pasar los datos al formulario
         form.info.push({
             id: item.id,
             name: item.name,
             quantity: 1,
-            price: item.price - productTax,
+            cost: item.cost,
+            price: item.product_no_tax,
             stock: 0.00,
             amount: 0.00,
-            tax: productTax,
-            total_tax: 0.00,
-            stockTotal: item.stock,
+            discount: item.discount,
+            discount_amount: 0.00,
+            tax: item.tax,
+            tax_amount: item.tax,
             tax_rate: item.tax_rate,
-            product_tax: productTax
+            product_tax: item.price,
         });
 
         //Cerrar la ventana
@@ -162,11 +147,17 @@ const deleteItem =(name:string , index:number) => {
 const totalAmount = (index:number) => {
 
     // Sacar los datos del produtos
-    let info:productSaleI = form.info[index];
+    let info:saleInfoI = form.info[index];
+    let discountRate = info.discount / 100;
+
+    console.log(info.tax);
+    console.log(info.quantity);
 
     //Pasar los datos al formulario
-    info.total_tax = parseFloat((info.tax  * info.quantity).toFixed(2).toString());
-    info.amount = parseFloat((info.price * info.quantity).toFixed(2).toString());
+    info.tax_amount = parseFloat ((info.tax  * info.quantity).toFixed(2));
+    info.amount = parseFloat ((info.price * info.quantity).toFixed(2));
+    //Descuento datos
+    info.discount_amount = parseFloat((info.amount * discountRate).toFixed(2));
 
     //Calcular los totales
     totalSale();
@@ -178,21 +169,28 @@ const totalAmount = (index:number) => {
  */
 // Calculo de los datos finales
 const totalSale = () => {
+
+    //Tomar los datos
     let totalTax:number = 0.00;
     let subTotal:number = 0.00;
+    let discount:number = 0.00;
 
     //Recorrer el array para realizar el calcuclo
     form.info.forEach((el) =>{
-
-        totalTax += formatNumber(el.total_tax);
-        subTotal += formatNumber(el.amount);
+        totalTax += el.tax_amount;
+        subTotal += el.amount;
+        discount += el.discount_amount
     });
 
 
-    //Calcular el total de todo
-    form.tax = totalTax;
-    form.sub_total = subTotal;
-    form.amount = totalTax + subTotal;
+    //Calcular el total
+    form.tax = parseFloat((totalTax).toFixed(2));
+    form.sub_total = parseFloat((subTotal).toFixed(2)) ;
+    form.discount_amount = parseFloat(discount.toFixed(2));
+    form.amount = parseFloat(((totalTax + subTotal) - discount).toFixed(2));
+
+    //calcular el retorno
+    returned();
 
 }
 
@@ -202,6 +200,7 @@ const totalSale = () => {
  */
 //Seleccionar el cliente
 const selectClient = (item:clientDataI) =>  {
+    //Pasar los datos al formulario
     form.client_name = item.name;
     form.client_id = item.id;
     showClient.value = false;
@@ -223,14 +222,15 @@ const submit = () => {
                 form.reset();
                 // readPDF(props.pdf);
                 //Actualizar la ventana
-
-
+            },
+            onError:()=>{
+              setTimeout(()=>{
+                  form.clearErrors();
+              },5000)
             },
             only: ['products','clients','saleOpen'],
         });
     }
-
-
 }
 
 
@@ -267,34 +267,28 @@ const getSaleOpen = (item:saleDataI) => {
     form.info = [];
     form.id = item.id;
     //Verificar Pasar los datos a la variable
-    item.info.map((el,index) => {
-        //Busca el product coincidente
-        let propsData = props.products?.data.find((p) => p.id === el.id);
-
-        //Pasar los datos al producto
-        if(propsData)
-        {
-            productCheck.value.push(propsData);
-        }
+    item.info.map((el) => {
 
         //colocar la informacion en la lista
         form.info.push({
             id: el.id ? el.id : 0,
             name: el.name,
             quantity: el.quantity,
+            cost: el.product_tax,
             price: el.price,
-            stock: productCheck.value[index].stock,
+            stock: el.quantity,
             amount: el.amount,
             tax: el.tax,
-            total_tax: el.total_tax,
+            tax_amount: el.tax_amount,
+            discount: el.discount,
+            discount_amount: el.discount_amount,
             tax_rate: el.tax_rate,
-            stockTotal: 0,
-            product_tax: el.price,
+            product_tax: el.product_tax,
         });
 
     });
 
-    //Calcular el total de venta
+    //calcular el total de las ventas
     totalSale();
 
 
@@ -427,9 +421,9 @@ const returned = () => {
                                         for="open">
                                         Abierta
                                     </label>
-
-
                                 </div>
+
+
                                 <div class="ml-5">
                                     <input
                                         class="peer hidden"
@@ -446,13 +440,6 @@ const returned = () => {
 
                                 </div>
                             </fieldset>
-                            <div class="flex">
-
-
-
-                            </div>
-
-
 
                         </div>
 
@@ -468,6 +455,7 @@ const returned = () => {
                                         <th>Cantidad</th>
                                         <th>Precio sin Itbis</th>
                                         <th>Itbis</th>
+                                        <th>Desc.</th>
                                         <th>Importe</th>
                                         <th>Atc</th>
                                     </tr>
@@ -492,12 +480,20 @@ const returned = () => {
                                         </td>
                                         <td class=" w-[150px]">
                                             <span>
-                                                {{ getMoney(item.total_tax)}}
+                                                {{ getMoney(item.tax_amount)}}
                                             </span>
+                                        </td>
+                                        <td
+                                            class=" w-[150px]">
+                                            <input
+                                                class=" border-none bg-transparent rounded-md h-8 bg-white w-4/5"
+                                                @blur="totalAmount(index)"
+                                                v-model="item.discount"
+                                                type="number">
                                         </td>
                                         <td class=" w-[150px]">
                                             <span>
-                                                {{ getMoney(item.amount)}}
+                                                {{ getMoney(item.amount) }}
                                             </span>
                                         </td>
                                         <td
@@ -545,19 +541,25 @@ const returned = () => {
                                 </div>
                                 <div class="">
                                     <div>
-                                        <h5 class="inline font-bold">Itbis.............: </h5>
+                                        <h5 class="inline font-bold">Itbis...................: </h5>
                                         <span class="">
                                             {{getMoney(form.tax)}}
                                         </span>
                                     </div>
                                     <div>
-                                        <h5 class="inline font-bold">Sub Total...: </h5>
+                                        <h5 class="inline font-bold">Sub Total.........: </h5>
                                         <span>
                                             {{getMoney(form.sub_total)}}
                                         </span>
                                     </div>
                                     <div>
-                                        <h5 class="inline font-bold">Total............: </h5>
+                                        <h5 class="inline font-bold">Descuento......: </h5>
+                                        <span>
+                                            {{getMoney(form.discount_amount)}}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <h5 class="inline font-bold">Total.................: </h5>
                                         <span>
                                             {{getMoney(form.amount)}}
                                         </span>
@@ -619,7 +621,7 @@ const returned = () => {
                     @close="showClient = false"
                     v-if="showClient">
                     <FloatShowCli
-                        class=" bg-amber-50 w-4/5 rounded-md px-10 py-5"
+                        class=" w-4/5 rounded-md px-10 py-5"
                         @get-data="selectClient"
                         :clients="props.clients"/>
 
@@ -634,7 +636,7 @@ const returned = () => {
                     @close="showProduct = false"
                     v-if="showProduct">
                     <FloatShowPro
-                        class=" bg-amber-50 w-4/5 rounded-md px-10 py-5"
+                        class=" bg-gray-200 w-4/5 rounded-md px-10 py-5"
                         @select="getData"
                         :products="props.products"/>
                 </FloatBox>

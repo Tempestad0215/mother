@@ -76,6 +76,7 @@ const form = useForm({
     is_branch: false,
     fiscal_year: "",
     logo:"",
+    cost: true
 });
 
 
@@ -400,6 +401,37 @@ const removeUnit = (index:number) => {
                     <InputError :message="form.errors.fiscal_year"/>
                 </div>
 
+<!--               Proteger costo -->
+                <div class="flex flex-col">
+                    <InputLabel value="Proteger costo" />
+                    <div class="flex">
+                        <div >
+                            <input
+                                :value="true"
+                                v-model="form.cost"
+                                type="radio"
+                                name="yes_cost"
+                                id="yes_cost">
+                            <InputLabel
+                                for="yes_cost"
+                                value="Si" />
+                        </div>
+                        <div class="ml-5">
+                            <input
+                                :value="false"
+                                v-model="form.cost"
+                                type="radio"
+                                name="no_cost"
+                                id="no_cost">
+                            <InputLabel
+                                for="no_cost"
+                                value="No" />
+                        </div>
+                        <InputError :message="form.errors.cost"/>
+
+                    </div>
+
+                </div>
 <!--Logo-->
                 <div>
                     <InputLabel for="logo" value="Logo"/>

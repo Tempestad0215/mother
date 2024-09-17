@@ -31,6 +31,7 @@ const formSearch = useForm({
 
 
 const submit = () => {
+    //si es para actualizar
     if(form.update)
     {
         form.patch(route('category.update',{category: form.id}),{

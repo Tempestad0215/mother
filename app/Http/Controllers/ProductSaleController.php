@@ -2,24 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\ProductTypeEnum;
+use App\Enums\ProductTransType;
 use App\Helpers\ClientHelper;
-use App\Helpers\FacturaVentaA;
-use App\Helpers\FacturaVentaB;
 use App\Helpers\SaleHelper;
+use App\Helpers\TransHelper;
 use App\Http\Requests\StoreProductSaleRequest;
 use App\Models\Product;
 use App\Models\ProTrans;
 use App\Models\Sale;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class ProductSaleController extends Controller
 {
-    private $clientHelper;
+    private ClientHelper $clientHelper;
 
     /**
      * constructor de la para llamar el helpers
@@ -31,7 +32,8 @@ class ProductSaleController extends Controller
 
 
     /**
-     * Crear la ventas de productoss
+     * @param Request $request
+     * @return Response
      */
     public function create(Request $request)
     {
@@ -52,17 +54,14 @@ class ProductSaleController extends Controller
     }
 
 
-    /**
-     * @param StoreProductSaleRequest $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
+
     public function store(StoreProductSaleRequest $request)
     {
 
         //Obtener los datos
-        $products = $this->get($request);
-        $clients = $this->clientHelper->get($request);
-        $saleOpen = $this->getSaleOpen($request);
+//        $products = $this->get($request);
+//        $clients = $this->clientHelper->get($request);
+//        $saleOpen = $this->getSaleOpen($request);
 
         //Calcular la altura
 //        $tall = 200;
@@ -101,8 +100,6 @@ class ProductSaleController extends Controller
 //        // Codificar el pdf a base 64
 //        $pdfString = base64_encode($pdf->Output('S','', true));
 
-
-
         // Evitar que se realicen 2 operaciones al mismo tiempo
         Cache::lock('sale', 3)->get(function () use ($request) {
             //Para asegurar que se cumplan los registro
@@ -118,7 +115,7 @@ class ProductSaleController extends Controller
                     //Actualizar los datos
                     $sale->update($request->validated());
                 }else{
-
+                    // Crear el producto
                     $sale = Sale::create($request->validated());
                 }
 
@@ -126,59 +123,24 @@ class ProductSaleController extends Controller
                 //Recorrer la ventas para descontar los productos
                 foreach ($request->info as $key => $value)
                 {
-                    //Tomar los datos del producto
-                    $product = Product::find($value['id']);
+                    //Instancia
+                    $saleHelper = new SaleHelper();
 
-                    if ($request->close_table) {
-                        // Verifica si el producto estaba previamente reservado
-                        if ( $product->reserved > $value['quantity']  ) {
-                            /**
-                             * si la cantidad es mayor quie la reservas, pues se decuenta los productos
-                             * en la base de datos y se pone en cero la reversa
-                             */
-                            $product->stock -= $value['quantity'];
-                            $product->reserved -= $value['quantity'];  //Ajustar las reservas
-                        } else {
-                            // Si la cantidad aumentó antes de cerrar la mesa, calcula la diferencia.
-                            $difference = $value['quantity'] - $product->reserved;
+                    //Descontar los productos del inventario
+                    $saleHelper->processSale($request->get('close_table', false), $value );
 
-                            // Disminuye el stock en base a la cantidad total, no solo la diferencia.
-                            $product->stock -= $difference;
-
-                            // Elimina las reservas.
-                            $product->reserved = 0;
-                        }
-                        //Gudardar los datos en la base de datios
-                        $product->save();
-                    } else {
-                        // Verifica si la cantidad ha aumentado o disminuido
-                        if ($value['quantity'] > $product->reserved) {
-                            // Si la cantidad ha aumentado, reserva más stock
-                            $difference = $value['quantity'] - $product->reserved;
-                            $product->stock -= $difference;  // Disminuir el stock por la nueva cantidad
-                            $product->reserved += $difference;  // Aumentar la reserva
-                        } elseif ($value['quantity'] < $product->reserved) {
-                            // Si la cantidad ha disminuido, libera parte del stock reservado
-                            $difference = $product->reserved - $value['quantity'];
-                            $product->stock += $difference;  // Aumentar el stock con la diferencia
-                            $product->reserved -= $difference;  // Disminuir la reserva
-                        }
-
-                        $product->save();
-                    }
-
-
-
-                    //Crea la transaction
+                    //Crear la transaccion individual
                     ProTrans::create([
                         'product_id' => $value['id'],
                         'sale_id' => $sale->id,
                         'stock' => $value['quantity'],
                         'price' => $value['price'],
-//                        'discount' => $value['discount'],
                         'tax' => $value['tax'],
+                        'cost' => $value['cost'],
                         'amount' => $value['amount'],
-                        'type' => ProductTypeEnum::SALIDA
+                        'discount' => $value['discount'],
+                        'discount_amount' => $value['discount_amount'],
+                        'type' => ProductTransType::VENTAS
                     ]);
 
                 }
@@ -228,7 +190,7 @@ class ProductSaleController extends Controller
         $search = $request->get('search');
 
         //Pasar los datos a la variable
-        $data = Product::where('status', false)
+        $data = Product::where('status', true)
             ->where('name','LIKE','%'.$search.'%')
             ->where('stock','>',0)
             ->latest()
@@ -249,7 +211,7 @@ class ProductSaleController extends Controller
         $search = $request->get('search');
 
         //Pasar los datos a la variable
-        $data = Product::where('status', 1)
+        $data = Product::where('status', true)
             ->where('name','LIKE','%'.$search.'%')
             ->latest()
             ->limit(10)
@@ -266,7 +228,7 @@ class ProductSaleController extends Controller
 
         //Ralizar la busqueda en la base de datos de Sale cuando el campo close_table sea false
         return Sale::where([
-            ['status','=', false],
+            ['status','=', true],
             ['close_table','=',false]
         ])->where(function ($query) use ($search) {
                $query->where('client_name','LIKE','%'.$search.'%');

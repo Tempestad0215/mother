@@ -6,15 +6,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
+ * @property int $id
  * @property string $name
  * @property null|string $description
  * @property boolean $status
 */
-class Category extends Model
+class Category extends Model implements Auditable
 {
     use HasFactory;
+    use \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
         'name',
@@ -66,7 +69,7 @@ class Category extends Model
         $nextID = $last ? $last->id +1 : 1;
 
         // Devolver los datos
-        $code = config('Setting.catCode');
+        $code = config('appconfig.catCode');
 
         // craer el codigp
         return $code.str_pad($nextID, 6,'0', STR_PAD_LEFT);

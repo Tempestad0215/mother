@@ -40,6 +40,8 @@ const props = defineProps<paginationI>()
         <div class=" text-3xl space-x-5">
             <!-- Anterior -->
             <Link
+                preserve-state
+                preserve-scroll
                 :href="props.prev ? props.prev : '' ">
                 <i
                     class="fa-solid fa-circle-arrow-left"></i>
@@ -48,6 +50,8 @@ const props = defineProps<paginationI>()
 
             <!-- Siguiente -->
             <Link
+                preserve-state
+                preserve-scroll
                 :href="props.next ? props.next : '' ">
                 <i
                     class="fa-solid fa-circle-arrow-right"></i>

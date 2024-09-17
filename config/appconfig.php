@@ -4,7 +4,8 @@ return  [
     /*
      * Fecha de actualziacion
      */
-    'document-update' => 15,
+    'document-update' => 30,
+    'document-delete' => 15,
     'maxUser' => 10,
 
 

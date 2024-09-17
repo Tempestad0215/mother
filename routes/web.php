@@ -49,7 +49,9 @@ Route::middleware([
         ->prefix('setting')
         ->name('setting.')
         ->group(function () {
-       Route::get('/', 'index')->name('index');
+       Route::get('/', 'index')
+           ->middleware('can:is-admin')
+           ->name('index');
        Route::post('/','store')->name('store');
     });
 
@@ -72,7 +74,9 @@ Route::middleware([
         ]);
     })->name('register');
 
-    // Ruta de usuario
+    /**
+     * Usuarios
+     */
     Route::controller(UserController::class)
     ->prefix('user')
     ->name('user.')
@@ -82,7 +86,9 @@ Route::middleware([
         Route::patch('/destroy/{user}', 'destroy')->name('destroy');
     });
 
-    // Cliente
+    /**
+     * Cliente
+     */
     Route::controller(ClientController::class)
     ->prefix('client')
     ->name('client.')
@@ -96,7 +102,9 @@ Route::middleware([
         Route::get('/get','getJson')->name('get.json');
     });
 
-    //Categoria
+    /**
+     * Categoria
+     */
     Route::controller(CategoryController::class)
         ->prefix('category')
         ->name('category.')
@@ -108,7 +116,9 @@ Route::middleware([
             Route::get('/get','getJson')->name('get.json');
         });
 
-    // Suplidoress
+    /**
+     * Suplidores
+     */
     Route::controller(SupplierController::class)
     ->prefix('supplier')
     ->name('supplier.')
@@ -121,7 +131,9 @@ Route::middleware([
 
     });
 
-    // Productos
+    /**
+     * Productos
+     */
     Route::controller(ProductController::class)
     ->prefix('product')
     ->name('product.')
@@ -137,7 +149,9 @@ Route::middleware([
         Route::patch('/delete/{product}','destroy')->name('destroy');
     });
 
-    //Ventas de productos
+    /**
+     * Ventas
+     */
     Route::controller(ProductSaleController::class)
         ->prefix('product-sale')
         ->name('product-sale.')
@@ -148,16 +162,20 @@ Route::middleware([
            Route::get('/show','show')->name('show');
         });
 
-    //Entrada de los productos
+    /**
+     * Entrada de productos
+     */
     Route::controller(ProductInController::class)
         ->prefix('product-in')
         ->name('product-in.')
         ->group(function(){
             Route::get('/','index')->name('create');
+            Route::get('show','show')->name('show');
             Route::patch('/{productIn}','store')->name('store');
             Route::get('/entrance/{productIn}','entrance')->name('entrance');
-            Route::patch('/update/{productIn}','update')->name('update');
-            Route::patch('/destroy/{productIn}','destroy')->name('destroy');
+            Route::get('/entrance/edit/{trans}','edit')->name('edit');
+            Route::patch('/update/{trans}','update')->name('update');
+            Route::patch('/destroy/{trans}','destroy')->name('destroy');
 
         });
 

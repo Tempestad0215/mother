@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('company_name',150);
             $table->string('phone',20)->nullable();
             $table->string('email',150)->nullable()->unique();
-            $table->boolean('status')->default(false);
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

@@ -106,7 +106,7 @@ class SupplierController extends Controller
         $search = $request->get('search');
 
         //tomar los datos limitado a 10
-         $data = Supplier::where('status',false)
+         $data = Supplier::where('status',true)
              ->where('company_name', 'LIKE','%'.$search.'%')
              ->limit(10)
              ->get();
@@ -123,7 +123,7 @@ class SupplierController extends Controller
         $search = $request->get('search');
 
         //Devolver los datos paginado a 15
-        return Supplier::where('status',false)
+        return Supplier::where('status',true)
             ->where(function($query) use ($search){
                 $query->where('company_name', 'LIKE','%'.$search.'%')
                     ->orWhere('phone', 'LIKE','%'.$search.'%')

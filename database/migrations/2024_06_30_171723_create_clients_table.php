@@ -19,9 +19,10 @@ return new class extends Migration
             $table->string('personal_id',50)->nullable( );
             $table->string('email',150)->nullable()->unique();
             $table->string('address',255)->nullable();
-            $table->boolean('status')->default(false);
             $table->enum('type',['contado','credito','anticipo'])->default('contado');
 
+
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

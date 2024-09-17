@@ -1,3 +1,4 @@
+import {linksI, metaI} from "@/Interfaces/Global";
 
 
 export interface productI {
@@ -28,6 +29,8 @@ export interface productDataI {
     price: number;
     discount: number;
     tax_rate: number;
+    tax: number;
+    product_no_tax: number;
     category_id: number;
     supplier_id: number;
     updated_at: string
@@ -51,33 +54,25 @@ export interface productDataFullI {
     updated_at: string
 }
 
-export interface proSupResI{
-    data: productSupllierI
-}
-
-export interface productSupllierI {
-    id: number
-    name: string
-    description: string | null,
-    bar_code: string | null,
-    sku: string | null,
-    brand: string | null,
-    dimensions: string | null
-    unit: string
-    stock: number
-    cost: number
-    supplier: {
-        id: number
-        name: string
-    },
-    category: {
-        id: number,
-        name: string
-    },
-    tax_rate: number
-    weight: string
-    created_at: string
-    updated_at: string
+export interface productSupplierI {
+    id: number;
+    code: number;
+    name: string;
+    description: string | null;
+    bar_code: string | null;
+    sku: string | null;
+    brand: string | null;
+    dimensions: string | null;
+    unit: string;
+    stock: number;
+    cost: number;
+    type: string;
+    supplier_id: number;
+    category_id: number;
+    tax_rate: number;
+    weight: string;
+    created_at: string;
+    updated_at: string;
 }
 
 export  interface  productSaleI{
@@ -87,9 +82,47 @@ export  interface  productSaleI{
     price: number;
     stock: number;
     amount: number;
+    discount: number;
+    discount_amount:number;
     tax: number;
     total_tax: number;
     tax_rate: number;
     product_tax: number;
+    product_no_tax: number;
     stockTotal: number;
+}
+
+
+/**
+ * Producto y trans
+ */
+export interface productTransI {
+    amount: number;
+    code: string;
+    created_at: string;
+    discount: number;
+    discount_amount: number;
+    id: number;
+    cost: number;
+    tax_rate: number;
+    price: number;
+    product_code: string;
+    product_id: number;
+    product_name: string;
+    sale_id: number;
+    status: boolean;
+    stock: number;
+    tax: number;
+    type: string;
+    updated_at: string;
+}
+
+/**
+ * Paginacion de product trans
+ *
+ */
+export interface productTransPI {
+    data: productTransI[],
+    links: linksI,
+    meta: metaI
 }

@@ -4,7 +4,7 @@ namespace App\Enums;
 
 Enum ProductTypeEnum:string
 {
-    case  ARTIUCLO = 'articulo';
+    case  PRODUCTO = 'producto';
     case  SERVICIO = 'servicio';
 }
 

@@ -18,13 +18,13 @@ return new class extends Migration
             $table->string('client_name')->nullable()->default('');
             $table->foreignIdFor(Client::class,'client_id')->nullable();
             $table->json('info');
-            $table->float('discount')->default(0);
+            $table->float('discount_amount')->default(0);
             $table->float('tax');
             $table->float('sub_total');
             $table->float('amount');
             $table->text('comment')->nullable();
-            $table->boolean('status')->default(0);
-            $table->boolean('close_table')->default(0);
+            $table->boolean('status')->default(true);
+            $table->boolean('close_table')->default(false);
             $table->timestamps();
         });
     }

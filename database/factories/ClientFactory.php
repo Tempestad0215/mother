@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Client>
  */
-class ClientsFactory extends Factory
+class ClientFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,7 +17,12 @@ class ClientsFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => fake()->name(),
+            'phone' => fake()->phoneNumber(),
+            'personal_id' => fake()->numerify('###-#######-#'),
+            'email' => fake()->email(),
+            'address' => fake()->address(),
+            'type' => fake()->randomElement(['contado']),
         ];
     }
 }

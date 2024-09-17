@@ -146,6 +146,7 @@ const search = () => {
                             for="name"
                             value="Nombre de la empresa *"/>
                         <TextInput
+                            name="name"
                             class=" w-full"
                             maxLength="75"
                             v-model="form.company_name"
@@ -158,9 +159,10 @@ const search = () => {
                     <!-- Nombre -->
                     <div>
                         <InputLabel
-                            for="name"
+                            for="officer"
                             value="Representante"/>
                         <TextInput
+                            name="officer"
                             class=" w-full"
                             maxLength="75"
                             v-model="form.contact"

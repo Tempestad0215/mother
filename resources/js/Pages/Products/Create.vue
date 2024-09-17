@@ -6,17 +6,23 @@ import FloatBox from '@/Components/FloatBox.vue'
 import {ref} from 'vue';
 import FloatProduct from '@/Pages/Products/FloatPro.vue';
 import LinkHeader from "@components/LinkHeader.vue";
-import {proSupResI} from "@/Interfaces/Product";
+import {productSupplierI} from "@/Interfaces/Product";
+import {categoryI} from "@/Interfaces/Categories";
+import {supplierI} from "@/Interfaces/Supplier";
 
 
 
-
+//Propiedades de la ventana
 const props = defineProps<{
-    productEdit? : proSupResI,
-    update? : boolean
+    productEdit? : productSupplierI,
+    update? : boolean,
+    categories: categoryI[],
+    suppliers: supplierI[]
 }>();
 
 
+
+//Mostrar la ventana de suplidores
 const showSupplierForm = ref(false);
 
 
@@ -39,6 +45,11 @@ const showSupplierForm = ref(false);
                 :href="route('product.create')">
                 Registrar
             </LinkHeader>
+<!--            Mostrar los productos -->
+            <LinkHeader
+                :href="route('product.show')">
+                Mostrar
+            </LinkHeader>
 
 
 
@@ -49,6 +60,8 @@ const showSupplierForm = ref(false);
            <div
                class="bg-gray-200 p-5 rounded-md">
                <FloatProduct
+                   :suppliers="props.suppliers"
+                   :categories="props.categories"
                    :product-edit="props.productEdit"
                    :update="props.update"
                    @show-supplier="showSupplierForm = true"/>

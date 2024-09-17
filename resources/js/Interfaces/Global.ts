@@ -29,6 +29,7 @@ interface appSetting {
     unit: string[];
     fiscal_year: string;
     status: boolean;
+    save_cost: boolean;
     created_at: string;
     updated_at: string;
 
@@ -84,3 +85,22 @@ export interface pageI {
 
 }
 
+
+/**
+ * Links de navegacion
+ */
+
+export interface linksI {
+    first: string;
+    last: null | string;
+    prev: string | null;
+    next: string | null;
+}
+// Meta
+export interface metaI{
+    current_page: number;
+    from: number;
+    path: string;
+    per_page: number;
+    to: number;
+}

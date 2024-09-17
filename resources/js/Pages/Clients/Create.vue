@@ -46,7 +46,7 @@ onMounted(()=>{
 //Veriificar si es credito o contado
 const isMandatory = computed(()=>{
     //Retorna true cuando es credito o anticipo
-   if(form.type === 2 || form.type === 3)
+   if(form.type === 'credito' || form.type === 'anticipo')
    {
        return true;
    }
@@ -68,7 +68,7 @@ const form = useForm({
     phone:"",
     email:"",
     address:"",
-    type: 1,
+    type: 'contado',
     credit_limit: "",
     credit_day:"",
     credit_balance:"",
@@ -152,7 +152,7 @@ const submit = () => {
                             class="peer hidden"
                             type="radio"
                             v-model="form.type"
-                            :value="1"
+                            value="contado"
                             name="cli_cash"
                             id="cli_cash">
                         <label
@@ -166,7 +166,7 @@ const submit = () => {
 <!--                        <input-->
 <!--                            class="peer hidden"-->
 <!--                            v-model="form.type"-->
-<!--                            :value="2"-->
+<!--                            value="credito"-->
 <!--                            type="radio"-->
 <!--                            name="cli_credit"-->
 <!--                            id="cli_credit">-->
@@ -180,7 +180,7 @@ const submit = () => {
 <!--                        <input-->
 <!--                            class="peer hidden"-->
 <!--                            v-model="form.type"-->
-<!--                            :value="3"-->
+<!--                            value="anticipo"-->
 <!--                            type="radio"-->
 <!--                            name="cli_advance"-->
 <!--                            id="cli_advance">-->
@@ -291,7 +291,7 @@ const submit = () => {
 <!--             Datos de credito-->
                 <div class="grid grid-cols-2 gap-4">
                     <fieldset
-                        v-if="form.type === 2"
+                        v-if="form.type === 'credito'"
                         class="border-2 border-gray-400 p-5 rounded-md grid grid-cols-2 gap-3">
                         <legend>
                             Datos Credito
@@ -333,7 +333,7 @@ const submit = () => {
 
 <!--                  Datos de anticipo  -->
                     <fieldset
-                        v-if="form.type === 3"
+                        v-if="form.type === 'anticipo'"
                         class="border-2 border-gray-400 p-5 rounded-md grid grid-cols-2 gap-3">
                         <legend>
                             Datos Anticipo

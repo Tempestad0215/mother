@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\ProductTypeEnum;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreProductRequest extends FormRequest
 {
@@ -17,18 +20,23 @@ class StoreProductRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
+        $isArticle = $this->get('type') === 'producto';
+
         return [
+            'inventoried' => ['required','boolean'],
             'name' => ['required','string','min:3','max:75'],
             'description' => ['nullable','string','max:150'],
-            'unit' => ['required','string',],
+            'unit' => [Rule::requiredIf($isArticle),'string','nullable'],
             'supplier_id' => ['required','numeric','exists:suppliers,id'],
             'category_id' => ['required','numeric','exists:categories,id'],
             'bar_code' => ['nullable','string','max:100'],
+            'brand' => ['nullable','string','max:75'],
             'sku' => ['nullable','string','max:75'],
+            'type' => [Rule::enum(ProductTypeEnum::class), 'required'],
             'tax_rate' => ['required','numeric'],
             'branch' => ['nullable','string','max:75'],
             'weight' => ['nullable','numeric'],

@@ -98,7 +98,7 @@ class CategoryController extends Controller{
 
 
         // Tomar los datos y limitarlo a 10
-        $data = Category::where('status',false)
+        $data = Category::where('status',true)
             ->where('name', 'like', '%'.$search.'%')
             ->limit(10)
             ->get();
@@ -121,7 +121,7 @@ class CategoryController extends Controller{
 
 
 
-        $data = Category::where('status',false)
+        $data = Category::where('status',true)
             ->where('name', 'like', '%'.$search.'%')
             ->latest()
             ->simplePaginate(15);

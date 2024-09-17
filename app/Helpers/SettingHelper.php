@@ -37,7 +37,8 @@ class SettingHelper
                     'tax' => $request->tax,
                     'unit' => $request->unit,
                     'fiscal_year' => $request->fiscal_year,
-                    'logo' => $imageName
+                    'logo' => $imageName,
+                    'save_cost' => $request->save_cost
                 ]);
             }else{
                 //actualizar los datos
@@ -51,7 +52,8 @@ class SettingHelper
                     'tax' => $request->tax,
                     'unit' => $request->unit,
                     'fiscal_year' => $request->fiscal_year,
-                    'logo' => $imageName
+                    'logo' => $imageName,
+                    'save_cost' => $request->save_cost
                 ]);
             }
 

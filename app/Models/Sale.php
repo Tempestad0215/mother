@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @property int $id
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\DB;
  * @property string $client_name
  * @property int $client_id
  * @property array $info
- * @property float $discount
+ * @property float $discount_amount
  * @property float $tax
  * @property float $sub_total
  * @property float $amount
@@ -24,9 +25,10 @@ use Illuminate\Support\Facades\DB;
  */
 
 
-class Sale extends Model
+class Sale extends Model implements Auditable
 {
     use HasFactory;
+    use \OwenIt\Auditing\Auditable;
 
 
     // La tabla que se ve a utilizar
@@ -39,7 +41,7 @@ class Sale extends Model
         'client_name',
         'client_id',
         'info',
-        'discount',
+        'discount_amount',
         'tax',
         'sub_total',
         'amount',
@@ -115,7 +117,7 @@ class Sale extends Model
         $nextID = $last ? $last->id + 1 : 1;
 
         // Devolver los datos
-        $code = config('setting.saleCode');
+        $code = config('appconfig.saleCode');
 
         // craer el codigp
         return $code.str_pad($nextID, 6,'0', STR_PAD_LEFT);

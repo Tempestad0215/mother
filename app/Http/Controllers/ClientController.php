@@ -175,7 +175,7 @@ class ClientController extends Controller
         $search = $request->get('search');
 
         // Buscar en la base de datos
-        return Client::where('status',false)
+        return Client::where('status',true)
             ->where(function ($query) use ($search) {
                 $query->where('name','like','%'. $search .'%')
                     ->orWhere('email','like','%'. $search .'%')

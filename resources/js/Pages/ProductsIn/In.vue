@@ -1,56 +1,75 @@
 <script setup lang="ts">
-import {Head, router, useForm} from '@inertiajs/vue3';
+import {Head, router, useForm, usePage} from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
 import InputLabel from '@components/InputLabel.vue';
 import TextInput from '@components/TextInput.vue';
-import {formatNumber, getMoney} from '@/Global/Helpers';
+import {formatNumber, getCoin, getMoney, getPenny} from '@/Global/Helpers';
 import PrimaryButton from '@components/PrimaryButton.vue';
 import InputError from '@components/InputError.vue';
 import FloatBox from '@components/FloatBox.vue';
-import {computed, onMounted, PropType, reactive, ref} from 'vue';
-import FloatProduct from '@/Pages/Products/FloatPro.vue';
+import {computed, onMounted, ref} from 'vue';
 import FloatSupplier from '@/Pages/Suppliers/FloatSupp.vue';
 import {successHttp} from "@/Global/Alert";
 import FormSearch from "@components/FormSearch.vue";
-import {productDataI, productI} from "@/Interfaces/Product";
+import {productDataI, productI, productTransI} from "@/Interfaces/Product";
 import Pagination from "@components/Pagination.vue";
 import LinkHeader from '@components/LinkHeader.vue';
+import {pageI} from "@/Interfaces/Global";
+
+
+/**
+ * Datos de la pagina
+ */
+const page:pageI = usePage()
 
 /**
  * Propiedades de la ventana
  */
 // Props de la ventana
-const props = defineProps({
-    products: {
-        type: Object as PropType<productI>,
-        required: true
-    },
-    productEntrance:{
-        type: Object as PropType<productDataI>
-    },
-    update:{
-        type: Boolean,
-        default: false
-    }
-});
+const props = defineProps<{
+    products: productI,
+    trans?: productTransI,
+    productEntrance?: productDataI,
+    update? : boolean
+}>();
 
 /**
  * Formulario para enviar los daots
  */
 // Datos del formulario
 const form = useForm({
+    tran_id: 0,
+    sale_id: 0,
     product_id:0,
     product_name:"",
-    stock: "",
-    cost: "",
-    price: "",
+    stock: 0.00,
+    cost: 0.00,
+    price: 0.00,
     tax: 0.00,
-    tax_price: 0.00,
     product_no_tax: 0.00,
+    product_tax: 0.00,
     tax_amount: 0.00,
-    discount: "",
-    amount: 0.00
+    discount: 0.00,
+    discount_amount: 0.00,
+    amount: 0.00,
+    benefits: 0.00,
+    general:""
 });
+
+
+
+/*
+Computada
+ */
+const showError = computed(() => {
+   if (form.errors.general !== "")
+   {
+       setTimeout(() =>{
+           return false;
+       },3000)
+   }
+});
+
 
 
 /**
@@ -70,14 +89,9 @@ const formSearch = useForm({
 // Propiedades de la ventana
 const registerProduct = ref(false);
 const registerSupplier = ref(false);
-// Datos de select impuesto
-const taxData = reactive({
-    tax: 0,
-    product_no_tax: 0,
-    tax_amount: 0,
-    discount: 0,
-    amount:0,
-});
+const showForm = ref<boolean>(false);
+const tax_rate = ref<number>(0);
+
 
 /**
  * Al momento de cargar
@@ -87,25 +101,53 @@ onMounted(()=>{
     // Para los datos a editar
     if(props.productEntrance)
     {
+        showForm.value = true;
         form.product_id = props.productEntrance.id;
         form.product_name = props.productEntrance.name;
         form.stock = (props.productEntrance.stock || 0).toFixed(2);
         form.cost = (props.productEntrance.cost || 0).toFixed(2);
         form.price = (props.productEntrance.price || 0).toFixed(2);
+        tax_rate.value = props.productEntrance.tax_rate;
 
         //Calcular los datos
         totalTax();
     }
-})
+    if(props.trans)
+    {
+
+        showForm.value = true;
+        form.tran_id = props.trans.id;
+        form.product_id = props.trans.product_id;
+        form.product_name = props.trans.product_name;
+        form.stock = props.trans.stock;
+        form.cost = props.trans.cost;
+        form.price = props.trans.price;
+        tax_rate.value = props.trans.tax_rate;
+
+        //Calcular la cantidad
+        totalTax();
+    }
+});
+
+
+/**
+ * Propiedades computada
+ */
+const checkDiscount = computed(() => {
+    if( form.cost > 0.00 && page.props.appSetting.save_cost && form.discount_amount >= form.cost)
+   {
+       form.setError('discount', `El Item : ${form.product_name} Esta Debajo del Costo`);
+       return 'text-red-500';
+   }
+});
+
 
 
 /**
  * Funciones
  */
 // Computadas
-const isSelected = computed(() => {
-    return !props.productEntrance?.id;
-})
+
 
 
 /**
@@ -145,7 +187,20 @@ const submit = () => {
             product_no_tax: formatNumber(data.product_no_tax),
             tax_amount: formatNumber(data.tax_amount),
             discount: formatNumber(data.discount),
-        })).patch(route('product-in.update',{productIn: form.product_id}));
+            product_no_tax: formatNumber(data.product_no_tax),
+            product_tax: formatNumber(data.product_tax),
+            benefits: formatNumber(data.benefits),
+            tax: formatNumber(data.tax)
+        })).patch(route('product-in.update',{trans: form.tran_id}),{
+            onSuccess:()=>{
+              successHttp('Datos actualizado correctamente');
+            },
+            onError:()=>{
+                setTimeout(()=>{
+                    form.clearErrors('general');
+                },5000);
+            }
+        });
     }else{
         form.transform((data) => ({
             ...data,
@@ -156,6 +211,10 @@ const submit = () => {
             product_no_tax: formatNumber(data.product_no_tax),
             tax_amount: formatNumber(data.tax_amount),
             discount: formatNumber(data.discount),
+            product_no_tax: formatNumber(data.product_no_tax),
+            product_tax: formatNumber(data.product_tax),
+            benefits: formatNumber(data.benefits),
+            tax: formatNumber(data.tax)
         })).patch(route('product-in.store',form.product_id),{
             onSuccess:()=>{
                 successHttp('Datos registrado correctamente');
@@ -203,40 +262,23 @@ const edit = (id:number)=>{
  */
 const totalTax = () => {
     // Sacar los datos para el calculo
-    let stock = formatNumber(form.stock) || 0.00;
-    // let cost = formatNumber(form.cost) || 0.00;
-    let price = formatNumber(form.price) || 0.00;
-    let taxRate = props.productEntrance ? props.productEntrance?.tax_rate : 0;
+    let stock = form.stock || 0.00;
+    let cost =  getPenny(form.cost || 0.00);
+    let price = getPenny(form.price || 0.00);
+    let taxRate = parseFloat(tax_rate.value / 100);
+    let discount = form.discount / 100;
+
 
     // Tomar los datos para sacar el impuesto
-    let tax = ((price * 100) * taxRate) / 100;
-
-    // tomar los datos del decuento
-    let discount = formatNumber(form.discount) / 100 || 0;
-
-
-
-    // Guardar los datos en el formulario
-    taxData.tax = tax;
-    taxData.product_no_tax = (price - tax);
-    taxData.tax_amount = tax * stock;
-
-    // tamar el calor de stock y cost
-    taxData.amount = (stock * price);
-    taxData.discount = taxData.amount * discount;
-
-    // Pasar la info al
-    form.tax = taxData.tax;
-    form.tax_amount = taxData.tax_amount;
-    form.discount = (taxData.discount).toFixed(2);
-    form.product_no_tax = taxData.product_no_tax;
-    form.amount = taxData.amount;
-    taxData.tax_amount = taxData.amount * taxRate;
-    form.tax_amount = taxData.tax_amount;
+    form.tax =  getCoin(price * taxRate);
+    form.discount_amount = getCoin(price * discount);
+    form.product_no_tax = getCoin(price) - form.tax;
+    form.product_tax = form.price;
+    form.amount = getCoin( stock * price);
+    form.benefits =  getCoin(price - cost);
+    form.tax_amount = form.stock * form.tax;
 
 }
-
-
 
 
 </script>
@@ -251,14 +293,19 @@ const totalTax = () => {
                 :href="route('product-in.create')">
                 Entrada
             </LinkHeader>
+            <LinkHeader
+
+                :href="route('product-in.show')">
+                Mostrar
+            </LinkHeader>
 
         </template>
 
         <!-- Contenido de la pagina -->
-        <div class="">
+        <div class=" ">
 
                 <form
-                    v-if="props.productEntrance"
+                    v-if="showForm"
                     class=" p-5 rounded-md bg-gray-200"
                     @submit.prevent="submit">
                     <h3 class=" text-2xl font-bold text-center ">
@@ -299,7 +346,6 @@ const totalTax = () => {
                             <TextInput
                                 class="w-full"
                                 name="stock"
-                                :readonly="isSelected"
                                 @blur="totalTax"
                                 v-model="form.stock"
                                 type="number"/>
@@ -317,7 +363,6 @@ const totalTax = () => {
                             <TextInput
                                 class="w-full"
                                 name="cost"
-                                :readonly="isSelected"
                                 @blur="totalTax"
                                 v-model="form.cost"
                                 type="number"/>
@@ -335,7 +380,6 @@ const totalTax = () => {
                             <TextInput
                                 class=" w-full"
                                 name="price"
-                                :readonly="isSelected"
                                 @blur="totalTax"
                                 v-model="form.price"
                                 type="number"/>
@@ -345,90 +389,111 @@ const totalTax = () => {
 
                         </div>
 
-                        <!-- Descuento -->
-<!--                        <div>-->
-<!--                            <InputLabel-->
-<!--                                for="discount"-->
-<!--                                value="Descuento"/>-->
-<!--                            <TextInput-->
-<!--                                class=" w-full"-->
-<!--                                name="discount"-->
-<!--                                :readonly="isSelected"-->
-<!--                                @blur="totalTax"-->
-<!--                                v-model="form.discount"-->
-<!--                                type="number"/>-->
+<!--                         Descuento -->
+                        <div>
+                            <InputLabel
+                                for="discount"
+                                value="Descuento"/>
+                            <TextInput
+                                :class="checkDiscount"
+                                class=" w-full"
+                                name="discount"
+                                @blur="totalTax"
+                                v-model="form.discount"
+                                type="number"/>
 
-<!--                            &lt;!&ndash; Error &ndash;&gt;-->
-<!--                            <InputError :message="form.errors.discount" />-->
+                            <!-- Error -->
+                            <InputError :message="form.errors.discount" />
 
-<!--                        </div>-->
+                        </div>
 
 
                         <!-- Datos tributario -->
                         <fieldset
-                            class=" col-span-full grid grid-cols-6 gap-3 border-2 border-gray-500 rounded-md p-5">
+                            class=" col-span-full flex flex-row gap-3 border-2 border-gray-500 rounded-md p-5">
 
                             <legend>
                                 Tributario
                             </legend>
 
-                            <div>
+                            <div class="flex-auto">
                                 <InputLabel
                                     for="tax_rate"
                                     value="ITBIS %"/>
                                 <span>
-                                    {{ productEntrance ? productEntrance.tax_rate * 100 : 0 }} %
+                                    {{ tax_rate / 100 || 0 }} %
                                 </span>
                             </div>
 
                             <!-- Impuesto -->
-                            <div>
+                            <div class="flex-auto">
                                 <InputLabel
                                     for="tax"
                                     value="ITBIS * 1 " />
                                 <span>
-                                    {{getMoney(taxData.tax)}}
+                                    {{getMoney(form.tax)}}
                                 </span>
                             </div>
 
-                            <!-- Impuesto -->
-                            <div>
+                            <!-- Precio sin impuesto -->
+                            <div class="flex-auto">
                                 <InputLabel
                                     for="price-no-tax"
-                                    value="Precio sin ITBIS * 1" />
+                                    value="Precio - ITBIS * 1" />
                                 <span>
-                                    {{getMoney(taxData.product_no_tax)}}
+                                    {{getMoney(form.product_no_tax)}}
+                                </span>
+                            </div>
+
+                            <!-- Precio con impuesto -->
+                            <div class="flex-auto">
+                                <InputLabel
+                                    for="price-no-tax"
+                                    value="Precio + ITBIS * 1" />
+                                <span>
+                                    {{getMoney(form.product_tax)}}
                                 </span>
                             </div>
 
                             <!-- Impuesto -->
-                            <div>
+                            <div class="flex-auto">
                                 <InputLabel
                                     for="tax-aomount"
                                     value="Total del impuesto" />
                                 <span>
-                                    {{getMoney(taxData.tax_amount)}}
+                                    {{getMoney(form.tax_amount)}}
                                 </span>
                             </div>
 
-                            <!-- Decuento -->
-<!--                            <div>-->
-<!--                                <InputLabel-->
-<!--                                    for="discount"-->
-<!--                                    value="Descuento" />-->
-<!--                                <span>-->
-<!--                                    {{getMoney(taxData.discount)}}-->
-<!--                                </span>-->
-<!--                            </div>-->
+<!--                             Decuento-->
+                            <div class="flex-auto">
+                                <InputLabel
+                                    for="discount"
+                                    value="Descuento" />
+                                <span>
+                                    {{getMoney(form.discount_amount)}}
+                                </span>
+                            </div>
 
 
                             <!-- Decuento -->
-                            <div>
+                            <div class="flex-auto">
                                 <InputLabel
                                     for="discount"
                                     value="Total Ingresado" />
                                 <span>
-                                    {{getMoney(taxData.amount)}}
+                                    {{getMoney(form.amount)}}
+                                </span>
+                            </div>
+
+
+                            <!-- Beneficio -->
+                            <div class="flex-auto">
+                                <InputLabel
+                                    for="benefit"
+                                    value="Beneficio * 1" />
+                                <span>
+                                    {{getMoney(form.benefits)}}
                                 </span>
                             </div>
                         </fieldset>
@@ -438,11 +503,14 @@ const totalTax = () => {
 
                     <!-- Boton para el producto -->
                     <div class="mt-4 text-right col-span-full">
-                        <PrimaryButton>
+                        <PrimaryButton
+                            :disabled="form.processing">
                             {{ props.update ? 'Actualizar' : 'Registrar' }}
                         </PrimaryButton>
                     </div>
 
+<!--                    MEnsaje de error generales-->
+                    <InputError :message="form.errors.general"/>
                 </form>
 
 <!--                //Crear la tabla para mostrar las entrada-->
@@ -454,9 +522,12 @@ const totalTax = () => {
                             v-model="formSearch.search"/>
                     </form>
 
+
+<!--                Datos de los productos para la entrada    -->
                     <table class="table-auto w-full mt-3">
                         <thead>
                             <tr class="text-left">
+                                <th>Codigo</th>
                                 <th>Cod. Barr.</th>
                                 <th>Producto</th>
                                 <th>Descripcion</th>
@@ -470,12 +541,13 @@ const totalTax = () => {
                             <tr
                                 class=" odd:bg-gray-400"
                                 v-for="item in props.products?.data">
+                                <td>{{item.code}}</td>
                                 <td>{{item.bar_code ? item.bar_code : 'N/A'}}</td>
                                 <td>{{item.name}}</td>
                                 <td>{{item.description}}</td>
                                 <td>{{item.stock}}</td>
-                                <td>{{item.cost}}</td>
-                                <td>{{item.price}}</td>
+                                <td>{{ getMoney(item.cost)}}</td>
+                                <td>{{ getMoney(item.price)}}</td>
                                 <td class="text-xl space-x-3 w-[75px] ">
                                     <i
                                         @click="edit(item.id)"
@@ -495,15 +567,16 @@ const totalTax = () => {
 
 
             <!-- Mostrar regitro de producto -->
-            <Transition>
-                <FloatBox
-                    @close="registerProduct = false"
-                    v-if="registerProduct">
-                    <FloatProduct
-                        @show-supplier="registerSupplier = true"
-                        class=" bg-gray-200 p-5 w-4/5 rounded-md"/>
-                </FloatBox>
-            </Transition>
+<!--            <Transition>-->
+<!--                <FloatBox-->
+<!--                    @close="registerProduct = false"-->
+<!--                    v-if="registerProduct">-->
+<!--                    <FloatProduct-->
+<!--                        :supplier="props.s"-->
+<!--                        @show-supplier="registerSupplier = true"-->
+<!--                        class=" bg-gray-200 p-5 w-4/5 rounded-md"/>-->
+<!--                </FloatBox>-->
+<!--            </Transition>-->
 
             <!-- Mostrar registro de suplidores -->
             <Transition>

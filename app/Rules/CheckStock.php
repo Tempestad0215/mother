@@ -5,6 +5,7 @@ namespace App\Rules;
 use App\Models\Product;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Translation\PotentiallyTranslatedString;
 
 class CheckStock implements ValidationRule
 {
@@ -13,11 +14,12 @@ class CheckStock implements ValidationRule
     public  function __construct($info)
     {
         $this->info = $info;
+
     }
     /**
      * Run the validation rule.
      *
-     * @param  \Closure(string): \Illuminate\Translation\PotentiallyTranslatedString  $fail
+     * @param  \Closure(string): PotentiallyTranslatedString  $fail
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
@@ -26,8 +28,9 @@ class CheckStock implements ValidationRule
 
         //Sacar los datos del producto introducido para validar
         foreach ($this->info as $info) {
+
             //Buscar los datos del producto
-            $product = Product::where('status', false)
+            $product = Product::where('status', true)
                 ->findOrFail($info['id']);
             //Tomar los datos de la cantidad
             $quantity = $info['quantity'];

@@ -19,7 +19,7 @@ class ClientHelper
     {
 
         //conseguir los datos del cliente
-        return Client::where('status', false)
+        return Client::where('status', true)
             ->where('name','LIKE','%'.$request->get('search').'%' )
             ->latest()
             ->simplePaginate(15);

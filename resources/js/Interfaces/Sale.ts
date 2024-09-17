@@ -1,14 +1,19 @@
 
 
-interface saleInfoI {
+export interface saleInfoI {
     id: number;
     amount: number;
     name: string;
     price: number;
     quantity: number;
     tax: number;
-    total_tax: number;
+    tax_amount: number;
+    discount: number;
+    discount_amount: number;
     tax_rate: number;
+    cost: number;
+    product_tax: number;
+
 }
 
 interface saleI{

@@ -92,10 +92,10 @@ const destroy = (id:Number) => {
 
 <template>
     <div class=" bg-gray-200 p-5 rounded-md">
-        <div class=" mb-4">
+        <div class=" mb-4 flex justify-between items-center ">
             <form
                 @submit.prevent="submit"
-                class=" max-w-sm">
+                class="">
                 <InputLabel
                     for="search"
                     value="Buscar" />
@@ -105,6 +105,10 @@ const destroy = (id:Number) => {
                     type="text"/>
 
             </form>
+
+            <h3 class="text-3xl font-bold text-gray-900">
+                Clientes
+            </h3>
         </div>
 
         <table class=" table-auto w-full">

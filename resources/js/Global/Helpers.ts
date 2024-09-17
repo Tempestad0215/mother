@@ -32,6 +32,23 @@ export const getMoney = (value:number) => {
 }
 
 
+/**
+ * convertir los datos a centimo
+ * @param value
+ */
+export const getPenny = (value:number) => {
+    return value * 100;
+}
+
+/**
+ * Convertir a pesos normales
+ * @param value
+ */
+export const getCoin = (value:number) => {
+    return value / 100;
+}
+
+
 export const readPDF = (value:string) => {
 
     //Decodificar la cadena
@@ -55,6 +72,7 @@ export const readPDF = (value:string) => {
     {
         newTab.focus();
     }else{
-        console.error('No se pudo abrir la nueva pestaña. Asegúrate de que el navegador no esté bloqueando ventanas emergentes.');
+        console.error('No se pudo abrir la nueva pestaña. Asegúrate de que el navegador ' +
+            'no esté bloqueando ventanas emergentes.');
     }
 }
