@@ -44,9 +44,9 @@ const submit = () => {
 }
 
 //Editar la entrada
-const edit = (id:number) => {
-    router.get(route('product-in.edit',{trans: id}));
-}
+// const edit = (id:number) => {
+//     router.get(route('product-in.edit',{trans: id}));
+// }
 
 //Eliminar la transaccion
 const destroy = (id:number) => {
@@ -145,10 +145,14 @@ const destroy = (id:number) => {
                         <td class="uppercase" >{{item.type}}</td>
                         <td>{{item.created_at}}</td>
                         <td>
+<!--                            <i-->
+<!--                                @click="edit(item.id)"-->
+<!--                                class=" icon-efect fa-solid fa-pen-to-square"></i>-->
+                            <span v-if="item.type != 'entrada'">
+                                N/A
+                            </span>
                             <i
-                                @click="edit(item.id)"
-                                class=" icon-efect fa-solid fa-pen-to-square"></i>
-                            <i
+                                v-if="item.type == 'entrada'"
                                 @click="destroy(item.id)"
                                 class=" icon-efect ml-3 fa-solid fa-trash"></i>
                         </td>

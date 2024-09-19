@@ -2,6 +2,7 @@
 
 export interface saleInfoI {
     id: number;
+    code: string;
     amount: number;
     name: string;
     price: number;
@@ -18,6 +19,7 @@ export interface saleInfoI {
 
 interface saleI{
     id: number;
+    code: string;
     client_name: string;
     tax: number;
     sub_total: number;

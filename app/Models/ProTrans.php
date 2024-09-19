@@ -71,7 +71,7 @@ class ProTrans extends Model implements Auditable
      * Formatear la fehca de creacion
      * @return Attribute
      */
-    protected function created_at ():Attribute
+    protected function createdAt ():Attribute
     {
         return Attribute::make(
             get: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i:s'),
@@ -83,7 +83,7 @@ class ProTrans extends Model implements Auditable
      * Formataer la fecha de actualizacion
      * @return Attribute
      */
-    protected function updated_at ():Attribute
+    protected function updatedAt ():Attribute
     {
         return Attribute::make(
             get: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i:s'),

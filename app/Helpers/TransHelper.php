@@ -18,6 +18,7 @@ class TransHelper
     public function store(Request $request, ProductTransType $type, int $sale_id = 0, int $product_id = 0):void
     {
 
+
         //Crear la transacion
         $proTrans = new ProTrans();
         $proTrans->product_id = $product_id;

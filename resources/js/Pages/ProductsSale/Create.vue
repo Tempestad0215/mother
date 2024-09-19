@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {Head, useForm} from "@inertiajs/vue3";
+import {Head, router, useForm} from "@inertiajs/vue3";
 import AppLayout from "@layout/AppLayout.vue";
 import InputLabel from "@components/InputLabel.vue";
 import TextInput from "@components/TextInput.vue";
@@ -57,6 +57,7 @@ const form = useForm({
     received: 0,
     returned: 0,
     general:"",
+    update: false,
 });
 
 /**
@@ -84,6 +85,7 @@ const getData = (item:productDataI) => {
         //Pasar los datos al formulario
         form.info.push({
             id: item.id,
+            code: item.code,
             name: item.name,
             quantity: 1,
             cost: item.cost,
@@ -125,13 +127,31 @@ const deleteItem =(name:string , index:number) => {
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
-        confirmButtonText: "Si, Elimianr!",
+        confirmButtonText: "Si, Eliminar!",
         cancelButtonText: "Cancelar"
     }).then((result) => {
         if (result.isConfirmed)
         {
+            //Tomar datos la ventas
+            let info:saleInfoI = form.info[index];
+
             //Eliminar el producto seleccionado
-            form.info.splice(index);
+            form.info.splice(index,1);
+
+            //Enviar los datos para actualizar
+            router.patch(route('product-sale.destroy.item',{product: info.id, sale: form.id}),{
+                table: form.close_table,
+                info: form.info
+            },{
+                preserveScroll: true,
+                preserveState: true,
+                onSuccess:() =>{
+                    successHttp(`Item : ${info.name} Eliminado Correctamente` );
+                },
+                onError:()=>{
+
+                }
+            });
 
             //REalizar el calculo de nuevo
             totalSale();
@@ -149,9 +169,6 @@ const totalAmount = (index:number) => {
     // Sacar los datos del produtos
     let info:saleInfoI = form.info[index];
     let discountRate = info.discount / 100;
-
-    console.log(info.tax);
-    console.log(info.quantity);
 
     //Pasar los datos al formulario
     info.tax_amount = parseFloat ((info.tax  * info.quantity).toFixed(2));
@@ -216,20 +233,36 @@ const submit = () => {
     {
         form.setError('received','El monto recibido no puede ser menor al Total');
     }else{
-        form.post(route('product-sale.store'),{
-            onSuccess:()=>{
-                successHttp('Venta cerrada correctamente');
-                form.reset();
-                // readPDF(props.pdf);
-                //Actualizar la ventana
-            },
-            onError:()=>{
-              setTimeout(()=>{
-                  form.clearErrors();
-              },5000)
-            },
-            only: ['products','clients','saleOpen'],
-        });
+
+        //si es para actualizar
+        if (form.update)
+        {
+            //Enviar los datos para actualizar
+            form.patch(route('product-sale.update',{sale: form.id}),{
+                preserveState: true,
+                preserveScroll: true,
+                onSuccess:() =>{
+                    successHttp('Documento Actualizado Correctamente');
+                }
+            });
+        }else{
+            form.post(route('product-sale.store'),{
+                onSuccess:()=>{
+                    successHttp('Venta cerrada correctamente');
+                    form.reset();
+                    // readPDF(props.pdf);
+                    //Actualizar la ventana
+                },
+                onError:()=>{
+                    setTimeout(()=>{
+                        form.clearErrors();
+                    },5000)
+                },
+                only: ['products','clients','saleOpen'],
+            });
+        }
+
+
     }
 }
 
@@ -266,12 +299,13 @@ const getSaleOpen = (item:saleDataI) => {
     //Colocar la variable en nada al principio
     form.info = [];
     form.id = item.id;
+    form.update = true;
     //Verificar Pasar los datos a la variable
     item.info.map((el) => {
-
         //colocar la informacion en la lista
         form.info.push({
             id: el.id ? el.id : 0,
+            code: el.code,
             name: el.name,
             quantity: el.quantity,
             cost: el.product_tax,
@@ -451,7 +485,7 @@ const returned = () => {
                                     <tr
                                         class="text-left border-b-2 border-gray-400">
                                         <th>#</th>
-                                        <th>Producto</th>
+                                        <th>Producto/Servicio</th>
                                         <th>Cantidad</th>
                                         <th>Precio sin Itbis</th>
                                         <th>Itbis</th>
@@ -465,7 +499,13 @@ const returned = () => {
                                         class=" odd:bg-gray-300 border-2 border-b-gray-500"
                                         v-for="(item, index) in form.info" :key="index">
                                         <td>{{index+1}}</td>
-                                        <td>{{item.name}}</td>
+                                        <td>
+                                            <div>
+                                                <p>{{item.code}}</p>
+                                                <p>{{item.name}}</p>
+                                            </div>
+
+                                        </td>
                                         <td
                                             class=" w-[150px]">
                                             <input
@@ -595,11 +635,11 @@ const returned = () => {
                                 <InputError :message="form.errors.received"/>
                             </div>
 
-                            <div class="mt-5 flex justify-between">
-                                <SecondaryButton
-                                    type="button">
-                                    Limpiar
-                                </SecondaryButton>
+                            <div class="mt-5">
+<!--                                <SecondaryButton-->
+<!--                                    type="button">-->
+<!--                                    Limpiar-->
+<!--                                </SecondaryButton>-->
                                 <PrimaryButton
                                     @click="submit()"
                                     type="button">

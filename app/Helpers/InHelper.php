@@ -41,10 +41,11 @@ class InHelper
      */
     public function updateProduct(Request $request, Product $product):void
     {
+
         //Actulizar los datos
-        $product->update([
-            'stock' => +$request->get('stock')
-        ]);
+        $product->stock += $request->get('stock');
+
+        $product->save();
         $this->updateGeneral($request, $product);
     }
 
@@ -56,9 +57,8 @@ class InHelper
     public function adjustProduct(Request $request, Product $product):void
     {
         //Actulizar los datos
-        $product->update([
-            'stock' => $request->get('stock')
-        ]);
+        $product->stock = $request->get('stock');
+        $product->save();
         $this->updateProduct($request, $product);
     }
 

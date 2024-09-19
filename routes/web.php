@@ -159,7 +159,10 @@ Route::middleware([
            Route::get('/','create')->name('create');
            Route::get('/get','getJson')->name('get.json');
            Route::post('/','store')->name('store');
+           Route::patch('/{sale}','update')->name('update');
            Route::get('/show','show')->name('show');
+           Route::patch('/item/destroy/{product}/{sale}','destroyItem')->name('destroy.item');
+           Route::patch('/sale/destroy/{sale}/{inventoried}','destroySale')->name('destroy-sale');
         });
 
     /**

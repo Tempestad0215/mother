@@ -16,6 +16,7 @@ export interface productI {
 
 export interface productDataI {
     id: number;
+    code:string;
     name: string;
     sku:string;
     bar_code: string | null;

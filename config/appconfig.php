@@ -29,5 +29,6 @@ return  [
     'creCode' => 'CRE',
     'advCode' =>  'ADV',
     'coCode' => 'COM',
+    'deSale' => 'CAN'
 
 ];

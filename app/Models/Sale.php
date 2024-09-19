@@ -6,7 +6,6 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
@@ -20,7 +19,6 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property float $sub_total
  * @property float $amount
  * @property boolean $status
- * @property string $comment
  * @property bool $close_table
  */
 
@@ -65,7 +63,7 @@ class Sale extends Model implements Auditable
      * Formatear la fehca de creacion
      * @return Attribute
      */
-    protected function createAt ():Attribute
+    protected function createdAt ():Attribute
     {
         return Attribute::make(
             get: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i:s'),
@@ -77,7 +75,7 @@ class Sale extends Model implements Auditable
      * Formataer la fecha de actualizacion
      * @return Attribute
      */
-    protected function updateAt ():Attribute
+    protected function updatedAt ():Attribute
     {
         return Attribute::make(
             get: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i:s'),
@@ -91,7 +89,7 @@ class Sale extends Model implements Auditable
     /**
      * @return void
      */
-    protected static function boot()
+    protected static function boot():void
     {
         // Llamar el metodo principal
         parent::boot();
@@ -108,7 +106,7 @@ class Sale extends Model implements Auditable
      * @return string
      */
     // funcion para generar el codigo
-    private static function generateCode()
+    private static function generateCode():string
     {
         // Obtener el ultimo registros
         $last = self::orderBy('id','desc')->first();

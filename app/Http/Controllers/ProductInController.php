@@ -79,7 +79,7 @@ class ProductInController extends Controller
             $inHelper->updateProduct($request, $productIn);
 
             //Crear los datos de la transaccion
-            $transHelper->store($request, ProductTransType::ENTRADA, $productIn->id);
+            $transHelper->store($request, ProductTransType::ENTRADA, 0, $productIn->id);
 
 
         });
@@ -228,9 +228,13 @@ class ProductInController extends Controller
         }else{
 
             //Actualizar los datos
-            $trans->update([
-                'status' => false
-            ]);
+            $trans->status = false;
+            $trans->save();
+
+            //Obtener el producto
+            $prodcut = Product::find($trans->product_id);
+            $prodcut->stock -= $trans->stock;
+            $prodcut->save();
 
             //Retornar hacia atras
             return back();

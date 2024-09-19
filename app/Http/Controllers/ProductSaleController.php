@@ -5,16 +5,17 @@ namespace App\Http\Controllers;
 use App\Enums\ProductTransType;
 use App\Helpers\ClientHelper;
 use App\Helpers\SaleHelper;
-use App\Helpers\TransHelper;
 use App\Http\Requests\StoreProductSaleRequest;
 use App\Models\Product;
 use App\Models\ProTrans;
 use App\Models\Sale;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -54,7 +55,10 @@ class ProductSaleController extends Controller
     }
 
 
-
+    /**
+     * @param StoreProductSaleRequest $request
+     * @return RedirectResponse
+     */
     public function store(StoreProductSaleRequest $request)
     {
 
@@ -101,33 +105,24 @@ class ProductSaleController extends Controller
 //        $pdfString = base64_encode($pdf->Output('S','', true));
 
         // Evitar que se realicen 2 operaciones al mismo tiempo
-        Cache::lock('sale', 3)->get(function () use ($request) {
+        Cache::lock('sale', 5)->get(function () use ($request) {
+
+
             //Para asegurar que se cumplan los registro
             DB::transaction(function () use ($request) {
 
-                // Verificar si existe una venta como esa
-                $sale = Sale::find($request->input('id'));
-
-
-                //Actualizar o crear los productos
-                if(isset($sale))
-                {
-                    //Actualizar los datos
-                    $sale->update($request->validated());
-                }else{
-                    // Crear el producto
-                    $sale = Sale::create($request->validated());
-                }
-
+                // Crear la venta
+                $sale = Sale::create($request->validated());
 
                 //Recorrer la ventas para descontar los productos
                 foreach ($request->info as $key => $value)
                 {
+                    //Verificar si la mesa es cerrada
+                    $closeTable = $request->get('close_table');
                     //Instancia
                     $saleHelper = new SaleHelper();
-
                     //Descontar los productos del inventario
-                    $saleHelper->processSale($request->get('close_table', false), $value );
+                    $saleHelper->processSale($closeTable, $value);
 
                     //Crear la transaccion individual
                     ProTrans::create([
@@ -140,8 +135,11 @@ class ProductSaleController extends Controller
                         'amount' => $value['amount'],
                         'discount' => $value['discount'],
                         'discount_amount' => $value['discount_amount'],
-                        'type' => ProductTransType::VENTAS
+                        'type' =>  $closeTable ? ProductTransType::INTERNO : ProductTransType::VENTAS
                     ]);
+
+
+
 
                 }
             });
@@ -161,11 +159,28 @@ class ProductSaleController extends Controller
 
     }
 
+    /**
+     * @param StoreProductSaleRequest $request
+     * @param Sale $sale
+     * @return void
+     */
+    public function update(StoreProductSaleRequest $request, Sale $sale)
+    {
+        $close = $request->get('close_table');
+        //Instanacia
+        $saleHelper = new SaleHelper();
+
+        //Llamar el metodo
+        $saleHelper->updateSale($request, $sale);
+
+
+
+    }
 
     /**
      * Devolver la vista con los datos
      * @param Request $request
-     * @return \Inertia\Response
+     * @return Response
      */
     public function show(Request $request)
     {
@@ -180,6 +195,55 @@ class ProductSaleController extends Controller
         ]);
     }
 
+
+    /**
+     * Eliminar el producto seleccionado
+     * @param Request $request
+     * @param Product $product
+     * @param Sale $sale
+     * @return RedirectResponse
+     */
+    public function destroyItem(Request $request, Product $product, Sale $sale)
+    {
+
+
+        //Crear la instancia
+        $saleHelper = new SaleHelper();
+
+        //llamar los datos para actualizar
+        $saleHelper->deleteItem($request, $product, $sale);
+
+        return back();
+
+    }
+
+
+    /**
+     * Eliminar la venta seleccionada
+     * @param Request $request
+     * @param Sale $sale
+     * @param bool $inventoried
+     * @return RedirectResponse
+     */
+    public function destroySale(Request $request, Sale $sale, bool $inventoried)
+    {
+        //Validar el comentario que llega
+        Validator::make($request->all(),[
+            'comment' => ['required','string','min:5','max:255'],
+        ])->validate();
+
+        //Crear la instancia
+        $saleHelper = new SaleHelper();
+
+        //llamar el metodo
+        $saleHelper->deleteSale($request, $sale, $inventoried);
+
+        return back();
+
+    }
+
+
+
     /**
      * @param Request $request
      * @return Paginator
@@ -190,20 +254,18 @@ class ProductSaleController extends Controller
         $search = $request->get('search');
 
         //Pasar los datos a la variable
-        $data = Product::where('status', true)
+        return Product::where('status', true)
             ->where('name','LIKE','%'.$search.'%')
             ->where('stock','>',0)
             ->latest()
             ->simplePaginate(15);
-
-        //Devolver los datos yla respuesta
-        return $data;
     }
+
 
 
     /**
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     private  function getJson(Request $request)
     {
