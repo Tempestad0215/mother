@@ -3,30 +3,26 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import Float from '@/Pages/Suppliers/FloatSupp.vue'
 import FloatBox from '@/Components/FloatBox.vue'
-import {PropType, ref} from 'vue';
+import {ref} from 'vue';
 import FloatProduct from '@/Pages/Products/FloatPro.vue';
 import LinkHeader from "@components/LinkHeader.vue";
-import FloatShowPro from "@/Pages/Products/FloatShowPro.vue";
-import {productI, proSupResI} from "@/Interfaces/Product";
+import {productSupplierI} from "@/Interfaces/Product";
+import {categoryI} from "@/Interfaces/Categories";
+import {supplierI} from "@/Interfaces/Supplier";
 
 
 
-
-const props = defineProps({
-   products: {
-       type: Object as PropType<productI>,
-       required: true
-   },
-    productEdit: {
-        type: Object as PropType<proSupResI>,
-    },
-    update:{
-       type: Boolean,
-        default: false
-    }
-});
+//Propiedades de la ventana
+const props = defineProps<{
+    productEdit? : productSupplierI,
+    update? : boolean,
+    categories: categoryI[],
+    suppliers: supplierI[]
+}>();
 
 
+
+//Mostrar la ventana de suplidores
 const showSupplierForm = ref(false);
 
 
@@ -49,6 +45,11 @@ const showSupplierForm = ref(false);
                 :href="route('product.create')">
                 Registrar
             </LinkHeader>
+<!--            Mostrar los productos -->
+            <LinkHeader
+                :href="route('product.show')">
+                Mostrar
+            </LinkHeader>
 
 
 
@@ -59,15 +60,13 @@ const showSupplierForm = ref(false);
            <div
                class="bg-gray-200 p-5 rounded-md">
                <FloatProduct
+                   :suppliers="props.suppliers"
+                   :categories="props.categories"
                    :product-edit="props.productEdit"
                    :update="props.update"
                    @show-supplier="showSupplierForm = true"/>
            </div>
 
-            <div>
-                <FloatShowPro
-                    :products="products"/>
-            </div>
 
             <Transition>
                 <!-- Formulario para Agregar el suplidor -->

@@ -3,7 +3,6 @@
 import TextInput from "@components/TextInput.vue";
 import InputLabel from "@components/InputLabel.vue";
 import Pagination from "@components/Pagination.vue";
-import {PropType} from "vue";
 import {clientDataI, clientI} from "@/Interfaces/ClientInterface";
 import {router, useForm, usePage} from "@inertiajs/vue3";
 import Swal from "sweetalert2";
@@ -17,12 +16,9 @@ const page = usePage();
 /**
  * Datos del back end
  */
-const props = defineProps({
-    clients:{
-        type: Object as PropType<clientI>,
-        required: true
-    }
-});
+const props = defineProps<{
+    clients: clientI;
+}>();
 
 /**
  * Para emitir los eventos
@@ -96,10 +92,10 @@ const destroy = (id:Number) => {
 
 <template>
     <div class=" bg-gray-200 p-5 rounded-md">
-        <div class=" mb-4">
+        <div class=" mb-4 flex justify-between items-center ">
             <form
                 @submit.prevent="submit"
-                class=" max-w-sm">
+                class="">
                 <InputLabel
                     for="search"
                     value="Buscar" />
@@ -109,56 +105,64 @@ const destroy = (id:Number) => {
                     type="text"/>
 
             </form>
+
+            <h3 class="text-3xl font-bold text-gray-900">
+                Clientes
+            </h3>
         </div>
 
         <table class=" table-auto w-full">
             <thead class=" border-b-2 text-left">
-            <tr class=" border-b-2">
-                <th>Id</th>
-                <th>Nombre</th>
-                <th>Correo</th>
-                <th>Telefono</th>
-                <th>Atc</th>
+                <tr class=" border-b-2 border-gray-800">
+                    <th>Code</th>
+                    <th>Nombre</th>
+                    <th>Ced./Rnc./Pas.</th>
+                    <th>Correo</th>
+                    <th>Telefono</th>
+                    <th>Atc</th>
 
-            </tr>
+                </tr>
             </thead>
 
             <!-- Contenido -->
             <tbody>
-            <tr
-                class=" border-b odd:bg-gray-400"
-                v-for="(item, index) in props.clients?.data" :key="index" >
-                <td class=" px-2">
-                    {{ item.id }}
-                </td>
-                <td class=" px-2">
-                    {{item.name}}
-                </td>
-                <td class=" px-2">
-                    {{item.email ? item.email : 'N/A'}}
-                </td>
-                <td class=" px-2">
-                    {{ item.phone }}
-                </td>
-                <!-- Botones -->
-                <td class="text-xl space-x-5 w-[100px]">
-                    <i
-                        v-if="page.component !== 'Clients/Create'"
-                        title="Seleccionar"
-                        @click="emit('getData',item)"
-                        class="fa-solid fa-circle-check"></i>
-                    <i
-                        v-if="page.component === 'Clients/Create'"
-                        title="Editar"
-                        @click="edit(item.id)"
-                        class=" icon-efect fa-solid fa-pen-to-square"></i>
-                    <i
-                        v-if="page.component === 'Clients/Create'"
-                        title="Eliminar"
-                        @click="destroy(item.id)"
-                        class=" icon-efect fa-solid fa-trash"></i>
-                </td>
-            </tr>
+                <tr
+                    class=" border-b odd:bg-gray-400"
+                    v-for="(item, index) in props.clients?.data" :key="index" >
+                    <td class=" px-2">
+                        {{ item.code }}
+                    </td>
+                    <td class=" px-2">
+                        {{item.name}}
+                    </td>
+                    <td class=" px-2">
+                        {{item.personal_id}}
+                    </td>
+                    <td class=" px-2">
+                        {{item.email ? item.email : 'N/A'}}
+                    </td>
+                    <td class=" px-2">
+                        {{ item.phone }}
+                    </td>
+                    <!-- Botones -->
+                    <td class="text-xl space-x-5 w-[100px]">
+                        <i
+                            v-if="page.component !== 'Clients/Show'"
+                            title="Seleccionar"
+                            @click="emit('getData',item)"
+                            class="fa-solid fa-circle-check"></i>
+                        <i
+                            v-if="page.component === 'Clients/Show'"
+                            title="Editar"
+                            @click="edit(item.id)"
+                            class=" icon-efect fa-solid fa-pen-to-square"></i>
+                        <i
+                            v-if="page.component === 'Clients/Show'"
+                            title="Eliminar"
+                            @click="destroy(item.id)"
+                            class=" icon-efect fa-solid fa-trash"></i>
+                    </td>
+                </tr>
             </tbody>
         </table>
 

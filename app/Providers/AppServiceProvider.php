@@ -2,15 +2,9 @@
 
 namespace App\Providers;
 
-use App\Models\Category;
-use App\Models\Clients;
-use App\Models\Product;
-use App\Models\Supplier;
-use App\Policies\CategoryPolicy;
-use App\Policies\ClientsPolicy;
-use App\Policies\ProductInPolicy;
-use App\Policies\ProductPolicy;
-use App\Policies\SupplierPolicy;
+use App\Models\User;
+use Illuminate\Auth\Access\Response;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -34,11 +28,24 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
-        //Politica de cliente
-        Gate::policy(Clients::class, ClientsPolicy::class);
-        Gate::policy(Category::class, CategoryPolicy::class);
-        Gate::policy(Supplier::class, SupplierPolicy::class);
-        Gate::policy(Product::class, ProductPolicy::class);
+
+        //Verificar si es administrador
+        Gate::define('is-admin', function (User $user) {
+
+            //Verificar si es adminitrador
+            if($user->role->value == 'admin')
+            {
+                //Permitir si es administrador
+                return Response::allow();
+            }else{
+                //Denegar el acceso si no es adminitrador
+                return Response::deny('No esta autorizado, comunicarse con el administrador');
+            }
+
+        });
+
+        //Evitar envolver los datos
+        JsonResource::withoutWrapping();
 
 
     }

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
 import InputLabel from '@/Components/InputLabel.vue';
-import { PropType } from 'vue';
 import { successHttp } from '@/Global/Alert';
 import AppLayout from '@layout/AppLayout.vue';
 import TextInput from '@components/TextInput.vue';
@@ -13,12 +12,9 @@ import {supplierI, supplierPaginationI} from "@/Interfaces/Supplier";
 import Pagination from "@components/Pagination.vue";
 import Swal from "sweetalert2";
 
-const props = defineProps({
-    suppliers:{
-        type: Object as PropType<supplierPaginationI>
-    }
-
-});
+const props = defineProps<{
+    suppliers: supplierPaginationI
+}>();
 
 
 
@@ -150,6 +146,7 @@ const search = () => {
                             for="name"
                             value="Nombre de la empresa *"/>
                         <TextInput
+                            name="name"
                             class=" w-full"
                             maxLength="75"
                             v-model="form.company_name"
@@ -162,9 +159,10 @@ const search = () => {
                     <!-- Nombre -->
                     <div>
                         <InputLabel
-                            for="name"
+                            for="officer"
                             value="Representante"/>
                         <TextInput
+                            name="officer"
                             class=" w-full"
                             maxLength="75"
                             v-model="form.contact"
@@ -230,20 +228,24 @@ const search = () => {
 
 
             <div class="bg-gray-200 mt-5 rounded-md p-5">
-                <h3 class="text-2xl font-bold text-center">
-                    Tabla de Suplidores
-                </h3>
-                <form
-                    @submit.prevent="search">
-                    <FormSearch
-                        v-model="formSearch.search"
+                <div class="flex justify-between items-center">
+                    <form
+                        @submit.prevent="search">
+                        <FormSearch
+                            v-model="formSearch.search"
                         />
-                </form>
+                    </form>
+                    <h3 class="text-3xl font-bold text-center">
+                        Suplidores
+                    </h3>
+                </div>
 
-                <table class=" text-left w-full table-auto">
-                    <thead>
+
+
+                <table class=" mt-5 text-left w-full table-auto">
+                    <thead class="border-b-2 border-gray-800">
                         <tr>
-                            <th>ID</th>
+                            <th>Code</th>
                             <th>Empresa</th>
                             <th>Representante</th>
                             <th>telefono</th>
@@ -255,7 +257,7 @@ const search = () => {
                         <tr
                             class="odd:bg-gray-400"
                             v-for="(item,index) in props.suppliers?.data" :key="index">
-                            <td>{{item.id}}</td>
+                            <td>{{item.code}}</td>
                             <td>{{item.company_name}}</td>
                             <td>{{item.contact ? item.contact : "N/A" }}</td>
                             <td>{{item.phone ? item.phone : 'N/A'}}</td>

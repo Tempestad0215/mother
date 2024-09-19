@@ -21,7 +21,7 @@ const showOption = ref<boolean>(false);
 const checkRole = computed(()=>{
    let role:number = page.props.auth.user.role;
 
-   if(role === 3)
+   if(role !== 'user')
    {
        return true
    }
@@ -112,6 +112,18 @@ const profile = () => {
                         title="Reportes"
                         :href="route('report.index')">
                         <i class="fa-solid fa-chart-pie"></i>
+                    </Link>
+                </li>
+
+
+
+                <li
+                    class="absolute bottom-0 right-8 hover:scale-125 duration-300"
+                    v-if="checkRole">
+                    <Link
+                        title="Reportes"
+                        :href="route('setting.index')">
+                        <i class="fa-solid fa-sliders"></i>
                     </Link>
                 </li>
 

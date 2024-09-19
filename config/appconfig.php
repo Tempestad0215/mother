@@ -4,7 +4,8 @@ return  [
     /*
      * Fecha de actualziacion
      */
-    'document-update' => 15,
+    'document-update' => 30,
+    'document-delete' => 15,
     'maxUser' => 10,
 
 
@@ -24,6 +25,10 @@ return  [
     'transCode' => 'TRA',
     'cliCode' => 'CLI',
     'catCode' => 'CAT',
-    'supCode' => 'SUP'
+    'supCode' => 'SUP',
+    'creCode' => 'CRE',
+    'advCode' =>  'ADV',
+    'coCode' => 'COM',
+    'deSale' => 'CAN'
 
 ];

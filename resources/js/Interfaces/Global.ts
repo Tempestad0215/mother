@@ -11,17 +11,39 @@ export interface idI {
 }
 
 export interface taxeI{
-    value: number
+    amount: number
     name: string
 }
 
+
+interface appSetting {
+    id: number;
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+    logo: string;
+    website: string;
+    company_id: string;
+    tax: number[];
+    unit: string[];
+    fiscal_year: string;
+    status: boolean;
+    save_cost: boolean;
+    created_at: string;
+    updated_at: string;
+
+}
+
 export interface pageI {
+
     component: string
     // scrollRegion: any[]
     url: string
     version: string
     // rememberState: any
     props: {
+        appSetting: appSetting,
         auth: {
             user: {
                 id: number
@@ -63,3 +85,22 @@ export interface pageI {
 
 }
 
+
+/**
+ * Links de navegacion
+ */
+
+export interface linksI {
+    first: string;
+    last: null | string;
+    prev: string | null;
+    next: string | null;
+}
+// Meta
+export interface metaI{
+    current_page: number;
+    from: number;
+    path: string;
+    per_page: number;
+    to: number;
+}

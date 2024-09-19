@@ -2,17 +2,17 @@
 
 use App\Helpers\UserHelper;
 use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\ClientsController;
+use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductInController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductSaleController;
+use App\Http\Controllers\SettingController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 
 
@@ -42,6 +42,19 @@ Route::middleware([
     });
 
 
+    /**
+     * Configuracion de la app
+     */
+    Route::controller(SettingController::class)
+        ->prefix('setting')
+        ->name('setting.')
+        ->group(function () {
+       Route::get('/', 'index')
+           ->middleware('can:is-admin')
+           ->name('index');
+       Route::post('/','store')->name('store');
+    });
+
 
 
     Route::get('/dashboard', function () {
@@ -61,7 +74,9 @@ Route::middleware([
         ]);
     })->name('register');
 
-    // Ruta de usuario
+    /**
+     * Usuarios
+     */
     Route::controller(UserController::class)
     ->prefix('user')
     ->name('user.')
@@ -71,8 +86,10 @@ Route::middleware([
         Route::patch('/destroy/{user}', 'destroy')->name('destroy');
     });
 
-    // Cliente
-    Route::controller(ClientsController::class)
+    /**
+     * Cliente
+     */
+    Route::controller(ClientController::class)
     ->prefix('client')
     ->name('client.')
     ->group(function () {
@@ -85,7 +102,9 @@ Route::middleware([
         Route::get('/get','getJson')->name('get.json');
     });
 
-    //Categoria
+    /**
+     * Categoria
+     */
     Route::controller(CategoryController::class)
         ->prefix('category')
         ->name('category.')
@@ -97,7 +116,9 @@ Route::middleware([
             Route::get('/get','getJson')->name('get.json');
         });
 
-    // Suplidoress
+    /**
+     * Suplidores
+     */
     Route::controller(SupplierController::class)
     ->prefix('supplier')
     ->name('supplier.')
@@ -110,7 +131,9 @@ Route::middleware([
 
     });
 
-    // Productos
+    /**
+     * Productos
+     */
     Route::controller(ProductController::class)
     ->prefix('product')
     ->name('product.')
@@ -126,7 +149,9 @@ Route::middleware([
         Route::patch('/delete/{product}','destroy')->name('destroy');
     });
 
-    //Ventas de productos
+    /**
+     * Ventas
+     */
     Route::controller(ProductSaleController::class)
         ->prefix('product-sale')
         ->name('product-sale.')
@@ -134,19 +159,26 @@ Route::middleware([
            Route::get('/','create')->name('create');
            Route::get('/get','getJson')->name('get.json');
            Route::post('/','store')->name('store');
+           Route::patch('/{sale}','update')->name('update');
            Route::get('/show','show')->name('show');
+           Route::patch('/item/destroy/{product}/{sale}','destroyItem')->name('destroy.item');
+           Route::patch('/sale/destroy/{sale}/{inventoried}','destroySale')->name('destroy-sale');
         });
 
-    //Entrada de los productos
+    /**
+     * Entrada de productos
+     */
     Route::controller(ProductInController::class)
         ->prefix('product-in')
         ->name('product-in.')
         ->group(function(){
             Route::get('/','index')->name('create');
+            Route::get('show','show')->name('show');
             Route::patch('/{productIn}','store')->name('store');
             Route::get('/entrance/{productIn}','entrance')->name('entrance');
-            Route::patch('/update/{productIn}','update')->name('update');
-            Route::patch('/destroy/{productIn}','destroy')->name('destroy');
+            Route::get('/entrance/edit/{trans}','edit')->name('edit');
+            Route::patch('/update/{trans}','update')->name('update');
+            Route::patch('/destroy/{trans}','destroy')->name('destroy');
 
         });
 

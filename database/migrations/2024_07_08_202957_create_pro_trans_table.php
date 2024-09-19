@@ -21,10 +21,12 @@ return new class extends Migration
             $table->float('stock',2);
             $table->float('tax');
             $table->float('amount');
+            $table->float('discount_amount');
+            $table->float('cost');
             $table->float('price',2);
             $table->float('discount',2)->default(0);
-            $table->enum('type',[1,2,3,4,5]);
-            $table->boolean('status')->default(false);
+            $table->enum('type',['entrada','ventas','salida','cancelacion','ajuste']);
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

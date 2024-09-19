@@ -1,7 +1,10 @@
 export interface categoryI{
-    id: number
-    name: string
-    description: string
+    id: number;
+    code: string;
+    name: string;
+    description: string | null;
+    created_at: string;
+    updated_at: string;
 }
 
 

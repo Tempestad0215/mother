@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @property int $id
@@ -14,19 +14,19 @@ use Illuminate\Support\Facades\DB;
  * @property string $client_name
  * @property int $client_id
  * @property array $info
- * @property float $discount
+ * @property float $discount_amount
  * @property float $tax
  * @property float $sub_total
  * @property float $amount
  * @property boolean $status
- * @property string $comment
  * @property bool $close_table
  */
 
 
-class Sale extends Model
+class Sale extends Model implements Auditable
 {
     use HasFactory;
+    use \OwenIt\Auditing\Auditable;
 
 
     // La tabla que se ve a utilizar
@@ -39,7 +39,7 @@ class Sale extends Model
         'client_name',
         'client_id',
         'info',
-        'discount',
+        'discount_amount',
         'tax',
         'sub_total',
         'amount',
@@ -63,7 +63,7 @@ class Sale extends Model
      * Formatear la fehca de creacion
      * @return Attribute
      */
-    protected function createAt ():Attribute
+    protected function createdAt ():Attribute
     {
         return Attribute::make(
             get: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i:s'),
@@ -75,7 +75,7 @@ class Sale extends Model
      * Formataer la fecha de actualizacion
      * @return Attribute
      */
-    protected function updateAt ():Attribute
+    protected function updatedAt ():Attribute
     {
         return Attribute::make(
             get: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i:s'),
@@ -89,7 +89,7 @@ class Sale extends Model
     /**
      * @return void
      */
-    protected static function boot()
+    protected static function boot():void
     {
         // Llamar el metodo principal
         parent::boot();
@@ -106,7 +106,7 @@ class Sale extends Model
      * @return string
      */
     // funcion para generar el codigo
-    private static function generateCode()
+    private static function generateCode():string
     {
         // Obtener el ultimo registros
         $last = self::orderBy('id','desc')->first();
@@ -115,7 +115,7 @@ class Sale extends Model
         $nextID = $last ? $last->id + 1 : 1;
 
         // Devolver los datos
-        $code = config('setting.saleCode');
+        $code = config('appconfig.saleCode');
 
         // craer el codigp
         return $code.str_pad($nextID, 6,'0', STR_PAD_LEFT);

@@ -2,18 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Clients;
+use App\Helpers\ClientHelper;
+use App\Http\Resources\ClientCommentResource;
+use App\Models\Client;
 use App\Http\Requests\StoreClientsRequest;
 use App\Http\Requests\UpdateClientsRequest;
-use http\Exception;
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
-class ClientsController extends Controller
+class ClientController extends Controller
 {
+    public $clientHelper;
+
+    public function __construct()
+    {
+        $this->clientHelper = new ClientHelper();
+    }
+
+
+
     /**
      * @return void
      */
@@ -29,14 +38,15 @@ class ClientsController extends Controller
     {
         // Validar los datos
         $request->validate([
-            'search' => ['nullable','string']
+            'search' => ['nullable','string'],
         ]);
 
         // Tomar los datos
         $data = $this->getTable($request);
 
         return Inertia::render('Clients/Create',[
-            'clients' => $data
+            'clients' => $data,
+            'test' => config('Setting.cliCode')
         ]);
 
     }
@@ -48,8 +58,8 @@ class ClientsController extends Controller
     public function store(StoreClientsRequest $request)
     {
 
-        // Introducir los datos
-        Clients::create($request->validated());
+        //Guardar los datos
+        $this->clientHelper->store($request);
 
         // Devolver hacia atras
         return back();
@@ -70,6 +80,8 @@ class ClientsController extends Controller
         // Tomar los datos
         $data = $this->getTable($request);
 
+
+        //Devolver los datos
         return Inertia::render('Clients/Show',[
             'clients' => $data
         ]);
@@ -77,25 +89,25 @@ class ClientsController extends Controller
     }
 
     /**
-     * @param Clients $client
+     * @param Client $client
      * @return \Inertia\Response
      */
-    public function edit(Clients $client)
+    public function edit(Client $client)
     {
         // Devolver la vista con los datos
         return Inertia::render('Clients/Create',[
             'update' => true,
-            'clientEdit' => $client
+            'clientEdit' => new ClientCommentResource($client) ,
         ]);
 
     }
 
     /**
      * @param UpdateClientsRequest $request
-     * @param Clients $client
+     * @param Client $client
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(UpdateClientsRequest $request, Clients $client)
+    public function update(UpdateClientsRequest $request, Client $client)
     {
 
         // Actualizar todos los datos
@@ -107,10 +119,10 @@ class ClientsController extends Controller
     }
 
     /***
-     * @param Clients $client
+     * @param Client $client
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(Clients $client)
+    public function destroy(Client $client)
     {
 
         //Verificar si el usuario tiene permiso
@@ -139,7 +151,7 @@ class ClientsController extends Controller
         $search = $request->get('search');
 
         //Buscar los datos de todo
-        $data = Clients::where('status',false)
+        $data = Client::where('status',false)
             ->where(function ($query) use ($search) {
                 $query->where('name','like','%'. $search .'%')
                     ->orWhere('phone','like','%'. $search .'%');
@@ -163,7 +175,7 @@ class ClientsController extends Controller
         $search = $request->get('search');
 
         // Buscar en la base de datos
-        return Clients::where('status',false)
+        return Client::where('status',true)
             ->where(function ($query) use ($search) {
                 $query->where('name','like','%'. $search .'%')
                     ->orWhere('email','like','%'. $search .'%')

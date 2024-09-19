@@ -6,17 +6,14 @@ import InputError from "@components/InputError.vue";
 import {useForm} from "@inertiajs/vue3";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import {successHttp} from "@/Global/Alert";
-import {PropType} from "vue";
 import {categoryI, categoryPaginationI} from "@/Interfaces/Categories";
 import FormSearch from "@components/FormSearch.vue";
 import Pagination from "@components/Pagination.vue";
 import Swal from "sweetalert2";
 
-const props = defineProps({
-    categories: {
-        type: Object as PropType<categoryPaginationI>
-    }
-});
+const props = defineProps<{
+    categories: categoryPaginationI
+}>();
 
 
 const form = useForm({
@@ -34,6 +31,7 @@ const formSearch = useForm({
 
 
 const submit = () => {
+    //si es para actualizar
     if(form.update)
     {
         form.patch(route('category.update',{category: form.id}),{
@@ -145,19 +143,25 @@ const search = () => {
 
 
             <div class="bg-gray-200 p-5 rounded-md mt-5">
+                <div class="flex justify-between items-center">
+                    <form
+                        @submit.prevent="search">
+                        <FormSearch
+                            holder="-- Buscar Categoria --"
+                            v-model="formSearch.search">
+                        </FormSearch>
+                    </form>
+                    <h3 class="text-3xl font-bold">
+                        Categorias
+                    </h3>
+                </div>
 
-                <form
-                    @submit.prevent="search">
-                    <FormSearch
-                        holder="-- Buscar Categoria --"
-                        v-model="formSearch.search">
-                    </FormSearch>
-                </form>
 
-                <table class="w-full  rounded-md">
+
+                <table class="w-full mt-5 rounded-md">
                     <thead>
-                    <tr class=" text-left">
-                        <th>Id</th>
+                    <tr class=" text-left border-b-2 border-gray-800">
+                        <th>Code</th>
                         <th>Nombre</th>
                         <th>Descripcion</th>
                         <th>Act</th>
@@ -167,9 +171,9 @@ const search = () => {
                         <tr
                             class="odd:bg-gray-400"
                             v-for="(item, index) in props.categories?.data" :key="index">
-                            <td>{{item.id}}</td>
+                            <td>{{item.code}}</td>
                             <td>{{item.name}}</td>
-                            <td>{{item.description ? item.description : 'N/A'}}</td>
+                            <td class="w-2/4 max-w-[600px] truncate">{{item.description ? item.description : 'N/A'}}</td>
                             <td class="text-xl space-x-3 w-16">
                                 <i
                                     @click="edit(item)"

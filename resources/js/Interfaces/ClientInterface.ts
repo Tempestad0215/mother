@@ -1,5 +1,7 @@
 
 // Cliente para la tabla
+import {commentI} from "@/Interfaces/Comment";
+
 export interface clientI {
     current_page: number
     data: clientDataI[]
@@ -16,24 +18,28 @@ export interface clientI {
 export interface clienteEditI
 {
     id: number;
+    code: string;
     name: string;
-    phone: string;
-    email:(null | string);
-    address:(null | string);
+    personal_id: string | null;
+    phone: string | null;
+    email:null | string;
+    address:null | string;
+    type: boolean,
+    comment: commentI
     status: Boolean;
     created_at:string;
-    updated_at:string;
-
 }
 
 
 export interface clientDataI {
-    address: (string | null)
-    createed_at: string
-    email: (string|null)
+    address: string | null
+    code: string
+    created_at: string
+    email: string | null
+    personal_id: string | null
     id: number
     name: string
-    phone: string
+    phone: string | null
     status: boolean
     updated_at: string
 }

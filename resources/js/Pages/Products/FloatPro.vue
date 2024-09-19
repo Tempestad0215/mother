@@ -4,39 +4,49 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { successHttp } from '@/Global/Alert';
-import { proSupResI } from '@/Interfaces/Product';
+import {productSupplierI} from '@/Interfaces/Product';
 import { supplierI } from '@/Interfaces/Supplier';
-import InputSelect from '@components/InputSelect.vue';
 import SecondaryButton from '@components/SecondaryButton.vue';
-import { useForm } from '@inertiajs/vue3';
-import axios from 'axios';
-import { onMounted, PropType, ref } from 'vue';
-import {taxeI} from "@/Interfaces/Global";
+import {useForm, usePage} from '@inertiajs/vue3';
+import { onMounted, ref } from 'vue';
+import {pageI, taxeI} from "@/Interfaces/Global";
 import {categoryI} from "@/Interfaces/Categories";
 
 
-const props = defineProps({
-    productEdit: {
-        type: Object as PropType<proSupResI>,
-    },
-    update: {
-        type: Boolean
-    }
-});
+/**
+ * Info general
+ */
+const page:pageI = usePage();
+
+/**
+ * Propiedades de la ventana
+ */
+const props = defineProps<{
+    productEdit? : productSupplierI,
+    update? : boolean,
+    categories: categoryI[],
+    suppliers: supplierI[]
+}>();
 
 
+/**
+ * Emitir eventos
+ */
 const emit = defineEmits(['showSupplier']);
 
 
-// Datos del formulario
+/**
+ * Datos del formulario
+ */
 const form = useForm({
     id: 0,
     name: "",
     description: "",
     unit: "",
+    type: "producto",
     category_id:0,
-    category_name:"",
     supplier_id:0,
+    inventoried: true,
     search:"",
     tax_rate: 0,
     tax_tex: "",
@@ -49,50 +59,37 @@ const form = useForm({
 
 });
 
-// Cons datos de la ventana
-const dataSelect = ref<supplierI[]>([]);
-const taxes = ref<taxeI[]>([
-    {
-        value: 0,
-        name: 'Ex.'
-    },
-    {
-        value: 0.16,
-        name: '16%'
-    },
-    {
-        value: 0.18,
-        name: '18%'
-    },
-]);
+/**
+ *Datos de la ventana
+ */
+const taxes = ref<taxeI[]>(page.props.appSetting.tax);
+const dataUnit = ref(page.props.appSetting.unit);
 
 
-const showCategory = ref<boolean>(false);
-const dataUnit = ref(["UNIDAD","CAJA","KG","LIBRA","LITRO","ONZA","GALON"]);
-const categoryData = ref<categoryI[]>([]);
-
+/**
+ * Al momento de cargar
+ */
 onMounted(()=>{
-    // actualizar los suplidores
-    getSupplier();
+
     // Pasar los datos a editar
-    if(props.productEdit?.data)
+    if(props.productEdit)
     {
-        form.id = props.productEdit.data.id;
-        form.name = props.productEdit.data.name;
-        form.description = <string>props.productEdit.data.description;
-        form.bar_code = <string>props.productEdit.data.bar_code;
-        form.category_name = props.productEdit.data.category.name;
-        form.category_id = props.productEdit.data.category.id;
-        form.tax_rate = props.productEdit.data.tax_rate;
-        form.unit = props.productEdit.data.unit;
-        form.supplier_id = props.productEdit.data.supplier.id;
-        form.search = props.productEdit.data.supplier.name;
+        form.id = props.productEdit.id;
+        form.name = props.productEdit.name;
+        form.type = props.productEdit.type;
+        form.description = props.productEdit.description;
+        form.bar_code = props.productEdit.bar_code;
+        form.category_id = props.productEdit.category_id;
+        form.supplier_id = props.productEdit.supplier_id;
+        form.tax_rate = props.productEdit.tax_rate;
+        form.unit = props.productEdit.unit;
     }
-})
+});
 
 
-
-// Funciones
+/**
+ * Funciones
+ */
 const submit = () => {
 
     if(props.update)
@@ -116,56 +113,57 @@ const submit = () => {
 
 }
 
-// conseguir los nuevos suplidores
-const getSupplier = () =>{
-    axios.get(route('supplier.get.json', {search: form.search}))
-        .then((res)=>{
-            dataSelect.value = res.data
-
-        }).catch((err)=>{
-            console.log('error', err)
-        })
-}
-
-const getValueSelect = (supplierId:number) =>{
-    form.supplier_id = supplierId;
-}
 
 
-const getCategory = () => {
-    if(form.category_name.length < 2)
-    {
-        return false;
-    }else{
-        axios.get(route('category.get.json',{search: form.category_name}))
-            .then((res) =>{
-                categoryData.value = res.data;
-            }).catch(()=>{
-
-        });
-    }
-
-}
-
-const selectCategory = (item:categoryI) => {
-    form.category_id = item.id;
-    form.category_name = item.name;
-    showCategory.value = false;
-}
 
 </script>
 
 
 
 <template>
+<!--Formulario-->
     <div  >
         <form
             @submit.prevent="submit" >
+
+<!--Titulo-->
             <h3 class="text-2xl font-bold text-center">
                 Registro de producto
             </h3>
 
-            <div class="">
+            <div class="flex flex-col float-right text-center">
+                <InputLabel for="inventoried" value="Inventariar" />
+                <div class="flex">
+                    <div class="">
+                        <input
+                            type="radio"
+                            name="yes_inventoried"
+                            v-model="form.inventoried"
+                            :value="true"
+                            id="no_inventoried">
+                        <InputLabel
+                            class="inline ml-2"
+                            for="yes_inventoried" value="SI" />
+                    </div>
+                    <div class="ml-5">
+                        <input
+                            type="radio"
+                            :value="false"
+                            v-model="form.inventoried"
+                            name="no_inventoried"
+                            id="no_inventoried">
+                        <InputLabel
+                            class="inline ml-2"
+                            for="yes_inventoried" value="No" />
+                    </div>
+                </div>
+
+
+            </div>
+
+
+<!--Informacion General-->
+            <div class=" clear-both">
                 <fieldset class=" grid grid-cols-4 gap-3 field-box">
                     <legend>
                         Informacion
@@ -181,6 +179,7 @@ const selectCategory = (item:categoryI) => {
                             class=" w-full"
                             name="name"
                             required
+                            autocomplete="false"
                             v-model="form.name"
                             placeholder="Nombre del producto"
                         />
@@ -206,33 +205,23 @@ const selectCategory = (item:categoryI) => {
 
                     <div>
                         <InputLabel for="category" value="Categoria" />
-                        <div class="relative">
-                            <TextInput
-                                @focus="showCategory = true"
-                                @input="getCategory"
-                                aria-required="true"
-                                v-model="form.category_name"
-                                aria-autocomplete="none"
-                                class=" w-full"
-                            />
-                            <i
-                                class="icon-rotate fa-solid fa-circle-arrow-down"
-                                :class="{'rotate-180' : showCategory}"></i>
+                        <select
+                            name="category"
+                            id="category"
+                            class="rounded-md border-gray-300 w-full"
+                            v-model="form.category_id">
+                            <option disabled :value="0">
+                                --- Seleccione ---
+                            </option>
+                            <option
+                                v-for="(item, index) in props.categories"
+                                :key="index"
+                                :value="item.id">
+                                {{item.name}}
+                            </option>
+                        </select>
 
-
-                            <div
-                                class="bg-gray-100 rounded-md absolute w-full border-2 border-gray-800 "
-                                v-if="showCategory">
-                                <ol>
-                                   <li
-                                       class="list-data"
-                                       v-for="(item,index) in categoryData" :key="index"
-                                       @click="selectCategory(item)">
-                                       {{item.name}}
-                                   </li>
-                                </ol>
-                            </div>
-                        </div>
+<!--                        Mensaje de error-->
                         <InputError :message="form.errors.category_id"/>
 
                     </div>
@@ -243,17 +232,23 @@ const selectCategory = (item:categoryI) => {
                             for="supplier_id"
                             value="Proveedor *"/>
 
-                        <div class=" flex space-x-3">
-                            <InputSelect
-                                field="company_name"
-                                :info="dataSelect"
-                                @send-value="getValueSelect"
-                                @update-data="getSupplier()"
-                                aria-required="true"
-                                autocomplete="false"
-                                v-model="form.search"
-                                class=" w-full" />
+                        <div class="flex items-center ">
+                            <select
+                                v-model="form.supplier_id"
+                                name="supplier_id"
+                                class="w-full rounded-md border-gray-300"
+                                id="supplier_id">
+                                <option disabled :value="0">
+                                    --- Seleccione ---
+                                </option>
+                                <option
+                                    v-for="(item, index) in props.suppliers" :key="index"
+                                    :value="item.id">
+                                    {{item.company_name}}
+                                </option>
+                            </select>
                             <SecondaryButton
+                                class=" py-3 ml-1"
                                 @click="emit('showSupplier')"
                                 type="button">
                                 Agre.
@@ -275,6 +270,7 @@ const selectCategory = (item:categoryI) => {
                                 for="sku"
                                 value="Cod. Externo"/>
                             <TextInput
+                                name="sku"
                                 v-model="form.sku"
                                 class="w-full"
                             />
@@ -285,14 +281,57 @@ const selectCategory = (item:categoryI) => {
                                 for="bar_code"
                                 value="Codigo de Barra"/>
                             <TextInput
+                                name="bar_code"
                                 v-model="form.bar_code"
                                 class="w-full"
                             />
                             <InputError :message="form.errors.bar_code"/>
                         </div>
+
+
+<!--Opciones de producto, si sera producto o servicio-->
+                        <div class=" flex flex-col">
+                            <InputLabel
+                                class=" mb-2"
+                                for="type" value="Tipo" />
+                            <div class="flex">
+                                <div>
+                                    <input
+                                        class="peer hidden"
+                                        type="radio"
+                                        v-model="form.type"
+                                        value="producto"
+                                        name="cli_cash"
+                                        id="cli_cash">
+                                    <label
+                                        class=" border-2 px-2 py-1 rounded-md border-gray-400 peer-checked:bg-gray-800 peer-checked:text-white duration-300 "
+                                        for="cli_cash">
+                                        Producto
+                                    </label>
+
+                                </div>
+                                <div class="ml-5">
+                                    <input
+                                        class="peer hidden"
+                                        v-model="form.type"
+                                        value="servicio"
+                                        type="radio"
+                                        name="cli_credit"
+                                        id="cli_credit">
+                                    <label
+                                        class=" border-2 px-2 py-1 rounded-md border-gray-400 peer-checked:bg-gray-800 peer-checked:text-white duration-300 "
+                                        for="cli_credit">
+                                        Servicio
+                                    </label>
+                                </div>
+                                <InputError :message="form.errors.type"/>
+                            </div>
+                        </div>
+
+
                     </fieldset>
 
-
+<!--Detalle del producto-->
                     <fieldset class=" grid grid-cols-2 gap-3 field-box">
                         <legend>
                             Datalles
@@ -307,11 +346,11 @@ const selectCategory = (item:categoryI) => {
                                     required
                                     name="tax_rate"
                                     v-model="form.tax_rate">
-                                    <option value="">--- Seleccione El Itbis  ---</option>
+                                    <option value="" selected>--- Seleccione El Itbis  ---</option>
                                     <option
                                         v-for="item in taxes"
-                                        :value="item.value">
-                                        {{item.name}}
+                                        :value="item.amount">
+                                        {{item.name }} | {{item.amount}}
                                     </option>
                                 </select>
 
@@ -320,7 +359,9 @@ const selectCategory = (item:categoryI) => {
                             <InputError :message="form.errors.tax_rate" />
                         </div>
                         <!-- Unidad -->
-                        <div class="">
+                        <div
+                            v-if="form.type === 'producto'"
+                            class="">
                             <InputLabel
                                 for="unit"
                                 value="Unidad *"/>
@@ -340,7 +381,7 @@ const selectCategory = (item:categoryI) => {
                             <!-- Error -->
                             <InputError :message="form.errors.unit" />
                         </div>
-                        <div>
+                        <div v-if="form.type === 'producto'">
                             <InputLabel
                                 for="weight"
                                 value="Peso"/>
@@ -360,7 +401,9 @@ const selectCategory = (item:categoryI) => {
                                 name="brand"/>
                             <InputError :message="form.errors.brand" />
                         </div>
-                        <div class="col-span-full">
+                        <div
+                            v-if="form.type === 'producto'"
+                            class="col-span-full">
                             <InputLabel
                                 for="dimension"
                                 value="Dimensiones"/>

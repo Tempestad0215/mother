@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Rules\CheckStock;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreProductSaleRequest extends FormRequest
@@ -18,7 +19,7 @@ class StoreProductSaleRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
@@ -32,18 +33,23 @@ class StoreProductSaleRequest extends FormRequest
             'client_name' => ['nullable', 'string','min:3','max:75'],
             'client_id' => ['nullable','integer'],
             'info' => ['required','array', new CheckStock($info)],
-            'info.*.id' => ['required','numeric','exists:products,id', ],
+            'info.*.id' => ['required','numeric','exists:products,id'],
+            'info.*.code' => ['nullable','string','min:4','max:50'],
             'info.*.name' => ['required','string','min:3','max:75'],
             'info.*.quantity' => ['required','numeric'],
+            'info.*.cost' => ['required','numeric'],
             'info.*.price' => ['required','numeric'],
             'info.*.tax' => ['required','numeric'],
-            'info.*.total_tax' => ['required','numeric'],
             'info.*.tax_rate' => ['required','numeric'],
+            'info.*.tax_amount' => ['required','numeric'],
             'info.*.amount' => ['required','numeric'],
+            'info.*.discount' => ['required','numeric'],
+            'info.*.discount_amount' => ['required','numeric'],
+            'info.*.product_tax' => ['required','numeric'],
             'tax' => ['required','numeric'],
             'amount' => ['required','numeric'],
             'sub_total' => ['required','numeric'],
-            'discount' => ['required','numeric'],
+            'discount_amount' => ['required','numeric'],
             'comment' => ['nullable','string','min:3','max:255'],
             'close_table' => ['required','boolean'],
         ];

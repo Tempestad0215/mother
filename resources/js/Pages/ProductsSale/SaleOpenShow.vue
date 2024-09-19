@@ -52,28 +52,41 @@ const submit = () => {
 
 <template>
     <div class="">
-        <form @submit.prevent="submit()">
-            <FormSearch
-                v-model="form.search"
-            />
-        </form>
+        <div class="flex items-center justify-between">
+            <form @submit.prevent="submit()">
+                <FormSearch
+                    v-model="form.search"
+                />
+            </form>
 
-        <table class="w-full">
+            <h3 class="text-3xl font-bold mt-5">
+                Cuentas Abiertas
+            </h3>
+        </div>
+
+
+        <table class="w-full mt-5">
             <thead class="text-left">
                 <tr>
                     <th>Code</th>
                     <th>Cliente</th>
+                    <th>Itbis</th>
                     <th>Total</th>
                     <th>Act</th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(item, index) in props.saleOpen?.data"  :key="index">
+                <tr
+                    class="odd:bg-gray-400"
+                    v-for="(item, index) in props.saleOpen?.data"  :key="index">
                     <td>
                         {{item.code}}
                     </td>
                     <td>
                         {{item.client_name ? item.client_name : "N/A"}}
+                    </td>
+                    <td>
+                        {{ getMoney(item.tax)}}
                     </td>
                     <td>
                         {{ getMoney(item.amount)}}

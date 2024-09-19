@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
+ * @property int $id
+ * @property string $type
+ * @property boolean $inventoried
  * @property boolean $status
  * @property string $code
  * @property string $name
@@ -23,8 +26,13 @@ use Illuminate\Support\Facades\DB;
  * @property float $weight
  * @property string $dimensions
  * @property string $brand
+ * @property float  $tax
  * @property float $discount
+ * @property float $discount_amount
+ * @property float $product_tax
+ * @property float $product_no_tax
  * @property float $tax_rate
+ * @property float $benefits
  * @property string $comment
  * @property bool $close_table
  * @property  int $supplier_id
@@ -34,9 +42,10 @@ use Illuminate\Support\Facades\DB;
  *
  * @method static create(mixed $validated)
  */
-class Product extends Model
+class Product extends Model implements Auditable
 {
     use HasFactory;
+    use \OwenIt\Auditing\Auditable;
 
 
     /**
@@ -60,10 +69,17 @@ class Product extends Model
         'dimensions',
         'brand',
         'discount',
+        'discount_amount',
+        'product_no_tax',
+        'product_tax',
+        'benefits',
+        'tax',
         'tax_rate',
         'status',
         'comment',
-        'close_table'
+        'close_table',
+        'type',
+        'inventoried'
     ];
 
 
@@ -136,11 +152,17 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
+    //Transacciones
+    public function trans():HasMany
+    {
+        return $this->hasMany(ProTrans::class);
+    }
+
 
     /**
      * @return void
      */
-    protected static function boot()
+    protected static function boot():void
     {
         // Llamar el metodo principal
         parent::boot();
@@ -156,7 +178,7 @@ class Product extends Model
      * @return string
      */
     // funcion para generar el codigo
-    private static function generateCode()
+    private static function generateCode():string
     {
         // Obtener el ultimo registros
         $last = self::orderBy('id','desc')->first();
@@ -165,7 +187,7 @@ class Product extends Model
         $nextID = $last ? $last->id + 1 : 1;
 
         // Devolver los datos
-        $code = config('setting.proCode');
+        $code = config('appconfig.proCode');
 
         // craer el codigp
         return $code.str_pad($nextID, 6,'0', STR_PAD_LEFT);
