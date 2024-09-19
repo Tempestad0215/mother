@@ -124,22 +124,22 @@ class ProductSaleController extends Controller
                     //Descontar los productos del inventario
                     $saleHelper->processSale($closeTable, $value);
 
-                    //Crear la transaccion individual
-                    ProTrans::create([
-                        'product_id' => $value['id'],
-                        'sale_id' => $sale->id,
-                        'stock' => $value['quantity'],
-                        'price' => $value['price'],
-                        'tax' => $value['tax'],
-                        'cost' => $value['cost'],
-                        'amount' => $value['amount'],
-                        'discount' => $value['discount'],
-                        'discount_amount' => $value['discount_amount'],
-                        'type' =>  $closeTable ? ProductTransType::INTERNO : ProductTransType::VENTAS
-                    ]);
-
-
-
+                    if ($closeTable)
+                    {
+                        //Crear la transaccion individual
+                        ProTrans::create([
+                            'product_id' => $value['id'],
+                            'sale_id' => $sale->id,
+                            'stock' => $value['quantity'],
+                            'price' => $value['price'],
+                            'tax' => $value['tax'],
+                            'cost' => $value['cost'],
+                            'amount' => $value['amount'],
+                            'discount' => $value['discount'],
+                            'discount_amount' => $value['discount_amount'],
+                            'type' =>  ProductTransType::VENTAS
+                        ]);
+                    }
 
                 }
             });

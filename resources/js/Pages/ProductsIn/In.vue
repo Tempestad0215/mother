@@ -61,14 +61,14 @@ const form = useForm({
 /*
 Computada
  */
-const showError = computed(() => {
-   if (form.errors.general !== "")
-   {
-       setTimeout(() =>{
-           return false;
-       },3000)
-   }
-});
+// const showError = computed(() => {
+//    if (form.errors.general !== "")
+//    {
+//        setTimeout(() =>{
+//            return false;
+//        },3000)
+//    }
+// });
 
 
 
@@ -87,7 +87,6 @@ const formSearch = useForm({
  * Datos de la ventnaa
  */
 // Propiedades de la ventana
-const registerProduct = ref(false);
 const registerSupplier = ref(false);
 const showForm = ref<boolean>(false);
 const tax_rate = ref<number>(0);
@@ -515,18 +514,25 @@ const totalTax = () => {
 
 <!--                //Crear la tabla para mostrar las entrada-->
                 <div class=" mt-5 bg-gray-200 p-5 rounded-md">
-                    <form
-                        @submit.prevent="search" >
-                        <FormSearch
-                            holder="Buscar Entradas"
-                            v-model="formSearch.search"/>
-                    </form>
+
+                    <div class="flex justify-between items-center">
+                        <form
+                            @submit.prevent="search" >
+                            <FormSearch
+                                holder="Buscar Entradas"
+                                v-model="formSearch.search"/>
+                        </form>
+                        <h3 class="text-3xl font-bold">
+                            Productos
+                        </h3>
+                    </div>
+
 
 
 <!--                Datos de los productos para la entrada    -->
-                    <table class="table-auto w-full mt-3">
+                    <table class="table-auto w-full mt-5">
                         <thead>
-                            <tr class="text-left">
+                            <tr class="text-left border-b-2 border-gray-900">
                                 <th>Codigo</th>
                                 <th>Cod. Barr.</th>
                                 <th>Producto</th>

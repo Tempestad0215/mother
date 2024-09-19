@@ -72,7 +72,7 @@ class DeletedSale extends Model implements Auditable
         // Llamar el metodo principal
         parent::boot();
 
-        //Generar el codigo en todo
+        //Generar el codigo
         static::creating(function ($sale) {
             $sale->code = self::generateCode();
         });

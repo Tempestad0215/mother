@@ -143,14 +143,20 @@ const search = () => {
 
 
             <div class="bg-gray-200 p-5 rounded-md mt-5">
+                <div class="flex justify-between items-center">
+                    <form
+                        @submit.prevent="search">
+                        <FormSearch
+                            holder="-- Buscar Categoria --"
+                            v-model="formSearch.search">
+                        </FormSearch>
+                    </form>
+                    <h3 class="text-3xl font-bold">
+                        Categorias
+                    </h3>
+                </div>
 
-                <form
-                    @submit.prevent="search">
-                    <FormSearch
-                        holder="-- Buscar Categoria --"
-                        v-model="formSearch.search">
-                    </FormSearch>
-                </form>
+
 
                 <table class="w-full mt-5 rounded-md">
                     <thead>

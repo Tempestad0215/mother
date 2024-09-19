@@ -228,15 +228,19 @@ const search = () => {
 
 
             <div class="bg-gray-200 mt-5 rounded-md p-5">
-                <h3 class="text-2xl font-bold text-center">
-                    Tabla de Suplidores
-                </h3>
-                <form
-                    @submit.prevent="search">
-                    <FormSearch
-                        v-model="formSearch.search"
+                <div class="flex justify-between items-center">
+                    <form
+                        @submit.prevent="search">
+                        <FormSearch
+                            v-model="formSearch.search"
                         />
-                </form>
+                    </form>
+                    <h3 class="text-3xl font-bold text-center">
+                        Suplidores
+                    </h3>
+                </div>
+
+
 
                 <table class=" mt-5 text-left w-full table-auto">
                     <thead class="border-b-2 border-gray-800">

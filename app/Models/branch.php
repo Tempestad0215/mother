@@ -15,12 +15,12 @@ class branch extends Model implements Auditable
     /**
      * @return void
      */
-    protected static function boot()
+    protected static function boot():void
     {
         // Llamar el metodo principal
         parent::boot();
 
-        //Generar el codigo en todo
+        //Generar el codigo
         static::creating(function ($category) {
             $category->code = self::generateCode();
         });
@@ -33,7 +33,7 @@ class branch extends Model implements Auditable
      */
 
     // funcion para generar el codigo
-    private static function generateCode()
+    private static function generateCode():string
     {
         // Obtener el ultimo registros
         $last = self::orderBy('id','desc')->first();

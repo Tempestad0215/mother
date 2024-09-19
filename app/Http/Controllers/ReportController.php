@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Models\Sale;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -21,7 +23,10 @@ class ReportController extends Controller
         return Inertia::render('Reports/Index');
     }
 
-
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function getDailyByDate(Request $request)
     {
         //Validar los datos
@@ -53,4 +58,12 @@ class ReportController extends Controller
         return response()->json($data);
 
     }
+
+//    public function getAllDaySale(Request $request)
+//    {
+//        $sold = ProTrans::where('');
+//    }
+
+
+
 }

@@ -243,9 +243,12 @@ const submit = () => {
                 preserveScroll: true,
                 onSuccess:() =>{
                     successHttp('Documento Actualizado Correctamente');
+                    form.reset();
                 }
             });
         }else{
+
+            //Guardar los datos por primera vez
             form.post(route('product-sale.store'),{
                 onSuccess:()=>{
                     successHttp('Venta cerrada correctamente');

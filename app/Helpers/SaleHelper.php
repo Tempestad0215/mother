@@ -236,19 +236,23 @@ class SaleHelper
                 $sale->close_table = $request->get('close_table');
                 $sale->save();
 
-                //Crear la transaccion individual
-                ProTrans::create([
-                    'product_id' => $item['id'],
-                    'sale_id' => $sale->id,
-                    'stock' => $item['quantity'],
-                    'price' => $item['price'],
-                    'tax' => $item['tax'],
-                    'cost' => $item['cost'],
-                    'amount' => $item['amount'],
-                    'discount' => $item['discount'],
-                    'discount_amount' => $item['discount_amount'],
-                    'type' =>  $closeTable ? ProductTransType::INTERNO : ProductTransType::VENTAS
-                ]);
+                if ($closeTable)
+                {
+                    //Crear la transaccion individual
+                    ProTrans::create([
+                        'product_id' => $item['id'],
+                        'sale_id' => $sale->id,
+                        'stock' => $item['quantity'],
+                        'price' => $item['price'],
+                        'tax' => $item['tax'],
+                        'cost' => $item['cost'],
+                        'amount' => $item['amount'],
+                        'discount' => $item['discount'],
+                        'discount_amount' => $item['discount_amount'],
+                        'type' => ProductTransType::VENTAS
+                    ]);
+                }
+
 
             });
         });
