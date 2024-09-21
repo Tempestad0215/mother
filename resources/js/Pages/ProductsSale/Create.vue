@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {Head, router, useForm} from "@inertiajs/vue3";
+import {Head, useForm} from "@inertiajs/vue3";
 import AppLayout from "@layout/AppLayout.vue";
 import InputLabel from "@components/InputLabel.vue";
 import TextInput from "@components/TextInput.vue";
@@ -24,7 +24,7 @@ import {saleDataI, saleDataPaginationI, saleInfoI} from "@/Interfaces/Sale";
 /**
  * Datos del back end
  */
-const props = defineProps<{
+const propsW = defineProps<{
     products: productI,
     clients: clientI,
     pdf? : string,
@@ -139,19 +139,13 @@ const deleteItem =(name:string , index:number) => {
             form.info.splice(index,1);
 
             //Enviar los datos para actualizar
-            router.patch(route('product-sale.destroy.item',{product: info.id, sale: form.id}),{
-                table: form.close_table,
-                info: form.info
-            },{
+            form.patch(route('product-sale.destroy.item',{product: info.id, sale: form.id},{
                 preserveScroll: true,
                 preserveState: true,
-                onSuccess:() =>{
+                onSuccess: () => {
                     successHttp(`Item : ${info.name} Eliminado Correctamente` );
-                },
-                onError:()=>{
-
                 }
-            });
+            }));
 
             //REalizar el calculo de nuevo
             totalSale();
@@ -253,7 +247,7 @@ const submit = () => {
                 onSuccess:()=>{
                     successHttp('Venta cerrada correctamente');
                     form.reset();
-                    // readPDF(props.pdf);
+                    // readPDF(propsW.pdf);
                     //Actualizar la ventana
                 },
                 onError:()=>{
@@ -666,7 +660,7 @@ const returned = () => {
                     <FloatShowCli
                         class=" w-4/5 rounded-md px-10 py-5"
                         @get-data="selectClient"
-                        :clients="props.clients"/>
+                        :clients="propsW.clients"/>
 
                 </FloatBox>
             </Transition>
@@ -681,7 +675,7 @@ const returned = () => {
                     <FloatShowPro
                         class=" bg-gray-200 w-4/5 rounded-md px-10 py-5"
                         @select="getData"
-                        :products="props.products"/>
+                        :products="propsW.products"/>
                 </FloatBox>
             </Transition>
 
@@ -694,7 +688,7 @@ const returned = () => {
                     <SaleOpenShow
                         @sen-data="getSaleOpen"
                         class=" bg-gray-200 w-4/5 rounded-md px-10 py-5"
-                        :sale-open="props.saleOpen"/>
+                        :sale-open="propsW.saleOpen"/>
                 </FloatBox>
             </Transition>
 

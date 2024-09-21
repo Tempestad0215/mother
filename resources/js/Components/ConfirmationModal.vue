@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import SecondaryButton from "@components/SecondaryButton.vue";
 
-const emit = defineEmits<{
-    (e: 'confirm')
-}>();
+// const emit = defineEmits<{
+//     (e: 'close')
+// }>();
 /**
  * Definir las propiedades
  */
@@ -22,9 +22,9 @@ const props = defineProps<{
  */
 
 
-const close = () => {
-    emit('close');
-};
+// const close = ():void => {
+//     emit('close');
+// };
 </script>
 
 <template>

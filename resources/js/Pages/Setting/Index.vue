@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {Head, useForm} from "@inertiajs/vue3";
+import {Head, useForm, usePage} from "@inertiajs/vue3";
 import AppLayout from "@layout/AppLayout.vue";
 import InputLabel from "@components/InputLabel.vue";
 import TextInput from "@components/TextInput.vue";
@@ -8,17 +8,23 @@ import Swal from "sweetalert2";
 import LinkHeader from "@components/LinkHeader.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import {onMounted, onUpdated, ref} from "vue";
-import {settingsDataI} from "@/Interfaces/Setting";
+// import {settingsDataI} from "@/Interfaces/Setting";
 import {successHttp} from "@/Global/Alert";
+import {taxI} from "@/Interfaces/Global";
 
+
+/*
+Datos de ajuste
+ */
+const {appSetting} = usePage().props
 
 /**
  * Propiedades
  *
  */
-const props = defineProps<{
-    setting?: settingsDataI
-}>()
+// const propsW = defineProps<{
+//     setting?: settingsDataI
+// }>()
 
 
 
@@ -29,17 +35,17 @@ const props = defineProps<{
 onMounted(() =>{
 
     //Verificar si existe correctamente
-    if(props.setting)
+    if(appSetting)
     {
-        form.name = props.setting.name;
-        form.email = props.setting.email;
-        form.phone = props.setting.phone;
-        form.address = props.setting.address;
-        form.website = props.setting.website;
-        form.company_id = props.setting.company_id;
-        form.tax = props.setting.tax.length > 0 ? props.setting.tax : [];
-        form.unit = props.setting.unit.length > 0 ? props.setting.unit : [];
-        imgName.value = props.setting.logo ? props.setting.logo : 'logoexample.png';
+        form.name = appSetting.name ? appSetting.name : "";
+        form.email = appSetting.email ? appSetting.email : "";
+        form.phone = appSetting.phone ? appSetting.phone :"";
+        form.address = appSetting.address ? appSetting.address :"";
+        form.website = appSetting.website ? appSetting.website : "";
+        form.company_id = appSetting.company_id ? appSetting.company_id : "";
+        form.tax = appSetting.tax.length > 0 ? appSetting.tax : [] as taxI[];
+        form.unit = appSetting.unit.length > 0 ? appSetting.unit : [] as string[];
+        imgName.value = appSetting.logo ? appSetting.logo : "logoexample.png";
     }
 });
 
@@ -47,10 +53,10 @@ onMounted(() =>{
  * Al momento de actualizar
  */
 onUpdated(() =>{
-    if(props.setting.logo)
+    if(appSetting.logo)
     {
         //Actualizar la imagen registrad
-        imgName.value = props.setting.logo;
+        imgName.value = appSetting.logo;
     }
 
 })
@@ -70,9 +76,9 @@ const form = useForm({
     company_id:"",
     taxName:"",
     taxValue:"",
-    tax: [],
+    tax: [] as taxI[],
     unitValue:"",
-    unit:[],
+    unit:[] as string[],
     is_branch: false,
     fiscal_year: "",
     logo:"",
@@ -101,7 +107,7 @@ const submit = () => {
 //Agregar lis impuesto
 const addTax = () => {
     //Verificar si existe
-    let exists = form.tax.find((el) => el == form.taxValue);
+    let exists = form.tax.find((el) => el.name === form.taxValue);
 
     if (form.taxValue === "")
     {
@@ -123,7 +129,7 @@ const addTax = () => {
         // Agregar los datos de impuesto
         form.tax.push({
             name: form.taxName.toUpperCase(),
-            amount: <number>form.taxValue
+            amount: parseFloat(form.taxValue)
         });
         //Limpiar el campo para agregar otro
         form.reset('taxValue','taxName');
@@ -153,7 +159,7 @@ const removeTax = (index:number) => {
 //Agregar Unidad a la lista
 const addUnit = () => {
     //Verificar si existe
-    let exists = form.tax.find((el) => el == form.taxValue);
+    let exists = form.tax.find((el) => el.name === form.taxValue);
 
     if (form.unitValue === "")
     {
@@ -339,7 +345,7 @@ const removeUnit = (index:number) => {
                     <div
                         class=""
                         v-if="form.tax.length > 0"
-                        v-for="(item, index) in form.tax" :key="item">
+                        v-for="(item, index) in form.tax" :key="index">
                         <p class=" border-b-2 border-gray-400 rounded-md px-5">
                             <span>
                                  {{item.name}} - {{item.amount}}%

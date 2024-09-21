@@ -8,15 +8,15 @@ import {productSupplierI} from '@/Interfaces/Product';
 import { supplierI } from '@/Interfaces/Supplier';
 import SecondaryButton from '@components/SecondaryButton.vue';
 import {useForm, usePage} from '@inertiajs/vue3';
-import { onMounted, ref } from 'vue';
-import {pageI, taxeI} from "@/Interfaces/Global";
+import {onMounted, ref} from 'vue';
 import {categoryI} from "@/Interfaces/Categories";
+import {taxI} from "@/Interfaces/Global";
 
 
 /**
  * Info general
  */
-const page:pageI = usePage();
+const { appSetting } = usePage().props;
 
 /**
  * Propiedades de la ventana
@@ -62,8 +62,8 @@ const form = useForm({
 /**
  *Datos de la ventana
  */
-const taxes = ref<taxeI[]>(page.props.appSetting.tax);
-const dataUnit = ref(page.props.appSetting.unit);
+const taxes  = ref<taxI[]>(appSetting.tax);
+const dataUnit = ref<string[]>(appSetting.unit);
 
 
 /**
@@ -77,8 +77,8 @@ onMounted(()=>{
         form.id = props.productEdit.id;
         form.name = props.productEdit.name;
         form.type = props.productEdit.type;
-        form.description = props.productEdit.description;
-        form.bar_code = props.productEdit.bar_code;
+        form.description = props.productEdit.description ? props.productEdit.description : "";
+        form.bar_code = props.productEdit.bar_code ? props.productEdit.bar_code : "";
         form.category_id = props.productEdit.category_id;
         form.supplier_id = props.productEdit.supplier_id;
         form.tax_rate = props.productEdit.tax_rate;
@@ -130,6 +130,7 @@ const submit = () => {
             <h3 class="text-2xl font-bold text-center">
                 Registro de producto
             </h3>
+
 
             <div class="flex flex-col float-right text-center">
                 <InputLabel for="inventoried" value="Inventariar" />

@@ -14,19 +14,18 @@ import FormSearch from "@components/FormSearch.vue";
 import {productDataI, productI, productTransI} from "@/Interfaces/Product";
 import Pagination from "@components/Pagination.vue";
 import LinkHeader from '@components/LinkHeader.vue';
-import {pageI} from "@/Interfaces/Global";
 
 
 /**
  * Datos de la pagina
  */
-const page:pageI = usePage()
+const {appSetting} = usePage().props
 
 /**
  * Propiedades de la ventana
  */
-// Props de la ventana
-const props = defineProps<{
+// propsW de la ventana
+const propsW = defineProps<{
     products: productI,
     trans?: productTransI,
     productEntrance?: productDataI,
@@ -98,30 +97,30 @@ const tax_rate = ref<number>(0);
 //Al momento de crearse
 onMounted(()=>{
     // Para los datos a editar
-    if(props.productEntrance)
+    if(propsW.productEntrance)
     {
         showForm.value = true;
-        form.product_id = props.productEntrance.id;
-        form.product_name = props.productEntrance.name;
-        form.stock = (props.productEntrance.stock || 0).toFixed(2);
-        form.cost = (props.productEntrance.cost || 0).toFixed(2);
-        form.price = (props.productEntrance.price || 0).toFixed(2);
-        tax_rate.value = props.productEntrance.tax_rate;
+        form.product_id = propsW.productEntrance.id;
+        form.product_name = propsW.productEntrance.name;
+        form.stock = propsW.productEntrance.stock;
+        form.cost = propsW.productEntrance.cost;
+        form.price = propsW.productEntrance.price;
+        tax_rate.value = propsW.productEntrance.tax_rate;
 
         //Calcular los datos
         totalTax();
     }
-    if(props.trans)
+    if(propsW.trans)
     {
 
         showForm.value = true;
-        form.tran_id = props.trans.id;
-        form.product_id = props.trans.product_id;
-        form.product_name = props.trans.product_name;
-        form.stock = props.trans.stock;
-        form.cost = props.trans.cost;
-        form.price = props.trans.price;
-        tax_rate.value = props.trans.tax_rate;
+        form.tran_id = propsW.trans.id;
+        form.product_id = propsW.trans.product_id;
+        form.product_name = propsW.trans.product_name;
+        form.stock = propsW.trans.stock;
+        form.cost = propsW.trans.cost;
+        form.price = propsW.trans.price;
+        tax_rate.value = propsW.trans.tax_rate;
 
         //Calcular la cantidad
         totalTax();
@@ -133,7 +132,7 @@ onMounted(()=>{
  * Propiedades computada
  */
 const checkDiscount = computed(() => {
-    if( form.cost > 0.00 && page.props.appSetting.save_cost && form.discount_amount >= form.cost)
+    if( form.cost > 0.00 && appSetting.save_cost && form.discount_amount >= form.cost)
    {
        form.setError('discount', `El Item : ${form.product_name} Esta Debajo del Costo`);
        return 'text-red-500';
@@ -175,7 +174,7 @@ const checkDiscount = computed(() => {
 // Enviar formulario
 const submit = () => {
     //Para editar
-    if(props.update)
+    if(propsW.update)
     {
         form.transform((data) =>({
             ...data,
@@ -186,7 +185,6 @@ const submit = () => {
             product_no_tax: formatNumber(data.product_no_tax),
             tax_amount: formatNumber(data.tax_amount),
             discount: formatNumber(data.discount),
-            product_no_tax: formatNumber(data.product_no_tax),
             product_tax: formatNumber(data.product_tax),
             benefits: formatNumber(data.benefits),
             tax: formatNumber(data.tax)
@@ -210,7 +208,6 @@ const submit = () => {
             product_no_tax: formatNumber(data.product_no_tax),
             tax_amount: formatNumber(data.tax_amount),
             discount: formatNumber(data.discount),
-            product_no_tax: formatNumber(data.product_no_tax),
             product_tax: formatNumber(data.product_tax),
             benefits: formatNumber(data.benefits),
             tax: formatNumber(data.tax)
@@ -261,11 +258,11 @@ const edit = (id:number)=>{
  */
 const totalTax = () => {
     // Sacar los datos para el calculo
-    let stock = form.stock || 0.00;
-    let cost =  getPenny(form.cost || 0.00);
-    let price = getPenny(form.price || 0.00);
-    let taxRate = parseFloat(tax_rate.value / 100);
-    let discount = form.discount / 100;
+    let stock:number = form.stock || 0.00;
+    let cost:number =  getPenny(form.cost || 0.00);
+    let price:number = getPenny(form.price || 0.00);
+    let taxRate:number = tax_rate.value / 100;
+    let discount:number = form.discount / 100;
 
 
     // Tomar los datos para sacar el impuesto
@@ -504,7 +501,7 @@ const totalTax = () => {
                     <div class="mt-4 text-right col-span-full">
                         <PrimaryButton
                             :disabled="form.processing">
-                            {{ props.update ? 'Actualizar' : 'Registrar' }}
+                            {{ propsW.update ? 'Actualizar' : 'Registrar' }}
                         </PrimaryButton>
                     </div>
 
@@ -546,7 +543,7 @@ const totalTax = () => {
                         <tbody>
                             <tr
                                 class=" odd:bg-gray-400"
-                                v-for="item in props.products?.data">
+                                v-for="item in propsW.products?.data">
                                 <td>{{item.code}}</td>
                                 <td>{{item.bar_code ? item.bar_code : 'N/A'}}</td>
                                 <td>{{item.name}}</td>
@@ -564,10 +561,10 @@ const totalTax = () => {
                         </tbody>
                     </table>
                     <Pagination
-                        :next="props.products?.next_page_url ? props.products?.next_page_url : ''"
-                        :total-page="props.products?.to"
-                        :prev="props.products?.prev_page_url ? props.products?.prev_page_url : ''"
-                        :current-page="props.products?.current_page"/>
+                        :next="propsW.products?.next_page_url ? propsW.products?.next_page_url : ''"
+                        :total-page="propsW.products?.to"
+                        :prev="propsW.products?.prev_page_url ? propsW.products?.prev_page_url : ''"
+                        :current-page="propsW.products?.current_page"/>
                 </div>
 
 
@@ -578,7 +575,7 @@ const totalTax = () => {
 <!--                    @close="registerProduct = false"-->
 <!--                    v-if="registerProduct">-->
 <!--                    <FloatProduct-->
-<!--                        :supplier="props.s"-->
+<!--                        :supplier="propsW.s"-->
 <!--                        @show-supplier="registerSupplier = true"-->
 <!--                        class=" bg-gray-200 p-5 w-4/5 rounded-md"/>-->
 <!--                </FloatBox>-->

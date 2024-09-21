@@ -1,11 +1,12 @@
+import {taxI} from "@/Interfaces/Global";
 
 
-export interface infoBranchesI {
-    name: string;
-    code: string;
-    address: string;
-    phone: string;
-}
+// export interface infoBranchesI {
+//     name: string;
+//     code: string;
+//     address: string;
+//     phone: string;
+// }
 
 export  interface settingsDataI {
     id: number;
@@ -23,9 +24,4 @@ export  interface settingsDataI {
     created_at: string;
     updated_at: string;
 
-}
-
-interface taxI {
-    name: string;
-    value: number;
 }

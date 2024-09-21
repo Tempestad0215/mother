@@ -29,10 +29,10 @@ onMounted(()=>{
     {
         form.id = props.clientEdit.id;
         form.name = props.clientEdit.name;
-        form.personal_id = props.clientEdit.personal_id;
-        form.phone = props.clientEdit.phone;
-        form.email = props.clientEdit.email ? props.clientEdit.email : '' ;
-        form.address = props.clientEdit.address ? props.clientEdit.address : '';
+        form.personal_id = props.clientEdit.personal_id ? props.clientEdit.personal_id : "";
+        form.phone = props.clientEdit.phone ? props.clientEdit.phone : "";
+        form.email = props.clientEdit.email ? props.clientEdit.email : "" ;
+        form.address = props.clientEdit.address ? props.clientEdit.address : "";
         form.comment = props.clientEdit.comment.content;
         form.status = props.clientEdit.status;
         form.type = props.clientEdit.type;
@@ -46,7 +46,7 @@ onMounted(()=>{
 //Veriificar si es credito o contado
 const isMandatory = computed(()=>{
     //Retorna true cuando es credito o anticipo
-   if(form.type === 'credito' || form.type === 'anticipo')
+   if(form.type === "credito" || form.type === "anticipo")
    {
        return true;
    }

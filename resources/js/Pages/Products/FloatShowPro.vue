@@ -7,19 +7,18 @@ import {router, useForm, usePage} from "@inertiajs/vue3";
 import Swal from "sweetalert2";
 import {successHttp} from "@/Global/Alert";
 import {getMoney} from "@/Global/Helpers";
-import {pageI} from "@/Interfaces/Global";
 
 
 /**
  * Informacion de la ventana
  */
-const page:pageI = usePage();
-
+const {url, component, props} = usePage();
+const {auth} = props;
 
 /**
  * Propiedades de la ventana
  */
-const props = defineProps<{
+const propsW = defineProps<{
     products: productI
 }>();
 
@@ -115,6 +114,7 @@ const detroy = (id:Number) => {
         </div>
 
 
+
         <table class=" table-auto w-full mt-5">
             <thead>
             <tr class=" text-left border-b-2 border-gray-800">
@@ -131,7 +131,7 @@ const detroy = (id:Number) => {
             <tbody>
             <tr
                 class=" odd:bg-gray-400"
-                v-for="(item, index) in props.products.data" :key="index">
+                v-for="(item, index) in propsW.products.data" :key="index">
                 <td>{{item.code}}</td>
                 <td>{{item.bar_code ? item.bar_code : 'N/A'}}</td>
                 <td>{{item.name}}</td>
@@ -145,7 +145,7 @@ const detroy = (id:Number) => {
                         class=" space-x-3">
                         <!-- Entrada de producto -->
                         <i
-                            v-if="$page.component !== 'Products/Show'"
+                            v-if="url !== 'Products/Show'"
                             title="Seleccionar"
                             @click="selectData(item)"
                             class=" icon-efect fa-solid fa-circle-check"></i>
@@ -161,14 +161,14 @@ const detroy = (id:Number) => {
 
                         <!-- Editar -->
                         <i
-                            v-if="page.component === 'Products/Show' "
+                            v-if="component === 'Products/Show' "
                             title="Editar"
                             @click="edit(item.id)"
                             class="icon-efect fa-solid fa-pen-to-square"></i>
 
                         <!-- Eliminar -->
                         <i
-                            v-if="page.component === 'Products/Show' && page.props.auth.user.role === 'admin' "
+                            v-if="component === 'Products/Show' && auth.user.role === 'admin' "
                             title="Eliminar"
                             @click="detroy(item.id)"
                             class="icon-efect fa-solid fa-trash"></i>
@@ -178,10 +178,10 @@ const detroy = (id:Number) => {
             </tbody>
         </table>
         <Pagination
-            :current-page="props.products.current_page"
-            :total-page="props.products.to"
-            :next="props.products.next_page_url ? props.products.next_page_url : ''"
-            :prev="props.products.prev_page_url ? props.products.prev_page_url : '' "/>
+            :current-page="propsW.products.current_page"
+            :total-page="propsW.products.to"
+            :next="propsW.products.next_page_url ? propsW.products.next_page_url : ''"
+            :prev="propsW.products.prev_page_url ? propsW.products.prev_page_url : '' "/>
     </div>
 </template>
 

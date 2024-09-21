@@ -6,7 +6,6 @@ import FormSearch from "@components/FormSearch.vue";
 import {salePaginationI} from "@/Interfaces/Sale";
 import {getMoney} from "@/Global/Helpers";
 import Pagination from "@components/Pagination.vue";
-import {pageI} from "@/Interfaces/Global";
 import Swal from "sweetalert2";
 import InputError from "@components/InputError.vue";
 import {successHttp} from "@/Global/Alert";
@@ -14,14 +13,14 @@ import {successHttp} from "@/Global/Alert";
 /*
 Datos de la pagina
  */
-const page:pageI = usePage();
+const {auth, errors} = usePage().props;
 
 
 
 /**
  * Propiedades de la ventana
  */
-const props = defineProps<{
+const propsW = defineProps<{
     sales: salePaginationI,
 }>();
 
@@ -73,7 +72,7 @@ const destroy = (id:number) => {
                 confirmButtonText: "Si",
                 denyButtonText: "No",
                 cancelButtonText: "Cancelar",
-                preConfirm(): T {
+                preConfirm() {
 
                     //Tomar el valor del comentario
                     let comment = (document.getElementById("comment") as HTMLInputElement).value;
@@ -85,7 +84,7 @@ const destroy = (id:number) => {
                         return  false;
                     }
                 },
-                preDeny(): SyncOrAsync<any> {
+                preDeny() {
                     //tomar el valor del input
                     let comment = (document.getElementById("comment") as HTMLInputElement).value;
 
@@ -177,13 +176,13 @@ const destroySale = (id: number, inventoried: boolean, comment: string) => {
                         <th>Sub Total</th>
                         <th>Total</th>
                         <th>Mesa A/C</th>
-                        <th v-if="page.props.auth.user.role === 'admin'">Act</th>
+                        <th v-if="auth.user.role === 'admin'">Act</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr
                         class="odd:bg-gray-400"
-                        v-for="(item,index) in props.sales.data" :key="index">
+                        v-for="(item,index) in propsW.sales.data" :key="index">
                         <td>{{item.code}}</td>
                         <td>{{item.client_name}}</td>
                         <td>{{ getMoney(item.tax)}}</td>
@@ -195,7 +194,7 @@ const destroySale = (id: number, inventoried: boolean, comment: string) => {
                                 N/A
                             </span>
                             <i
-                                v-if="page.props.auth.user.role === 'admin' && !item.close_table  "
+                                v-if="auth.user.role === 'admin' && !item.close_table  "
                                 @click="destroy(item.id)"
                                 class="icon-efect fa-solid fa-trash"></i>
                         </td>
@@ -205,14 +204,14 @@ const destroySale = (id: number, inventoried: boolean, comment: string) => {
 
 
             <Pagination
-                :current-page="props.sales.current_page"
-                :total-page="props.sales.to"
-                :prev="props.sales.prev_page_url"
-                :next="props.sales.next_page_url"/>
+                :current-page="propsW.sales.current_page"
+                :total-page="propsW.sales.to"
+                :prev="propsW.sales.prev_page_url"
+                :next="propsW.sales.next_page_url"/>
 
 
             <!--           Mensajke de error-->
-            <InputError :message="page.props.errors.comment"/>
+            <InputError :message="errors.comment"/>
         </div>
 
 

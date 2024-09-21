@@ -24,9 +24,9 @@ export interface clienteEditI
     phone: string | null;
     email:null | string;
     address:null | string;
-    type: boolean,
+    type: string,
     comment: commentI
-    status: Boolean;
+    status: boolean;
     created_at:string;
 }
 

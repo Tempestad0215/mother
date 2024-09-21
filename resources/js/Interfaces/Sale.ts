@@ -6,6 +6,7 @@ export interface saleInfoI {
     amount: number;
     name: string;
     price: number;
+    stock: number;
     quantity: number;
     tax: number;
     tax_amount: number;

@@ -2,24 +2,35 @@
 import {computed, ref} from 'vue';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import NavLink from '@/Components/NavLink.vue';
-import {pageI} from "@/Interfaces/Global";
 
 
 
 
-const page:pageI = <pageI>usePage();
+/*
+Destructurar las variables
+ */
+const {url, props} = usePage();
+const {auth} = props;
 
+/*
+Propiedads de la ventana
+ */
 defineProps({
     title: String,
 });
 
-const showOption = ref<boolean>(false);
-/**
- * Propiedades computad
+/*
+Datos de la ventana
  */
+const showOption = ref<boolean>(false);
 
+
+
+/*
+Propiedades computada
+ */
 const checkRole = computed(()=>{
-   let role:number = page.props.auth.user.role;
+   let role:string = props.auth.user.role;
 
    if(role !== 'user')
    {
@@ -30,8 +41,8 @@ const checkRole = computed(()=>{
 
 
 
-/**
- * Funciones
+/*
+Funciones
  */
 const logout = () => {
     router.post(route('logout'));
@@ -39,25 +50,26 @@ const logout = () => {
 
 const isUrl = (params:string) => {
 
-    return page.url.startsWith(params);
+    return url.startsWith(params);
 }
 
-const profile = () => {
-    router.get(route('profile.show'));
-}
+// const profile = () => {
+//     router.get(route('profile.show'));
+// }
 
 
 </script>
 
 <template>
     <Head :title="title"/>
+
+
     <div class="">
         <aside class=" fixed bg-gray-200 w-20 h-screen z-30">
-
             <img
                 @click="showOption = !showOption"
                 class="rounded-full mx-auto mt-5"
-                :src="page.props.auth.user ? page.props.auth.user.profile_photo_url : ''"
+                :src="props.auth.user ? props.auth.user.profile_photo_url : ''"
                 alt="Imagen de nombre">
 
             <ol

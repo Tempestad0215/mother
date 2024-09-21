@@ -53,7 +53,7 @@ const submit = () => {
 const edit = (item:categoryI) => {
     form.id = item.id;
     form.name = item.name;
-    form.description = item.description;
+    form.description = item.description ? item.description : "";
     form.update = true;
 
 }
