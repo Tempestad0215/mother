@@ -1,21 +1,24 @@
 <script setup lang="ts">
 
 import AppLayout from "@layout/AppLayout.vue";
-import {Head, useForm} from "@inertiajs/vue3";
-import TextInput from "@components/TextInput.vue";
-import InputLabel from "@components/InputLabel.vue";
-import PrimaryButton from "@components/PrimaryButton.vue";
+import {Head, router, useForm, usePage} from "@inertiajs/vue3";
 import axios from "axios";
-import {ref} from "vue";
-import {getMoney} from "@/Global/Helpers";
+import {onMounted, onUpdated, ref} from "vue";
+import SecondaryButton from "@components/SecondaryButton.vue";
+import Swal from "sweetalert2";
+import InputError from "@components/InputError.vue";
 
+
+const {errors} = usePage().props;
 
 /**
  * Dato del formulario
  */
 const form = useForm({
-  from: "",
-  to:""
+    from: "",
+    to:"",
+    general: ""
+
 });
 
 
@@ -27,6 +30,111 @@ const info = ref({
    sub_total: 0,
    amount: 0
 });
+
+
+/*
+Al momento de cargar
+ */
+onMounted(()=>{
+
+});
+
+
+onUpdated(()=>{
+
+});
+
+
+
+
+
+
+/*
+Funciones
+ */
+
+const getDayly = () => {
+    Swal.fire({
+        title: "Reporte Diario X Fecha",
+        width: 600,
+        html: `
+            <div class="flex gap-3" >
+                <input type="datetime-local" id="daily-date-start" class="rounded-md border-gray-200" >
+                <input type="datetime-local" id="daily-date-end" class="rounded-md border-gray-200">
+            </div>
+
+        `,
+        showCancelButton: true,
+        allowOutsideClick: false,
+        confirmButtonText: "Buscar",
+    }).then((result) => {
+        if (result.isConfirmed)
+        {
+            //Tomar los datos de los input
+            let from:string = (document.getElementById("daily-date-start") as HTMLInputElement).value;
+            let to:string = (document.getElementById("daily-date-end") as HTMLInputElement).value;
+
+            //Buscar los datos par el reporte
+            router.get(route('report.day'),{
+                from: from,
+                to: to
+            },{
+                preserveScroll: true,
+                preserveState: true,
+                onError:() => {
+                    //Limp
+                    setTimeout(()=>{
+                        form.clearErrors();
+                    },5000);
+
+                }
+            });
+        }
+    });
+
+    //Hora de inicio
+    setHour("daily-date-start", 0,0,0,0);
+    //Hora de Final
+    setHour("daily-date-end", 23,59,59,0);
+}
+
+
+/**
+ * Poner la hora por el id en inicio y final
+ * @param id
+ * @param h
+ * @param m
+ * @param s
+ * @param ms
+ */
+const setHour = (id:string, h:number, m:number, s:number, ms:number) => {
+    //Tomar la fecha del dia
+    const now = new Date();
+
+    //Fecha de inicio
+    const date = new Date(now);
+    //colocar la hora
+    date.setHours(h,m,s,ms);
+
+    //Formatear la fecha
+    //Obtener el input para poner la fecha
+    (document.getElementById(id) as HTMLInputElement).value = getDateInUtc4(date);
+}
+
+
+/**
+ * Convertir los datos
+ * @param date
+ */
+const getDateInUtc4 = (date:Date):string => {
+    date.setHours(date.getHours() - 4);
+
+    //Convertir
+    const isoString = date.toISOString();
+    //Devolver los datos
+    return isoString.slice(0,16);
+}
+
 
 
 
@@ -62,103 +170,110 @@ const submit = () => {
 
         <div class="bg-gray-200 rounded-md p-5">
 
-<!--            <fieldset class=" border-2 border-gray-800 rounded-md p-3 space-x-3">-->
-<!--                <legend>-->
-<!--                    Reportes de Ventas-->
-<!--                </legend>-->
+            <fieldset class=" border-2 border-gray-800 rounded-md p-3 space-x-3">
+                <legend>
+                    Reportes de Ventas
+                </legend>
 
-<!--                <SecondaryButton>-->
-<!--                    Ventas Diaria X Fecha-->
-<!--                </SecondaryButton>-->
-
-<!--&lt;!&ndash;                <SecondaryButton >&ndash;&gt;-->
-<!--&lt;!&ndash;                    Ventas Semanal&ndash;&gt;-->
-<!--&lt;!&ndash;                </SecondaryButton>&ndash;&gt;-->
-
-<!--&lt;!&ndash;                <SecondaryButton >&ndash;&gt;-->
-<!--&lt;!&ndash;                    Ventas Mensual&ndash;&gt;-->
-<!--&lt;!&ndash;                </SecondaryButton>&ndash;&gt;-->
-
-<!--&lt;!&ndash;                <SecondaryButton >&ndash;&gt;-->
-<!--&lt;!&ndash;                    Ventas Anual&ndash;&gt;-->
-<!--&lt;!&ndash;                </SecondaryButton>&ndash;&gt;-->
-<!--            </fieldset>-->
-
-
-<!--            <fieldset class=" border-2 border-gray-800 rounded-md p-3 space-x-3 mt-4">-->
-<!--                <legend>-->
-<!--                    Reporte de Inventario-->
-<!--                </legend>-->
+                <SecondaryButton
+                    @click="getDayly" >
+                    Ventas Diaria X Fecha
+                </SecondaryButton>
 
 <!--                <SecondaryButton >-->
-<!--                    Productos Alm. -10-->
+<!--                    Ventas Semanal-->
 <!--                </SecondaryButton>-->
 
+<!--                <SecondaryButton >-->
+<!--                    Ventas Mensual-->
+<!--                </SecondaryButton>-->
 
-<!--            </fieldset>-->
+<!--                <SecondaryButton >-->
+<!--                    Ventas Anual-->
+<!--                </SecondaryButton>-->
+            </fieldset>
 
-            <form
-                @submit.prevent="submit()">
-                <fieldset class="flex">
-                    <legend>
-                        Reporte de venta
-                    </legend>
 
-                    <div>
-                        <InputLabel for="from" value="Desde"/>
-                        <TextInput
-                            type="datetime-local"
-                            v-model="form.from"/>
-                    </div>
+            <fieldset class=" border-2 border-gray-800 rounded-md p-3 space-x-3 mt-4">
+                <legend>
+                    Reporte de Inventario
+                </legend>
 
-                    <div class="ml-5">
-                        <InputLabel for="to" value="Hasta"/>
-                        <TextInput
-                            type="datetime-local"
-                            v-model="form.to"/>
-                    </div>
+                <SecondaryButton>
+                    Productos Alm. -10
+                </SecondaryButton>
 
-                </fieldset>
 
-                <fieldset
-                    v-if="info.tax > 0"
-                    class="flex justify-between">
-                    <legend>
-                        Resultado
-                    </legend>
-                    <div>
-                        <p class="font-bold">
-                            Itbis Total:
-                        </p>
-                        <span>
-                            {{getMoney(info.tax)}}
-                        </span>
-                    </div>
-                    <div>
-                        <p class="font-bold">
-                            Sub Total:
-                        </p>
-                        <span>
-                            {{getMoney(info.sub_total)}}
-                        </span>
-                    </div>
-                    <div>
-                        <p class="font-bold">
-                            Total:
-                        </p>
-                        <span>
-                            {{getMoney(info.amount)}}
-                        </span>
-                    </div>
-                </fieldset>
+            </fieldset>
 
-                <div class="mt-5">
-                    <PrimaryButton>
-                        Reporte
-                    </PrimaryButton>
-                </div>
+<!--            Monstar los errore-->
+            <div>
+                <InputError :message="errors.general"/>
+            </div>
 
-            </form>
+<!--            Datos del formulario-->
+<!--            <form-->
+<!--                @submit.prevent="submit()">-->
+<!--                <fieldset class="flex">-->
+<!--                    <legend>-->
+<!--                        Reporte de venta-->
+<!--                    </legend>-->
+
+<!--                    <div>-->
+<!--                        <InputLabel for="from" value="Desde"/>-->
+<!--                        <TextInput-->
+<!--                            type="datetime-local"-->
+<!--                            v-model="form.from"/>-->
+<!--                    </div>-->
+
+<!--                    <div class="ml-5">-->
+<!--                        <InputLabel for="to" value="Hasta"/>-->
+<!--                        <TextInput-->
+<!--                            type="datetime-local"-->
+<!--                            v-model="form.to"/>-->
+<!--                    </div>-->
+
+<!--                </fieldset>-->
+
+<!--                <fieldset-->
+<!--                    v-if="info.tax > 0"-->
+<!--                    class="flex justify-between">-->
+<!--                    <legend>-->
+<!--                        Resultado-->
+<!--                    </legend>-->
+<!--                    <div>-->
+<!--                        <p class="font-bold">-->
+<!--                            Itbis Total:-->
+<!--                        </p>-->
+<!--                        <span>-->
+<!--                            {{getMoney(info.tax)}}-->
+<!--                        </span>-->
+<!--                    </div>-->
+<!--                    <div>-->
+<!--                        <p class="font-bold">-->
+<!--                            Sub Total:-->
+<!--                        </p>-->
+<!--                        <span>-->
+<!--                            {{getMoney(info.sub_total)}}-->
+<!--                        </span>-->
+<!--                    </div>-->
+<!--                    <div>-->
+<!--                        <p class="font-bold">-->
+<!--                            Total:-->
+<!--                        </p>-->
+<!--                        <span>-->
+<!--                            {{getMoney(info.amount)}}-->
+<!--                        </span>-->
+<!--                    </div>-->
+<!--                </fieldset>-->
+
+<!--                <div class="mt-5">-->
+<!--                    <PrimaryButton>-->
+<!--                        Reporte-->
+<!--                    </PrimaryButton>-->
+<!--                </div>-->
+
+<!--            </form>-->
 
         </div>
     </AppLayout>

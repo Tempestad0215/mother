@@ -8,7 +8,7 @@ use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Resources\ProSupRes;
 use App\Models\Setting;
-use App\Services\configService;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,15 +18,12 @@ use Inertia\Response;
 class ProductController extends Controller
 {
 
-    private CategoryHelper $categoryHelper;
-    private SupplierHelper $supplierHelper;
-    protected configService $configService;
-
+    /**
+     *
+     */
     public function __construct()
     {
-        $this->categoryHelper = new CategoryHelper();
-        $this->supplierHelper = new SupplierHelper();
-        $this->configService = new configService();
+
     }
 
     /**
@@ -44,11 +41,14 @@ class ProductController extends Controller
     public function create(Request $request): Response|RedirectResponse
     {
 
+        $categoryHelper = new CategoryHelper();
+        $supplierHelper = new SupplierHelper();
+
         //Obtener los datos del productos
         $data = $this->get($request);
 
         //Verificar si existe configuracion
-        $setting = Setting::firstOrFail();
+        $setting = Setting::first();
 
         //si existe la configuracion
         if(isset($setting))
@@ -56,8 +56,8 @@ class ProductController extends Controller
             //Devolver correctamente
             return Inertia::render('Products/Create',[
                 'products' => $data,
-                'categories' => $this->categoryHelper->getAllCategories(),
-                'suppliers' => $this->supplierHelper->getAllSuppliers(),
+                'categories' => $categoryHelper->getAllCategories(),
+                'suppliers' => $supplierHelper->getAllSuppliers(),
             ]);
 
         }else{
@@ -129,6 +129,8 @@ class ProductController extends Controller
      */
     public function edit(Product $product, Request $request)
     {
+        $categoryHelper = new CategoryHelper();
+        $supplierHelper = new SupplierHelper();
 
         $dataProducts = $this->get($request);
         $dataEdit = new ProSupRes($product);
@@ -137,8 +139,8 @@ class ProductController extends Controller
             'productEdit' => $dataEdit,
             'products' => $dataProducts,
             'update' => true,
-            'categories' => $this->categoryHelper->getAllCategories(),
-            'suppliers' => $this->supplierHelper->getAllSuppliers(),
+            'categories' => $categoryHelper->getAllCategories(),
+            'suppliers' => $supplierHelper->getAllSuppliers(),
         ]);
 
     }
@@ -217,7 +219,7 @@ class ProductController extends Controller
     /**
      * Summary of get
      * @param Request $request
-     * @return \Illuminate\Contracts\Pagination\Paginator
+     * @return Paginator
      */
     public function get(Request $request)
     {

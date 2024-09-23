@@ -138,8 +138,8 @@ Route::middleware([
     ->prefix('product')
     ->name('product.')
     ->group(function(){
-        Route::get('/show','show')->name ('show');
         Route::get('/','create')->name('create');
+        Route::get('/show','show')->name ('show');
         Route::post('/','store')->name('store');
         Route::get('/edit/{product}','edit')->name('edit');
         Route::patch('/{product}','update')->name('update');
@@ -190,6 +190,7 @@ Route::middleware([
         ->name('report.')
         ->group(function (){
            Route::get('/','index')->name('index');
+           Route::get('/day','getDailyByDate')->name('day');
            Route::post('/daily','getDailyByDate')->name('getDailyByDate');
         });
 

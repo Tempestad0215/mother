@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Date;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
@@ -20,6 +21,8 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property float $amount
  * @property boolean $status
  * @property bool $close_table
+ * @property Date $created_at,
+ * @property Date $updated_at
  */
 
 

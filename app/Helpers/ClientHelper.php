@@ -36,6 +36,7 @@ class ClientHelper
         //Asegurar la transaccion de la introducion de datos
         DB::transaction(function () use ($request) {
 
+
             //Obtener el tipo
             $type = (int) $request->get('type');
 

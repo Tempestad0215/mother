@@ -1,9 +1,8 @@
-<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
+<?php
 
 namespace App\Http\Controllers;
 
 use App\Enums\ProductTransType;
-use App\Helpers\CategoryHelper;
 use App\Helpers\InHelper;
 use App\Helpers\TransHelper;
 use App\Http\Resources\ProductTransResource;
@@ -11,25 +10,23 @@ use App\Models\Product;
 use App\Http\Requests\StoreProductInRequest;
 use App\Http\Requests\UpdateProductInRequest;
 use App\Models\ProTrans;
-use App\Services\configService;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Exceptions;
 use Inertia\Inertia;
 use Inertia\Response;
-use function PHPUnit\Framework\throwException;
 
 class ProductInController extends Controller
 {
 
-    protected configService $configService;
-
+    /**
+     *
+     */
     public function __construct()
     {
-        $this->configService = new configService();
+
     }
 
 
@@ -46,10 +43,7 @@ class ProductInController extends Controller
         //Devolver la vista con los datos
         return Inertia::render('ProductsIn/In', [
             'products' => $data,
-
         ]);
-
-
     }
 
     /**
@@ -241,7 +235,6 @@ class ProductInController extends Controller
         }
 
     }
-
 
 
     /**

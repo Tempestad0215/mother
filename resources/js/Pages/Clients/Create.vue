@@ -77,7 +77,7 @@ const form = useForm({
     advance_date:"",
     advance_expire:"",
     advance_balance:"",
-    status: false,
+    status: true,
     comment:""
 });
 
@@ -402,7 +402,7 @@ const submit = () => {
                             <input
                                 class="peer hidden"
                                 v-model="form.status"
-                                :value="false"
+                                :value="true"
                                 type="radio" name="cli_active" id="cli_active">
                             <label
                                 class=" border-2 px-2 py-1 rounded-md border-gray-400 peer-checked:bg-gray-800 peer-checked:text-white duration-300 "
@@ -415,7 +415,7 @@ const submit = () => {
                             <input
                                 class="peer hidden"
                                 v-model="form.status"
-                                :value="true"
+                                :value="false"
                                 type="radio"
                                 name="cli_disabled"
                                 id="cli_disabled">

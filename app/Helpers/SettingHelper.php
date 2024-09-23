@@ -3,7 +3,7 @@
 namespace App\Helpers;
 
 use App\Http\Requests\StoreSettingRequest;
-use App\Models\Setting;;
+use App\Models\Setting;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -14,8 +14,9 @@ use Illuminate\Support\Facades\Storage;
 class SettingHelper
 {
 
-    public function store(StoreSettingRequest $request)
+    public function store(StoreSettingRequest $request):void
     {
+
 
         DB::transaction(function () use ($request) {
             //Guradar la imagen y devolver el nombre
@@ -38,7 +39,7 @@ class SettingHelper
                     'unit' => $request->unit,
                     'fiscal_year' => $request->fiscal_year,
                     'logo' => $imageName,
-                    'save_cost' => $request->save_cost
+                    'save_cost' => $request->cost
                 ]);
             }else{
                 //actualizar los datos
@@ -53,7 +54,7 @@ class SettingHelper
                     'unit' => $request->unit,
                     'fiscal_year' => $request->fiscal_year,
                     'logo' => $imageName,
-                    'save_cost' => $request->save_cost
+                    'save_cost' => $request->cost
                 ]);
             }
 

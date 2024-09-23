@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\ProductTypeEnum;
 use App\Models\Category;
 use App\Models\Supplier;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -39,7 +40,7 @@ class ProductFactory extends Factory
             'product_tax' => $cost * (1 + $tax),
             'product_no_tax' =>  $price - ($price * $tax),
             'benefits' => $price - $cost,
-            'type' => fake()->randomElement(['servicio','articulo']),
+            'type' => fake()->randomElement([ProductTypeEnum::PRODUCTO,ProductTypeEnum::SERVICIO]),
             'category_id' => Category::factory(),
             'supplier_id' => Supplier::factory(),
 

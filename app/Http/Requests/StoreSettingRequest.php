@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
@@ -16,7 +17,7 @@ use Illuminate\Foundation\Http\FormRequest;
  * @property array $unit
  * @property string $fiscal_year
  * @property boolean $status
- * @property boolean $save_cost
+ * @property boolean $cost
  */
 class StoreSettingRequest extends FormRequest
 {
@@ -32,7 +33,7 @@ class StoreSettingRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
@@ -50,6 +51,7 @@ class StoreSettingRequest extends FormRequest
             'unit' => ['required','array'],
             'unit.*' => ['nullable','string','min:2', 'max:30'],
             'fiscal_year' => ['nullable','date'],
+            'cost' => ['nullable','boolean'],
         ];
     }
 }
