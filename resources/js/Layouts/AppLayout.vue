@@ -44,19 +44,21 @@ const checkRole = computed(()=>{
 /*
 Funciones
  */
+/**
+ * Salir de la app
+ */
 const logout = () => {
     router.post(route('logout'));
 };
 
+/**
+ * Verificar si la url comienza con el parametro
+ * @param params
+ */
 const isUrl = (params:string) => {
 
     return url.startsWith(params);
 }
-
-// const profile = () => {
-//     router.get(route('profile.show'));
-// }
-
 
 </script>
 
@@ -80,60 +82,63 @@ const isUrl = (params:string) => {
                         title="Clientes"
                         :active="isUrl('/client')"
                         :href="route('client.create')">
-                        <i class="fa-solid fa-users"></i>
+                        <i class=" fa-solid fa-users"></i>
                     </NavLink>
                 </li>
                 <li v-if="checkRole">
-                    <Link
+                    <NavLink
                         title="Categorias"
                         :active="isUrl('/category')"
                         :href="route('category.create')">
                         <i class="fa-solid fa-code-branch"></i>
-                    </Link>
+                    </NavLink>
                 </li>
                 <li v-if="checkRole">
-                    <Link
+                    <NavLink
                         title="Suplidores"
+                        :active="isUrl('/supplier')"
                         :href="route('supplier.create')">
                         <i class="fa-solid fa-truck-field"></i>
-                    </Link>
+                    </NavLink>
                 </li>
                 <li v-if="checkRole">
-                    <Link
+                    <NavLink
                         title="Producto"
+                        :active="isUrl('/product')"
                         :href="route('product.create')">
                         <i class="fa-solid fa-box-open"></i>
-                    </Link>
+                    </NavLink>
                 </li>
                 <li v-if="checkRole">
-                    <Link
+                    <NavLink
                         title="Entrada"
-                        :href="route('product-in.create')">
+                        :active="isUrl('/in')"
+                        :href="route('in.create')">
                         <i class="fa-solid fa-dolly"></i>
-                    </Link>
+                    </NavLink>
                 </li>
                 <li>
-                    <Link
+                    <NavLink
                         title="Ventas"
-                        :href="route('product-sale.create')">
+                        :active="isUrl('/sale')"
+                        :href="route('sale.create')">
                         <i class="fa-solid fa-cart-shopping"></i>
-                    </Link>
+                    </NavLink>
                 </li>
                 <li v-if="checkRole">
-                    <Link
+                    <NavLink
                         title="Reportes"
+                        :active="isUrl('/report')"
                         :href="route('report.index')">
                         <i class="fa-solid fa-chart-pie"></i>
-                    </Link>
+                    </NavLink>
                 </li>
-
-
 
                 <li
                     class="absolute bottom-0 right-8 hover:scale-125 duration-300"
                     v-if="checkRole">
                     <Link
-                        title="Reportes"
+                        title="Ajustes"
                         :href="route('setting.index')">
                         <i class="fa-solid fa-sliders"></i>
                     </Link>
@@ -170,12 +175,15 @@ const isUrl = (params:string) => {
         </Transition>
 
 
-        <div class="flex-col flex-1 overflow-hidden">
-            <header class=" flex items-center justify-center space-x-3 fixed top-0 left-20 h-20 max-h-16 flex-1 w-full bg-gray-200 z-20 px-5">
+        <div
+            class="flex-col flex-1 overflow-hidden">
+            <header
+                class=" flex items-center justify-center space-x-3 fixed top-0 left-20 h-20 max-h-16 flex-1 w-full bg-gray-200 z-20 px-5">
                 <slot name="header"/>
             </header>
-            <div class="mt-20 ml-24 mr-4">
-                <slot/>
+            <div
+                class="flex-1 ml-[80px] justify-center mt-[64px] rounded-md p-5 ">
+                    <slot/>
             </div>
         </div>
     </div>

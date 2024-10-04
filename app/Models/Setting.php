@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use App\Enums\CompanyTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Date;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
@@ -23,12 +26,12 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
  * @property string $company_id
  * @property array $tax
  * @property array $unit
+ * @property CompanyTypeEnum $company_type
  * @property string $fiscal_year
  * @property boolean $status
  * @property boolean $save_cost
- *
- *
- *
+ * @property boolean $sequence
+ * @property Date $deleted_at
  *
  */
 
@@ -38,6 +41,7 @@ class Setting extends Model implements Auditable
 {
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
+    use softDeletes;
 
     /**
      * @var string[]
@@ -55,8 +59,10 @@ class Setting extends Model implements Auditable
         'tax.value',
         'unit',
         'fiscal_year',
+        'company_type',
         'status',
-        'save_cost'
+        'save_cost',
+        'sequence'
     ];
 
     /**
@@ -66,6 +72,8 @@ class Setting extends Model implements Auditable
         'tax' => 'json',
         'unit' => 'array',
         'status' => 'boolean',
-        'save_cost' => 'boolean'
+        'save_cost' => 'boolean',
+        'sequence' => 'boolean',
+        'company_type' => CompanyTypeEnum::class,
     ];
 }

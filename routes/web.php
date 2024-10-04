@@ -6,6 +6,7 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductInController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SequenceController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductSaleController;
@@ -26,6 +27,7 @@ use Illuminate\Http\Request;
 
 Route::middleware([
     'auth:sanctum',
+
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
@@ -54,6 +56,21 @@ Route::middleware([
            ->name('index');
        Route::post('/','store')->name('store');
     });
+
+    /*
+     * Secuencia de RNC
+     */
+    Route::controller(SequenceController::class)
+        ->prefix('setting/sequence')
+        ->name('sequence.')
+        ->group(function () {
+            Route::get('/', 'create')->name('create');
+            Route::get('/get/{type}','get')->name('get');
+            Route::get('/get/rnc/{rnc}','getRnc')->name('getRnc');
+            Route::post('/','store')->name('store');
+            Route::get('/{sequence}','edit')->name('edit');
+            Route::delete('/{sequence}','destroy')->name('destroy');
+        });
 
 
 
@@ -153,8 +170,8 @@ Route::middleware([
      * Ventas
      */
     Route::controller(ProductSaleController::class)
-        ->prefix('product-sale')
-        ->name('product-sale.')
+        ->prefix('sale')
+        ->name('sale.')
         ->group(function(){
            Route::get('/','create')->name('create');
            Route::get('/get','getJson')->name('get.json');
@@ -169,8 +186,8 @@ Route::middleware([
      * Entrada de productos
      */
     Route::controller(ProductInController::class)
-        ->prefix('product-in')
-        ->name('product-in.')
+        ->prefix('in')
+        ->name('in.')
         ->group(function(){
             Route::get('/','index')->name('create');
             Route::get('show','show')->name('show');
@@ -190,7 +207,9 @@ Route::middleware([
         ->name('report.')
         ->group(function (){
            Route::get('/','index')->name('index');
-           Route::get('/day','getDailyByDate')->name('day');
+            Route::get('/day','getDay')->name('day');
+           Route::get('/day/date','getDailyByDate')->name('day.date');
+           Route::get('/product/low','stockLow')->name('product.low');
            Route::post('/daily','getDailyByDate')->name('getDailyByDate');
         });
 

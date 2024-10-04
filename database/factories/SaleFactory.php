@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\SaleTypeEnum;
 use App\Models\Sale;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -22,6 +23,7 @@ class SaleFactory extends Factory
             'amount' => $this->faker->randomFloat(),
             'status' => $this->faker->boolean(),
             'comment' => $this->faker->word(),
+            'type' => $this->faker->randomNumber([SaleTypeEnum::VENTAS, SaleTypeEnum::COTIZACION]),
             'close_table' => $this->faker->boolean(),
         ];
     }

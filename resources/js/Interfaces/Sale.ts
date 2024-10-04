@@ -1,21 +1,23 @@
 
 
-export interface saleInfoI {
-    id: number;
-    code: string;
+export interface infoSaleI {
     amount: number;
-    name: string;
-    price: number;
-    stock: number;
-    quantity: number;
-    tax: number;
-    tax_amount: number;
+    code: string;
+    cost: number;
+    deleted_at: string | null;
     discount: number;
     discount_amount: number;
+    id: number;
+    price: number;
+    product_id: number;
+    sale_id: number;
+    status: boolean;
+    stock: number;
+    tax: number;
     tax_rate: number;
-    cost: number;
-    product_tax: number;
-
+    type?: string;
+    updated_at?: string;
+    created_at?: string;
 }
 
 interface saleI{
@@ -33,11 +35,14 @@ export interface saleDataI {
     client_name: string;
     close_table: boolean;
     code: string;
-    comment: string;
+    comment:  {
+        id: number,
+        content: string,
+    };
     created_at: string;
     discount: number;
     id: number;
-    info: saleInfoI[];
+    info_sale: infoSaleI[];
     status: boolean;
     sub_total: number;
     tax: number;

@@ -19,14 +19,6 @@ class ProductController extends Controller
 {
 
     /**
-     *
-     */
-    public function __construct()
-    {
-
-    }
-
-    /**
      * Display a listing of the resource.
      */
     public function index()
@@ -66,9 +58,6 @@ class ProductController extends Controller
             return to_route('setting.index');
         }
 
-
-
-
     }
 
     /**
@@ -86,6 +75,9 @@ class ProductController extends Controller
             //Actualizar datos por fuera cuando son servicio
             $product->inventoried = false;
             $product->price = 1;
+            $product->product_no_tax = 1;
+            $product->product_tax = 1;
+            $product->tax = $request->get('tax_rate') / 100;
             $product->save();
         }
 

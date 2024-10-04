@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('commentable_id');
             $table->string('commentable_type');
             $table->boolean('status')->default(true);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

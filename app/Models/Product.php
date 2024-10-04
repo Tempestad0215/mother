@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Date;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
@@ -26,12 +28,11 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property float $weight
  * @property string $dimensions
  * @property string $brand
+ * @property float $tax_rate
  * @property float  $tax
  * @property float $discount
  * @property float $discount_amount
- * @property float $product_tax
  * @property float $product_no_tax
- * @property float $tax_rate
  * @property float $benefits
  * @property string $comment
  * @property bool $close_table
@@ -39,6 +40,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property int $category_id
  * @property string $created_at
  * @property string $updated_at
+ * @property Date $deleted_at
  *
  * @method static create(mixed $validated)
  */
@@ -46,6 +48,7 @@ class Product extends Model implements Auditable
 {
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
+    use softDeletes;
 
 
     /**
@@ -70,7 +73,6 @@ class Product extends Model implements Auditable
         'brand',
         'discount',
         'discount_amount',
-        'product_no_tax',
         'product_tax',
         'benefits',
         'tax',

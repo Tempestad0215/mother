@@ -5,24 +5,27 @@ namespace App\Http\Controllers;
 use App\Helpers\SettingHelper;
 use App\Http\Requests\StoreSettingRequest;
 use App\Models\Setting;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class SettingController extends Controller
 {
     /**
-     * @return \Inertia\Response
+     * @return Response
      */
     public function index()
     {
         return Inertia::render('Setting/Index',[
-            'setting' => Setting::first()
+            'setting' => Setting::first(),
+            'company_type' => config('appconfig.company_type'),
         ]);
     }
 
 
     /**
      * @param StoreSettingRequest $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function store(StoreSettingRequest $request)
     {
@@ -37,14 +40,18 @@ class SettingController extends Controller
 
     }
 
-    public function getJson()
-    {
-        //Buscar los datos de la configuracion
-        $data = Setting::first();
 
-        //Devolver los datos
-        return response()->json($data);
-    }
+//    /**
+//     * @return JsonResponse
+//     */
+//    public function getJson()
+//    {
+//        //Buscar los datos de la configuracion
+//        $data = Setting::first();
+//
+//        //Devolver los datos
+//        return response()->json($data);
+//    }
 
 
 

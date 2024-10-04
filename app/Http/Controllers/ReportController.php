@@ -42,11 +42,47 @@ class ReportController extends Controller
             'report' => $data,
             'to' => Carbon::parse($request->get('to'))->format('Y-m-d H:i:s'),
             'from' => Carbon::parse($request->get('from'))->format('Y-m-d H:i:s'),
+            'title' => 'Reporte Por Fecha'
         ]);
 
-
-
     }
+
+    /**
+     * Ventas del dia
+     * @return Response
+     */
+    public function getDay()
+    {
+        //Intancia
+        $reportHelper = new ReportHelper();
+
+        //Obtener los datos
+        $data = $reportHelper->getDay();
+
+        return Inertia::render('Reports/Daily/Index', [
+            'report' => $data,
+            'title' => 'Reporte Del Día'
+        ]);
+    }
+
+
+    public function stockLow()
+    {
+        //Instancia
+        $reportHelper = new ReportHelper();
+
+        //Obtener los datos de producto bajo en estock
+        $data = $reportHelper->stockLow();
+
+        //Devolver la vista con los datos
+        return Inertia::render('Reports/Product/Low',[
+            'products' => $data['products'],
+            'amount' => $data['amount'],
+
+        ]);
+    }
+
+
 
 //    public function getAllDaySale(Request $request)
 //    {

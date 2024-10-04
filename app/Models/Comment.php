@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Date;
 use OwenIt\Auditing\Contracts\Auditable;
 
 
@@ -17,11 +19,13 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property string $commentable_type
  * @property string $created_at
  * @property string $updated_at
+ * @property Date $deleted_at
  */
 class Comment extends Model implements Auditable
 {
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
+    use softDeletes;
 
 
     protected $fillable = [

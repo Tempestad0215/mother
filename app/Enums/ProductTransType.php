@@ -3,10 +3,13 @@
 namespace App\Enums;
 
 Enum ProductTransType:string {
-    CASE  ENTRADA = 'entrada';
-    CASE VENTAS = 'ventas';
-    CASE  SALIDA = 'salida';
-    CASE  INTERNO = 'interno';
-    CASE  AJUSTE = 'ajuste';
-    CASE  OTROS = 'otros';
+    case  ENTRADA = 'entrada';
+
+    case RESERVA = 'reserva';
+    case VENTAS = 'ventas';
+    case  SALIDA = 'salida';
+    case  INTERNO = 'interno';
+    case  AJUSTE = 'ajuste';
+    case  OTROS = 'otros';
+    case ELIMINADO = 'eliminado';
 }

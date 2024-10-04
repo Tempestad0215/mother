@@ -20,6 +20,7 @@ export interface clienteEditI
     id: number;
     code: string;
     name: string;
+    document: string;
     personal_id: string | null;
     phone: string | null;
     email:null | string;

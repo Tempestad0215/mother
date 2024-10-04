@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -16,12 +18,14 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property string|null $phone
  * @property string|null $email
  * @property boolean $status
+ * @property Date $deleted_at
 */
 
 class Supplier extends Model implements Auditable
 {
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
+    use softDeletes;
 
 
     protected $fillable = [

@@ -26,11 +26,13 @@ export interface productDataI {
     description: string | null;
     unit: string;
     stock: number;
+    reserved: number;
     cost: number;
     price: number;
     discount: number;
     tax_rate: number;
     tax: number;
+    type:string;
     product_no_tax: number;
     category_id: number;
     supplier_id: number;

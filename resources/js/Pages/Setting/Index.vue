@@ -16,56 +16,58 @@ import {taxI} from "@/Interfaces/Global";
 /*
 Datos de ajuste
  */
-const {appSetting} = usePage().props
+const {props} = usePage();
 
-/**
- * Propiedades
- *
+/*
+Propiedades de la ventana
  */
-// const propsW = defineProps<{
-//     setting?: settingsDataI
-// }>()
+const propsW = defineProps<{
+    company_type: string[]
+}>();
 
 
 
-/**
- * Al momento de cargar
- *
+
+/*
+Al momento de cargar
  */
 onMounted(() =>{
 
     //Verificar si existe correctamente
-    if(appSetting)
+    if(props.setting)
     {
-        form.name = appSetting.name ? appSetting.name : "";
-        form.email = appSetting.email ? appSetting.email : "";
-        form.phone = appSetting.phone ? appSetting.phone :"";
-        form.address = appSetting.address ? appSetting.address :"";
-        form.website = appSetting.website ? appSetting.website : "";
-        form.company_id = appSetting.company_id ? appSetting.company_id : "";
-        form.tax = appSetting.tax.length > 0 ? appSetting.tax : [] as taxI[];
-        form.unit = appSetting.unit.length > 0 ? appSetting.unit : [] as string[];
-        imgName.value = appSetting.logo ? appSetting.logo : "logoexample.png";
+        form.name = props.setting.name;
+        form.email = props.setting.email;
+        form.phone = props.setting.phone ?? "";
+        form.address = props.setting.address ?? "" ;
+        form.website = props.setting.website ?? "";
+        form.company_id = props.setting.company_id ?? "";
+        form.company_type = props.setting.company_type ?? "";
+        form.tax = props.setting.tax;
+        form.unit = props.setting.unit;
+        form.cost = props.setting.save_cost;
+        form.sequence = props.setting.sequence;
+        imgName.value = props.setting.logo ? props.setting.logo: "logoexample.png";
     }
 });
 
-/**
- * Al momento de actualizar
+/*
+Al momento de actualizar
  */
 onUpdated(() =>{
-    if(appSetting.logo)
+    if(props.setting.logo)
     {
         //Actualizar la imagen registrad
-        imgName.value = appSetting.logo;
+        imgName.value = props.setting.logo;
     }
 
-})
+});
 
 
 
 
-/**
- * Datos del formulario
+/*
+Datos del formulario
  */
 const form = useForm({
     name:"",
@@ -81,20 +83,22 @@ const form = useForm({
     unit:[] as string[],
     is_branch: false,
     fiscal_year: "",
+    company_type: "",
     logo:"",
-    cost: true
+    cost: true,
+    sequence: true
 });
 
 
-/**
- * Datos de la ventana
+/*
+Datos de la ventana
  */
 const url = ref(window.origin);
 const imgName = ref("logoexample.png")
 
 
-/**
- * Funciones
+/*
+Funciones
  */
 //Enviar los datos
 const submit = () => {
@@ -216,249 +220,346 @@ const removeUnit = (index:number) => {
         <template #header>
             <LinkHeader
                 :active="true"
-                :href="route('register')">
+                :href="route('setting.index')">
                 Ajustes
+            </LinkHeader>
+            <LinkHeader
+                :href="route('sequence.create')">
+                Correlativos
             </LinkHeader>
         </template>
 
-        <form
-            @submit.prevent="submit"
-            class="max-w-2/4 bg-gray-200 rounded-md p-5"
-            action="">
+        <div class="max-w-[1180px] mx-auto bg-gray-200 rounded-md p-5">
+            <form
+                @submit.prevent="submit"
 
-<!--Muestra del logo-->
-            <div class="">
-                <img
-                    class="rounded-full mx-auto"
-                    :src="`${url}/storage/images/${imgName}`"
-                    alt="logo"
-                    width="150">
-            </div>
+                action="">
 
-<!-- Informaicon de la emprea-->
-            <fieldset class=" mt-5 grid grid-cols-3 gap-3 border-2 border-gray-400 p-5 rounded-md">
-                <legend>
-                    Datos de la Empresa
-                </legend>
-<!-- Nombre-->
-                <div>
-                    <InputLabel
-                        for="company"
-                        value="Nombre *"/>
-                    <TextInput
-                        name="name"
-                        v-model="form.name"
-                        required
-                        maxLength="75"
-                        class="w-full"/>
-                    <InputError :message="form.errors.name"/>
+                <!--Muestra del logo-->
+                <div class="">
+                    <img
+                        class="rounded-full mx-auto"
+                        :src="`${url}/storage/images/${imgName}`"
+                        alt="logo"
+                        width="150">
                 </div>
-<!--Correo-->
-                <div>
-                    <InputLabel
-                        for="email"
-                        value="Correo *"/>
-                    <TextInput
-                        v-model="form.email"
-                        required
-                        class="w-full"
-                        maxLength="75"
-                        type="email" />
-                    <InputError :message="form.errors.email"/>
-                </div>
-<!--Telefono-->
-                <div>
-                    <InputLabel
-                        for="phone"
-                        value="Teléfono *"/>
-                    <TextInput
-                        name="phone"
-                        v-model="form.phone"
-                        required
-                        maxLength="30"
-                        class="w-full"
-                        type="text" />
-                    <InputError :message="form.errors.phone"/>
-                </div>
-<!--Direccion-->
-                <div>
-                    <InputLabel
-                        for="address"
-                        value="Direccion"/>
-                    <TextInput
-                        name="address"
-                        v-model="form.address"
-                        maxLength="255"
-                        class="w-full"
-                        type="text" />
-                    <InputError :message="form.errors.address"/>
-                </div>
-<!--Pagina Web-->
-                <div>
-                    <InputLabel
-                        for="website"
-                        value="Pagina Web"/>
-                    <TextInput
-                        name="website"
-                        v-model="form.website"
-                        maxLength="255"
-                        class="w-full"
-                        type="text" />
-                    <InputError :message="form.errors.website"/>
-                </div>
-<!--Rnc-->
-                <div>
-                    <InputLabel
-                        for="id"
-                        value="RNC"/>
-                    <TextInput
-                        v-model="form.company_id"
-                        name="id"
-                        maxLength="30"
-                        class="w-full"
-                        type="text" />
-                    <InputError :message="form.errors.company_id"/>
-                </div>
-<!--Itbis-->
-                <div>
-                    <InputLabel
-                        for="tax"
-                        value="Itbis"/>
-                    <div class="relative">
+
+                <!-- Informaicon de la emprea-->
+                <fieldset class=" mt-5 grid grid-cols-3 gap-3 border-2 border-gray-400 p-5 rounded-md">
+                    <legend class="px-3">
+                        Datos de la Empresa
+                    </legend>
+                    <!-- Nombre-->
+                    <div>
+                        <InputLabel
+                            for="company"
+                            value="Nombre *"/>
                         <TextInput
-                            type="text"
                             name="name"
-                            v-model="form.taxName"
-                            placeholder="Nombre"
-                            class="inline w-[40%] "/>
-                        <TextInput
-                            class=" inline w-[60%] pr-10"
-                            name="tax"
-                            placeholder="Valor"
-                            v-model="form.taxValue"
-                            type="number" />
-                        <i
-                            @click="addTax"
-                            class=" absolute inset-y-0 right-0 p-3 bg-gray-300 rounded-tr-md rounded-br-md flex items-center fa-solid fa-circle-plus"></i>
+                            v-model="form.name"
+                            required
+                            maxLength="75"
+                            class="w-full"/>
+                        <InputError :message="form.errors.name"/>
                     </div>
-                    <InputError :message="form.errors.tax"/>
-                    <div
-                        class=""
-                        v-if="form.tax.length > 0"
-                        v-for="(item, index) in form.tax" :key="index">
-                        <p class=" border-b-2 border-gray-400 rounded-md px-5">
-                            <span>
-                                 {{item.name}} - {{item.amount}}%
-                            </span>
-                            <span class="float-right">
-                                <i
-                                    @click="removeTax(index)"
-                                    class=" text-red-500 fa-solid fa-circle-xmark"></i>
-                            </span>
-                        </p>
-                    </div>
-                </div>
-
-<!--Unidades de medida-->
-                <div>
-                    <InputLabel
-                        for="unit"
-                        value="Unidades"/>
-                    <div class="relative">
+                    <!--Correo-->
+                    <div>
+                        <InputLabel
+                            for="email"
+                            value="Correo *"/>
                         <TextInput
-                            :autocomplete="false"
-                            class="w-full pr-10"
-                            name="unit"
-                            v-model="form.unitValue"
+                            v-model="form.email"
+                            required
+                            class="w-full"
+                            maxLength="75"
+                            type="email" />
+                        <InputError :message="form.errors.email"/>
+                    </div>
+                    <!--Telefono-->
+                    <div>
+                        <InputLabel
+                            for="phone"
+                            value="Teléfono *"/>
+                        <TextInput
+                            name="phone"
+                            v-model="form.phone"
+                            required
+                            maxLength="30"
+                            class="w-full"
                             type="text" />
-                        <i
-                            @click="addUnit"
-                            class=" absolute inset-y-0 right-0 p-3 bg-gray-300 rounded-tr-md rounded-br-md flex items-center fa-solid fa-circle-plus"></i>
+                        <InputError :message="form.errors.phone"/>
                     </div>
-                    <InputError :message="form.errors.unit"/>
-                    <div
-                        class=""
-                        v-if="form.unit.length > 0"
-                        v-for="(item, index) in form.unit" :key="item">
-                        <p class=" border-b-2 border-gray-400 rounded-md px-5">
+                    <!--Direccion-->
+                    <div>
+                        <InputLabel
+                            for="address"
+                            value="Direccion"/>
+                        <TextInput
+                            name="address"
+                            v-model="form.address"
+                            maxLength="255"
+                            class="w-full"
+                            type="text" />
+                        <InputError :message="form.errors.address"/>
+                    </div>
+                    <!--Pagina Web-->
+                    <div>
+                        <InputLabel
+                            for="website"
+                            value="Pagina Web"/>
+                        <TextInput
+                            name="website"
+                            v-model="form.website"
+                            maxLength="255"
+                            class="w-full"
+                            type="text" />
+                        <InputError :message="form.errors.website"/>
+                    </div>
+                    <!--Rnc-->
+                    <div>
+                        <InputLabel
+                            for="id"
+                            value="RNC"/>
+                        <TextInput
+                            v-model="form.company_id"
+                            name="id"
+                            maxLength="30"
+                            class="w-full"
+                            type="text" />
+                        <InputError :message="form.errors.company_id"/>
+                    </div>
+                    <div>
+                        <InputLabel for="company_type" value="Empresa" />
+                        <select
+                            v-model="form.company_type"
+                            class="border-gray-300 rounded-md w-full"
+                            form="company_type" id="company_type">
+                            <option selected value="">
+                                ----- Selecciona La Empresa -----
+                            </option>
+                            <option v-for="(item, index) in propsW.company_type" :key="index" >
+                                {{item}}
+                            </option>
+
+                        </select>
+                    </div>
+
+
+
+
+
+                    <!--Tiempo fiscal-->
+                    <div>
+                        <InputLabel
+                            for="fiscal_year"
+                            value="Año Fiscal"/>
+                        <TextInput
+                            v-model="form.fiscal_year"
+                            name="fiscal_year"
+                            class="w-full"
+                            type="date" />
+                        <InputError :message="form.errors.fiscal_year"/>
+                    </div>
+
+
+                    <!--Logo-->
+                    <div>
+                        <InputLabel for="logo" value="Logo"/>
+                        <TextInput
+                            @input="form.logo = $event.target.files[0]"
+                            multiple="false"
+                            class=""
+                            type="file"/>
+                        <InputError/>
+                    </div>
+                </fieldset>
+
+                <!--            Datos de inventario-->
+                <fieldset class="border-2 border-gray-400 p-5 rounded-md grid grid-cols-2 gap-3">
+                    <legend class="px-3">
+                        Inventario
+                    </legend>
+
+                    <!--               Proteger costo -->
+                    <div class="col-span-full grid grid-cols-2 gap-3 ">
+
+                        <fieldset class="flex">
+                            <legend>
+                                Proteger Costo
+                            </legend>
+                            <!--                       Si -->
+                            <div >
+                                <input
+                                    class="peer hidden"
+                                    :value="true"
+                                    v-model="form.cost"
+                                    type="radio"
+                                    name="yes_cost"
+                                    id="yes_cost">
+                                <label
+                                    class=" bg-gray-400 px-3 py-1 rounded-md peer-checked:bg-gray-800 peer-checked:text-white duration-300"
+                                    id="yes_cost"
+                                    for="yes_cost">
+                                    Si
+                                </label>
+
+                            </div>
+
+                            <!--                        No-->
+                            <div class="ml-5">
+                                <input
+                                    class="peer hidden"
+                                    :value="false"
+                                    v-model="form.cost"
+                                    type="radio"
+                                    name="no_cost"
+                                    id="no_cost">
+                                <label
+                                    class=" bg-gray-400 px-3 py-1 rounded-md peer-checked:bg-gray-800 peer-checked:text-white duration-300"
+                                    id="no_cost"
+                                    for="no_cost">
+                                    No
+                                </label>
+
+                            </div>
+                            <InputError :message="form.errors.cost"/>
+                        </fieldset>
+
+
+                        <!-- Manejar comprobantes -->
+                        <fieldset class="flex">
+                            <legend>
+                                Manejar Comprobante
+                            </legend>
+                            <!--                        Si-->
+                            <div >
+                                <input
+                                    class="peer hidden"
+                                    :value="true"
+                                    v-model="form.sequence"
+                                    type="radio"
+                                    name="yes_sequence"
+                                    id="yes_sequence">
+                                <label
+                                    class=" bg-gray-400 px-3 py-1 rounded-md peer-checked:bg-gray-800 peer-checked:text-white duration-300"
+                                    id="yes_sequence"
+                                    for="yes_sequence">
+                                    Si
+                                </label>
+
+                            </div>
+                            <!--                        No-->
+                            <div class="ml-5">
+                                <input
+                                    class="peer hidden"
+                                    :value="false"
+                                    v-model="form.sequence"
+                                    type="radio"
+                                    name="no_sequence"
+                                    id="no_sequence">
+                                <label
+                                    class=" bg-gray-400 px-3 py-1 rounded-md peer-checked:bg-gray-800 peer-checked:text-white duration-300"
+                                    id="no_sequence"
+                                    for="no_sequence">
+                                    No
+                                </label>
+
+                            </div>
+                            <InputError :message="form.errors.sequence"/>
+                        </fieldset>
+                    </div>
+
+
+
+
+                    <!--Unidades de medida-->
+                    <div>
+                        <InputLabel
+                            for="unit"
+                            value="Unidades"/>
+                        <div class="relative">
+                            <TextInput
+                                :autocomplete="false"
+                                class="w-full pr-10"
+                                name="unit"
+                                v-model="form.unitValue"
+                                type="text" />
+                            <i
+                                @click="addUnit"
+                                class=" absolute inset-y-0 right-0 p-3 bg-gray-300 rounded-tr-md rounded-br-md flex items-center fa-solid fa-circle-plus"></i>
+                        </div>
+                        <InputError :message="form.errors.unit"/>
+                        <div
+                            class=""
+                            v-if="form.unit.length > 0"
+                            v-for="(item, index) in form.unit" :key="item">
+                            <p class=" border-b-2 border-gray-400 rounded-md px-5">
                             <span>
                                 {{item}}
                             </span>
-                            <span class="float-right">
+                                <span class="float-right">
                                 <i
                                     @click="removeUnit(index)"
                                     class=" text-red-500 fa-solid fa-circle-xmark"></i>
                             </span>
-                        </p>
-                    </div>
-                </div>
-
-
-<!--Tiempo fiscal-->
-                <div>
-                    <InputLabel
-                        for="fiscal_year"
-                        value="Año Fiscal"/>
-                    <TextInput
-                        v-model="form.fiscal_year"
-                        name="fiscal_year"
-                        class="w-full"
-                        type="date" />
-                    <InputError :message="form.errors.fiscal_year"/>
-                </div>
-
-<!--               Proteger costo -->
-                <div class="flex flex-col">
-                    <InputLabel value="Proteger costo" />
-                    <div class="flex">
-                        <div >
-                            <input
-                                :value="true"
-                                v-model="form.cost"
-                                type="radio"
-                                name="yes_cost"
-                                id="yes_cost">
-                            <InputLabel
-                                for="yes_cost"
-                                value="Si" />
+                            </p>
                         </div>
-                        <div class="ml-5">
-                            <input
-                                :value="false"
-                                v-model="form.cost"
-                                type="radio"
-                                name="no_cost"
-                                id="no_cost">
-                            <InputLabel
-                                for="no_cost"
-                                value="No" />
-                        </div>
-                        <InputError :message="form.errors.cost"/>
-
                     </div>
 
+
+                    <!--Itbis-->
+                    <div>
+                        <InputLabel
+                            for="tax"
+                            value="Itbis"/>
+                        <div class="relative">
+                            <TextInput
+                                type="text"
+                                name="name"
+                                v-model="form.taxName"
+                                placeholder="Nombre"
+                                class="inline w-[40%] "/>
+                            <TextInput
+                                class=" inline w-[60%] pr-10"
+                                name="tax"
+                                placeholder="Valor"
+                                v-model="form.taxValue"
+                                type="number" />
+                            <i
+                                @click="addTax"
+                                class=" absolute inset-y-0 right-0 p-3 bg-gray-300 rounded-tr-md rounded-br-md flex items-center fa-solid fa-circle-plus"></i>
+                        </div>
+                        <InputError :message="form.errors.tax"/>
+                        <div
+                            class=""
+                            v-if="form.tax.length > 0"
+                            v-for="(item, index) in form.tax" :key="index">
+                            <p class=" border-b-2 border-gray-400 rounded-md px-5">
+                            <span>
+                                 {{item.name}} - {{item.amount}}%
+                            </span>
+                                <span class="float-right">
+                                <i
+                                    @click="removeTax(index)"
+                                    class=" text-red-500 fa-solid fa-circle-xmark"></i>
+                            </span>
+                            </p>
+                        </div>
+                    </div>
+
+                </fieldset>
+
+
+                <!--Botones-->
+                <div class="text-right mt-5">
+                    <PrimaryButton>
+                        Registrar
+                    </PrimaryButton>
                 </div>
-<!--Logo-->
-                <div>
-                    <InputLabel for="logo" value="Logo"/>
-                    <TextInput
-                        @input="form.logo = $event.target.files[0]"
-                        multiple="false"
-                        class=""
-                        type="file"/>
-                    <InputError/>
-                </div>
-            </fieldset>
 
+            </form>
+        </div>
 
-<!--Botones-->
-            <div class="text-right mt-5">
-                <PrimaryButton>
-                    Registrar
-                </PrimaryButton>
-            </div>
-
-        </form>
 
     </AppLayout>
 

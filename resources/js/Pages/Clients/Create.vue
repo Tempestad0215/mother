@@ -5,16 +5,19 @@ import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@components/TextInput.vue';
 import InputError from '@components/InputError.vue';
 import PrimaryButton from '@components/PrimaryButton.vue';
-import {computed, onMounted} from 'vue';
+import {computed, onMounted, ref, Ref} from 'vue';
 import {clienteEditI} from '@/Interfaces/ClientInterface';
 import { successHttp } from '@/Global/Alert';
 import LinkHeader from "@components/LinkHeader.vue";
-import {getMoney} from "@/Global/Helpers";
+import {getRncHelper} from "@/Global/Helpers";
+import {rncUserI} from "@/Interfaces/Setting";
+import Swal from "sweetalert2";
+
 
 /**
- * Props de la vantana
+ * propsW de la vantana
  */
-const props = defineProps<{
+const propsW = defineProps<{
     clientEdit?: clienteEditI,
     update?: boolean,
 }> ();
@@ -25,19 +28,28 @@ const props = defineProps<{
 onMounted(()=>{
 
     //Verificar si existe datos para poner en el formulario
-    if(props.clientEdit)
+    if(propsW.clientEdit)
     {
-        form.id = props.clientEdit.id;
-        form.name = props.clientEdit.name;
-        form.personal_id = props.clientEdit.personal_id ? props.clientEdit.personal_id : "";
-        form.phone = props.clientEdit.phone ? props.clientEdit.phone : "";
-        form.email = props.clientEdit.email ? props.clientEdit.email : "" ;
-        form.address = props.clientEdit.address ? props.clientEdit.address : "";
-        form.comment = props.clientEdit.comment.content;
-        form.status = props.clientEdit.status;
-        form.type = props.clientEdit.type;
+        form.id = propsW.clientEdit.id;
+        form.name = propsW.clientEdit.name;
+        form.document = propsW.clientEdit.document
+        form.personal_id = propsW.clientEdit.personal_id ? propsW.clientEdit.personal_id : "";
+        form.phone = propsW.clientEdit.phone ? propsW.clientEdit.phone : "";
+        form.email = propsW.clientEdit.email ? propsW.clientEdit.email : "" ;
+        form.address = propsW.clientEdit.address ? propsW.clientEdit.address : "";
+        form.comment = propsW.clientEdit.comment.content;
+        form.status = propsW.clientEdit.status;
+        form.type = propsW.clientEdit.type;
     }
 });
+
+
+/*
+Datos de la ventana
+ */
+const classRnc:Ref<string> = ref("");
+
+
 
 /**
  * Propiedades computada
@@ -69,6 +81,7 @@ const form = useForm({
     email:"",
     address:"",
     type: 'contado',
+    document:"cedula",
     credit_limit: "",
     credit_day:"",
     credit_balance:"",
@@ -78,17 +91,22 @@ const form = useForm({
     advance_expire:"",
     advance_balance:"",
     status: true,
-    comment:""
+    comment:"",
+
 });
 
 
-/**
- * Funciones
+/*
+Funciones
  */
-const submit = () => {
+
+/**
+ * Enviar los datos
+ */
+const submit = ():void => {
 
     // Si es actualziar
-    if(props.update)
+    if(propsW.update)
     {
         form.patch(route('client.update', form.id),{
             onSuccess:()=>{
@@ -109,6 +127,66 @@ const submit = () => {
     }
 
 }
+
+
+/**
+ * Otener el RNC
+ */
+const getRnc = async () => {
+    //Obtener la informacion del RNC
+    let info:string = await getRncHelper(form.personal_id);
+
+    console.log();
+
+
+    if (info === "SUSPENDIDO")
+    {
+        form.setError("personal_id", "Este Contribuyente Esta Suspendido, Por Favor Elegir Otro");
+        //Variable de error
+        classRnc.value = "border-red-800 text-red-500 animate-pulse";
+    }else if (info === "ERROR")
+    {
+        form.setError("personal_id", "Este Contribuyente No Pudo Ser Encontrado");
+        //Variable de error
+        classRnc.value = "border-red-800 text-red-500 animate-pulse";
+
+    }else if (info === "CANCELLED")
+    {
+
+    }
+    else{
+
+        //Pasar los datos del json y transformar
+        let infoParse:rncUserI = JSON.parse(info);
+        //Poner los datos en verde
+        classRnc.value = "border-green-800 text-green-500";
+        //Mostrar el mensaje de la razon social
+        await Swal.fire({
+            title: "Datos Contribuyente",
+            html: `
+                <p>
+                    <strong>RNC :</strong>
+                    ${infoParse.rnc}
+                </p>
+                <p>
+                    <strong>Razon Social :</strong>
+                    ${infoParse.razon_social}
+                </p>
+            `,
+            icon: "info"
+        });
+
+    }
+    //Limpiar el error luego de 5 segundo
+    setTimeout(() => {
+        form.clearErrors("personal_id");
+        classRnc.value = "";
+    },5000);
+
+}
+
+
+
 
 </script>
 
@@ -134,64 +212,61 @@ const submit = () => {
         <!-- Formulario de registro -->
         <div>
             <form
-                class="bg-gray-200 rounded-md p-5 md:max-w-full mx-auto"
+                class="bg-gray-200  rounded-md p-5 md:max-w-full mx-auto"
                 @submit.prevent="submit">
 
 <!--                Titulo del formulario-->
                 <h2 class="col-span-full text-2xl font-bold text-center mb-4">
-                    {{ props.update ? 'Actualización' :  'Registro'}} de cliente
+                    {{ propsW.update ? 'Actualización' :  'Registro'}} de cliente
                 </h2>
 
-<!--                Tipo de cliente-->
-                <fieldset class="flex border-2 border-gray-400 p-5 rounded-md">
-                    <legend>
-                        Tipo de Cliente
-                    </legend>
+                <div class="flex justify-end items-center">
+                    <!--                Tipo de cliente-->
                     <div>
-                        <input
-                            class="peer hidden"
-                            type="radio"
-                            v-model="form.type"
-                            value="contado"
-                            name="cli_cash"
-                            id="cli_cash">
-                        <label
-                            class=" border-2 px-2 py-1 rounded-md border-gray-400 peer-checked:bg-gray-800 peer-checked:text-white duration-300 "
-                            for="cli_cash">
-                            Contado
-                        </label>
-
+                        <InputLabel for="tye" value="Tipo"/>
+                        <select
+                            title="Tipo de cliente"
+                            class="border-gray-200 rounded-md"
+                            id="type">
+                            <option value="contado">Contado</option>
+<!--                            <option value="credito">Credito</option>-->
+<!--                            <option value="anticipo">Anticipo</option>-->
+                        </select>
+                        <InputError :message="form.errors.type"/>
                     </div>
-<!--                    <div class="ml-5">-->
-<!--                        <input-->
-<!--                            class="peer hidden"-->
-<!--                            v-model="form.type"-->
-<!--                            value="credito"-->
-<!--                            type="radio"-->
-<!--                            name="cli_credit"-->
-<!--                            id="cli_credit">-->
-<!--                        <label-->
-<!--                            class=" border-2 px-2 py-1 rounded-md border-gray-400 peer-checked:bg-gray-800 peer-checked:text-white duration-300 "-->
-<!--                            for="cli_credit">-->
-<!--                            Credito-->
-<!--                        </label>-->
-<!--                    </div>-->
-<!--                    <div class="ml-5">-->
-<!--                        <input-->
-<!--                            class="peer hidden"-->
-<!--                            v-model="form.type"-->
-<!--                            value="anticipo"-->
-<!--                            type="radio"-->
-<!--                            name="cli_advance"-->
-<!--                            id="cli_advance">-->
-<!--                        <label-->
-<!--                            class=" border-2 px-2 py-1 rounded-md border-gray-400 peer-checked:bg-gray-800 peer-checked:text-white duration-300 "-->
-<!--                            for="cli_advance">-->
-<!--                            Anticipo-->
-<!--                        </label>-->
-<!--                    </div>-->
-                    <InputError :message="form.errors.type"/>
-                </fieldset>
+
+
+                    <!--Tipo de documento-->
+                    <div class="ml-3">
+                        <InputLabel for="document" value="Documento"/>
+                        <select
+                            title="Documento de Indetificación"
+                            v-model="form.document"
+                            class="border-gray-200 rounded-md"
+                            id="document" >
+                            <option value="cedula" >Cédula</option>
+                            <option value="pasaporte" >Pasaporte</option>
+                            <option value="rnc" >RNC</option>
+                        </select>
+                        <InputError :message="form.errors.document"/>
+                    </div>
+
+
+                    <!-- Estatus del cliente -->
+                    <div class="ml-3">
+                        <InputLabel value="Estado"/>
+                        <select
+                            title="Estado del cliente"
+                            v-model="form.status"
+                            class="border-gray-200 rounded-md"
+                            id="document" >
+                            <option :value="true" >Activo</option>
+                            <option :value="false" >Inactivo</option>
+                        </select>
+                        <InputError :message="form.errors.status" />
+                    </div>
+
+                </div>
 
 
 <!--                Datos personales-->
@@ -217,13 +292,16 @@ const submit = () => {
                     <div>
                         <InputLabel
                             for="personal_id"
-                            value="Cedula / Pasaporte /RNC"/>
+                            value="Cédula / Pasaporte /RNC"/>
                         <TextInput
-                            class=" w-full"
-                            maxLength="75"
+                            id="personal_id"
+                            @blur="getRnc"
+                            class=" w-full "
+                            :class="[classRnc]"
+                            maxLength="15"
                             :required="isMandatory"
                             v-model="form.personal_id"
-                            placeholder="Nombre completo"
+                            placeholder="12345678910"
                             type="text"/>
 
                         <!-- Error -->
@@ -238,6 +316,7 @@ const submit = () => {
                         <TextInput
                             class=" w-full"
                             name="phone"
+                            maxLength="20"
                             :required="isMandatory"
                             v-model="form.phone"
                             placeholder="(849) 425-8568"
@@ -276,7 +355,7 @@ const submit = () => {
                             name="address"
                             maxLength="150"
                             :required="isMandatory"
-                            placeholder="Puerto Plata"
+                            placeholder="Puerto Plata, Padres Las Casas #12"
                             v-model="form.address"
                             type="text"/>
 
@@ -314,20 +393,20 @@ const submit = () => {
                             <InputError :message="form.errors.credit_day" />
                         </div>
 
-                        <div>
-                            <InputLabel for="curren_balance" value="Balance Actual"/>
-                            <p>
-                                {{getMoney(1253.26)}}
-                            </p>
-                            <InputError/>
-                        </div>
-                        <div>
-                            <InputLabel for="credit_expired" value="Balance Vencido"/>
-                            <p>
-                                {{getMoney(0.0)}}
-                            </p>
-                            <InputError/>
-                        </div>
+<!--                        <div>-->
+<!--                            <InputLabel for="curren_balance" value="Balance Actual"/>-->
+<!--                            <p>-->
+<!--                                {{getMoney(1253.26)}}-->
+<!--                            </p>-->
+<!--                            <InputError/>-->
+<!--                        </div>-->
+<!--                        <div>-->
+<!--                            <InputLabel for="credit_expired" value="Balance Vencido"/>-->
+<!--                            <p>-->
+<!--                                {{getMoney(0.0)}}-->
+<!--                            </p>-->
+<!--                            <InputError/>-->
+<!--                        </div>-->
                     </fieldset>
 
 
@@ -361,13 +440,13 @@ const submit = () => {
                                 type="date" />
                             <InputError :message="form.errors.advance_expire" />
                         </div>
-                        <div>
-                            <InputLabel for="advance_balance" value="Balance Disponible"/>
-                            <p>
-                                {{getMoney(12530.12)}}
-                            </p>
-                            <InputError />
-                        </div>
+<!--                        <div>-->
+<!--                            <InputLabel for="advance_balance" value="Balance Disponible"/>-->
+<!--                            <p>-->
+<!--                                {{getMoney(12530.12)}}-->
+<!--                            </p>-->
+<!--                            <InputError />-->
+<!--                        </div>-->
 
                     </fieldset>
 
@@ -377,56 +456,19 @@ const submit = () => {
 
                 <!-- Datos de comentario y  -->
                 <div class="flex mt-5">
-                    <fieldset class=" border-2 border-gray-400 rounded-md p-2 flex items-center">
-                        <legend>
-                            Comentario
-                        </legend>
+
+                    <div>
+                        <InputLabel for="comment" value="Comentario"/>
                         <textarea
                             maxlength="255"
                             v-model="form.comment"
                             rows="5"
                             cols="50"
-                            class="border-gray-200 rounded-md max-w-[400px] min-h-[150px] max-h-[200px]"/>
-                        <InputError :message="form.errors.comment" />
-                    </fieldset>
-                    <div>
-
+                            class="border-gray-200 rounded-md max-w-[400px] min-h-[75px] h-[100px] max-h-[150px]"/>
+                        <InputError :message="form.errors.comment"/>
                     </div>
 
-                    <!--                Estatus del cliente    -->
-                    <fieldset class="ml-3 p-3 border-2 border-gray-400 rounded-md flex items-center">
-                        <legend>
-                            Estado
-                        </legend>
-                        <div>
-                            <input
-                                class="peer hidden"
-                                v-model="form.status"
-                                :value="true"
-                                type="radio" name="cli_active" id="cli_active">
-                            <label
-                                class=" border-2 px-2 py-1 rounded-md border-gray-400 peer-checked:bg-gray-800 peer-checked:text-white duration-300 "
-                                for="cli_active">
-                                Activado
-                            </label>
 
-                        </div>
-                        <div class="pl-5">
-                            <input
-                                class="peer hidden"
-                                v-model="form.status"
-                                :value="false"
-                                type="radio"
-                                name="cli_disabled"
-                                id="cli_disabled">
-                            <label
-                                class=" border-2 px-2 py-1 rounded-md border-gray-400 peer-checked:bg-gray-800 peer-checked:text-white duration-300 "
-                                for="cli_disabled">
-                                Desactivado
-                            </label>
-                        </div>
-                        <InputError :message="form.errors.status" />
-                    </fieldset>
 
 
 
@@ -434,7 +476,7 @@ const submit = () => {
                     <div class="flex flex-1 justify-end items-center space-x-5">
                         <PrimaryButton
                             :disabled="form.processing">
-                            {{ props.update ? 'Actualizar' :  'Registrar'}}
+                            {{ propsW.update ? 'Actualizar' :  'Registrar'}}
                         </PrimaryButton>
 
                     </div>

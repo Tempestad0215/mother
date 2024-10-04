@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import {Head, useForm} from "@inertiajs/vue3";
+import {Head, useForm, usePage} from "@inertiajs/vue3";
 import AppLayout from "@layout/AppLayout.vue";
 import InputLabel from "@components/InputLabel.vue";
 import TextInput from "@components/TextInput.vue";
 import SecondaryButton from "@components/SecondaryButton.vue";
 import FloatBox from "@components/FloatBox.vue";
 import FloatShowPro from "@/Pages/Products/FloatShowPro.vue";
-import {ref} from "vue";
+import {onMounted, Ref, ref} from "vue";
 import {productDataI, productI} from "@/Interfaces/Product";
-import {getMoney} from "@/Global/Helpers";
+import {formatNumber, getMoney, getSequenceType} from "@/Global/Helpers";
 import LinkHeader from "@components/LinkHeader.vue";
 import Swal from "sweetalert2";
 import InputError from "@components/InputError.vue";
@@ -18,7 +18,13 @@ import PrimaryButton from "@components/PrimaryButton.vue";
 import {successHttp} from "@/Global/Alert";
 import axios from "axios";
 import SaleOpenShow from "@/Pages/ProductsSale/SaleOpenShow.vue";
-import {saleDataI, saleDataPaginationI, saleInfoI} from "@/Interfaces/Sale";
+import {infoSaleI, saleDataI, saleDataPaginationI} from "@/Interfaces/Sale";
+import {invoiceTypeI, sequenceDataI} from "@/Interfaces/Setting";
+
+
+
+const {setting} = usePage().props;
+
 
 
 /**
@@ -28,16 +34,29 @@ const propsW = defineProps<{
     products: productI,
     clients: clientI,
     pdf? : string,
-    saleOpen : saleDataPaginationI
+    saleOpen : saleDataPaginationI,
+    invoiceType: invoiceTypeI[]
 }>();
+
+
+
+/*
+al momento de cargar
+ */
+onMounted(() => {
+   getSequence("B02");
+});
+
 
 
 /**
  * Datos de la ventana
  */
-const showClient = ref<boolean>(false);
-const showProduct = ref(false);
-const showSaleOpen = ref<boolean>(false);
+const showClient:Ref<boolean> = ref<boolean>(false);
+const showProduct:Ref<boolean> = ref(false);
+const showSaleOpen:Ref<boolean> = ref<boolean>(false);
+const sequenceData:Ref<sequenceDataI | null> = ref(null);
+
 
 /**
  * Formulario
@@ -47,22 +66,60 @@ const form = useForm({
     code_product:"",
     client_name:"",
     client_id: 0,
-    info:[] as saleInfoI[],
+    info:[] as infoSaleI[],
     tax: 0.00,
     discount_amount: 0.00,
     amount: 0.00,
     sub_total: 0.00,
     comment:"",
+    comment_id:"",
     close_table: false,
     received: 0,
     returned: 0,
     general:"",
+    type: "ventas",
     update: false,
+    sequence_type:"",
+    sequence:"",
+    invoice_type:"B02"
 });
 
-/**
- * Funciones
+/*
+Funciones
  */
+
+/**
+ * Obtener los datos de la sequencia
+ */
+
+const getSequence = async (type: string) => {
+
+    //Realizar la buqueda
+    const result = await axios.get(route('sequence.get', {type: type}));
+
+    //Verificar si la secuencia es correcta
+    if (result.status === 200 &&  typeof(result.data) ==='object')
+    {
+        //Pasar los datos a las variables
+        sequenceData.value  = result.data || null;
+
+        //Obtner el tipo de secuencia
+        form.sequence_type = getSequenceType(type);
+
+        //Asegurar de que los datos existan
+        if (sequenceData.value && sequenceData.value.type && sequenceData.value.next != undefined )
+        {
+            form.sequence = sequenceData.value.type+sequenceData.value.next.toString().padStart(8, '0');
+        }
+        //Crear la secuencia
+
+    }else{
+        //Mensaje de error
+        form.setError("sequence", "Este Comprobante No Puedo Ser");
+    }
+
+}
+
 
 /**
  * funciones para obtener los datos de productos
@@ -82,6 +139,8 @@ const getData = (item:productDataI) => {
 
     }else{
 
+        console.log(item);
+
         //Pasar los datos al formulario
         form.info.push({
             id: item.id,
@@ -89,15 +148,14 @@ const getData = (item:productDataI) => {
             name: item.name,
             quantity: 1,
             cost: item.cost,
-            price: item.product_no_tax,
+            price: item.price,
             stock: 0.00,
             amount: 0.00,
+            type: item.type,
             discount: item.discount,
             discount_amount: 0.00,
+            tax_rate: item.tax_rate / 100,
             tax: item.tax,
-            tax_amount: item.tax,
-            tax_rate: item.tax_rate,
-            product_tax: item.price,
         });
 
         //Cerrar la ventana
@@ -119,8 +177,9 @@ const getData = (item:productDataI) => {
  * @param name
  * @param index
  */
-const deleteItem =(name:string , index:number) => {
-    Swal.fire({
+const deleteItem = async (name:string , index:number) => {
+    //Tomar el resultado si vas a eliminar
+    const result = await Swal.fire({
         title: `Desea eliminar registro : ${name}?`,
         text: "Los cambios realizados son irreversible!",
         icon: "warning",
@@ -129,7 +188,11 @@ const deleteItem =(name:string , index:number) => {
         cancelButtonColor: "#d33",
         confirmButtonText: "Si, Eliminar!",
         cancelButtonText: "Cancelar"
-    }).then((result) => {
+    });
+
+    //Verificar si se ha confirmado
+    if(result.isConfirmed)
+    {
         if (result.isConfirmed)
         {
             //Tomar datos la ventas
@@ -138,20 +201,23 @@ const deleteItem =(name:string , index:number) => {
             //Eliminar el producto seleccionado
             form.info.splice(index,1);
 
-            //Enviar los datos para actualizar
-            form.patch(route('product-sale.destroy.item',{product: info.id, sale: form.id},{
-                preserveScroll: true,
-                preserveState: true,
-                onSuccess: () => {
-                    successHttp(`Item : ${info.name} Eliminado Correctamente` );
-                }
-            }));
+            if(form.id !== 0)
+            {
+                //Enviar los datos para actualizar
+                form.patch(route('sale.destroy.item',{product: info.id, sale: form.id},{
+                    preserveScroll: true,
+                    preserveState: true,
+                    onSuccess: () => {
+                        successHttp(`Item : ${info.name} Eliminado Correctamente` );
+                    }
+                }));
+            }
 
             //REalizar el calculo de nuevo
             totalSale();
         }
+    }
 
-    });
 }
 
 /**
@@ -161,12 +227,12 @@ const deleteItem =(name:string , index:number) => {
 const totalAmount = (index:number) => {
 
     // Sacar los datos del produtos
-    let info:saleInfoI = form.info[index];
+    let info:infoSaleI = form.info[index];
     let discountRate = info.discount / 100;
 
     //Pasar los datos al formulario
-    info.tax_amount = parseFloat ((info.tax  * info.quantity).toFixed(2));
-    info.amount = parseFloat ((info.price * info.quantity).toFixed(2));
+    info.tax_amount = parseFloat ((info.tax  * info.stock).toFixed(2));
+    info.amount = parseFloat ((info.price * info.stock).toFixed(2));
     //Descuento datos
     info.discount_amount = parseFloat((info.amount * discountRate).toFixed(2));
 
@@ -195,10 +261,10 @@ const totalSale = () => {
 
 
     //Calcular el total
-    form.tax = parseFloat((totalTax).toFixed(2));
-    form.sub_total = parseFloat((subTotal).toFixed(2)) ;
-    form.discount_amount = parseFloat(discount.toFixed(2));
-    form.amount = parseFloat(((totalTax + subTotal) - discount).toFixed(2));
+    form.tax = parseFloat((totalTax).toFixed(4));
+    form.sub_total = parseFloat((subTotal).toFixed(4)) ;
+    form.discount_amount = parseFloat(discount.toFixed(4));
+    form.amount = parseFloat(subTotal - discount).toFixed(4);
 
     //calcular el retorno
     returned();
@@ -232,7 +298,7 @@ const submit = () => {
         if (form.update)
         {
             //Enviar los datos para actualizar
-            form.patch(route('product-sale.update',{sale: form.id}),{
+            form.patch(route('sale.update',{sale: form.id}),{
                 preserveState: true,
                 preserveScroll: true,
                 onSuccess:() =>{
@@ -243,7 +309,7 @@ const submit = () => {
         }else{
 
             //Guardar los datos por primera vez
-            form.post(route('product-sale.store'),{
+            form.post(route('sale.store'),{
                 onSuccess:()=>{
                     successHttp('Venta cerrada correctamente');
                     form.reset();
@@ -293,29 +359,30 @@ const getBycode = () => {
 //Obtener los datos de las cuentas abiertas
 const getSaleOpen = (item:saleDataI) => {
 
+
     //Colocar la variable en nada al principio
     form.info = [];
     form.id = item.id;
     form.update = true;
     //Verificar Pasar los datos a la variable
-    item.info.map((el) => {
+    item.info_sale.map((el, index) => {
         //colocar la informacion en la lista
         form.info.push({
             id: el.id ? el.id : 0,
             code: el.code,
             name: el.name,
-            quantity: el.quantity,
-            cost: el.product_tax,
             price: el.price,
-            stock: el.quantity,
+            stock: el.stock,
             amount: el.amount,
-            tax: el.tax,
+            tax: formatNumber(el.tax),
             tax_amount: el.tax_amount,
             discount: el.discount,
             discount_amount: el.discount_amount,
             tax_rate: el.tax_rate,
             product_tax: el.product_tax,
         });
+
+        totalAmount(index);
 
     });
 
@@ -327,7 +394,8 @@ const getSaleOpen = (item:saleDataI) => {
     form.client_id = item.client_id;
     form.client_name = item.client_name;
     form.close_table = item.close_table;
-    form.comment = item.comment ? item.comment : "";
+    form.comment = item.comment.content ?? "";
+    form.comment_id = item.comment.id ?? 0;
 
     //Cerra la ventana
     showSaleOpen.value = false;
@@ -351,21 +419,22 @@ const returned = () => {
 </script>
 
 <template>
-
+<!--Titulo de la ventana-->
     <Head title="Sale" />
-
-
+<!--    Contenido general-->
     <AppLayout>
+
+<!--        Cabecera de la ventana-->
         <template #header >
 
             <LinkHeader
                 :active="true"
-                :href="route('product-sale.create')">
+                :href="route('sale.create')">
                 Ventas
             </LinkHeader>
 
             <LinkHeader
-                :href="route('product-sale.show')">
+                :href="route('sale.show')">
                 Mostrar
             </LinkHeader>
 
@@ -374,103 +443,162 @@ const returned = () => {
 <!--        //contenido-->
         <div>
 
-            <div class=" bg-gray-200 rounded-md p-5 mx-auto overflow-hidden">
+            <div class=" bg-gray-200 p-5 max-w-[1180px] rounded-md mx-auto overflow-hidden">
 
                 <form
                     class=" max-w-3/5"
                     action="">
                     <div >
-                        <input-label
-                            for="product"
-                            value="Cliente" />
 
-                        <div>
-                            <div class="flex space-x-5 ">
 
-                                <div class="relative">
-                                    <TextInput
-                                        class=" w-[400px]"
-                                        v-model="form.client_name"
-                                        placeholder="Cliente"/>
-                                    <InputError
-                                        :message="form.errors.client_id"/>
+                        <div class="flex">
+                            <div>
+<!--                                Botones para buscar datos-->
+                                <div class="flex space-x-5 items-center ">
+
+                                    <div class="relative">
+                                        <input-label
+                                            for="product"
+                                            value="Cliente" />
+
+                                        <div class="relative">
+                                            <TextInput
+                                                class=" w-[400px] pr-10"
+                                                v-model="form.client_name"
+                                                placeholder="Cliente"/>
+<!--                                            Colocar al lado esto-->
+                                            <div
+                                                class="absolute inset-y-0 right-0 flex items-center">
+                                                <i
+                                                    title="Buscar Cliente"
+                                                    @click="showClient = !showClient"
+                                                    class=" icon-efect text-2xl pr-3 fa-solid fa-magnifying-glass-plus"></i>
+                                            </div>
+                                        </div>
+
+                                        <InputError
+                                            :message="form.errors.client_id"/>
+                                    </div>
                                 </div>
-
-                                <SecondaryButton
-                                    @click="showClient = !showClient">
-                                    Clie...
-                                </SecondaryButton>
-                                <SecondaryButton
-                                    @click="showProduct = !showProduct">
-                                    Prod..
-                                </SecondaryButton>
-                                <SecondaryButton
-                                    @click="showSaleOpen = !showSaleOpen">
-                                    Abierta
-                                </SecondaryButton>
-
+                                <InputError :message="form.errors.client_name"/>
                             </div>
 
-                            <InputError :message="form.errors.client_name"/>
+                            <div
+                                class=" flex-1 flex justify-end animate-pulse "
+                                v-if="form.sequence_type == ''">
+                                Cargando....
+                            </div>
+
+                            <div
+                                class=" flex-1 flex justify-end"
+                                v-if="form.sequence_type !== ''">
+<!--                                Mensaje de cargando-->
+                                <!--Numero de comprobantes-->
+                                <fieldset
+                                    class=" border-2 border-gray-400 rounded-md px-2 mx-3 max-w-[400px]">
+                                    <legend>
+                                        Datos Tributario
+                                    </legend>
+                                    <p><strong>RNC :</strong> {{form.sequence}}</p>
+                                    <p><strong>Razon Social :</strong> {{form.sequence}}</p>
+                                </fieldset>
+
+                                <!--Numero de comprobantes-->
+                                <fieldset class="border-2 border-gray-400 rounded-md px-2 ">
+                                    <legend>
+                                        {{form.sequence_type}}
+                                    </legend>
+                                    <p class="truncate"><strong>NCF :</strong> {{form.sequence}}</p>
+                                </fieldset>
+                            </div>
 
                         </div>
 
+<!--                        Datos del formulario-->
+                        <div class=" flex justify-between items-center mt-3">
+                            <div class="flex">
+                                <form
+                                    @submit.prevent="getBycode">
+                                    <InputLabel
+                                        for="Product"
+                                        value="Codigo"/>
 
-                        <div class=" grid grid-cols-3 gap-3 items-center">
-                            <form
-                                @submit.prevent="getBycode">
-                                <InputLabel
-                                    for="Product"
-                                    value="Codigo"/>
+                                    <TextInput
+                                        placeholder="Producto"
+                                        maxLength="15"
+                                        class="w-[400px]"
+                                        @blur="getBycode"
+                                        v-model="form.code_product"
+                                    />
 
-                                <TextInput
-                                    placeholder="Producto"
-                                    maxLength="15"
-                                    class="w-[400px]"
-                                    @blur="getBycode"
-                                    v-model="form.code_product"
-                                />
-
-                                <InputError :message="form.errors.code_product"/>
-                            </form>
-
-
-                            <fieldset class="flex border-2 border-gray-500 p-2 rounded-md max-w-[200px]">
-                                <legend>
-                                    Mesa
-                                </legend>
-                                <div>
-                                    <input
-                                        class="peer hidden"
-                                        type="radio"
-                                        name="open"
-                                        :value="false"
-                                        v-model="form.close_table"
-                                        id="open">
-                                    <label
-                                        class="font-bold border-2 border-gray-500 px-2 py-1 rounded-md peer-checked:bg-gray-600 peer-checked:text-white duration-300"
-                                        for="open">
+                                    <InputError :message="form.errors.code_product"/>
+                                </form>
+                                <!--                            Buscar los datos necesario-->
+                                <div class="ml-3">
+                                    <InputLabel value="Datos"/>
+                                    <SecondaryButton
+                                        class="ml-3"
+                                        @click="showProduct = !showProduct">
+                                        Prod..
+                                    </SecondaryButton>
+                                    <SecondaryButton
+                                        class="ml-3"
+                                        @click="showSaleOpen = !showSaleOpen">
                                         Abierta
-                                    </label>
+                                    </SecondaryButton>
+                                </div>
+                            </div>
+
+
+
+
+                            <div class="flex">
+
+                                <!--                        Tipo de factura-->
+                                <div class="ml-3">
+                                    <InputLabel for="type" value="Tipo de Factura"/>
+                                    <select
+                                        v-model="form.invoice_type"
+                                        class="border-gray-200 rounded-md"
+                                        name="type"
+                                        id="type">
+                                        <option
+                                            v-for="(item, index) in propsW.invoiceType" :key="index"
+                                            :value="item.type">{{ item.name }}</option>
+                                        <!--                                        <option value="">Credito</option>-->
+                                    </select>
+                                    <InputError :message="form.errors.invoice_type"/>
                                 </div>
 
-
-                                <div class="ml-5">
-                                    <input
-                                        class="peer hidden"
-                                        type="radio"
-                                        name="open"
-                                        :value="true"
+                                <!--                        Tipo de factura-->
+                                <div class="ml-3">
+                                    <InputLabel for="type" value="Tipo de Venta"/>
+                                    <select
+                                        title="Tipo de Venta"
+                                        v-model="form.type"
+                                        class="border-gray-200 rounded-md"
+                                        name="type"
+                                        id="type">
+                                        <option value="ventas">Ventas</option>
+                                        <option value="contizacion">Cotizacion</option>
+<!--                                        <option value="">Credito</option>-->
+                                    </select>
+                                    <InputError :message="form.errors.type"/>
+                                </div>
+<!--                                Tipo de cuenta si abierta o cerrada-->
+                                <div class="ml-3">
+                                    <InputLabel
+                                        for="type_account"
+                                        value="Cuenta"/>
+                                    <select
+                                        title="Tipo de Cuenta"
                                         v-model="form.close_table"
-                                        id="close">
-                                    <label
-                                        class="font-bold border-2 border-gray-500 px-2 py-1 rounded-md peer-checked:bg-gray-600 peer-checked:text-white duration-300"
-                                        for="close">
-                                        Cerrada
-                                    </label>
-
+                                        class="border-gray-200 rounded-md">
+                                        <option :value="false">Abierta</option>
+                                        <option :value="true">Cerrada</option>
+                                    </select>
                                 </div>
-                            </fieldset>
+                            </div>
 
                         </div>
 
@@ -484,9 +612,9 @@ const returned = () => {
                                         <th>#</th>
                                         <th>Producto/Servicio</th>
                                         <th>Cantidad</th>
-                                        <th>Precio sin Itbis</th>
-                                        <th>Itbis</th>
                                         <th>Desc.</th>
+                                        <th>Itbis</th>
+                                        <th>Precio</th>
                                         <th>Importe</th>
                                         <th>Atc</th>
                                     </tr>
@@ -508,17 +636,8 @@ const returned = () => {
                                             <input
                                                 class=" border-none bg-transparent rounded-md h-8 bg-white w-4/5"
                                                 @blur="totalAmount(index)"
-                                                v-model="item.quantity"
+                                                v-model="item.stock"
                                                 type="number">
-                                        </td>
-                                        <td
-                                            class=" w-[150px]">
-                                            {{ getMoney(item.price)}}
-                                        </td>
-                                        <td class=" w-[150px]">
-                                            <span>
-                                                {{ getMoney(item.tax_amount)}}
-                                            </span>
                                         </td>
                                         <td
                                             class=" w-[150px]">
@@ -528,6 +647,16 @@ const returned = () => {
                                                 v-model="item.discount"
                                                 type="number">
                                         </td>
+                                        <td class=" w-[150px]">
+                                            <span>
+                                                {{ getMoney(item.tax)}}
+                                            </span>
+                                        </td>
+                                        <td
+                                            class=" w-[150px]">
+                                            {{ getMoney(item.price)}}
+                                        </td>
+
                                         <td class=" w-[150px]">
                                             <span>
                                                 {{ getMoney(item.amount) }}
@@ -556,7 +685,7 @@ const returned = () => {
                                         </legend>
                                         <textarea
                                             title="Comentario de la venta"
-                                            class="border-gray-300 rounded-md min-h-[190px] max-h-[190px]"
+                                            class="border-gray-300 rounded-md min-h-[100px] max-h-[150px]"
                                             name="note"
                                             placeholder="Escribe tu comentario"
                                             v-model="form.comment"

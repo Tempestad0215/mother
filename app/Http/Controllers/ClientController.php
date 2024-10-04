@@ -7,14 +7,19 @@ use App\Http\Resources\ClientCommentResource;
 use App\Models\Client;
 use App\Http\Requests\StoreClientsRequest;
 use App\Http\Requests\UpdateClientsRequest;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
+use Inertia\Response;
+use LaravelIdea\Helper\App\Models\_IH_Client_C;
 
 class ClientController extends Controller
 {
-    public $clientHelper;
+    public ClientHelper $clientHelper;
 
     public function __construct()
     {
@@ -32,7 +37,7 @@ class ClientController extends Controller
     }
 
     /**
-     * @return \Inertia\Response
+     * @return Response
      */
     public function create(Request $request)
     {
@@ -53,7 +58,7 @@ class ClientController extends Controller
 
     /**
      * @param StoreClientsRequest $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function store(StoreClientsRequest $request)
     {
@@ -68,7 +73,7 @@ class ClientController extends Controller
 
     /**
      * @param Request $request
-     * @return \Inertia\Response
+     * @return Response
      */
     public function show(Request $request)
     {
@@ -90,7 +95,7 @@ class ClientController extends Controller
 
     /**
      * @param Client $client
-     * @return \Inertia\Response
+     * @return Response
      */
     public function edit(Client $client)
     {
@@ -105,7 +110,7 @@ class ClientController extends Controller
     /**
      * @param UpdateClientsRequest $request
      * @param Client $client
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function update(UpdateClientsRequest $request, Client $client)
     {
@@ -120,7 +125,7 @@ class ClientController extends Controller
 
     /***
      * @param Client $client
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function destroy(Client $client)
     {
@@ -143,7 +148,7 @@ class ClientController extends Controller
 
     /**
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function getJson(Request $request)
     {
@@ -167,7 +172,7 @@ class ClientController extends Controller
 
     /**
      * @param Request $request
-     * @return mixed
+     * @return Client[]|Paginator|_IH_Client_C
      */
     private function getTable(REquest $request)
     {

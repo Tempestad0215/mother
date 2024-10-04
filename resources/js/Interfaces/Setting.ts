@@ -25,3 +25,41 @@ export  interface settingsDataI {
     updated_at: string;
 
 }
+
+export interface sequenceDataI {
+    id: number;
+    code: string;
+    type: string;
+    from: number;
+    next: number;
+    to: number;
+    advise: number;
+    num_request: string;
+    num_authorization: string;
+    date_request: string;
+    date_expire: string;
+    status: boolean;
+    deleted_at: string;
+    created_at: string;
+    updated_at: string;
+}
+
+/**
+ *
+ */
+export interface rncUserI {
+    razon_social: string
+    rnc: string;
+    status: string;
+    type : string;
+}
+
+/**
+ * Tipo de factura para facturar
+ */
+export interface invoiceTypeI {
+    type: string;
+    name: string;
+}
+
+

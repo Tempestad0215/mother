@@ -5,7 +5,7 @@ import { appSettingI, userAuthI } from "@/Interfaces/Global";
 // Extender la interfaz PageProps
 declare module '@inertiajs/core' {
     interface PageProps {
-        appSetting: appSettingI;
+        setting: appSettingI;
         auth: {
             user: userAuthI;
             canLogin: boolean;

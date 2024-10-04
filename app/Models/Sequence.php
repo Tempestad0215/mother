@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\SequenceTypeEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -12,44 +13,48 @@ use OwenIt\Auditing\Contracts\Auditable;
 /**
  * @property int $id
  * @property string $code
- * @property Sale $sale_id
- * @property array $info
- * @property float $discount_amount
- * @property float $tax
- * @property float $sub_total
- * @property float $amount
+ * @property SequenceTypeEnum $type
+ * @property int $from
+ * @property int $next
+ * @property int $to
+ * @property int $advise
+ * @property string $num_request
+ * @property string $num_authorization
+ * @property Date $date_request
+ * @property Date $date_expire
  * @property boolean $status
- * @property bool $close_table
  * @property Date $deleted_at
  */
-class DeletedSale extends Model implements Auditable
+
+class Sequence extends Model implements Auditable
 {
-    use \OwenIt\Auditing\Auditable;
+
     use softDeletes;
+    use \OwenIt\Auditing\Auditable;
 
-    //Tabla
-    protected $table = 'deleted_sales';
+    //Tabla a utilizar
+    protected $table = 'sequences';
 
 
-    //Datos para Guardar
-
-    protected  $fillable = [
+    //Datos a llenar masivamente
+    protected $fillable = [
         'code',
-        'sale_id',
-        'info',
-        'discount_amount',
-        'tax',
-        'sub_total',
-        'amount',
+        'type',
+        'from',
+        'next',
+        'to',
+        'advise',
+        'num_request',
+        'num_authorization',
+        'date_request',
+        'date_expire',
         'status',
-        'close_table'
+        'deleted_at'
     ];
-
 
     protected $casts = [
-        'info' => 'json'
+        'type' => SequenceTypeEnum::class,
     ];
-
 
 
 
@@ -61,10 +66,9 @@ class DeletedSale extends Model implements Auditable
     //Comentario
     public function comment():MorphOne
     {
+        //Retornar la relacion polimorfica
         return $this->morphOne(Comment::class, 'commentable');
     }
-
-
 
 
 
@@ -76,9 +80,9 @@ class DeletedSale extends Model implements Auditable
         // Llamar el metodo principal
         parent::boot();
 
-        //Generar el codigo
-        static::creating(function ($sale) {
-            $sale->code = self::generateCode();
+        //Generar el codigo en
+        static::creating(function ($category) {
+            $category->code = self::generateCode();
         });
     }
 
@@ -87,6 +91,7 @@ class DeletedSale extends Model implements Auditable
     /**
      * @return string
      */
+
     // funcion para generar el codigo
     private static function generateCode():string
     {
@@ -94,10 +99,10 @@ class DeletedSale extends Model implements Auditable
         $last = self::orderBy('id','desc')->first();
 
         // Generar el proximo ID
-        $nextID = $last ? $last->id + 1 : 1;
+        $nextID = $last ? $last->id +1 : 1;
 
         // Devolver los datos
-        $code = config('appconfig.deSale');
+        $code = config('appconfig.seqCode');
 
         // craer el codigp
         return $code.str_pad($nextID, 6,'0', STR_PAD_LEFT);

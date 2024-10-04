@@ -91,11 +91,11 @@ const destroy = (id:Number) => {
 </script>
 
 <template>
-    <div class=" bg-gray-200 p-5 rounded-md">
+    <div class=" bg-gray-200 p-5 rounded-md overflow-y-auto">
         <div class=" mb-4 flex justify-between items-center ">
             <form
                 @submit.prevent="submit"
-                class="">
+                class=" w-[300px]">
                 <InputLabel
                     for="search"
                     value="Buscar" />
@@ -111,7 +111,7 @@ const destroy = (id:Number) => {
             </h3>
         </div>
 
-        <table class=" table-auto w-full">
+        <table class=" table-auto w-full bg-red-200">
             <thead class=" border-b-2 text-left">
                 <tr class=" border-b-2 border-gray-800">
                     <th>Code</th>

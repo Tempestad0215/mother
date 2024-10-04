@@ -25,13 +25,15 @@ return new class extends Migration
             $table->string('company_id',30)->nullable();
             $table->json('tax')->nullable();
             $table->json('unit');
+            $table->enum('company_type', ['BAR','GYM','RESPUESTO','SUPERMERCADO','OTRO']);
             $table->boolean('save_cost')->default(true);
+            $table->boolean('sequence')->default(true);
             //Datos fiscales de las empresa
             $table->date('fiscal_year')->nullable();
 
             //Estado
             $table->boolean('status')->default(true);
-
+            $table->softDeletes();
             //Datos de crecion y actualizacion
             $table->timestamps();
         });

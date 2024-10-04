@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use App\Enums\ProductTransType;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Date;
 use OwenIt\Auditing\Contracts\Auditable;
 
 
@@ -21,13 +23,15 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property float $cost
  * @property float $discount
  * @property float $discount_amount
+ * @property float $tax_rate
  * @property float $tax
  * @property float $tax_amount
  * @property float $amount
  * @property boolean $status
  * @property ProductTransType $type
- * @property string $created_at
- * @property string $updated_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property Carbon $deleted_at
  */
 
 class ProTrans extends Model implements Auditable
@@ -37,6 +41,9 @@ class ProTrans extends Model implements Auditable
      */
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
+    use softDeletes;
+
+    protected $table = 'pro_trans';
 
 
     /**
@@ -50,6 +57,7 @@ class ProTrans extends Model implements Auditable
         'cost',
         'discount',
         'discount_amount',
+        'tax_rate',
         'tax',
         'tax_amount',
         'amount',
@@ -61,6 +69,24 @@ class ProTrans extends Model implements Auditable
         'status' => 'boolean',
         'type' => ProductTransType::class
     ];
+
+
+    //Campo Oculto
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
+
+
+    /*
+     * Relacionar los datos
+     */
+
+    public function sale():BelongsTo
+    {
+        return $this->belongsTo(Sale::class);
+    }
+
 
 
 

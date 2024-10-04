@@ -16,13 +16,14 @@ return new class extends Migration
             $table->id();
             $table->string('code', 30)->unique();
             $table->foreignIdFor(Client::class, 'client_id');
-            $table->float('limit_amount');
+            $table->float('limit_amount',4);
             $table->integer('limit_day');
             $table->integer('expired_day');
-            $table->float('available');
-            $table->float('consumed');
+            $table->float('available',4);
+            $table->float('consumed',4);
             $table->float('expired_amount');
             $table->boolean('status')->default(true);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

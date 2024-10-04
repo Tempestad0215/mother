@@ -24,21 +24,20 @@ return new class extends Migration
             $table->string('dimensions',255)->nullable();
             $table->string('brand',75)->nullable();
             $table->string('unit',20)->nullable();
-            $table->float('stock')->default(0);
-            $table->float('reserved')->default(0);
-            $table->float('cost')->default(0);
-            $table->float('price')->default(0);
+            $table->float('stock',4)->default(0);
+            $table->float('reserved',4)->default(0);
+            $table->float('cost',4)->default(0);
+            $table->float('price',4)->default(0);
 
             //Informacion del producto
-            $table->float('product_tax')->default(0);
-            $table->float('product_no_tax')->default(0);
-            $table->float('tax')->default(0);
-            $table->float('benefits')->default(0);
+            $table->float('product_no_tax',4)->default(0);
+            $table->float('tax',4)->default(0);
+            $table->float('tax_rate',4)->default(0);
+            $table->float('benefits',4)->default(0);
 
-            $table->float('discount')->default(0);
-            $table->float('discount_amount')->default(0);
-            $table->float('discount_percent')->default(0);
-            $table->float('tax_rate')->default(0);
+            $table->float('discount',4)->default(0);
+            $table->float('discount_amount',4)->default(0);
+
 
             //Relaciones de los productos
             $table->foreignIdFor(Category::class,'category_id');
@@ -46,6 +45,7 @@ return new class extends Migration
             $table->enum('type',['producto','servicio'])->default('producto');
             $table->boolean('inventoried')->default(true);
             $table->boolean('status')->default(true);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

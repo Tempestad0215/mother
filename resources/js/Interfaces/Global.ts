@@ -15,11 +15,13 @@ export interface appSettingI {
     logo: string | null;
     website: string | null;
     company_id: string | null;
-    tax: taxI[];
-    unit: string[];
+    tax: taxI[] | [];
+    unit: string[] | [];
     fiscal_year: string | null;
+    company_type: string | null;
     status: boolean;
     save_cost: boolean;
+    sequence: boolean;
     created_at: string;
     updated_at: string;
 
@@ -41,43 +43,6 @@ export interface userAuthI {
     two_factor_enabled: boolean
 }
 
-export interface pageI {
-
-    component: string
-    // scrollRegion: any[]
-    url: string
-    version: string
-    // rememberState: any
-    props: {
-        appSetting: appSettingI,
-        auth: {
-            user: userAuthI
-        }
-        canLogin: boolean
-        errorBags:any[]
-        errors: any[]
-        jetstream: {
-            canCreateTeams: boolean
-            canManageTwoFactorAuthentication: boolean
-            canUpdatePassword: boolean
-            canUpdateProfileInformation: boolean
-            hasEmailVerification: boolean
-            flash: any[]
-            hasAccountDeletionFeatures: boolean
-            hasApiFeatures: boolean
-            hasTeamFeatures: boolean
-            hasTermsAndPrivacyPolicyFeature: boolean
-            managesProfilePhotos:boolean
-        }
-        laravelVersion: string
-        phpVersion: string
-    };
-    // rememberedState: Record<string, any>;
-    // scrollRegion: any[]
-
-
-
-}
 
 
 /**

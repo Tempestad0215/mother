@@ -23,11 +23,12 @@ class TransHelper
         $proTrans = new ProTrans();
         $proTrans->product_id = $product_id;
         $proTrans->stock = $request->get('stock');
-        $proTrans->sale_id = $sale_id;
+        $proTrans->sale_id = $sale_id ?: null;
         $proTrans->price = $request->get('price');
         $proTrans->cost = $request->get('cost');
         $proTrans->discount = $request->get('discount');
         $proTrans->discount_amount = $request->get('discount_amount');
+        $proTrans->tax_rate = $request->get('tax_rate');
         $proTrans->tax = $request->get('tax');
         $proTrans->amount = $request->get('amount');
         $proTrans->type = $type;

@@ -3,22 +3,28 @@
 namespace App\Helpers;
 
 use App\Enums\ProductTransType;
+use App\Enums\ProductTypeEnum;
+use App\Enums\SaleTypeEnum;
 use App\Http\Requests\StoreProductSaleRequest;
+use App\Http\Resources\SaleInfoResource;
 use App\Models\DeletedSale;
 use App\Models\Product;
 use App\Models\ProTrans;
 use App\Models\Sale;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
+use LaravelIdea\Helper\App\Models\_IH_Sale_C;
 
 class SaleHelper
 {
     /**
      * @param Request $request
-     * @return mixed
+     * @return Sale[]|Paginator|_IH_Sale_C
      */
-    public function getSalePagination(Request $request):mixed
+    public function getSalePagination(Request $request): Paginator|array|_IH_Sale_C
     {
         //Tomar los datos de busqueda
         $search = $request->get('search');
@@ -36,22 +42,83 @@ class SaleHelper
 
     }
 
+//    /**
+//     * @param int $id
+//     * @param StoreProductSaleRequest $request
+//     * @return void
+//     */
+//    public function checkToInsert(int $id,StoreProductSaleRequest $request):void
+//    {
+//        // Tomar los datos para instroducir
+//        $saleData = $request->only(['client_name','client_id','info','discount','tax','sub_total','amount']);
+//
+//        //Guardar si no existe ese
+//        $sale = Sale::updateOrCreate(
+//            ['id' => $id],
+//            $saleData
+//        );
+//    }
+
     /**
-     * @param int $id
      * @param StoreProductSaleRequest $request
      * @return void
      */
-    public function checkToInsert(int $id,StoreProductSaleRequest $request):void
+    public function store(StoreProductSaleRequest $request):void
     {
-        // Tomar los datos para instroducir
-        $saleData = $request->only(['client_name','client_id','info','discount','tax','sub_total','amount']);
+        //Para asegurar que se cumplan los registro
+        DB::transaction(function () use ($request) {
 
-        //Guardar si no existe ese
-        $sale = Sale::updateOrCreate(
-            ['id' => $id],
-            $saleData
-        );
+            // Crear la venta
+            $sale = Sale::create([
+                'client_name' => $request->get('client_name'),
+                'client_id' => $request->get('client_id') ?: null,
+                'discount_amount' => $request->get('discount_amount'),
+                'discount' => $request->get('discount'),
+                'tax' => $request->get('tax'),
+                'sub_total' => $request->get('sub_total'),
+                'amount' => $request->get('amount'),
+                'type' => $request->get('type'),
+                'close_table' => $request->get('close_table'),
+            ]);
+
+
+            //Crear el comentario
+            $sale->comment()->create([
+                'content' => $request->get('comment'),
+            ]);
+
+            //Recorrer la ventas para descontar los productos
+            foreach ($request->info as $value)
+            {
+                //Verificar si la mesa es cerrada
+                $closeTable = $request->get('close_table');
+                //Instancia
+                $saleHelper = new SaleHelper();
+                //Descontar los productos del inventario
+                $saleHelper->processSale($closeTable, $value);
+
+                //Crear la transaccion individual
+                ProTrans::create([
+                    'product_id' => $value['id'],
+                    'sale_id' => $sale->id,
+                    'stock' => $value['quantity'],
+                    'price' => $value['price'],
+                    'tax_rate' => $value['tax_rate'],
+                    'tax' => $value['tax'],
+                    'cost' => $value['cost'],
+                    'amount' => $value['amount'],
+                    'discount' => $value['discount'],
+                    'discount_amount' => $value['discount_amount'],
+                    'type' => $request->get('close_table') ? ProductTransType::VENTAS : ProductTransType::RESERVA
+                ]);
+
+
+            }
+        });
     }
+
+
+
 
 
     /**
@@ -64,8 +131,12 @@ class SaleHelper
         //Tomar los datos del producto
         $product = Product::find($info['id']);
 
-        //reducir el stock
-        $product->stock -= $info['quantity'];
+        if ($info['type'] === ProductTypeEnum::PRODUCTO)
+        {
+            //reducir el stock
+            $product->stock -= $info['quantity'];
+        }
+
 
         //si la cuenta es abierta
         if (!$table) {
@@ -76,6 +147,13 @@ class SaleHelper
         $product->save();
 
     }
+
+
+//    public function processQuote(StoreProductSaleRequest $request):void
+//    {
+//        //Guardar los datos en la venta
+//        Sale::create($request->validated());
+//    }
 
 
     /**
@@ -93,7 +171,7 @@ class SaleHelper
 
 
         //Verificar si existe una considencia
-        foreach ($sale->info as $key => $value)
+        foreach ($sale->info as $value)
         {
             if ($value['id'] === $product->id)
             {
@@ -144,7 +222,7 @@ class SaleHelper
             //recorrer los datos de la ventas
             if ($inventoried)
             {
-                foreach ($sale->info as $key => $value)
+                foreach ($sale->info as $value)
                 {
                     //Buscar el producto en la lista
                     $product = Product::find($value['id']);
@@ -212,7 +290,6 @@ class SaleHelper
                     //Auemntar la reserva
                     $product->reserved += $result;
                     //Guardar los datos
-                    $product->save();
 
                 }else{
 
@@ -221,9 +298,9 @@ class SaleHelper
                     //Disminuir la reserva
                     $product->reserved -= abs($result);
                     //Guardar los datos
-                    $product->save();
 
                 }
+                $product->save();
 
                 //Actualizar los datos de la ventas
                 $sale->client_id = $request->get('client_id');
@@ -236,28 +313,61 @@ class SaleHelper
                 $sale->close_table = $request->get('close_table');
                 $sale->save();
 
-                if ($closeTable)
-                {
-                    //Crear la transaccion individual
-                    ProTrans::create([
-                        'product_id' => $item['id'],
-                        'sale_id' => $sale->id,
-                        'stock' => $item['quantity'],
-                        'price' => $item['price'],
-                        'tax' => $item['tax'],
-                        'cost' => $item['cost'],
-                        'amount' => $item['amount'],
-                        'discount' => $item['discount'],
-                        'discount_amount' => $item['discount_amount'],
-                        'type' => ProductTransType::VENTAS
-                    ]);
-                }
+                //Actualizar el comentario
+                $sale->comment()->updateOrCreate(
+                    ['commentable_id' => $sale->id],
+                    ['content' => $request->get('comment')]
+                );
+
+                //Crear la transaccion individual
+                ProTrans::updateOrCreate(
+                    ['id' => $request->get('id')],
+                    [
+                    'product_id' => $item['id'],
+                    'sale_id' => $sale->id,
+                    'stock' => $item['quantity'],
+                    'price' => $item['price'],
+                    'tax' => $item['tax'],
+                    'cost' => $item['cost'],
+                    'amount' => $item['amount'],
+                    'discount' => $item['discount'],
+                    'discount_amount' => $item['discount_amount'],
+                    'type' => $closeTable ? ProductTransType::VENTAS : ProductTransType::RESERVA
+                ]);
+
 
 
             });
         });
 
 
+
+    }
+
+
+//    /**
+//     * @param Request $request
+//     * @return Sale[]|Paginator|_IH_Sale_C
+//     */
+    public function getSaleOpen(Request $request)
+    {
+        //tomar los datos para buscar
+        $search = $request->get("search", "");
+
+
+        //Ralizar la busqueda en la base de datos de Sale cuando el campo close_table sea false
+        $data = Sale::where(function (Builder $query) {
+            $query->where('status', true)
+                ->where('close_table', false);
+        })->where(function (Builder $query) use ($search) {
+            $query->where('client_name', 'LIKE', "%$search%")
+                ->orWhereNull('client_name')
+                ->orWhere('client_name','=','');
+        })->with('infoSale')
+            ->latest()
+            ->simplePaginate(15);
+
+        return SaleInfoResource::collection($data)->response()->getData(true);
 
     }
 

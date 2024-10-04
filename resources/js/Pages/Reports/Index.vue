@@ -53,6 +53,10 @@ onUpdated(()=>{
 Funciones
  */
 
+
+/**
+ * Ventas pro rango de fecha
+ */
 const getDayly = () => {
     Swal.fire({
         title: "Reporte Diario X Fecha",
@@ -75,7 +79,7 @@ const getDayly = () => {
             let to:string = (document.getElementById("daily-date-end") as HTMLInputElement).value;
 
             //Buscar los datos par el reporte
-            router.get(route('report.day'),{
+            router.get(route('report.day.date'),{
                 from: from,
                 to: to
             },{
@@ -97,6 +101,15 @@ const getDayly = () => {
     //Hora de Final
     setHour("daily-date-end", 23,59,59,0);
 }
+
+/**
+ * Ventas del dia
+ */
+const getDay = () => {
+    // Crear el reporte
+    router.get(route('report.day'));
+}
+
 
 
 /**
@@ -137,6 +150,12 @@ const getDateInUtc4 = (date:Date):string => {
 
 
 
+const stockLow = () => {
+    //Buscar los producto menos a 10
+    router.get(route('report.product.low'));
+}
+
+
 
 
 
@@ -171,13 +190,17 @@ const submit = () => {
         <div class="bg-gray-200 rounded-md p-5">
 
             <fieldset class=" border-2 border-gray-800 rounded-md p-3 space-x-3">
-                <legend>
+                <legend class="px-3">
                     Reportes de Ventas
                 </legend>
 
                 <SecondaryButton
                     @click="getDayly" >
                     Ventas Diaria X Fecha
+                </SecondaryButton>
+                <SecondaryButton
+                    @click="getDay" >
+                    Ventas Del Dia
                 </SecondaryButton>
 
 <!--                <SecondaryButton >-->
@@ -195,11 +218,12 @@ const submit = () => {
 
 
             <fieldset class=" border-2 border-gray-800 rounded-md p-3 space-x-3 mt-4">
-                <legend>
+                <legend class="px-3">
                     Reporte de Inventario
                 </legend>
 
-                <SecondaryButton>
+                <SecondaryButton
+                    @click="stockLow">
                     Productos Alm. -10
                 </SecondaryButton>
 

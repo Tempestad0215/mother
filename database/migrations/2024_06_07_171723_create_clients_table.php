@@ -15,14 +15,17 @@ return new class extends Migration
             $table->id();
             $table->string('code',30);
             $table->string('name',75);
+            $table->enum('document',['cedula','pasaporte','rnc','otro']);
             $table->string('phone',20)->nullable();
             $table->string('personal_id',50)->nullable( );
             $table->string('email',150)->nullable()->unique();
             $table->string('address',255)->nullable();
+            $table->boolean('receive_email')->default(false);
             $table->enum('type',['contado','credito','anticipo'])->default('contado');
 
 
             $table->boolean('status')->default(true);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

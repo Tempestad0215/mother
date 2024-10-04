@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Enums\ClientDocumentEnum;
 use App\Enums\ClientTypeEnum;
 use App\Models\Comment;
 use Illuminate\Http\Request;
@@ -12,6 +13,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property string $code
  * @property string $name
  * @property string $phone
+ * @property ClientDocumentEnum $document
  * @property string $personal_id
  * @property string $email
  * @property string $address
@@ -38,6 +40,7 @@ class ClientCommentResource extends JsonResource
             'phone' => $this->phone,
             'email' => $this->email,
             'address' => $this->address,
+            'document' => $this->document,
             'type' => $this->type,
             'status' => $this->status,
             'comment' => [

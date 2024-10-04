@@ -8,7 +8,7 @@ import {productSupplierI} from '@/Interfaces/Product';
 import { supplierI } from '@/Interfaces/Supplier';
 import SecondaryButton from '@components/SecondaryButton.vue';
 import {useForm, usePage} from '@inertiajs/vue3';
-import {onMounted, ref} from 'vue';
+import {onMounted, Ref, ref} from 'vue';
 import {categoryI} from "@/Interfaces/Categories";
 import {taxI} from "@/Interfaces/Global";
 
@@ -16,12 +16,12 @@ import {taxI} from "@/Interfaces/Global";
 /**
  * Info general
  */
-const { appSetting } = usePage().props;
+const {props} = usePage();
 
 /**
  * Propiedades de la ventana
  */
-const props = defineProps<{
+const propsW = defineProps<{
     productEdit? : productSupplierI,
     update? : boolean,
     categories: categoryI[],
@@ -62,8 +62,8 @@ const form = useForm({
 /**
  *Datos de la ventana
  */
-const taxes  = ref<taxI[]>(appSetting.tax);
-const dataUnit = ref<string[]>(appSetting.unit);
+const taxes:Ref<taxI[]>  = ref(props.setting.tax);
+const dataUnit:Ref<string[]> = ref(props.setting.unit);
 
 
 /**
@@ -72,17 +72,17 @@ const dataUnit = ref<string[]>(appSetting.unit);
 onMounted(()=>{
 
     // Pasar los datos a editar
-    if(props.productEdit)
+    if(propsW.productEdit)
     {
-        form.id = props.productEdit.id;
-        form.name = props.productEdit.name;
-        form.type = props.productEdit.type;
-        form.description = props.productEdit.description ? props.productEdit.description : "";
-        form.bar_code = props.productEdit.bar_code ? props.productEdit.bar_code : "";
-        form.category_id = props.productEdit.category_id;
-        form.supplier_id = props.productEdit.supplier_id;
-        form.tax_rate = props.productEdit.tax_rate;
-        form.unit = props.productEdit.unit;
+        form.id = propsW.productEdit.id;
+        form.name = propsW.productEdit.name;
+        form.type = propsW.productEdit.type;
+        form.description = propsW.productEdit.description ? propsW.productEdit.description : "";
+        form.bar_code = propsW.productEdit.bar_code ? propsW.productEdit.bar_code : "";
+        form.category_id = propsW.productEdit.category_id;
+        form.supplier_id = propsW.productEdit.supplier_id;
+        form.tax_rate = propsW.productEdit.tax_rate;
+        form.unit = propsW.productEdit.unit;
     }
 });
 
@@ -92,7 +92,7 @@ onMounted(()=>{
  */
 const submit = () => {
 
-    if(props.update)
+    if(propsW.update)
     {
         form.patch(route('product.update',form.id),{
             onSuccess:()=>{
@@ -215,7 +215,7 @@ const submit = () => {
                                 --- Seleccione ---
                             </option>
                             <option
-                                v-for="(item, index) in props.categories"
+                                v-for="(item, index) in propsW.categories"
                                 :key="index"
                                 :value="item.id">
                                 {{item.name}}
@@ -243,7 +243,7 @@ const submit = () => {
                                     --- Seleccione ---
                                 </option>
                                 <option
-                                    v-for="(item, index) in props.suppliers" :key="index"
+                                    v-for="(item, index) in propsW.suppliers" :key="index"
                                     :value="item.id">
                                     {{item.company_name}}
                                 </option>
@@ -425,7 +425,7 @@ const submit = () => {
             <div class="mt-4 text-right">
                 <PrimaryButton
                     :disabled="form.processing">
-                    {{props.update ? 'Actualizar' : 'Registrar'}}
+                    {{propsW.update ? 'Actualizar' : 'Registrar'}}
                 </PrimaryButton>
             </div>
         </form>

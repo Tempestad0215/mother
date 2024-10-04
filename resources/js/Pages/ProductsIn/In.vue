@@ -7,7 +7,7 @@ import {formatNumber, getCoin, getMoney, getPenny} from '@/Global/Helpers';
 import PrimaryButton from '@components/PrimaryButton.vue';
 import InputError from '@components/InputError.vue';
 import FloatBox from '@components/FloatBox.vue';
-import {computed, onMounted, ref} from 'vue';
+import {computed, onMounted, Ref, ref} from 'vue';
 import FloatSupplier from '@/Pages/Suppliers/FloatSupp.vue';
 import {successHttp} from "@/Global/Alert";
 import FormSearch from "@components/FormSearch.vue";
@@ -19,7 +19,7 @@ import LinkHeader from '@components/LinkHeader.vue';
 /**
  * Datos de la pagina
  */
-const {appSetting} = usePage().props
+const {props} = usePage();
 
 /**
  * Propiedades de la ventana
@@ -45,6 +45,7 @@ const form = useForm({
     cost: 0.00,
     price: 0.00,
     tax: 0.00,
+    tax_rate:"",
     product_no_tax: 0.00,
     product_tax: 0.00,
     tax_amount: 0.00,
@@ -86,9 +87,8 @@ const formSearch = useForm({
  * Datos de la ventnaa
  */
 // Propiedades de la ventana
-const registerSupplier = ref(false);
-const showForm = ref<boolean>(false);
-const tax_rate = ref<number>(0);
+const registerSupplier:Ref<boolean> = ref(false);
+const showForm:Ref<boolean> = ref(false);
 
 
 /**
@@ -105,7 +105,7 @@ onMounted(()=>{
         form.stock = propsW.productEntrance.stock;
         form.cost = propsW.productEntrance.cost;
         form.price = propsW.productEntrance.price;
-        tax_rate.value = propsW.productEntrance.tax_rate;
+        form.tax_rate= propsW.productEntrance.tax_rate / 100;
 
         //Calcular los datos
         totalTax();
@@ -120,7 +120,7 @@ onMounted(()=>{
         form.stock = propsW.trans.stock;
         form.cost = propsW.trans.cost;
         form.price = propsW.trans.price;
-        tax_rate.value = propsW.trans.tax_rate;
+        form.tax_rate = propsW.trans.tax_rate / 100;
 
         //Calcular la cantidad
         totalTax();
@@ -132,7 +132,7 @@ onMounted(()=>{
  * Propiedades computada
  */
 const checkDiscount = computed(() => {
-    if( form.cost > 0.00 && appSetting.save_cost && form.discount_amount >= form.cost)
+    if( form.cost > 0.00 && props.setting.save_cost && form.discount_amount >= form.cost)
    {
        form.setError('discount', `El Item : ${form.product_name} Esta Debajo del Costo`);
        return 'text-red-500';
@@ -173,7 +173,8 @@ const checkDiscount = computed(() => {
 
 // Enviar formulario
 const submit = () => {
-    //Para editar
+
+    // //Para editar
     if(propsW.update)
     {
         form.transform((data) =>({
@@ -185,10 +186,10 @@ const submit = () => {
             product_no_tax: formatNumber(data.product_no_tax),
             tax_amount: formatNumber(data.tax_amount),
             discount: formatNumber(data.discount),
-            product_tax: formatNumber(data.product_tax),
             benefits: formatNumber(data.benefits),
-            tax: formatNumber(data.tax)
-        })).patch(route('product-in.update',{trans: form.tran_id}),{
+            tax: formatNumber(data.tax),
+            tax_rate: formatNumber(data.tax_rate)
+        })).patch(route('in.update',{trans: form.tran_id}),{
             onSuccess:()=>{
               successHttp('Datos actualizado correctamente');
             },
@@ -208,10 +209,10 @@ const submit = () => {
             product_no_tax: formatNumber(data.product_no_tax),
             tax_amount: formatNumber(data.tax_amount),
             discount: formatNumber(data.discount),
-            product_tax: formatNumber(data.product_tax),
             benefits: formatNumber(data.benefits),
-            tax: formatNumber(data.tax)
-        })).patch(route('product-in.store',form.product_id),{
+            tax: formatNumber(data.tax),
+            tax_rate: formatNumber(data.tax_rate)
+        })).patch(route('in.store',form.product_id),{
             onSuccess:()=>{
                 successHttp('Datos registrado correctamente');
                 form.reset();
@@ -228,7 +229,7 @@ const search = () => {
 }
 
 const edit = (id:number)=>{
-    router.get(route('product-in.entrance', {productIn: id}));
+    router.get(route('in.entrance', {productIn: id}));
 }
 
 // const destroy = (id:number) => {
@@ -242,7 +243,7 @@ const edit = (id:number)=>{
 //         confirmButtonText: "Si, Eliminar!"
 //     }).then((result) => {
 //         if (result.isConfirmed) {
-//             router.patch(route('product-in.destroy',{productIn: id}),{},{
+//             router.patch(route('in.destroy',{productIn: id}),{},{
 //                 onSuccess:()=>{
 //                     successHttp('Datos eliminado correctamente');
 //                 }
@@ -261,7 +262,7 @@ const totalTax = () => {
     let stock:number = form.stock || 0.00;
     let cost:number =  getPenny(form.cost || 0.00);
     let price:number = getPenny(form.price || 0.00);
-    let taxRate:number = tax_rate.value / 100;
+    let taxRate:number = form.tax_rate;
     let discount:number = form.discount / 100;
 
 
@@ -286,12 +287,12 @@ const totalTax = () => {
         <template #header >
             <LinkHeader
                 :active="true"
-                :href="route('product-in.create')">
+                :href="route('in.create')">
                 Entrada
             </LinkHeader>
             <LinkHeader
 
-                :href="route('product-in.show')">
+                :href="route('in.show')">
                 Mostrar
             </LinkHeader>
 
@@ -417,7 +418,7 @@ const totalTax = () => {
                                     for="tax_rate"
                                     value="ITBIS %"/>
                                 <span>
-                                    {{ tax_rate / 100 || 0 }} %
+                                    {{ form.tax_rate || 0 }} %
                                 </span>
                             </div>
 

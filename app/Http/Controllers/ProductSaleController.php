@@ -4,15 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Enums\ProductTransType;
 use App\Helpers\ClientHelper;
+use App\Helpers\ProductHelper;
 use App\Helpers\SaleHelper;
 use App\Http\Requests\StoreProductSaleRequest;
 use App\Models\Product;
 use App\Models\ProTrans;
 use App\Models\Sale;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -21,14 +20,13 @@ use Inertia\Response;
 
 class ProductSaleController extends Controller
 {
-    private ClientHelper $clientHelper;
 
     /**
      * constructor de la para llamar el helpers
      */
     public function __construct()
     {
-        $this->clientHelper = new ClientHelper();
+
     }
 
 
@@ -38,19 +36,24 @@ class ProductSaleController extends Controller
      */
     public function create(Request $request)
     {
-
+        //Intancia de los datos
+        $saleHelper = new SaleHelper();
+        $clientHelper = new ClientHelper();
+        $productHelper = new ProductHelper();
 
         //Obtener los datos
-        $products = $this->get($request);
-        $clients = $this->clientHelper->get($request);
-        $saleOpen = $this->getSaleOpen($request);
+        $products = $productHelper->get($request);
+        $clients = $clientHelper->get($request);
+        $saleOpen = $saleHelper->getSaleOpen($request);
+
 
 
         //DEvolver la vista y los datos
         return Inertia::render('ProductsSale/Create',[
             'products' => $products,
             'clients' => $clients,
-            'saleOpen' => $saleOpen
+            'saleOpen' => $saleOpen,
+            'invoiceType' => config('appconfig.invoiceType'),
         ]);
     }
 
@@ -59,8 +62,10 @@ class ProductSaleController extends Controller
      * @param StoreProductSaleRequest $request
      * @return RedirectResponse
      */
-    public function store(StoreProductSaleRequest $request)
+    public function store(StoreProductSaleRequest $request):RedirectResponse
     {
+
+        //Intancia de los datos
 
         //Obtener los datos
 //        $products = $this->get($request);
@@ -107,46 +112,15 @@ class ProductSaleController extends Controller
         // Evitar que se realicen 2 operaciones al mismo tiempo
         Cache::lock('sale', 5)->get(function () use ($request) {
 
+            //Intancia de los datos
+            $saleHelper = new SaleHelper();
+            //Llamar el metodo
+            $saleHelper->store($request);
 
-            //Para asegurar que se cumplan los registro
-            DB::transaction(function () use ($request) {
-
-                // Crear la venta
-                $sale = Sale::create($request->validated());
-
-                //Recorrer la ventas para descontar los productos
-                foreach ($request->info as $key => $value)
-                {
-                    //Verificar si la mesa es cerrada
-                    $closeTable = $request->get('close_table');
-                    //Instancia
-                    $saleHelper = new SaleHelper();
-                    //Descontar los productos del inventario
-                    $saleHelper->processSale($closeTable, $value);
-
-                    if ($closeTable)
-                    {
-                        //Crear la transaccion individual
-                        ProTrans::create([
-                            'product_id' => $value['id'],
-                            'sale_id' => $sale->id,
-                            'stock' => $value['quantity'],
-                            'price' => $value['price'],
-                            'tax' => $value['tax'],
-                            'cost' => $value['cost'],
-                            'amount' => $value['amount'],
-                            'discount' => $value['discount'],
-                            'discount_amount' => $value['discount_amount'],
-                            'type' =>  ProductTransType::VENTAS
-                        ]);
-                    }
-
-                }
-            });
         });
 
 
-        return to_route('product-sale.create');
+        return to_route('sale.create');
 
         //Devolver los datos con el PDF
 //        return Inertia::render('ProductsSale/Create',[
@@ -166,7 +140,6 @@ class ProductSaleController extends Controller
      */
     public function update(StoreProductSaleRequest $request, Sale $sale)
     {
-        $close = $request->get('close_table');
         //Instanacia
         $saleHelper = new SaleHelper();
 
@@ -244,60 +217,30 @@ class ProductSaleController extends Controller
 
 
 
-    /**
-     * @param Request $request
-     * @return Paginator
-     */
-    private  function get(Request $request)
-    {
-        //Obtner los datos de busqueda
-        $search = $request->get('search');
-
-        //Pasar los datos a la variable
-        return Product::where('status', true)
-            ->where('name','LIKE','%'.$search.'%')
-            ->where('stock','>',0)
-            ->latest()
-            ->simplePaginate(15);
-    }
 
 
 
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
-    private  function getJson(Request $request)
-    {
-        //Obtner los datos de busqueda
-        $search = $request->get('search');
 
-        //Pasar los datos a la variable
-        $data = Product::where('status', true)
-            ->where('name','LIKE','%'.$search.'%')
-            ->latest()
-            ->limit(10)
-            ->get();
-
-        //Devolver los datos yla respuesta
-        return response()->json($data);
-    }
-
-    private function getSaleOpen(Request $request)
-    {
-        //tomar los datos para buscar
-        $search = $request->get('search');
-
-        //Ralizar la busqueda en la base de datos de Sale cuando el campo close_table sea false
-        return Sale::where([
-            ['status','=', true],
-            ['close_table','=',false]
-        ])->where(function ($query) use ($search) {
-               $query->where('client_name','LIKE','%'.$search.'%');
-            })->latest()
-            ->simplePaginate(15);
+//    /**
+//     * @param Request $request
+//     * @return JsonResponse
+//     */
+//    private  function getJson(Request $request):JsonResponse
+//    {
+//        //Obtner los datos de busqueda
+//        $search = $request->get('search');
+//
+//        //Pasar los datos a la variable
+//        $data = Product::where('status', true)
+//            ->where('name','LIKE','%'.$search.'%')
+//            ->latest()
+//            ->limit(10)
+//            ->get();
+//
+//        //Devolver los datos yla respuesta
+//        return response()->json($data);
+//    }
 
 
-    }
 
 }

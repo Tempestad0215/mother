@@ -2,11 +2,15 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
+use App\Enums\SaleTypeEnum;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Date;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
@@ -14,15 +18,17 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property string $code
  * @property string $client_name
  * @property int $client_id
- * @property array $info
  * @property float $discount_amount
  * @property float $tax
  * @property float $sub_total
  * @property float $amount
  * @property boolean $status
+ * @property SaleTypeEnum $type
  * @property bool $close_table
- * @property Date $created_at,
- * @property Date $updated_at
+ * @property Carbon $created_at,
+ * @property Carbon $updated_at
+ * @property Carbon $deleted_at
+ * @property ProTrans[] $infoSale
  */
 
 
@@ -30,6 +36,7 @@ class Sale extends Model implements Auditable
 {
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
+    use softDeletes;
 
 
     // La tabla que se ve a utilizar
@@ -41,13 +48,12 @@ class Sale extends Model implements Auditable
         'code',
         'client_name',
         'client_id',
-        'info',
         'discount_amount',
         'tax',
         'sub_total',
         'amount',
+        'type',
         'status',
-        'comment',
         'close_table'
     ];
 
@@ -55,9 +61,40 @@ class Sale extends Model implements Auditable
     //Formatear los datos
     protected  $casts = [
         'status' => 'boolean',
-        'info' => 'array',
         'close_table' => 'boolean',
+        'type' => SaleTypeEnum::class,
     ];
+
+
+    /*
+     * Relaciones
+     */
+
+    //Relacion de comentario
+    public function comment():MorphOne
+    {
+        return $this->morphOne(Comment::class, 'commentable');
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function client():BelongsTo
+    {
+        return $this->belongsTo(Client::class);
+    }
+
+    //Relacion para los datos de las ventas
+
+    /**
+     * Retorno de valor
+     * @return HasMany
+     */
+    public function infoSale():HasMany
+    {
+        return $this->hasMany(ProTrans::class);
+    }
+
 
 
     //Formatear los datos
@@ -99,26 +136,33 @@ class Sale extends Model implements Auditable
 
         //Generar el codigo en todo
         static::creating(function ($sale) {
-            $sale->code = self::generateCode();
+            $sale->code = self::generateCode($sale->type);
         });
     }
 
 
 
     /**
+     * @param SaleTypeEnum $type
      * @return string
+     *
      */
     // funcion para generar el codigo
-    private static function generateCode():string
+    private static function generateCode(SaleTypeEnum $type):string
     {
         // Obtener el ultimo registros
-        $last = self::orderBy('id','desc')->first();
+        $last = self::where('type', $type)->orderBy('id','desc')->first();
 
         // Generar el proximo ID
         $nextID = $last ? $last->id + 1 : 1;
 
-        // Devolver los datos
-        $code = config('appconfig.saleCode');
+        if ($type === SaleTypeEnum::COTIZACION)
+        {
+            $code = config('appconfig.quoCode');
+        }else{
+
+            $code = config('appconfig.saleCode');
+        }
 
         // craer el codigp
         return $code.str_pad($nextID, 6,'0', STR_PAD_LEFT);

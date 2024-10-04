@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\ClientDocumentEnum;
 use App\Enums\ClientTypeEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -39,6 +40,7 @@ class StoreClientsRequest extends FormRequest
             'address' => ['nullable','string','max:255',Rule::requiredIf($isRequired)],
             'type' => ['required', Rule::enum(ClientTypeEnum::class)],
             'status' => ['required','boolean'],
+            'document' =>  ['required', Rule::enum(ClientDocumentEnum::class)],
 
             //Validacion de los avance
             'advance_amount' => [Rule::requiredIf($isAdvanced),'nullable','numeric'],

@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\SaleTypeEnum;
 use App\Rules\CheckStock;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreProductSaleRequest extends FormRequest
 {
@@ -45,11 +47,11 @@ class StoreProductSaleRequest extends FormRequest
             'info.*.amount' => ['required','numeric'],
             'info.*.discount' => ['required','numeric'],
             'info.*.discount_amount' => ['required','numeric'],
-            'info.*.product_tax' => ['required','numeric'],
             'tax' => ['required','numeric'],
             'amount' => ['required','numeric'],
             'sub_total' => ['required','numeric'],
             'discount_amount' => ['required','numeric'],
+            'type' => ['required',Rule::enum(SaleTypeEnum::class)],
             'comment' => ['nullable','string','min:3','max:255'],
             'close_table' => ['required','boolean'],
         ];

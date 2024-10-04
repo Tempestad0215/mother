@@ -16,17 +16,26 @@ return new class extends Migration
         Schema::create('pro_trans', function (Blueprint $table) {
             $table->id();
             $table->string('code',30);
-            $table->foreignIdFor(Sale::class,'sale_id');
-            $table->foreignIdFor(Product::class,'product_id');
-            $table->float('stock',2);
-            $table->float('tax');
-            $table->float('amount');
-            $table->float('discount_amount');
-            $table->float('cost');
-            $table->float('price',2);
-            $table->float('discount',2)->default(0);
-            $table->enum('type',['entrada','ventas','salida','cancelacion','ajuste']);
+            $table->foreignIdFor(Sale::class,'sale_id')
+                ->nullable()
+                ->constrained('sales',)
+                ->onUpdate('restrict')
+                ->onDelete('restrict');
+            $table->foreignIdFor(Product::class,'product_id')
+                ->constrained('products')
+                ->onUpdate('restrict')
+                ->onDelete('restrict');;
+            $table->float('stock',4);
+            $table->float('cost',4);
+            $table->float('price',4);
+            $table->float('tax_rate',4);
+            $table->float('tax',4);
+            $table->float('amount',4);
+            $table->float('discount',4)->default(0);
+            $table->float('discount_amount',4);
+            $table->enum('type',['entrada','ventas','salida','cancelacion','ajuste','reserva','eliminado']);
             $table->boolean('status')->default(true);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -2,10 +2,14 @@
 
 namespace App\Models;
 
+use App\Enums\ClientDocumentEnum;
 use App\Enums\ClientTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Date;
 use OwenIt\Auditing\Contracts\Auditable;
 
 
@@ -15,6 +19,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property string $phone
  * @property string $personal_id
  * @property string $email
+ * @property ClientDocumentEnum $document
  * @property string $address
  * @property boolean $status
  * @property int $type
@@ -28,15 +33,18 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property float $advance_expire
  * @property float $advance_consumed
  * @property float $advance_available
+ * @property Date $deleted_at
  */
 
 class Client extends Model implements Auditable
 {
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
+    use softDeletes;
 
     protected $fillable = [
         'name',
+        'document',
         'personal_id',
         'phone',
         'email',
@@ -48,6 +56,7 @@ class Client extends Model implements Auditable
 
     protected $casts = [
         'type' => ClientTypeEnum::class,
+        'document' => ClientDocumentEnum::class,
         'status'=> 'boolean',
     ];
 
@@ -60,6 +69,14 @@ class Client extends Model implements Auditable
         return $this->morphOne(Comment::class, 'commentable');
     }
 
+    /**
+     * Cliente
+     * @return HasOne
+     */
+    public function sale():HasOne
+    {
+        return $this->hasOne(Sale::class);
+    }
 
 
     /**

@@ -74,7 +74,6 @@ class InHelper
         $product->discount = $request->get('discount');
         $product->discount_amount = $request->get('discount_amount');
         $product->tax = $request->get('tax');
-        $product->product_tax = $request->get('product_tax');
         $product->product_no_tax = $request->get('product_no_tax');
         $product->benefits = $request->get('benefits');
         $product->save();

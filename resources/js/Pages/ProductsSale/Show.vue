@@ -124,7 +124,7 @@ const destroy = (id:number) => {
  */
 const destroySale = (id: number, inventoried: boolean, comment: string) => {
 
-    router.patch(route('product-sale.destroy-sale',{sale: id, inventoried: inventoried}),{
+    router.patch(route('sale.destroy-sale',{sale: id, inventoried: inventoried}),{
         comment: comment
     },{
         preserveScroll: true,
@@ -143,18 +143,18 @@ const destroySale = (id: number, inventoried: boolean, comment: string) => {
     <AppLayout>
         <template #header>
             <LinkHeader
-                :href="route('product-sale.create')">
+                :href="route('sale.create')">
                 Ventas
             </LinkHeader>
 
             <LinkHeader
                 :active="true"
-                :href="route('product-sale.show')">
+                :href="route('sale.show')">
                 Mostrar
             </LinkHeader>
         </template>
 
-        <div class="bg-gray-200 rounded-md p-5 mx-auto overflow-hidden">
+        <div class="bg-gray-200 max-w-[1180px] rounded-md p-5 mx-auto overflow-hidden">
             <div class="flex justify-between items-center">
                 <form
                     @submit.prevent="submit">

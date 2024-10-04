@@ -12,13 +12,13 @@ return new class extends Migration {
             $table->id();
             $table->string('code',30)->unique();
             $table->foreignIdFor(Sale::class, 'sale_id');
-            $table->json('info');
-            $table->float('discount_amount')->default(0);
-            $table->float('tax');
-            $table->float('sub_total');
-            $table->float('amount');
+            $table->float('discount_amount',4)->default(0);
+            $table->float('tax',4);
+            $table->float('sub_total',4);
+            $table->float('amount',4);
             $table->boolean('status')->default(true);
             $table->boolean('close_table')->default(false);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

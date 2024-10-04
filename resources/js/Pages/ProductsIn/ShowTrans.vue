@@ -45,7 +45,7 @@ const submit = () => {
 
 //Editar la entrada
 // const edit = (id:number) => {
-//     router.get(route('product-in.edit',{trans: id}));
+//     router.get(route('in.edit',{trans: id}));
 // }
 
 //Eliminar la transaccion
@@ -61,7 +61,7 @@ const destroy = (id:number) => {
         cancelButtonText: "Cancelar"
     }).then((result) => {
         if (result.isConfirmed) {
-            router.patch(route('product-in.destroy',{trans: id}),{},{
+            router.patch(route('in.destroy',{trans: id}),{},{
                 preserveScroll: true,
                 preserveState: true,
                 onSuccess: () => {
@@ -91,12 +91,12 @@ const destroy = (id:number) => {
         <template #header >
             <LinkHeader
 
-                :href="route('product-in.create')">
+                :href="route('in.create')">
                 Entrada
             </LinkHeader>
             <LinkHeader
                 :active="true"
-                :href="route('product-in.show')">
+                :href="route('in.show')">
                 Mostrar
             </LinkHeader>
 
