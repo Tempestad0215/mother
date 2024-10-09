@@ -8,10 +8,12 @@ use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Resources\ProSupRes;
 use App\Models\Setting;
+use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -67,20 +69,20 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-
-        $product = Product::create($request->validated());
-        // Guardar los datos del productos
-        if ($request->get('type') === 'servicio')
-        {
-            //Actualizar datos por fuera cuando son servicio
-            $product->inventoried = false;
-            $product->price = 1;
-            $product->product_no_tax = 1;
-            $product->product_tax = 1;
-            $product->tax = $request->get('tax_rate') / 100;
-            $product->save();
-        }
-
+        //Para asegurar que no se guarda si hay problema
+        DB::transaction(function () use ($request) {
+            $product = Product::create($request->validated());
+            // Guardar los datos del productos
+            if ($request->get('type') === 'servicio')
+            {
+                //Actualizar datos por fuera cuando son servicio
+                $product->inventoried = false;
+                $product->price = 1;
+                $product->unit = "N/A";
+                $product->tax = $request->get('tax_rate') / 100;
+                $product->save();
+            }
+        });
 
         // Devolver hacia atras
         return back();
@@ -154,6 +156,8 @@ class ProductController extends Controller
             //Actualizar datos por fuera cuando son servicio
             $product->inventoried = false;
             $product->price = 1;
+            $product->unit = "N/A";
+            $product->tax = $request->get('tax_rate') / 100;
             $product->save();
         }
 
@@ -168,8 +172,9 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
 
+
         //Actulizar los datos
-        $product->status = false;
+        $product->deleted_at = Carbon::now();
         $product->save();
 
         //Devolver atras

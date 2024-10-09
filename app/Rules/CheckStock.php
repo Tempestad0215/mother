@@ -10,11 +10,11 @@ use Illuminate\Translation\PotentiallyTranslatedString;
 
 class CheckStock implements ValidationRule
 {
-    protected array $info;
+    protected array $info_sale;
 
-    public  function __construct($info)
+    public  function __construct($info_sale)
     {
-        $this->info = $info;
+        $this->info_sale = $info_sale;
 
     }
     /**
@@ -28,16 +28,16 @@ class CheckStock implements ValidationRule
         $errorMessage = '';
 
         //Sacar los datos del producto introducido para validar
-        foreach ($this->info as $info) {
+        foreach ($this->info_sale as $info) {
 
             //Buscar los datos del producto
             $product = Product::where('status', true)
-                ->findOrFail($info['id']);
+                ->find($info['id']);
             //Tomar los datos de la cantidad
-            $quantity = $info['quantity'];
+            $quantity = $info['stock'];
 
             //Verificar si existe en reservado
-            if($product->reserved > 0)
+            if($product && $product->reserved > 0)
             {
                 //Restar la cantidad de la reserva
                 $quantity -= $product->reserved;

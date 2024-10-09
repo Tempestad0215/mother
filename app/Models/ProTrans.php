@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Date;
 use OwenIt\Auditing\Contracts\Auditable;
 
 
@@ -17,10 +16,10 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property int $id
  * @property string $code
  * @property int $product_id
+ * @property string $product_name
  * @property int $sale_id
  * @property float $stock
  * @property float $price
- * @property float $cost
  * @property float $discount
  * @property float $discount_amount
  * @property float $tax_rate
@@ -51,10 +50,10 @@ class ProTrans extends Model implements Auditable
      */
     protected $fillable = [
         'product_id',
+        'product_name',
         'sale_id',
         'stock',
         'price',
-        'cost',
         'discount',
         'discount_amount',
         'tax_rate',

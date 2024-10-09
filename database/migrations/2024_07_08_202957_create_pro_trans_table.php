@@ -24,9 +24,9 @@ return new class extends Migration
             $table->foreignIdFor(Product::class,'product_id')
                 ->constrained('products')
                 ->onUpdate('restrict')
-                ->onDelete('restrict');;
+                ->onDelete('restrict');
+            $table->string('product_name',75);
             $table->float('stock',4);
-            $table->float('cost',4);
             $table->float('price',4);
             $table->float('tax_rate',4);
             $table->float('tax',4);

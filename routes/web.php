@@ -15,6 +15,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use App\Models\Setting;
 
 
 
@@ -32,8 +33,8 @@ Route::middleware([
     'verified',
 ])->group(function () {
 
-    /**
-     * Ruta de Bienvenida
+    /*
+     * Ruta de bienvenida
      */
     Route::get('/', function () {
         return Inertia::render('Welcome', [
@@ -44,7 +45,7 @@ Route::middleware([
     });
 
 
-    /**
+    /*
      * Configuracion de la app
      */
     Route::controller(SettingController::class)
@@ -57,20 +58,29 @@ Route::middleware([
        Route::post('/','store')->name('store');
     });
 
-    /*
+
+
+    //conseguir la configuracion
+    $setting = Setting::pluck('sequence')->first();
+    // Solo ver esto si la opcion esta habilitado
+    if ($setting)
+    {
+        /*
      * Secuencia de RNC
      */
-    Route::controller(SequenceController::class)
-        ->prefix('setting/sequence')
-        ->name('sequence.')
-        ->group(function () {
-            Route::get('/', 'create')->name('create');
-            Route::get('/get/{type}','get')->name('get');
-            Route::get('/get/rnc/{rnc}','getRnc')->name('getRnc');
-            Route::post('/','store')->name('store');
-            Route::get('/{sequence}','edit')->name('edit');
-            Route::delete('/{sequence}','destroy')->name('destroy');
-        });
+        Route::controller(SequenceController::class)
+            ->prefix('setting/sequence')
+            ->name('sequence.')
+            ->group(function () {
+                Route::get('/', 'create')->name('create');
+                Route::get('/get/{type}','get')->name('get');
+                Route::get('/get/rnc/{rnc}','getRnc')->name('getRnc');
+                Route::post('/','store')->name('store');
+                Route::get('/{sequence}','edit')->name('edit');
+                Route::delete('/{sequence}','destroy')->name('destroy');
+            });
+    }
+
 
 
 
@@ -91,8 +101,8 @@ Route::middleware([
         ]);
     })->name('register');
 
-    /**
-     * Usuarios
+    /*
+     * Usuario
      */
     Route::controller(UserController::class)
     ->prefix('user')
@@ -103,7 +113,7 @@ Route::middleware([
         Route::patch('/destroy/{user}', 'destroy')->name('destroy');
     });
 
-    /**
+    /*
      * Cliente
      */
     Route::controller(ClientController::class)
@@ -119,7 +129,7 @@ Route::middleware([
         Route::get('/get','getJson')->name('get.json');
     });
 
-    /**
+    /*
      * Categoria
      */
     Route::controller(CategoryController::class)
@@ -133,7 +143,9 @@ Route::middleware([
             Route::get('/get','getJson')->name('get.json');
         });
 
-    /**
+
+
+    /*
      * Suplidores
      */
     Route::controller(SupplierController::class)
@@ -148,7 +160,10 @@ Route::middleware([
 
     });
 
-    /**
+
+
+
+    /*
      * Productos
      */
     Route::controller(ProductController::class)
@@ -166,7 +181,8 @@ Route::middleware([
         Route::patch('/delete/{product}','destroy')->name('destroy');
     });
 
-    /**
+
+    /*
      * Ventas
      */
     Route::controller(ProductSaleController::class)
@@ -175,15 +191,20 @@ Route::middleware([
         ->group(function(){
            Route::get('/','create')->name('create');
            Route::get('/get','getJson')->name('get.json');
-           Route::post('/','store')->name('store');
-           Route::patch('/{sale}','update')->name('update');
            Route::get('/show','show')->name('show');
+           Route::get('/credit-note/{sale}','creditNote')->name('credit.note');
+           Route::post('/','store')->name('store');
+           Route::patch('/credit-note/{sale}','creditNoteStore')->name('credit.note.store');
+           Route::patch('/update/{sale}','update')->name('update');
            Route::patch('/item/destroy/{product}/{sale}','destroyItem')->name('destroy.item');
-           Route::patch('/sale/destroy/{sale}/{inventoried}','destroySale')->name('destroy-sale');
+           Route::patch('/destroy/{sale}/{inventoried}','destroySale')->name('destroy-sale');
         });
 
-    /**
-     * Entrada de productos
+
+
+
+    /*
+     * Ventas
      */
     Route::controller(ProductInController::class)
         ->prefix('in')
@@ -199,7 +220,7 @@ Route::middleware([
 
         });
 
-    /**
+    /*
      * Reportes
      */
     Route::controller(ReportController::class)

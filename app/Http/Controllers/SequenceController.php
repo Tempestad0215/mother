@@ -114,7 +114,6 @@ class SequenceController extends Controller
         //Obtener los datos solicitado
         return $sequenceHelper->getRnc($rnc);
 
-
     }
 
 

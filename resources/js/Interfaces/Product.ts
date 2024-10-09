@@ -40,22 +40,22 @@ export interface productDataI {
     created_at: string
 }
 
-export interface productDataFullI {
-    id: number
-    name: string
-    description: string | null,
-    bar_code: string | null,
-    sku: string | null,
-    brand: string | null,
-    dimensions: string | null
-    unit: string
-    stock: number
-    cost: number
-    tax_rate: number
-    weight: string
-    created_at: string
-    updated_at: string
-}
+// export interface productDataFullI {
+//     id: number
+//     name: string
+//     description: string | null,
+//     bar_code: string | null,
+//     sku: string | null,
+//     brand: string | null,
+//     dimensions: string | null
+//     unit: string
+//     stock: number
+//     cost: number
+//     tax_rate: number
+//     weight: string
+//     created_at: string
+//     updated_at: string
+// }
 
 export interface productSupplierI {
     id: number;
@@ -81,6 +81,7 @@ export interface productSupplierI {
 export  interface  productSaleI{
     id: number;
     name: string;
+    code: string;
     quantity: number;
     price: number;
     stock: number;
@@ -88,6 +89,7 @@ export  interface  productSaleI{
     discount: number;
     discount_amount:number;
     tax: number;
+    type: string;
     total_tax: number;
     tax_rate: number;
     product_tax: number;

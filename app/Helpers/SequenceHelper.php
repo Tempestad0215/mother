@@ -5,6 +5,7 @@ namespace App\Helpers;
 use App\Enums\SequenceTypeEnum;
 use App\Http\Requests\SequenceRequest;
 use App\Models\Sequence;
+use App\Models\Setting;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -12,7 +13,6 @@ use SplFileObject;
 
 class SequenceHelper
 {
-
 
     /**
      * Guardar las secuencias y actualizar
@@ -75,7 +75,9 @@ class SequenceHelper
     public function get(SequenceTypeEnum $type):JsonResponse
     {
         //retonar el primer elemento solicitado
-        $sequence = Sequence::where('type', $type)->first();
+        $sequence = Sequence::where('type', $type)
+            ->where('status', true)
+            ->first();
 
        //Verificar si la secuancia existe
         if (!$sequence) {
@@ -133,6 +135,37 @@ class SequenceHelper
         //Devolver losd atos
         return response()->json($data);
 
+    }
+
+    /**
+     * @param SequenceTypeEnum $type
+     * @return void
+     */
+    public static function incrementSequence(SequenceTypeEnum $type):void
+    {
+        //Obtenr la configuracion
+        $setting = Setting::first();
+
+        //Verificar si la sercuencia existe
+        if($setting->sequence)
+        {
+            //Obtener el primer registro del tipo seleccionado
+            $sequence = Sequence::where('type', $type)
+                ->where('status', true)
+                ->first();
+
+            //Incrementar la secuencia a 10
+            $sequence->increment('next');
+
+            //Verificar si ya llego al final
+            if ($sequence->to == $sequence->next)
+            {
+                //Desetimar este sequencia
+                $sequence->update([
+                    'status' => 0
+                ]);
+            }
+        }
     }
 
 }

@@ -12,6 +12,9 @@ use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
+ * @property string $invoice_type
+ * @property string $ncf
+ * @property string $ncf_m
  * @property string $code
  * @property string $client_name
  * @property int $client_id
@@ -34,6 +37,9 @@ class SaleInfoResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'invoice_type' => $this->invoice_type,
+            'ncf' => $this->ncf,
+            'ncf_m' => $this->ncf_m,
             'code' => $this->code,
             'client_name' => $this->client_name,
             'client_id' => $this->client_id,

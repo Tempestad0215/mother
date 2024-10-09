@@ -12,4 +12,5 @@ Enum ProductTransType:string {
     case  AJUSTE = 'ajuste';
     case  OTROS = 'otros';
     case ELIMINADO = 'eliminado';
+    case DEVOLUCION = 'devolucion';
 }

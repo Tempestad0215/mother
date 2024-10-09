@@ -13,7 +13,7 @@ import {successHttp} from "@/Global/Alert";
 /*
 Datos de la pagina
  */
-const {auth, errors} = usePage().props;
+const page = usePage();
 
 
 
@@ -40,7 +40,10 @@ const submit = () => {
 }
 
 
-//Eliminar la ventas registrada
+/**
+ * Eliminar la registrada
+ * @param id
+ */
 const destroy = (id:number) => {
 
     Swal.fire({
@@ -136,6 +139,16 @@ const destroySale = (id: number, inventoried: boolean, comment: string) => {
 
 }
 
+/**
+ * Devolver la cuenta creada
+ * @param id
+ */
+const refund  = (id:number):void => {
+    //llmar la nota de credito
+    router.get(route('sale.credit.note',{sale: id}));
+}
+
+
 </script>
 
 <template>
@@ -176,7 +189,7 @@ const destroySale = (id: number, inventoried: boolean, comment: string) => {
                         <th>Sub Total</th>
                         <th>Total</th>
                         <th>Mesa A/C</th>
-                        <th v-if="auth.user.role === 'admin'">Act</th>
+                        <th v-if="page.props.auth.user.role === 'admin'">Act</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -194,7 +207,13 @@ const destroySale = (id: number, inventoried: boolean, comment: string) => {
                                 N/A
                             </span>
                             <i
-                                v-if="auth.user.role === 'admin' && !item.close_table  "
+                                v-if="!item.close_table"
+                                @click="refund(item.id)"
+                                class=" icon-efect fa-solid fa-right-left mr-2"></i>
+                            <i
+                                v-if="page.props.auth.user.role === 'admin'
+                                && !item.close_table
+                                && !page.props.setting.sequence  "
                                 @click="destroy(item.id)"
                                 class="icon-efect fa-solid fa-trash"></i>
                         </td>
@@ -211,7 +230,7 @@ const destroySale = (id: number, inventoried: boolean, comment: string) => {
 
 
             <!--           Mensajke de error-->
-            <InputError :message="errors.comment"/>
+            <InputError :message="page.props.errors.comment"/>
         </div>
 
 

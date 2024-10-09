@@ -18,6 +18,7 @@ use Illuminate\Foundation\Http\FormRequest;
  * @property string $fiscal_year
  * @property boolean $status
  * @property boolean $cost
+ * @property boolean $sequence
  */
 class StoreSettingRequest extends FormRequest
 {
@@ -51,7 +52,8 @@ class StoreSettingRequest extends FormRequest
             'unit' => ['required','array'],
             'unit.*' => ['nullable','string','min:2', 'max:30'],
             'fiscal_year' => ['nullable','date'],
-            'cost' => ['nullable','boolean'],
+            'cost' => ['required','boolean'],
+            'sequence' => ['required','boolean'],
         ];
     }
 }

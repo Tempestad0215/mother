@@ -16,7 +16,7 @@ import {taxI} from "@/Interfaces/Global";
 /*
 Datos de ajuste
  */
-const {props} = usePage();
+const page = usePage();
 
 /*
 Propiedades de la ventana
@@ -34,20 +34,20 @@ Al momento de cargar
 onMounted(() =>{
 
     //Verificar si existe correctamente
-    if(props.setting)
+    if(page.props.setting)
     {
-        form.name = props.setting.name;
-        form.email = props.setting.email;
-        form.phone = props.setting.phone ?? "";
-        form.address = props.setting.address ?? "" ;
-        form.website = props.setting.website ?? "";
-        form.company_id = props.setting.company_id ?? "";
-        form.company_type = props.setting.company_type ?? "";
-        form.tax = props.setting.tax;
-        form.unit = props.setting.unit;
-        form.cost = props.setting.save_cost;
-        form.sequence = props.setting.sequence;
-        imgName.value = props.setting.logo ? props.setting.logo: "logoexample.png";
+        form.name = page.props.setting.name;
+        form.email = page.props.setting.email;
+        form.phone = page.props.setting.phone ?? "";
+        form.address = page.props.setting.address ?? "" ;
+        form.website = page.props.setting.website ?? "";
+        form.company_id = page.props.setting.company_id ?? "";
+        form.company_type = page.props.setting.company_type ?? "";
+        form.tax = page.props.setting.tax;
+        form.unit = page.props.setting.unit;
+        form.cost = page.props.setting.save_cost;
+        form.sequence = page.props.setting.sequence;
+        imgName.value = page.props.setting.logo ? page.props.setting.logo: "logoexample.png";
     }
 });
 
@@ -55,10 +55,10 @@ onMounted(() =>{
 Al momento de actualizar
  */
 onUpdated(() =>{
-    if(props.setting.logo)
+    if(page.props.setting.logo)
     {
         //Actualizar la imagen registrad
-        imgName.value = props.setting.logo;
+        imgName.value = page.props.setting.logo;
     }
 
 });
@@ -224,6 +224,7 @@ const removeUnit = (index:number) => {
                 Ajustes
             </LinkHeader>
             <LinkHeader
+                v-if="page.props.setting.sequence"
                 :href="route('sequence.create')">
                 Correlativos
             </LinkHeader>
@@ -231,9 +232,7 @@ const removeUnit = (index:number) => {
 
         <div class="max-w-[1180px] mx-auto bg-gray-200 rounded-md p-5">
             <form
-                @submit.prevent="submit"
-
-                action="">
+                @submit.prevent="submit">
 
                 <!--Muestra del logo-->
                 <div class="">

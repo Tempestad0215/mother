@@ -6,9 +6,9 @@ import TextInput from "@components/TextInput.vue";
 import SecondaryButton from "@components/SecondaryButton.vue";
 import FloatBox from "@components/FloatBox.vue";
 import FloatShowPro from "@/Pages/Products/FloatShowPro.vue";
-import {onMounted, Ref, ref} from "vue";
-import {productDataI, productI} from "@/Interfaces/Product";
-import {formatNumber, getMoney, getSequenceType} from "@/Global/Helpers";
+import {computed, onMounted, onUpdated, Ref, ref} from "vue";
+import {productDataI, productI, productSaleI} from "@/Interfaces/Product";
+import { getMoney, getSequenceType} from "@/Global/Helpers";
 import LinkHeader from "@components/LinkHeader.vue";
 import Swal from "sweetalert2";
 import InputError from "@components/InputError.vue";
@@ -22,10 +22,10 @@ import {infoSaleI, saleDataI, saleDataPaginationI} from "@/Interfaces/Sale";
 import {invoiceTypeI, sequenceDataI} from "@/Interfaces/Setting";
 
 
-
-const {setting} = usePage().props;
-
-
+/*
+Utilizar el page para los datos de la pagina
+ */
+const page = usePage();
 
 /**
  * Datos del back end
@@ -35,7 +35,9 @@ const propsW = defineProps<{
     clients: clientI,
     pdf? : string,
     saleOpen : saleDataPaginationI,
-    invoiceType: invoiceTypeI[]
+    invoiceType: invoiceTypeI[],
+    saleInfo?: saleDataI,
+    refund?: boolean
 }>();
 
 
@@ -43,8 +45,29 @@ const propsW = defineProps<{
 /*
 al momento de cargar
  */
-onMounted(() => {
-   getSequence("B02");
+onMounted(async () => {
+    //Verificar si existe los datos para devoluicion
+    if (propsW.refund && propsW.saleInfo)
+    {
+        form.id = propsW.saleInfo.id;
+        form.ncf_m = propsW.saleInfo.ncf;
+        form.client_name = propsW.saleInfo.client_name;
+        form.info_sale = propsW.saleInfo.info_sale;
+        form.comment = propsW.saleInfo.comment.content;
+        form.comment_id = propsW.saleInfo.comment.id;
+        form.invoice_type = page.props.setting.sequence ? "B04" : "";
+        form.type = "devolucion";
+
+        //calcular todo
+        totalSale();
+    }
+    //Buscar la secuencia si esta en la configuracion
+    if (page.props.setting.sequence)  await getSequence(form.invoice_type);
+});
+
+onUpdated(async () => {
+    //Buscar la secuencia si esta en la configuracion
+    if (page.props.setting.sequence) await getSequence(form.invoice_type);
 });
 
 
@@ -56,6 +79,7 @@ const showClient:Ref<boolean> = ref<boolean>(false);
 const showProduct:Ref<boolean> = ref(false);
 const showSaleOpen:Ref<boolean> = ref<boolean>(false);
 const sequenceData:Ref<sequenceDataI | null> = ref(null);
+const showClientRnc:Ref<boolean> = ref(false);
 
 
 /**
@@ -63,26 +87,31 @@ const sequenceData:Ref<sequenceDataI | null> = ref(null);
  */
 const form = useForm({
     id: 0,
-    code_product:"",
-    client_name:"",
+    code_value: "",
+    ncf:"",
+    ncf_m:"",
+    client_name: "",
     client_id: 0,
-    info:[] as infoSaleI[],
-    tax: 0.00,
-    discount_amount: 0.00,
-    amount: 0.00,
-    sub_total: 0.00,
-    comment:"",
-    comment_id:"",
+    client_rnc:"",
+    client_social:"",
+    info_sale: [] as infoSaleI[],
+    tax: 0,
+    discount_amount: 0,
+    amount: 0,
+    sub_total: 0,
+    comment: "",
+    comment_id: 0,
     close_table: false,
     received: 0,
     returned: 0,
-    general:"",
+    general: "",
     type: "ventas",
     update: false,
-    sequence_type:"",
-    sequence:"",
-    invoice_type:"B02"
+    sequence_type: "",
+    invoice_type: "B02"
 });
+
+
 
 /*
 Funciones
@@ -91,7 +120,10 @@ Funciones
 /**
  * Obtener los datos de la sequencia
  */
-
+/**
+ * Obtner los comprobantes
+ * @param type
+ */
 const getSequence = async (type: string) => {
 
     //Realizar la buqueda
@@ -109,7 +141,7 @@ const getSequence = async (type: string) => {
         //Asegurar de que los datos existan
         if (sequenceData.value && sequenceData.value.type && sequenceData.value.next != undefined )
         {
-            form.sequence = sequenceData.value.type+sequenceData.value.next.toString().padStart(8, '0');
+            form.ncf = sequenceData.value.type+sequenceData.value.next.toString().padStart(8, '0');
         }
         //Crear la secuencia
 
@@ -120,51 +152,75 @@ const getSequence = async (type: string) => {
 
 }
 
+/**
+ * Verificar el tipo de factura
+ */
+const checkInvoiceType = async ()=>{
+
+    // Verificar si es nota de credito
+    if (form.invoice_type === 'B04')
+    {
+        //REsultaod de la pregunta
+        const result = await Swal.fire({
+            title: "Desea Colocar Comprobante?",
+            text: "Registre El Comprobante Del Cliente!",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Si",
+            cancelButtonText: "No"
+        });
+
+        //Verificar la accion
+        showClientRnc.value = result.isConfirmed;
+
+    }else showClientRnc.value = form.invoice_type !== 'B02';
+
+    //llamar el tipo de boleta
+    await getSequence(form.invoice_type);
+};
+
 
 /**
- * funciones para obtener los datos de productos
+ * Obtener los datos de productos
  * @param item
  */
-//Funciones
-const getData = (item:productDataI) => {
+const getData = (item:productSaleI) => {
 
     //Obtener los datos de productos
-    let info = form.info.find((el) => el.id === item.id);
+    let info = form.info_sale.find((el) => el.id === item.id);
 
     // Verificar si el producto exite en todo
     if (info?.id  === item.id)
     {
-        info.quantity += 1;
+        info.stock += 1;
         showProduct.value = false;
 
     }else{
 
-        console.log(item);
-
-        //Pasar los datos al formulario
-        form.info.push({
+       //Pasar los datos al formulario
+       form.info_sale.push({
             id: item.id,
             code: item.code,
             name: item.name,
-            quantity: 1,
+            stock: 1,
             cost: item.cost,
             price: item.price,
-            stock: 0.00,
             amount: 0.00,
             type: item.type,
             discount: item.discount,
             discount_amount: 0.00,
             tax_rate: item.tax_rate / 100,
             tax: item.tax,
-        });
+       });
 
-        //Cerrar la ventana
+       //Cerrar la ventana
         showProduct.value = false;
     }
 
-
-    //Conseguir el index para poder realizar el calculo
-    let index = form.info.findIndex((el) => el.id === item.id);
+    // //Conseguir el index para poder realizar el calculo
+    let index = form.info_sale.findIndex((el) => el.id === item.id);
 
     //Calcular el indice
     totalAmount(index);
@@ -196,15 +252,20 @@ const deleteItem = async (name:string , index:number) => {
         if (result.isConfirmed)
         {
             //Tomar datos la ventas
-            let info:saleInfoI = form.info[index];
+            let info:infoSaleI = form.info_sale[index];
+
 
             //Eliminar el producto seleccionado
-            form.info.splice(index,1);
+            form.info_sale.splice(index,1);
 
             if(form.id !== 0)
             {
                 //Enviar los datos para actualizar
-                form.patch(route('sale.destroy.item',{product: info.id, sale: form.id},{
+                form.transform((data) => ({
+                    ...data,
+                    info: info,
+                    info_new: data.info,
+                })).patch(route('sale.destroy.item',{product: info.product_id, sale: form.id},{
                     preserveScroll: true,
                     preserveState: true,
                     onSuccess: () => {
@@ -227,14 +288,15 @@ const deleteItem = async (name:string , index:number) => {
 const totalAmount = (index:number) => {
 
     // Sacar los datos del produtos
-    let info:infoSaleI = form.info[index];
+    let info:infoSaleI = form.info_sale[index];
     let discountRate = info.discount / 100;
 
-    //Pasar los datos al formulario
-    info.tax_amount = parseFloat ((info.tax  * info.stock).toFixed(2));
+
     info.amount = parseFloat ((info.price * info.stock).toFixed(2));
     //Descuento datos
     info.discount_amount = parseFloat((info.amount * discountRate).toFixed(2));
+    //Pasar los datos al formulario
+    info.tax = parseFloat ((info.amount  * info.tax_rate).toFixed(2));
 
     //Calcular los totales
     totalSale();
@@ -247,24 +309,12 @@ const totalAmount = (index:number) => {
 // Calculo de los datos finales
 const totalSale = () => {
 
-    //Tomar los datos
-    let totalTax:number = 0.00;
-    let subTotal:number = 0.00;
-    let discount:number = 0.00;
-
-    //Recorrer el array para realizar el calcuclo
-    form.info.forEach((el) =>{
-        totalTax += el.tax_amount;
-        subTotal += el.amount;
-        discount += el.discount_amount
-    });
-
 
     //Calcular el total
-    form.tax = parseFloat((totalTax).toFixed(4));
-    form.sub_total = parseFloat((subTotal).toFixed(4)) ;
-    form.discount_amount = parseFloat(discount.toFixed(4));
-    form.amount = parseFloat(subTotal - discount).toFixed(4);
+    form.tax = form.info_sale.reduce((tax:number, item:infoSaleI) => tax + item.tax, 0);
+    form.sub_total = form.info_sale.reduce((subTotal:number, item:infoSaleI) => subTotal + item.amount, 0);
+    form.discount_amount = form.info_sale.reduce((discount, item:infoSaleI) => discount + item.discount, 0);
+    form.amount = parseFloat(form.sub_total - form.discount_amount).toFixed(4);
 
     //calcular el retorno
     returned();
@@ -288,44 +338,64 @@ const selectClient = (item:clientDataI) =>  {
  * Enviar los datos
  */
 const submit = () => {
-    //Si van a cerrar verificar que lo recibido sea menor a
-    if(form.received < form.amount && form.close_table)
-    {
-        form.setError('received','El monto recibido no puede ser menor al Total');
-    }else{
 
-        //si es para actualizar
-        if (form.update)
+    //Si es nota de credito
+    if (propsW.refund)
+    {
+        //Enviar los datos para las devoluciones
+        form.patch(route('sale.credit.note.store',{sale: form.id}),{
+            onSuccess: () => {
+                console.log('existo');
+                form.reset();
+                successHttp('Nota de Credito Creada Correctamente');
+            },
+            onError: () => {
+                console.log('error');
+            }
+        })
+    }else {
+        //Si van a cerrar verificar que lo recibido sea menor a
+        if(form.received < form.amount && form.close_table && !propsW.refund)
         {
-            //Enviar los datos para actualizar
-            form.patch(route('sale.update',{sale: form.id}),{
-                preserveState: true,
-                preserveScroll: true,
-                onSuccess:() =>{
-                    successHttp('Documento Actualizado Correctamente');
-                    form.reset();
-                }
-            });
+            form.setError('received','El monto recibido no puede ser menor al Total');
         }else{
 
-            //Guardar los datos por primera vez
-            form.post(route('sale.store'),{
-                onSuccess:()=>{
-                    successHttp('Venta cerrada correctamente');
-                    form.reset();
-                    // readPDF(propsW.pdf);
-                    //Actualizar la ventana
-                },
-                onError:()=>{
-                    setTimeout(()=>{
-                        form.clearErrors();
-                    },5000)
-                },
-                only: ['products','clients','saleOpen'],
-            });
+            //si es para actualizar
+            if (form.update)
+            {
+                //Enviar los datos para actualizar
+                form.patch(route('sale.update',{sale: form.id}),{
+                    preserveState: true,
+                    preserveScroll: true,
+                    onSuccess:() =>{
+                        successHttp('Documento Actualizado Correctamente');
+                        form.reset();
+                    },
+                    onError:(err) => {
+                        console.log('error', err);
+                    }
+                });
+            }else{
+
+                //Guardar los datos por primera vez
+                form.post(route('sale.store'),{
+                    onSuccess:()=>{
+                        console.log('enviado');
+                        successHttp('Venta Cerrada Correctamente');
+                        form.reset();
+                        // readPDF(propsW.pdf);
+                        //Actualizar la ventana
+                    },
+                    onError:(err)=>{
+                        console.log('error', err);
+                        setTimeout(()=>{
+                            form.clearErrors();
+                        },5000)
+                    },
+                    only: ['products','clients','saleOpen'],
+                });
+            }
         }
-
-
     }
 }
 
@@ -336,7 +406,7 @@ const submit = () => {
 const getBycode = () => {
 
     //Verificar que tenga mas de 6 caracter
-    if(form.code_product.length > 6)
+    if(form.code_value.length > 6)
     {
         //realizar la busqueda en automatico
         axios.get(route('product.get.code', {search: form.code_product}))
@@ -359,27 +429,25 @@ const getBycode = () => {
 //Obtener los datos de las cuentas abiertas
 const getSaleOpen = (item:saleDataI) => {
 
-
     //Colocar la variable en nada al principio
-    form.info = [];
+    form.info_sale = [];
     form.id = item.id;
     form.update = true;
     //Verificar Pasar los datos a la variable
     item.info_sale.map((el, index) => {
         //colocar la informacion en la lista
-        form.info.push({
-            id: el.id ? el.id : 0,
+        form.info_sale.push({
+            id: el.product_id,
             code: el.code,
-            name: el.name,
+            product_name: el.product_name,
             price: el.price,
             stock: el.stock,
             amount: el.amount,
-            tax: formatNumber(el.tax),
-            tax_amount: el.tax_amount,
+            tax: el.tax,
+            type: el.type,
             discount: el.discount,
             discount_amount: el.discount_amount,
             tax_rate: el.tax_rate,
-            product_tax: el.product_tax,
         });
 
         totalAmount(index);
@@ -416,6 +484,8 @@ const returned = () => {
     }
 }
 
+
+
 </script>
 
 <template>
@@ -442,7 +512,6 @@ const returned = () => {
 
 <!--        //contenido-->
         <div>
-
             <div class=" bg-gray-200 p-5 max-w-[1180px] rounded-md mx-auto overflow-hidden">
 
                 <form
@@ -481,26 +550,42 @@ const returned = () => {
                                     </div>
                                 </div>
                                 <InputError :message="form.errors.client_name"/>
+
+
+                                <!--RNC del cliente-->
+                                <div v-if="showClientRnc && page.props.setting.sequence" >
+                                    <InputLabel
+                                        for="client_rnc"
+                                        value="RNC" />
+                                    <TextInput
+                                        v-model="form.client_rnc"
+                                        class="w-[400px]"
+                                        type="text" />
+                                    <InputError :message="form.errors.client_rnc"/>
+                                </div>
                             </div>
 
+<!--                            Mensaje cargando-->
                             <div
                                 class=" flex-1 flex justify-end animate-pulse "
-                                v-if="form.sequence_type == ''">
+                                v-if="form.sequence_type == '' && page.props.setting.sequence">
                                 Cargando....
                             </div>
 
+<!--                            Datos de comprobante-->
                             <div
                                 class=" flex-1 flex justify-end"
                                 v-if="form.sequence_type !== ''">
 <!--                                Mensaje de cargando-->
                                 <!--Numero de comprobantes-->
                                 <fieldset
+                                    v-if="showClientRnc"
                                     class=" border-2 border-gray-400 rounded-md px-2 mx-3 max-w-[400px]">
                                     <legend>
                                         Datos Tributario
                                     </legend>
-                                    <p><strong>RNC :</strong> {{form.sequence}}</p>
-                                    <p><strong>Razon Social :</strong> {{form.sequence}}</p>
+                                    <p><strong>RNC :</strong> {{form.client_rnc}}</p>
+                                    <p><strong>Razon Social :</strong> {{form.client_social}}</p>
                                 </fieldset>
 
                                 <!--Numero de comprobantes-->
@@ -508,10 +593,12 @@ const returned = () => {
                                     <legend>
                                         {{form.sequence_type}}
                                     </legend>
-                                    <p class="truncate"><strong>NCF :</strong> {{form.sequence}}</p>
+                                    <p class="truncate"><strong>NCF :</strong> {{form.ncf}}</p>
+                                    <p
+                                        v-if="form.invoice_type === 'B04'"
+                                        class="truncate"><strong>NCF M. :</strong> {{form.ncf_m}}</p>
                                 </fieldset>
                             </div>
-
                         </div>
 
 <!--                        Datos del formulario-->
@@ -528,13 +615,15 @@ const returned = () => {
                                         maxLength="15"
                                         class="w-[400px]"
                                         @blur="getBycode"
-                                        v-model="form.code_product"
+                                        v-model="form.code_value"
                                     />
 
-                                    <InputError :message="form.errors.code_product"/>
+                                <InputError :message="form.errors.code_product"/>
                                 </form>
-                                <!--                            Buscar los datos necesario-->
-                                <div class="ml-3">
+                                <!-- Buscar los datos necesario -->
+                                <div
+                                    v-if="!propsW.refund"
+                                    class="ml-3">
                                     <InputLabel value="Datos"/>
                                     <SecondaryButton
                                         class="ml-3"
@@ -555,16 +644,21 @@ const returned = () => {
                             <div class="flex">
 
                                 <!--                        Tipo de factura-->
-                                <div class="ml-3">
+                                <div
+                                    v-if="page.props.setting.sequence"
+                                    class="ml-3">
                                     <InputLabel for="type" value="Tipo de Factura"/>
                                     <select
+                                        @change="checkInvoiceType"
                                         v-model="form.invoice_type"
                                         class="border-gray-200 rounded-md"
                                         name="type"
                                         id="type">
                                         <option
                                             v-for="(item, index) in propsW.invoiceType" :key="index"
-                                            :value="item.type">{{ item.name }}</option>
+                                            :value="item.type">
+                                            {{item.type}} - {{ item.name }}
+                                        </option>
                                         <!--                                        <option value="">Credito</option>-->
                                     </select>
                                     <InputError :message="form.errors.invoice_type"/>
@@ -579,14 +673,23 @@ const returned = () => {
                                         class="border-gray-200 rounded-md"
                                         name="type"
                                         id="type">
-                                        <option value="ventas">Ventas</option>
-                                        <option value="contizacion">Cotizacion</option>
+                                        <option
+                                            :disabled="propsW.refund"
+                                            value="ventas">Ventas</option>
+                                        <option
+                                            :disabled="propsW.refund"
+                                            value="contizacion">Cotizacion</option>
+                                        <option
+                                            :disabled="!propsW.refund"
+                                            value="devolucion">Devolución</option>
 <!--                                        <option value="">Credito</option>-->
                                     </select>
                                     <InputError :message="form.errors.type"/>
                                 </div>
 <!--                                Tipo de cuenta si abierta o cerrada-->
-                                <div class="ml-3">
+                                <div
+                                    v-if="!propsW.refund"
+                                    class="ml-3">
                                     <InputLabel
                                         for="type_account"
                                         value="Cuenta"/>
@@ -616,18 +719,21 @@ const returned = () => {
                                         <th>Itbis</th>
                                         <th>Precio</th>
                                         <th>Importe</th>
-                                        <th>Atc</th>
+                                        <th
+                                            v-if="form.info_sale.length < 1 && propsW.refund">
+                                            Atc
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr
                                         class=" odd:bg-gray-300 border-2 border-b-gray-500"
-                                        v-for="(item, index) in form.info" :key="index">
+                                        v-for="(item, index) in form.info_sale" :key="index">
                                         <td>{{index+1}}</td>
                                         <td>
                                             <div>
                                                 <p>{{item.code}}</p>
-                                                <p>{{item.name}}</p>
+                                                <p>{{item.product_name}}</p>
                                             </div>
 
                                         </td>
@@ -663,6 +769,7 @@ const returned = () => {
                                             </span>
                                         </td>
                                         <td
+                                            v-if="form.info_sale.length < 1 && propsW.refund"
                                             class="text-xl w-[50px]">
                                             <i
                                                 @click="deleteItem(item.name, index)"
@@ -671,6 +778,14 @@ const returned = () => {
                                     </tr>
                                 </tbody>
                             </table>
+
+<!--                            //Mensaje de errores-->
+                            <ol v-if="page.props.errors">
+                                <li class="text-red-600 "
+                                    v-for="(item) in page.props.errors">
+                                    {{item}}
+                                </li>
+                            </ol>
 
                             <div>
                                 <InputError :message="form.errors.info"/>
@@ -737,7 +852,7 @@ const returned = () => {
 
 
                         <div class=" mt-5 w-64 float-right">
-                            <div v-if="form.close_table">
+                            <div v-if="form.close_table && !propsW.refund ">
 
                                 <div>
                                     <strong>

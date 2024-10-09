@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\SalePaymentEnum;
 use App\Enums\SaleTypeEnum;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,6 +17,9 @@ use OwenIt\Auditing\Contracts\Auditable;
 /**
  * @property int $id
  * @property string $code
+ * @property string $ncf
+ * @property string $ncf_m
+ * @property string $client_rnc
  * @property string $client_name
  * @property int $client_id
  * @property float $discount_amount
@@ -28,7 +32,10 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property Carbon $created_at,
  * @property Carbon $updated_at
  * @property Carbon $deleted_at
- * @property ProTrans[] $infoSale
+ * @property ProTrans[] $infoSale,
+ * @property SalePaymentEnum $type_payment,
+ * @property float $received
+ * @property float $returned
  */
 
 
@@ -46,7 +53,10 @@ class Sale extends Model implements Auditable
     // Datos para actualizar masivamente
     protected $fillable = [
         'code',
+        'ncf',
+        'ncf_m',
         'client_name',
+        'client_rnc',
         'client_id',
         'discount_amount',
         'tax',
@@ -63,6 +73,7 @@ class Sale extends Model implements Auditable
         'status' => 'boolean',
         'close_table' => 'boolean',
         'type' => SaleTypeEnum::class,
+        'type_payment' => SalePaymentEnum::class
     ];
 
 
@@ -134,7 +145,7 @@ class Sale extends Model implements Auditable
         // Llamar el metodo principal
         parent::boot();
 
-        //Generar el codigo en todo
+        //Generar el codigo
         static::creating(function ($sale) {
             $sale->code = self::generateCode($sale->type);
         });
@@ -156,13 +167,19 @@ class Sale extends Model implements Auditable
         // Generar el proximo ID
         $nextID = $last ? $last->id + 1 : 1;
 
-        if ($type === SaleTypeEnum::COTIZACION)
+
+        if ($type->value === SaleTypeEnum::DEVOLUCION->value)
+        {
+            $code = config('appconfig.saleRet');
+        }
+        else if ($type->value === SaleTypeEnum::COTIZACION->value)
         {
             $code = config('appconfig.quoCode');
         }else{
 
             $code = config('appconfig.saleCode');
         }
+
 
         // craer el codigp
         return $code.str_pad($nextID, 6,'0', STR_PAD_LEFT);

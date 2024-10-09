@@ -3,6 +3,7 @@
 export interface infoSaleI {
     amount: number;
     code: string;
+    name: string;
     cost: number;
     deleted_at: string | null;
     discount: number;
@@ -10,6 +11,7 @@ export interface infoSaleI {
     id: number;
     price: number;
     product_id: number;
+    product_name: string;
     sale_id: number;
     status: boolean;
     stock: number;
@@ -33,7 +35,11 @@ interface saleI{
 export interface saleDataI {
     client_id: number;
     client_name: string;
+    client_rnc: string;
     close_table: boolean;
+    invoice_type:string;
+    ncf: string;
+    ncf_m: string;
     code: string;
     comment:  {
         id: number,

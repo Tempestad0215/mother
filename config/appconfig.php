@@ -50,6 +50,7 @@ return  [
     'proCode' => 'PRO',
     'saleCode' => 'FACT',
     'quoCode' => 'COT',
+    'saleRet' => 'DEV',
     'transCode' => 'TRA',
     'cliCode' => 'CLI',
     'catCode' => 'CAT',

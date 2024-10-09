@@ -2,18 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\ProductTransType;
 use App\Helpers\ClientHelper;
 use App\Helpers\ProductHelper;
 use App\Helpers\SaleHelper;
 use App\Http\Requests\StoreProductSaleRequest;
+use App\Http\Resources\SaleInfoResource;
 use App\Models\Product;
-use App\Models\ProTrans;
 use App\Models\Sale;
+use App\Models\Setting;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -22,37 +21,28 @@ class ProductSaleController extends Controller
 {
 
     /**
-     * constructor de la para llamar el helpers
-     */
-    public function __construct()
-    {
-
-    }
-
-
-    /**
      * @param Request $request
-     * @return Response
+     * @return RedirectResponse|Response
      */
-    public function create(Request $request)
+    public function create(Request $request):RedirectResponse|Response
     {
+
+        //Verificar si existe la configuracion
+        $setting = Setting::first();
+
+        //Si no existe redirecciona a setting
+        if (!$setting)
+        {
+            return redirect()->route('setting.index');
+        }
         //Intancia de los datos
-        $saleHelper = new SaleHelper();
-        $clientHelper = new ClientHelper();
-        $productHelper = new ProductHelper();
-
-        //Obtener los datos
-        $products = $productHelper->get($request);
-        $clients = $clientHelper->get($request);
-        $saleOpen = $saleHelper->getSaleOpen($request);
-
-
+        $dataSale = $this->dataSale($request);
 
         //DEvolver la vista y los datos
-        return Inertia::render('ProductsSale/Create',[
-            'products' => $products,
-            'clients' => $clients,
-            'saleOpen' => $saleOpen,
+        return Inertia::render('ProductsSale/Create', [
+            'products' => $dataSale['products'],
+            'clients' => $dataSale['clients'],
+            'saleOpen' => $dataSale['saleOpen'],
             'invoiceType' => config('appconfig.invoiceType'),
         ]);
     }
@@ -140,15 +130,50 @@ class ProductSaleController extends Controller
      */
     public function update(StoreProductSaleRequest $request, Sale $sale)
     {
+
         //Instanacia
         $saleHelper = new SaleHelper();
 
         //Llamar el metodo
         $saleHelper->updateSale($request, $sale);
+    }
 
 
+    /**
+     * @param Request $request
+     * @param Sale $sale
+     * @return Response
+     */
+    public function creditNote(Request $request, Sale $sale):Response
+    {
+
+        //Intancia de los datos
+        $dataSale = $this->dataSale($request);
+        $saleInfo = new SaleInfoResource($sale);
+
+        //DEvolver la vista y los datos
+        return Inertia::render('ProductsSale/Create', [
+            'products' => $dataSale['products'],
+            'clients' => $dataSale['clients'],
+            'saleOpen' => $dataSale['saleOpen'],
+            'invoiceType' => config('appconfig.invoiceType'),
+            'saleInfo' => $saleInfo,
+            'refund' => true,
+        ]);
+    }
+
+
+
+    public function creditNoteStore(StoreProductSaleRequest $request, Sale $sale)
+    {
+        //Intancia
+        $saleHelper = new SaleHelper();
+
+        //Llamar el metodo
+        $saleHelper->creditNoteStore($request, $sale);
 
     }
+
 
     /**
      * Devolver la vista con los datos
@@ -178,7 +203,6 @@ class ProductSaleController extends Controller
      */
     public function destroyItem(Request $request, Product $product, Sale $sale)
     {
-
 
         //Crear la instancia
         $saleHelper = new SaleHelper();
@@ -240,7 +264,29 @@ class ProductSaleController extends Controller
 //        //Devolver los datos yla respuesta
 //        return response()->json($data);
 //    }
+    /**
+     * @param Request $request
+     * @return array
+     */
+    public function dataSale(Request $request):array
+    {
+        $saleHelper = new SaleHelper();
+        $clientHelper = new ClientHelper();
+        $productHelper = new ProductHelper();
 
+        //Obtener los datos
+        $products = $productHelper->get($request);
+        $clients = $clientHelper->get($request);
+        $saleOpen = $saleHelper->getSaleOpen($request);
+
+        return  [
+            'products' => $products,
+            'clients' => $clients,
+            'saleOpen' => $saleOpen
+        ];
+
+
+    }
 
 
 }

@@ -5,6 +5,7 @@ namespace App\Helpers;
 use App\Enums\ProductTransType;
 use App\Enums\ProductTypeEnum;
 use App\Enums\SaleTypeEnum;
+use App\Enums\SequenceTypeEnum;
 use App\Http\Requests\StoreProductSaleRequest;
 use App\Http\Resources\SaleInfoResource;
 use App\Models\DeletedSale;
@@ -31,6 +32,7 @@ class SaleHelper
 
         //Buscar los datos
         return Sale::where('status', true)
+            ->where('type', [SaleTypeEnum::VENTAS,SaleTypeEnum::COTIZACION])
             ->where(function (Builder $query) use ($search) {
                 $query->where('client_name','like','%'.$search.'%')
                     ->orWhere('tax','like','%'.$search.'%')
@@ -65,13 +67,22 @@ class SaleHelper
      */
     public function store(StoreProductSaleRequest $request):void
     {
+
+
         //Para asegurar que se cumplan los registro
         DB::transaction(function () use ($request) {
+            //Obtener la configuracion
+
+            //Incrementar la secuencia enviada
+            SequenceHelper::incrementSequence(SequenceTypeEnum::from($request->get('invoice_type')));
 
             // Crear la venta
             $sale = Sale::create([
                 'client_name' => $request->get('client_name'),
                 'client_id' => $request->get('client_id') ?: null,
+                'client_rnc' => $request->get('client_rnc'),
+                'ncf' => $request->get('ncf'),
+                'ncf_m' => $request->get('ncf_m'),
                 'discount_amount' => $request->get('discount_amount'),
                 'discount' => $request->get('discount'),
                 'tax' => $request->get('tax'),
@@ -79,6 +90,9 @@ class SaleHelper
                 'amount' => $request->get('amount'),
                 'type' => $request->get('type'),
                 'close_table' => $request->get('close_table'),
+                'type_payment' => $request->get('type_payment'),
+                'received' => $request->get('received'),
+                'returned' => $request->get('returned'),
             ]);
 
 
@@ -88,7 +102,7 @@ class SaleHelper
             ]);
 
             //Recorrer la ventas para descontar los productos
-            foreach ($request->info as $value)
+            foreach ($request->get('info_sale') as $value)
             {
                 //Verificar si la mesa es cerrada
                 $closeTable = $request->get('close_table');
@@ -100,26 +114,21 @@ class SaleHelper
                 //Crear la transaccion individual
                 ProTrans::create([
                     'product_id' => $value['id'],
+                    'product_name' => $value['name'],
                     'sale_id' => $sale->id,
-                    'stock' => $value['quantity'],
+                    'stock' => $value['stock'],
                     'price' => $value['price'],
                     'tax_rate' => $value['tax_rate'],
                     'tax' => $value['tax'],
-                    'cost' => $value['cost'],
                     'amount' => $value['amount'],
                     'discount' => $value['discount'],
                     'discount_amount' => $value['discount_amount'],
                     'type' => $request->get('close_table') ? ProductTransType::VENTAS : ProductTransType::RESERVA
                 ]);
 
-
             }
         });
     }
-
-
-
-
 
     /**
      * @param bool $table
@@ -131,18 +140,17 @@ class SaleHelper
         //Tomar los datos del producto
         $product = Product::find($info['id']);
 
-        if ($info['type'] === ProductTypeEnum::PRODUCTO)
+        if ($info['type'] === ProductTypeEnum::PRODUCTO->value)
         {
             //reducir el stock
-            $product->stock -= $info['quantity'];
+            $product->stock -= $info['stock'];
         }
 
-
         //si la cuenta es abierta
-        if (!$table) {
+        if (!$table && $info['type'] === ProductTypeEnum::PRODUCTO->value ) {
 
             //Redicir los productos y aumentar el contador
-            $product->reserved += $info['quantity'];
+            $product->reserved += $info['stock'];
         }
         $product->save();
 
@@ -155,7 +163,6 @@ class SaleHelper
 //        Sale::create($request->validated());
 //    }
 
-
     /**
      * @param Request $request
      * @param Product $product
@@ -166,41 +173,34 @@ class SaleHelper
     {
 
         //Declarar las variables
-        $exits = false;
-        $stock = 0;
+        DB::transaction(function () use ($sale, $product,$request) {
+            $productStock = $request->get('info')['stock'];
+            $transType = $request->get('info')['type'];
+            //Id de transaction producto
+            $idTransProduct = $request->get('info')['id'];
 
+            //Actualizar los datos
+            ProTrans::where('id',$idTransProduct)->update([
+                'deleted_at' => now()
+            ]);
 
-        //Verificar si existe una considencia
-        foreach ($sale->info as $value)
-        {
-            if ($value['id'] === $product->id)
+            // si tiene reserva pues se descuenta ese monto
+            if ($product->reserved > 0 && $transType == ProductTransType::RESERVA->value )
             {
-                $exits = true;
-                $stock = $value['quantity'];
-                break;
+                $product->reserved -= $productStock;
             }
-        }
 
-        //Verificar si existe algo
-        if ($exits )
-        {
-            DB::transaction(function () use ($sale, $product, $stock, $request) {
-                // si tiene reserva pues se descuenta ese monto
-                if ($product->reserved > 0)
-                {
-                    $product->reserved -= $stock;
-                }
-                $product->stock += $stock;
-                $product->save();
+            //Solo actualizar si es producto
+            if($product->type === ProductTypeEnum::PRODUCTO->value )
+            {
+                $product->stock += $productStock;
+            }
 
-                //Actulizar los datos en la ventas
-                $sale->info = $request->get('info');
-                $sale->save();
-
-            });
+            $product->save();
 
 
-        }
+        });
+
     }
 
 
@@ -211,7 +211,7 @@ class SaleHelper
      * @param bool $inventoried
      * @return void
      */
-    public function deleteSale(Request $request,sale $sale, bool $inventoried):void
+    public function deleteSale(Request $request,Sale $sale, bool $inventoried):void
     {
         DB::transaction(function () use ($request, $sale, $inventoried) {
             //Poner los datos en deshabilitado
@@ -222,7 +222,7 @@ class SaleHelper
             //recorrer los datos de la ventas
             if ($inventoried)
             {
-                foreach ($sale->info as $value)
+                foreach ($sale->infoSale as $value)
                 {
                     //Buscar el producto en la lista
                     $product = Product::find($value['id']);
@@ -238,7 +238,7 @@ class SaleHelper
             //Crear la venta eliminada
             $deleteSale = DeletedSale::create([
                 'sale_id' => $sale->id,
-                'info' => $sale->info,
+                'info' => $sale->infoSale,
                 'discount_amount' => $sale->discount_amount,
                 'amount' => $sale->amount,
                 'tax' => $sale->tax,
@@ -263,32 +263,35 @@ class SaleHelper
     {
 
         //Obtener la info
-        $infoRequest = collect($request->get('info'));
-        $infoSale = collect($sale->info);
+        $infoRequest = collect($request->get('info_sale'));
         //Verificar si esta cerrada
         $closeTable = $request->get('close_table');
 
 
-        DB::transaction(function () use ($sale, $infoRequest, $infoSale, $closeTable, $request) {
+        DB::transaction(function () use ($sale, $infoRequest, $closeTable, $request) {
             //Recorrer los datos
-            $infoRequest->map(function ($item) use ($infoSale, $sale, $closeTable, $request) {
-                //buscar si existe la info
-                $existsInfosale = collect($infoSale->firstWhere('id', $item['id']));
-                //Toamr la cantidad de la venta
-                $quantityProduct = $existsInfosale['quantity'];
+            $infoRequest->map(callback: function ($item) use ($sale, $closeTable, $request) {
+
+                //convertir la info sale a collection
+                $infoSale = collect($sale->infoSale);
+
+                //Econtrar la coincidencia y tomar el stock
+                $stock = $infoSale->firstWhere('product_id', $item['id'])['stock'];
+
                 //Buscar el producto existente
-                $product = Product::find($existsInfosale['id']);
+                $product = Product::find($item['id']);
+
                 //Restar la cantidad que llega - la registrada
-                $result = $item['quantity'] - $quantityProduct;
+                $result = $item['stock'] - $stock;
 
                 //Verificar el resultado
                 if ($result > 0)
                 {
 
                     //Disminuir la stock
-                    $product->stock -= $result;
+                    $product->stock -= abs($result);
                     //Auemntar la reserva
-                    $product->reserved += $result;
+                    $product->reserved += abs($result);
                     //Guardar los datos
 
                 }else{
@@ -304,8 +307,8 @@ class SaleHelper
 
                 //Actualizar los datos de la ventas
                 $sale->client_id = $request->get('client_id');
+                $sale->client_rnc = $request->get('client_rnc');
                 $sale->client_name = $request->get('client_name');
-                $sale->info = $request->get('info');
                 $sale->discount_amount = $request->get('discount_amount');
                 $sale->tax = $request->get('tax');
                 $sale->sub_total = $request->get('sub_total');
@@ -325,10 +328,9 @@ class SaleHelper
                     [
                     'product_id' => $item['id'],
                     'sale_id' => $sale->id,
-                    'stock' => $item['quantity'],
+                    'stock' => $item['stock'],
                     'price' => $item['price'],
                     'tax' => $item['tax'],
-                    'cost' => $item['cost'],
                     'amount' => $item['amount'],
                     'discount' => $item['discount'],
                     'discount_amount' => $item['discount_amount'],
@@ -349,7 +351,11 @@ class SaleHelper
 //     * @param Request $request
 //     * @return Sale[]|Paginator|_IH_Sale_C
 //     */
-    public function getSaleOpen(Request $request)
+    /**
+     * @param Request $request
+     * @return mixed
+     */
+    public function getSaleOpen(Request $request):mixed
     {
         //tomar los datos para buscar
         $search = $request->get("search", "");
@@ -368,6 +374,101 @@ class SaleHelper
             ->simplePaginate(15);
 
         return SaleInfoResource::collection($data)->response()->getData(true);
+
+    }
+
+
+
+    public function creditNoteStore(StoreProductSaleRequest $request, Sale $sale)
+    {
+        //Asegurar que los procesos se cumplan
+        DB::transaction(function () use ($request, $sale) {
+
+            //Convertir a collection
+            $infoCollect = collect($request->get('info_sale'));
+            $saleCollect = collect($sale->infoSale);
+
+            //Obtener el tipo de devolucion
+            $type = $request->get('type');
+
+            //Verificar si existe para aumentar el contador de la nota de credito
+            if ($type == SaleTypeEnum::DEVOLUCION->value)
+            {
+                //Crear el aumento de los comprobante
+                SequenceHelper::incrementSequence(SequenceTypeEnum::B04);
+            }
+
+            //Crear la devolucion
+            $saleNew = Sale::create([
+                'client_id' => $request->get('client_id') ?: null,
+                'client_name' => $request->get('client_name'),
+                'client_rnc' => $request->get('client_rnc'),
+                'ncf' => $request->get('ncf'),
+                'ncf_m' => $request->get('ncf_m'),
+                'discount_amount' => $request->get('discount_amount'),
+                'discount' => $request->get('discount'),
+                'tax' => $request->get('tax'),
+                'sub_total' => $request->get('sub_total'),
+                'amount' => $request->get('amount'),
+                'type' => SaleTypeEnum::DEVOLUCION,
+                'n_available' => $request->get('amount'),
+                'n_used' => $request->get('amount'),
+                'close_table' => $request->get('close_table'),
+                'type_payment' => $request->get('type_payment'),
+                'received' => $request->get('received'),
+                'returned' => $request->get('returned')
+            ]);
+
+            //Crear el comentario de la devolucion
+            $saleNew->comment()->create(
+                ['content' => $request->get('comment')]
+            );
+
+            //Recorrer los datos
+            $infoCollect->map(callback: function ($item) use ($saleCollect, $sale) {
+                $product = Product::find($item['product_id']);
+                //Buscar la concidencia en los datos antiguo
+                $saleInfo = $saleCollect->firstWhere('product_id', $item['product_id']);
+                //sacar el resultado
+                $result  =  $saleInfo['stock'] - $item['stock'];
+
+                //Si el producto es de servicio el resultado debe ser 0
+                if ($product->type === ProductTypeEnum::SERVICIO->value && $result != 0)
+                {
+                    // Devolver error si no coincide
+                    return back()->withErrors([
+                        'general' => "Por Favor, No Puede Modificar La Cantidad Del Item: $product->name "
+                    ]);
+
+                }else if ($result < 0)
+                {
+                    // Devolver error si no coincide
+                    return back()->withErrors([
+                        'general' => "Por Favor, El Item: $product->name, La Cantidad Es Mayor Que La Factura"
+                    ]);
+                }
+                else{
+
+                    //Crear la transaccion individual
+                    ProTrans::create([
+                        'product_id' => $item['product_id'],
+                        'product_name' => $item['product_name'],
+                        'sale_id' => $sale->id,
+                        'stock' => $item['stock'],
+                        'price' => $item['price'],
+                        'tax_rate' => $item['tax_rate'],
+                        'tax' => $item['tax'],
+                        'amount' => $item['amount'],
+                        'discount' => $item['discount'],
+                        'discount_amount' => $item['discount_amount'],
+                        'type' => ProductTransType::DEVOLUCION
+                    ]);
+
+                    //DEvolver exito
+                    return  back();
+                }
+            });
+        });
 
     }
 
