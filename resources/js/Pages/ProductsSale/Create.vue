@@ -6,7 +6,7 @@ import TextInput from "@components/TextInput.vue";
 import SecondaryButton from "@components/SecondaryButton.vue";
 import FloatBox from "@components/FloatBox.vue";
 import FloatShowPro from "@/Pages/Products/FloatShowPro.vue";
-import {computed, onMounted, onUpdated, Ref, ref} from "vue";
+import {onMounted, onUpdated, Ref, ref} from "vue";
 import {productDataI, productI, productSaleI} from "@/Interfaces/Product";
 import { getMoney, getSequenceType} from "@/Global/Helpers";
 import LinkHeader from "@components/LinkHeader.vue";
