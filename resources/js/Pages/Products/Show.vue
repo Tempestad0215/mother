@@ -33,7 +33,7 @@ const props = defineProps({
             </LinkHeader>
         </template>
 
-        <div>
+        <div class="max-w-[1100px] mx-auto">
             <ContentBox class="md:max-w-full !bg-gray-200">
                <FloatShow
                    class=""

@@ -101,7 +101,7 @@ const search = () => {
         <div>
             <form
                 @submit.prevent="submit"
-                class="bg-gray-200 md:max-w-full mx-auto rounded-md p-5 grid grid-cols-2 gap-3">
+                class="bg-gray-200 max-w-[1100px] mx-auto rounded-md p-5 grid grid-cols-2 gap-3">
                 <h3 class=" text-2xl font-bold col-span-full text-center">
                     Registro de Categoria
                 </h3>
@@ -134,7 +134,8 @@ const search = () => {
                 </div>
 
                 <div class="mt-4 text-right col-span-full">
-                    <primary-button>
+                    <primary-button
+                        :disabled="form.processing">
                         Registrar
                     </primary-button>
                 </div>
@@ -142,7 +143,7 @@ const search = () => {
             </form>
 
 
-            <div class="bg-gray-200 p-5 rounded-md mt-5">
+            <div class="bg-gray-200 max-w-[1100px] mx-auto p-5 rounded-md mt-5">
                 <div class="flex justify-between items-center">
                     <form
                         @submit.prevent="search">

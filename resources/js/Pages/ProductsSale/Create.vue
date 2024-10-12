@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import {Head, useForm, usePage} from "@inertiajs/vue3";
+import {Head, router, useForm, usePage} from "@inertiajs/vue3";
 import AppLayout from "@layout/AppLayout.vue";
 import InputLabel from "@components/InputLabel.vue";
 import TextInput from "@components/TextInput.vue";
 import SecondaryButton from "@components/SecondaryButton.vue";
 import FloatBox from "@components/FloatBox.vue";
 import FloatShowPro from "@/Pages/Products/FloatShowPro.vue";
-import {onMounted, onUpdated, Ref, ref} from "vue";
+import {onMounted, onUpdated, reactive, Ref, ref} from "vue";
 import {productDataI, productI, productSaleI} from "@/Interfaces/Product";
 import { getMoney, getSequenceType} from "@/Global/Helpers";
 import LinkHeader from "@components/LinkHeader.vue";
@@ -27,7 +27,7 @@ Utilizar el page para los datos de la pagina
  */
 const page = usePage();
 
-/**
+/*
  * Datos del back end
  */
 const propsW = defineProps<{
@@ -40,12 +40,10 @@ const propsW = defineProps<{
     refund?: boolean
 }>();
 
-
-
 /*
 al momento de cargar
  */
-onMounted(async () => {
+onMounted( () => {
     //Verificar si existe los datos para devoluicion
     if (propsW.refund && propsW.saleInfo)
     {
@@ -53,21 +51,20 @@ onMounted(async () => {
         form.ncf_m = propsW.saleInfo.ncf;
         form.client_name = propsW.saleInfo.client_name;
         form.info_sale = propsW.saleInfo.info_sale;
-        form.comment = propsW.saleInfo.comment.content;
-        form.comment_id = propsW.saleInfo.comment.id;
         form.invoice_type = page.props.setting.sequence ? "B04" : "";
         form.type = "devolucion";
 
-        //calcular todo
+        //calcular totales
         totalSale();
     }
     //Buscar la secuencia si esta en la configuracion
-    if (page.props.setting.sequence)  await getSequence(form.invoice_type);
+    if (page.props.setting.sequence)  getSequence(form.invoice_type);
 });
 
-onUpdated(async () => {
+onUpdated( () => {
+
     //Buscar la secuencia si esta en la configuracion
-    if (page.props.setting.sequence) await getSequence(form.invoice_type);
+    if (page.props.setting.sequence) getSequence(form.invoice_type);
 });
 
 
@@ -80,6 +77,35 @@ const showProduct:Ref<boolean> = ref(false);
 const showSaleOpen:Ref<boolean> = ref<boolean>(false);
 const sequenceData:Ref<sequenceDataI | null> = ref(null);
 const showClientRnc:Ref<boolean> = ref(false);
+const showReturn:Ref<boolean> = ref(false);
+const typePaymentData = reactive([
+    {
+        name: "Contado",
+        value: 'contado'
+    },
+    {
+        name: "Credito",
+        value: 'credito'
+    },
+    {
+        name: "Cheque",
+        value: 'cheque'
+    },
+    {
+        name: "Tarjeta",
+        value: 'tarjeta'
+    },
+    {
+        name: "Transferencia",
+        value: 'transferencia'
+    },
+    {
+        name: "Anticipo",
+        value: 'anticipo'
+    },
+])
+
+
 
 
 /**
@@ -97,7 +123,7 @@ const form = useForm({
     info_sale: [] as infoSaleI[],
     tax: 0,
     discount_amount: 0,
-    amount: 0,
+    amount: 2500,
     sub_total: 0,
     comment: "",
     comment_id: 0,
@@ -106,6 +132,7 @@ const form = useForm({
     returned: 0,
     general: "",
     type: "ventas",
+    type_payment:"contado",
     update: false,
     sequence_type: "",
     invoice_type: "B02"
@@ -152,6 +179,33 @@ const getSequence = async (type: string) => {
 
 }
 
+
+/**
+ * Return blir
+ */
+const returnedBlur = ():boolean => {
+    //Verificar el calculo
+    if(form.returned < 0)
+    {
+        //Enviar el mensaje de error
+        form.setError('returned','El monto recibido no puede ser menor al Total');
+        setTimeout(()=>{
+            form.clearErrors('returned');
+        },3500);
+        return false;
+
+    }else return  true
+}
+
+/**
+ * Devuelta de cambio
+ */
+const returned = ():void => {
+    //Restar la cantidad
+    form.returned = form.received  - form.amount;
+}
+
+
 /**
  * Verificar el tipo de factura
  */
@@ -189,10 +243,10 @@ const checkInvoiceType = async ()=>{
 const getData = (item:productSaleI) => {
 
     //Obtener los datos de productos
-    let info = form.info_sale.find((el) => el.id === item.id);
+    let info = form.info_sale.find((el) => el.product_id === item.id);
 
-    // Verificar si el producto exite en todo
-    if (info?.id  === item.id)
+    // Verificar si el producto exite
+    if (info?.product_id  === item.id)
     {
         info.stock += 1;
         showProduct.value = false;
@@ -201,9 +255,9 @@ const getData = (item:productSaleI) => {
 
        //Pasar los datos al formulario
        form.info_sale.push({
-            id: item.id,
+            product_id: item.id,
             code: item.code,
-            name: item.name,
+            product_name: item.name,
             stock: 1,
             cost: item.cost,
             price: item.price,
@@ -220,7 +274,7 @@ const getData = (item:productSaleI) => {
     }
 
     // //Conseguir el index para poder realizar el calculo
-    let index = form.info_sale.findIndex((el) => el.id === item.id);
+    let index = form.info_sale.findIndex((el) => el.product_id === item.id);
 
     //Calcular el indice
     totalAmount(index);
@@ -234,6 +288,7 @@ const getData = (item:productSaleI) => {
  * @param index
  */
 const deleteItem = async (name:string , index:number) => {
+
     //Tomar el resultado si vas a eliminar
     const result = await Swal.fire({
         title: `Desea eliminar registro : ${name}?`,
@@ -249,14 +304,14 @@ const deleteItem = async (name:string , index:number) => {
     //Verificar si se ha confirmado
     if(result.isConfirmed)
     {
-        if (result.isConfirmed)
+        //Tomar datos la ventas
+        let info:infoSaleI = form.info_sale[index];
+
+        //Eliminar el producto seleccionado
+        form.info_sale.splice(index,1);
+
+        if (!propsW.refund)
         {
-            //Tomar datos la ventas
-            let info:infoSaleI = form.info_sale[index];
-
-
-            //Eliminar el producto seleccionado
-            form.info_sale.splice(index,1);
 
             if(form.id !== 0)
             {
@@ -273,10 +328,9 @@ const deleteItem = async (name:string , index:number) => {
                     }
                 }));
             }
-
-            //REalizar el calculo de nuevo
-            totalSale();
         }
+        //REalizar el calculo de nuevo
+        totalSale();
     }
 
 }
@@ -335,31 +389,34 @@ const selectClient = (item:clientDataI) =>  {
 
 
 /**
- * Enviar los datos
+ * Enviar los datos para guardar
  */
-const submit = () => {
+const sendData = ():void => {
 
-    //Si es nota de credito
     if (propsW.refund)
     {
-        //Enviar los datos para las devoluciones
-        form.patch(route('sale.credit.note.store',{sale: form.id}),{
+        // Enviar los datos para las devoluciones
+        form.patch(route('credit-note.store',{sale: form.id}),{
+            only: ['products','clients','saleOpen','invoiceType'],
             onSuccess: () => {
-                console.log('existo');
                 form.reset();
                 successHttp('Nota de Credito Creada Correctamente');
+                router.get(route('sale.create'));
             },
-            onError: () => {
-                console.log('error');
+            onError:()=>{
+                setTimeout(()=>{
+                    form.clearErrors('general');
+                },3500);
             }
-        })
-    }else {
-        //Si van a cerrar verificar que lo recibido sea menor a
-        if(form.received < form.amount && form.close_table && !propsW.refund)
-        {
-            form.setError('received','El monto recibido no puede ser menor al Total');
-        }else{
+        });
 
+    }else{
+
+        //Verificar si no hay problema con nada
+        if (!returnedBlur() && form.close_table)
+        {
+            return false;
+        }else{
             //si es para actualizar
             if (form.update)
             {
@@ -370,24 +427,26 @@ const submit = () => {
                     onSuccess:() =>{
                         successHttp('Documento Actualizado Correctamente');
                         form.reset();
+                        showReturn.value = false;
                     },
-                    onError:(err) => {
-                        console.log('error', err);
-                    }
+                    onError:()=>{
+                        setTimeout(()=>{
+                            form.clearErrors();
+                        },5000)
+                    },
                 });
             }else{
 
                 //Guardar los datos por primera vez
                 form.post(route('sale.store'),{
                     onSuccess:()=>{
-                        console.log('enviado');
                         successHttp('Venta Cerrada Correctamente');
                         form.reset();
+                        showReturn.value = false;
                         // readPDF(propsW.pdf);
                         //Actualizar la ventana
                     },
-                    onError:(err)=>{
-                        console.log('error', err);
+                    onError:()=>{
                         setTimeout(()=>{
                             form.clearErrors();
                         },5000)
@@ -472,18 +531,16 @@ const getSaleOpen = (item:saleDataI) => {
 
 
 /**
- * Devuelta de cambio
+ * Verificar la venta
  */
-const returned = () => {
-    form.returned = form.received  - form.amount;
-
-    if(form.returned < 0)
-    {
-        form.setError('returned','El monto recibido no puede ser menor al Total');
-        form.returned = 0;
+const checkSale = () => {
+    //Verificar si se puede mostrar los datos
+    if (form.close_table) showReturn.value = form.close_table;
+    else{
+        sendData();
     }
-}
 
+}
 
 
 </script>
@@ -515,11 +572,8 @@ const returned = () => {
             <div class=" bg-gray-200 p-5 max-w-[1180px] rounded-md mx-auto overflow-hidden">
 
                 <form
-                    class=" max-w-3/5"
-                    action="">
+                    class=" max-w-3/5">
                     <div >
-
-
                         <div class="flex">
                             <div>
 <!--                                Botones para buscar datos-->
@@ -532,6 +586,7 @@ const returned = () => {
 
                                         <div class="relative">
                                             <TextInput
+                                                type="search"
                                                 class=" w-[400px] pr-10"
                                                 v-model="form.client_name"
                                                 placeholder="Cliente"/>
@@ -705,7 +760,7 @@ const returned = () => {
 
                         </div>
 
-
+<!--                        Listado de los productos-->
                         <div>
                             <table
                                 class="w-full table-auto mt-4">
@@ -720,7 +775,7 @@ const returned = () => {
                                         <th>Precio</th>
                                         <th>Importe</th>
                                         <th
-                                            v-if="form.info_sale.length < 1 && propsW.refund">
+                                            v-if="form.info_sale.length > 1">
                                             Atc
                                         </th>
                                     </tr>
@@ -769,7 +824,7 @@ const returned = () => {
                                             </span>
                                         </td>
                                         <td
-                                            v-if="form.info_sale.length < 1 && propsW.refund"
+                                            v-if="form.info_sale.length > 1"
                                             class="text-xl w-[50px]">
                                             <i
                                                 @click="deleteItem(item.name, index)"
@@ -779,13 +834,11 @@ const returned = () => {
                                 </tbody>
                             </table>
 
-<!--                            //Mensaje de errores-->
-                            <ol v-if="page.props.errors">
-                                <li class="text-red-600 "
-                                    v-for="(item) in page.props.errors">
-                                    {{item}}
-                                </li>
-                            </ol>
+<!--                            Mensaje generales-->
+                            <div>
+                                <InputError :message="form.errors.general"/>
+                            </div>
+
 
                             <div>
                                 <InputError :message="form.errors.info"/>
@@ -850,31 +903,31 @@ const returned = () => {
 
                         </div>
 
-
+<!--                        Devuelta y demas detos-->
                         <div class=" mt-5 w-64 float-right">
-                            <div v-if="form.close_table && !propsW.refund ">
+<!--                            <div v-if="form.close_table && !propsW.refund ">-->
 
-                                <div>
-                                    <strong>
-                                        Devuelta :
-                                    </strong>
-                                    <span>
-                                        {{getMoney(form.returned)}}
-                                    </span>
-                                </div>
+<!--                                <div>-->
+<!--                                    <strong>-->
+<!--                                        Devuelta :-->
+<!--                                    </strong>-->
+<!--                                    <span>-->
+<!--                                        {{getMoney(form.returned)}}-->
+<!--                                    </span>-->
+<!--                                </div>-->
 
-                                <InputLabel
-                                    class="text-left"
-                                    for="received"
-                                    value="Monto Recibido"/>
-                                <TextInput
-                                    class="w-full"
-                                    type="number"
-                                    required
-                                    @blur="returned"
-                                    v-model="form.received"/>
-                                <InputError :message="form.errors.received"/>
-                            </div>
+<!--                                <InputLabel-->
+<!--                                    class="text-left"-->
+<!--                                    for="received"-->
+<!--                                    value="Monto Recibido"/>-->
+<!--                                <TextInput-->
+<!--                                    class="w-full"-->
+<!--                                    type="number"-->
+<!--                                    required-->
+<!--                                    @blur="returned"-->
+<!--                                    v-model="form.received"/>-->
+<!--                                <InputError :message="form.errors.received"/>-->
+<!--                            </div>-->
 
                             <div class="mt-5">
 <!--                                <SecondaryButton-->
@@ -882,7 +935,8 @@ const returned = () => {
 <!--                                    Limpiar-->
 <!--                                </SecondaryButton>-->
                                 <PrimaryButton
-                                    @click="submit()"
+                                    :disabled="form.processing"
+                                    @click="checkSale"
                                     type="button">
                                     {{form.close_table ? 'Cerrar Venta' : 'Registrar'}}
                                 </PrimaryButton>
@@ -894,6 +948,73 @@ const returned = () => {
                 </form>
 
             </div>
+
+            <Transition>
+                <FloatBox
+                    v-if="showReturn "
+                    @close="showReturn = false">
+                    <div class="bg-gray-200 p-5 rounded-md min-w-[600px] h-fit">
+                        <h3 class="text-2xl text-center">
+                            Datos de pagos
+                        </h3>
+
+                        <!--Tipo de apgo-->
+                        <div class="mt-3">
+                            <InputLabel
+                                for="typePayment"
+                                value="Tipo Pago" />
+                            <select
+                                v-model="form.type_payment"
+                                id="typePayment"
+                                class="rounded-md border-gray-300 w-full">
+                                <option
+                                    v-for="(item, index) in typePaymentData" :key="index"
+                                    :value="item.value">
+                                    {{item.name}}
+                                </option>
+                            </select>
+                        </div>
+
+
+
+<!--                      Monto Recibido-->
+                        <div class="w-full mt-3">
+                            <InputLabel
+                                for="received"
+                                value="Recibido" />
+
+                            <TextInput
+                                @blur="returnedBlur"
+                                @input="returned"
+                                autofocus
+                                class="w-full"
+                                type="number"
+                                v-model="form.received"/>
+                        </div>
+
+
+                        <div class="mt-3 text-3xl">
+                            Devolver: {{getMoney(form.returned)}}
+                        </div>
+
+<!--                        Boton para cerrar la factura-->
+                        <div class="mt-3 text-right">
+                            <PrimaryButton
+                                :disabled="form.processing"
+                                @click="sendData()">
+                                Cerrar Factura
+                            </PrimaryButton>
+                        </div>
+
+<!--                        Mensaje de error-->
+                        <div class="mt-3">
+                            <InputError :message="form.errors.returned"/>
+                        </div>
+
+
+                    </div>
+                </FloatBox>
+            </Transition>
 
 
             <!-- Mostrar flotante los clientes --->

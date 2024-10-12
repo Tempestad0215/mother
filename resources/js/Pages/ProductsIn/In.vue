@@ -299,7 +299,7 @@ const totalTax = () => {
         </template>
 
         <!-- Contenido de la pagina -->
-        <div class=" ">
+        <div class="max-w-[1100px] mx-auto">
 
                 <form
                     v-if="showForm"

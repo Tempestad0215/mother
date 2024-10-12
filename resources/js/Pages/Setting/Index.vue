@@ -7,7 +7,7 @@ import InputError from "@components/InputError.vue";
 import Swal from "sweetalert2";
 import LinkHeader from "@components/LinkHeader.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
-import {onMounted, onUpdated, ref} from "vue";
+import {onMounted, onUpdated, Ref, ref} from "vue";
 // import {settingsDataI} from "@/Interfaces/Setting";
 import {successHttp} from "@/Global/Alert";
 import {taxI} from "@/Interfaces/Global";
@@ -25,6 +25,12 @@ const propsW = defineProps<{
     company_type: string[]
 }>();
 
+
+/*
+Datos de la ventana
+ */
+
+const isSequence:Ref<boolean> = ref(false);
 
 
 
@@ -48,6 +54,8 @@ onMounted(() =>{
         form.cost = page.props.setting.save_cost;
         form.sequence = page.props.setting.sequence;
         imgName.value = page.props.setting.logo ? page.props.setting.logo: "logoexample.png";
+
+        isSequence.value = page.props.setting.sequence;
     }
 });
 
@@ -55,7 +63,7 @@ onMounted(() =>{
 Al momento de actualizar
  */
 onUpdated(() =>{
-    if(page.props.setting.logo)
+    if(page.props.setting && page.props.setting.logo)
     {
         //Actualizar la imagen registrad
         imgName.value = page.props.setting.logo;
@@ -224,7 +232,7 @@ const removeUnit = (index:number) => {
                 Ajustes
             </LinkHeader>
             <LinkHeader
-                v-if="page.props.setting.sequence"
+                v-if="isSequence"
                 :href="route('sequence.create')">
                 Correlativos
             </LinkHeader>

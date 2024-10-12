@@ -25,7 +25,6 @@ class TransHelper
         $proTrans->stock = $request->get('stock');
         $proTrans->sale_id = $sale_id ?: null;
         $proTrans->price = $request->get('price');
-        $proTrans->cost = $request->get('cost');
         $proTrans->discount = $request->get('discount');
         $proTrans->discount_amount = $request->get('discount_amount');
         $proTrans->tax_rate = $request->get('tax_rate');
@@ -47,7 +46,6 @@ class TransHelper
         $trans->product_id = $request->get('product_id');
         $trans->stock = $request->get('stock');
         $trans->price = $request->get('price');
-        $trans->cost = $request->get('cost');
         $trans->sale_id = 0;
         $trans->discount = $request->get('discount');
         $trans->discount_amount = $request->get('discount_amount');

@@ -6,7 +6,6 @@ use App\Helpers\ClientHelper;
 use App\Helpers\ProductHelper;
 use App\Helpers\SaleHelper;
 use App\Http\Requests\StoreProductSaleRequest;
-use App\Http\Resources\SaleInfoResource;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\Setting;
@@ -140,42 +139,6 @@ class ProductSaleController extends Controller
 
 
     /**
-     * @param Request $request
-     * @param Sale $sale
-     * @return Response
-     */
-    public function creditNote(Request $request, Sale $sale):Response
-    {
-
-        //Intancia de los datos
-        $dataSale = $this->dataSale($request);
-        $saleInfo = new SaleInfoResource($sale);
-
-        //DEvolver la vista y los datos
-        return Inertia::render('ProductsSale/Create', [
-            'products' => $dataSale['products'],
-            'clients' => $dataSale['clients'],
-            'saleOpen' => $dataSale['saleOpen'],
-            'invoiceType' => config('appconfig.invoiceType'),
-            'saleInfo' => $saleInfo,
-            'refund' => true,
-        ]);
-    }
-
-
-
-    public function creditNoteStore(StoreProductSaleRequest $request, Sale $sale)
-    {
-        //Intancia
-        $saleHelper = new SaleHelper();
-
-        //Llamar el metodo
-        $saleHelper->creditNoteStore($request, $sale);
-
-    }
-
-
-    /**
      * Devolver la vista con los datos
      * @param Request $request
      * @return Response
@@ -238,10 +201,6 @@ class ProductSaleController extends Controller
         return back();
 
     }
-
-
-
-
 
 
 

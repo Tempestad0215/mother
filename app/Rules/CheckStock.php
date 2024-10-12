@@ -30,9 +30,10 @@ class CheckStock implements ValidationRule
         //Sacar los datos del producto introducido para validar
         foreach ($this->info_sale as $info) {
 
+
             //Buscar los datos del producto
             $product = Product::where('status', true)
-                ->find($info['id']);
+                ->find($info['product_id']);
             //Tomar los datos de la cantidad
             $quantity = $info['stock'];
 

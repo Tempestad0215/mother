@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Models\Setting;
-
+use App\Http\Controllers\CreditNoteController;
 
 
 // La ruita de registro bloquerar
@@ -162,7 +162,6 @@ Route::middleware([
 
 
 
-
     /*
      * Productos
      */
@@ -192,12 +191,22 @@ Route::middleware([
            Route::get('/','create')->name('create');
            Route::get('/get','getJson')->name('get.json');
            Route::get('/show','show')->name('show');
-           Route::get('/credit-note/{sale}','creditNote')->name('credit.note');
-           Route::post('/','store')->name('store');
-           Route::patch('/credit-note/{sale}','creditNoteStore')->name('credit.note.store');
+            Route::post('/','store')->name('store');
            Route::patch('/update/{sale}','update')->name('update');
            Route::patch('/item/destroy/{product}/{sale}','destroyItem')->name('destroy.item');
            Route::patch('/destroy/{sale}/{inventoried}','destroySale')->name('destroy-sale');
+        });
+
+    /*
+     * Notas de credito o devoluciones
+     */
+    Route::controller(CreditNoteController::class)
+        ->prefix('credit-note')
+        ->name('credit-note.')
+        ->group(function (){
+            Route::get('/{sale}','index')->name('index');
+            Route::patch('/{sale}','store')->name('store');
+
         });
 
 

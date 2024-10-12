@@ -18,6 +18,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property int $product_id
  * @property string $product_name
  * @property int $sale_id
+ * @property int $credit_note_id
  * @property float $stock
  * @property float $price
  * @property float $discount
@@ -52,6 +53,7 @@ class ProTrans extends Model implements Auditable
         'product_id',
         'product_name',
         'sale_id',
+        'credit_note_id',
         'stock',
         'price',
         'discount',
@@ -64,6 +66,7 @@ class ProTrans extends Model implements Auditable
         'status'
     ];
 
+    //formatear los datos
     protected $casts = [
         'status' => 'boolean',
         'type' => ProductTransType::class
@@ -86,6 +89,19 @@ class ProTrans extends Model implements Auditable
         return $this->belongsTo(Sale::class);
     }
 
+    /**
+     * Relaciones
+     */
+    public function product():belongsTo
+    {
+        return $this->belongsTo(Product::class);
+    }
+
+    public function credit_note():belongsTo
+    {
+        return $this->belongsTo(CreditNote::class);
+    }
+
 
 
 
@@ -104,27 +120,10 @@ class ProTrans extends Model implements Auditable
         );
     }
 
-    /**
-     * Formataer la fecha de actualizacion
-     * @return Attribute
-     */
-    protected function updatedAt ():Attribute
-    {
-        return Attribute::make(
-            get: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i:s'),
-            set: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i:s'),
-        );
-    }
 
 
 
-    /**
-     * Relaciones
-     */
-    public function product():belongsTo
-    {
-        return $this->belongsTo(Product::class);
-    }
+
 
 
 
@@ -140,7 +139,7 @@ class ProTrans extends Model implements Auditable
         // Llamar el metodo principal
         parent::boot();
 
-        //Generar el codigo en todo
+        //Generar el codigo
         static::creating(function ($sale) {
             $sale->code = self::generateCode();
         });

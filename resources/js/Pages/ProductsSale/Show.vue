@@ -28,7 +28,8 @@ const propsW = defineProps<{
  * Datos del formulario
  */
 const form = useForm({
-    search: ""
+    search: "",
+    general: "",
 });
 
 //Enviar los datos
@@ -145,7 +146,8 @@ const destroySale = (id: number, inventoried: boolean, comment: string) => {
  */
 const refund  = (id:number):void => {
     //llmar la nota de credito
-    router.get(route('sale.credit.note',{sale: id}));
+    router.get(route('credit-note.index',{sale: id}));
+
 }
 
 
@@ -203,13 +205,16 @@ const refund  = (id:number):void => {
                         <td>{{getMoney(item.amount)}}</td>
                         <td>{{item.close_table ? 'Cerrada' : 'Abierta'}}</td>
                         <td >
+<!--                            Para la devoluciones-->
+                            <i
+                                @click="refund(item.id)"
+                                class=" icon-efect fa-solid fa-right-left mr-2"></i>
+
+<!--                            Si no existe nada-->
                             <span v-if="item.close_table">
                                 N/A
                             </span>
-                            <i
-                                v-if="!item.close_table"
-                                @click="refund(item.id)"
-                                class=" icon-efect fa-solid fa-right-left mr-2"></i>
+
                             <i
                                 v-if="page.props.auth.user.role === 'admin'
                                 && !item.close_table
@@ -220,6 +225,10 @@ const refund  = (id:number):void => {
                     </tr>
                 </tbody>
             </table>
+
+            <div>
+                <InputError :message="page.props.errors.general"/>
+            </div>
 
 
             <Pagination

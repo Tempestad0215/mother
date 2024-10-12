@@ -34,7 +34,7 @@ const sendData = (e:Event) => {
             :value="props.modelValue"
             @input="sendData($event)"
             :placeholder="props.holder"
-            type="text" />
+            type="search" />
     </div>
 
 </template>

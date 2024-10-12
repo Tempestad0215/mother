@@ -10,6 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;
 
 
+
 /**
  * @property int $id
  * @property string $invoice_type
@@ -35,6 +36,7 @@ class SaleInfoResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+
         return [
             'id' => $this->id,
             'invoice_type' => $this->invoice_type,

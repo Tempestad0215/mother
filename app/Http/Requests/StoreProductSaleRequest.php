@@ -30,7 +30,8 @@ class  StoreProductSaleRequest extends FormRequest
 
         //datos de configuracion
         $sequence = Setting::pluck('sequence')->first() ??  false;
-        $invoice_type = $this->get('invoice_type');
+
+        //Obtener el tipo de venta
         $type = $this->get('type');
 
 
@@ -42,13 +43,12 @@ class  StoreProductSaleRequest extends FormRequest
         return [
             'id' => ['nullable', 'numeric'],
             'ncf' => ['nullable','string','max:30',Rule::requiredIf($sequence)],
-            'ncf_m' => ['nullable','string','max:30',Rule::requiredIf($sequence && $invoice_type == "B04")],
             'invoice_type' => ['nullable','max:6','string', Rule::requiredIf($sequence)],
             'client_name' => ['nullable', 'string','min:3','max:75'],
             'client_id' => ['nullable','integer'],
             'client_rnc' => ['nullable','string','max:20'],
             'info_sale' => ['required','array', new CheckStock($info_sale)],
-            'info_sale.*.id' => ['required','numeric','exists:products,id'],
+            'info_sale.*.product_id' => ['required','numeric','exists:products,id'],
             'info_sale.*.code' => ['nullable','string','min:4','max:50'],
             'info_sale.*.product_name' => ['required','string','min:3','max:75'],
             'info_sale.*.stock' => ['required','numeric'],
@@ -66,7 +66,7 @@ class  StoreProductSaleRequest extends FormRequest
             'type_payment' => ['nullable',Rule::requiredIf(SaleTypeEnum::DEVOLUCION->value !== $type) ,Rule::enum(SalePaymentEnum::class)],
             'received' => ['required','numeric'],
             'returned' => ['required','numeric'],
-            'comment' => ['nullable','string','min:3','max:255'],
+            'comment' => ['required','string','min:3','max:255'],
             'close_table' => ['required','boolean'],
         ];
     }

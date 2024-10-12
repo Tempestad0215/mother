@@ -6,6 +6,7 @@ return  [
      */
     'document-update' => 30,
     'document-delete' => 15,
+    'saleCreditNote' => 30,
     'maxUser' => 10,
 
 

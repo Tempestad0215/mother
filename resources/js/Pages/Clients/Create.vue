@@ -212,7 +212,7 @@ const getRnc = async () => {
         <!-- Formulario de registro -->
         <div>
             <form
-                class="bg-gray-200  rounded-md p-5 md:max-w-full mx-auto"
+                class="bg-gray-200  rounded-md p-5 max-w-[1100px] mx-auto"
                 @submit.prevent="submit">
 
 <!--                Titulo del formulario-->
@@ -279,6 +279,7 @@ const getRnc = async () => {
                             for="name"
                             value="Nombre Completo *"/>
                         <TextInput
+                            id="name"
                             class=" w-full"
                             maxLength="75"
                             v-model="form.name"

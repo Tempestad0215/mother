@@ -4,15 +4,12 @@ namespace App\Models;
 
 use App\Enums\SalePaymentEnum;
 use App\Enums\SaleTypeEnum;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
-use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @property int $id
@@ -26,28 +23,26 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property float $tax
  * @property float $sub_total
  * @property float $amount
+ * @property float $n_available
+ * @property float $n_used
  * @property boolean $status
- * @property SaleTypeEnum $type
- * @property bool $close_table
  * @property Carbon $created_at,
  * @property Carbon $updated_at
  * @property Carbon $deleted_at
- * @property ProTrans[] $infoSale,
+ * @property ProTrans[] $trans
+ * @property Sale[] $sale,
  * @property SalePaymentEnum $type_payment,
  * @property float $received
  * @property float $returned
  */
 
-
-class Sale extends Model implements Auditable
+class CreditNote extends Model
 {
-    use HasFactory;
-    use \OwenIt\Auditing\Auditable;
-    use softDeletes;
+    use SoftDeletes;
 
 
     // La tabla que se ve a utilizar
-    protected $table = 'sales';
+    protected $table = 'credit_notes';
 
 
     // Datos para actualizar masivamente
@@ -58,89 +53,42 @@ class Sale extends Model implements Auditable
         'client_name',
         'client_rnc',
         'client_id',
+        'sale_id',
         'discount_amount',
         'tax',
         'sub_total',
         'amount',
+        'n_available',
+        'n_used',
         'type',
         'status',
-        'close_table'
     ];
 
 
-    //Formatear los datos
-    protected  $casts = [
-        'status' => 'boolean',
-        'close_table' => 'boolean',
-        'type' => SaleTypeEnum::class,
-        'type_payment' => SalePaymentEnum::class
-    ];
 
 
     /*
      * Relaciones
      */
-
-    //Relacion de comentario
     public function comment():MorphOne
     {
         return $this->morphOne(Comment::class, 'commentable');
     }
 
     /**
-     * @return BelongsTo
-     */
-    public function client():BelongsTo
-    {
-        return $this->belongsTo(Client::class);
-    }
-
-
-    public function credit_note():HasMany
-    {
-        return $this->hasMany(CreditNote::class);
-    }
-
-
-    //Relacion para los datos de las ventas
-
-    /**
-     * Retorno de valor
+     * Relacion de nota de credito
      * @return HasMany
      */
-    public function infoSale():HasMany
+    public function trans():HasMany
     {
         return $this->hasMany(ProTrans::class);
+
     }
 
-
-
-    //Formatear los datos
-
-    /**
-     * Formatear la fehca de creacion
-     * @return Attribute
-     */
-    protected function createdAt ():Attribute
+    public function sale():belongsTo
     {
-        return Attribute::make(
-            get: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i:s'),
-            set: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i:s'),
-        );
+        return $this->belongsTo(Sale::class);
     }
-
-    /**
-     * Formataer la fecha de actualizacion
-     * @return Attribute
-     */
-    protected function updatedAt ():Attribute
-    {
-        return Attribute::make(
-            get: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i:s'),
-            set: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i:s'),
-        );
-    }
-
 
 
 
@@ -174,19 +122,11 @@ class Sale extends Model implements Auditable
         // Generar el proximo ID
         $nextID = $last ? $last->id + 1 : 1;
 
-
-
-        if ($type->value === SaleTypeEnum::COTIZACION->value)
-        {
-            $code = config('appconfig.quoCode');
-        }else{
-
-            $code = config('appconfig.saleCode');
-        }
-
+        $code = config('appconfig.saleRet');
 
         // craer el codigp
         return $code.str_pad($nextID, 6,'0', STR_PAD_LEFT);
     }
+
 
 }

@@ -23,7 +23,7 @@ const props = defineProps({
     <!-- Titulo -->
     <Head title="Cliente"/>
 
-    <!-- Contenido de todo -->
+    <!-- Contenido -->
     <AppLayout>
         <!-- Cabecera de la ventana -->
         <template #header>

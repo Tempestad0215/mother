@@ -183,7 +183,10 @@ const isUrl = (params:string) => {
             </header>
             <div
                 class="flex-1 ml-[80px] justify-center mt-[64px] rounded-md p-5 ">
-                    <slot/>
+                    <div class="max-w-[1100px] mx-auto">
+                        <slot/>
+                    </div>
+
             </div>
         </div>
     </div>

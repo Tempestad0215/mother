@@ -51,7 +51,7 @@ class Category extends Model implements Auditable
         // Llamar el metodo principal
         parent::boot();
 
-        //Generar el codigo en todo
+        //Generar el codigo
         static::creating(function ($category) {
             $category->code = self::generateCode();
         });

@@ -13,7 +13,6 @@ use App\Models\Product;
 use App\Models\ProTrans;
 use App\Models\Sale;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
@@ -31,8 +30,7 @@ class SaleHelper
         $search = $request->get('search');
 
         //Buscar los datos
-        return Sale::where('status', true)
-            ->where('type', [SaleTypeEnum::VENTAS,SaleTypeEnum::COTIZACION])
+        return Sale::where('type', [SaleTypeEnum::VENTAS,SaleTypeEnum::COTIZACION])
             ->where(function (Builder $query) use ($search) {
                 $query->where('client_name','like','%'.$search.'%')
                     ->orWhere('tax','like','%'.$search.'%')
@@ -82,7 +80,6 @@ class SaleHelper
                 'client_id' => $request->get('client_id') ?: null,
                 'client_rnc' => $request->get('client_rnc'),
                 'ncf' => $request->get('ncf'),
-                'ncf_m' => $request->get('ncf_m'),
                 'discount_amount' => $request->get('discount_amount'),
                 'discount' => $request->get('discount'),
                 'tax' => $request->get('tax'),
@@ -111,10 +108,11 @@ class SaleHelper
                 //Descontar los productos del inventario
                 $saleHelper->processSale($closeTable, $value);
 
+
                 //Crear la transaccion individual
                 ProTrans::create([
-                    'product_id' => $value['id'],
-                    'product_name' => $value['name'],
+                    'product_id' => $value['product_id'],
+                    'product_name' => $value['product_name'],
                     'sale_id' => $sale->id,
                     'stock' => $value['stock'],
                     'price' => $value['price'],
@@ -138,7 +136,7 @@ class SaleHelper
     public function processSale(bool $table, array $info):void
     {
         //Tomar los datos del producto
-        $product = Product::find($info['id']);
+        $product = Product::find($info['product_id']);
 
         if ($info['type'] === ProductTypeEnum::PRODUCTO->value)
         {
@@ -379,97 +377,5 @@ class SaleHelper
 
 
 
-    public function creditNoteStore(StoreProductSaleRequest $request, Sale $sale)
-    {
-        //Asegurar que los procesos se cumplan
-        DB::transaction(function () use ($request, $sale) {
-
-            //Convertir a collection
-            $infoCollect = collect($request->get('info_sale'));
-            $saleCollect = collect($sale->infoSale);
-
-            //Obtener el tipo de devolucion
-            $type = $request->get('type');
-
-            //Verificar si existe para aumentar el contador de la nota de credito
-            if ($type == SaleTypeEnum::DEVOLUCION->value)
-            {
-                //Crear el aumento de los comprobante
-                SequenceHelper::incrementSequence(SequenceTypeEnum::B04);
-            }
-
-            //Crear la devolucion
-            $saleNew = Sale::create([
-                'client_id' => $request->get('client_id') ?: null,
-                'client_name' => $request->get('client_name'),
-                'client_rnc' => $request->get('client_rnc'),
-                'ncf' => $request->get('ncf'),
-                'ncf_m' => $request->get('ncf_m'),
-                'discount_amount' => $request->get('discount_amount'),
-                'discount' => $request->get('discount'),
-                'tax' => $request->get('tax'),
-                'sub_total' => $request->get('sub_total'),
-                'amount' => $request->get('amount'),
-                'type' => SaleTypeEnum::DEVOLUCION,
-                'n_available' => $request->get('amount'),
-                'n_used' => $request->get('amount'),
-                'close_table' => $request->get('close_table'),
-                'type_payment' => $request->get('type_payment'),
-                'received' => $request->get('received'),
-                'returned' => $request->get('returned')
-            ]);
-
-            //Crear el comentario de la devolucion
-            $saleNew->comment()->create(
-                ['content' => $request->get('comment')]
-            );
-
-            //Recorrer los datos
-            $infoCollect->map(callback: function ($item) use ($saleCollect, $sale) {
-                $product = Product::find($item['product_id']);
-                //Buscar la concidencia en los datos antiguo
-                $saleInfo = $saleCollect->firstWhere('product_id', $item['product_id']);
-                //sacar el resultado
-                $result  =  $saleInfo['stock'] - $item['stock'];
-
-                //Si el producto es de servicio el resultado debe ser 0
-                if ($product->type === ProductTypeEnum::SERVICIO->value && $result != 0)
-                {
-                    // Devolver error si no coincide
-                    return back()->withErrors([
-                        'general' => "Por Favor, No Puede Modificar La Cantidad Del Item: $product->name "
-                    ]);
-
-                }else if ($result < 0)
-                {
-                    // Devolver error si no coincide
-                    return back()->withErrors([
-                        'general' => "Por Favor, El Item: $product->name, La Cantidad Es Mayor Que La Factura"
-                    ]);
-                }
-                else{
-
-                    //Crear la transaccion individual
-                    ProTrans::create([
-                        'product_id' => $item['product_id'],
-                        'product_name' => $item['product_name'],
-                        'sale_id' => $sale->id,
-                        'stock' => $item['stock'],
-                        'price' => $item['price'],
-                        'tax_rate' => $item['tax_rate'],
-                        'tax' => $item['tax'],
-                        'amount' => $item['amount'],
-                        'discount' => $item['discount'],
-                        'discount_amount' => $item['discount_amount'],
-                        'type' => ProductTransType::DEVOLUCION
-                    ]);
-
-                    //DEvolver exito
-                    return  back();
-                }
-            });
-        });
-
-    }
 
 }

@@ -155,7 +155,7 @@ class ClientController extends Controller
         //Obtener los datos para buscar
         $search = $request->get('search');
 
-        //Buscar los datos de todo
+        //Buscar los datos
         $data = Client::where('status',false)
             ->where(function ($query) use ($search) {
                 $query->where('name','like','%'. $search .'%')

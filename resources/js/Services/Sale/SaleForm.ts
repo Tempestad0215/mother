@@ -76,8 +76,7 @@ export class SaleForm extends SaleService{
         this.sequence = "";
         this.invoice_type = "B02";
     }
-
-    // Método para limpiar el formulario
+    //limpiar formulario
     clearForm(): void {
         this.setDefault();
     }

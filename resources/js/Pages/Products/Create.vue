@@ -56,7 +56,7 @@ const showSupplierForm = ref(false);
         </template>
 
         <!-- Contenido de la ventana de los productos -->
-        <div>
+        <div class="max-w-[1100px] mx-auto">
            <div
                class="bg-gray-200 p-5 rounded-md">
                <FloatProduct

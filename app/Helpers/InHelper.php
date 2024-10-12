@@ -69,8 +69,8 @@ class InHelper
      */
     public function updateGeneral(Request $request, Product $product): void
     {
-        $product->cost = $request->get('cost');
         $product->price = $request->get('price');
+        $product->cost = $request->get('cost');
         $product->discount = $request->get('discount');
         $product->discount_amount = $request->get('discount_amount');
         $product->tax = $request->get('tax');

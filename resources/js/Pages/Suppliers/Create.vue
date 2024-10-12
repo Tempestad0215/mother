@@ -127,7 +127,7 @@ const search = () => {
         </template>
 
         <!-- Formulario de registro -->
-        <div>
+        <div class="max-w-[1100px] mx-auto">
 
             <form
                 class=" bg-gray-200 rounded-md p-5"
@@ -218,7 +218,8 @@ const search = () => {
                     <ActionMessage :on="form.recentlySuccessful" >
                         {{ form.update ? ' !Actualizado' :  '! Registrado'}}
                     </ActionMessage>
-                    <PrimaryButton>
+                    <PrimaryButton
+                        :disabled="form.processing">
                         {{ form.update ? 'Actualizar' :  'Registrar'}}
                     </PrimaryButton>
 

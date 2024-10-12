@@ -111,7 +111,7 @@ const destroy = (id:Number) => {
             </h3>
         </div>
 
-        <table class=" table-auto w-full bg-red-200">
+        <table class=" table-auto w-full">
             <thead class=" border-b-2 text-left">
                 <tr class=" border-b-2 border-gray-800">
                     <th>Code</th>

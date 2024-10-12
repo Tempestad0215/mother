@@ -10,7 +10,7 @@ const emit = defineEmits<{
 
 <template>
     <div
-        class=" bg-black bg-opacity-80  absolute top-20 w-[calc(100%-7rem)]  h-[calc(100%-6rem)] flex justify-center py-10 rounded-md">
+        class=" bg-black bg-opacity-80  absolute top-20 w-[calc(100%-7rem)] max-w-[1100px]  h-[calc(100%-6rem)] flex justify-center py-10 rounded-md">
 
         <i
             @click="$emit('close')"

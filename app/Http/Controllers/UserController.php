@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\UserRoleEnum;
 use App\Models\User;
 use App\Rules\CheckMaxUser;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
@@ -14,11 +15,11 @@ class UserController extends Controller
 {
     /**
      * @param Request $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function store(Request $request)
     {
-        // crear la validacion de todo
+        // crear la validacion
         $validated = $request->validate([
             'name' => ['required','string','min:4','max:75'],
             'email' => ['required','string','email','max:150',new CheckMaxUser()],
@@ -37,7 +38,7 @@ class UserController extends Controller
     {
         if($request->modify_password)
         {
-            // crear la validacion de todo
+            // crear la validacion
             $validated = $request->validate([
                 'name' => ['required','string','min:4','max:75'],
                 'email' => ['required','string','email','max:150',new CheckMaxUser(), Rule::unique('users', 'email')->ignore($user)],
@@ -45,7 +46,7 @@ class UserController extends Controller
                 'role' => ['required',Rule::enum(UserRoleEnum::class),'numeric'],
             ]);
         }else{
-            // crear la validacion de todo
+            // crear la validacion
             $validated = $request->validate([
                 'name' => ['required','string','min:4','max:75'],
                 'email' => ['required','string','email','max:150',new CheckMaxUser(), Rule::unique('users', 'email')->ignore($user)],
@@ -66,7 +67,7 @@ class UserController extends Controller
 
     /**
      * @param User $user
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function destroy(User $user)
     {

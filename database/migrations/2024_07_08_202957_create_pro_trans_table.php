@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\CreditNote;
 use App\Models\Sale;
 use App\Models\Product;
 use Illuminate\Database\Migrations\Migration;
@@ -25,6 +26,11 @@ return new class extends Migration
                 ->constrained('products')
                 ->onUpdate('restrict')
                 ->onDelete('restrict');
+            $table->foreignIdFor(CreditNote::class,'credit_note_id')
+                ->nullable()
+                ->constrained('credit_notes')
+                ->onUpdate('restrict')
+                ->onDelete('restrict');
             $table->string('product_name',75);
             $table->float('stock',4);
             $table->float('price',4);
@@ -33,7 +39,7 @@ return new class extends Migration
             $table->float('amount',4);
             $table->float('discount',4)->default(0);
             $table->float('discount_amount',4);
-            $table->enum('type',['entrada','ventas','salida','cancelacion','ajuste','reserva','eliminado']);
+            $table->enum('type',['entrada','ventas','salida','cancelacion','ajuste','reserva','eliminado','devolucion']);
             $table->boolean('status')->default(true);
             $table->softDeletes();
             $table->timestamps();

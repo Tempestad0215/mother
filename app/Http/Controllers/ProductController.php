@@ -212,7 +212,7 @@ class ProductController extends Controller
 
     }
 
-    // Conseguir todo los productos
+    // Conseguir los productos
     /**
      * Summary of get
      * @param Request $request

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ProductTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -103,6 +104,7 @@ class Product extends Model implements Auditable
     protected $casts = [
         'status' => 'boolean',
         'close_table' => 'boolean',
+        'type' => ProductTypeEnum::class
     ];
 
 
@@ -169,7 +171,7 @@ class Product extends Model implements Auditable
         // Llamar el metodo principal
         parent::boot();
 
-        //Generar el codigo en todo
+        //Generar el codigo
         static::creating(function ($product) {
             $product->code = self::generateCode();
         });
