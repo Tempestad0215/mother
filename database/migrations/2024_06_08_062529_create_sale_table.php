@@ -22,8 +22,8 @@ return new class extends Migration
             $table->float('returned',4)->default(0);
             $table->boolean('status')->default(true);
             $table->boolean('close_table')->default(false);
-
-
+            $table->json('credit_notes')->nullable();
+            $table->float('credit_notes_amount')->default(0);
         });
     }
 

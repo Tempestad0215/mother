@@ -80,3 +80,10 @@ export interface salePaginationI {
     prev_page_url: (string|null)
     to: number
 }
+
+export interface creditNotesSaleI{
+    id: number;
+    ncf: string;
+    n_available: number;
+    code: string;
+}

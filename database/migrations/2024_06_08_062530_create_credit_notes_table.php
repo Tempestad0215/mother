@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('ncf_m',30)->nullable();
             $table->float('n_available',4);
             $table->string('type',20)->default('Devolucion');
+            $table->boolean('status')->default(true);
             $table->foreignIdFor(Sale::class, 'sale_id')
                 ->constrained('sales')
                 ->onUpdate('restrict')

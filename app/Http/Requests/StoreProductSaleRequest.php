@@ -66,6 +66,9 @@ class  StoreProductSaleRequest extends FormRequest
             'type_payment' => ['nullable',Rule::requiredIf(SaleTypeEnum::DEVOLUCION->value !== $type) ,Rule::enum(SalePaymentEnum::class)],
             'received' => ['required','numeric'],
             'returned' => ['required','numeric'],
+            'credit_notes' => ['nullable','array'],
+            'credit_notes.*.id' => ['nullable','numeric'],
+            'credit_notes_amount' => ['nullable','numeric'],
             'comment' => ['required','string','min:3','max:255'],
             'close_table' => ['required','boolean'],
         ];

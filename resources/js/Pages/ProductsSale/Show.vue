@@ -126,19 +126,19 @@ const destroy = (id:number) => {
  * @param inventoried
  * @param comment
  */
-const destroySale = (id: number, inventoried: boolean, comment: string) => {
-
-    router.patch(route('sale.destroy-sale',{sale: id, inventoried: inventoried}),{
-        comment: comment
-    },{
-        preserveScroll: true,
-        preserveState: true,
-        onSuccess: () => {
-            successHttp('Docuemnto Eliminado Correctamente');
-        }
-    });
-
-}
+// const destroySale = (id: number, inventoried: boolean, comment: string) => {
+//
+//     router.patch(route('sale.destroy-sale',{sale: id, inventoried: inventoried}),{
+//         comment: comment
+//     },{
+//         preserveScroll: true,
+//         preserveState: true,
+//         onSuccess: () => {
+//             successHttp('Docuemnto Eliminado Correctamente');
+//         }
+//     });
+//
+// }
 
 /**
  * Devolver la cuenta creada
@@ -210,17 +210,17 @@ const refund  = (id:number):void => {
                                 @click="refund(item.id)"
                                 class=" icon-efect fa-solid fa-right-left mr-2"></i>
 
-<!--                            Si no existe nada-->
-                            <span v-if="item.close_table">
-                                N/A
-                            </span>
+<!--&lt;!&ndash;                            Si no existe nada&ndash;&gt;-->
+<!--                            <span v-if="item.close_table">-->
+<!--                                N/A-->
+<!--                            </span>-->
 
-                            <i
-                                v-if="page.props.auth.user.role === 'admin'
-                                && !item.close_table
-                                && !page.props.setting.sequence  "
-                                @click="destroy(item.id)"
-                                class="icon-efect fa-solid fa-trash"></i>
+<!--                            <i-->
+<!--                                v-if="page.props.auth.user.role === 'admin'-->
+<!--                                && !item.close_table-->
+<!--                                && !page.props.setting.sequence  "-->
+<!--                                @click="destroy(item.id)"-->
+<!--                                class="icon-efect fa-solid fa-trash"></i>-->
                         </td>
                     </tr>
                 </tbody>

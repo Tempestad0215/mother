@@ -205,6 +205,7 @@ Route::middleware([
         ->name('credit-note.')
         ->group(function (){
             Route::get('/{sale}','index')->name('index');
+            Route::get('/get/{code}','creditNoteGet')->name('get');
             Route::patch('/{sale}','store')->name('store');
 
         });

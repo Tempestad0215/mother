@@ -27,7 +27,7 @@ export const formatNumber = (val:string | number):number  =>
  * Convertir a dinero
  * @param value
  */
-export const getMoney = (value:number) => {
+export const getMoney = (value:number = 0) => {
     return new Intl.NumberFormat('es-DO',{
         style: 'currency',
         currency: 'DOP',

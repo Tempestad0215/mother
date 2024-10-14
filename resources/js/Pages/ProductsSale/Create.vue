@@ -18,8 +18,9 @@ import PrimaryButton from "@components/PrimaryButton.vue";
 import {successHttp} from "@/Global/Alert";
 import axios from "axios";
 import SaleOpenShow from "@/Pages/ProductsSale/SaleOpenShow.vue";
-import {infoSaleI, saleDataI, saleDataPaginationI} from "@/Interfaces/Sale";
+import {creditNotesSaleI, infoSaleI, saleDataI, saleDataPaginationI} from "@/Interfaces/Sale";
 import {invoiceTypeI, sequenceDataI} from "@/Interfaces/Setting";
+import {i} from "vite/dist/node/types.d-aGj9QkWt";
 
 
 /*
@@ -54,6 +55,11 @@ onMounted( () => {
         form.invoice_type = page.props.setting.sequence ? "B04" : "";
         form.type = "devolucion";
 
+        //Recorrer los datos
+        form.info_sale.forEach((item, index) => {
+            totalAmount(index);
+        });
+
         //calcular totales
         totalSale();
     }
@@ -61,15 +67,16 @@ onMounted( () => {
     if (page.props.setting.sequence)  getSequence(form.invoice_type);
 });
 
-onUpdated( () => {
 
+/*
+ * al momento de cargar
+ */
+onUpdated( () => {
     //Buscar la secuencia si esta en la configuracion
     if (page.props.setting.sequence) getSequence(form.invoice_type);
 });
 
-
-
-/**
+/*
  * Datos de la ventana
  */
 const showClient:Ref<boolean> = ref<boolean>(false);
@@ -108,7 +115,7 @@ const typePaymentData = reactive([
 
 
 
-/**
+/*
  * Formulario
  */
 const form = useForm({
@@ -123,7 +130,7 @@ const form = useForm({
     info_sale: [] as infoSaleI[],
     tax: 0,
     discount_amount: 0,
-    amount: 2500,
+    amount: 0,
     sub_total: 0,
     comment: "",
     comment_id: 0,
@@ -135,7 +142,11 @@ const form = useForm({
     type_payment:"contado",
     update: false,
     sequence_type: "",
-    invoice_type: "B02"
+    invoice_type: "B02",
+    credit_notes_value: "",
+    credit_notes: [] as creditNotesSaleI[],
+    credit_notes_amount: 0,
+    pending: 0
 });
 
 
@@ -144,7 +155,7 @@ const form = useForm({
 Funciones
  */
 
-/**
+/*
  * Obtener los datos de la sequencia
  */
 /**
@@ -153,30 +164,32 @@ Funciones
  */
 const getSequence = async (type: string) => {
 
-    //Realizar la buqueda
-    const result = await axios.get(route('sequence.get', {type: type}));
-
-    //Verificar si la secuencia es correcta
-    if (result.status === 200 &&  typeof(result.data) ==='object')
+    if (!page.props.setting.sequence)
     {
-        //Pasar los datos a las variables
-        sequenceData.value  = result.data || null;
+        //Realizar la buqueda
+        const result = await axios.get(route('sequence.get', {type: type}));
 
-        //Obtner el tipo de secuencia
-        form.sequence_type = getSequenceType(type);
-
-        //Asegurar de que los datos existan
-        if (sequenceData.value && sequenceData.value.type && sequenceData.value.next != undefined )
+        //Verificar si la secuencia es correcta
+        if (result.status === 200 &&  typeof(result.data) ==='object')
         {
-            form.ncf = sequenceData.value.type+sequenceData.value.next.toString().padStart(8, '0');
+            //Pasar los datos a las variables
+            sequenceData.value  = result.data || null;
+
+            //Obtner el tipo de secuencia
+            form.sequence_type = getSequenceType(type);
+
+            //Asegurar de que los datos existan
+            if (sequenceData.value && sequenceData.value.type && sequenceData.value.next != undefined )
+            {
+                form.ncf = sequenceData.value.type+sequenceData.value.next.toString().padStart(8, '0');
+            }
+            //Crear la secuencia
+
+        }else{
+            //Mensaje de error
+            form.setError("sequence", "Este Comprobante No Puedo Ser");
         }
-        //Crear la secuencia
-
-    }else{
-        //Mensaje de error
-        form.setError("sequence", "Este Comprobante No Puedo Ser");
     }
-
 }
 
 
@@ -201,8 +214,16 @@ const returnedBlur = ():boolean => {
  * Devuelta de cambio
  */
 const returned = ():void => {
+
+    let received:number = parseFloat(form.received ?? 0);
+    let amount:number = parseFloat(form.amount ?? 0);
+    let creditAmount:number = parseFloat(form.credit_notes_amount ?? 0);
     //Restar la cantidad
-    form.returned = form.received  - form.amount;
+    form.returned = creditAmount + received - amount;
+
+    //Datos pendiente para nota de credito o balance
+    form.pending = (creditAmount + received - amount) < 0 ? (creditAmount + received - amount) : 0 ;
+
 }
 
 
@@ -368,7 +389,7 @@ const totalSale = () => {
     form.tax = form.info_sale.reduce((tax:number, item:infoSaleI) => tax + item.tax, 0);
     form.sub_total = form.info_sale.reduce((subTotal:number, item:infoSaleI) => subTotal + item.amount, 0);
     form.discount_amount = form.info_sale.reduce((discount, item:infoSaleI) => discount + item.discount, 0);
-    form.amount = parseFloat(form.sub_total - form.discount_amount).toFixed(4);
+    form.amount = form.sub_total - form.discount_amount;
 
     //calcular el retorno
     returned();
@@ -498,6 +519,7 @@ const getSaleOpen = (item:saleDataI) => {
         form.info_sale.push({
             id: el.product_id,
             code: el.code,
+            product_id: el.product_id,
             product_name: el.product_name,
             price: el.price,
             stock: el.stock,
@@ -535,12 +557,89 @@ const getSaleOpen = (item:saleDataI) => {
  */
 const checkSale = () => {
     //Verificar si se puede mostrar los datos
-    if (form.close_table) showReturn.value = form.close_table;
+    if (form.close_table && form.info_sale.length > 0) {
+        //REalizar calculo si existe
+        amountCreditNote();
+        //Mostar la ventana
+        showReturn.value = form.close_table;
+    }
     else{
         sendData();
     }
 
 }
+
+/**
+ * Buscar la notas de credito para pagar la factura
+ */
+const getCreditNote = async () => {
+
+    //Si no hay suficiente caracateres
+    if (form.credit_notes_value.length < 5) {
+        form.setError('credit_notes_value', 'Por Favor, Introduzca Valores Valido');
+        return false;
+    }
+
+    //Verificar si ya esta en positivo no puede colocar nota de credito
+    if (form.returned > 0)
+    {
+        form.setError('credit_notes_value','Existe Suficiente Balance Para Cerrar La Cuenta');
+        return false;
+    }
+
+    //Verificar si exsite alguna igual
+    const exist:boolean = form.credit_notes.some((el) => el.code == form.credit_notes_value || el.ncf == form.credit_notes_value);
+
+    if (exist)
+    {
+        form.setError('credit_notes_value','Esta Nota De Credito, Esta Agregada');
+
+    }else{
+        //Buscar la nota de credito
+        const {data} = await axios.get(route('credit-note.get',{code: form.credit_notes_value}));
+
+        //Verifciar los datos
+        if (data.hasOwnProperty('code'))
+        {
+            //Pasar los datos al formulario
+            form.credit_notes.push(data);
+            //Calcular los datos
+            amountCreditNote();
+            //Limpiar los errores
+            form.clearErrors('credit_notes_value');
+            //Limpiar el campo para agreagr otros
+            form.reset('credit_notes_value');
+
+        }else{
+            //Poner el mensaje de error
+            form.setError('credit_notes_value',data.error);
+        }
+    }
+
+}
+
+/**
+ * Eliminar la nota de credito
+ */
+const deleteCreditNote = (index:number) => {
+    //Eliminar solo el dato seleccionado
+    form.credit_notes.splice(index, 1);
+    //Realizar el calculo
+    amountCreditNote();
+}
+
+/**
+ * Calcular la nota de credito
+ */
+const amountCreditNote = () => {
+    //REalizar el calculo de notas de credito
+    form.credit_notes_amount = form.credit_notes.reduce((acc, cur) => acc + cur.n_available, 0);
+    //Datos pendiente por pagar
+    form.returned = form.credit_notes_amount - form.amount;
+    form.pending = (form.credit_notes_amount - form.amount) < 0 ?(form.credit_notes_amount - form.amount) : 0;
+
+}
+
 
 
 </script>
@@ -866,7 +965,7 @@ const checkSale = () => {
 
                                         <span
                                             class=" absolute inset-y-0 right-3 text-red-400">
-                                            {{ 255 - form.comment.length }}
+                                            {{ form.comment ? 255 - form.comment.length : 255 }}
                                         </span>
 
                                         <InputError :message="form.errors.comment"/>
@@ -951,8 +1050,9 @@ const checkSale = () => {
 
             <Transition>
                 <FloatBox
-                    v-if="showReturn "
+                    v-if="showReturn"
                     @close="showReturn = false">
+                    <!--Datos de la ventana-->
                     <div class="bg-gray-200 p-5 rounded-md min-w-[600px] h-fit">
                         <h3 class="text-2xl text-center">
                             Datos de pagos
@@ -964,6 +1064,7 @@ const checkSale = () => {
                                 for="typePayment"
                                 value="Tipo Pago" />
                             <select
+                                autofocus
                                 v-model="form.type_payment"
                                 id="typePayment"
                                 class="rounded-md border-gray-300 w-full">
@@ -974,7 +1075,51 @@ const checkSale = () => {
                                 </option>
                             </select>
                         </div>
-
+<!--                        Aplicar nota de credito-->
+                        <div class="max-w-[590px] mt-3">
+                            <InputLabel
+                                for="credit_notes"
+                                value="Notas Creditos"/>
+                            <div class="relative">
+                                <TextInput
+                                    class="w-[calc(100%-3rem)]"
+                                    v-model="form.credit_notes_value"
+                                    type="search"/>
+                                <i
+                                    @click="getCreditNote"
+                                    class=" bg-gray-400 hover:text-white duration-300 ease-linear rounded-md text-2xl p-2 absolute right-0 flex items-center inset-y-0 fa-solid fa-magnifying-glass"></i>
+                            </div>
+<!--                            Mensaje de error-->
+                            <InputError :message="form.errors.credit_notes_value"/>
+<!--                            Mostrar las notas de creditos asociada a esa venta-->
+                            <table class="table-fixed w-full mt-3">
+                                <caption>
+                                    Notas De Credito
+                                </caption>
+                                <thead class="text-left">
+                                    <tr class="border-2 border-b-gray-800">
+                                        <th>Cod./NCF</th>
+                                        <th>Disponible</th>
+                                        <th class="w-1/12" >Act</th>
+                                    </tr>
+                                </thead>
+<!--                                Cuerpod de los datos-->
+                                <tbody>
+                                    <tr v-for="(item, index) in form.credit_notes" :key="index">
+                                        <td>{{item.code}}</td>
+                                        <td>{{ getMoney(item.n_available)}}</td>
+                                        <td class="text-center w-1/12">
+                                            <i
+                                            @click="deleteCreditNote(index)"
+                                            class=" icon-efect fa-solid fa-trash"></i></td>
+                                    </tr>
+                                    <tr class=" border-t-2 border-gray-800">
+                                        <th>Total :</th>
+                                        <th>{{getMoney(form.credit_notes_amount)}}</th>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
 
 
 <!--                      Monto Recibido-->
@@ -986,15 +1131,18 @@ const checkSale = () => {
                             <TextInput
                                 @blur="returnedBlur"
                                 @input="returned"
-                                autofocus
                                 class="w-full"
                                 type="number"
                                 v-model="form.received"/>
                         </div>
 
-
+<!--                        Datos pendiente para cobrar-->
                         <div class="mt-3 text-3xl">
-                            Devolver: {{getMoney(form.returned)}}
+                            Pendiente...: {{getMoney(form.pending)}}
+                        </div>
+<!--                        Datos Para devuelta-->
+                        <div class="mt-3 text-3xl">
+                            Devuelta......: {{getMoney(form.returned)}}
                         </div>
 
 <!--                        Boton para cerrar la factura-->

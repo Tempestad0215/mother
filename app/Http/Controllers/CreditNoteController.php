@@ -7,6 +7,7 @@ use App\Http\Requests\StoreProductSaleRequest;
 use App\Http\Resources\SaleCreditNoteResource;
 use App\Models\Sale;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -64,8 +65,13 @@ class CreditNoteController extends Controller
     }
 
 
-
-    public function store(StoreProductSaleRequest $request, Sale $sale)
+    /**
+     * Guardar los datos
+     * @param StoreProductSaleRequest $request
+     * @param Sale $sale
+     * @return void
+     */
+    public function store(StoreProductSaleRequest $request, Sale $sale):void
     {
         //Intancia
         $creditNoteHelper = new CreditNoteHelper();
@@ -74,4 +80,32 @@ class CreditNoteController extends Controller
         $creditNoteHelper->creditNoteStore($request, $sale);
 
     }
+
+
+    /**
+     * @param string $code
+     * @return JsonResponse
+     */
+    public function creditNoteGet(string $code):JsonResponse
+    {
+        //Para buscar los datos de nota de credito
+        $data = CreditNoteHelper::creditNoteGet($code);
+
+        //Verificar que tiene sto
+        if (isset($data))
+        {
+            //DEvolver el mensaje con los datos
+            return response()->json($data);
+        }
+        else{
+            //Deolver el mensaje de error
+            return response()->json([
+                'error' => 'Datos No Encontrado'
+            ]);
+        }
+
+        //Devolver los datos en json
+
+    }
+
 }

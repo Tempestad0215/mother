@@ -11,6 +11,7 @@ use App\Models\CreditNote;
 use App\Models\Product;
 use App\Models\ProTrans;
 use App\Models\Sale;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -30,7 +31,6 @@ class CreditNoteHelper
             //Convertir a collection
             $infoCollect = collect($request->get('info_sale'));
             $saleCollect = collect($sale->infoSale);
-
 
             //Obtener el tipo de devolucion
             $type = $request->get('type');
@@ -67,7 +67,6 @@ class CreditNoteHelper
 
             //sumatoria para ver si se cerro la cuenta
             $resultTotal = [];
-
 
             //Recorrer los datos
             $infoCollect->map(callback: function ($item) use (&$saleCollect, &$sale, &$creditNote, &$resultTotal) {
@@ -128,15 +127,20 @@ class CreditNoteHelper
                         $product->decrement('reserved', $item['stock']);
                     }
 
+                    //Tomar el total de toda la devoluciones
+                    $stockRet = $product->trans
+                        ->where('type', ProductTransType::DEVOLUCION)
+                        ->where('sale_id', $sale->id)
+                        ->sum('stock');
+
                     //Tomar el resultado
-                    $result = $saleInfo->stock - $item['stock'];
+                    $result = $saleInfo->stock - $stockRet;
 
                     //Agreagr a resultado final
                     $resultTotal[] = $result;
 
-
                     //Si el resultado es cero, pues se
-                    if ($result == 0)
+                    if ($result == 0.0)
                     {
                         // Actualizar el status del producto
                         ProTrans::where('id', $saleInfo->id)
@@ -166,5 +170,85 @@ class CreditNoteHelper
 
     }
 
+
+    /**
+     * @param string $code
+     * @return CreditNote|null
+     */
+    public static function creditNoteGet(string $code):CreditNote|null
+    {
+        return CreditNote::where(function (Builder $q) use ($code){
+            $q->where('code', $code)
+                ->orWhere('ncf',$code);
+        })->where('n_available','>',0)
+            ->select(['id','ncf','n_available','code'])
+            ->first() ?? null;
+
+    }
+
+
+    public static function updateAvailableFor(array $info, float $amount)
+    {
+        //Total de nota de credito
+        $totalCredit = array_sum(array_column($info, 'n_available'));
+        //Scar el resultado de la nota de credito y la venta total
+        $result =  $totalCredit - $amount;
+
+        //Verificar si es mayor a cero
+        if ($result < 0)
+        {
+            //Recorrar los datos para actualizar
+            foreach ($info as $item)
+            {
+                //colocar en 0 las notas de credito
+                CreditNote::where('id', $item['id'])
+                    ->update([
+                       'n_available' => 0,
+                        'status' => false
+                    ]);
+
+                dd($item['id']);
+            }
+
+        //Si el balance de la nota de credito es mayor
+        }else{
+
+            //Convertir a collecion
+            $infoCollect = collect($info);
+            //Buscar la que tenga el balance mas alto
+            $maxData = $infoCollect->sortByDesc('n_available')->first();
+
+
+
+            $infoCollect->map(function ($item) use ($maxData, $result){
+                //tomar los datos de la nota de credito maxima
+                $maxId = $maxData['id'];
+                $maxAve = $maxData['n_available'];
+
+
+                //Buscar la nota de credito
+                $credit = CreditNote::find($item['id']);
+
+                //Evitar que esta se actualize del todo
+                if ($item['n_available'] == $maxAve && $maxId == $item['id'])
+                {
+
+                    //Reducir el resultado el cual es positivo
+                    $credit->update([
+                        'n_available' => $result
+                    ]);
+
+                }else{
+
+                    //Ponerla en 0 y Quitarle el status
+                    $credit->update([
+                        'n_available' => 0,
+                        'status' => false
+                    ]);
+                }
+            });
+
+        }
+    }
 
 }

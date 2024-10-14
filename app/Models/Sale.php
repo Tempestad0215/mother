@@ -29,13 +29,15 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property boolean $status
  * @property SaleTypeEnum $type
  * @property bool $close_table
- * @property Carbon $created_at,
+ * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property Carbon $deleted_at
- * @property ProTrans[] $infoSale,
- * @property SalePaymentEnum $type_payment,
+ * @property ProTrans[] $infoSale
+ * @property SalePaymentEnum $type_payment
  * @property float $received
  * @property float $returned
+ * @property integer[] $credit_notes
+ * @property float $credit_notes_amount
  */
 
 
@@ -64,7 +66,9 @@ class Sale extends Model implements Auditable
         'amount',
         'type',
         'status',
-        'close_table'
+        'close_table',
+        'credit_notes',
+        'credit_notes_amount'
     ];
 
 
@@ -73,7 +77,8 @@ class Sale extends Model implements Auditable
         'status' => 'boolean',
         'close_table' => 'boolean',
         'type' => SaleTypeEnum::class,
-        'type_payment' => SalePaymentEnum::class
+        'type_payment' => SalePaymentEnum::class,
+        'credit_notes' => 'array'
     ];
 
 

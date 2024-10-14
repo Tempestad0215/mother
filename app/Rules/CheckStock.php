@@ -27,9 +27,10 @@ class CheckStock implements ValidationRule
         $existsError = false;
         $errorMessage = '';
 
+
+
         //Sacar los datos del producto introducido para validar
         foreach ($this->info_sale as $info) {
-
 
             //Buscar los datos del producto
             $product = Product::where('status', true)

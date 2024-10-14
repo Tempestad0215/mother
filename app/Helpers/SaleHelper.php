@@ -66,13 +66,17 @@ class SaleHelper
     public function store(StoreProductSaleRequest $request):void
     {
 
-
         //Para asegurar que se cumplan los registro
         DB::transaction(function () use ($request) {
             //Obtener la configuracion
 
             //Incrementar la secuencia enviada
             SequenceHelper::incrementSequence(SequenceTypeEnum::from($request->get('invoice_type')));
+
+            //obtener notas de credito
+            $creditNotes = $request->get('credit_notes');
+            //Sacar los IDS
+            $ids = array_column($creditNotes, 'id');
 
             // Crear la venta
             $sale = Sale::create([
@@ -90,7 +94,12 @@ class SaleHelper
                 'type_payment' => $request->get('type_payment'),
                 'received' => $request->get('received'),
                 'returned' => $request->get('returned'),
+                'credit_notes' => $ids,
+                'credit_notes_amount' => $request->get('credit_notes_amount'),
             ]);
+
+            //Actualizar los datos de la notas de credito
+            CreditNoteHelper::updateAvailableFor($creditNotes, $request->get('amount'));
 
 
             //Crear el comentario
@@ -301,7 +310,11 @@ class SaleHelper
                     //Guardar los datos
 
                 }
-                $product->save();
+
+                //Conseguiir notas de creditos
+                $creditNotes = $request->get('credit_notes');
+                //Obtener los ids
+                $ids = array_column($creditNotes, 'id');
 
                 //Actualizar los datos de la ventas
                 $sale->client_id = $request->get('client_id');
@@ -312,6 +325,8 @@ class SaleHelper
                 $sale->sub_total = $request->get('sub_total');
                 $sale->amount = $request->get('amount');
                 $sale->close_table = $request->get('close_table');
+                $sale->credit_notes = $ids;
+                $sale->credit_notes_amount = $request->get('credit_notes_amount');
                 $sale->save();
 
                 //Actualizar el comentario
@@ -319,6 +334,9 @@ class SaleHelper
                     ['commentable_id' => $sale->id],
                     ['content' => $request->get('comment')]
                 );
+
+                //Reducir las notas de creditos seleccionada
+                CreditNoteHelper::updateAvailableFor($creditNotes, $request->get('amount'));
 
                 //Crear la transaccion individual
                 ProTrans::updateOrCreate(
