@@ -28,7 +28,6 @@ use App\Http\Controllers\CreditNoteController;
 
 Route::middleware([
     'auth:sanctum',
-
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
@@ -57,29 +56,21 @@ Route::middleware([
            ->name('index');
        Route::post('/','store')->name('store');
     });
-
-
-
-    //conseguir la configuracion
-    $setting = Setting::pluck('sequence')->first();
-    // Solo ver esto si la opcion esta habilitado
-    if ($setting)
-    {
-        /*
+    /*
      * Secuencia de RNC
      */
-        Route::controller(SequenceController::class)
-            ->prefix('setting/sequence')
-            ->name('sequence.')
-            ->group(function () {
-                Route::get('/', 'create')->name('create');
-                Route::get('/get/{type}','get')->name('get');
-                Route::get('/get/rnc/{rnc}','getRnc')->name('getRnc');
-                Route::post('/','store')->name('store');
-                Route::get('/{sequence}','edit')->name('edit');
-                Route::delete('/{sequence}','destroy')->name('destroy');
-            });
-    }
+    Route::controller(SequenceController::class)
+        ->prefix('setting/sequence')
+        ->name('sequence.')
+        ->group(function () {
+            Route::get('/', 'create')->name('create');
+            Route::get('/get/{type}','get')->name('get');
+            Route::get('/get/rnc/{rnc}','getRnc')->name('getRnc');
+            Route::post('/','store')->name('store');
+            Route::get('/{sequence}','edit')->name('edit');
+            Route::delete('/{sequence}','destroy')->name('destroy');
+        });
+
 
 
 

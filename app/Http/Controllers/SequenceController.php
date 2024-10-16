@@ -6,6 +6,7 @@ use App\Enums\SequenceTypeEnum;
 use App\Helpers\SequenceHelper;
 use App\Http\Requests\SequenceRequest;
 use App\Models\Sequence;
+use App\Models\Setting;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -20,16 +21,27 @@ class SequenceController extends Controller
      */
     public function create()
     {
-        //Intancia
-        $sequenceHelper = new SequenceHelper();
+        //Tomar la configuracion
+        $setting = Setting::first();
+
+        //Verificar si existe
+        if ($setting->sequence)
+        {
+            //Intancia
+            $sequenceHelper = new SequenceHelper();
+
+            //DEvolver la vista con los datos
+            return Inertia::render('Setting/Sequence',[
+                'sequenceType' => config('appconfig.sequence'),
+                'sequencesData' => $sequenceHelper->getAll()
+
+            ]);
+        }else{
+
+            abort(403, "No esta Autorizado Para Este Modulo");
+        }
 
 
-        //DEvolver la vista con los datos
-        return Inertia::render('Setting/Sequence',[
-            'sequenceType' => config('appconfig.sequence'),
-            'sequencesData' => $sequenceHelper->getAll()
-
-        ]);
     }
 
 

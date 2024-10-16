@@ -93,7 +93,7 @@ export const getCoin = (value:number) => {
  */
 export const getRncHelper = async (data: string):Promise<string> => {
 
-    const result = Swal.fire({
+    const result = await Swal.fire({
         title: "Desea Buscar Contribuyente?",
         text: "Por favor, elija la Opcion!",
         icon: "warning",
@@ -105,7 +105,7 @@ export const getRncHelper = async (data: string):Promise<string> => {
     });
 
     //Verificar
-    if ((await result).isConfirmed) {
+    if (result.isConfirmed){
         try {
             const response = await axios.get(route('sequence.getRnc', { rnc: data }));
             const status = response.data.status;

@@ -3,12 +3,11 @@ import {Head, router, useForm, usePage} from "@inertiajs/vue3";
 import AppLayout from "@layout/AppLayout.vue";
 import InputLabel from "@components/InputLabel.vue";
 import TextInput from "@components/TextInput.vue";
-import SecondaryButton from "@components/SecondaryButton.vue";
 import FloatBox from "@components/FloatBox.vue";
 import FloatShowPro from "@/Pages/Products/FloatShowPro.vue";
 import {onMounted, onUpdated, reactive, Ref, ref} from "vue";
 import {productDataI, productI, productSaleI} from "@/Interfaces/Product";
-import { getMoney, getSequenceType} from "@/Global/Helpers";
+import {getMoney, getRncHelper, getSequenceType} from "@/Global/Helpers";
 import LinkHeader from "@components/LinkHeader.vue";
 import Swal from "sweetalert2";
 import InputError from "@components/InputError.vue";
@@ -19,8 +18,7 @@ import {successHttp} from "@/Global/Alert";
 import axios from "axios";
 import SaleOpenShow from "@/Pages/ProductsSale/SaleOpenShow.vue";
 import {creditNotesSaleI, infoSaleI, saleDataI, saleDataPaginationI} from "@/Interfaces/Sale";
-import {invoiceTypeI, sequenceDataI} from "@/Interfaces/Setting";
-import {i} from "vite/dist/node/types.d-aGj9QkWt";
+import {invoiceTypeI, rncUserI, sequenceDataI} from "@/Interfaces/Setting";
 
 
 /*
@@ -113,8 +111,6 @@ const typePaymentData = reactive([
 ])
 
 
-
-
 /*
  * Formulario
  */
@@ -165,6 +161,8 @@ Funciones
 const getSequence = async (type: string) => {
 
     if (!page.props.setting.sequence)
+
+    console.log('funciona');
     {
         //Realizar la buqueda
         const result = await axios.get(route('sequence.get', {type: type}));
@@ -640,6 +638,46 @@ const amountCreditNote = () => {
 
 }
 
+/**
+ * Conseguirel RNC del cliente
+ */
+const getRncClient = async () => {
+    //Verificar tis tiene menos de la longitud deseada
+    if (form.client_rnc.length < 7)
+    {
+        //Poner el mensaje cuando sea menos de la longitud real
+        form.setError("client_rnc",'Por favor, La Longitud De La Cadena Es Insuficiente');
+    }else{
+        //Obtener el resultado de los
+        const result = await getRncHelper(form.client_rnc);
+
+        //Verificar los estado del RNC
+        if (result === "SUSPENDIDO")
+        {
+            form.setError("client_rnc", "Este Contribuyente Esta Suspendido, Por Favor Elegir Otro");
+
+        }else if (result === "ERROR")
+        {
+            form.setError("client_rnc", "Este Contribuyente No Pudo Ser Encontrado");
+
+        }else if (result === "CANCELLED")
+        {
+            form.setError("client_rnc", "Este Contribuyente Esta Cancelado");
+        }else{
+            //Formatear el json
+            const info:rncUserI = JSON.parse(result);
+
+            //Poner cada datos en su lugar
+            form.client_name = info.razon_social;
+
+            console.log(info);
+        }
+    }
+
+
+}
+
+
 
 
 </script>
@@ -711,10 +749,16 @@ const amountCreditNote = () => {
                                     <InputLabel
                                         for="client_rnc"
                                         value="RNC" />
-                                    <TextInput
-                                        v-model="form.client_rnc"
-                                        class="w-[400px]"
-                                        type="text" />
+                                    <div class="relative">
+                                        <TextInput
+                                            v-model="form.client_rnc"
+                                            class="w-[400px] pr-[32px]"
+                                            type="search" />
+                                        <i
+                                            @click="getRncClient"
+                                            class=" absolute right-0 inset-y-0 flex items-center icon-efect p-2 text-2xl fa-solid fa-magnifying-glass"></i>
+                                    </div>
+
                                     <InputError :message="form.errors.client_rnc"/>
                                 </div>
                             </div>
@@ -728,22 +772,11 @@ const amountCreditNote = () => {
 
 <!--                            Datos de comprobante-->
                             <div
-                                class=" flex-1 flex justify-end"
+                                class="flex flex-col-reverse"
                                 v-if="form.sequence_type !== ''">
 <!--                                Mensaje de cargando-->
                                 <!--Numero de comprobantes-->
-                                <fieldset
-                                    v-if="showClientRnc"
-                                    class=" border-2 border-gray-400 rounded-md px-2 mx-3 max-w-[400px]">
-                                    <legend>
-                                        Datos Tributario
-                                    </legend>
-                                    <p><strong>RNC :</strong> {{form.client_rnc}}</p>
-                                    <p><strong>Razon Social :</strong> {{form.client_social}}</p>
-                                </fieldset>
-
-                                <!--Numero de comprobantes-->
-                                <fieldset class="border-2 border-gray-400 rounded-md px-2 ">
+                                <fieldset class="border-2 border-gray-400 rounded-md px-2 mx-3 w-[350px] ">
                                     <legend>
                                         {{form.sequence_type}}
                                     </legend>
@@ -752,6 +785,22 @@ const amountCreditNote = () => {
                                         v-if="form.invoice_type === 'B04'"
                                         class="truncate"><strong>NCF M. :</strong> {{form.ncf_m}}</p>
                                 </fieldset>
+                                <!--Numero de comprobantes-->
+                                <fieldset
+                                    v-if="showClientRnc"
+                                    class=" border-2 border-gray-400 rounded-md px-2 mx-3 w-[350px] max-w-[400px]">
+                                    <legend>
+                                        Datos Tributario
+                                    </legend>
+                                    <p><strong>RNC :</strong> {{form.client_rnc}}</p>
+                                    <p class="max-w-[300px] truncate">
+                                        <strong>Razon Social :</strong>
+                                        {{form.client_name}}
+                                    </p>
+                                </fieldset>
+
+
+
                             </div>
                         </div>
 
@@ -779,25 +828,25 @@ const amountCreditNote = () => {
                                     v-if="!propsW.refund"
                                     class="ml-3">
                                     <InputLabel value="Datos"/>
-                                    <SecondaryButton
-                                        class="ml-3"
-                                        @click="showProduct = !showProduct">
-                                        Prod..
-                                    </SecondaryButton>
-                                    <SecondaryButton
-                                        class="ml-3"
-                                        @click="showSaleOpen = !showSaleOpen">
-                                        Abierta
-                                    </SecondaryButton>
+
+<!--                                    Btn de producto-->
+                                    <i
+                                        title="Productos"
+                                        @click="showProduct = !showProduct"
+                                        class="icon-efect text-3xl fa-solid fa-box-open"></i>
+
+<!--                                    Btn de Cuentas abierta-->
+                                    <i
+                                        title="Cuentas Abiertas"
+                                        @click="showSaleOpen = !showSaleOpen"
+                                        class=" ml-3 icon-efect text-3xl  fa-solid fa-table-cells-row-unlock"></i>
+
                                 </div>
                             </div>
 
 
-
-
                             <div class="flex">
-
-                                <!--                        Tipo de factura-->
+                                <!--Tipo de factura-->
                                 <div
                                     v-if="page.props.setting.sequence"
                                     class="ml-3">
@@ -810,6 +859,7 @@ const amountCreditNote = () => {
                                         id="type">
                                         <option
                                             v-for="(item, index) in propsW.invoiceType" :key="index"
+                                            :disabled="item.type == 'B04' && page.url == '/sale' "
                                             :value="item.type">
                                             {{item.type}} - {{ item.name }}
                                         </option>
@@ -818,7 +868,8 @@ const amountCreditNote = () => {
                                     <InputError :message="form.errors.invoice_type"/>
                                 </div>
 
-                                <!--                        Tipo de factura-->
+
+                                <!--Tipo de factura-->
                                 <div class="ml-3">
                                     <InputLabel for="type" value="Tipo de Venta"/>
                                     <select
@@ -836,11 +887,11 @@ const amountCreditNote = () => {
                                         <option
                                             :disabled="!propsW.refund"
                                             value="devolucion">Devolución</option>
-<!--                                        <option value="">Credito</option>-->
+                                    <!--<option value="">Credito</option>-->
                                     </select>
                                     <InputError :message="form.errors.type"/>
                                 </div>
-<!--                                Tipo de cuenta si abierta o cerrada-->
+                                <!--Tipo de cuenta si abierta o cerrada-->
                                 <div
                                     v-if="!propsW.refund"
                                     class="ml-3">

@@ -6,6 +6,8 @@ use App\Helpers\CreditNoteHelper;
 use App\Http\Requests\StoreProductSaleRequest;
 use App\Http\Resources\SaleCreditNoteResource;
 use App\Models\Sale;
+use App\Models\Sequence;
+use App\Models\Setting;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -24,9 +26,24 @@ class CreditNoteController extends Controller
      */
     public function index(Request $request, Sale $sale):RedirectResponse|Response
     {
+        //Verificar si existe la secuencio y hay B04
+        $setting = Setting::first();
 
+        //Buscar la secuencia de NCF
+       $sequence = Sequence::where('type', 'B04')
+            ->where('status', true)
+           ->first();
 
-        //Verificar si se puede devolver los articulos
+       //Verificar si existe la secuencia y hay datos
+       if ($setting->sequence && !$sequence)
+       {
+            //Devolver el mensaje con problema
+            throw ValidationException::withMessages([
+                'general' => "No Existen NCF Disponible Para NC (B04)"
+            ]);
+       }
+
+       //Verificar si se puede devolver los articulos
         $maxDay = config('appconfig.saleCreditNote');
         //Formatear la fecha para comparar
         $maxDate = Carbon::parse($sale->created_at);
@@ -59,9 +76,6 @@ class CreditNoteController extends Controller
                 'refund' => true,
             ]);
         }
-
-
-
     }
 
 

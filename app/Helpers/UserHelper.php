@@ -21,11 +21,11 @@ class UserHelper
         $search = $request->get('search');
 
         // Devolver los datos paginado
-        $data = User::where('status', 0)
+        $data = User::where('status', true)
             ->where(function ($query) use ($search) {
                 $query->where('name','like','%'.$search.'%')
                     ->orWhere('email','like','%'.$search.'%');
-            })
+            })->where('id', '!=', auth()->user()->id)
             ->latest()
             ->simplePaginate(15);
 

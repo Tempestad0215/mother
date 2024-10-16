@@ -7,18 +7,20 @@ import TextInput from '@/Components/TextInput.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import ActionMessage from '@/Components/ActionMessage.vue';
 import {userI, userPaginationI} from "@/Interfaces/User";
-import {computed, ref} from "vue";
+import {computed} from "vue";
 import Swal from "sweetalert2";
 import {successHttp} from "@/Global/Alert";
 import FormSearch from "@components/FormSearch.vue";
 import Pagination from "@components/Pagination.vue";
 
+/*
+Propiedad de la ventana
+ */
 defineProps<{
     users: userPaginationI
-}>()
+}>();
 
-
-/**
+/*
  * Datos del formulario
  */
 const form = useForm({
@@ -27,24 +29,24 @@ const form = useForm({
     email: '',
     password: '',
     password_confirmation: '',
-    role: 1,
+    role: 'user',
     terms: false,
     update: false,
     modify_password: false
 });
-//Datos de busqueda
+
+
+/*
+Formulario de busqueda
+ */
 const formSearch = useForm({
     search:""
 })
 
 
-/**
- * Datos de la ventana
- */
-const showConfirm = ref<boolean>(true);
 
 
-/**
+/*
  * Propiedades computada
  */
 const showPassword = computed(()=>{
@@ -58,16 +60,11 @@ const showPassword = computed(()=>{
    {
        return  true;
    }
-   else if(!form.update)
-   {
-       return true
-   }else{
-       return false;
-   }
+   else return !form.update;
 });
 
 
-/**
+/*
  * Enviar los datos
  */
 const submit = () => {
@@ -258,7 +255,7 @@ const search = () => {
                         <input
                             id="user"
                             name="user"
-                            :value="1"
+                            value="user"
                             v-model="form.role"
                             type="radio">
                         <label for="user">
@@ -272,7 +269,7 @@ const search = () => {
                         <input
                             id="supervisor"
                             name="supervisor"
-                            :value="2"
+                            value="supervisor"
                             v-model="form.role"
                             type="radio">
                         <label for="supervisor">
@@ -286,7 +283,7 @@ const search = () => {
                         <input
                             id="admin"
                             name="admin"
-                            :value="3"
+                            value="admin"
                             v-model="form.role"
                             type="radio">
                         <label for="admin">

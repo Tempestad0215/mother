@@ -136,8 +136,6 @@ const getRnc = async () => {
     //Obtener la informacion del RNC
     let info:string = await getRncHelper(form.personal_id);
 
-    console.log();
-
 
     if (info === "SUSPENDIDO")
     {
