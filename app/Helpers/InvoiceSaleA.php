@@ -6,13 +6,17 @@ namespace App\Helpers;
 use Codedge\Fpdf\Fpdf\Fpdf;
 use Illuminate\Support\Facades\Storage;
 
-class FacturaVentaA extends Fpdf
+class InvoiceSaleA extends Fpdf
 {
     public string $clientName;
+    public bool $isSequence;
+    public string $clientRnc;
+    public string $sequence;
+    public string $invoiceType;
     public string $clientPhone;
     public string $clientEmail;
 
-    public function __construct($clientName, $clientPhone = "", $clientEmail = "")
+    public function __construct($clientName, $isSequence = false, $clientRnc = null, $sequence = null, $clientPhone = null, $clientEmail = null)
     {
         // Llmar el constructor de pdf
         parent::__construct();

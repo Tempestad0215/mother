@@ -85,12 +85,10 @@ class SupplierController extends Controller
      */
     public function destroy(Supplier $supplier)
     {
-        //Politica de borrado
-        Gate::authorize('delete',Auth::user());
 
         // Actualizar los datos
         $supplier->update([
-            'status' => true
+            'deleted_at' => now()
         ]);
 
         //Devolver hacia atras

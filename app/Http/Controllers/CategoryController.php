@@ -3,15 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
+use Inertia\Response;
+use LaravelIdea\Helper\App\Models\_IH_Category_C;
 
 class CategoryController extends Controller{
     /**
      * @param Request $request
-     * @return \Inertia\Response
+     * @return Response
      */
     public function create(Request $request){
 
@@ -28,9 +33,10 @@ class CategoryController extends Controller{
 
     /**
      * @param Request $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
-    public  function store(Request $request){
+    public  function store(Request $request)
+    {
 
         //Validar los datos
         $request->validate([
@@ -51,7 +57,7 @@ class CategoryController extends Controller{
     /**
      * @param Request $request
      * @param Category $category
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function update(Request $request, Category $category){
         // Valiar los datos antes de actualizar
@@ -71,15 +77,14 @@ class CategoryController extends Controller{
 
     /**
      * @param Category $category
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function destroy(Category $category){
 
-        //Poner la restricciones de usuario
-        Gate::authorize('delete', Auth::user());
+
         // Actualizar los datos
         $category->update([
-            'status' => true
+            'deleted_at' => now()
         ]);
         //Devolver hacia atras
         return back();
@@ -89,7 +94,7 @@ class CategoryController extends Controller{
 
     /**
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function getJson(Request $request){
 
@@ -111,22 +116,19 @@ class CategoryController extends Controller{
 
     /**
      * @param Request $request
-     * @return mixed
+     * @return Category[]|Paginator|_IH_Category_C
      */
-    private function get(Request $request)
+    private function get(Request $request):Category|Paginator|_IH_Category_C
     {
 
         // Tomar los datos de busqueda
         $search = $request->get('search');
 
-
-
-        $data = Category::where('status',true)
+        return Category::where('status',true)
             ->where('name', 'like', '%'.$search.'%')
             ->latest()
             ->simplePaginate(15);
 
-        return $data;
     }
 
 

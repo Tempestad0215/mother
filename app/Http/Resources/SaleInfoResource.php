@@ -9,8 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;
 
-
-
 /**
  * @property int $id
  * @property string $invoice_type
@@ -36,6 +34,34 @@ class SaleInfoResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        //Guardar los datos
+        $infoFinal = [];
+
+        //Convertir a una collection
+        $data = collect($this->infoSale);
+
+        //Recorrer los datos para guardarlos
+        $data->map(function (ProTrans $item) use (&$infoFinal) {
+
+            //Agregar los datos
+           $infoFinal[] = [
+               'id' => $item->id,
+               'code' => $item->product->code ?? null,
+               'product_id' => $item->product_id,
+               'product_name' => $item->product_name,
+               'sale_id' => $item->sale_id,
+               'amount' => $item->amount,
+               'discount' => $item->discount,
+               'discount_amount' => $item->discount_amount,
+               'price' => $item->price,
+               'status' => $item->status,
+               'stock' => $item->stock,
+               'tax' => $item->tax,
+               'tax_rate' => $item->tax_rate,
+               'type' => $item->type,
+           ];
+
+        });
 
         return [
             'id' => $this->id,
@@ -52,7 +78,7 @@ class SaleInfoResource extends JsonResource
             'status' => $this->status,
             'type' => $this->type,
             'close_table' => $this->close_table,
-            'info_sale' => $this->infoSale,
+            'info_sale' => $infoFinal,
             'comment' => [
                 'id' => $this->comment->id,
                 'content' => $this->comment->content

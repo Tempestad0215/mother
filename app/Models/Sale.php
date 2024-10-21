@@ -68,7 +68,9 @@ class Sale extends Model implements Auditable
         'status',
         'close_table',
         'credit_notes',
-        'credit_notes_amount'
+        'credit_notes_amount',
+        'returned',
+        'received'
     ];
 
 

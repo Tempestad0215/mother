@@ -204,7 +204,9 @@ class ProductController extends Controller
     }
 
 
-    // Para crear la entrada de producto
+    /**
+     * @return Response
+     */
     public function in()
     {
 

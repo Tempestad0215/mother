@@ -93,6 +93,7 @@ export const getCoin = (value:number) => {
  */
 export const getRncHelper = async (data: string):Promise<string> => {
 
+    //Preguntar para buscar los datos
     const result = await Swal.fire({
         title: "Desea Buscar Contribuyente?",
         text: "Por favor, elija la Opcion!",

@@ -18,7 +18,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property string|null $phone
  * @property string|null $email
  * @property boolean $status
- * @property Date $deleted_at
+ * @property string $deleted_at
 */
 
 class Supplier extends Model implements Auditable
@@ -33,7 +33,8 @@ class Supplier extends Model implements Auditable
         'company_name',
         'phone',
         'email',
-        'status'
+        'status',
+        'deleted_at'
     ];
 
 

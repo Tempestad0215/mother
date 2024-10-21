@@ -42,32 +42,16 @@ class SaleHelper
 
     }
 
-//    /**
-//     * @param int $id
-//     * @param StoreProductSaleRequest $request
-//     * @return void
-//     */
-//    public function checkToInsert(int $id,StoreProductSaleRequest $request):void
-//    {
-//        // Tomar los datos para instroducir
-//        $saleData = $request->only(['client_name','client_id','info','discount','tax','sub_total','amount']);
-//
-//        //Guardar si no existe ese
-//        $sale = Sale::updateOrCreate(
-//            ['id' => $id],
-//            $saleData
-//        );
-//    }
 
     /**
      * @param StoreProductSaleRequest $request
-     * @return void
+     * @return null|string
      */
-    public function store(StoreProductSaleRequest $request):void
+    public function store(StoreProductSaleRequest $request):string|null
     {
 
         //Para asegurar que se cumplan los registro
-        DB::transaction(function () use ($request) {
+        return DB::transaction(function () use ($request) {
             //Obtener la configuracion
 
             //Incrementar la secuencia enviada
@@ -94,13 +78,11 @@ class SaleHelper
                 'type_payment' => $request->get('type_payment'),
                 'received' => $request->get('received'),
                 'returned' => $request->get('returned'),
-                'credit_notes' => $ids,
-                'credit_notes_amount' => $request->get('credit_notes_amount'),
+                'credit_notes' => $ids
             ]);
 
             //Actualizar los datos de la notas de credito
             CreditNoteHelper::updateAvailableFor($creditNotes, $request->get('amount'));
-
 
             //Crear el comentario
             $sale->comment()->create([
@@ -134,6 +116,21 @@ class SaleHelper
                 ]);
 
             }
+
+            if ($sale->close_table)
+            {
+                //crear la altura del pdf
+                $height = $this->getHeigtPdf($sale);
+
+                //Instancia de la clase para imprimir
+                $pdf = new CustomSaleInvoice($sale->id, $height);
+
+                //Retornar los datos
+                return $pdf->getPDF();
+            }
+
+            //Devolver nulo
+            return null;
         });
     }
 
@@ -163,12 +160,6 @@ class SaleHelper
 
     }
 
-
-//    public function processQuote(StoreProductSaleRequest $request):void
-//    {
-//        //Guardar los datos en la venta
-//        Sale::create($request->validated());
-//    }
 
     /**
      * @param Request $request
@@ -261,12 +252,11 @@ class SaleHelper
 
 
     /**
-     * Actualzar los datos de las ventas
      * @param StoreProductSaleRequest $request
      * @param Sale $sale
-     * @return void
+     * @return string|null
      */
-    public function updateSale(StoreProductSaleRequest $request, Sale $sale):void
+    public function updateSale(StoreProductSaleRequest $request, Sale $sale):string|null
     {
 
         //Obtener la info
@@ -274,99 +264,111 @@ class SaleHelper
         //Verificar si esta cerrada
         $closeTable = $request->get('close_table');
 
+        //Recorrer los datos
+        $infoRequest->map(callback: function ($item) use (&$sale, &$closeTable, &$request) {
 
-        DB::transaction(function () use ($sale, $infoRequest, $closeTable, $request) {
-            //Recorrer los datos
-            $infoRequest->map(callback: function ($item) use ($sale, $closeTable, $request) {
+            //convertir la info sale a collection
+            $infoSale = collect($sale->infoSale);
 
-                //convertir la info sale a collection
-                $infoSale = collect($sale->infoSale);
+            //Poner la variable en 0
+            $stock = 0;
 
+            //Verificar si el item existe
+            if ($infoSale->has('id'))
+            {
                 //Econtrar la coincidencia y tomar el stock
-                $stock = $infoSale->firstWhere('product_id', $item['id'])['stock'];
+                $stock = $infoSale->firstWhere('product_id', $item['product_id'])['stock'];
+            }
 
-                //Buscar el producto existente
-                $product = Product::find($item['id']);
+            //Buscar el producto existente
+            $product = Product::find($item['product_id']);
 
-                //Restar la cantidad que llega - la registrada
-                $result = $item['stock'] - $stock;
+            //Restar la cantidad que llega - la registrada
+            $result = $item['stock'] - $stock;
 
-                //Verificar el resultado
-                if ($result > 0)
-                {
+            //Verificar el resultado
+            if ($result > 0)
+            {
 
-                    //Disminuir la stock
-                    $product->stock -= abs($result);
-                    //Auemntar la reserva
-                    $product->reserved += abs($result);
-                    //Guardar los datos
+                //Disminuir la stock
+                $product->stock -= abs($result);
+                //Auemntar la reserva
+                $product->reserved += abs($result);
+                //Guardar los datos
 
-                }else{
+            }else{
 
-                    //Auemntar el stock
-                    $product->stock += abs($result);
-                    //Disminuir la reserva
-                    $product->reserved -= abs($result);
-                    //Guardar los datos
+                //Auemntar el stock
+                $product->stock += abs($result);
+                //Disminuir la reserva
+                $product->reserved -= abs($result);
+                //Guardar los datos
 
-                }
+            }
 
-                //Conseguiir notas de creditos
-                $creditNotes = $request->get('credit_notes');
-                //Obtener los ids
-                $ids = array_column($creditNotes, 'id');
+            //Conseguiir notas de creditos
+            $creditNotes = $request->get('credit_notes');
+            //Obtener los ids
+            $ids = array_column($creditNotes, 'id');
 
-                //Actualizar los datos de la ventas
-                $sale->client_id = $request->get('client_id');
-                $sale->client_rnc = $request->get('client_rnc');
-                $sale->client_name = $request->get('client_name');
-                $sale->discount_amount = $request->get('discount_amount');
-                $sale->tax = $request->get('tax');
-                $sale->sub_total = $request->get('sub_total');
-                $sale->amount = $request->get('amount');
-                $sale->close_table = $request->get('close_table');
-                $sale->credit_notes = $ids;
-                $sale->credit_notes_amount = $request->get('credit_notes_amount');
-                $sale->save();
+            //Actualizar los datos de la ventas
+            $sale->client_id = $request->get('client_id');
+            $sale->client_rnc = $request->get('client_rnc');
+            $sale->client_name = $request->get('client_name');
+            $sale->discount_amount = $request->get('discount_amount');
+            $sale->tax = $request->get('tax');
+            $sale->sub_total = $request->get('sub_total');
+            $sale->amount = $request->get('amount');
+            $sale->credit_notes = $ids;
+            $sale->close_table = $request->get('close_table');
+            $sale->returned = $request->get('returned');
+            $sale->received = $request->get('received');
+            $sale->save();
 
-                //Actualizar el comentario
-                $sale->comment()->updateOrCreate(
-                    ['commentable_id' => $sale->id],
-                    ['content' => $request->get('comment')]
-                );
+            //Actualizar el comentario
+            $sale->comment()->updateOrCreate(
+                ['commentable_id' => $sale->id],
+                ['content' => $request->get('comment')]
+            );
 
-                //Reducir las notas de creditos seleccionada
-                CreditNoteHelper::updateAvailableFor($creditNotes, $request->get('amount'));
+            //Reducir las notas de creditos seleccionada
+            CreditNoteHelper::updateAvailableFor($creditNotes, $request->get('amount'));
 
-                //Crear la transaccion individual
-                ProTrans::updateOrCreate(
-                    ['id' => $request->get('id')],
-                    [
-                    'product_id' => $item['id'],
-                    'sale_id' => $sale->id,
-                    'stock' => $item['stock'],
-                    'price' => $item['price'],
-                    'tax' => $item['tax'],
-                    'amount' => $item['amount'],
-                    'discount' => $item['discount'],
-                    'discount_amount' => $item['discount_amount'],
-                    'type' => $closeTable ? ProductTransType::VENTAS : ProductTransType::RESERVA
-                ]);
+            //Crear la transaccion individual
+            ProTrans::updateOrCreate(
+                ['id' => $request->get('id')],
+                [
+                'product_id' => $item['product_id'],
+                'sale_id' => $sale->id,
+                'stock' => $item['stock'],
+                'price' => $item['price'],
+                'tax' => $item['tax'],
+                'amount' => $item['amount'],
+                'discount' => $item['discount'],
+                'discount_amount' => $item['discount_amount'],
+                'type' => $closeTable ? ProductTransType::VENTAS : ProductTransType::RESERVA
+            ]);
 
-
-
-            });
         });
 
+        //Obtener la ventas registada recien
+        $saleUpdated = sale::find($sale->id);
 
+        if ($saleUpdated->close_table)
+        {
+            //Tomar la altura
+            $height = $this->getHeigtPdf($saleUpdated);
 
+            //Instancia de la clase para imprimir
+            $pdf = new CustomSaleInvoice($saleUpdated->id, $height);
+            //Retornar los datos
+            return $pdf->getPDF();
+        }
+
+        return  null;
     }
 
 
-//    /**
-//     * @param Request $request
-//     * @return Sale[]|Paginator|_IH_Sale_C
-//     */
     /**
      * @param Request $request
      * @return mixed
@@ -391,6 +393,25 @@ class SaleHelper
 
         return SaleInfoResource::collection($data)->response()->getData(true);
 
+    }
+
+    /**
+     * Verificar la altura total
+     * @param Sale $sale
+     * @return int
+     */
+    private function getHeigtPdf(Sale $sale):int
+    {
+        //Tonmar los datos para verificar la altura
+        $checkHeight = $sale->infoSale->where('type',ProductTransType::VENTAS);
+        //Altura total
+        $heightTotal = 200;
+        //Verificar si la altura correcta
+        $checkHeight->map(callback: function ($item, $index) use (&$heightTotal) {
+            if ($index > 4) $heightTotal += 15;
+        });
+
+        return $heightTotal;
     }
 
 

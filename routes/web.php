@@ -182,10 +182,13 @@ Route::middleware([
            Route::get('/','create')->name('create');
            Route::get('/get','getJson')->name('get.json');
            Route::get('/show','show')->name('show');
+            Route::get('/test/invoice', 'testInvoice')->name('test-invoice');
             Route::post('/','store')->name('store');
            Route::patch('/update/{sale}','update')->name('update');
            Route::patch('/item/destroy/{product}/{sale}','destroyItem')->name('destroy.item');
            Route::patch('/destroy/{sale}/{inventoried}','destroySale')->name('destroy-sale');
+
+
         });
 
     /*

@@ -62,4 +62,8 @@ return  [
     'deSale' => 'CAN',
     'seqCode' => 'SEQ',
 
+
+
+    'msjInvoice' => 'Para devoluciones, traer su factura. Las piezas eléctricas no tienen garantía y la garantía no aplica si la pieza ha sido instalada fuera de nuestro taller.'
+
 ];

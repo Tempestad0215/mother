@@ -2,12 +2,14 @@
 
 namespace App\Helpers;
 
+use App\Http\Requests\StoreProductSaleRequest;
 use Carbon\Carbon;
 use Codedge\Fpdf\Fpdf\Fpdf;
+use Illuminate\Http\Request;
 use NumberFormatter;
+use phpDocumentor\Reflection\Types\Integer;
 
 /**
- * @property string $imagePath Ruta de la imagen
  * @property string $clientName Nombre del cliente
  * @property string $clientPhone Telefono del cliente
  * @property string $clientEmail Correo del cliente
@@ -15,23 +17,27 @@ use NumberFormatter;
  */
 
 
-class FacturaVentaB extends Fpdf
+class InvoiceSaleB extends Fpdf
 {
 
 
-    private string $imagePath;
-    public string $clientName;
-    public string $clientPhone;
-    public string $clientEmail;
-    public bool $exitsClient;
+//    public string $clientName;
+//    public string $clientPhone;
+//    public string $clientEmail;
+//    public bool $exitsClient;
+
+    public $h;
 
 
 
 
-    public  function __construct(int $h=200)
+    public  function __construct($h = 200)
     {
-        parent::__construct('P','mm',array(80, 200));
-        $this->imagePath = public_path('storage/images/logo.jpg');
+        parent::__construct('P','mm',array(80, $h));
+
+        //Inicializar la variable
+        $this->h = $h;
+
     }
 
     /**
@@ -41,7 +47,7 @@ class FacturaVentaB extends Fpdf
     {
         //Llave para formatear a utf8
         $formatKey = [
-            'phone' => utf8_decode('Teléfono'),
+            'phone' => mb_convert_encoding('Teléfono', 'ISO-8859-1', 'UTF-8'),
             ''
         ];
 
@@ -49,8 +55,8 @@ class FacturaVentaB extends Fpdf
         //colocar el tipo de fuente
         $this->SetFont('Arial','',9);
 
-        //colocar la imagem
-        $this->Image($this->imagePath,0,0, 25);
+//        //colocar la imagem
+//        $this->Image($this->imagePath,0,0, 25);
 
         /**
          * Informacion del negocio
@@ -117,7 +123,7 @@ class FacturaVentaB extends Fpdf
      */
     function Footer():void
     {
-        $thanks = utf8_decode('¡Gracias por su compra!');
+        $thanks = mb_convert_encoding('¡Gracias por su compra!', 'ISO-8859-1', 'UTF-8');
         // Go to 1.5 cm from bottom
         $this->SetY(-15);
         // Select Arial italic 8
@@ -128,18 +134,19 @@ class FacturaVentaB extends Fpdf
 
 
 
-    public function setSaleInfo(float $tax, float $subTotal, float $total, float $discount = 0, array $data = []):void
+    public function setSaleInfo(float $tax, float $subTotal, float $total, float $discount = null, array $data = []):void
     {
         for($i = 0; $i < count($data); $i++) {
 
+
             //Sacar los nombres
-            $name = $data[$i]['name'];
-            $code = $data[$i]['id'];
+            $name = $data[$i]['product_name'];
+            $code = $data[$i]['code'];
             $price = $data[$i]['price'];
-            $quantity = $data[$i]['quantity'];
+            $stock = $data[$i]['stock'];
 
             //Crear la descripcion del producto
-            $description = 'PRO00000'.$code."\n".$name."\n".$quantity.'*'.$price;
+            $description = $code."\n".$name."\n".$stock.'*'.$price;
 
             //Poner los datos en la lista
             $this->SetXY(2, $this->GetY()+4);
@@ -189,12 +196,59 @@ class FacturaVentaB extends Fpdf
 
 
 
-    private function formatMoney($amount, $currency = 'DOP', $locale = 'es_DO'):string {
+    private function formatMoney($amount):string {
         //Formatear los datos
-        $formatter = new NumberFormatter($locale, NumberFormatter::CURRENCY);
+        $formatter = new NumberFormatter('es_DO', NumberFormatter::CURRENCY);
 
         //DEvolver los datos
         return $formatter->format($amount);
+    }
+
+
+    /**
+     * @param StoreProductSaleRequest $request
+     * @return string
+     */
+    public function createPdf(StoreProductSaleRequest $request):string
+    {
+
+        //        Calcular la altura
+        $this->h = 200;
+
+        //Para aumentar el tamaño de la ventana
+        for($i = 0; $i < count($request->info_sale); $i++){
+            if(count($request->info_sale) > 2)
+            {
+                $this->h += 20;
+            }
+        }
+
+        //Crear la pagina del PDF
+        $this->AddPage();
+        // Poner el tipo de fuente
+        $this->SetFont('Courier', '', 8);
+
+        //Colocar los datos de ventas
+        $this->setSaleInfo($request->tax,
+            $request->sub_total,
+            $request->amount,
+            $request->discount,
+            $request->info_sale);
+
+
+        //Colocar el comentario
+        $this->SetX(2);
+        $this->Cell(30,5, 'Comentario',0,0,'L');
+        $this->SetX(22);
+        $this->Cell(30,5, ':',0,1,'L');
+        $this->SetX(5);
+        $this->MultiCell(70,3, $request->comment, 0, 'L');
+
+        //Poner el salto de pagina en no false
+        $this->SetAutoPageBreak(false);
+
+        // Codificar el pdf a base 64
+        return base64_encode($this->Output('S','', true));
     }
 
 }

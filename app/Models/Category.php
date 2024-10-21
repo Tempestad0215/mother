@@ -15,7 +15,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property string $name
  * @property null|string $description
  * @property boolean $status
- * @property Date $deleted_at
+ * @property string $deleted_at
 */
 class Category extends Model implements Auditable
 {
@@ -27,6 +27,7 @@ class Category extends Model implements Auditable
         'name',
         'description',
         'status',
+        'deleted_at',
     ];
 
 
