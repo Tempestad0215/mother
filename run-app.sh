@@ -1,6 +1,11 @@
 #!/bin/bash
 # Make sure this file has executable permissions, run `chmod +x run-app.sh`
 
+
+#permisos a la carpeta
+chmod -R 775 storage
+chmod -R 775 botstrap/cache
+
 # Build assets using NPM
 npm run build
 
