@@ -6,9 +6,6 @@
 chmod -R 775 storage
 chmod -R 775 bootstrap/cache
 
-#colocar el puerto
-php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
-
 # Build assets using NPM
 npm run build
 
