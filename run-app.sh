@@ -4,7 +4,7 @@
 
 #permisos a la carpeta
 chmod -R 775 storage
-chmod -R 775 botstrap/cache
+chmod -R 775 bootstrap/cache
 
 # Build assets using NPM
 npm run build
