@@ -19,5 +19,3 @@ php artisan view:cache
 # Run any database migrations
 php artisan migrate --force
 
-#servir la app
-php artisan serve --port 9000
