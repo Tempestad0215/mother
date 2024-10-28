@@ -35,16 +35,16 @@ class ProductHelper
         $search = $request->get('search');
 
         //Pasar los datos a la variable
-        return Product::where('status', true)
+        return Product::where('status', '=',true)
             ->where(function ($query) use ($search) {
                 $query->where('name', 'like',"%$search%")
                     ->orWhereNull('name');
             })->where(function (Builder $builder){
                 $builder->where(function (Builder $q){
-                    $q->where('type', ProductTypeEnum::PRODUCTO)
+                    $q->where('type', '=',ProductTypeEnum::PRODUCTO)
                         ->where('stock', '>', 0);
                 })->orWhere(function (Builder $p){
-                   $p->where('type', ProductTypeEnum::SERVICIO);
+                   $p->where('type', '=',ProductTypeEnum::SERVICIO);
                 });
             })
             ->latest()

@@ -34,13 +34,13 @@ class StoreClientsRequest extends FormRequest
 
         return [
             'name' => ['required','string','min:4','max:75'],
-            'phone' => ['string','max:20',Rule::requiredIf($isRequired)],
+            'phone' => ['nullable','max:20',Rule::requiredIf($isRequired)],
             'personal_id' => ['nullable','string','max:50',Rule::requiredIf($isRequired)],
             'email'=> ['nullable','string','email','max:150', Rule::unique('clients','email'),Rule::requiredIf($isRequired)],
             'address' => ['nullable','string','max:255',Rule::requiredIf($isRequired)],
             'type' => ['required', Rule::enum(ClientTypeEnum::class)],
             'status' => ['required','boolean'],
-            'document' =>  ['required', Rule::enum(ClientDocumentEnum::class)],
+            'document' =>  ['nullable', Rule::enum(ClientDocumentEnum::class)],
 
             //Validacion de los avance
             'advance_amount' => [Rule::requiredIf($isAdvanced),'nullable','numeric'],

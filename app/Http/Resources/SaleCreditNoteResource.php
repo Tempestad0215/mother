@@ -128,10 +128,6 @@ class SaleCreditNoteResource extends JsonResource
             "type" => $this->type,
             "close_table" => $this->close_table,
             "info_sale" => $info,
-            "comment" => [
-                "id" => $this->comment->id,
-                "content" => $this->comment->content,
-            ],
         ];
     }
 }

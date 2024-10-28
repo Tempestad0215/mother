@@ -8,6 +8,7 @@ use App\Enums\SaleTypeEnum;
 use App\Enums\SequenceTypeEnum;
 use App\Http\Requests\StoreProductSaleRequest;
 use App\Http\Resources\SaleInfoResource;
+use App\Invoices\SaleInvoiceA;
 use App\Models\DeletedSale;
 use App\Models\Product;
 use App\Models\ProTrans;
@@ -84,10 +85,14 @@ class SaleHelper
             //Actualizar los datos de la notas de credito
             CreditNoteHelper::updateAvailableFor($creditNotes, $request->get('amount'));
 
-            //Crear el comentario
-            $sale->comment()->create([
-                'content' => $request->get('comment'),
-            ]);
+            if ($request->get('comment') !== null)
+            {
+                //Crear el comentario
+                $sale->comment()->create([
+                    'content' => $request->get('comment'),
+                ]);
+            }
+
 
             //Recorrer la ventas para descontar los productos
             foreach ($request->get('info_sale') as $value)
@@ -117,16 +122,19 @@ class SaleHelper
 
             }
 
+
+            //Para mostar el PDF
             if ($sale->close_table)
             {
-                //crear la altura del pdf
-                $height = $this->getHeigtPdf($sale);
+
+                //Crear el PDF
+                $pdf = new SaleInvoiceA($sale);
+
+                // Crear Base 64
+                return base64_encode($pdf->setData());
 
                 //Instancia de la clase para imprimir
-                $pdf = new CustomSaleInvoice($sale->id, $height);
 
-                //Retornar los datos
-                return $pdf->getPDF();
             }
 
             //Devolver nulo
@@ -325,11 +333,15 @@ class SaleHelper
             $sale->received = $request->get('received');
             $sale->save();
 
-            //Actualizar el comentario
-            $sale->comment()->updateOrCreate(
-                ['commentable_id' => $sale->id],
-                ['content' => $request->get('comment')]
-            );
+            //Solo guardar el comentario si es diferente de nulo
+            if ($request->get('comment') !== null)
+            {
+                //Actualizar el comentario
+                $sale->comment()->updateOrCreate(
+                    ['commentable_id' => $sale->id],
+                    ['content' => $request->get('comment')]
+                );
+            }
 
             //Reducir las notas de creditos seleccionada
             CreditNoteHelper::updateAvailableFor($creditNotes, $request->get('amount'));
@@ -339,10 +351,12 @@ class SaleHelper
                 ['id' => $request->get('id')],
                 [
                 'product_id' => $item['product_id'],
+                'product_name' => $item['product_name'],
                 'sale_id' => $sale->id,
                 'stock' => $item['stock'],
                 'price' => $item['price'],
                 'tax' => $item['tax'],
+                'tax_rate' => $item['tax_rate'],
                 'amount' => $item['amount'],
                 'discount' => $item['discount'],
                 'discount_amount' => $item['discount_amount'],
@@ -352,17 +366,17 @@ class SaleHelper
         });
 
         //Obtener la ventas registada recien
-        $saleUpdated = sale::find($sale->id);
+        $saleUpdated = Sale::find($sale->id);
 
+
+        //Pra mostar el PDF
         if ($saleUpdated->close_table)
         {
-            //Tomar la altura
-            $height = $this->getHeigtPdf($saleUpdated);
 
             //Instancia de la clase para imprimir
-            $pdf = new CustomSaleInvoice($saleUpdated->id, $height);
+            $pdf = new SaleInvoiceA($saleUpdated);
             //Retornar los datos
-            return $pdf->getPDF();
+            return base64_encode($pdf->setData());
         }
 
         return  null;
@@ -400,19 +414,19 @@ class SaleHelper
      * @param Sale $sale
      * @return int
      */
-    private function getHeigtPdf(Sale $sale):int
-    {
-        //Tonmar los datos para verificar la altura
-        $checkHeight = $sale->infoSale->where('type',ProductTransType::VENTAS);
-        //Altura total
-        $heightTotal = 200;
-        //Verificar si la altura correcta
-        $checkHeight->map(callback: function ($item, $index) use (&$heightTotal) {
-            if ($index > 4) $heightTotal += 15;
-        });
-
-        return $heightTotal;
-    }
+//    private function getHeigtPdf(Sale $sale):int
+//    {
+//        //Tonmar los datos para verificar la altura
+//        $checkHeight = $sale->infoSale->where('type',ProductTransType::VENTAS);
+//        //Altura total
+//        $heightTotal = 200;
+//        //Verificar si la altura correcta
+//        $checkHeight->map(callback: function ($item, $index) use (&$heightTotal) {
+//            if ($index > 4) $heightTotal += 15;
+//        });
+//
+//        return $heightTotal;
+//    }
 
 
 

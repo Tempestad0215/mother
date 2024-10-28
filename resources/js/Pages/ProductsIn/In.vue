@@ -45,7 +45,7 @@ const form = useForm({
     cost: 0.00,
     price: 0.00,
     tax: 0.00,
-    tax_rate:"",
+    tax_rate: 0 ,
     product_no_tax: 0.00,
     product_tax: 0.00,
     tax_amount: 0.00,
@@ -103,9 +103,8 @@ onMounted(()=>{
         form.product_id = propsW.productEntrance.id;
         form.product_name = propsW.productEntrance.name;
         form.stock = propsW.productEntrance.stock;
-        form.cost = propsW.productEntrance.cost;
         form.price = propsW.productEntrance.price;
-        form.tax_rate= propsW.productEntrance.tax_rate / 100;
+        form.tax_rate =  propsW.productEntrance.tax_rate / 100;
 
         //Calcular los datos
         totalTax();

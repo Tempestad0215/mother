@@ -161,3 +161,23 @@ export const getSequenceType = (type:string):string =>
 }
 
 
+/**
+ * Generar colores para los charts
+ * @param numItems
+ */
+
+export const generateColors = (numItems:number) => {
+    const colors = [];
+
+    // Hue (tono) variará entre 0 y 360 para cubrir el espectro de colores.
+    // Saturación y luminosidad se mantienen constantes para armonía.
+    for (let i = 0; i < numItems; i++) {
+        const hue = Math.floor((i / numItems) * 360); // Distribuye los colores de manera armónica.
+        const saturation = 70; // Saturación constante para mantener la viveza.
+        const lightness = 50; // Luminosidad constante para colores equilibrados.
+
+        colors.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`); // Color armónico
+    }
+
+    return colors;
+};

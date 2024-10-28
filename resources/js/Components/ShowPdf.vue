@@ -6,13 +6,13 @@ import FloatBox from "@components/FloatBox.vue";
 Propiedades de la ventana
  */
 const propsW = defineProps<{
-    pdf?: string
+    pdf: string | null
 }>();
 
 /*
 Emitir eventos
  */
-const emit = defineEmits<{
+defineEmits<{
     (e: 'closeWindow'):void
 }>()
 
@@ -22,7 +22,6 @@ const emit = defineEmits<{
 Funcion computada
  */
 const createUrlPdf = computed(() => {
-
     //Verificar si existe el pdf
     if (propsW.pdf != '') return `data:application/pdf;base64,${propsW.pdf}`
 });
@@ -36,7 +35,9 @@ const createUrlPdf = computed(() => {
                 @close="$emit('closeWindow')">
                 <!--        Para ver los PDF-->
                 <iframe
-                    class="w-full mt-10"
+
+                    @wheel.passive="true"
+                    class="w-full h-600px overflow-hidden mt-10"
                     :src="createUrlPdf" >
                 </iframe>
             </FloatBox>

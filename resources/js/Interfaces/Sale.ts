@@ -1,19 +1,17 @@
 
 
 export interface infoSaleI {
+    transID?: number;
     amount: number;
     code: string;
-    name: string;
-    cost: number;
-    deleted_at: string | null;
+    deleted_at?: string | null;
     discount: number;
     discount_amount: number;
-    id: number;
     price: number;
     product_id: number;
     product_name: string;
-    sale_id: number;
-    status: boolean;
+    sale_id?: number;
+    status?: boolean;
     stock: number;
     tax: number;
     tax_rate: number;
@@ -44,7 +42,7 @@ export interface saleDataI {
     comment:  {
         id: number,
         content: string,
-    };
+    } | null;
     created_at: string;
     discount: number;
     id: number;

@@ -163,6 +163,7 @@ class Product extends Model implements Auditable
     }
 
 
+
     /**
      * @return void
      */

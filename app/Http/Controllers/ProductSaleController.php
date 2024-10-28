@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ClientHelper;
-use App\Helpers\CustomSaleInvoice;
 use App\Helpers\ProductHelper;
 use App\Helpers\SaleHelper;
 use App\Http\Requests\StoreProductSaleRequest;
@@ -46,15 +45,12 @@ class ProductSaleController extends Controller
             'clients' => $dataSale['clients'],
             'saleOpen' => $dataSale['saleOpen'],
             'invoiceType' => config('appconfig.invoiceType'),
+            'pdf' => null
         ]);
     }
 
 
-    /**
-     * Guardar los datos de la ventas
-     * @param StoreProductSaleRequest $request
-     * @return Response
-     */
+
     public function store(StoreProductSaleRequest $request)
     {
 
@@ -83,11 +79,7 @@ class ProductSaleController extends Controller
     }
 
 
-    /**
-     * @param StoreProductSaleRequest $request
-     * @param Sale $sale
-     * @return Response
-     */
+
     public function update(StoreProductSaleRequest $request, Sale $sale)
     {
 
@@ -103,13 +95,13 @@ class ProductSaleController extends Controller
         //Intancia de los datos
         $dataSale = $this->dataSale($request);
 
-        //DEvolver la vista y los datos
+
         return Inertia::render('ProductsSale/Create', [
             'products' => $dataSale['products'],
             'clients' => $dataSale['clients'],
             'saleOpen' => $dataSale['saleOpen'],
             'invoiceType' => config('appconfig.invoiceType'),
-            'pdf' => $pdf,
+            'pdf' => $pdf
         ]);
 
     }

@@ -44,9 +44,14 @@ class ClientHelper
             //Guardar los datos validado
            $client = Client::create($request->validated());
 
-           //Tomar el nombre del comentario
-           $commentHelper = new CommentHelper();
-           $commentHelper->updateOrInsert($client, $request->get('comment'));
+           if ($request->get('comment') !== null)
+           {
+               //Tomar el nombre del comentario
+               $commentHelper = new CommentHelper();
+               $commentHelper->updateOrInsert($client, $request->get('comment'));
+           }
+
+
 
            //si es avance
            if($type === 3)

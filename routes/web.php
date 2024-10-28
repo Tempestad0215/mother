@@ -3,6 +3,7 @@
 use App\Helpers\UserHelper;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductInController;
 use App\Http\Controllers\ReportController;
@@ -11,11 +12,11 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductSaleController;
 use App\Http\Controllers\SettingController;
+use App\Invoices\SaleInvoiceA;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
-use App\Models\Setting;
 use App\Http\Controllers\CreditNoteController;
 
 
@@ -193,6 +194,7 @@ Route::middleware([
 
     /*
      * Notas de credito o devoluciones
+     *
      */
     Route::controller(CreditNoteController::class)
         ->prefix('credit-note')
@@ -238,6 +240,28 @@ Route::middleware([
            Route::post('/daily','getDailyByDate')->name('getDailyByDate');
         });
 
+
+    /*
+     * Facturas del sistema
+     */
+    Route::controller(InvoiceController::class)
+        ->prefix('invoice')
+        ->name('invoice.')
+        ->group(function (){
+           Route::get('/getA/{sale}','getA')->name('getA');
+        });
+
+
+
+    Route::get('/test', function (){
+        $sale = \App\Models\Sale::find(2);
+
+        $pdf = new SaleInvoiceA($sale);
+
+        $pdf->setData();
+
+        $pdf->Output();
+    });
 
 
 });

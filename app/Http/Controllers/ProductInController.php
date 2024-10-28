@@ -248,7 +248,6 @@ class ProductInController extends Controller
 
         //Devolver los datos
         return Product::where('status', true)
-            ->where('type', 'producto')
             ->where('name','LIKE','%'.$search.'%')
             ->latest()
             ->simplePaginate();

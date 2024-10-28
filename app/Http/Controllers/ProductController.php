@@ -108,7 +108,9 @@ class ProductController extends Controller
         $data = Product::where('status', true)
             ->where('name','LIKE', '%'. $search.'%')
             ->latest()
-            ->simplePaginate();
+            ->simplePaginate(10);
+
+        //Devolver la vista con los datos
 
         return Inertia::render('Products/Show',[
             'products' => $data

@@ -65,6 +65,7 @@ class Sale extends Model implements Auditable
         'sub_total',
         'amount',
         'type',
+        'type_payment',
         'status',
         'close_table',
         'credit_notes',
@@ -103,10 +104,12 @@ class Sale extends Model implements Auditable
     }
 
 
+
     public function credit_note():HasMany
     {
         return $this->hasMany(CreditNote::class);
     }
+
 
 
     //Relacion para los datos de las ventas

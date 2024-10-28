@@ -94,7 +94,8 @@ const form = useForm({
     company_type: "",
     logo:"",
     cost: true,
-    sequence: true
+    sequence: true,
+    general: ""
 });
 
 
@@ -245,7 +246,7 @@ const removeUnit = (index:number) => {
                 <!--Muestra del logo-->
                 <div class="">
                     <img
-                        class="rounded-full mx-auto"
+                        class="rounded-2xl mx-auto"
                         :src="`${url}/storage/images/${imgName}`"
                         alt="logo"
                         width="150">
@@ -555,6 +556,9 @@ const removeUnit = (index:number) => {
                     </div>
 
                 </fieldset>
+                <div >
+                    <InputError :message="form.errors.general"/>
+                </div>
 
 
                 <!--Botones-->

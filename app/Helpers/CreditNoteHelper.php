@@ -59,7 +59,6 @@ class CreditNoteHelper
                 'n_available' => $request->get('amount'),
             ]);
 
-
             //Crear el comentario de la devolucion
             $creditNote->comment()->create(
                 ['content' => $request->get('comment')]

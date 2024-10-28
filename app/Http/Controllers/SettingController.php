@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Helpers\SettingHelper;
 use App\Http\Requests\StoreSettingRequest;
+use App\Models\Sale;
 use App\Models\Setting;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -29,6 +31,18 @@ class SettingController extends Controller
      */
     public function store(StoreSettingRequest $request)
     {
+        //Verificar si existe venta con la cuenta abierta
+        $sale = Sale::where('close_table', '=', true)->exists();
+
+        //Verificar si existe para devolver el mensaje
+        if ($sale && $request->get('sequence'))
+        {
+            //Enviar mensaje de error, hasta cerrar las cuentas no se puede cambiar la sequencia
+            throw ValidationException::withMessages([
+                'general' => 'Por Favor, Antes De Cambiar El Modo (Manejar Comprobante) Debes Cerrar Todas Las Cuentas.'
+            ]);
+        }
+
         //Crear la instancia de los datos
         $settingHelper = new SettingHelper();
 

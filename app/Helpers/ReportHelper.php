@@ -2,9 +2,12 @@
 
 namespace App\Helpers;
 
+use App\Enums\ProductTransType;
+use App\Enums\ProductTypeEnum;
 use App\Models\Product;
 use App\Models\Sale;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use LaravelIdea\Helper\App\Models\_IH_Product_C;
 
@@ -15,7 +18,7 @@ class ReportHelper
      * @param Request $request
      * @return array
      */
-    public function getDayly(Request $request):array
+    public function getDaily(Request $request):array
     {
 
         //Tomar los datos formateado
@@ -43,7 +46,7 @@ class ReportHelper
      * Ventas del dia actual
      * @return array
      */
-    public function getDay()
+    public function getDay(): array
     {
         //Busca las ventas del dia
         $sale = Sale::where('status', true)
@@ -64,19 +67,71 @@ class ReportHelper
 
 
     /**
-     * @return Product[]|_IH_Product_C
+     * @return Product[]
      */
-    public function stockLow()
+    public function stockLow(): array
     {
+        //Tomar los productos menos a 10
         $products = Product::where('status', true)
             ->where('stock','<', 10)
             ->get();
 
-
+        //Vista con los datos
         return [
             'products' => $products,
             'amount' => $products->sum('price'),
         ];
 
+    }
+
+
+    /**
+     * Productos mas vendido
+     * @return array
+     */
+    public static function productMostSold():array
+    {
+        //Tomar los datos con mas stock vendido
+        $data = Product::whereHas('trans', function (Builder $q){
+            $q->where('type','=', ProductTransType::VENTAS )
+            ->whereBetween('created_at', [Carbon::today()->subDays(30), Carbon::today()]);
+        })->withSum('trans', 'stock')
+        ->orderBy('id', 'desc')
+        ->limit(10)
+        ->get();
+
+
+        //Separar los datos
+        $dataClean = [];
+
+        //Tomar los datos
+        $data->map(function (Product $item) use (&$dataClean) {
+            $dataClean[] = [
+                'id' => $item->id,
+                'code' => $item->code,
+                'name' => $item->name,
+                'totalSaled' => $item->trans->sum('stock'),
+            ];
+
+        });
+
+        //DEvolver los datos
+        return $dataClean;
+
+    }
+
+
+    /**
+     * Obtner los productos bajo de stock
+     * @return Product[]|_IH_Product_C
+     */
+    public static function productStockLow(): _IH_Product_C|array
+    {
+        //Tomar los productos con stock bajo
+        return Product::where('stock','<',11)
+            ->where('type','=',ProductTypeEnum::PRODUCTO)
+            ->orderBy('stock')
+            ->limit(10)
+            ->get(['id','code','name','stock']);
     }
 }

@@ -317,9 +317,9 @@ const search = () => {
                     v-model="formSearch.search"/>
             </form>
             <table
-                class="w-full table-auto  rounded-md">
+                class="w-full table-auto  rounded-md mt-5">
                 <thead class="border-b-2 border-gray-400">
-                <tr>
+                <tr class="border-b-2 border-gray-800">
                     <th>ID</th>
                     <th>Nombre</th>
                     <th>Email</th>

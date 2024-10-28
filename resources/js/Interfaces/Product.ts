@@ -27,7 +27,6 @@ export interface productDataI {
     unit: string;
     stock: number;
     reserved: number;
-    cost: number;
     price: number;
     discount: number;
     tax_rate: number;
@@ -36,8 +35,26 @@ export interface productDataI {
     product_no_tax: number;
     category_id: number;
     supplier_id: number;
-    updated_at: string
-    created_at: string
+    updated_at?: string
+    created_at?: string
+}
+
+
+export interface proTransSaleI{
+    amount: number;
+    code: string;
+    discount: number;
+    discount_amount: number;
+    id: number;
+    price: number;
+    product_id: number;
+    product_name: string;
+    sale_id: number;
+    status: number;
+    stock: number;
+    tax: number;
+    tax_rate: number;
+    type: string;
 }
 
 // export interface productDataFullI {

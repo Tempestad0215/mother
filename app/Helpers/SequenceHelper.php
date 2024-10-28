@@ -59,6 +59,7 @@ class SequenceHelper
     }
 
     /**
+     * Obtener los RNCS
      * @return Collection
      */
     public function getAll():Collection
@@ -69,6 +70,7 @@ class SequenceHelper
 
 
     /**
+     * Conseguir el rnc
      * @param SequenceTypeEnum $type
      * @return JsonResponse
      */
@@ -101,7 +103,7 @@ class SequenceHelper
         $matches = "";
 
         //Obtener la ruta del arhivo
-        $path = public_path("storage/rncs/DGII_RNC.TXT");
+        $path = public_path("storage/rncs/DGII_RNC.txt");
 
         //Abrir el archivo
         $file = new SplFileObject($path, 'r');

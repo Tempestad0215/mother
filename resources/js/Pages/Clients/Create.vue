@@ -174,6 +174,9 @@ const getRnc = async () => {
             icon: "info"
         });
 
+        //Cambiar el nombre a razon social
+        form.name = infoParse.razon_social;
+
     }
     //Limpiar el error luego de 5 segundo
     setTimeout(() => {
@@ -277,6 +280,7 @@ const getRnc = async () => {
                             for="name"
                             value="Nombre Completo *"/>
                         <TextInput
+                            required
                             id="name"
                             class=" w-full"
                             maxLength="75"
@@ -292,16 +296,24 @@ const getRnc = async () => {
                         <InputLabel
                             for="personal_id"
                             value="Cédula / Pasaporte /RNC"/>
-                        <TextInput
-                            id="personal_id"
-                            @blur="getRnc"
-                            class=" w-full "
-                            :class="[classRnc]"
-                            maxLength="15"
-                            :required="isMandatory"
-                            v-model="form.personal_id"
-                            placeholder="12345678910"
-                            type="text"/>
+                        <div class="relative">
+                            <TextInput
+                                id="personal_id"
+                                class=" w-full pr-10 "
+                                :class="[classRnc]"
+                                maxLength="15"
+                                :required="isMandatory"
+                                v-model="form.personal_id"
+                                placeholder="12345678910"
+                                type="text"/>
+<!--                            Boton para buscar los rnc-->
+                            <i
+                                @click="getRnc()"
+                                title="Buscar RNC"
+                                class=" absolute right-0 p-2 tetx-2xl icon-efect inset-y-0 flex items-center fa-solid fa-magnifying-glass"></i>
+
+                        </div>
+
 
                         <!-- Error -->
                         <InputError :message="form.errors.personal_id" />

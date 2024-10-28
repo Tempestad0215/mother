@@ -9,6 +9,7 @@ use App\Rules\CheckStock;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Route;
 
 class  StoreProductSaleRequest extends FormRequest
 {
@@ -33,8 +34,6 @@ class  StoreProductSaleRequest extends FormRequest
 
         //Obtener el tipo de venta
         $type = $this->get('type');
-
-
 
         //Tomar los datos de la info_sale
         $info_sale = $this->input('info_sale');
@@ -69,7 +68,7 @@ class  StoreProductSaleRequest extends FormRequest
             'credit_notes' => ['nullable','array'],
             'credit_notes.*.id' => ['nullable','numeric'],
             'credit_notes_amount' => ['nullable','numeric'],
-            'comment' => ['required','string','min:3','max:255'],
+            'comment' => [Rule::requiredIf(Route::is('credit-note.store')),'max:255'],
             'close_table' => ['required','boolean'],
         ];
     }

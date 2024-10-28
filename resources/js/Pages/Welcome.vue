@@ -1,7 +1,6 @@
 <script setup lang="ts" >
 import AppLayout from "@layout/AppLayout.vue";
 
-
 </script>
 
 <template>
@@ -12,7 +11,7 @@ import AppLayout from "@layout/AppLayout.vue";
         </template>
 
         <div>
-            <div class="h-screen">
+            <div class="">
 
             </div>
 

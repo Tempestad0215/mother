@@ -177,6 +177,7 @@ const detroy = (id:Number) => {
             </tr>
             </tbody>
         </table>
+
         <Pagination
             :current-page="propsW.products.current_page"
             :total-page="propsW.products.to"

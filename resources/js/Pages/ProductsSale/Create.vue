@@ -6,7 +6,7 @@ import TextInput from "@components/TextInput.vue";
 import FloatBox from "@components/FloatBox.vue";
 import FloatShowPro from "@/Pages/Products/FloatShowPro.vue";
 import {computed, onMounted, onUpdated, reactive, Ref, ref} from "vue";
-import {productDataI, productI, productSaleI} from "@/Interfaces/Product";
+import {productDataI, productI} from "@/Interfaces/Product";
 import {getMoney, getRncHelper, getSequenceType} from "@/Global/Helpers";
 import LinkHeader from "@components/LinkHeader.vue";
 import Swal from "sweetalert2";
@@ -33,7 +33,7 @@ const page = usePage();
 const propsW = defineProps<{
     products: productI,
     clients: clientI,
-    pdf? : string,
+    pdf: string | null,
     saleOpen : saleDataPaginationI,
     invoiceType: invoiceTypeI[],
     saleInfo?: saleDataI,
@@ -55,9 +55,7 @@ onMounted( () => {
         form.type = "devolucion";
 
         //Recorrer los datos
-        form.info_sale.forEach((item, index) => {
-            totalAmount(index);
-        });
+        form.info_sale.forEach((_,index )=> totalAmount(index));
 
         //calcular totales
         totalSale();
@@ -117,8 +115,7 @@ const typePaymentData = reactive([
     },
 ]);
 //DDATOS DEL dpf
-const pdfString:Ref<string | null> = ref(propsW.pdf);
-const showPdf:Ref<boolean> = ref(false);
+const pdfString:Ref<string | null> = ref(null);
 
 
 /*
@@ -148,6 +145,7 @@ const form = useForm({
     type: "ventas",
     type_payment:"contado",
     update: false,
+    sequence:"",
     sequence_type: "",
     invoice_type: "B02",
     credit_notes_value: "",
@@ -234,9 +232,9 @@ const returnedBlur = ():boolean => {
  */
 const returned = ():void => {
 
-    let received:number = parseFloat(form.received ?? 0);
-    let amount:number = parseFloat(form.amount ?? 0);
-    let creditAmount:number = parseFloat(form.credit_notes_amount ?? 0);
+    let received:number = form.received ;
+    let amount:number = form.amount;
+    let creditAmount:number = form.credit_notes_amount;
     //Restar la cantidad
     form.returned = creditAmount + received - amount;
 
@@ -280,10 +278,9 @@ const checkInvoiceType = async ()=>{
  * Obtener los datos de productos
  * @param item
  */
-const getData = (item:productSaleI) => {
-
+const getData = (item:productDataI) => {
     //Obtener los datos de productos
-    let info = form.info_sale.find((el) => el.product_id === item.id);
+    let info:infoSaleI | undefined = form.info_sale.find((el) => el.product_id === item.id);
 
     // Verificar si el producto exite
     if (info?.product_id  === item.id)
@@ -295,18 +292,17 @@ const getData = (item:productSaleI) => {
 
        //Pasar los datos al formulario
        form.info_sale.push({
-            product_id: item.id,
-            code: item.code,
-            product_name: item.name,
-            stock: 1,
-            cost: item.cost,
-            price: item.price,
-            amount: 0.00,
-            type: item.type,
-            discount: item.discount,
-            discount_amount: 0.00,
-            tax_rate: item.tax_rate / 100,
-            tax: item.tax,
+           amount: 0,
+           code: item.code,
+           discount: item.discount,
+           discount_amount: 0,
+           price: item.price,
+           product_id: item.id,
+           product_name: item.name,
+           stock: 1,
+           tax: item.tax,
+           tax_rate: item.tax_rate / 100,
+           type: item.type
        });
 
        //Cerrar la ventana
@@ -359,12 +355,12 @@ const deleteItem = async (name:string , index:number) => {
                 form.transform((data) => ({
                     ...data,
                     info: info,
-                    info_new: data.info,
+                    info_new: data.info_sale,
                 })).patch(route('sale.destroy.item',{product: info.product_id, sale: form.id},{
                     preserveScroll: true,
                     preserveState: true,
                     onSuccess: () => {
-                        successHttp(`Item : ${info.name} Eliminado Correctamente` );
+                        successHttp(`Item : ${info.product_name} Eliminado Correctamente` );
                     }
                 }));
             }
@@ -455,7 +451,7 @@ const sendData = ():void => {
         //Verificar si no hay problema con nada
         if (!returnedBlur() && form.close_table)
         {
-            return false;
+
         }else{
             //si es para actualizar
             if (form.update)
@@ -464,10 +460,16 @@ const sendData = ():void => {
                 form.patch(route('sale.update',{sale: form.id}),{
                     preserveState: true,
                     preserveScroll: true,
-                    onSuccess:() =>{
+                    onSuccess:(data) =>{
                         successHttp('Documento Actualizado Correctamente');
+                        //Verificar si fue cerrado la mesa
+
+                        console.log(data);
                         form.reset();
                         showReturn.value = false;
+
+
+
                     },
                     onError:()=>{
                         setTimeout(()=>{
@@ -479,7 +481,8 @@ const sendData = ():void => {
 
                 //Guardar los datos por primera vez
                 form.post(route('sale.store'),{
-                    onSuccess:()=>{
+                    onSuccess:(data)=>{
+                        console.log(data);
                         successHttp('Venta Cerrada Correctamente');
                         form.reset();
                         showReturn.value = false;
@@ -507,19 +510,19 @@ const getBycode = () => {
     if(form.code_value.length > 6)
     {
         //realizar la busqueda en automatico
-        axios.get(route('product.get.code', {search: form.code_product}))
+        axios.get(route('product.get.code', {search: form.code_value}))
             .then((res) =>{
                 //Formatear los datos
                 const product:productDataI = res.data;
                 //Pasar los datos al metodo
                 getData(product);
                 //Limpiar campo y errores en caso de tenerlo
-                form.reset('code_product');
-                form.clearErrors('code_product');
+                form.reset('code_value');
+                form.clearErrors('code_value');
             })
             .catch(()=>{
                 //Mensjae de que no existe en la base de datos
-                form.setError('code_product','Este Producto no existe en la Base de Datos');
+                form.setError('code_value','Este Producto no existe en la Base de Datos');
             })
     }
 }
@@ -535,20 +538,21 @@ const getSaleOpen = (item:saleDataI) => {
     item.info_sale.map((el, index) => {
         //colocar la informacion en la lista
         form.info_sale.push({
-            id: el.product_id,
+            transID: el.transID,
             code: el.code,
             product_id: el.product_id,
             product_name: el.product_name,
             price: el.price,
             stock: el.stock,
             amount: el.amount,
-            tax: el.tax,
-            type: el.type,
             discount: el.discount,
             discount_amount: el.discount_amount,
+            tax: el.tax,
+            type: el.type,
             tax_rate: el.tax_rate,
+            status: el.status
         });
-
+        //Calcular el total
         totalAmount(index);
 
     });
@@ -561,8 +565,8 @@ const getSaleOpen = (item:saleDataI) => {
     form.client_id = item.client_id;
     form.client_name = item.client_name;
     form.close_table = item.close_table;
-    form.comment = item.comment.content ?? "";
-    form.comment_id = item.comment.id ?? 0;
+    form.comment = item.comment ? item.comment.content : "";
+    form.comment_id = item.comment ? item.comment.id : 0;
 
     //Cerra la ventana
     showSaleOpen.value = false;
@@ -845,7 +849,7 @@ const getRncClient = async () => {
                                         v-model="form.code_value"
                                     />
 
-                                    <InputError :message="form.errors.code_product"/>
+                                    <InputError :message="form.errors.code_value"/>
                                 </form>
                                 <!-- Buscar los datos necesario -->
                                 <div
@@ -936,9 +940,10 @@ const getRncClient = async () => {
                         </div>
 
 <!--                        Listado de los productos-->
-                        <div>
+                        <div
+                            class="max-h-[400px] border-t-2 mt-3 border-black overflow-y-auto shadow-lg p-3 rounded-md">
                             <table
-                                class="w-full table-auto mt-4">
+                                class="w-full  table-auto mt-4">
                                 <thead class="">
                                     <tr
                                         class="text-left border-b-2 border-gray-400">
@@ -1002,24 +1007,27 @@ const getRncClient = async () => {
                                             v-if="form.info_sale.length > 1"
                                             class="text-xl w-[50px]">
                                             <i
-                                                @click="deleteItem(item.name, index)"
+                                                @click="deleteItem(item.product_name, index)"
                                                 class=" icon-efect text-red-500 fa-solid fa-circle-xmark"></i>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
 
-<!--                            Mensaje generales-->
+                        </div>
+<!--                        Dato de la ventas-->
+                        <div>
+                            <!--                            Mensaje generales-->
                             <div>
                                 <InputError :message="form.errors.general"/>
                             </div>
 
 
                             <div>
-                                <InputError :message="form.errors.info"/>
+                                <InputError :message="form.errors.info_sale"/>
                             </div>
 
-<!--                            Comentario de la venta-->
+                            <!--                            Comentario de la venta-->
                             <div class="grid grid-cols-4 items-center gap-4 mt-5">
                                 <div class=" col-span-3">
                                     <fieldset class=" relative max-w-[400px]">
@@ -1075,13 +1083,14 @@ const getRncClient = async () => {
                                     </div>
                                 </div>
                             </div>
-
                         </div>
 
-<!--                        Devuelta y demas detos-->
-                        <div class=" mt-5 w-64 float-right">
 
-                            <div class="mt-5">
+
+<!--                        Devuelta y demas detos-->
+                        <div class=" mt-2 w-64 float-right">
+
+                            <div class="">
 <!--                                <SecondaryButton-->
 <!--                                    type="button">-->
 <!--                                    Limpiar-->

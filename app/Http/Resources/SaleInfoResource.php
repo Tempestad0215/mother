@@ -17,6 +17,7 @@ use Illuminate\Support\Carbon;
  * @property string $code
  * @property string $client_name
  * @property int $client_id
+ * @property float $discount
  * @property float $discount_amount
  * @property float $tax
  * @property float $sub_total
@@ -79,10 +80,10 @@ class SaleInfoResource extends JsonResource
             'type' => $this->type,
             'close_table' => $this->close_table,
             'info_sale' => $infoFinal,
-            'comment' => [
+            'comment' => $this->comment ? [
                 'id' => $this->comment->id,
                 'content' => $this->comment->content
-            ]
+            ]: null,
         ];
     }
 }

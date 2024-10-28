@@ -28,6 +28,7 @@ class InHelper
             ->latest()
             ->simplePaginate(15);
 
+
         //Devolver los datos formateado
         return ProductTransResource::collection($data)->response()->getData(true);
 
