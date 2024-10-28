@@ -1,11 +1,19 @@
 #!/bin/bash
 # Make sure this file has executable permissions, run `chmod +x run-app.sh`
 
+
+#permisos a la carpeta
+chmod -R 775 storage
+chmod -R 775 bootstrap/cache
+
 # Build assets using NPM
 npm run build
 
 # Clear cache
 php artisan optimize:clear
+
+#Crear el link
+php artisan storage:link
 
 # Cache the various components of the Laravel application
 php artisan config:cache
@@ -15,3 +23,4 @@ php artisan view:cache
 
 # Run any database migrations
 php artisan migrate --force
+
