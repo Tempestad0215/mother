@@ -17,15 +17,6 @@ defineEmits<{
 }>();
 
 
-window.addEventListener('click', (e) =>{
-    console.log(e);
-})
-
-window.addEventListener('beforeprint', (e) =>{
-    console.log('before print',e);
-})
-
-
 /*
 Funcion computada
  */
