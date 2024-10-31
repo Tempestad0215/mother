@@ -12,6 +12,7 @@ import Swal from "sweetalert2";
 import {successHttp} from "@/Global/Alert";
 import FormSearch from "@components/FormSearch.vue";
 import Pagination from "@components/Pagination.vue";
+import {paginationJoin} from "@/Global/Helpers";
 
 /*
 Propiedad de la ventana
@@ -40,8 +41,9 @@ const form = useForm({
 Formulario de busqueda
  */
 const formSearch = useForm({
-    search:""
-})
+    search:"",
+    perPage: 15
+});
 
 
 
@@ -88,27 +90,14 @@ const submit = () => {
 // editar los datos
 const edit = (item:userI) => {
 
-    //Para cambiar la version
-    let role:number = 1;
+    console.log(item);
 
-    //Formatear los datos
-    switch (item.role) {
-        case 'USER':
-            role = 1;
-            break;
-        case 'SUPERVISOR':
-            role = 2;
-            break;
-        case 'ADMINFULL':
-            role = 3;
-            break;
-    }
 
     //Pasar los datos al formulario
     form.id = item.id;
     form.name = item.name;
     form.email = item.email;
-    form.role = role;
+    form.role = item.role;
 
     //Poner el formulario en actualizar
     form.update = true;
@@ -185,34 +174,37 @@ const search = () => {
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>
 
-
-            <fieldset
+            <!--        Preguntar si desea cambiar la password-->
+            <div
                 v-if="form.update"
-                class="col-span-full flex">
-                <legend>
-                    Modificar Contraseña
-                </legend>
-                <div>
-                    <input
-                        v-model="form.modify_password"
-                        class=""
-                        type="radio"
-                        :value="false"
-                        name="no"
-                        id="no">
-                    <InputLabel
-                         class="inline" for="no" value="No"/>
-                </div>
-                <div class="ml-10">
-                    <input
-                        v-model="form.modify_password"
-                        type="radio"
-                        :value="true"
-                        name="si"
-                        id="si">
-                    <InputLabel class="inline" for="si" value="Si"/>
-                </div>
-            </fieldset>
+                class="flex-1">
+                <InputLabel for="modifyPassoword" value="Modificar Contraseña" />
+                <select
+                    name="modifyPassowrd"
+                    v-model="form.modify_password"
+                    class=" w-full rounded-md border-gray-300">
+                    <option :value="false" >NO</option>
+                    <option :value="true" >SI</option>
+                </select>
+
+            </div>
+
+            <!-- Rol de usuarios -->
+            <div class="flex-1">
+                <InputLabel for="role" value="Rol *"  />
+                <select
+                    v-model="form.role"
+                    class=" w-full /4 rounded-md border-gray-300">
+                    <option value="user">USER</option>
+                    <option value="supervisor">SUPERVISOR</option>
+                    <option value="admin">ADMIN</option>
+                </select>
+
+                <!-- Mensaje de error -->
+                <InputError class="mt-2" :message="form.errors.role" />
+            </div>
+
+
 
 
             <div
@@ -245,56 +237,8 @@ const search = () => {
 
 
 
-            <!-- Rol de usuarios -->
-            <div class=" col-span-full text-center ">
-                <InputLabel for="role" value="Rol *"  />
-
-                <div class="  space-x-5">
-                    <!-- Usuarios -->
-                    <div class="inline">
-                        <input
-                            id="user"
-                            name="user"
-                            value="user"
-                            v-model="form.role"
-                            type="radio">
-                        <label for="user">
-                            Usuario
-                        </label>
-                    </div>
 
 
-                    <!-- Admin -->
-                    <div class="inline">
-                        <input
-                            id="supervisor"
-                            name="supervisor"
-                            value="supervisor"
-                            v-model="form.role"
-                            type="radio">
-                        <label for="supervisor">
-                            Supervisor
-                        </label>
-                    </div>
-
-
-                    <!-- Adminfill -->
-                    <div class="inline">
-                        <input
-                            id="admin"
-                            name="admin"
-                            value="admin"
-                            v-model="form.role"
-                            type="radio">
-                        <label for="admin">
-                            Administrador
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Mensaje de error -->
-                <InputError class="mt-2" :message="form.errors.role" />
-            </div>
 
 
             <div
@@ -310,16 +254,21 @@ const search = () => {
         </form>
 
 
-        <div class="mt-5 bg-gray-200 p-5 rounded-md">
+        <div class=" bg-gray-200 px-5 rounded-md">
             <form
+                class=""
                 @submit.prevent="search">
                 <FormSearch
+                    holder="Buscar"
+                    v-model:select-value="formSearch.perPage"
                     v-model="formSearch.search"/>
             </form>
             <table
                 class="w-full table-auto  rounded-md mt-5">
-                <thead class="border-b-2 border-gray-400">
-                <tr class="border-b-2 border-gray-800">
+                <thead
+                    class=" sticky top-0">
+                <tr
+                    class="">
                     <th>ID</th>
                     <th>Nombre</th>
                     <th>Email</th>
@@ -329,12 +278,12 @@ const search = () => {
                 </thead>
                 <tbody>
                 <tr
-                    class="odd:bg-gray-400"
+                    class=""
                     v-for="(item, index) in users.data" :key="index">
                     <td>{{item.id}}</td>
                     <td>{{item.name}}</td>
                     <td>{{item.email}}</td>
-                    <td>{{item.role}}</td>
+                    <td class="uppercase">{{item.role}}</td>
                     <td class="space-x-4">
                         <i
                             @click="edit(item)"
@@ -350,8 +299,12 @@ const search = () => {
 
             <Pagination
                 :total-page="users.meta.to"
-                :prev="users.links.prev"
-                :next="users.links.next"
+                :prev="users.links.prev
+                    ? paginationJoin(users.links.prev, formSearch.search, formSearch.perPage)
+                    : ''"
+                :next="users.links.next
+                    ? paginationJoin(users.links.next, formSearch.search, formSearch.perPage)
+                    : ''"
                 :current-page="users.meta.current_page "/>
         </div>
 

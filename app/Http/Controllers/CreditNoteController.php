@@ -74,6 +74,7 @@ class CreditNoteController extends Controller
                 'invoiceType' => config('appconfig.invoiceType'),
                 'saleInfo' => $saleInfo,
                 'refund' => true,
+                'pdf' => ''
             ]);
         }
     }

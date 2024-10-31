@@ -50,7 +50,10 @@ class ProductSaleController extends Controller
     }
 
 
-
+    /**
+     * @param StoreProductSaleRequest $request
+     * @return Response
+     */
     public function store(StoreProductSaleRequest $request)
     {
 
@@ -79,7 +82,11 @@ class ProductSaleController extends Controller
     }
 
 
-
+    /**
+     * @param StoreProductSaleRequest $request
+     * @param Sale $sale
+     * @return Response
+     */
     public function update(StoreProductSaleRequest $request, Sale $sale)
     {
 
@@ -95,7 +102,7 @@ class ProductSaleController extends Controller
         //Intancia de los datos
         $dataSale = $this->dataSale($request);
 
-
+        //REtornar la pagina con el DPF
         return Inertia::render('ProductsSale/Create', [
             'products' => $dataSale['products'],
             'clients' => $dataSale['clients'],

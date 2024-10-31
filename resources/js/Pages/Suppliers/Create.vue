@@ -11,13 +11,20 @@ import FormSearch from "@components/FormSearch.vue";
 import {supplierI, supplierPaginationI} from "@/Interfaces/Supplier";
 import Pagination from "@components/Pagination.vue";
 import Swal from "sweetalert2";
+import {paginationJoin} from "@/Global/Helpers";
 
+
+/*
+Propiedades de la ventana
+ */
 const props = defineProps<{
     suppliers: supplierPaginationI
 }>();
 
 
-
+/*
+Formulario
+ */
 const form = useForm({
     id:0,
     contact:"",
@@ -31,12 +38,14 @@ const form = useForm({
  * Formaulario de busqueda
  */
 const formSearch = useForm({
-    search:""
+    search:"",
+    perPage: 15
 });
 
 
-
-// funciones
+/**
+ *Enviar los datos
+ */
 const submit = () => {
 
     // Si es actualziar
@@ -60,6 +69,10 @@ const submit = () => {
 
 }
 
+/**
+ *
+ * @param item
+ */
 const edit = (item:supplierI) => {
     form.update = true;
     form.id = item.id;
@@ -69,6 +82,10 @@ const edit = (item:supplierI) => {
     form.email = item.email ? item.email : "";
 }
 
+/**
+ *
+ * @param item
+ */
 const destroy = (item:supplierI) => {
     form.id = item.id;
 
@@ -92,7 +109,9 @@ const destroy = (item:supplierI) => {
     });
 }
 
-
+/**
+ *Buscar los datos
+ */
 const search = () => {
     formSearch.get('',{
         preserveScroll: true,
@@ -228,11 +247,13 @@ const search = () => {
             </form>
 
 
-            <div class="bg-gray-200 mt-5 rounded-md p-5">
+            <div class="bg-gray-200 rounded-md px-5">
                 <div class="flex justify-between items-center">
                     <form
                         @submit.prevent="search">
                         <FormSearch
+                            v-model:select-value="formSearch.perPage"
+                            holder="Buscar"
                             v-model="formSearch.search"
                         />
                     </form>
@@ -243,8 +264,10 @@ const search = () => {
 
 
 
-                <table class=" mt-5 text-left w-full table-auto">
-                    <thead class="border-b-2 border-gray-800">
+                <table
+                    class=" mt-5 text-left w-full table-auto ">
+                    <thead
+                        class="">
                         <tr>
                             <th>Code</th>
                             <th>Empresa</th>
@@ -256,14 +279,14 @@ const search = () => {
                     </thead>
                     <tbody>
                         <tr
-                            class="odd:bg-gray-400"
+                            class=""
                             v-for="(item,index) in props.suppliers?.data" :key="index">
                             <td>{{item.code}}</td>
                             <td>{{item.company_name}}</td>
                             <td>{{item.contact ? item.contact : "N/A" }}</td>
                             <td>{{item.phone ? item.phone : 'N/A'}}</td>
                             <td>{{item.email ? item.email : 'N/A'}}</td>
-                            <td class="w-16 space-x-3">
+                            <td class=" space-x-3">
                                 <i
                                     @click="edit(item)"
                                     title="Editar"
@@ -276,9 +299,15 @@ const search = () => {
                         </tr>
                     </tbody>
                 </table>
+
+<!--                PAginacion-->
                 <Pagination
-                    :next="props.suppliers?.next_page_url"
-                    :prev="props.suppliers?.prev_page_url"
+                    :next=" props.suppliers.next_page_url
+                        ? paginationJoin(props.suppliers.next_page_url, formSearch.search, formSearch.perPage)
+                        : ''"
+                    :prev=" props.suppliers.prev_page_url
+                        ? paginationJoin(props.suppliers.prev_page_url, formSearch.search, formSearch.perPage)
+                        : ''"
                     :total-page="props.suppliers?.to"
                     :current-page="props.suppliers?.current_page"
                     />

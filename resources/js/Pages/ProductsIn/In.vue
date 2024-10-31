@@ -21,6 +21,9 @@ import LinkHeader from '@components/LinkHeader.vue';
  */
 const {props} = usePage();
 
+
+
+
 /**
  * Propiedades de la ventana
  */
@@ -31,6 +34,9 @@ const propsW = defineProps<{
     productEntrance?: productDataI,
     update? : boolean
 }>();
+
+
+
 
 /**
  * Formulario para enviar los daots
@@ -77,7 +83,8 @@ Computada
  */
 // Para la busqueda
 const formSearch = useForm({
-    search:""
+    search:"",
+    perPage:15
 });
 
 
@@ -299,7 +306,6 @@ const totalTax = () => {
 
         <!-- Contenido de la pagina -->
         <div class="max-w-[1100px] mx-auto">
-
                 <form
                     v-if="showForm"
                     class=" p-5 rounded-md bg-gray-200"
@@ -516,6 +522,7 @@ const totalTax = () => {
                         <form
                             @submit.prevent="search" >
                             <FormSearch
+                                v-model:select-value="formSearch.perPage"
                                 holder="Buscar Entradas"
                                 v-model="formSearch.search"/>
                         </form>
@@ -529,11 +536,11 @@ const totalTax = () => {
 <!--                Datos de los productos para la entrada    -->
                     <table class="table-auto w-full mt-5">
                         <thead>
-                            <tr class="text-left border-b-2 border-gray-900">
-                                <th>Codigo</th>
-                                <th>Cod. Barr.</th>
-                                <th>Producto</th>
-                                <th>Descripcion</th>
+                            <tr class="text-left">
+                                <th >Codigo</th>
+                                <th >Cod. Barr.</th>
+                                <th >Producto</th>
+<!--                                <th>Descripcion</th>-->
                                 <th>Cant.</th>
                                 <th>Cost</th>
                                 <th>Precio</th>
@@ -542,16 +549,16 @@ const totalTax = () => {
                         </thead>
                         <tbody>
                             <tr
-                                class=" odd:bg-gray-400"
+                                class=""
                                 v-for="item in propsW.products?.data">
-                                <td>{{item.code}}</td>
-                                <td>{{item.bar_code ? item.bar_code : 'N/A'}}</td>
-                                <td>{{item.name}}</td>
-                                <td>{{item.description}}</td>
+                                <td class="">{{item.code}}</td>
+                                <td class="px-3">{{item.bar_code ? item.bar_code : 'N/A'}}</td>
+                                <td class="overflow-hidden">{{item.name}}</td>
+<!--                                <td>{{item.description}}</td>-->
                                 <td>{{item.stock}}</td>
                                 <td>{{ getMoney(item.cost)}}</td>
                                 <td>{{ getMoney(item.price)}}</td>
-                                <td class="text-xl space-x-3 w-[75px] ">
+                                <td class="text-xl space-x-3 ">
                                     <i
                                         @click="edit(item.id)"
                                         title="Entrada"
@@ -561,9 +568,13 @@ const totalTax = () => {
                         </tbody>
                     </table>
                     <Pagination
-                        :next="propsW.products?.next_page_url ? propsW.products?.next_page_url : ''"
+                        :next="propsW.products?.next_page_url
+                            ? propsW.products?.next_page_url+'&perPage='+formSearch.perPage
+                            : ''"
                         :total-page="propsW.products?.to"
-                        :prev="propsW.products?.prev_page_url ? propsW.products?.prev_page_url : ''"
+                        :prev="propsW.products?.prev_page_url
+                            ? propsW.products?.prev_page_url+'&perPage='+formSearch.perPage
+                            : ''"
                         :current-page="propsW.products?.current_page"/>
                 </div>
 

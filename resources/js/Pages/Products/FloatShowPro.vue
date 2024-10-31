@@ -33,7 +33,8 @@ const emit = defineEmits(['select']);
  * Formulario de datos
  */
 const form = useForm({
-    search:''
+    search:'',
+    perPage: 15
 });
 
 
@@ -58,7 +59,17 @@ const edit = (id:number) => {
 
 //Seleccionar
 const selectData = (item:productDataI) => {
-    emit('select',item);
+    //Verificar si es la URL
+    if (url.startsWith('/product'))
+    {
+        //Enviar los datos
+        router.get(route('in.entrance',{productIn: item.id}));
+    }else{
+        //Enviar los datos
+        emit('select',item);
+    }
+
+
 }
 
 //Eliminar el producto
@@ -99,13 +110,15 @@ const detroy = (id:Number) => {
 </script>
 
 <template>
-    <div class="rounded-md p-5">
+    <div class="rounded-md p-5 h-full">
         <div class="flex justify-between">
 
             <div>
                 <form @submit.prevent="submit"  >
                     <FormSearch
-                        v-model="form.search" />
+                        v-model="form.search"
+                        holder="Buscar"
+                        v-model:select-value="form.perPage"/>
                 </form>
             </div>
             <h3 class="text-3xl font-bold float-right mt-6">
@@ -113,76 +126,83 @@ const detroy = (id:Number) => {
             </h3>
         </div>
 
+        <div class="h-full overflow-hidden"
+            :class="url.startsWith('/sale') ? 'overflow-y-auto max-h-[550px]' : ''">
+            <table
+                class=" table-auto w-full mt-5">
+                <thead
+                    class="sticky top-0 bg-gray-300">
+                    <tr
+                        class=" text-left">
+                        <th >Codigo </th>
+                        <th >Cod. Barr</th>
+                        <th >Nombre</th>
+    <!--                    <th class="w-1/12">Descripción</th>-->
+    <!--                    <th class="w-1/12">Uni.</th>-->
+                        <th >Disp.</th>
+                        <th >Precio</th>
+                        <th >Atc</th>
+                    </tr>
+                </thead>
+                    <tbody>
+                        <tr
+                            class=""
+                            v-for="(item, index) in propsW.products.data" :key="index">
+                            <td>{{item.code}}</td>
+                            <td>{{item.bar_code ? item.bar_code : 'N/A'}}</td>
+                            <td>{{item.name}}</td>
+        <!--                    <td>{{item.description}}</td>-->
+        <!--                    <td>{{item.unit ? item.unit : 'N/A'}}</td>-->
+                            <td>{{item.stock}}</td>
+                            <td>{{ getMoney(item.price)}}</td>
+                            <td
+                                class="text-center">
+                                <div
+                                    class=" space-x-3">
+                                    <!-- Entrada de producto -->
+                                    <i
+                                        v-if="url !== 'Products/Show'"
+                                        title="Crear Entrada"
+                                        @click="selectData(item)"
+                                        class=" icon-efect fa-solid fa-circle-check"></i>
 
+                                    <!--                        <i-->
+                                    <!--                            v-if="page.component !== 'Products/Sale' "-->
+                                    <!--                            class="icon-efect fa-solid fa-arrows-down-to-line"></i>-->
 
-        <table class=" table-auto w-full mt-5">
-            <thead>
-            <tr class=" text-left border-b-2 border-gray-800">
-                <th>Codigo </th>
-                <th>Cod. Barr</th>
-                <th>Nombre</th>
-                <th>Descripción</th>
-                <th>Uni.</th>
-                <th>Disp.</th>
-                <th>Precio</th>
-                <th class="">Atc</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr
-                class=" odd:bg-gray-400"
-                v-for="(item, index) in propsW.products.data" :key="index">
-                <td>{{item.code}}</td>
-                <td>{{item.bar_code ? item.bar_code : 'N/A'}}</td>
-                <td>{{item.name}}</td>
-                <td>{{item.description}}</td>
-                <td>{{item.unit ? item.unit : 'N/A'}}</td>
-                <td>{{item.stock}}</td>
-                <td>{{ getMoney(item.price)}}</td>
-                <td
-                    class="">
-                    <div
-                        class=" space-x-3">
-                        <!-- Entrada de producto -->
-                        <i
-                            v-if="url !== 'Products/Show'"
-                            title="Seleccionar"
-                            @click="selectData(item)"
-                            class=" icon-efect fa-solid fa-circle-check"></i>
+                                    <!-- Ver los productos -->
+                                    <!--                        <i-->
+                                    <!--                            v-if="page.component !== 'Products/Sale' "-->
+                                    <!--                            class="icon-efect  fa-solid fa-eye"></i>-->
 
-<!--                        <i-->
-<!--                            v-if="page.component !== 'Products/Sale' "-->
-<!--                            class="icon-efect fa-solid fa-arrows-down-to-line"></i>-->
+                                    <!-- Editar -->
+                                    <i
+                                        v-if="component === 'Products/Show' "
+                                        title="Editar"
+                                        @click="edit(item.id)"
+                                        class="icon-efect fa-solid fa-pen-to-square"></i>
 
-                        <!-- Ver los productos -->
-<!--                        <i-->
-<!--                            v-if="page.component !== 'Products/Sale' "-->
-<!--                            class="icon-efect  fa-solid fa-eye"></i>-->
+                                    <!-- Eliminar -->
+                                    <i
+                                        v-if="component === 'Products/Show' && auth.user.role === 'admin' "
+                                        title="Eliminar"
+                                        @click="detroy(item.id)"
+                                        class="icon-efect fa-solid fa-trash"></i>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+            </table>
 
-                        <!-- Editar -->
-                        <i
-                            v-if="component === 'Products/Show' "
-                            title="Editar"
-                            @click="edit(item.id)"
-                            class="icon-efect fa-solid fa-pen-to-square"></i>
+        </div>
 
-                        <!-- Eliminar -->
-                        <i
-                            v-if="component === 'Products/Show' && auth.user.role === 'admin' "
-                            title="Eliminar"
-                            @click="detroy(item.id)"
-                            class="icon-efect fa-solid fa-trash"></i>
-                    </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-
+        <!--        PAginacion de la ventana-->
         <Pagination
             :current-page="propsW.products.current_page"
             :total-page="propsW.products.to"
-            :next="propsW.products.next_page_url ? propsW.products.next_page_url : ''"
-            :prev="propsW.products.prev_page_url ? propsW.products.prev_page_url : '' "/>
+            :next="propsW.products.next_page_url ? propsW.products.next_page_url+'&perPage='+form.perPage : ''"
+            :prev="propsW.products.prev_page_url ? propsW.products.prev_page_url+'&perPage='+form.perPage : '' "/>
+
     </div>
 </template>
 

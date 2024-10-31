@@ -28,6 +28,7 @@ export interface productDataI {
     stock: number;
     reserved: number;
     price: number;
+    cost?: number;
     discount: number;
     tax_rate: number;
     tax: number;

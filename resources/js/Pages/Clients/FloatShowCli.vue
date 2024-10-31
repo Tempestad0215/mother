@@ -1,12 +1,12 @@
 <script setup lang="ts">
-
-import TextInput from "@components/TextInput.vue";
-import InputLabel from "@components/InputLabel.vue";
 import Pagination from "@components/Pagination.vue";
 import {clientDataI, clientI} from "@/Interfaces/ClientInterface";
 import {router, useForm, usePage} from "@inertiajs/vue3";
 import Swal from "sweetalert2";
 import {successHttp} from "@/Global/Alert";
+import FormSearch from "@components/FormSearch.vue";
+import {computed} from "vue";
+import {paginationJoin} from "@/Global/Helpers";
 
 /**
  * Datos de la ventana
@@ -25,7 +25,13 @@ const props = defineProps<{
  */
 const emit = defineEmits<{
     (e: 'getData', item:clientDataI):void
-}>()
+}>();
+
+
+//Propiedades computada
+const isSale = computed(()=>{
+   return page.url.startsWith('/sale');
+});
 
 
 
@@ -33,7 +39,8 @@ const emit = defineEmits<{
  * Formulario
  */
 const form = useForm({
-    search:""
+    search:"",
+    perPage:15
 });
 
 
@@ -42,7 +49,6 @@ const form = useForm({
  */
 // Enviar los datos
 const submit = () => {
-
     // Limpiar los errores
     form.clearErrors();
     // Enviar el formularios
@@ -91,18 +97,16 @@ const destroy = (id:Number) => {
 </script>
 
 <template>
-    <div class=" bg-gray-200 p-5 rounded-md overflow-y-auto">
+    <div class=" bg-gray-200 p-5 rounded-md">
         <div class=" mb-4 flex justify-between items-center ">
             <form
                 @submit.prevent="submit"
-                class=" w-[300px]">
-                <InputLabel
-                    for="search"
-                    value="Buscar" />
-                <TextInput
-                    class=" w-full"
+                class="">
+                <FormSearch
                     v-model="form.search"
-                    type="text"/>
+                    holder="Buscar"
+                    v-model:select-value="form.perPage"/>
+
 
             </form>
 
@@ -111,41 +115,49 @@ const destroy = (id:Number) => {
             </h3>
         </div>
 
-        <table class=" table-auto w-full">
-            <thead class=" border-b-2 text-left">
-                <tr class=" border-b-2 border-gray-800">
-                    <th>Code</th>
-                    <th>Nombre</th>
-                    <th>Ced./Rnc./Pas.</th>
-                    <th>Correo</th>
-                    <th>Telefono</th>
-                    <th>Atc</th>
+        <div class=" max-h-[550px] overflow-y-auto">
+            <table
+                class=" table-auto w-full">
+                <thead
+                    class=" sticky top-0 text-left">
+                <tr
+                    class="">
+                    <th >Code</th>
+                    <th class="overflow-hidden max-w-[50px]" >Nombre</th>
+                    <th >Ced./Rnc./Pas.</th>
+                    <th v-if="!isSale" >Correo</th>
+                    <th v-if="!isSale" >Teléfono</th>
+                    <th >Atc</th>
 
                 </tr>
-            </thead>
+                </thead>
 
-            <!-- Contenido -->
-            <tbody>
+                <!-- Contenido -->
+                <tbody>
                 <tr
-                    class=" border-b odd:bg-gray-400"
+                    class=" "
                     v-for="(item, index) in props.clients?.data" :key="index" >
-                    <td class=" px-2">
+                    <td class="">
                         {{ item.code }}
                     </td>
-                    <td class=" px-2">
+                    <td class="overflow-hidden" >
                         {{item.name}}
                     </td>
-                    <td class=" px-2">
+                    <td class=" ">
                         {{item.personal_id}}
                     </td>
-                    <td class=" px-2">
+                    <td
+                        v-if="!isSale"
+                        class="">
                         {{item.email ? item.email : 'N/A'}}
                     </td>
-                    <td class=" px-2">
+                    <td
+                        v-if="!isSale"
+                        class="">
                         {{ item.phone }}
                     </td>
                     <!-- Botones -->
-                    <td class="text-xl space-x-5 w-[100px]">
+                    <td class="space-x-5">
                         <i
                             v-if="page.component !== 'Clients/Show'"
                             title="Seleccionar"
@@ -163,15 +175,21 @@ const destroy = (id:Number) => {
                             class=" icon-efect fa-solid fa-trash"></i>
                     </td>
                 </tr>
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
+
 
         <!-- PAginacion -->
         <Pagination
             :current-page="props.clients.current_page"
             :total-page="props.clients.to"
-            :prev="props.clients.prev_page_url ? props.clients.prev_page_url : '' "
-            :next="props.clients.next_page_url ? props.clients.next_page_url : '' " />
+            :prev="props.clients.prev_page_url
+                ? paginationJoin(props.clients.prev_page_url, form.search, form.perPage)
+                : '' "
+            :next="props.clients.next_page_url
+                ? paginationJoin(props.clients.next_page_url, form.search, form.perPage)
+                : '' " />
     </div>
 </template>
 

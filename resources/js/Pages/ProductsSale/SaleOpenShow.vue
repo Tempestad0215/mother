@@ -22,7 +22,8 @@ const props = defineProps({
  */
 
 const form = useForm({
-    search: ""
+    search: "",
+    perPage: 15
 })
 
 
@@ -55,6 +56,8 @@ const submit = () => {
         <div class="flex items-center justify-between">
             <form @submit.prevent="submit()">
                 <FormSearch
+                    holder="Buscar"
+                    v-model:select-value="form.perPage"
                     v-model="form.search"
                 />
             </form>

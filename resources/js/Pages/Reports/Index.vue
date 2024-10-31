@@ -7,6 +7,7 @@ import LinkHeader from "@components/LinkHeader.vue";
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
 import ProductMostSold from "@/Charts/ProductMostSold.vue";
 import {mostSoldI} from "@/Interfaces/Report";
+import DateRange from "@components/DateRange.vue";
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
@@ -55,45 +56,9 @@ onMounted(()=>{
 
 
 
-/*
-Funciones
- */
-
-/**
- * Poner la hora por el id en inicio y final
- * @param id
- * @param h
- * @param m
- * @param s
- * @param ms
- */
-// const setHour = (id:string, h:number, m:number, s:number, ms:number) => {
-//     //Tomar la fecha del dia
-//     const now = new Date();
-//
-//     //Fecha de inicio
-//     const date = new Date(now);
-//     //colocar la hora
-//     date.setHours(h,m,s,ms);
-//
-//     //Formatear la fecha
-//     //Obtener el input para poner la fecha
-//     (document.getElementById(id) as HTMLInputElement).value = getDateInUtc4(date);
-// }
 
 
-/**
- * Convertir los datos
- * @param date
- */
-// const getDateInUtc4 = (date:Date):string => {
-//     date.setHours(date.getHours() - 4);
-//
-//     //Convertir
-//     const isoString = date.toISOString();
-//     //Devolver los datos
-//     return isoString.slice(0,16);
-// }
+
 
 
 
@@ -134,6 +99,8 @@ Funciones
         </template>
 
         <div class="bg-gray-200 rounded-md p-5">
+
+
 
 <!--         Productos  Mas Vendido-->
             <ProductMostSold

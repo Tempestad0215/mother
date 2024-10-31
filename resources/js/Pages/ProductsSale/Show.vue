@@ -6,9 +6,7 @@ import FormSearch from "@components/FormSearch.vue";
 import {salePaginationI} from "@/Interfaces/Sale";
 import {getMoney} from "@/Global/Helpers";
 import Pagination from "@components/Pagination.vue";
-import Swal from "sweetalert2";
 import InputError from "@components/InputError.vue";
-import {successHttp} from "@/Global/Alert";
 
 /*
 Datos de la pagina
@@ -29,6 +27,7 @@ const propsW = defineProps<{
  */
 const form = useForm({
     search: "",
+    perPage: 15,
     general: "",
 });
 
@@ -45,79 +44,79 @@ const submit = () => {
  * Eliminar la registrada
  * @param id
  */
-const destroy = (id:number) => {
-
-    Swal.fire({
-        title: "Desea Eliminar Este Documento?",
-        text: "Los Cambios Realizados Son Irreversible!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Si, Eliminar!",
-        cancelButtonText: "Cancelar"
-    }).then((result) => {
-        if (result.isConfirmed) {
-
-            Swal.fire({
-                title: "Desea Afectar El Inventario?",
-                html: `
-                    <div>
-                        <p> <b>Comentario :</b> </p>
-                        <input
-                            autocomplete="false"
-                            class="w-full border-gray-200 rounded-md"
-                            type="text"
-                            id="comment" />
-                    </div>
-                `,
-                showDenyButton: true,
-                showCancelButton: true,
-                confirmButtonText: "Si",
-                denyButtonText: "No",
-                cancelButtonText: "Cancelar",
-                preConfirm() {
-
-                    //Tomar el valor del comentario
-                    let comment = (document.getElementById("comment") as HTMLInputElement).value;
-
-                    // Verificar si existe datos de comentario
-                    if (comment.length < 4)
-                    {
-                        Swal.showValidationMessage("Este Campos Es Obligaotorio y Debes Contener Al Menos 5 Caracter");
-                        return  false;
-                    }
-                },
-                preDeny() {
-                    //tomar el valor del input
-                    let comment = (document.getElementById("comment") as HTMLInputElement).value;
-
-                    if (comment.length < 4)
-                    {
-                        Swal.showValidationMessage("Este Campos Es Obligaotorio y Debes Contener Al Menos 5 Caracter");
-                        return  false;
-                    }
-
-                }
-            }).then((result) => {
-                let comment = (document.getElementById("comment") as HTMLInputElement).value;
-                // console.log(com);
-
-                /* Read more about isConfirmed, isDenied below */
-                if (result.isConfirmed) {
-
-                    destroySale(id, true, comment);
-
-                } else if (result.isDenied) {
-
-                    destroySale(id, false, comment);
-
-                }
-            });
-
-        }
-    });
-}
+// const destroy = (id:number) => {
+//
+//     Swal.fire({
+//         title: "Desea Eliminar Este Documento?",
+//         text: "Los Cambios Realizados Son Irreversible!",
+//         icon: "warning",
+//         showCancelButton: true,
+//         confirmButtonColor: "#3085d6",
+//         cancelButtonColor: "#d33",
+//         confirmButtonText: "Si, Eliminar!",
+//         cancelButtonText: "Cancelar"
+//     }).then((result) => {
+//         if (result.isConfirmed) {
+//
+//             Swal.fire({
+//                 title: "Desea Afectar El Inventario?",
+//                 html: `
+//                     <div>
+//                         <p> <b>Comentario :</b> </p>
+//                         <input
+//                             autocomplete="false"
+//                             class="w-full border-gray-200 rounded-md"
+//                             type="text"
+//                             id="comment" />
+//                     </div>
+//                 `,
+//                 showDenyButton: true,
+//                 showCancelButton: true,
+//                 confirmButtonText: "Si",
+//                 denyButtonText: "No",
+//                 cancelButtonText: "Cancelar",
+//                 preConfirm() {
+//
+//                     //Tomar el valor del comentario
+//                     let comment = (document.getElementById("comment") as HTMLInputElement).value;
+//
+//                     // Verificar si existe datos de comentario
+//                     if (comment.length < 4)
+//                     {
+//                         Swal.showValidationMessage("Este Campos Es Obligaotorio y Debes Contener Al Menos 5 Caracter");
+//                         return  false;
+//                     }
+//                 },
+//                 preDeny() {
+//                     //tomar el valor del input
+//                     let comment = (document.getElementById("comment") as HTMLInputElement).value;
+//
+//                     if (comment.length < 4)
+//                     {
+//                         Swal.showValidationMessage("Este Campos Es Obligaotorio y Debes Contener Al Menos 5 Caracter");
+//                         return  false;
+//                     }
+//
+//                 }
+//             }).then((result) => {
+//                 let comment = (document.getElementById("comment") as HTMLInputElement).value;
+//                 // console.log(com);
+//
+//                 /* Read more about isConfirmed, isDenied below */
+//                 if (result.isConfirmed) {
+//
+//                     destroySale(id, true, comment);
+//
+//                 } else if (result.isDenied) {
+//
+//                     destroySale(id, false, comment);
+//
+//                 }
+//             });
+//
+//         }
+//     });
+// }
 
 
 /**
@@ -174,6 +173,8 @@ const refund  = (id:number):void => {
                 <form
                     @submit.prevent="submit">
                     <FormSearch
+                        holder="Buscar"
+                        v-model:select-value="form.perPage"
                         v-model="form.search"/>
                 </form>
                 <h3 class="text-3xl font-bold">
@@ -196,7 +197,7 @@ const refund  = (id:number):void => {
                 </thead>
                 <tbody>
                     <tr
-                        class="odd:bg-gray-400"
+                        class="hoverTable"
                         v-for="(item,index) in propsW.sales.data" :key="index">
                         <td>{{item.code}}</td>
                         <td>{{item.client_name}}</td>
@@ -234,8 +235,12 @@ const refund  = (id:number):void => {
             <Pagination
                 :current-page="propsW.sales.current_page"
                 :total-page="propsW.sales.to"
-                :prev="propsW.sales.prev_page_url"
-                :next="propsW.sales.next_page_url"/>
+                :prev="propsW.sales.prev_page_url
+                    ? propsW.sales.prev_page_url+'&perPage='+form.perPage
+                    :''"
+                :next=" propsW.sales.prev_page_url
+                    ? propsW.sales.next_page_url+'&perPage='+form.perPage
+                    : ''"/>
 
 
             <!--           Mensajke de error-->

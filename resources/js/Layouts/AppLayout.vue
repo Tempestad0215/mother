@@ -129,7 +129,7 @@ const isUrl = (params:string) => {
                     <NavLink
                         title="Reportes"
                         :active="isUrl('/report')"
-                        :href="route('report.index')">
+                        :href="route('report-sale.index')">
                         <i class="fa-solid fa-chart-pie"></i>
                     </NavLink>
                 </li>
@@ -182,8 +182,8 @@ const isUrl = (params:string) => {
                 <slot name="header"/>
             </header>
             <div
-                class="flex-1 ml-[80px] justify-center mt-[64px] rounded-md p-5 ">
-                    <div class="max-w-[1100px] mx-auto">
+                class="flex-1 ml-[80px] justify-center mt-[64px] rounded-md p-5 h-[calc(100%-1rem)] ">
+                    <div class="max-w-[1100px] mx-auto bg-gray-200 p-3 rounded-md">
                         <slot/>
                     </div>
 

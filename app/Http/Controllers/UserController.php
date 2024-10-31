@@ -19,7 +19,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         // crear la validacion
         $validated = $request->validate([
             'name' => ['required','string','min:4','max:75'],
@@ -37,6 +37,8 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
+
+        //Validar de esta forma si se va a colocar la password
         if($request->modify_password)
         {
             // crear la validacion
@@ -44,14 +46,14 @@ class UserController extends Controller
                 'name' => ['required','string','min:4','max:75'],
                 'email' => ['required','string','email','max:150',new CheckMaxUser(), Rule::unique('users', 'email')->ignore($user)],
                 'password'=> ['required','string',Password::min(8),'confirmed'],
-                'role' => ['required',Rule::enum(UserRoleEnum::class),'numeric'],
+                'role' => ['required',Rule::enum(UserRoleEnum::class)],
             ]);
         }else{
             // crear la validacion
             $validated = $request->validate([
                 'name' => ['required','string','min:4','max:75'],
                 'email' => ['required','string','email','max:150',new CheckMaxUser(), Rule::unique('users', 'email')->ignore($user)],
-                'role' => ['required',Rule::enum(UserRoleEnum::class),'numeric'],
+                'role' => ['required',Rule::enum(UserRoleEnum::class)],
             ]);
         }
 

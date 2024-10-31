@@ -9,6 +9,7 @@ use App\Models\Sale;
 use App\Models\Setting;
 use Carbon\Carbon;
 use TCPDF;
+use Illuminate\Support\Str;
 
 
 /**
@@ -34,11 +35,12 @@ class SaleInvoiceA extends TCPDF
 
             if ($index > 1) {
                 //Aumenatr 10mm para que la factura quede bien
-                $this->height += 8;
+                $this->height += 3;
             }
         });
 
 
+//        dd($this->sale->infoSale->count(),  $this->height);
 
         //Crea el formato de imprsion
         $format = array(72, $this->height);
@@ -179,6 +181,8 @@ class SaleInvoiceA extends TCPDF
         $this->SetY($this->headerEnd - 3);
         $this->setFont('helvetica', '', 8);
 
+
+
         //Crear la linea de los productos
         $this->sale->infoSale->where('type', '=', ProductTransType::VENTAS)
             ->each( function (ProTrans $item) use (&$width){
@@ -187,9 +191,10 @@ class SaleInvoiceA extends TCPDF
             $this->Cell($width[0],5, number_format($item->stock,2), 0, 0, 'L', false, '', '');
 
             //Informaciond e productos
+            $this->setFont('helvetica', '', 8);
             $this->Cell($width[0],5, $item->product->code, 0, 0, 'L', false, '', '');
             $this->setXY($width[0] + 2.5,$this->GetY()+3);
-            $this->Cell($width[0],5,$item->product->name , 0, 0, 'L', false, '', '');
+            $this->Cell($width[1],5, Str::limit($item->product->name, 20,  '...')  , 0, 0, 'L', false, '', 1);
 
             //Informacion de importe
             $this->setXY(54,$this->GetY()-3);
@@ -223,7 +228,7 @@ class SaleInvoiceA extends TCPDF
         $this->setY(-100);
         $this->setFont('helvetica', '', 10);
         //Crear linea divisora
-        $this->Line($this->GetX(),$this->GetY(),$this->GetX()+$this->line,$this->GetY());
+//        $this->Line($this->GetX(),$this->GetY(),$this->GetX()+$this->line,$this->GetY());
 
         $this->setX($xLocation);
         //Cantidad de articulo

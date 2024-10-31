@@ -181,3 +181,56 @@ export const generateColors = (numItems:number) => {
 
     return colors;
 };
+
+
+/**
+ *
+ * @param h
+ * @param m
+ * @param s
+ * @param ms
+ */
+export const setHour = (h:number, m:number, s:number, ms:number):string => {
+    //Tomar la fecha del dia
+    const now = new Date();
+
+    //Fecha de inicio
+    const date = new Date(now);
+    //colocar la hora
+    date.setHours(h,m,s,ms);
+
+    //Formatear la fecha
+    //Obtener el input para poner la fecha
+    return  getDateInUtc4(date);
+}
+
+
+
+/**
+ * Convertir los datos
+ * @param date
+ */
+const getDateInUtc4 = (date:Date):string => {
+    date.setHours(date.getHours() - 4);
+
+    //Convertir
+    const isoString = date.toISOString();
+    //Devolver los datos
+    return isoString.slice(0,16);
+}
+
+
+/**
+ * Para unir la paginacion con la busqueda y otros datos
+ * @param url
+ * @param search
+ * @param perPage
+ */
+export const paginationJoin = (url:string, search:string, perPage:number) => {
+    return url+'&search='+search+'&perPage='+perPage;
+}
+
+
+
+
+

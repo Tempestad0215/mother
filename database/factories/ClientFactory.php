@@ -2,10 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Models\Client;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Client>
+ * @extends Factory<Client>
  */
 class ClientFactory extends Factory
 {
@@ -18,6 +19,7 @@ class ClientFactory extends Factory
     {
         return [
             'name' => fake()->name(),
+            'document' => fake()->randomElement(['cedula','pasaporte','rnc','otro']),
             'phone' => fake()->phoneNumber(),
             'personal_id' => fake()->numerify('###-#######-#'),
             'email' => fake()->email(),

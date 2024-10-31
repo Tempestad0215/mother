@@ -5,9 +5,9 @@ import InputLabel from "@components/InputLabel.vue";
 import TextInput from "@components/TextInput.vue";
 import FloatBox from "@components/FloatBox.vue";
 import FloatShowPro from "@/Pages/Products/FloatShowPro.vue";
-import {computed, onMounted, onUpdated, reactive, Ref, ref} from "vue";
+import {computed, onMounted, onUpdated, Ref, ref} from "vue";
 import {productDataI, productI} from "@/Interfaces/Product";
-import {getMoney, getRncHelper, getSequenceType} from "@/Global/Helpers";
+import { getMoney, getRncHelper, getSequenceType} from "@/Global/Helpers";
 import LinkHeader from "@components/LinkHeader.vue";
 import Swal from "sweetalert2";
 import InputError from "@components/InputError.vue";
@@ -20,6 +20,7 @@ import SaleOpenShow from "@/Pages/ProductsSale/SaleOpenShow.vue";
 import {creditNotesSaleI, infoSaleI, saleDataI, saleDataPaginationI} from "@/Interfaces/Sale";
 import {invoiceTypeI, rncUserI, sequenceDataI} from "@/Interfaces/Setting";
 import ShowPdf from "@components/ShowPdf.vue";
+import {typePaymentData} from "@/Global/ShareData";
 
 
 /*
@@ -65,7 +66,12 @@ onMounted( () => {
 
     //Pasar los datos a la variable si existe
     if (propsW.pdf != undefined && propsW.pdf != "") pdfString.value = propsW.pdf;
+
 });
+
+
+
+
 
 
 /*
@@ -88,32 +94,6 @@ const showSaleOpen:Ref<boolean> = ref<boolean>(false);
 const sequenceData:Ref<sequenceDataI | undefined> = ref(undefined);
 const showClientRnc:Ref<boolean> = ref(false);
 const showReturn:Ref<boolean> = ref(false);
-const typePaymentData = reactive([
-    {
-        name: "Contado",
-        value: 'contado'
-    },
-    {
-        name: "Credito",
-        value: 'credito'
-    },
-    {
-        name: "Cheque",
-        value: 'cheque'
-    },
-    {
-        name: "Tarjeta",
-        value: 'tarjeta'
-    },
-    {
-        name: "Transferencia",
-        value: 'transferencia'
-    },
-    {
-        name: "Anticipo",
-        value: 'anticipo'
-    },
-]);
 //DDATOS DEL dpf
 const pdfString:Ref<string | null> = ref(null);
 
@@ -159,6 +139,32 @@ const form = useForm({
 Propidades computada
  */
 const checkShowPdf = computed(()=>{
+
+    if (pdfString.value != null && pdfString.value != '')
+    {
+        //Obtner elemento de html
+        const iframe:HTMLIFrameElement = document.getElementById('pdfA') as HTMLIFrameElement;
+        const floatBox:HTMLElement = document.getElementById('pdfBox') as HTMLElement
+
+        iframe.onload = function (){
+            // floatBox.style.display = 'none';
+
+            iframe.contentWindow?.print();
+
+            // console.log(floatBox);
+        }
+
+
+        //Ocultar de la vista
+        // iframe.onload = function () {
+        //     iframe.style.display = 'none'; //Ocultar la ventanta
+        //
+        //     //Imprimir la ventna
+        //     iframe.contentWindow?.print()
+        // }
+    }
+
+
     //PAsar el valos de los datos
     return pdfString.value != null && pdfString.value != '';
 });
@@ -169,6 +175,8 @@ const checkShowPdf = computed(()=>{
 /*
 Funciones
  */
+
+
 
 /*
  * Obtener los datos de la sequencia
@@ -343,9 +351,11 @@ const deleteItem = async (name:string , index:number) => {
         //Tomar datos la ventas
         let info:infoSaleI = form.info_sale[index];
 
+
         //Eliminar el producto seleccionado
         form.info_sale.splice(index,1);
 
+        //Verificar si es diferente a devuelta
         if (!propsW.refund)
         {
 
@@ -434,8 +444,7 @@ const sendData = ():void => {
         // Enviar los datos para las devoluciones
         form.patch(route('credit-note.store',{sale: form.id}),{
             only: ['products','clients','saleOpen','invoiceType','pdf'],
-            onSuccess: (data) => {
-                console.log('data', data)
+            onSuccess: () => {
                 form.reset();
                 successHttp('Nota de Credito Creada Correctamente');
             },
@@ -460,11 +469,10 @@ const sendData = ():void => {
                 form.patch(route('sale.update',{sale: form.id}),{
                     preserveState: true,
                     preserveScroll: true,
-                    onSuccess:(data) =>{
+                    onSuccess:() =>{
                         successHttp('Documento Actualizado Correctamente');
                         //Verificar si fue cerrado la mesa
 
-                        console.log(data);
                         form.reset();
                         showReturn.value = false;
 
@@ -481,8 +489,7 @@ const sendData = ():void => {
 
                 //Guardar los datos por primera vez
                 form.post(route('sale.store'),{
-                    onSuccess:(data)=>{
-                        console.log(data);
+                    onSuccess:()=>{
                         successHttp('Venta Cerrada Correctamente');
                         form.reset();
                         showReturn.value = false;
@@ -700,6 +707,8 @@ const getRncClient = async () => {
 
 }
 
+
+
 </script>
 
 
@@ -751,7 +760,7 @@ const getRncClient = async () => {
                                                 type="search"
                                                 :readonly="form.invoice_type === 'B04' "
                                                 class=" w-[400px] pr-10"
-                                                v-model="form.client_name"
+                                                v-model.trim="form.client_name"
                                                 placeholder="Cliente"/>
 <!--                                            Colocar al lado esto-->
                                             <div
@@ -962,7 +971,7 @@ const getRncClient = async () => {
                                 </thead>
                                 <tbody>
                                     <tr
-                                        class=" odd:bg-gray-300 border-2 border-b-gray-500"
+                                        class=""
                                         v-for="(item, index) in form.info_sale" :key="index">
                                         <td>{{index+1}}</td>
                                         <td>
@@ -973,39 +982,39 @@ const getRncClient = async () => {
 
                                         </td>
                                         <td
-                                            class=" w-[150px]">
+                                            class="">
                                             <input
-                                                class=" border-none bg-transparent rounded-md h-8 bg-white w-4/5"
+                                                class=" ring-0 !focus:outline-0 border-none !bg-transparent rounded-md bg-white w-[100px] "
                                                 @blur="totalAmount(index)"
-                                                v-model="item.stock"
+                                                v-model.number="item.stock"
                                                 type="number">
                                         </td>
                                         <td
-                                            class=" w-[150px]">
+                                            class="">
                                             <input
-                                                class=" border-none bg-transparent rounded-md h-8 bg-white w-4/5"
+                                                class=" ring-0 !focus:outline-0 border-none !bg-transparent rounded-md bg-white w-[75px]"
                                                 @blur="totalAmount(index)"
-                                                v-model="item.discount"
+                                                v-model.number="item.discount"
                                                 type="number">
                                         </td>
-                                        <td class=" w-[150px]">
+                                        <td class="">
                                             <span>
                                                 {{ getMoney(item.tax)}}
                                             </span>
                                         </td>
                                         <td
-                                            class=" w-[150px]">
+                                            class="">
                                             {{ getMoney(item.price)}}
                                         </td>
 
-                                        <td class=" w-[150px]">
+                                        <td class="">
                                             <span>
                                                 {{ getMoney(item.amount) }}
                                             </span>
                                         </td>
                                         <td
                                             v-if="form.info_sale.length > 1"
-                                            class="text-xl w-[50px]">
+                                            class="text-xl">
                                             <i
                                                 @click="deleteItem(item.product_name, index)"
                                                 class=" icon-efect text-red-500 fa-solid fa-circle-xmark"></i>
@@ -1146,7 +1155,7 @@ const getRncClient = async () => {
                             <div class="relative">
                                 <TextInput
                                     class="w-[calc(100%-3rem)]"
-                                    v-model="form.credit_notes_value"
+                                    v-model.trim="form.credit_notes_value"
                                     type="search"/>
                                 <i
                                     @click="getCreditNote"
@@ -1196,7 +1205,7 @@ const getRncClient = async () => {
                                 @input="returned"
                                 class="w-full"
                                 type="number"
-                                v-model="form.received"/>
+                                v-model.trim="form.received"/>
                         </div>
 
 <!--                        Datos pendiente para cobrar-->
@@ -1229,6 +1238,7 @@ const getRncClient = async () => {
 
 <!--            Monstrar los PDF-->
             <ShowPdf
+                id="pdfBox"
                 :pdf="pdfString"
                 v-show="checkShowPdf"
                 @close-window="pdfString = null "/>
@@ -1249,10 +1259,11 @@ const getRncClient = async () => {
             <!-- Ventana flotante -->
             <Transition>
                 <FloatBox
+                    class=""
                     @close="showProduct = false"
                     v-if="showProduct">
                     <FloatShowPro
-                        class=" bg-gray-200 w-4/5 rounded-md px-10 py-5"
+                        class=" bg-gray-200 w-5/5 rounded-md px-10 py-5"
                         @select="getData"
                         :products="propsW.products"/>
                 </FloatBox>

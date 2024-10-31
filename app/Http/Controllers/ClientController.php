@@ -177,17 +177,20 @@ class ClientController extends Controller
     private function getTable(REquest $request)
     {
         // Tomar los datos
-        $search = $request->get('search');
+        $search = trim($request->get('search'));
+        $perPage = $request->get('perPage',15);
 
         // Buscar en la base de datos
         return Client::where('status',true)
             ->where(function ($query) use ($search) {
-                $query->where('name','like','%'. $search .'%')
+                $query->where('code','LIKE','%'. $search .'%')
+                    ->orWhere('name','like','%'. $search .'%')
+                    ->orWhere('personal_id','like','%'. $search .'%')
                     ->orWhere('email','like','%'. $search .'%')
                     ->orWhere('phone','like','%'. $search .'%');
             })
             ->latest()
-            ->simplePaginate();
+            ->simplePaginate($perPage);
 
     }
 

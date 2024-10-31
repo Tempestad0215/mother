@@ -14,8 +14,16 @@ Emitir eventos
  */
 defineEmits<{
     (e: 'closeWindow'):void
-}>()
+}>();
 
+
+window.addEventListener('click', (e) =>{
+    console.log(e);
+})
+
+window.addEventListener('beforeprint', (e) =>{
+    console.log('before print',e);
+})
 
 
 /*
@@ -35,7 +43,7 @@ const createUrlPdf = computed(() => {
                 @close="$emit('closeWindow')">
                 <!--        Para ver los PDF-->
                 <iframe
-
+                    id="pdfA"
                     @wheel.passive="true"
                     class="w-full h-600px overflow-hidden mt-10"
                     :src="createUrlPdf" >

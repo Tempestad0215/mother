@@ -33,13 +33,14 @@ class ProductHelper
     {
         //Obtner los datos de busqueda
         $search = $request->get('search');
+        $perPage = $request->get('perPage',15);
 
         //Pasar los datos a la variable
         return Product::where('status', '=',true)
             ->where(function ($query) use ($search) {
                 $query->where('name', 'like',"%$search%")
                     ->orWhereNull('name');
-            })->where(function (Builder $builder){
+            })->where(function (Builder $builder) {
                 $builder->where(function (Builder $q){
                     $q->where('type', '=',ProductTypeEnum::PRODUCTO)
                         ->where('stock', '>', 0);
@@ -48,7 +49,7 @@ class ProductHelper
                 });
             })
             ->latest()
-            ->simplePaginate(15);
+            ->simplePaginate($perPage);
     }
 
 

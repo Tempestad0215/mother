@@ -186,7 +186,13 @@ class CreditNoteHelper
     }
 
 
-    public static function updateAvailableFor(array $info, float $amount)
+    /**
+     * Verificar la notas de credito
+     * @param array $info
+     * @param float $amount
+     * @return void
+     */
+    public static function updateAvailableFor(array $info, float $amount):void
     {
         //Total de nota de credito
         $totalCredit = array_sum(array_column($info, 'n_available'));
@@ -205,8 +211,6 @@ class CreditNoteHelper
                        'n_available' => 0,
                         'status' => false
                     ]);
-
-                dd($item['id']);
             }
 
         //Si el balance de la nota de credito es mayor
@@ -228,7 +232,7 @@ class CreditNoteHelper
                 //Buscar la nota de credito
                 $credit = CreditNote::find($item['id']);
 
-                //Evitar que esta se actualize del todo
+                //Evitar que esta se actualize
                 if ($item['n_available'] == $maxAve && $maxId == $item['id'])
                 {
 

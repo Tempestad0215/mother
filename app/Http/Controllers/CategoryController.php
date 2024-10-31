@@ -3,12 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 use LaravelIdea\Helper\App\Models\_IH_Category_C;
@@ -122,12 +121,17 @@ class CategoryController extends Controller{
     {
 
         // Tomar los datos de busqueda
-        $search = $request->get('search');
+        $search = trim($request->get('search'));
+        $perPage = $request->get('perPage',15);
 
         return Category::where('status',true)
-            ->where('name', 'like', '%'.$search.'%')
+            ->when($search, function (Builder $query) use ($search) {
+                $query->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('code', 'like', '%'.$search.'%')
+                    ->orWhere('description', 'like', '%'.$search.'%');
+            })
             ->latest()
-            ->simplePaginate(15);
+            ->simplePaginate($perPage);
 
     }
 

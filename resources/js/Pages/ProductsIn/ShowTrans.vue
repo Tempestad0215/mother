@@ -23,6 +23,7 @@ const props = defineProps<{
  */
 const form = useForm({
     search:"",
+    perPage:15,
     general:""
 });
 
@@ -110,6 +111,8 @@ const destroy = (id:number) => {
                 <div>
                     <form @submit.prevent="submit">
                         <FormSearch
+                            holder="Buscar"
+                            v-model:select-value="form.perPage"
                             v-model="form.search"/>
                         <InputError :message="form.errors.search"/>
                     </form>
@@ -121,7 +124,7 @@ const destroy = (id:number) => {
             </div>
 
             <table class=" w-full table-auto mt-5">
-                <thead class="text-left border-b-2 border-gray-800">
+                <thead class="text-left">
                     <tr>
                         <th>Codigo</th>
                         <th>Producto/Servicio</th>
@@ -129,21 +132,20 @@ const destroy = (id:number) => {
                         <th>Itbis</th>
                         <th>Precio</th>
                         <th>Tipo</th>
-                        <th>Creado</th>
                         <th>Act</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr
-                        class="odd:bg-gray-400"
-                        v-for="(item, index) in props.trans.data" :key="index" >
+                        class=""
+                        v-for="(item, index) in props.trans.data" :key="index"
+                        :title="`Creado el : ${item.created_at}`">
                         <td>{{item.code}}</td>
-                        <td>{{item.product_name}}</td>
+                        <td class="overflow-hidden">{{item.product_name}}</td>
                         <td>{{item.stock}}</td>
                         <td>{{ getMoney(item.tax)}}</td>
                         <td>{{getMoney(item.price)}}</td>
                         <td class="uppercase" >{{item.type}}</td>
-                        <td>{{item.created_at}}</td>
                         <td>
 <!--                            <i-->
 <!--                                @click="edit(item.id)"-->

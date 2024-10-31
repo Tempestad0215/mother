@@ -18,11 +18,14 @@ class ClientHelper
     public  function  get(Request $request):mixed
     {
 
+        $search = $request->get('search');
+        $perPage = $request->get('perPage',15);
+
         //conseguir los datos del cliente
         return Client::where('status', true)
-            ->where('name','LIKE','%'.$request->get('search').'%' )
+            ->where('name','LIKE','%'.$search.'%' )
             ->latest()
-            ->simplePaginate(15);
+            ->simplePaginate($perPage);
 
     }
 

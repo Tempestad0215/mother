@@ -46,7 +46,7 @@ class SaleInfoResource extends JsonResource
 
             //Agregar los datos
            $infoFinal[] = [
-               'id' => $item->id,
+               'transID' => $item->id,
                'code' => $item->product->code ?? null,
                'product_id' => $item->product_id,
                'product_name' => $item->product_name,
@@ -64,6 +64,8 @@ class SaleInfoResource extends JsonResource
 
         });
 
+
+        //DEvolver los datos
         return [
             'id' => $this->id,
             'invoice_type' => $this->invoice_type,

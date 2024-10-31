@@ -7,12 +7,14 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductInController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ReportSaleController;
 use App\Http\Controllers\SequenceController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductSaleController;
 use App\Http\Controllers\SettingController;
 use App\Invoices\SaleInvoiceA;
+use App\Models\Sale;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -75,7 +77,9 @@ Route::middleware([
 
 
 
-
+    /**
+     * Dashboard de la app
+     */
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
@@ -93,7 +97,7 @@ Route::middleware([
         ]);
     })->name('register');
 
-    /*
+    /**
      * Usuario
      */
     Route::controller(UserController::class)
@@ -105,7 +109,7 @@ Route::middleware([
         Route::patch('/destroy/{user}', 'destroy')->name('destroy');
     });
 
-    /*
+    /**
      * Cliente
      */
     Route::controller(ClientController::class)
@@ -121,7 +125,7 @@ Route::middleware([
         Route::get('/get','getJson')->name('get.json');
     });
 
-    /*
+    /**
      * Categoria
      */
     Route::controller(CategoryController::class)
@@ -137,7 +141,7 @@ Route::middleware([
 
 
 
-    /*
+    /**
      * Suplidores
      */
     Route::controller(SupplierController::class)
@@ -154,7 +158,7 @@ Route::middleware([
 
 
 
-    /*
+    /**
      * Productos
      */
     Route::controller(ProductController::class)
@@ -173,7 +177,7 @@ Route::middleware([
     });
 
 
-    /*
+    /**
      * Ventas
      */
     Route::controller(ProductSaleController::class)
@@ -192,7 +196,7 @@ Route::middleware([
 
         });
 
-    /*
+    /**
      * Notas de credito o devoluciones
      *
      */
@@ -207,9 +211,7 @@ Route::middleware([
         });
 
 
-
-
-    /*
+    /**
      * Ventas
      */
     Route::controller(ProductInController::class)
@@ -226,7 +228,7 @@ Route::middleware([
 
         });
 
-    /*
+    /**
      * Reportes
      */
     Route::controller(ReportController::class)
@@ -241,7 +243,18 @@ Route::middleware([
         });
 
 
-    /*
+    /**
+     * Reporte de Ventas
+     */
+    Route::controller(ReportSaleController::class)
+        ->prefix('report/sale')
+        ->name('report-sale.')
+        ->group(function (){
+           Route::get('/','index')->name('index');
+        });
+
+
+    /**
      * Facturas del sistema
      */
     Route::controller(InvoiceController::class)
@@ -253,8 +266,10 @@ Route::middleware([
 
 
 
+
+
     Route::get('/test', function (){
-        $sale = \App\Models\Sale::find(2);
+        $sale = Sale::find(11);
 
         $pdf = new SaleInvoiceA($sale);
 

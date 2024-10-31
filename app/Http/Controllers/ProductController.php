@@ -10,6 +10,7 @@ use App\Http\Resources\ProSupRes;
 use App\Models\Setting;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -96,19 +97,9 @@ class ProductController extends Controller
      */
     public function show(Request $request)
     {
-        //validar los datos de busqueda
-        $request->validate([
-            'search' => ['nullable','max:50','string']
-        ]);
-
-        //Sacar los datos de busqueda
-        $search = $request->get('search');
 
         // Realizar la busqueda
-        $data = Product::where('status', true)
-            ->where('name','LIKE', '%'. $search.'%')
-            ->latest()
-            ->simplePaginate(10);
+        $data = $this->get($request);
 
         //Devolver la vista con los datos
 
@@ -224,14 +215,20 @@ class ProductController extends Controller
      */
     public function get(Request $request)
     {
-        // Obntener los datos de busqueda
-        $search = $request->get('search');
+        //Sacar los datos de busqueda
+        $search = trim($request->get('search'));
+        $perPage = $request->get('perPage',15);
 
         // Realizar la busqueda
         return  Product::where('status', true)
-            ->where('name','LIKE','%'.$search.'%')
+            ->when($search, function (Builder $query) use ($search){
+                $query->where('code', 'like', '%'.$search.'%')
+                    ->orWhere('bar_code', 'like', '%'.$search.'%')
+                    ->orWhere('name', 'like', '%'.$search.'%')
+                    ->orWhere('description', 'like', '%'.$search.'%');
+            })
             ->latest()
-            ->simplePaginate(15);
+            ->simplePaginate($perPage);
 
     }
 

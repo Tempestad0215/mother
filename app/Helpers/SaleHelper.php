@@ -183,11 +183,13 @@ class SaleHelper
             $productStock = $request->get('info')['stock'];
             $transType = $request->get('info')['type'];
             //Id de transaction producto
-            $idTransProduct = $request->get('info')['id'];
+            $idTransProduct = $request->get('info')['transID'];
+
 
             //Actualizar los datos
             ProTrans::where('id',$idTransProduct)->update([
-                'deleted_at' => now()
+                'deleted_at' => now(),
+                'type' => ProductTransType::ELIMINADO,
             ]);
 
             // si tiene reserva pues se descuenta ese monto
@@ -202,6 +204,7 @@ class SaleHelper
                 $product->stock += $productStock;
             }
 
+            //Guardar los datos
             $product->save();
 
 
@@ -343,25 +346,52 @@ class SaleHelper
                 );
             }
 
+
             //Reducir las notas de creditos seleccionada
             CreditNoteHelper::updateAvailableFor($creditNotes, $request->get('amount'));
 
-            //Crear la transaccion individual
-            ProTrans::updateOrCreate(
-                ['id' => $request->get('id')],
-                [
-                'product_id' => $item['product_id'],
-                'product_name' => $item['product_name'],
-                'sale_id' => $sale->id,
-                'stock' => $item['stock'],
-                'price' => $item['price'],
-                'tax' => $item['tax'],
-                'tax_rate' => $item['tax_rate'],
-                'amount' => $item['amount'],
-                'discount' => $item['discount'],
-                'discount_amount' => $item['discount_amount'],
-                'type' => $closeTable ? ProductTransType::VENTAS : ProductTransType::RESERVA
-            ]);
+
+            if ($closeTable)
+            {
+                //Crear la transaccion individual
+                ProTrans::create(
+                    [
+                        'sale_id' => $sale->id,
+                        'product_id' => $item['product_id'],
+                        'product_name' => $item['product_name'],
+                        'stock' => $item['stock'],
+                        'price' => $item['price'],
+                        'tax' => $item['tax'],
+                        'tax_rate' => $item['tax_rate'],
+                        'amount' => $item['amount'],
+                        'discount' => $item['discount'],
+                        'discount_amount' => $item['discount_amount'],
+                        'type' => ProductTransType::VENTAS
+                    ]);
+
+            }else{
+                //Crear la transaccion individual
+                ProTrans::updateOrCreate([
+                    'id' => $request->get('id'),
+                    'product_id' => $item['product_id'],
+                ],
+                    [
+                        'product_id' => $item['product_id'],
+                        'product_name' => $item['product_name'],
+                        'stock' => $item['stock'],
+                        'price' => $item['price'],
+                        'tax' => $item['tax'],
+                        'tax_rate' => $item['tax_rate'],
+                        'amount' => $item['amount'],
+                        'discount' => $item['discount'],
+                        'discount_amount' => $item['discount_amount'],
+                        'type' => ProductTransType::RESERVA
+                    ]);
+            }
+
+
+
+
 
         });
 

@@ -10,6 +10,7 @@ import {categoryI, categoryPaginationI} from "@/Interfaces/Categories";
 import FormSearch from "@components/FormSearch.vue";
 import Pagination from "@components/Pagination.vue";
 import Swal from "sweetalert2";
+import {paginationJoin} from "@/Global/Helpers";
 
 const props = defineProps<{
     categories: categoryPaginationI
@@ -25,7 +26,8 @@ const form = useForm({
 });
 
 const formSearch = useForm({
-    search:""
+    search:"",
+    perPage:15
 });
 
 
@@ -143,13 +145,14 @@ const search = () => {
             </form>
 
 
-            <div class="bg-gray-200 max-w-[1100px] mx-auto p-5 rounded-md mt-5">
+            <div class="bg-gray-200 max-w-[1100px] mx-auto rounded-md px-5 ">
                 <div class="flex justify-between items-center">
                     <form
                         @submit.prevent="search">
                         <FormSearch
                             holder="-- Buscar Categoria --"
-                            v-model="formSearch.search">
+                            v-model="formSearch.search"
+                            v-model:select-value="formSearch.perPage">
                         </FormSearch>
                     </form>
                     <h3 class="text-3xl font-bold">
@@ -157,25 +160,25 @@ const search = () => {
                     </h3>
                 </div>
 
-
-
-                <table class="w-full mt-5 rounded-md">
+<!--    Tabla de las categorias-->
+                <table
+                    class=" mt-5 table-auto w-full rounded-md">
                     <thead>
-                    <tr class=" text-left border-b-2 border-gray-800">
+                    <tr class=" text-left ">
                         <th>Code</th>
                         <th>Nombre</th>
-                        <th>Descripcion</th>
+                        <th>Descripción</th>
                         <th>Act</th>
                     </tr>
                     </thead>
                     <tbody>
                         <tr
-                            class="odd:bg-gray-400"
+                            class=""
                             v-for="(item, index) in props.categories?.data" :key="index">
                             <td>{{item.code}}</td>
                             <td>{{item.name}}</td>
                             <td class="w-2/4 max-w-[600px] truncate">{{item.description ? item.description : 'N/A'}}</td>
-                            <td class="text-xl space-x-3 w-16">
+                            <td class="space-x-3">
                                 <i
                                     @click="edit(item)"
                                     title="Editar"
@@ -189,9 +192,13 @@ const search = () => {
                     </tbody>
                 </table>
                 <Pagination
-                    :next="props.categories?.next_page_url"
+                    :next="props.categories.next_page_url
+                        ? paginationJoin(props.categories.next_page_url, formSearch.search, formSearch.perPage)
+                        : ''"
                     :total-page="props.categories?.to"
-                    :prev="props.categories?.prev_page_url"
+                    :prev=" props.categories.prev_page_url
+                        ? paginationJoin(props.categories.prev_page_url, formSearch.search, formSearch.perPage)
+                        : ''"
                     :current-page="props.categories?.current_page"/>
             </div>
 

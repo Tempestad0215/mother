@@ -245,12 +245,14 @@ class ProductInController extends Controller
     {
         //Obtener los datos de busqueda
         $search = $request->get('search');
+        $perPage = $request->get('perPage',15);
+
 
         //Devolver los datos
         return Product::where('status', true)
             ->where('name','LIKE','%'.$search.'%')
             ->latest()
-            ->simplePaginate();
+            ->simplePaginate($perPage);
 
     }
 }

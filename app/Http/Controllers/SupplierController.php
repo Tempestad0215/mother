@@ -5,9 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Supplier;
 use App\Http\Requests\StoreSupplierRequest;
 use App\Http\Requests\UpdateSupplierRequest;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class SupplierController extends Controller
@@ -122,11 +121,15 @@ class SupplierController extends Controller
 
         //Devolver los datos paginado a 15
         return Supplier::where('status',true)
-            ->where(function($query) use ($search){
+            ->when($search, function (Builder $query, $search) {
                 $query->where('company_name', 'LIKE','%'.$search.'%')
+                    ->orWhere('code', 'LIKE','%'.$search.'%')
                     ->orWhere('phone', 'LIKE','%'.$search.'%')
                     ->orWhere('email', 'LIKE','%'.$search.'%')
                     ->orWhere('contact', 'LIKE','%'.$search.'%');
+            })
+            ->where(function($query) use ($search){
+
             })->latest()
             ->paginate(15);
 

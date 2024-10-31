@@ -17,7 +17,7 @@ const props = defineProps<paginationI>()
 
 <template>
     <!-- PAginacion-->
-    <div class=" mt-5 flex justify-between items-center border-t border-gray-600 pt-2">
+    <div class=" mt-5 flex justify-between items-center border-t border-gray-600 py-5 ">
         <div>
             <!-- Pagina -->
             <span>
