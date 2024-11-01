@@ -31,6 +31,8 @@ const form = useForm({
 Al momento de cargar
  */
 onMounted(()=>{
+
+    console.log(getParams().from);
     //Poner la hora
     form.from = setHour(1,0,0,0);
     form.to = setHour(12,0,0,0);
@@ -45,9 +47,30 @@ Funciones
 
 const submit = () => {
     form.get(route('report-sale.index'),{
-        preserveState: true
+        preserveState: true,
     });
 }
+
+
+/**
+ * Devoler los parametros
+ */
+const getParams = () => {
+    //Tomar los datos del parametros
+    let from = new URL(window.location.href)
+    //Para tomar los parametros
+    let params = new URLSearchParams(from.search);
+
+
+    //Devolver los datos
+    return {
+        from: params.get("from"),
+        to: params.get("to"),
+    }
+
+
+}
+
 
 
 </script>

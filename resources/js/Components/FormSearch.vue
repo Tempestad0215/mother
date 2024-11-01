@@ -46,14 +46,13 @@ const updateSelectValue = (e:Event) => {
 
 
 <template>
-    <div class="w-full">
+    <div class=" ">
         <InputLabel
             for="search"
             value="Buscar" />
-
-        <div class="relative">
+        <div class="relative w-[450px]">
             <input
-                class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm min-w-[500px] w-[500px] max-w-sm pr-[60px]"
+                class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full pr-[60px]"
                 :value="props.modelValue"
                 @input="sendData($event)"
                 :placeholder="props.holder ? props.holder : ''"

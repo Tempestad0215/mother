@@ -33,10 +33,12 @@ return new class extends Migration
                 ->onDelete('restrict');
             $table->string('product_name',75);
             $table->float('stock',4);
+            $table->float('reserved',4);
             $table->float('price',4);
             $table->float('tax_rate',4);
             $table->float('tax',4);
             $table->float('amount',4);
+            $table->boolean('ride')->default(false);
             $table->float('discount',4)->default(0);
             $table->float('discount_amount',4);
             $table->enum('type',['entrada','ventas','salida','cancelacion','ajuste','reserva','eliminado','devolucion']);

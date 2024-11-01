@@ -139,32 +139,7 @@ const form = useForm({
 Propidades computada
  */
 const checkShowPdf = computed(()=>{
-
-    if (pdfString.value != null && pdfString.value != '')
-    {
-        //Obtner elemento de html
-        const iframe:HTMLIFrameElement = document.getElementById('pdfA') as HTMLIFrameElement;
-        const floatBox:HTMLElement = document.getElementById('pdfBox') as HTMLElement
-
-        iframe.onload = function (){
-            // floatBox.style.display = 'none';
-
-            iframe.contentWindow?.print();
-
-            // console.log(floatBox);
-        }
-
-
-        //Ocultar de la vista
-        // iframe.onload = function () {
-        //     iframe.style.display = 'none'; //Ocultar la ventanta
-        //
-        //     //Imprimir la ventna
-        //     iframe.contentWindow?.print()
-        // }
-    }
-
-
+    
     //PAsar el valos de los datos
     return pdfString.value != null && pdfString.value != '';
 });

@@ -192,7 +192,7 @@ const refund  = (id:number):void => {
                         <th>Sub Total</th>
                         <th>Total</th>
                         <th>Mesa A/C</th>
-                        <th v-if="page.props.auth.user.role === 'admin'">Act</th>
+<!--                        <th v-if="page.props.auth.user.role === 'admin'">Act</th>-->
                     </tr>
                 </thead>
                 <tbody>
@@ -205,24 +205,24 @@ const refund  = (id:number):void => {
                         <td>{{getMoney(item.sub_total)}}</td>
                         <td>{{getMoney(item.amount)}}</td>
                         <td>{{item.close_table ? 'Cerrada' : 'Abierta'}}</td>
-                        <td >
-<!--                            Para la devoluciones-->
-                            <i
-                                @click="refund(item.id)"
-                                class=" icon-efect fa-solid fa-right-left mr-2"></i>
-
-<!--&lt;!&ndash;                            Si no existe nada&ndash;&gt;-->
-<!--                            <span v-if="item.close_table">-->
-<!--                                N/A-->
-<!--                            </span>-->
-
+<!--                        <td >-->
+<!--&lt;!&ndash;                            Para la devoluciones&ndash;&gt;-->
 <!--                            <i-->
-<!--                                v-if="page.props.auth.user.role === 'admin'-->
-<!--                                && !item.close_table-->
-<!--                                && !page.props.setting.sequence  "-->
-<!--                                @click="destroy(item.id)"-->
-<!--                                class="icon-efect fa-solid fa-trash"></i>-->
-                        </td>
+<!--                                @click="refund(item.id)"-->
+<!--                                class=" icon-efect fa-solid fa-right-left mr-2"></i>-->
+
+<!--&lt;!&ndash;&lt;!&ndash;                            Si no existe nada&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;                            <span v-if="item.close_table">&ndash;&gt;-->
+<!--&lt;!&ndash;                                N/A&ndash;&gt;-->
+<!--&lt;!&ndash;                            </span>&ndash;&gt;-->
+
+<!--&lt;!&ndash;                            <i&ndash;&gt;-->
+<!--&lt;!&ndash;                                v-if="page.props.auth.user.role === 'admin'&ndash;&gt;-->
+<!--&lt;!&ndash;                                && !item.close_table&ndash;&gt;-->
+<!--&lt;!&ndash;                                && !page.props.setting.sequence  "&ndash;&gt;-->
+<!--&lt;!&ndash;                                @click="destroy(item.id)"&ndash;&gt;-->
+<!--&lt;!&ndash;                                class="icon-efect fa-solid fa-trash"></i>&ndash;&gt;-->
+<!--                        </td>-->
                     </tr>
                 </tbody>
             </table>

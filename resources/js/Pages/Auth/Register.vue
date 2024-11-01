@@ -204,9 +204,7 @@ const search = () => {
                 <InputError class="mt-2" :message="form.errors.role" />
             </div>
 
-
-
-
+<!--            Contrase;a-->
             <div
                 v-if="showPassword "
                 class="">
@@ -220,7 +218,7 @@ const search = () => {
                 />
                 <InputError class="mt-2" :message="form.errors.password" />
             </div>
-
+<!--            confirma passwod-->
             <div
                 v-if="showPassword "
                 class="">
@@ -235,12 +233,7 @@ const search = () => {
                 <InputError class="mt-2" :message="form.errors.password_confirmation" />
             </div>
 
-
-
-
-
-
-
+<!--            Botones-->
             <div
                 class=" col-span-full flex items-center justify-end mt-4">
                 <ActionMessage
@@ -254,11 +247,12 @@ const search = () => {
         </form>
 
 
-        <div class=" bg-gray-200 px-5 rounded-md">
+        <div class=" rounded-md">
             <form
-                class=""
+
                 @submit.prevent="search">
                 <FormSearch
+                    class=""
                     holder="Buscar"
                     v-model:select-value="formSearch.perPage"
                     v-model="formSearch.search"/>
@@ -267,33 +261,33 @@ const search = () => {
                 class="w-full table-auto  rounded-md mt-5">
                 <thead
                     class=" sticky top-0">
-                <tr
-                    class="">
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Atc</th>
-                </tr>
+                    <tr
+                        class="">
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Atc</th>
+                    </tr>
                 </thead>
                 <tbody>
-                <tr
-                    class=""
-                    v-for="(item, index) in users.data" :key="index">
-                    <td>{{item.id}}</td>
-                    <td>{{item.name}}</td>
-                    <td>{{item.email}}</td>
-                    <td class="uppercase">{{item.role}}</td>
-                    <td class="space-x-4">
-                        <i
-                            @click="edit(item)"
-                            class="icon-efect fa-solid fa-pen-to-square"></i>
+                    <tr
+                        class=""
+                        v-for="(item, index) in users.data" :key="index">
+                        <td>{{item.id}}</td>
+                        <td>{{item.name}}</td>
+                        <td>{{item.email}}</td>
+                        <td class="uppercase">{{item.role}}</td>
+                        <td class="space-x-4">
+                            <i
+                                @click="edit(item)"
+                                class="icon-efect fa-solid fa-pen-to-square"></i>
 
-                        <i
-                            @click="destroy(item)"
-                            class=" icon-efect fa-solid fa-trash"></i>
-                    </td>
-                </tr>
+                            <i
+                                @click="destroy(item)"
+                                class=" icon-efect fa-solid fa-trash"></i>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
 
