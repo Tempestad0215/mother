@@ -41,7 +41,7 @@ const props = defineProps({
         <!-- Contenido principal -->
         <div>
            <FloatShowCli
-               :clients="props.clients"
+               :clients="<clientI>props.clients"
                 />
 
         </div>

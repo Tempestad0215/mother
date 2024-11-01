@@ -16,12 +16,12 @@ return new class extends Migration
             $table->id();
             $table->string('code', 30)->unique();
             $table->foreignIdFor(Client::class, 'client_id');
-            $table->float('limit_amount',4);
+            $table->decimal('limit_amount',14,4);
             $table->integer('limit_day');
             $table->integer('expired_day');
-            $table->float('available',4);
-            $table->float('consumed',4);
-            $table->float('expired_amount');
+            $table->decimal('available',14,4);
+            $table->decimal('consumed',14,4);
+            $table->decimal('expired_amount',14,4);
             $table->boolean('status')->default(true);
             $table->softDeletes();
             $table->timestamps();

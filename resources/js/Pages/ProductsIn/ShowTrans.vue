@@ -126,7 +126,6 @@ const destroy = (id:number) => {
             <table class=" w-full table-auto mt-5">
                 <thead class="text-left">
                     <tr>
-                        <th>Codigo</th>
                         <th>Producto/Servicio</th>
                         <th>Disponible</th>
                         <th>Itbis</th>
@@ -140,7 +139,6 @@ const destroy = (id:number) => {
                         class=""
                         v-for="(item, index) in props.trans.data" :key="index"
                         :title="`Creado el : ${item.created_at}`">
-                        <td>{{item.code}}</td>
                         <td class="overflow-hidden">{{item.product_name}}</td>
                         <td>{{item.stock}}</td>
                         <td>{{ getMoney(item.tax)}}</td>
@@ -161,6 +159,8 @@ const destroy = (id:number) => {
                     </tr>
                 </tbody>
             </table>
+
+<!--            Paginacion-->
             <Pagination
                 :next="props.trans.links.next"
                 :prev="props.trans.links.prev"

@@ -3,25 +3,26 @@ import {Head, router, useForm, usePage} from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
 import InputLabel from '@components/InputLabel.vue';
 import TextInput from '@components/TextInput.vue';
-import {formatNumber, getCoin, getMoney, getPenny} from '@/Global/Helpers';
+import {formatNumber, getCoin, getMoney, getPenny, moneyConfig} from '@/Global/Helpers';
 import PrimaryButton from '@components/PrimaryButton.vue';
 import InputError from '@components/InputError.vue';
 import FloatBox from '@components/FloatBox.vue';
-import {computed, onMounted, Ref, ref} from 'vue';
+import {onMounted, Ref, ref} from 'vue';
 import FloatSupplier from '@/Pages/Suppliers/FloatSupp.vue';
 import {successHttp} from "@/Global/Alert";
 import FormSearch from "@components/FormSearch.vue";
 import {productDataI, productI, productTransI} from "@/Interfaces/Product";
 import Pagination from "@components/Pagination.vue";
 import LinkHeader from '@components/LinkHeader.vue';
+import {Money} from "v-money3";
+import {appSettingI} from "@/Interfaces/Global";
 
 
 /**
  * Datos de la pagina
  */
-const {props} = usePage();
-
-
+// const {props} = usePage();
+const setting:appSettingI = usePage().props.setting
 
 
 /**
@@ -36,8 +37,6 @@ const propsW = defineProps<{
 }>();
 
 
-
-
 /**
  * Formulario para enviar los daots
  */
@@ -49,6 +48,8 @@ const form = useForm({
     product_name:"",
     stock: 0.00,
     cost: 0.00,
+    min_price:0.00,
+    special_price:0.00,
     price: 0.00,
     tax: 0.00,
     tax_rate: 0 ,
@@ -110,6 +111,7 @@ onMounted(()=>{
         form.product_id = propsW.productEntrance.id;
         form.product_name = propsW.productEntrance.name;
         form.stock = propsW.productEntrance.stock;
+        form.cost = <number>propsW.productEntrance.cost;
         form.price = propsW.productEntrance.price;
         form.tax_rate =  propsW.productEntrance.tax_rate / 100;
 
@@ -137,45 +139,14 @@ onMounted(()=>{
 /**
  * Propiedades computada
  */
-const checkDiscount = computed(() => {
-    if( form.cost > 0.00 && props.setting.save_cost && form.discount_amount >= form.cost)
-   {
-       form.setError('discount', `El Item : ${form.product_name} Esta Debajo del Costo`);
-       return 'text-red-500';
-   }
-});
+// const checkDiscount = computed(() => {
+//     if( form.cost > 0.00 && props.setting.save_cost && form.discount_amount >= form.cost)
+//    {
+//        form.setError('discount', `El Item : ${form.product_name} Esta Debajo del Costo`);
+//        return 'text-red-500';
+//    }
+// });
 
-
-
-/**
- * Funciones
- */
-// Computadas
-
-
-
-/**
- * Funciones
- */
-// funciones
-// const getProduct = () => {
-//     if(form.product_name.length < 2)
-//     {
-//         return false;
-//     }else{
-//         axios.get(route('product.get',{search: form.product_name}))
-//             .then((res)=>{
-//                 // Pasar los datos
-//                 productData.value = res.data;
-//
-//             });
-//     }
-// }
-
-//Obtener el valor del select
-// const getValue = (id:number)=>{
-//     form.product_id = id;
-// }
 
 // Enviar formulario
 const submit = () => {
@@ -238,27 +209,6 @@ const edit = (id:number)=>{
     router.get(route('in.entrance', {productIn: id}));
 }
 
-// const destroy = (id:number) => {
-//     Swal.fire({
-//         title: `Desea eliminar el registro N°: ${id} ?`,
-//         text: "Los cambios realizados son irreversible!",
-//         icon: "question",
-//         showCancelButton: true,
-//         confirmButtonColor: "#393434",
-//         cancelButtonColor: "#c6c2c2",
-//         confirmButtonText: "Si, Eliminar!"
-//     }).then((result) => {
-//         if (result.isConfirmed) {
-//             router.patch(route('in.destroy',{productIn: id}),{},{
-//                 onSuccess:()=>{
-//                     successHttp('Datos eliminado correctamente');
-//                 }
-//             });
-//         }
-//     });
-//
-//
-// }
 
 /**
  * Calcular el los impuesto de los ingreos
@@ -320,13 +270,10 @@ const totalTax = () => {
                         <div class=" flex space-x-5">
                             <div class="relative flex-1">
                                 <TextInput
-                                    class=" w-full"
+                                    maxLength="50"
+                                    class="w-3/4"
                                     v-model="form.product_name "
                                     name="product" />
-                                <i
-                                    class=" absolute inset-y-0 right-3 flex items-center fa-solid fa-circle-arrow-down">
-                                </i>
-
                             </div>
 
 <!--                            <SecondaryButton-->
@@ -339,18 +286,17 @@ const totalTax = () => {
                     </div>
 
                     <!-- Datos del producto -->
-                    <div class=" mt-4 grid grid-cols-4 gap-3 overflow-hidden">
+                    <div class=" mt-4 grid grid-cols-3 gap-3 overflow-hidden">
                         <!-- Cantidad -->
                         <div>
                             <InputLabel
                                 for="stock"
                                 value="Cantidad"/>
-                            <TextInput
-                                class="w-full"
-                                name="stock"
+                            <money
                                 @blur="totalTax"
+                                class="inputGeneral w-full"
                                 v-model="form.stock"
-                                type="number"/>
+                                v-bind="moneyConfig"/>
 
                             <!-- Error -->
                             <InputError :message="form.errors.stock" />
@@ -362,15 +308,52 @@ const totalTax = () => {
                             <InputLabel
                                 for="cost"
                                 value="Costo"/>
-                            <TextInput
-                                class="w-full"
-                                name="cost"
+                            <money
                                 @blur="totalTax"
+                                class="inputGeneral w-full"
                                 v-model="form.cost"
-                                type="number"/>
+                                v-bind="moneyConfig"/>
 
                             <!-- Error -->
                             <InputError :message="form.errors.cost" />
+
+                        </div>
+
+                        <!-- Precio Espcial -->
+                        <div>
+                            <InputLabel
+                                for="minPrice"
+                                value="Precio Especial"/>
+
+                            <money
+                                name="minPrice"
+                                :min="setting.save_cost ? form.cost : 0"
+                                @blur="totalTax"
+                                class="inputGeneral w-full"
+                                v-model="form.special_price"
+                                v-bind="moneyConfig"/>
+
+                            <!-- Error -->
+                            <InputError :message="form.errors.min_price" />
+
+                        </div>
+
+                        <!-- Precio Special -->
+                        <div>
+                            <InputLabel
+                                for="minPrice"
+                                value="Precio Minímo"/>
+
+                            <money
+                                name="minPrice"
+                                :min="setting.save_cost ? form.cost : 0"
+                                @blur="totalTax"
+                                class="inputGeneral w-full"
+                                v-model="form.min_price"
+                                v-bind="moneyConfig"/>
+
+                            <!-- Error -->
+                            <InputError :message="form.errors.min_price" />
 
                         </div>
 
@@ -379,12 +362,12 @@ const totalTax = () => {
                             <InputLabel
                                 for="price"
                                 value="Precio"/>
-                            <TextInput
-                                class=" w-full"
-                                name="price"
+
+                            <money
                                 @blur="totalTax"
+                                class="inputGeneral w-full"
                                 v-model="form.price"
-                                type="number"/>
+                                v-bind="moneyConfig"/>
 
                             <!-- Error -->
                             <InputError :message="form.errors.price" />
@@ -396,14 +379,11 @@ const totalTax = () => {
                             <InputLabel
                                 for="discount"
                                 value="Descuento"/>
-                            <TextInput
-                                :class="checkDiscount"
-                                class=" w-full"
-                                name="discount"
+                            <money
                                 @blur="totalTax"
+                                class="inputGeneral w-full"
                                 v-model="form.discount"
-                                type="number"/>
-
+                                v-bind="moneyConfig"/>
                             <!-- Error -->
                             <InputError :message="form.errors.discount" />
 
@@ -537,7 +517,6 @@ const totalTax = () => {
                     <table class="table-auto w-full mt-5">
                         <thead>
                             <tr class="text-left">
-                                <th >Codigo</th>
                                 <th >Cod. Barr.</th>
                                 <th >Producto</th>
 <!--                                <th>Descripcion</th>-->
@@ -551,8 +530,7 @@ const totalTax = () => {
                             <tr
                                 class=""
                                 v-for="item in propsW.products?.data">
-                                <td class="">{{item.code}}</td>
-                                <td class="px-3">{{item.bar_code ? item.bar_code : 'N/A'}}</td>
+                                <td class="">{{item.bar_code ? item.bar_code : 'N/A'}}</td>
                                 <td class="overflow-hidden">{{item.name}}</td>
 <!--                                <td>{{item.description}}</td>-->
                                 <td>{{item.stock}}</td>

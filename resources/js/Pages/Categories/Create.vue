@@ -12,11 +12,16 @@ import Pagination from "@components/Pagination.vue";
 import Swal from "sweetalert2";
 import {paginationJoin} from "@/Global/Helpers";
 
+/*
+Propiedades de la ventana
+ */
 const props = defineProps<{
     categories: categoryPaginationI
 }>();
 
-
+/*
+Formularios
+ */
 const form = useForm({
     id:0,
     name:"",
@@ -25,13 +30,18 @@ const form = useForm({
     search: ""
 });
 
+/*
+Formulario de busqueda
+ */
 const formSearch = useForm({
     search:"",
     perPage:15
 });
 
 
-
+/**
+ * Para enviar los datos
+ */
 const submit = () => {
     //si es para actualizar
     if(form.update)
@@ -52,6 +62,10 @@ const submit = () => {
 
 }
 
+/**
+ * Para editar los datos
+ * @param item
+ */
 const edit = (item:categoryI) => {
     form.id = item.id;
     form.name = item.name;
@@ -59,6 +73,11 @@ const edit = (item:categoryI) => {
     form.update = true;
 
 }
+
+/**
+ * Para eliminar los datos
+ * @param item
+ */
 const destroy = (item:categoryI) => {
 
     form.id = item.id;
@@ -83,6 +102,10 @@ const destroy = (item:categoryI) => {
     });
 }
 
+
+/**
+ * Para busqueda los datos
+ */
 const search = () => {
     formSearch.get(route('category.create',{search: formSearch.search}),{
         preserveState: true,
@@ -165,7 +188,6 @@ const search = () => {
                     class=" mt-5 table-auto w-full rounded-md">
                     <thead>
                     <tr class=" text-left ">
-                        <th>Code</th>
                         <th>Nombre</th>
                         <th>Descripción</th>
                         <th>Act</th>
@@ -175,7 +197,6 @@ const search = () => {
                         <tr
                             class=""
                             v-for="(item, index) in props.categories?.data" :key="index">
-                            <td>{{item.code}}</td>
                             <td>{{item.name}}</td>
                             <td class="w-2/4 max-w-[600px] truncate">{{item.description ? item.description : 'N/A'}}</td>
                             <td class="space-x-3">

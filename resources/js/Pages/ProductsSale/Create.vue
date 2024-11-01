@@ -7,7 +7,7 @@ import FloatBox from "@components/FloatBox.vue";
 import FloatShowPro from "@/Pages/Products/FloatShowPro.vue";
 import {computed, onMounted, onUpdated, Ref, ref} from "vue";
 import {productDataI, productI} from "@/Interfaces/Product";
-import { getMoney, getRncHelper, getSequenceType} from "@/Global/Helpers";
+import {getMoney, getRncHelper, getSequenceType, moneyConfig} from "@/Global/Helpers";
 import LinkHeader from "@components/LinkHeader.vue";
 import Swal from "sweetalert2";
 import InputError from "@components/InputError.vue";
@@ -21,6 +21,7 @@ import {creditNotesSaleI, infoSaleI, saleDataI, saleDataPaginationI} from "@/Int
 import {invoiceTypeI, rncUserI, sequenceDataI} from "@/Interfaces/Setting";
 import ShowPdf from "@components/ShowPdf.vue";
 import {typePaymentData} from "@/Global/ShareData";
+import {Money} from "v-money3";
 
 
 /*
@@ -139,7 +140,7 @@ const form = useForm({
 Propidades computada
  */
 const checkShowPdf = computed(()=>{
-    
+
     //PAsar el valos de los datos
     return pdfString.value != null && pdfString.value != '';
 });
@@ -958,19 +959,21 @@ const getRncClient = async () => {
                                         </td>
                                         <td
                                             class="">
-                                            <input
-                                                class=" ring-0 !focus:outline-0 border-none !bg-transparent rounded-md bg-white w-[100px] "
+                                            <money
+                                                class="inputGeneral"
+                                                v-model="item.stock"
+                                                v-bind="moneyConfig"
                                                 @blur="totalAmount(index)"
-                                                v-model.number="item.stock"
-                                                type="number">
+                                                />
                                         </td>
                                         <td
                                             class="">
-                                            <input
-                                                class=" ring-0 !focus:outline-0 border-none !bg-transparent rounded-md bg-white w-[75px]"
+                                            <money
+                                                class="inputGeneral"
+                                                v-model="item.discount"
+                                                v-bind="moneyConfig"
                                                 @blur="totalAmount(index)"
-                                                v-model.number="item.discount"
-                                                type="number">
+                                            />
                                         </td>
                                         <td class="">
                                             <span>
@@ -1231,14 +1234,14 @@ const getRncClient = async () => {
                 </FloatBox>
             </Transition>
 
-            <!-- Ventana flotante -->
+            <!-- Ventana de productos-->
             <Transition>
                 <FloatBox
                     class=""
                     @close="showProduct = false"
                     v-if="showProduct">
                     <FloatShowPro
-                        class=" bg-gray-200 w-5/5 rounded-md px-10 py-5"
+                        class=" bg-gray-200 rounded-md mx-14 py-5"
                         @select="getData"
                         :products="propsW.products"/>
                 </FloatBox>
@@ -1252,7 +1255,7 @@ const getRncClient = async () => {
                     @close="showSaleOpen = false">
                     <SaleOpenShow
                         @sen-data="getSaleOpen"
-                        class=" bg-gray-200 w-4/5 rounded-md px-10 py-5"
+                        class=" bg-gray-200 rounded-md mx-14 px-10 py-5"
                         :sale-open="propsW.saleOpen"/>
                 </FloatBox>
             </Transition>

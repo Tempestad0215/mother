@@ -263,13 +263,12 @@ const search = () => {
                 </div>
 
 
-
+<!--                Datos de los proveedores-->
                 <table
                     class=" mt-5 text-left w-full table-auto ">
                     <thead
                         class="">
                         <tr>
-                            <th>Code</th>
                             <th>Empresa</th>
                             <th>Representante</th>
                             <th>telefono</th>
@@ -281,7 +280,6 @@ const search = () => {
                         <tr
                             class=""
                             v-for="(item,index) in props.suppliers?.data" :key="index">
-                            <td>{{item.code}}</td>
                             <td>{{item.company_name}}</td>
                             <td>{{item.contact ? item.contact : "N/A" }}</td>
                             <td>{{item.phone ? item.phone : 'N/A'}}</td>

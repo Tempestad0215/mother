@@ -110,7 +110,7 @@ const detroy = (id:Number) => {
 </script>
 
 <template>
-    <div class="rounded-md p-5 h-full">
+    <div class="rounded-md p-5">
         <div class="flex justify-between">
 
             <div>

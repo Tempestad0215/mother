@@ -32,15 +32,16 @@ return new class extends Migration
                 ->onUpdate('restrict')
                 ->onDelete('restrict');
             $table->string('product_name',75);
-            $table->float('stock',4);
-            $table->float('reserved',4);
-            $table->float('price',4);
-            $table->float('tax_rate',4);
-            $table->float('tax',4);
-            $table->float('amount',4);
+            $table->decimal('stock',15,4);
+            $table->decimal('reserved');
+            $table->decimal('min_price',15,4);
+            $table->decimal('price',15,4);
+            $table->decimal('tax_rate');
+            $table->decimal('tax');
+            $table->decimal('amount',15,4);
             $table->boolean('ride')->default(false);
-            $table->float('discount',4)->default(0);
-            $table->float('discount_amount',4);
+            $table->decimal('discount',4)->default(0);
+            $table->decimal('discount_amount');
             $table->enum('type',['entrada','ventas','salida','cancelacion','ajuste','reserva','eliminado','devolucion']);
             $table->boolean('status')->default(true);
             $table->softDeletes();

@@ -16,11 +16,11 @@ return new class extends Migration
             $table->id();
             $table->string('code',30)->unique();
             $table->foreignIdFor(Client::class,'client_id')->constrained('clients')->onUpdate('restrict')->onDelete('restrict');
-            $table->float('amount',4);
+            $table->decimal('amount',15,4);
             $table->date('date');
             $table->date('expire')->nullable();
-            $table->float('balance',4);
-            $table->float('consumed',4);
+            $table->decimal('balance',15,4);
+            $table->decimal('consumed',15,4);
             $table->boolean('status')->default(true);
             $table->softDeletes();
             $table->timestamps();

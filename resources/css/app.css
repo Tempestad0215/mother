@@ -41,6 +41,14 @@
         @apply text-3xl font-bold italic underline ;
     }
 
+
+    /*
+    Input general
+     */
+    .inputGeneral {
+        @apply border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm;
+    }
+
     /*
     Estilo para la tabla completa
      */

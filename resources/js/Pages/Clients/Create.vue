@@ -96,6 +96,7 @@ const form = useForm({
 });
 
 
+
 /*
 Funciones
  */
@@ -220,6 +221,8 @@ const getRnc = async () => {
                 <h2 class="col-span-full text-2xl font-bold text-center mb-4">
                     {{ propsW.update ? 'Actualización' :  'Registro'}} de cliente
                 </h2>
+
+
 
                 <div class="flex justify-end items-center">
                     <!--                Tipo de cliente-->

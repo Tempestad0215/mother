@@ -18,8 +18,8 @@ return new class extends Migration
             //Datos solo de la ventas
             $table->enum('type', ['ventas','cotizacion']);
             $table->enum('type_payment',['contado','credito','cheque','tarjeta','transferencia','anticipo'])->default('contado');
-            $table->float('received',4)->default(0);
-            $table->float('returned',4)->default(0);
+            $table->decimal('received',15,4)->default(0);
+            $table->decimal('returned',15,4)->default(0);
             $table->boolean('status')->default(true);
             $table->boolean('close_table')->default(false);
             $table->json('credit_notes')->nullable();

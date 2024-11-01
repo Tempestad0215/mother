@@ -122,7 +122,6 @@ const destroy = (id:Number) => {
                     class=" sticky top-0 text-left">
                 <tr
                     class="">
-                    <th >Code</th>
                     <th class="overflow-hidden max-w-[50px]" >Nombre</th>
                     <th >Ced./Rnc./Pas.</th>
                     <th v-if="!isSale" >Correo</th>
@@ -137,9 +136,6 @@ const destroy = (id:Number) => {
                 <tr
                     class=" "
                     v-for="(item, index) in props.clients?.data" :key="index" >
-                    <td class="">
-                        {{ item.code }}
-                    </td>
                     <td class="overflow-hidden" >
                         {{item.name}}
                     </td>

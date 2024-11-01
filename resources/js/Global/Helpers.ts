@@ -2,6 +2,21 @@ import Swal from "sweetalert2";
 import axios from "axios";
 
 
+/*
+* Variables compartida general
+ */
+export const moneyConfig =  {
+    decimal: '.',
+    thousands: ',',
+    prefix: '',
+    suffix: '',
+    precision: 2,
+    masked: false
+}
+
+
+
+
 /**
  * Limpiar y convertir a float
  * @param val
@@ -33,6 +48,20 @@ export const getMoney = (value:number = 0) => {
         currency: 'DOP',
     }).format(value);
 }
+
+
+/**
+ * convertir a dinero sin prefijo
+ * @param value
+ */
+export const formatNumberPlane = (value:number):string => {
+    return  value.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 4,
+    });
+}
+
+
 
 
 /**
@@ -85,10 +114,7 @@ export const getCoin = (value:number) => {
 // }
 
 
-/**
- * Obtener los RNC
- */
-/**
+/*
  * Buscar el RNC de los datos
  */
 export const getRncHelper = async (data: string):Promise<string> => {
@@ -129,7 +155,6 @@ export const getRncHelper = async (data: string):Promise<string> => {
 /**
  * Tipos de secuencia ncf
  */
-
 export const getSequenceType = (type:string):string =>
 {
     switch (type){
@@ -165,7 +190,6 @@ export const getSequenceType = (type:string):string =>
  * Generar colores para los charts
  * @param numItems
  */
-
 export const generateColors = (numItems:number) => {
     const colors = [];
 
@@ -184,7 +208,7 @@ export const generateColors = (numItems:number) => {
 
 
 /**
- *
+ *Colocar la hora en la busqueda
  * @param h
  * @param m
  * @param s

@@ -4,13 +4,13 @@ import '../css/app.css';
 import 'sweetalert2/dist/sweetalert2.min.css';
 
 
-
 import { createApp, h, DefineComponent } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import VueTheMask from 'vue-the-mask';
 import VueSweetalert2 from 'vue-sweetalert2';
+import money from 'v-money';
 
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
@@ -21,6 +21,7 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         createApp({ render: () => h(App, props) })
             .use(plugin)
+            .use(money as any)
             .use(ZiggyVue, Ziggy)
             .use(VueTheMask as any)
             .use(VueSweetalert2)
