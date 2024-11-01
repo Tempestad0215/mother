@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Enums\ProductTypeEnum;
 use App\Models\Product;
 use App\Rules\CheckIsServiceRule;
+use App\Rules\SaveCostProductRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -46,10 +47,13 @@ class StoreProductInRequest extends FormRequest
         $product = Product::find($this->product_id);
 
         //Validar los datos
+
         return [
             'product_id' => ['required','exists:products,id'],
             'stock' => [Rule::requiredIf($product->type == ProductTypeEnum::PRODUCTO), 'required', 'numeric'],
             'cost' => ['required', 'numeric'],
+            'special_price' => ['required','numeric', new SaveCostProductRule($this->cost)],
+            'min_price' => ['required', 'numeric'],
             'price' => ['required', 'numeric'],
             'tax_rate' => ['required', 'numeric'],
             'tax' =>['required', 'numeric'],

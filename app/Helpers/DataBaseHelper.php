@@ -24,10 +24,10 @@ class DataBaseHelper
             ->constrained('clients')
             ->onUpdate('restrict')
             ->onDelete('restrict');
-        $table->float('discount_amount')->default(0);
-        $table->float('tax',4);
-        $table->float('sub_total',4);
-        $table->float('amount',4);
+        $table->decimal('discount_amount',15,4)->default(0);
+        $table->decimal('tax',4);
+        $table->decimal('sub_total',15,4);
+        $table->decimal('amount',15,4);
 
 
         $table->softDeletes();

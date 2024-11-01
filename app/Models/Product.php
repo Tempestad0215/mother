@@ -23,6 +23,8 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property float $stock
  * @property float $reserved
  * @property float $cost
+ * @property float $special_price
+ * @property float $min_price
  * @property float $price
  * @property string $sku
  * @property string $bar_code
@@ -64,6 +66,8 @@ class Product extends Model implements Auditable
         'stock',
         'reserved',
         'cost',
+        'special_price',
+        'min_price',
         'price',
         'supplier_id',
         'category_id',

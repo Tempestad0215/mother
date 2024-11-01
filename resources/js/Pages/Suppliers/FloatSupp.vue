@@ -31,7 +31,7 @@ const submit = () =>{
 
 
 <template>
-    <div class=" bg-gray-200 p-5 w-full m-8 rounded-md">
+    <div class=" bg-gray-200 p-5 mx-11 rounded-md">
         <form
             class=" grid grid-cols-2 gap-3"
             @submit.prevent="submit" >

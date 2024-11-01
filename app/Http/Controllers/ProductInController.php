@@ -61,8 +61,6 @@ class ProductInController extends Controller
      */
     public function store(StoreProductInRequest $request, Product $productIn): RedirectResponse
     {
-
-
         DB::transaction(function () use ($request, $productIn) {
 
             //Actulizar los datos

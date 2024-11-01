@@ -24,19 +24,23 @@ return new class extends Migration
             $table->string('dimensions',255)->nullable();
             $table->string('brand',75)->nullable();
             $table->string('unit',20)->nullable();
-            $table->float('stock',4)->default(0);
-            $table->float('reserved',4)->default(0);
-            $table->float('cost',4)->default(0);
-            $table->float('price',4)->default(0);
+            $table->decimal('stock')->default(0);
+            $table->decimal('reserved',4)->default(0);
+
+            //Precio y costo
+            $table->decimal('cost')->default(0);
+            $table->decimal('special_price');
+            $table->decimal('min_price');
+            $table->decimal('price')->default(0);
 
             //Informacion del producto
-            $table->float('product_no_tax',4)->default(0);
-            $table->float('tax',4)->default(0);
-            $table->float('tax_rate',4)->default(0);
-            $table->float('benefits',4)->default(0);
+            $table->decimal('product_no_tax')->default(0);
+            $table->decimal('tax')->default(0);
+            $table->decimal('tax_rate')->default(0);
+            $table->decimal('benefits')->default(0);
 
-            $table->float('discount',4)->default(0);
-            $table->float('discount_amount',4)->default(0);
+            $table->decimal('discount',15,4)->default(0);
+            $table->decimal('discount_amount',14,4)->default(0);
 
 
             //Relaciones de los productos
