@@ -9,27 +9,42 @@ use Illuminate\Http\Request;
 class TransHelper
 {
     /**
-     * Guardar los datos de la trans
-     * @param Request $request
+     * @param array $request
+     * @param ProductTransType $type
      * @param int $sale_id
      * @param int $product_id
      * @return void
      */
-    public function store(Request $request, ProductTransType $type, int $sale_id = 0, int $product_id = 0):void
+    public static function store(Array $request, ProductTransType $type, int $sale_id = 0, int $product_id = 0):void
     {
 
+
+
+        //Crear el TransId
+        $transId = $request['transID'] ?? null;
+
+
+
+        //Verificar si existe la transcciones antiguia
+        $transOld = ProTrans::find($transId);
+
+        //Verificar si existe o no
+        $proTrans = $transOld && $type == ProductTransType::RESERVA ? $transOld : new ProTrans();
+
+
+
         //Crear la transacion
-        $proTrans = new ProTrans();
-        $proTrans->product_id = $product_id;
-        $proTrans->product_name = $request->get("product_name");
-        $proTrans->stock = $request->get('stock');
+        $proTrans->product_id = $product_id ?: $request['product_id'];
+        $proTrans->product_name = $request["product_name"];
+        $proTrans->reserved = $type === ProductTransType::RESERVA ?  $request["reserved"] : 0;
+        $proTrans->stock = $request['stock'];
         $proTrans->sale_id = $sale_id ?: null;
-        $proTrans->price = $request->get('price');
-        $proTrans->discount = $request->get('discount');
-        $proTrans->discount_amount = $request->get('discount_amount');
-        $proTrans->tax_rate = $request->get('tax_rate');
-        $proTrans->tax = $request->get('tax');
-        $proTrans->amount = $request->get('amount');
+        $proTrans->price = $request['price'];
+        $proTrans->discount = $request['discount'];
+        $proTrans->discount_amount = $request['discount_amount'];
+        $proTrans->tax_rate = $request['tax_rate'];
+        $proTrans->tax = $request['tax'];
+        $proTrans->amount = $request['amount'];
         $proTrans->type = $type;
         $proTrans->save();
 

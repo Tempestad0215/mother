@@ -85,6 +85,8 @@ class SaleHelper
             //Actualizar los datos de la notas de credito
             CreditNoteHelper::updateAvailableFor($creditNotes, $request->get('amount'));
 
+
+            //Verificar si existe el comentario
             if ($request->get('comment') !== null)
             {
                 //Crear el comentario
@@ -104,21 +106,34 @@ class SaleHelper
                 //Descontar los productos del inventario
                 $saleHelper->processSale($closeTable, $value);
 
+                //Para colocar el tipo
+                $transType =  null;
+
+                //Cambiar el valor dependiendo el tipo de la mesa
+                if ($closeTable)
+                {
+                    $transType = ProductTransType::VENTAS;
+                }else{
+                    $transType = ProductTransType::RESERVA;
+                }
+
 
                 //Crear la transaccion individual
-                ProTrans::create([
-                    'product_id' => $value['product_id'],
-                    'product_name' => $value['product_name'],
-                    'sale_id' => $sale->id,
-                    'stock' => $value['stock'],
-                    'price' => $value['price'],
-                    'tax_rate' => $value['tax_rate'],
-                    'tax' => $value['tax'],
-                    'amount' => $value['amount'],
-                    'discount' => $value['discount'],
-                    'discount_amount' => $value['discount_amount'],
-                    'type' => $request->get('close_table') ? ProductTransType::VENTAS : ProductTransType::RESERVA
-                ]);
+                TransHelper::store($value, $transType, $sale->id);
+
+//                ProTrans::create([
+//                    'product_id' => $value['product_id'],
+//                    'product_name' => $value['product_name'],
+//                    'sale_id' => $sale->id,
+//                    'stock' => $value['stock'],
+//                    'price' => $value['price'],
+//                    'tax_rate' => $value['tax_rate'],
+//                    'tax' => $value['tax'],
+//                    'amount' => $value['amount'],
+//                    'discount' => $value['discount'],
+//                    'discount_amount' => $value['discount_amount'],
+//                    'type' => $request->get('close_table') ? ProductTransType::VENTAS : ProductTransType::RESERVA
+//                ]);
 
             }
 
@@ -353,40 +368,33 @@ class SaleHelper
 
             if ($closeTable)
             {
-                //Crear la transaccion individual
-                ProTrans::create(
-                    [
-                        'sale_id' => $sale->id,
-                        'product_id' => $item['product_id'],
-                        'product_name' => $item['product_name'],
-                        'stock' => $item['stock'],
-                        'price' => $item['price'],
-                        'tax' => $item['tax'],
-                        'tax_rate' => $item['tax_rate'],
-                        'amount' => $item['amount'],
-                        'discount' => $item['discount'],
-                        'discount_amount' => $item['discount_amount'],
-                        'type' => ProductTransType::VENTAS
-                    ]);
+
+                //Crear la transacciones
+                TransHelper::store($item, ProductTransType::VENTAS, $sale->id);
+
 
             }else{
+
+
+                //Crear la transacciones
+                TransHelper::store($item, ProductTransType::RESERVA, $sale->id);
                 //Crear la transaccion individual
-                ProTrans::updateOrCreate([
-                    'id' => $request->get('id'),
-                    'product_id' => $item['product_id'],
-                ],
-                    [
-                        'product_id' => $item['product_id'],
-                        'product_name' => $item['product_name'],
-                        'stock' => $item['stock'],
-                        'price' => $item['price'],
-                        'tax' => $item['tax'],
-                        'tax_rate' => $item['tax_rate'],
-                        'amount' => $item['amount'],
-                        'discount' => $item['discount'],
-                        'discount_amount' => $item['discount_amount'],
-                        'type' => ProductTransType::RESERVA
-                    ]);
+//                ProTrans::updateOrCreate([
+//                    'id' => $request->get('id'),
+//                    'product_id' => $item['product_id'],
+//                ],
+//                    [
+//                        'product_id' => $item['product_id'],
+//                        'product_name' => $item['product_name'],
+//                        'stock' => $item['stock'],
+//                        'price' => $item['price'],
+//                        'tax' => $item['tax'],
+//                        'tax_rate' => $item['tax_rate'],
+//                        'amount' => $item['amount'],
+//                        'discount' => $item['discount'],
+//                        'discount_amount' => $item['discount_amount'],
+//                        'type' => ProductTransType::RESERVA
+//                    ]);
             }
 
 
@@ -428,12 +436,12 @@ class SaleHelper
             $query->where('status', true)
                 ->where('close_table', false);
         })->where(function (Builder $query) use ($search) {
-            $query->where('client_name', 'LIKE', "%$search%")
-                ->orWhereNull('client_name')
-                ->orWhere('client_name','=','');
+            $query->where('client_name', 'LIKE', "%$search%");
         })->with('infoSale')
             ->latest()
             ->simplePaginate(15);
+
+
 
         return SaleInfoResource::collection($data)->response()->getData(true);
 

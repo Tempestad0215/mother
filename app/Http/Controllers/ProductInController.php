@@ -61,6 +61,7 @@ class ProductInController extends Controller
      */
     public function store(StoreProductInRequest $request, Product $productIn): RedirectResponse
     {
+
         DB::transaction(function () use ($request, $productIn) {
 
             //Actulizar los datos
@@ -71,7 +72,7 @@ class ProductInController extends Controller
             $inHelper->updateProduct($request, $productIn);
 
             //Crear los datos de la transaccion
-            $transHelper->store($request, ProductTransType::ENTRADA, 0, $productIn->id);
+            $transHelper->store($request->toArray(), ProductTransType::ENTRADA, 0, $productIn->id);
 
 
         });
@@ -187,7 +188,7 @@ class ProductInController extends Controller
 
 
                 //Actualizar la transaciom
-                $transHelper->store($request, ProductTransType::AJUSTE, 0, $product->id);
+                $transHelper->store($request->toArray(), ProductTransType::AJUSTE, 0, $product->id);
                 //Actualizar los productos
                 $inHelper->adjustProduct($request, $product);
             });

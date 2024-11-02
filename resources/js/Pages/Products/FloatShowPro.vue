@@ -110,9 +110,10 @@ const detroy = (id:Number) => {
 </script>
 
 <template>
-    <div class="rounded-md p-5">
-        <div class="flex justify-between">
-
+    <div
+         class="rounded-md max-h-[90vh] px-5 overflow-hidden ">
+        <div
+            class="flex justify-between">
             <div>
                 <form @submit.prevent="submit"  >
                     <FormSearch
@@ -126,8 +127,8 @@ const detroy = (id:Number) => {
             </h3>
         </div>
 
-        <div class="h-full overflow-hidden"
-            :class="url.startsWith('/sale') ? 'overflow-y-auto max-h-[550px]' : ''">
+        <div
+            class="max-h-[65vh] overflow-y-scroll ">
             <table
                 class=" table-auto w-full mt-5">
                 <thead
@@ -144,54 +145,55 @@ const detroy = (id:Number) => {
                         <th >Atc</th>
                     </tr>
                 </thead>
-                    <tbody>
-                        <tr
-                            class=""
-                            v-for="(item, index) in propsW.products.data" :key="index">
-                            <td>{{item.code}}</td>
-                            <td>{{item.bar_code ? item.bar_code : 'N/A'}}</td>
-                            <td>{{item.name}}</td>
-        <!--                    <td>{{item.description}}</td>-->
-        <!--                    <td>{{item.unit ? item.unit : 'N/A'}}</td>-->
-                            <td>{{item.stock}}</td>
-                            <td>{{ getMoney(item.price)}}</td>
-                            <td
-                                class="text-center">
-                                <div
-                                    class=" space-x-3">
-                                    <!-- Entrada de producto -->
-                                    <i
-                                        v-if="url !== 'Products/Show'"
-                                        title="Crear Entrada"
-                                        @click="selectData(item)"
-                                        class=" icon-efect fa-solid fa-circle-check"></i>
+                <tbody
+                    class="">
+                    <tr
+                        class=""
+                        v-for="(item, index) in propsW.products.data" :key="index">
+                        <td>{{item.code}}</td>
+                        <td>{{item.bar_code ? item.bar_code : 'N/A'}}</td>
+                        <td>{{item.name}}</td>
+    <!--                    <td>{{item.description}}</td>-->
+    <!--                    <td>{{item.unit ? item.unit : 'N/A'}}</td>-->
+                        <td>{{item.stock}}</td>
+                        <td>{{ getMoney(item.price)}}</td>
+                        <td
+                            class="text-center">
+                            <div
+                                class=" space-x-3">
+                                <!-- Entrada de producto -->
+                                <i
+                                    v-if="url !== 'Products/Show'"
+                                    title="Crear Entrada"
+                                    @click="selectData(item)"
+                                    class=" icon-efect fa-solid fa-circle-check"></i>
 
-                                    <!--                        <i-->
-                                    <!--                            v-if="page.component !== 'Products/Sale' "-->
-                                    <!--                            class="icon-efect fa-solid fa-arrows-down-to-line"></i>-->
+                                <!--                        <i-->
+                                <!--                            v-if="page.component !== 'Products/Sale' "-->
+                                <!--                            class="icon-efect fa-solid fa-arrows-down-to-line"></i>-->
 
-                                    <!-- Ver los productos -->
-                                    <!--                        <i-->
-                                    <!--                            v-if="page.component !== 'Products/Sale' "-->
-                                    <!--                            class="icon-efect  fa-solid fa-eye"></i>-->
+                                <!-- Ver los productos -->
+                                <!--                        <i-->
+                                <!--                            v-if="page.component !== 'Products/Sale' "-->
+                                <!--                            class="icon-efect  fa-solid fa-eye"></i>-->
 
-                                    <!-- Editar -->
-                                    <i
-                                        v-if="component === 'Products/Show' "
-                                        title="Editar"
-                                        @click="edit(item.id)"
-                                        class="icon-efect fa-solid fa-pen-to-square"></i>
+                                <!-- Editar -->
+                                <i
+                                    v-if="component === 'Products/Show' "
+                                    title="Editar"
+                                    @click="edit(item.id)"
+                                    class="icon-efect fa-solid fa-pen-to-square"></i>
 
-                                    <!-- Eliminar -->
-                                    <i
-                                        v-if="component === 'Products/Show' && auth.user.role === 'admin' "
-                                        title="Eliminar"
-                                        @click="detroy(item.id)"
-                                        class="icon-efect fa-solid fa-trash"></i>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
+                                <!-- Eliminar -->
+                                <i
+                                    v-if="component === 'Products/Show' && auth.user.role === 'admin' "
+                                    title="Eliminar"
+                                    @click="detroy(item.id)"
+                                    class="icon-efect fa-solid fa-trash"></i>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
             </table>
 
         </div>

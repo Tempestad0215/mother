@@ -20,6 +20,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property int $sale_id
  * @property int $credit_note_id
  * @property float $stock
+ * @property float $reserved
  * @property float $price
  * @property float $discount
  * @property float $discount_amount
@@ -97,7 +98,7 @@ class ProTrans extends Model implements Auditable
         return $this->belongsTo(Product::class);
     }
 
-    public function credit_note():belongsTo
+    public function creditNote():belongsTo
     {
         return $this->belongsTo(CreditNote::class);
     }

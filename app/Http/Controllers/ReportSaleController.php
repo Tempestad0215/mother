@@ -21,7 +21,6 @@ class ReportSaleController extends Controller
         $typePayment = $request->get('typePayment');
 
 
-
         //Llmar el metodo para
        $data =  ReportSaleHelper::repotSaleRange($from, $to, $type, $typePayment);
 

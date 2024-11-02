@@ -10,11 +10,13 @@ use Illuminate\Translation\PotentiallyTranslatedString;
 
 class CheckStock implements ValidationRule
 {
-    protected array $info_sale;
 
-    public  function __construct($info_sale)
+
+    public  function __construct(
+        protected array $info_sale
+    )
     {
-        $this->info_sale = $info_sale;
+
 
     }
     /**
@@ -26,8 +28,6 @@ class CheckStock implements ValidationRule
     {
         $existsError = false;
         $errorMessage = '';
-
-
 
         //Sacar los datos del producto introducido para validar
         foreach ($this->info_sale as $info) {
@@ -48,7 +48,7 @@ class CheckStock implements ValidationRule
                 if($quantity > $product->stock && $product->type == ProductTypeEnum::PRODUCTO ){
                     // Enviar el mensaje de que no puede ser mayor
                     $existsError = true;
-                    $errorMessage = 'El Producto "' . $info['name'] . '" no tiene suficiente stock.';
+                    $errorMessage = 'El Producto "' . $info['product_name'] . '" no tiene suficiente stock.';
                     break;
                 }
             }

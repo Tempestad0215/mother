@@ -146,7 +146,7 @@ const search = () => {
         </template>
 
         <!-- Formulario de registro -->
-        <div class="max-w-[1100px] mx-auto">
+        <div class="max-w-[1100px] mx-auto max-h-[85vh] overflow-y-auto">
 
             <form
                 class=" bg-gray-200 rounded-md p-5"
@@ -262,43 +262,45 @@ const search = () => {
                     </h3>
                 </div>
 
-
-<!--                Datos de los proveedores-->
+<!--        Table de datos-->
+            <div>
+                <!--                Datos de los proveedores-->
                 <table
                     class=" mt-5 text-left w-full table-auto ">
                     <thead
                         class="">
-                        <tr>
-                            <th>Empresa</th>
-                            <th>Representante</th>
-                            <th>telefono</th>
-                            <th>Correo</th>
-                            <th>Atc</th>
-                        </tr>
+                    <tr>
+                        <th>Empresa</th>
+                        <th>Representante</th>
+                        <th>telefono</th>
+                        <th>Correo</th>
+                        <th>Atc</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        <tr
-                            class=""
-                            v-for="(item,index) in props.suppliers?.data" :key="index">
-                            <td>{{item.company_name}}</td>
-                            <td>{{item.contact ? item.contact : "N/A" }}</td>
-                            <td>{{item.phone ? item.phone : 'N/A'}}</td>
-                            <td>{{item.email ? item.email : 'N/A'}}</td>
-                            <td class=" space-x-3">
-                                <i
-                                    @click="edit(item)"
-                                    title="Editar"
-                                    class=" icon-efect fa-solid fa-pen-to-square"></i>
-                                <i
-                                    @click="destroy(item)"
-                                    title="Eliminar"
-                                    class=" icon-efect fa-solid fa-trash"></i>
-                            </td>
-                        </tr>
+                    <tr
+                        class=""
+                        v-for="(item,index) in props.suppliers?.data" :key="index">
+                        <td>{{item.company_name}}</td>
+                        <td>{{item.contact ? item.contact : "N/A" }}</td>
+                        <td>{{item.phone ? item.phone : 'N/A'}}</td>
+                        <td>{{item.email ? item.email : 'N/A'}}</td>
+                        <td class=" space-x-3">
+                            <i
+                                @click="edit(item)"
+                                title="Editar"
+                                class=" icon-efect fa-solid fa-pen-to-square"></i>
+                            <i
+                                @click="destroy(item)"
+                                title="Eliminar"
+                                class=" icon-efect fa-solid fa-trash"></i>
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
+            </div>
 
-<!--                PAginacion-->
+                <!--                PAginacion-->
                 <Pagination
                     :next=" props.suppliers.next_page_url
                         ? paginationJoin(props.suppliers.next_page_url, formSearch.search, formSearch.perPage)
@@ -308,7 +310,10 @@ const search = () => {
                         : ''"
                     :total-page="props.suppliers?.to"
                     :current-page="props.suppliers?.current_page"
-                    />
+                />
+
+
+
 
             </div>
 

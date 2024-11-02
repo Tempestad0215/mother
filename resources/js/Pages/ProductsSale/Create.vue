@@ -7,7 +7,7 @@ import FloatBox from "@components/FloatBox.vue";
 import FloatShowPro from "@/Pages/Products/FloatShowPro.vue";
 import {computed, onMounted, onUpdated, Ref, ref} from "vue";
 import {productDataI, productI} from "@/Interfaces/Product";
-import {getMoney, getRncHelper, getSequenceType, moneyConfig} from "@/Global/Helpers";
+import {getMoney, getRncHelper, getSequenceType, moneyConfig, moneyConfigPer} from "@/Global/Helpers";
 import LinkHeader from "@components/LinkHeader.vue";
 import Swal from "sweetalert2";
 import InputError from "@components/InputError.vue";
@@ -20,8 +20,8 @@ import SaleOpenShow from "@/Pages/ProductsSale/SaleOpenShow.vue";
 import {creditNotesSaleI, infoSaleI, saleDataI, saleDataPaginationI} from "@/Interfaces/Sale";
 import {invoiceTypeI, rncUserI, sequenceDataI} from "@/Interfaces/Setting";
 import ShowPdf from "@components/ShowPdf.vue";
-import {typePaymentData} from "@/Global/ShareData";
 import {Money} from "v-money3";
+import PaymentInvoice from "@components/PaymentInvoice.vue";
 
 
 /*
@@ -69,9 +69,6 @@ onMounted( () => {
     if (propsW.pdf != undefined && propsW.pdf != "") pdfString.value = propsW.pdf;
 
 });
-
-
-
 
 
 
@@ -146,8 +143,6 @@ const checkShowPdf = computed(()=>{
 });
 
 
-
-
 /*
 Funciones
  */
@@ -163,9 +158,8 @@ Funciones
  */
 const getSequence = async (type: string) => {
 
+    //Verifocar so existe la secuencia
     if (!page.props.setting.sequence)
-
-    console.log('funciona');
     {
         //Realizar la buqueda
         const result = await axios.get(route('sequence.get', {type: type}));
@@ -198,6 +192,9 @@ const getSequence = async (type: string) => {
  * Return blir
  */
 const returnedBlur = ():boolean => {
+    //Primero verifica la cantidad
+    returned()
+
     //Verificar el calculo
     if(form.returned < 0)
     {
@@ -216,6 +213,7 @@ const returnedBlur = ():boolean => {
  */
 const returned = ():void => {
 
+    //Verificar el calculo de los datos
     let received:number = form.received ;
     let amount:number = form.amount;
     let creditAmount:number = form.credit_notes_amount;
@@ -284,6 +282,7 @@ const getData = (item:productDataI) => {
            product_id: item.id,
            product_name: item.name,
            stock: 1,
+           reserved: 1,
            tax: item.tax,
            tax_rate: item.tax_rate / 100,
            type: item.type
@@ -367,7 +366,7 @@ const totalAmount = (index:number) => {
     let info:infoSaleI = form.info_sale[index];
     let discountRate = info.discount / 100;
 
-
+    //Para calcular los datos
     info.amount = parseFloat ((info.price * info.stock).toFixed(2));
     //Descuento datos
     info.discount_amount = parseFloat((info.amount * discountRate).toFixed(2));
@@ -389,7 +388,7 @@ const totalSale = () => {
     //Calcular el total
     form.tax = form.info_sale.reduce((tax:number, item:infoSaleI) => tax + item.tax, 0);
     form.sub_total = form.info_sale.reduce((subTotal:number, item:infoSaleI) => subTotal + item.amount, 0);
-    form.discount_amount = form.info_sale.reduce((discount, item:infoSaleI) => discount + item.discount, 0);
+    form.discount_amount = form.info_sale.reduce((discount, item:infoSaleI) => discount + item.discount_amount, 0);
     form.amount = form.sub_total - form.discount_amount;
 
     //calcular el retorno
@@ -517,28 +516,36 @@ const getSaleOpen = (item:saleDataI) => {
     form.info_sale = [];
     form.id = item.id;
     form.update = true;
-    //Verificar Pasar los datos a la variable
-    item.info_sale.map((el, index) => {
-        //colocar la informacion en la lista
-        form.info_sale.push({
-            transID: el.transID,
-            code: el.code,
-            product_id: el.product_id,
-            product_name: el.product_name,
-            price: el.price,
-            stock: el.stock,
-            amount: el.amount,
-            discount: el.discount,
-            discount_amount: el.discount_amount,
-            tax: el.tax,
-            type: el.type,
-            tax_rate: el.tax_rate,
-            status: el.status
-        });
-        //Calcular el total
-        totalAmount(index);
 
-    });
+    setTimeout(()=>{
+        //Verificar Pasar los datos a la variable
+        item.info_sale.map((el, index) => {
+            //colocar la informacion en la lista
+
+            console.log()
+
+            form.info_sale.push({
+                transID: el.transID,
+                code: el.code,
+                product_id: el.product_id,
+                product_name: el.product_name,
+                price: el.price,
+                stock:  el.stock,
+                reserved: el.reserved,
+                amount: el.amount,
+                discount: el.discount,
+                discount_amount: el.discount_amount,
+                tax: el.tax,
+                type: el.type,
+                tax_rate: el.tax_rate,
+                status: el.status
+            });
+            //Calcular el total
+            totalAmount(index);
+        })
+
+    },2);
+
 
     //calcular el total de las ventas
     totalSale();
@@ -572,66 +579,13 @@ const checkSale = () => {
         sendData();
     }
 
-}
-
-/*
- * Buscar la notas de credito para pagar la factura
- */
-const getCreditNote = async () => {
-
-    //Si no hay suficiente caracateres
-    if (form.credit_notes_value.length < 5) {
-        form.setError('credit_notes_value', 'Por Favor, Introduzca Valores Valido');
-        return false;
-    }
-
-    //Verificar si ya esta en positivo no puede colocar nota de credito
-    if (form.returned > 0)
-    {
-        form.setError('credit_notes_value','Existe Suficiente Balance Para Cerrar La Cuenta');
-        return false;
-    }
-
-    //Verificar si exsite alguna igual
-    const exist:boolean = form.credit_notes.some((el) => el.code == form.credit_notes_value || el.ncf == form.credit_notes_value);
-
-    if (exist)
-    {
-        form.setError('credit_notes_value','Esta Nota De Credito, Esta Agregada');
-
-    }else{
-        //Buscar la nota de credito
-        const {data} = await axios.get(route('credit-note.get',{code: form.credit_notes_value}));
-
-        //Verifciar los datos
-        if (data.hasOwnProperty('code'))
-        {
-            //Pasar los datos al formulario
-            form.credit_notes.push(data);
-            //Calcular los datos
-            amountCreditNote();
-            //Limpiar los errores
-            form.clearErrors('credit_notes_value');
-            //Limpiar el campo para agreagr otros
-            form.reset('credit_notes_value');
-
-        }else{
-            //Poner el mensaje de error
-            form.setError('credit_notes_value',data.error);
-        }
-    }
+    //Llamar el metodo para el calculo
+    returned();
 
 }
 
-/*
- * Eliminar la nota de credito
- */
-const deleteCreditNote = (index:number) => {
-    //Eliminar solo el dato seleccionado
-    form.credit_notes.splice(index, 1);
-    //Realizar el calculo
-    amountCreditNote();
-}
+
+
 
 /*
  * Calcular la nota de credito
@@ -716,8 +670,8 @@ const getRncClient = async () => {
 
 <!--        //contenido-->
         <div>
-            <div class=" bg-gray-200 p-5 max-w-[1180px] rounded-md mx-auto overflow-hidden">
-
+            <div
+                class=" bg-gray-200 p-5 max-w-[1180px] rounded-md mx-auto overflow-hidden">
                 <form
                     class=" max-w-3/5">
                     <div >
@@ -958,20 +912,21 @@ const getRncClient = async () => {
 
                                         </td>
                                         <td
-                                            class="">
+                                            class="max-w-[8rem">
                                             <money
-                                                class="inputGeneral"
-                                                v-model="item.stock"
+                                                class="inputGeneral bg-transparent max-w-[7rem]"
+                                                v-model.number="item.stock"
                                                 v-bind="moneyConfig"
                                                 @blur="totalAmount(index)"
                                                 />
                                         </td>
                                         <td
-                                            class="">
+                                            class="max-w-[5.5rem]">
                                             <money
-                                                class="inputGeneral"
+                                                max="100"
+                                                class="inputGeneral bg-transparent max-w-[5rem]"
                                                 v-model="item.discount"
-                                                v-bind="moneyConfig"
+                                                v-bind="moneyConfigPer"
                                                 @blur="totalAmount(index)"
                                             />
                                         </td>
@@ -1026,8 +981,8 @@ const getRncClient = async () => {
                                             class="border-gray-300 rounded-md min-h-[100px] max-h-[150px]"
                                             name="note"
                                             placeholder="Escribe tu comentario"
-                                            v-model="form.comment"
-                                            maxlength="300"
+                                            v-model.trim="form.comment"
+                                            maxlength="255"
                                             id="note"
                                             cols="50"
                                             rows="3">
@@ -1102,115 +1057,17 @@ const getRncClient = async () => {
                 <FloatBox
                     v-if="showReturn"
                     @close="showReturn = false">
-                    <!--Datos de la ventana-->
-                    <div class="bg-gray-200 p-5 rounded-md min-w-[600px] h-fit">
-                        <h3 class="text-2xl text-center">
-                            Datos de pagos
-                        </h3>
-
-                        <!--Tipo de apgo-->
-                        <div class="mt-3">
-                            <InputLabel
-                                for="typePayment"
-                                value="Tipo Pago" />
-                            <select
-                                autofocus
-                                v-model="form.type_payment"
-                                id="typePayment"
-                                class="rounded-md border-gray-300 w-full">
-                                <option
-                                    v-for="(item, index) in typePaymentData" :key="index"
-                                    :value="item.value">
-                                    {{item.name}}
-                                </option>
-                            </select>
-                        </div>
-<!--                        Aplicar nota de credito-->
-                        <div class="max-w-[590px] mt-3">
-                            <InputLabel
-                                for="credit_notes"
-                                value="Notas Creditos"/>
-                            <div class="relative">
-                                <TextInput
-                                    class="w-[calc(100%-3rem)]"
-                                    v-model.trim="form.credit_notes_value"
-                                    type="search"/>
-                                <i
-                                    @click="getCreditNote"
-                                    class=" bg-gray-400 hover:text-white duration-300 ease-linear rounded-md text-2xl p-2 absolute right-0 flex items-center inset-y-0 fa-solid fa-magnifying-glass"></i>
-                            </div>
-<!--                            Mensaje de error-->
-                            <InputError :message="form.errors.credit_notes_value"/>
-<!--                            Mostrar las notas de creditos asociada a esa venta-->
-                            <table class="table-fixed w-full mt-3">
-                                <caption>
-                                    Notas De Credito
-                                </caption>
-                                <thead class="text-left">
-                                    <tr class="border-2 border-b-gray-800">
-                                        <th>Cod./NCF</th>
-                                        <th>Disponible</th>
-                                        <th class="w-1/12" >Act</th>
-                                    </tr>
-                                </thead>
-<!--                                Cuerpod de los datos-->
-                                <tbody>
-                                    <tr v-for="(item, index) in form.credit_notes" :key="index">
-                                        <td>{{item.code}}</td>
-                                        <td>{{ getMoney(item.n_available)}}</td>
-                                        <td class="text-center w-1/12">
-                                            <i
-                                            @click="deleteCreditNote(index)"
-                                            class=" icon-efect fa-solid fa-trash"></i></td>
-                                    </tr>
-                                    <tr class=" border-t-2 border-gray-800">
-                                        <th>Total :</th>
-                                        <th>{{getMoney(form.credit_notes_amount)}}</th>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-
-<!--                      Monto Recibido-->
-                        <div class="w-full mt-3">
-                            <InputLabel
-                                for="received"
-                                value="Recibido" />
-
-                            <TextInput
-                                @blur="returnedBlur"
-                                @input="returned"
-                                class="w-full"
-                                type="number"
-                                v-model.trim="form.received"/>
-                        </div>
-
-<!--                        Datos pendiente para cobrar-->
-                        <div class="mt-3 text-3xl">
-                            Pendiente...: {{getMoney(form.pending)}}
-                        </div>
-<!--                        Datos Para devuelta-->
-                        <div class="mt-3 text-3xl">
-                            Devuelta......: {{getMoney(form.returned)}}
-                        </div>
-
-<!--                        Boton para cerrar la factura-->
-                        <div class="mt-3 text-right">
-                            <PrimaryButton
-                                :disabled="form.processing"
-                                @click="sendData()">
-                                Cerrar Factura
-                            </PrimaryButton>
-                        </div>
-
-<!--                        Mensaje de error-->
-                        <div class="mt-3">
-                            <InputError :message="form.errors.returned"/>
-                        </div>
-
-
-                    </div>
+                    <PaymentInvoice
+                        @amount-credit-note="amountCreditNote()"
+                        @returned-blur="returnedBlur()"
+                        @returned="returned()"
+                        @sen-data="sendData()"
+                        :form="form"
+                        v-model:type-payment="form.type_payment"
+                        v-model:credit-note="form.credit_notes_value"
+                        v-model:credit-notes="form.credit_notes"
+                        v-model:returned="form.returned"
+                       />
                 </FloatBox>
             </Transition>
 

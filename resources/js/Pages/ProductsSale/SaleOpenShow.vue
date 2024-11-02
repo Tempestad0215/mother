@@ -30,8 +30,7 @@ const form = useForm({
 /**
  * Emitir los datos al padre
  */
-
-const emit = defineEmits<{
+defineEmits<{
     (e: 'senData', item:saleDataI):void
 }>()
 
@@ -71,7 +70,6 @@ const submit = () => {
         <table class="w-full mt-5">
             <thead class="text-left">
                 <tr>
-                    <th>Code</th>
                     <th>Cliente</th>
                     <th>Itbis</th>
                     <th>Total</th>
@@ -80,11 +78,8 @@ const submit = () => {
             </thead>
             <tbody>
                 <tr
-                    class="odd:bg-gray-400"
+                    class=""
                     v-for="(item, index) in props.saleOpen?.data"  :key="index">
-                    <td>
-                        {{item.code}}
-                    </td>
                     <td>
                         {{item.client_name ? item.client_name : "N/A"}}
                     </td>

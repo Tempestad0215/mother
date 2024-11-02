@@ -6,13 +6,46 @@ import axios from "axios";
 * Variables compartida general
  */
 export const moneyConfig =  {
+    masked: false,
+    prefix: '',
+    suffix: '',
+    thousands: ',',
+    decimal: '.',
+    precision: 2,
+    disableNegative: false,
+    disabled: false,
+    min: null,
+    max: null,
+    allowBlank: true,
+    minimumNumberOfCharacters: 0,
+    shouldRound: false,
+    focusOnRight: false
+}
+
+/**
+ * PAra mostar los numeros enteros
+ */
+// export const moneyConfigInt =  {
+//     decimal: '.',
+//     thousands: ',',
+//     prefix: '',
+//     suffix: '',
+//     precision: 0,
+//     masked: false
+// }
+
+/**
+ * Esto es para porcentaje
+ */
+export const moneyConfigPer =  {
     decimal: '.',
     thousands: ',',
     prefix: '',
-    suffix: '',
-    precision: 2,
+    suffix: '%',
+    precision: 0,
     masked: false
 }
+
 
 
 
@@ -54,12 +87,12 @@ export const getMoney = (value:number = 0) => {
  * convertir a dinero sin prefijo
  * @param value
  */
-export const formatNumberPlane = (value:number):string => {
-    return  value.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 4,
-    });
-}
+// export const formatNumberPlane = (value:number):string => {
+//     return  value.toLocaleString('en-US', {
+//         minimumFractionDigits: 2,
+//         maximumFractionDigits: 4,
+//     });
+// }
 
 
 

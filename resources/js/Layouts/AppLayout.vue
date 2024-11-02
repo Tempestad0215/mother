@@ -176,14 +176,15 @@ const isUrl = (params:string) => {
 
 
         <div
-            class="flex-col flex-1 overflow-hidden">
+            class="flex-col flex-1">
             <header
-                class=" flex items-center justify-center space-x-3 fixed top-0 left-20 h-20 max-h-16 flex-1 w-full bg-gray-200 z-20 px-5">
+                class=" flex items-center justify-center space-x-3 fixed top-0 h-20 max-h-16 flex-1 w-full bg-gray-200 z-20 px-5">
                 <slot name="header"/>
             </header>
             <div
-                class="flex-1 ml-[80px] justify-center mt-[64px] rounded-md p-5 h-[calc(100%-1rem)] ">
-                    <div class="max-w-[1100px] mx-auto bg-gray-200 p-3 rounded-md">
+                class=" pl-[80px] pt-[80px] rounded-md  ">
+                    <div
+                        class=" max-w-[1100px] mx-auto bg-gray-200 rounded-md h-[90vh]">
                         <slot/>
                     </div>
 

@@ -31,12 +31,13 @@ const createUrlPdf = computed(() => {
     <div>
         <Transition>
             <FloatBox
+                class=""
                 @close="$emit('closeWindow')">
                 <!--        Para ver los PDF-->
                 <iframe
                     id="pdfA"
                     @wheel.passive="true"
-                    class="w-full h-600px overflow-hidden mt-10"
+                    class="w-full px-10 h-[80vh]"
                     :src="createUrlPdf" >
                 </iframe>
             </FloatBox>

@@ -70,9 +70,6 @@ const getParams = () => {
 
 
 }
-
-
-
 </script>
 
 <template>

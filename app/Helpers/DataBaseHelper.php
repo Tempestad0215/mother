@@ -25,7 +25,7 @@ class DataBaseHelper
             ->onUpdate('restrict')
             ->onDelete('restrict');
         $table->decimal('discount_amount',15,4)->default(0);
-        $table->decimal('tax',4);
+        $table->decimal('tax',15,4);
         $table->decimal('sub_total',15,4);
         $table->decimal('amount',15,4);
 

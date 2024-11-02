@@ -13,6 +13,7 @@ export interface infoSaleI {
     sale_id?: number;
     status?: boolean;
     stock: number;
+    reserved: number;
     tax: number;
     tax_rate: number;
     type?: string;

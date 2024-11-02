@@ -57,6 +57,7 @@ class SaleInfoResource extends JsonResource
                'price' => $item->price,
                'status' => $item->status,
                'stock' => $item->stock,
+               'reserved' => $item->reserved,
                'tax' => $item->tax,
                'tax_rate' => $item->tax_rate,
                'type' => $item->type,

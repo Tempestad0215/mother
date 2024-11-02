@@ -255,7 +255,7 @@ const totalTax = () => {
         </template>
 
         <!-- Contenido de la pagina -->
-        <div class="max-w-[1100px] mx-auto">
+        <div class="max-w-[1100px] mx-auto max-h-[85vh] overflow-y-auto">
                 <form
                     v-if="showForm"
                     class=" p-5 rounded-md bg-gray-200"
@@ -512,27 +512,29 @@ const totalTax = () => {
                     </div>
 
 
-
-<!--                Datos de los productos para la entrada    -->
-                    <table class="table-auto w-full mt-5">
-                        <thead>
-                            <tr class="text-left">
-                                <th >Cod. Barr.</th>
-                                <th >Producto</th>
-<!--                                <th>Descripcion</th>-->
-                                <th>Cant.</th>
-                                <th>Cost</th>
-                                <th>Precio</th>
-                                <th>Act</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                    <div
+                        class="max-h-[600px] overflow-y-auto ">
+                        <!--                Datos de los productos para la entrada    -->
+                        <table
+                            class="table-auto w-full mt-5">
+                            <thead class="sticky top-0">
+                                <tr class="text-left">
+                                    <th >Cod. Barr.</th>
+                                    <th >Producto</th>
+                                    <!--                                <th>Descripcion</th>-->
+                                    <th>Cant.</th>
+                                    <th>Cost</th>
+                                    <th>Precio</th>
+                                    <th>Act</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                             <tr
                                 class=""
                                 v-for="item in propsW.products?.data">
                                 <td class="">{{item.bar_code ? item.bar_code : 'N/A'}}</td>
                                 <td class="overflow-hidden">{{item.name}}</td>
-<!--                                <td>{{item.description}}</td>-->
+                                <!--                                <td>{{item.description}}</td>-->
                                 <td>{{item.stock}}</td>
                                 <td>{{ getMoney(item.cost)}}</td>
                                 <td>{{ getMoney(item.price)}}</td>
@@ -543,17 +545,20 @@ const totalTax = () => {
                                         class=" icon-efect fa-solid fa-dolly"></i>
                                 </td>
                             </tr>
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+
+                    </div>
                     <Pagination
                         :next="propsW.products?.next_page_url
-                            ? propsW.products?.next_page_url+'&perPage='+formSearch.perPage
-                            : ''"
+                                ? propsW.products?.next_page_url+'&perPage='+formSearch.perPage
+                                : ''"
                         :total-page="propsW.products?.to"
                         :prev="propsW.products?.prev_page_url
-                            ? propsW.products?.prev_page_url+'&perPage='+formSearch.perPage
-                            : ''"
+                                ? propsW.products?.prev_page_url+'&perPage='+formSearch.perPage
+                                : ''"
                         :current-page="propsW.products?.current_page"/>
+
                 </div>
 
 

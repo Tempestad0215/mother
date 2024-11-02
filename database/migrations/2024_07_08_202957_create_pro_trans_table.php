@@ -34,7 +34,6 @@ return new class extends Migration
             $table->string('product_name',75);
             $table->decimal('stock',15,4);
             $table->decimal('reserved');
-            $table->decimal('min_price',15,4);
             $table->decimal('price',15,4);
             $table->decimal('tax_rate');
             $table->decimal('tax');

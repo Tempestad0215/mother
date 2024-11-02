@@ -20,6 +20,16 @@
 
 
 
+/*
+Estilo general
+ */
+
+body{
+    overflow: hidden;
+}
+
+
+
 @layer components{
     .icon-efect {
         @apply hover:scale-125 duration-300 ease-out hover:animate-pulse text-xl;
@@ -33,9 +43,6 @@
     }
     .list-data{
         @apply odd:bg-gray-300 rounded-md px-5 hover:bg-gray-500 duration-300;
-    }
-    .hoverTable{
-        @apply odd:bg-gray-400 hover:bg-gray-900 hover:text-white duration-300;
     }
     .title{
         @apply text-3xl font-bold italic underline ;
