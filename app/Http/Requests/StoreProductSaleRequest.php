@@ -11,6 +11,9 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Route;
 
+
+
+
 class  StoreProductSaleRequest extends FormRequest
 {
     /**
@@ -28,6 +31,7 @@ class  StoreProductSaleRequest extends FormRequest
      */
     public function rules(): array
     {
+
 
         //datos de configuracion
         $sequence = Setting::pluck('sequence')->first() ??  false;

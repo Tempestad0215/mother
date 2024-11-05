@@ -11,7 +11,8 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import VueTheMask from 'vue-the-mask';
 import VueSweetalert2 from 'vue-sweetalert2';
 import money from 'v-money';
-
+import PrimeVue from 'primevue/config'
+import Aura from '@primevue/themes/aura';
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
 
@@ -21,6 +22,11 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         createApp({ render: () => h(App, props) })
             .use(plugin)
+            .use(PrimeVue,{
+                theme: {
+                    preset: Aura
+                }
+        })
             .use(money as any)
             .use(ZiggyVue, Ziggy)
             .use(VueTheMask as any)

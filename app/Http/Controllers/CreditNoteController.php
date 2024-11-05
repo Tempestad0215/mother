@@ -20,12 +20,28 @@ class CreditNoteController extends Controller
 {
 
     /**
+     * Mostar la nota de credito
      * @param Request $request
-     * @param Sale $sale
      * @return RedirectResponse|Response
      */
-    public function index(Request $request, Sale $sale):RedirectResponse|Response
+    public function index(Request $request):RedirectResponse|Response
     {
+
+        //Obtener el codiggo
+        $saleCode = $request->get('saleCode');
+
+        //Buscar los datos
+       $sale = Sale::where('status', true)
+        ->where('code', $saleCode)->first();
+
+       //Si no existe pues enviar un mensaje
+       if (!isset($sale))
+       {
+           throw ValidationException::withMessages([
+               'general' => 'Este Codigo No es Validos, Introduzca Uno Validado'
+           ]);
+       }
+
         //Verificar si existe la secuencio y hay B04
         $setting = Setting::first();
 
@@ -81,18 +97,20 @@ class CreditNoteController extends Controller
 
 
     /**
-     * Guardar los datos
      * @param StoreProductSaleRequest $request
      * @param Sale $sale
-     * @return void
+     * @return RedirectResponse
      */
-    public function store(StoreProductSaleRequest $request, Sale $sale):void
+    public function store(StoreProductSaleRequest $request, Sale $sale):RedirectResponse
     {
+
         //Intancia
         $creditNoteHelper = new CreditNoteHelper();
 
         //Llamar el metodo
         $creditNoteHelper->creditNoteStore($request, $sale);
+
+        return redirect()->route('sale.create');
 
     }
 
@@ -121,6 +139,12 @@ class CreditNoteController extends Controller
 
         //Devolver los datos en json
 
+    }
+
+
+    public function getBalance(string $code)
+    {
+        CreditNoteHelper::getBalance($code);
     }
 
 }

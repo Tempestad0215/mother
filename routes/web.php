@@ -204,7 +204,8 @@ Route::middleware([
         ->prefix('credit-note')
         ->name('credit-note.')
         ->group(function (){
-            Route::get('/{sale}','index')->name('index');
+            Route::get('/','index')->name('index');
+            Route::get('/get/balance/{code}','getBalance')->name('balance');
             Route::get('/get/{code}','creditNoteGet')->name('get');
             Route::patch('/{sale}','store')->name('store');
 
@@ -251,6 +252,8 @@ Route::middleware([
         ->name('report-sale.')
         ->group(function (){
            Route::get('/','index')->name('index');
+           Route::get('/json','reportSaleRange')->name('range');
+
         });
 
 
@@ -269,7 +272,7 @@ Route::middleware([
 
 
     Route::get('/test', function (){
-        $sale = Sale::find(11);
+        $sale = Sale::find(24);
 
         $pdf = new SaleInvoiceA($sale);
 

@@ -67,6 +67,7 @@ class CreditNoteHelper
             //sumatoria para ver si se cerro la cuenta
             $resultTotal = [];
 
+
             //Recorrer los datos
             $infoCollect->map(callback: function ($item) use (&$saleCollect, &$sale, &$creditNote, &$resultTotal) {
 
@@ -79,15 +80,18 @@ class CreditNoteHelper
                 //sacar el resultado
                 $result  =  $saleInfo['stock'] - $item['stock'];
 
-                //Si el producto es de servicio el resultado debe ser 0
-                if ($product->type == ProductTypeEnum::SERVICIO && $result != 0)
-                {
-                    // Devolver error si no coincide
-                    throw ValidationException::withMessages([
-                        'general' => "Por Favor, No Puede Modificar La Cantidad Del Item: $product->name"
-                    ]);
 
-                }else if ($result < 0)
+                //TODO Fue comentado para verificar la devoluicion de servicio
+                //Si el producto es de servicio el resultado debe ser 0
+//                if ($product->type == ProductTypeEnum::SERVICIO && $result != 0)
+//                {
+//                    // Devolver error si no coincide
+//                    throw ValidationException::withMessages([
+//                        'general' => "Por Favor, No Puede Modificar La Cantidad Del Item: $product->name"
+//                    ]);
+//
+//                }else
+                if ($result < 0)
                 {
                     // Devolver error si no coincide
                     throw  ValidationException::withMessages([
@@ -96,35 +100,44 @@ class CreditNoteHelper
                 }
                 else{
 
+
                     //Crear la transaccion individual
-                    ProTrans::create([
-                        'product_id' => $item['product_id'],
-                        'product_name' => $item['product_name'],
-                        'sale_id' => $sale->id,
-                        'credit_note_id' => $creditNote->id,
-                        'stock' => $item['stock'],
-                        'price' => $item['price'],
-                        'tax_rate' => $item['tax_rate'],
-                        'tax' => $item['tax'],
-                        'amount' => $item['amount'],
-                        'discount' => $item['discount'],
-                        'discount_amount' => $item['discount_amount'],
-                        'type' => ProductTransType::DEVOLUCION,
-                        'status' => false
-                    ]);
+                    TransHelper::store($item, ProductTransType::DEVOLUCION, $sale->id,0, $creditNote->id);
+
+//                    ProTrans::create([
+//                        'product_id' => $item['product_id'],
+//                        'product_name' => $item['product_name'],
+//                        'sale_id' => $sale->id,
+//                        'credit_note_id' => $creditNote->id,
+//                        'stock' => $item['stock'],
+//                        'price' => $item['price'],
+//                        'tax_rate' => $item['tax_rate'],
+//                        'tax' => $item['tax'],
+//                        'amount' => $item['amount'],
+//                        'discount' => $item['discount'],
+//                        'discount_amount' => $item['discount_amount'],
+//                        'type' => ProductTransType::DEVOLUCION,
+//                        'status' => false
+//                    ]);
 
                     //Verificar que el producto sea el mismo que el de la transation
                     $productCheck = $product->trans->where('id', $item['id'])->first();
 
 
-                    //actializar los datos del stock
-                    $product->increment('stock', $item['stock']);
-                    //Verificar si es resera o no
-                    if ($productCheck->type == ProductTransType::RESERVA)
+                    // Verificar si es productos para actualizar el inventario
+                    if ($product->type === ProductTypeEnum::PRODUCTO)
                     {
-                        //Deducir de la reserva
-                        $product->decrement('reserved', $item['stock']);
+                        //actializar los datos del stock
+                        $product->increment('stock', $item['stock']);
+
+                        //Verificar si es resera o no
+                        if ($productCheck->type == ProductTransType::RESERVA)
+                        {
+                            //Deducir de la reserva
+                            $product->decrement('reserved', $item['stock']);
+                        }
                     }
+
 
                     //Tomar el total de toda la devoluciones
                     $stockRet = $product->trans
@@ -252,6 +265,20 @@ class CreditNoteHelper
             });
 
         }
+    }
+
+
+
+    //Buscar el balance de la nota de credito
+    public static function getBalance (string $code)
+    {
+
+        $creditNote = self::creditNoteGet($code);
+
+
+        dd($creditNote);
+
+
     }
 
 }

@@ -22,6 +22,7 @@ import {invoiceTypeI, rncUserI, sequenceDataI} from "@/Interfaces/Setting";
 import ShowPdf from "@components/ShowPdf.vue";
 import {Money} from "v-money3";
 import PaymentInvoice from "@components/PaymentInvoice.vue";
+import ReturnForm from "@components/ReturnForm.vue";
 
 
 /*
@@ -47,26 +48,22 @@ al momento de cargar
  */
 onMounted( () => {
     //Verificar si existe los datos para devoluicion
-    if (propsW.refund && propsW.saleInfo)
-    {
-        form.id = propsW.saleInfo.id;
-        form.ncf_m = propsW.saleInfo.ncf;
-        form.client_name = propsW.saleInfo.client_name;
-        form.info_sale = propsW.saleInfo.info_sale;
-        form.invoice_type = page.props.setting.sequence ? "B04" : "";
-        form.type = "devolucion";
-
-        //Recorrer los datos
-        form.info_sale.forEach((_,index )=> totalAmount(index));
-
-        //calcular totales
-        totalSale();
-    }
+    setDataForm();
     //Buscar la secuencia si esta en la configuracion
     if (page.props.setting.sequence)  getSequence(form.invoice_type);
 
     //Pasar los datos a la variable si existe
     if (propsW.pdf != undefined && propsW.pdf != "") pdfString.value = propsW.pdf;
+
+
+    //Para verificar
+    let msjError = "Este Codigo No es Validos, Introduzca Uno Validado";
+
+    //Valizar si es igual
+    if (page.props.errors.general === msjError)
+    {
+        showFormReturn.value = true;
+    }
 
 });
 
@@ -81,6 +78,20 @@ onUpdated( () => {
 
     //Pasar los datos a la variable si existe
     if (propsW.pdf != undefined && propsW.pdf != "") pdfString.value = propsW.pdf;
+
+    //Para verificar
+    let msjError = "Este Codigo No es Validos, Introduzca Uno Validado";
+
+    //Valizar si es igual
+    if (page.props.errors.general === msjError)
+    {
+        showFormReturn.value = true;
+    }
+
+    //Verificar para actualizar los datos
+    setDataForm();
+
+
 });
 
 /*
@@ -92,6 +103,8 @@ const showSaleOpen:Ref<boolean> = ref<boolean>(false);
 const sequenceData:Ref<sequenceDataI | undefined> = ref(undefined);
 const showClientRnc:Ref<boolean> = ref(false);
 const showReturn:Ref<boolean> = ref(false);
+const showFormReturn:Ref<boolean> = ref(false);
+
 //DDATOS DEL dpf
 const pdfString:Ref<string | null> = ref(null);
 
@@ -129,7 +142,7 @@ const form = useForm({
     credit_notes_value: "",
     credit_notes: [] as creditNotesSaleI[],
     credit_notes_amount: 0,
-    pending: 0
+    pending: 0,
 });
 
 
@@ -147,6 +160,28 @@ const checkShowPdf = computed(()=>{
 Funciones
  */
 
+
+/**
+ * Poner los datos en el formuilario
+ */
+const setDataForm = () => {
+    //Verificar si existe los datos para devoluicion
+    if (propsW.refund && propsW.saleInfo)
+    {
+        form.id = propsW.saleInfo.id;
+        form.ncf_m = propsW.saleInfo.ncf;
+        form.client_name = propsW.saleInfo.client_name;
+        form.info_sale = propsW.saleInfo.info_sale;
+        form.invoice_type = page.props.setting.sequence ? "B04" : "";
+        form.type = "devolucion";
+
+        //Recorrer los datos
+        form.info_sale.forEach((_,index )=> totalAmount(index));
+
+        //calcular totales
+        totalSale();
+    }
+}
 
 
 /*
@@ -522,8 +557,6 @@ const getSaleOpen = (item:saleDataI) => {
         item.info_sale.map((el, index) => {
             //colocar la informacion en la lista
 
-            console.log()
-
             form.info_sale.push({
                 transID: el.transID,
                 code: el.code,
@@ -583,8 +616,6 @@ const checkSale = () => {
     returned();
 
 }
-
-
 
 
 /*
@@ -741,6 +772,8 @@ const getRncClient = async () => {
                                 class="flex flex-col-reverse"
                                 v-if="form.sequence_type !== ''">
 <!--                                Mensaje de cargando-->
+
+
                                 <!--Numero de comprobantes-->
                                 <fieldset class="border-2 border-gray-400 rounded-md px-2 mx-3 w-[350px] ">
                                     <legend>
@@ -751,6 +784,9 @@ const getRncClient = async () => {
                                         v-if="form.invoice_type === 'B04'"
                                         class="truncate"><strong>NCF M. :</strong> {{form.ncf_m}}</p>
                                 </fieldset>
+
+
+
                                 <!--Numero de comprobantes-->
                                 <fieldset
                                     v-if="showClientRnc"
@@ -807,6 +843,12 @@ const getRncClient = async () => {
                                         title="Cuentas Abiertas"
                                         @click="showSaleOpen = !showSaleOpen"
                                         class=" ml-3 icon-efect text-3xl  fa-solid fa-table-cells-row-unlock"></i>
+
+<!--                                 BTN Devolucion-->
+                                    <i
+                                        title="Devoluciones"
+                                        @click="showFormReturn = !showFormReturn"
+                                        class=" ml-3 icon-efect text-3xl fa-solid fa-arrow-rotate-left"></i>
 
                                 </div>
                             </div>
@@ -1028,7 +1070,10 @@ const getRncClient = async () => {
                         </div>
 
 
-
+<!--                        Mensaje de erro-->
+                        <div>
+                            <InputError :message="form.errors.general"/>
+                        </div>
 <!--                        Devuelta y demas detos-->
                         <div class=" mt-2 w-64 float-right">
 
@@ -1049,7 +1094,6 @@ const getRncClient = async () => {
 
                     </div>
                 </form>
-<!--                Mostar los pdf-->
             </div>
 
 <!--            Ventana de Devuelta-->
@@ -1084,7 +1128,7 @@ const getRncClient = async () => {
                     @close="showClient = false"
                     v-if="showClient">
                     <FloatShowCli
-                        class=" w-4/5 rounded-md px-10 py-5"
+                        class=" w-4/5 rounded-md py-5"
                         @get-data="selectClient"
                         :clients="propsW.clients"/>
 
@@ -1098,7 +1142,7 @@ const getRncClient = async () => {
                     @close="showProduct = false"
                     v-if="showProduct">
                     <FloatShowPro
-                        class=" bg-gray-200 rounded-md mx-14 py-5"
+                        class=" bg-gray-200 rounded-md px-10 py-5"
                         @select="getData"
                         :products="propsW.products"/>
                 </FloatBox>
@@ -1112,11 +1156,22 @@ const getRncClient = async () => {
                     @close="showSaleOpen = false">
                     <SaleOpenShow
                         @sen-data="getSaleOpen"
-                        class=" bg-gray-200 rounded-md mx-14 px-10 py-5"
+                        class=" bg-gray-200 rounded-md px-10 py-5"
                         :sale-open="propsW.saleOpen"/>
                 </FloatBox>
             </Transition>
 
+
+<!--            Formulario para la nota de credito-->
+            <Transition>
+                <FloatBox
+                    @close="showFormReturn = false"
+                    v-if="showFormReturn">
+                    <ReturnForm
+                        :error="page.props.errors.general"
+                        @closeFormReturn="showFormReturn = false"/>
+                </FloatBox>
+            </Transition>
         </div>
 
     </AppLayout>

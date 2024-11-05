@@ -6,20 +6,13 @@ import axios from "axios";
 * Variables compartida general
  */
 export const moneyConfig =  {
-    masked: false,
+    decimal: '.',
+    thousands: ',',
     prefix: '',
     suffix: '',
-    thousands: ',',
-    decimal: '.',
     precision: 2,
-    disableNegative: false,
-    disabled: false,
-    min: null,
-    max: null,
-    allowBlank: true,
-    minimumNumberOfCharacters: 0,
-    shouldRound: false,
-    focusOnRight: false
+    masked: false,
+    allowBlank: false
 }
 
 /**
@@ -43,7 +36,8 @@ export const moneyConfigPer =  {
     prefix: '',
     suffix: '%',
     precision: 0,
-    masked: false
+    masked: false,
+    allowBlank: false
 }
 
 

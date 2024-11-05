@@ -44,7 +44,9 @@ class SaleCreditNoteResource extends JsonResource
     public function toArray(Request $request): array
     {
         //Convertir al collectio
-        $infoCollect = collect($this->infoSale);
+        $infoCollect = collect($this->infoSale)->filter(function ($item) {
+           return $item['type'] === ProductTransType::VENTAS;
+        });
 
         //Para pasar los datos
         $info = [];
@@ -55,39 +57,35 @@ class SaleCreditNoteResource extends JsonResource
             //Obtener los productos que tengan devolucion pendiente
             $transProduct = ProTrans::where('product_id', $item->product_id)
                 ->where('sale_id', $item->sale_id)
-                ->whereIn('type', [ProductTransType::VENTAS, ProductTransType::RESERVA])
+                ->where('type', ProductTransType::DEVOLUCION)
                 ->where('status', true)
-                ->first();
+                ->get();
+
+            //Obtener el primer registro
+            //TODO para comparar
+//            $productFirst = $transProduct->first();
+            //Tomar el producto para poner los datos
+            $productFirst = Product::find($item->product_id);
+
+            //Tomar el valor del stock para la devolucion, si es 0 pues no se incluye
+            $stockAmount = $item['stock'] - $transProduct->sum('stock');
+
+            //Verificar si existe
+            if ($transProduct->isEmpty()) $stockAmount = $item["stock"];
 
 
-            //Conseguir la transacciones con devolucion existente
-            $transRet = ProTrans::where('product_id', $item->product_id)
-                ->where('sale_id', $item->sale_id)
-                ->where('type', [ProductTransType::DEVOLUCION])
-                ->where('status', false)
-                ->sum('stock');
+            //Verificar si el stock == 0
+            if ($stockAmount > 0) {
 
-            //Verificar si existe el productos
-            $existsProduct = isset($transProduct);
-
-            //Tomar los resultado de stock
-            $productStock = $existsProduct ? $transProduct->stock : 0;
-
-            //Tomar el resultado
-            $result =  $productStock - $transRet;
-
-            //Si el item tiene disponible
-            if ($existsProduct && $item->type != ProductTransType::DEVOLUCION && $result != 0)
-            {
                 //Crear la informacion
                 $info[] = [
                     "id" => $item['id'],
-                    "code" => $transProduct->product->code,
+                    "code" => $productFirst->code,
                     "sale_id" => $item['sale_id'],
-                    "product_id" => $transProduct->product->id,
+                    "product_id" => $productFirst->id,
                     "credit_note_id" => null,
-                    "product_name" => $transProduct->product->name,
-                    "stock" => $result == 0 ? $item['stock'] : abs($result),
+                    "product_name" => $productFirst->name,
+                    "stock" => $stockAmount ?: $item['stock'],
                     "price" => $item['price'],
                     "tax_rate" => $item['tax_rate'],
                     "tax" => $item['tax'],
@@ -98,7 +96,67 @@ class SaleCreditNoteResource extends JsonResource
                     "status" => $item['status']
                 ];
             }
+
+
+
+
+            //Verificar si existen los datos de ventas
+        //TODO comentado para probar algo
+//            if (!$transProduct) {
+//                $transProduct = ProTrans::where('product_id', $item->product_id)
+//                    ->where('sale_id', $item->sale_id)
+//                    ->where('type', ProductTransType::RESERVA)
+//                    ->where('status', true)
+//                    ->first();
+//            }
+
+
+            //Conseguir la transacciones con devolucion existente
+//          TODO comentado porquie credo que nosera necesario
+//            $transRet = ProTrans::where('product_id', $item->product_id)
+//                ->where('sale_id', $item->sale_id)
+//                ->where('type', [ProductTransType::DEVOLUCION])
+//                ->where('status', false)
+//                ->sum('stock');
+
+            //Verificar si existe el productos
+//          TODO
+//            $existsProduct = isset($transProduct);
+//
+//            //Tomar los resultado de stock
+//            $productStock = $existsProduct ? $transProduct->stock : 0;
+//
+//            //Tomar el resultado
+//            $result =  $productStock - $transRet;
+//
+//
+//            //Si el item tiene disponible
+//            if ($existsProduct && $item->type != ProductTransType::DEVOLUCION && $result != 0)
+//            {
+//
+//
+//                //Crear la informacion
+//                $info[] = [
+//                    "id" => $item['id'],
+//                    "code" => $transProduct->product->code,
+//                    "sale_id" => $item['sale_id'],
+//                    "product_id" => $transProduct->product->id,
+//                    "credit_note_id" => null,
+//                    "product_name" => $transProduct->product->name,
+//                    "stock" => $result == 0 ? $item['stock'] : abs($result),
+//                    "price" => $item['price'],
+//                    "tax_rate" => $item['tax_rate'],
+//                    "tax" => $item['tax'],
+//                    "amount" => $item['amount'],
+//                    "discount" => $item['discount'],
+//                    "discount_amount" => $item['discount_amount'],
+//                    "type" => SaleTypeEnum::VENTAS->value,
+//                    "status" => $item['status']
+//                ];
+//            }
         });
+
+//
 
 
         //verificar si esta vacio la info
@@ -108,7 +166,6 @@ class SaleCreditNoteResource extends JsonResource
                 'general' => "Este Documento No Tiene Item Disponible Para NC"
             ]);
         }
-
 
 
         //Devolver los datos formateado

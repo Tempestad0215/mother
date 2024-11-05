@@ -26,18 +26,17 @@ class SaleInvoiceA extends TCPDF
 
     public function __construct(
         public Sale $sale,
-        public $height = 200)
+        public $height = 180)
     {
 
 
         //Aumentar la linea por cada linea agregada
-        $this->sale->infoSale->each(function (ProTrans $sale, int $index) {
-
-            if ($index > 1) {
-                //Aumenatr 10mm para que la factura quede bien
-                $this->height += 3;
-            }
+        $this->sale->infoSale
+            ->where('type', ProductTransType::VENTAS)
+            ->each(function () {
+            $this->height += 6.5;
         });
+
 
 
 //        dd($this->sale->infoSale->count(),  $this->height);
@@ -194,7 +193,7 @@ class SaleInvoiceA extends TCPDF
             $this->setFont('helvetica', '', 8);
             $this->Cell($width[0],5, $item->product->code, 0, 0, 'L', false, '', '');
             $this->setXY($width[0] + 2.5,$this->GetY()+3);
-            $this->Cell($width[1],5, Str::limit($item->product->name, 20,  '...')  , 0, 0, 'L', false, '', 1);
+            $this->Cell($width[1],5, Str::limit($item->product->name, 20)  , 0, 0, 'L', false, '', 1);
 
             //Informacion de importe
             $this->setXY(54,$this->GetY()-3);
@@ -313,19 +312,9 @@ class SaleInvoiceA extends TCPDF
             ],
         );
 
-
-
             //MEnsaje
         $this->Ln(5);
         $this->MultiCell(0,1,config('appconfig.msjInvoice'),0,'C');
-
-
-
-
-
-
     }
-
-
 
 }

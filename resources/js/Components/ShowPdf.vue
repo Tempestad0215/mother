@@ -28,7 +28,7 @@ const createUrlPdf = computed(() => {
 </script>
 
 <template>
-    <div>
+    <div class="">
         <Transition>
             <FloatBox
                 class=""
@@ -37,7 +37,7 @@ const createUrlPdf = computed(() => {
                 <iframe
                     id="pdfA"
                     @wheel.passive="true"
-                    class="w-full px-10 h-[80vh]"
+                    class="w-[70rem] mx-auto px-10 h-[80vh]"
                     :src="createUrlPdf" >
                 </iframe>
             </FloatBox>

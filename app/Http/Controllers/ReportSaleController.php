@@ -17,17 +17,24 @@ class ReportSaleController extends Controller
         //Sacar los datos
         $from = Carbon::parse($request->get('from'));
         $to = Carbon::parse($request->get('to'));
-        $type = $request->get('type');
         $typePayment = $request->get('typePayment');
 
-
         //Llmar el metodo para
-       $data =  ReportSaleHelper::repotSaleRange($from, $to, $type, $typePayment);
+       $data =  ReportSaleHelper::repotSaleRange($from, $to, $typePayment);
 
-
+       //Tranformar los datos
         return Inertia::render('Reports/Sale/Index',[
-            'data' => $data,
+            'data' => $data['saleInfo'],
+            'total' => $data['total'],
+            'totalSold' => $data['totalSold'],
+            'from' => $request->get('from'),
+            'to' => $request->get('to'),
+            'typePayment' => $request->get('typePayment'),
         ]);
     }
+
+
+
+//    public function repotSaleRange(Req)
 
 }

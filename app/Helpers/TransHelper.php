@@ -13,17 +13,14 @@ class TransHelper
      * @param ProductTransType $type
      * @param int $sale_id
      * @param int $product_id
+     * @param int $credit_note_id
      * @return void
      */
-    public static function store(Array $request, ProductTransType $type, int $sale_id = 0, int $product_id = 0):void
+    public static function store(Array $request, ProductTransType $type, int $sale_id = 0, int $product_id = 0, int $credit_note_id = 0):void
     {
-
-
-
+        
         //Crear el TransId
         $transId = $request['transID'] ?? null;
-
-
 
         //Verificar si existe la transcciones antiguia
         $transOld = ProTrans::find($transId);
@@ -32,13 +29,13 @@ class TransHelper
         $proTrans = $transOld && $type == ProductTransType::RESERVA ? $transOld : new ProTrans();
 
 
-
         //Crear la transacion
         $proTrans->product_id = $product_id ?: $request['product_id'];
         $proTrans->product_name = $request["product_name"];
         $proTrans->reserved = $type === ProductTransType::RESERVA ?  $request["reserved"] : 0;
         $proTrans->stock = $request['stock'];
         $proTrans->sale_id = $sale_id ?: null;
+        $proTrans->credit_note_id = $credit_note_id ?: null;
         $proTrans->price = $request['price'];
         $proTrans->discount = $request['discount'];
         $proTrans->discount_amount = $request['discount_amount'];

@@ -45,13 +45,6 @@ const checkRole = computed(()=>{
 Funciones
  */
 /**
- * Salir de la app
- */
-const logout = () => {
-    router.post(route('logout'));
-};
-
-/**
  * Verificar si la url comienza con el parametro
  * @param params
  */
@@ -184,7 +177,7 @@ const isUrl = (params:string) => {
             <div
                 class=" pl-[80px] pt-[80px] rounded-md  ">
                     <div
-                        class=" max-w-[1100px] mx-auto bg-gray-200 rounded-md h-[90vh]">
+                        class=" max-w-[1100px] mx-auto bg-gray-200 rounded-md max-h-[90vh]">
                         <slot/>
                     </div>
 

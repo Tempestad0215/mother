@@ -56,6 +56,33 @@ export interface saleDataI {
 }
 
 
+export interface saleFullI{
+    id: number;
+    code: string;
+    ncf: string;
+    invoice_type: string;
+    client_id: number | null;
+    client_name: string | null;
+    client_rnc: string | null;
+    discount_amount: number;
+    close_table: boolean;
+    tax: number;
+    sub_total: number;
+    amount: number;
+    type: string;
+    type_payment: string;
+    received: number;
+    returned: number;
+    status: boolean;
+    credit_notes: creditNotesSaleI[],
+    deleted_at: string | null;
+    created_at: string;
+    updated_at: string;
+
+}
+
+
+
 export interface saleDataPaginationI {
     current_page: number
     data: saleDataI[]

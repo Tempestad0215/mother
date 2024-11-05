@@ -35,13 +35,6 @@ Al momento de cargar
 Funciones
  */
 
-
-
-
-
-
-
-
 </script>
 
 <template>

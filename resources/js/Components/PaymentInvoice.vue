@@ -10,6 +10,8 @@ import {InertiaForm} from "@inertiajs/vue3";
 import {creditNotesSaleI} from "@/Interfaces/Sale";
 import axios from "axios";
 import {Money} from "v-money3";
+import {onMounted} from "vue";
+
 
 
 const propsW = defineProps<{
@@ -17,10 +19,19 @@ const propsW = defineProps<{
 }>();
 
 
+onMounted(()=>{
+    console.log(typeof  creditNotes);
+})
+
+
 //Valores para sincronizar a la vez
 const typePayment = defineModel<string>('typePayment');
-const creditNotes = defineModel<creditNotesSaleI[]>('creditNotes');
-const creditNote = defineModel<string>('creditNote');
+const creditNotes = defineModel<creditNotesSaleI[]>('creditNotes',{
+    default: () => []
+});
+const creditNote = defineModel<string>('creditNote',{
+    default: ""
+});
 
 
 //Emitir los eventos
@@ -39,34 +50,35 @@ const emit = defineEmits<{
 const getCreditNote = async () => {
 
     //Si no hay suficiente caracateres
-    if (creditNote.length < 5) {
+    if (creditNote?.value.length < 5) {
         propsW.form.setError('credit_notes_value', 'Por Favor, Introduzca Valores Valido');
         return false;
     }
 
     //Verificar si ya esta en positivo no puede colocar nota de credito
-    if (form.returned > 0)
+    if (propsW.form.returned > 0)
     {
         propsW.form.setError('credit_notes_value','Existe Suficiente Balance Para Cerrar La Cuenta');
         return false;
     }
 
     //Verificar si exsite alguna igual
-    const exist:boolean = creditNotes.some((el) => el.code == propsW.cred || el.ncf == creditNote);
+    const exist:boolean = creditNotes.value.some((el) => el.code == creditNote.value || el.ncf == creditNote.value);
 
+    //Verificar si existe la misma nota de credito
     if (exist)
     {
-        form.setError('credit_notes_value','Esta Nota De Credito, Esta Agregada');
+        propsW.form.setError('credit_notes_value','Esta Nota De Credito, Esta Agregada');
 
     }else{
         //Buscar la nota de credito
-        const {data} = await axios.get(route('credit-note.get',{code: creditNote}));
+        const {data} = await axios.get(route('credit-note.get',{code: creditNote.value}));
 
         //Verifciar los datos
         if (data.hasOwnProperty('code'))
         {
             //Pasar los datos al formulario
-            creditNotes.push(data);
+            creditNotes.value.push(data);
             //Calcular los datos
             emit('amountCreditNote')
             //Limpiar los errores
@@ -88,9 +100,9 @@ const getCreditNote = async () => {
  */
 const deleteCreditNote = (index:number) => {
     //Eliminar solo el dato seleccionado
-    form.credit_notes.splice(index, 1);
+    propsW.form.credit_notes.splice(index, 1);
     //Realizar el calculo
-    amountCreditNote();
+    emit('amountCreditNote');
 }
 
 
@@ -101,7 +113,7 @@ const deleteCreditNote = (index:number) => {
 <template>
     <!--Datos de la ventana-->
     <div
-        class="bg-gray-200 p-5 rounded-md max-w-[800px]  h-fit mx-auto">
+        class="bg-gray-200 p-5 rounded-md min-w-[40rem]  max-w-[60px]  h-fit mx-auto">
         <h3 class="text-2xl text-center">
             Datos de pagos
         </h3>
@@ -131,7 +143,7 @@ const deleteCreditNote = (index:number) => {
             <div class="relative">
                 <TextInput
                     class="w-[calc(100%-3rem)]"
-                    v-model.trim="propsW.creditNotesValue"
+                    v-model.trim="creditNote"
                     type="search"/>
                 <i
                     @click="getCreditNote"
@@ -154,7 +166,7 @@ const deleteCreditNote = (index:number) => {
                 <!--                                Cuerpod de los datos-->
                 <tbody>
                 <tr
-                    v-for="(item, index) in propsW.creditNotesValue" :key="index">
+                    v-for="(item, index) in creditNotes" :key="index">
                     <td>{{item.code}}</td>
                     <td>{{ getMoney(item.n_available)}}</td>
                     <td class="text-center w-1/12">
