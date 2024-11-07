@@ -27,6 +27,8 @@ export interface productDataI {
     unit: string;
     stock: number;
     reserved: number;
+    min_price: number;
+    special_price: number;
     price: number;
     cost?: number;
     discount: number;
@@ -129,6 +131,8 @@ export interface productTransI {
     cost: number;
     tax_rate: number;
     price: number;
+    min_price: number;
+    special_price: number;
     product_code: string;
     product_id: number;
     product_name: string;

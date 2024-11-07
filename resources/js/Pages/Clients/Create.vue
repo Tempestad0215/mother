@@ -5,14 +5,20 @@ import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@components/TextInput.vue';
 import InputError from '@components/InputError.vue';
 import PrimaryButton from '@components/PrimaryButton.vue';
-import {computed, onMounted, ref, Ref} from 'vue';
+import {onMounted, ref, Ref} from 'vue';
 import {clienteEditI} from '@/Interfaces/ClientInterface';
 import { successHttp } from '@/Global/Alert';
 import LinkHeader from "@components/LinkHeader.vue";
 import {getRncHelper} from "@/Global/Helpers";
 import {rncUserI} from "@/Interfaces/Setting";
 import Swal from "sweetalert2";
-
+import Select from "primevue/select";
+import InputText from "primevue/inputtext";
+import ToggleButton from 'primevue/togglebutton';
+import InputGroup from 'primevue/inputgroup';
+import InputGroupAddon from 'primevue/inputgroupaddon';
+import InputMask from 'primevue/inputmask';
+import Textarea from 'primevue/textarea';
 
 /**
  * propsW de la vantana
@@ -48,6 +54,32 @@ onMounted(()=>{
 Datos de la ventana
  */
 const classRnc:Ref<string> = ref("");
+const typeClient:Ref<Array<any>> = ref([
+    {
+        name: "Contado",
+        code: 'contado'
+    },
+    // {
+    //     name: "Credito",
+    //     code: 'credito'
+    // }
+])
+const typoDocument:Ref<Array<any>> = ref([
+    {
+        name: "Cédula",
+        code: 'cedula'
+    },{
+        name: "RNC",
+        code: 'rnc'
+    },{
+        name: "Pasaporte",
+        code: 'pasaporte'
+    },
+    // {
+    //     name: "Credito",
+    //     code: 'credito'
+    // }
+])
 
 
 
@@ -56,18 +88,16 @@ const classRnc:Ref<string> = ref("");
  */
 
 //Veriificar si es credito o contado
-const isMandatory = computed(()=>{
-    //Retorna true cuando es credito o anticipo
-   if(form.type === "credito" || form.type === "anticipo")
-   {
-       return true;
-   }
-
-   //Retorna true cuando es a contado
-   return false;
-});
-
-
+// const isMandatory = computed(()=>{
+//     //Retorna true cuando es credito o anticipo
+//    if(form.type === "credito" || form.type === "anticipo")
+//    {
+//        return true;
+//    }
+//
+//    //Retorna true cuando es a contado
+//    return false;
+// });
 
 
 /**
@@ -134,35 +164,38 @@ const submit = ():void => {
  * Otener el RNC
  */
 const getRnc = async () => {
-    //Obtener la informacion del RNC
-    let info:string = await getRncHelper(form.personal_id);
-
-
-    if (info === "SUSPENDIDO")
-    {
-        form.setError("personal_id", "Este Contribuyente Esta Suspendido, Por Favor Elegir Otro");
-        //Variable de error
-        classRnc.value = "border-red-800 text-red-500 animate-pulse";
-    }else if (info === "ERROR")
-    {
-        form.setError("personal_id", "Este Contribuyente No Pudo Ser Encontrado");
-        //Variable de error
-        classRnc.value = "border-red-800 text-red-500 animate-pulse";
-
-    }else if (info === "CANCELLED")
+    if (form.document === 'rnc')
     {
 
-    }
-    else{
+        //Obtener la informacion del RNC
+        let info:string = await getRncHelper(form.personal_id);
 
-        //Pasar los datos del json y transformar
-        let infoParse:rncUserI = JSON.parse(info);
-        //Poner los datos en verde
-        classRnc.value = "border-green-800 text-green-500";
-        //Mostrar el mensaje de la razon social
-        await Swal.fire({
-            title: "Datos Contribuyente",
-            html: `
+
+        if (info === "SUSPENDIDO")
+        {
+            form.setError("personal_id", "Este Contribuyente Esta Suspendido, Por Favor Elegir Otro");
+            //Variable de error
+            classRnc.value = "border-red-800 text-red-500 animate-pulse";
+        }else if (info === "ERROR")
+        {
+            form.setError("personal_id", "Este Contribuyente No Pudo Ser Encontrado");
+            //Variable de error
+            classRnc.value = "border-red-800 text-red-500 animate-pulse";
+
+        }else if (info === "CANCELLED")
+        {
+
+        }
+        else{
+
+            //Pasar los datos del json y transformar
+            let infoParse:rncUserI = JSON.parse(info);
+            //Poner los datos en verde
+            classRnc.value = "border-green-800 text-green-500";
+            //Mostrar el mensaje de la razon social
+            await Swal.fire({
+                title: "Datos Contribuyente",
+                html: `
                 <p>
                     <strong>RNC :</strong>
                     ${infoParse.rnc}
@@ -172,18 +205,20 @@ const getRnc = async () => {
                     ${infoParse.razon_social}
                 </p>
             `,
-            icon: "info"
-        });
+                icon: "info"
+            });
 
-        //Cambiar el nombre a razon social
-        form.name = infoParse.razon_social;
+            //Cambiar el nombre a razon social
+            form.name = infoParse.razon_social;
 
+        }
+        //Limpiar el error luego de 5 segundo
+        setTimeout(() => {
+            form.clearErrors("personal_id");
+            classRnc.value = "";
+        },5000);
     }
-    //Limpiar el error luego de 5 segundo
-    setTimeout(() => {
-        form.clearErrors("personal_id");
-        classRnc.value = "";
-    },5000);
+
 
 }
 
@@ -228,14 +263,12 @@ const getRnc = async () => {
                     <!--                Tipo de cliente-->
                     <div>
                         <InputLabel for="tye" value="Tipo"/>
-                        <select
-                            title="Tipo de cliente"
-                            class="border-gray-200 rounded-md"
-                            id="type">
-                            <option value="contado">Contado</option>
-<!--                            <option value="credito">Credito</option>-->
-<!--                            <option value="anticipo">Anticipo</option>-->
-                        </select>
+                        <Select
+                            v-model="form.type"
+                            :options="typeClient"
+                            placeholder="Tipo Cliente"
+                            option-label="name"
+                            option-value="code"/>
                         <InputError :message="form.errors.type"/>
                     </div>
 
@@ -243,30 +276,22 @@ const getRnc = async () => {
                     <!--Tipo de documento-->
                     <div class="ml-3">
                         <InputLabel for="document" value="Documento"/>
-                        <select
-                            title="Documento de Indetificación"
+                        <Select
                             v-model="form.document"
-                            class="border-gray-200 rounded-md"
-                            id="document" >
-                            <option value="cedula" >Cédula</option>
-                            <option value="pasaporte" >Pasaporte</option>
-                            <option value="rnc" >RNC</option>
-                        </select>
+                            :options="typoDocument"
+                            default-value="cedula"
+                            option-label="name"
+                            option-value="code"/>
                         <InputError :message="form.errors.document"/>
                     </div>
 
 
                     <!-- Estatus del cliente -->
                     <div class="ml-3">
-                        <InputLabel value="Estado"/>
-                        <select
-                            title="Estado del cliente"
+                        <InputLabel value="Activo"/>
+                        <ToggleButton
                             v-model="form.status"
-                            class="border-gray-200 rounded-md"
-                            id="document" >
-                            <option :value="true" >Activo</option>
-                            <option :value="false" >Inactivo</option>
-                        </select>
+                            onLabel="SI" offLabel="NO" />
                         <InputError :message="form.errors.status" />
                     </div>
 
@@ -282,40 +307,52 @@ const getRnc = async () => {
                         <InputLabel
                             for="name"
                             value="Nombre Completo *"/>
-                        <TextInput
-                            required
-                            id="name"
-                            class=" w-full"
-                            maxLength="75"
+                        <InputText
+                            placeholder="Nombre Completo"
+                            fluid
                             v-model="form.name"
-                            placeholder="Nombre completo"
-                            type="text"/>
+                            maxlength="75"
+                            />
 
                         <!-- Error -->
                         <InputError :message="form.errors.name" />
                     </div>
 
-                    <div>
+                    <div class="relative">
                         <InputLabel
                             for="personal_id"
                             value="Cédula / Pasaporte /RNC"/>
-                        <div class="relative">
-                            <TextInput
-                                id="personal_id"
-                                class=" w-full pr-10 "
-                                :class="[classRnc]"
-                                maxLength="15"
-                                :required="isMandatory"
-                                v-model="form.personal_id"
-                                placeholder="12345678910"
-                                type="text"/>
-<!--                            Boton para buscar los rnc-->
-                            <i
-                                @click="getRnc()"
-                                title="Buscar RNC"
-                                class=" absolute right-0 p-2 tetx-2xl icon-efect inset-y-0 flex items-center fa-solid fa-magnifying-glass"></i>
 
-                        </div>
+                        <InputGroup>
+                            <InputMask
+                                v-if="form.document === 'cedula'"
+                                id="basic"
+                                v-model="form.personal_id"
+                                mask="999-9999999-9"
+                                placeholder="125-6536895-6" />
+
+                            <InputMask
+                                v-if="form.document === 'rnc'"
+                                id="basic"
+                                v-model="form.personal_id"
+                                mask="999-99999-9"
+                                placeholder="563-54569-8" />
+
+                            <InputMask
+                                v-if="form.document === 'pasaporte'"
+                                id="basic"
+                                v-model="form.personal_id"
+                                mask="a*?9999999"
+                                placeholder="AA1234567" />
+                            <InputGroupAddon>
+                                <i
+                                    @click="getRnc()"
+                                    title="Buscar RNC"
+                                    class=" fa-solid fa-magnifying-glass"></i>
+                            </InputGroupAddon>
+
+                        </InputGroup>
+
 
 
                         <!-- Error -->
@@ -327,15 +364,12 @@ const getRnc = async () => {
                         <InputLabel
                             for="phone"
                             value="Teléfono"/>
-                        <TextInput
-                            class=" w-full"
-                            name="phone"
-                            maxLength="20"
-                            :required="isMandatory"
+                        <InputMask
+                            id="basic"
                             v-model="form.phone"
-                            placeholder="(849) 425-8568"
-                            v-mask="'(###) ###-####'"
-                            type="text"/>
+                            fluid
+                            mask="+9 (999) 999-9999"
+                            placeholder="+1 (829) 352-6526" />
 
                         <!-- Error -->
                         <InputError :message="form.errors.phone" />
@@ -346,14 +380,12 @@ const getRnc = async () => {
                         <InputLabel
                             for="phone"
                             value="Correo"/>
-                        <TextInput
-                            class=" w-full"
-                            name="email"
-                            maxLength="150"
-                            :required="isMandatory"
-                            placeholder="ejemplo@ejemplo.com"
+                        <InputText
+                            placeholder="example@example.com"
+                            fluid
                             v-model="form.email"
-                            type="email"/>
+                            type="email"
+                            maxlength="150"/>
 
                         <!-- Error -->
                         <InputError :message="form.errors.email" />
@@ -364,14 +396,13 @@ const getRnc = async () => {
                         <InputLabel
                             for="phone"
                             value="Dirección"/>
-                        <TextInput
-                            class=" w-full"
-                            name="address"
-                            maxLength="150"
-                            :required="isMandatory"
+
+                        <InputText
                             placeholder="Puerto Plata, Padres Las Casas #12"
+                            fluid
                             v-model="form.address"
-                            type="text"/>
+                            type="email"
+                            maxlength="150"/>
 
                         <!-- Error -->
                         <InputError :message="form.errors.address" />
@@ -473,12 +504,12 @@ const getRnc = async () => {
 
                     <div>
                         <InputLabel for="comment" value="Comentario"/>
-                        <textarea
-                            maxlength="255"
+
+                        <Textarea
                             v-model="form.comment"
-                            rows="5"
-                            cols="50"
-                            class="border-gray-200 rounded-md max-w-[400px] min-h-[75px] h-[100px] max-h-[150px]"/>
+                            rows="2"
+                            auto-resize
+                            cols="60" />
                         <InputError :message="form.errors.comment"/>
                     </div>
 

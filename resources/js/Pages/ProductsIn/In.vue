@@ -3,7 +3,7 @@ import {Head, router, useForm, usePage} from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
 import InputLabel from '@components/InputLabel.vue';
 import TextInput from '@components/TextInput.vue';
-import {formatNumber, getCoin, getMoney, getPenny, moneyConfig} from '@/Global/Helpers';
+import {formatNumber, getCoin, getMoney, getPenny} from '@/Global/Helpers';
 import PrimaryButton from '@components/PrimaryButton.vue';
 import InputError from '@components/InputError.vue';
 import FloatBox from '@components/FloatBox.vue';
@@ -14,7 +14,8 @@ import FormSearch from "@components/FormSearch.vue";
 import {productDataI, productI, productTransI} from "@/Interfaces/Product";
 import Pagination from "@components/Pagination.vue";
 import LinkHeader from '@components/LinkHeader.vue';
-import {Money} from "v-money3";
+// import {appSettingI} from "@/Interfaces/Global";
+import {InputNumber} from "primevue";
 import {appSettingI} from "@/Interfaces/Global";
 
 
@@ -112,12 +113,16 @@ onMounted(()=>{
         form.product_name = propsW.productEntrance.name;
         form.stock = propsW.productEntrance.stock;
         form.cost = <number>propsW.productEntrance.cost;
+        form.min_price = propsW.productEntrance.min_price;
+        form.special_price = propsW.productEntrance.special_price;
         form.price = propsW.productEntrance.price;
         form.tax_rate =  propsW.productEntrance.tax_rate / 100;
 
         //Calcular los datos
         totalTax();
     }
+
+    //Verificar si exsite la transacciones
     if(propsW.trans)
     {
 
@@ -127,6 +132,8 @@ onMounted(()=>{
         form.product_name = propsW.trans.product_name;
         form.stock = propsW.trans.stock;
         form.cost = propsW.trans.cost;
+        form.min_price = propsW.trans.min_price;
+        form.special_price = propsW.trans.special_price;
         form.price = propsW.trans.price;
         form.tax_rate = propsW.trans.tax_rate / 100;
 
@@ -292,11 +299,15 @@ const totalTax = () => {
                             <InputLabel
                                 for="stock"
                                 value="Cantidad"/>
-                            <money
+                            <InputNumber
                                 @blur="totalTax"
-                                class="inputGeneral w-full"
-                                v-model="form.stock"
-                                v-bind="moneyConfig"/>
+                                input-id="stock"
+                                locale="en-US"
+                                placeholder="Cantidad"
+                                :min-fraction-digits="2"
+                                :max-fraction-digits="2"
+                                fluid
+                                v-model.number="form.stock"/>
 
                             <!-- Error -->
                             <InputError :message="form.errors.stock" />
@@ -308,11 +319,16 @@ const totalTax = () => {
                             <InputLabel
                                 for="cost"
                                 value="Costo"/>
-                            <money
+
+                            <InputNumber
                                 @blur="totalTax"
-                                class="inputGeneral w-full"
-                                v-model="form.cost"
-                                v-bind="moneyConfig"/>
+                                input-id="cost"
+                                locale="en-US"
+                                placeholder="Costo"
+                                :min-fraction-digits="2"
+                                :max-fraction-digits="2"
+                                fluid
+                                v-model="form.cost"/>
 
                             <!-- Error -->
                             <InputError :message="form.errors.cost" />
@@ -325,13 +341,16 @@ const totalTax = () => {
                                 for="minPrice"
                                 value="Precio Especial"/>
 
-                            <money
-                                name="minPrice"
-                                :min="setting.save_cost ? form.cost : 0"
+                            <InputNumber
                                 @blur="totalTax"
-                                class="inputGeneral w-full"
-                                v-model="form.special_price"
-                                v-bind="moneyConfig"/>
+                                input-id="cost"
+                                :min="setting.sequence ? form.cost : 0"
+                                locale="en-US"
+                                placeholder="Precio Especial"
+                                :min-fraction-digits="2"
+                                :max-fraction-digits="2"
+                                fluid
+                                v-model="form.special_price"/>
 
                             <!-- Error -->
                             <InputError :message="form.errors.min_price" />
@@ -344,13 +363,17 @@ const totalTax = () => {
                                 for="minPrice"
                                 value="Precio Minímo"/>
 
-                            <money
-                                name="minPrice"
-                                :min="setting.save_cost ? form.cost : 0"
+                            <InputNumber
                                 @blur="totalTax"
-                                class="inputGeneral w-full"
-                                v-model="form.min_price"
-                                v-bind="moneyConfig"/>
+                                :min="setting.sequence ? form.cost : 0"
+                                input-id="cost"
+                                locale="en-US"
+                                placeholder="Precio minimo"
+                                :min-fraction-digits="2"
+                                :max-fraction-digits="2"
+                                fluid
+                                v-model="form.min_price"/>
+
 
                             <!-- Error -->
                             <InputError :message="form.errors.min_price" />
@@ -363,11 +386,15 @@ const totalTax = () => {
                                 for="price"
                                 value="Precio"/>
 
-                            <money
+                            <InputNumber
                                 @blur="totalTax"
-                                class="inputGeneral w-full"
-                                v-model="form.price"
-                                v-bind="moneyConfig"/>
+                                input-id="cost"
+                                locale="en-US"
+                                placeholder="Precio"
+                                :min-fraction-digits="2"
+                                :max-fraction-digits="2"
+                                fluid
+                                v-model="form.price"/>
 
                             <!-- Error -->
                             <InputError :message="form.errors.price" />
@@ -379,11 +406,17 @@ const totalTax = () => {
                             <InputLabel
                                 for="discount"
                                 value="Descuento"/>
-                            <money
+
+
+                            <InputNumber
                                 @blur="totalTax"
-                                class="inputGeneral w-full"
-                                v-model="form.discount"
-                                v-bind="moneyConfig"/>
+                                prefix="%"
+                                input-id="cost"
+                                locale="en-US"
+                                placeholder="Descuento en %"
+                                fluid
+                                v-model="form.discount"/>
+
                             <!-- Error -->
                             <InputError :message="form.errors.discount" />
 

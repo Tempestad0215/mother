@@ -3,6 +3,9 @@ import '../css/app.css';
 // If you don't need the styles, do not connect
 import 'sweetalert2/dist/sweetalert2.min.css';
 
+// Importa los estilos de PrimeVue y el tema // Tema principal // Estilos base
+import 'primeicons/primeicons.css';
+
 
 import { createApp, h, DefineComponent } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';

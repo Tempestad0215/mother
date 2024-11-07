@@ -30,6 +30,7 @@
         "chart.js": "^4.4.5",
         "fast-glob": "3.3.2",
         "micromatch": "^4.0.8",
+        "primeicons": "^7.0.0",
         "primevue": "^4.2.1",
         "tailwindcss-primeui": "^0.3.4",
         "v-money": "^0.8.1",

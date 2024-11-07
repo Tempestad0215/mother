@@ -8,6 +8,11 @@ import FormSearch from "@components/FormSearch.vue";
 import {computed} from "vue";
 import {paginationJoin} from "@/Global/Helpers";
 
+
+//Para la tabla
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+
 /**
  * Datos de la ventana
  */
@@ -103,9 +108,8 @@ const destroy = (id:Number) => {
                 @submit.prevent="submit"
                 class="">
                 <FormSearch
-                    v-model="form.search"
-                    holder="Buscar"
-                    v-model:select-value="form.perPage"/>
+                    v-model:search="form.search"
+                    v-model:per-page="form.perPage"/>
 
 
             </form>
@@ -116,63 +120,30 @@ const destroy = (id:Number) => {
         </div>
 
         <div class=" max-h-[550px] overflow-y-auto">
-            <table
-                class=" table-auto w-full">
-                <thead
-                    class=" sticky top-0 text-left">
-                <tr
-                    class="">
-                    <th class="overflow-hidden max-w-[50px]" >Nombre</th>
-                    <th >Ced./Rnc./Pas.</th>
-                    <th v-if="!isSale" >Correo</th>
-                    <th v-if="!isSale" >Teléfono</th>
-                    <th >Atc</th>
+            <DataTable :value="props.clients.data">
+                <Column field="name" header="Nombre"  />
+                <Column field="personal_id" header="Ced./RNC/Pas"  />
+                <Column field="email" header="Correo"  />
+                <Column field="phone" header="Teléfono"  />
+                <Column header="Act"  #body="item">
+                    <i
+                        v-if="page.component !== 'Clients/Show'"
+                        title="Seleccionar"
+                        @click="emit('getData',item.data.id)"
+                        class="fa-solid fa-circle-check"></i>
+                    <i
+                        v-if="page.component === 'Clients/Show'"
+                        title="Editar"
+                        @click="edit(item.data.id)"
+                        class=" ml-2 icon-efect fa-solid fa-pen-to-square"></i>
+                    <i
+                        v-if="page.component === 'Clients/Show'"
+                        title="Eliminar"
+                        @click="destroy(item.data.id)"
+                        class="ml-2 icon-efect fa-solid fa-trash"></i>
+                </Column>
+            </DataTable>
 
-                </tr>
-                </thead>
-
-                <!-- Contenido -->
-                <tbody>
-                <tr
-                    class=" "
-                    v-for="(item, index) in props.clients?.data" :key="index" >
-                    <td class="overflow-hidden" >
-                        {{item.name}}
-                    </td>
-                    <td class=" ">
-                        {{item.personal_id}}
-                    </td>
-                    <td
-                        v-if="!isSale"
-                        class="">
-                        {{item.email ? item.email : 'N/A'}}
-                    </td>
-                    <td
-                        v-if="!isSale"
-                        class="">
-                        {{ item.phone }}
-                    </td>
-                    <!-- Botones -->
-                    <td class="space-x-5">
-                        <i
-                            v-if="page.component !== 'Clients/Show'"
-                            title="Seleccionar"
-                            @click="emit('getData',item)"
-                            class="fa-solid fa-circle-check"></i>
-                        <i
-                            v-if="page.component === 'Clients/Show'"
-                            title="Editar"
-                            @click="edit(item.id)"
-                            class=" icon-efect fa-solid fa-pen-to-square"></i>
-                        <i
-                            v-if="page.component === 'Clients/Show'"
-                            title="Eliminar"
-                            @click="destroy(item.id)"
-                            class=" icon-efect fa-solid fa-trash"></i>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
         </div>
 
 
