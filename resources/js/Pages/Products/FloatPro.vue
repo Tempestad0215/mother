@@ -11,6 +11,11 @@ import {useForm, usePage} from '@inertiajs/vue3';
 import {onMounted, Ref, ref} from 'vue';
 import {categoryI} from "@/Interfaces/Categories";
 import {taxI} from "@/Interfaces/Global";
+import ToggleButton from 'primevue/togglebutton';
+import Select from 'primevue/select';
+import Button from 'primevue/button';
+import InputGroup from 'primevue/inputgroup';
+import InputGroupAddon from 'primevue/inputgroupaddon';
 
 
 /**
@@ -134,38 +139,16 @@ const submit = () => {
 
             <div class="flex flex-col float-right text-center">
                 <InputLabel for="inventoried" value="Inventariar" />
-                <div class="flex">
-                    <div class="">
-                        <input
-                            type="radio"
-                            name="yes_inventoried"
-                            v-model="form.inventoried"
-                            :value="true"
-                            id="no_inventoried">
-                        <InputLabel
-                            class="inline ml-2"
-                            for="yes_inventoried" value="SI" />
-                    </div>
-                    <div class="ml-5">
-                        <input
-                            type="radio"
-                            :value="false"
-                            v-model="form.inventoried"
-                            name="no_inventoried"
-                            id="no_inventoried">
-                        <InputLabel
-                            class="inline ml-2"
-                            for="yes_inventoried" value="No" />
-                    </div>
-                </div>
-
-
+                <ToggleButton
+                    v-model="form.inventoried"
+                    onLabel="SI"
+                    offLabel="NO" />
             </div>
 
 
 <!--Informacion General-->
             <div class=" clear-both">
-                <fieldset class=" grid grid-cols-4 gap-3 field-box">
+                <fieldset class=" grid grid-cols-2 gap-3 field-box">
                     <legend>
                         Informacion
                     </legend>
@@ -206,21 +189,13 @@ const submit = () => {
 
                     <div>
                         <InputLabel for="category" value="Categoria" />
-                        <select
-                            name="category"
-                            id="category"
-                            class="rounded-md border-gray-300 w-full"
-                            v-model="form.category_id">
-                            <option disabled :value="0">
-                                --- Seleccione ---
-                            </option>
-                            <option
-                                v-for="(item, index) in propsW.categories"
-                                :key="index"
-                                :value="item.id">
-                                {{item.name}}
-                            </option>
-                        </select>
+                        <Select
+                            v-model="form.category_id"
+                            :options="propsW.categories"
+                            optionLabel="name"
+                            fluid
+                            option-value="id"
+                            placeholder="Elige La Categoria"/>
 
 <!--                        Mensaje de error-->
                         <InputError :message="form.errors.category_id"/>
@@ -232,30 +207,22 @@ const submit = () => {
                         <InputLabel
                             for="supplier_id"
                             value="Proveedor *"/>
+                        <InputGroup class="h-10">
+                            <Select
+                                v-model="form.category_id"
+                                :options="propsW.suppliers"
+                                optionLabel="company_name"
+                                fluid
+                                option-value="id"
+                                placeholder="Elige La Categoria"
+                                class="w-full md:w-56" />
+                            <InputGroupAddon>
+                                <i
+                                    @click="emit('showSupplier')"
+                                    class="icon-efect fa-solid fa-circle-plus"></i>
+                            </InputGroupAddon>
 
-                        <div class="flex items-center ">
-                            <select
-                                v-model="form.supplier_id"
-                                name="supplier_id"
-                                class="w-full rounded-md border-gray-300"
-                                id="supplier_id">
-                                <option disabled :value="0">
-                                    --- Seleccione ---
-                                </option>
-                                <option
-                                    v-for="(item, index) in propsW.suppliers" :key="index"
-                                    :value="item.id">
-                                    {{item.company_name}}
-                                </option>
-                            </select>
-                            <SecondaryButton
-                                class=" py-3 ml-1"
-                                @click="emit('showSupplier')"
-                                type="button">
-                                Agre.
-                            </SecondaryButton>
-                        </div>
-
+                        </InputGroup>
                         <!-- Error -->
                         <InputError :message="form.errors.search" />
                     </div>
@@ -341,6 +308,12 @@ const submit = () => {
                             <InputLabel
                                 for="tax_rate"
                                 value="Impuesto *" />
+<!--                            <Select-->
+<!--                                v-model="form.tax_rate"-->
+<!--                                :options="taxes"-->
+<!--                                option-value="amount"-->
+<!--                                option-label="name" />-->
+
                             <div class=" relative">
                                 <select
                                     class=" w-full border-gray-300 rounded-md "

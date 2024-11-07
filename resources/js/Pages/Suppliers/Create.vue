@@ -12,6 +12,10 @@ import {supplierI, supplierPaginationI} from "@/Interfaces/Supplier";
 import Pagination from "@components/Pagination.vue";
 import Swal from "sweetalert2";
 import {paginationJoin} from "@/Global/Helpers";
+import InputMask from 'primevue/inputmask';
+
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
 
 
 /*
@@ -199,13 +203,12 @@ const search = () => {
                         <InputLabel
                             for="phone"
                             value="Teléfono"/>
-                        <TextInput
-                            class=" w-full"
-                            name="phone"
+                        <InputMask
+                            fluid
+                            id="phone"
                             v-model="form.phone"
-                            placeholder="(849) 425-8568"
-                            v-mask="'(###) ###-####'"
-                            type="text"/>
+                            mask="+9 (999) 999-9999"
+                            placeholder="+9 (999) 999-9999" />
 
                         <!-- Error -->
                         <InputError :message="form.errors.phone" />
@@ -265,39 +268,22 @@ const search = () => {
 <!--        Table de datos-->
             <div>
                 <!--                Datos de los proveedores-->
-                <table
-                    class=" mt-5 text-left w-full table-auto ">
-                    <thead
-                        class="">
-                    <tr>
-                        <th>Empresa</th>
-                        <th>Representante</th>
-                        <th>telefono</th>
-                        <th>Correo</th>
-                        <th>Atc</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr
-                        class=""
-                        v-for="(item,index) in props.suppliers?.data" :key="index">
-                        <td>{{item.company_name}}</td>
-                        <td>{{item.contact ? item.contact : "N/A" }}</td>
-                        <td>{{item.phone ? item.phone : 'N/A'}}</td>
-                        <td>{{item.email ? item.email : 'N/A'}}</td>
-                        <td class=" space-x-3">
-                            <i
-                                @click="edit(item)"
-                                title="Editar"
-                                class=" icon-efect fa-solid fa-pen-to-square"></i>
-                            <i
-                                @click="destroy(item)"
-                                title="Eliminar"
-                                class=" icon-efect fa-solid fa-trash"></i>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                <DataTable striped-rows show-gridlines :value="props.suppliers.data" >
+                    <Column field="company_name" header="Empresa"/>
+                    <Column field="contact" header="Contacto"/>
+                    <Column field="phone" header="Telefono"/>
+                    <Column field="email" header="Correo"/>
+                    <column #body="item" header="Act" >
+                        <i
+                            @click="edit(item.data)"
+                            title="Editar"
+                            class=" icon-efect fa-solid fa-pen-to-square"></i>
+                        <i
+                            @click="destroy(item.data)"
+                            title="Eliminar"
+                            class=" ml-3 icon-efect fa-solid fa-trash"></i>
+                    </column>
+                </DataTable>
             </div>
 
                 <!--                PAginacion-->

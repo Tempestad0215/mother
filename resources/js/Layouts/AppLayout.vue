@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import {computed, ref} from 'vue';
+import {computed, Ref, ref} from 'vue';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import NavLink from '@/Components/NavLink.vue';
+// import ToggleSwitch from 'primevue/toggleswitch';
 
 
 
@@ -23,6 +24,7 @@ defineProps({
 Datos de la ventana
  */
 const showOption = ref<boolean>(false);
+const darkMode:Ref<boolean> = ref(false);
 
 
 
@@ -170,8 +172,17 @@ const isUrl = (params:string) => {
 
         <div
             class="flex-col flex-1">
+<!--            <div class="float-right">-->
+<!--                &lt;!&ndash;                Para el modo nocturno&ndash;&gt;-->
+<!--                <ToggleSwitch-->
+<!--                    v-model="darkMode" />-->
+<!--            </div>-->
             <header
                 class=" flex items-center justify-center space-x-3 fixed top-0 h-20 max-h-16 flex-1 w-full bg-gray-200 z-20 px-5">
+
+
+
+<!--                Para el contenido-->
                 <slot name="header"/>
             </header>
             <div
