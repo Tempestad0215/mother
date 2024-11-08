@@ -22,6 +22,8 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property float $stock
  * @property float $reserved
  * @property float $price
+ * @property float $min_price
+ * @property float $special_price
  * @property float $discount
  * @property float $discount_amount
  * @property float $tax_rate
@@ -57,6 +59,8 @@ class ProTrans extends Model implements Auditable
         'credit_note_id',
         'stock',
         'price',
+        'min_price',
+        'special_price',
         'discount',
         'discount_amount',
         'tax_rate',

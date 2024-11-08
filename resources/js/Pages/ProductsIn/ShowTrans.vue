@@ -9,6 +9,8 @@ import Pagination from "@components/Pagination.vue";
 import InputError from "@components/InputError.vue";
 import {successHttp} from "@/Global/Alert";
 import Swal from "sweetalert2";
+import Column from "primevue/column";
+import DataTable from "primevue/datatable";
 
 
 /**
@@ -123,42 +125,47 @@ const destroy = (id:number) => {
                 </h3>
             </div>
 
-            <table class=" w-full table-auto mt-5">
-                <thead class="text-left">
-                    <tr>
-                        <th>Producto/Servicio</th>
-                        <th>Disponible</th>
-                        <th>Itbis</th>
-                        <th>Precio</th>
-                        <th>Tipo</th>
-                        <th>Act</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr
-                        class=""
-                        v-for="(item, index) in props.trans.data" :key="index"
-                        :title="`Creado el : ${item.created_at}`">
-                        <td class="overflow-hidden">{{item.product_name}}</td>
-                        <td>{{item.stock}}</td>
-                        <td>{{ getMoney(item.tax)}}</td>
-                        <td>{{getMoney(item.price)}}</td>
-                        <td class="uppercase" >{{item.type}}</td>
-                        <td>
-<!--                            <i-->
-<!--                                @click="edit(item.id)"-->
-<!--                                class=" icon-efect fa-solid fa-pen-to-square"></i>-->
-                            <span v-if="item.type != 'entrada'">
-                                N/A
-                            </span>
-                            <i
-                                v-if="item.type == 'entrada'"
-                                @click="destroy(item.id)"
-                                class=" icon-efect ml-3 fa-solid fa-trash"></i>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+
+            <!--                Datos de los productos para la entrada    -->
+            <DataTable
+                striped-rows
+                show-gridlines
+                :value="props.trans.data" >
+                <Column field="product_name" header="Producto/Servicio"  />
+                <Column
+                    field="stock"
+                    header="Disponible"
+                    #body="item">
+
+                </Column>
+                <Column
+                    field="stock"
+                    header="Itbis"
+                    #body="item">
+                    {{getMoney(item.data.tax)}}
+                </Column>
+                <Column
+                    field="stock"
+                    header="Precio"
+                    #body="item">
+                    {{getMoney(item.data.price)}}
+                </Column>
+                <Column field="type" header="Tipo"  />
+                <Column
+                    field="stock"
+                    header="Act"
+                    #body="item">
+
+                    <span
+                        v-if="item.data.type != 'entrada'">
+                        N/A
+                    </span>
+                    <i
+                        v-if="item.data.type == 'entrada'"
+                        @click="destroy(item.data.id)"
+                        class=" icon-efect ml-3 fa-solid fa-trash"></i>
+                </Column>
+            </DataTable>
 
 <!--            Paginacion-->
             <Pagination

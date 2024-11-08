@@ -6,16 +6,15 @@ import TextInput from '@/Components/TextInput.vue';
 import { successHttp } from '@/Global/Alert';
 import {productSupplierI} from '@/Interfaces/Product';
 import { supplierI } from '@/Interfaces/Supplier';
-import SecondaryButton from '@components/SecondaryButton.vue';
 import {useForm, usePage} from '@inertiajs/vue3';
 import {onMounted, Ref, ref} from 'vue';
 import {categoryI} from "@/Interfaces/Categories";
 import {taxI} from "@/Interfaces/Global";
 import ToggleButton from 'primevue/togglebutton';
 import Select from 'primevue/select';
-import Button from 'primevue/button';
 import InputGroup from 'primevue/inputgroup';
 import InputGroupAddon from 'primevue/inputgroupaddon';
+import SelectButton from 'primevue/selectbutton';
 
 
 /**
@@ -69,6 +68,15 @@ const form = useForm({
  */
 const taxes:Ref<taxI[]>  = ref(props.setting.tax);
 const dataUnit:Ref<string[]> = ref(props.setting.unit);
+const typeOptions:Ref<any> = ref([
+    {
+        name:'Producto',
+        value:'producto',
+    },
+    {
+        name:'Servicio',
+        value:'servicio'
+    }]);
 
 
 /**
@@ -262,38 +270,12 @@ const submit = () => {
                             <InputLabel
                                 class=" mb-2"
                                 for="type" value="Tipo" />
-                            <div class="flex">
-                                <div>
-                                    <input
-                                        class="peer hidden"
-                                        type="radio"
-                                        v-model="form.type"
-                                        value="producto"
-                                        name="cli_cash"
-                                        id="cli_cash">
-                                    <label
-                                        class=" border-2 px-2 py-1 rounded-md border-gray-400 peer-checked:bg-gray-800 peer-checked:text-white duration-300 "
-                                        for="cli_cash">
-                                        Producto
-                                    </label>
-
-                                </div>
-                                <div class="ml-5">
-                                    <input
-                                        class="peer hidden"
-                                        v-model="form.type"
-                                        value="servicio"
-                                        type="radio"
-                                        name="cli_credit"
-                                        id="cli_credit">
-                                    <label
-                                        class=" border-2 px-2 py-1 rounded-md border-gray-400 peer-checked:bg-gray-800 peer-checked:text-white duration-300 "
-                                        for="cli_credit">
-                                        Servicio
-                                    </label>
-                                </div>
-                                <InputError :message="form.errors.type"/>
-                            </div>
+                            <SelectButton
+                                v-model="form.type"
+                                :options="typeOptions"
+                                option-label="name"
+                                option-value="value"/>
+                            <InputError :message="form.errors.type"/>
                         </div>
 
 
@@ -308,27 +290,12 @@ const submit = () => {
                             <InputLabel
                                 for="tax_rate"
                                 value="Impuesto *" />
-<!--                            <Select-->
-<!--                                v-model="form.tax_rate"-->
-<!--                                :options="taxes"-->
-<!--                                option-value="amount"-->
-<!--                                option-label="name" />-->
-
-                            <div class=" relative">
-                                <select
-                                    class=" w-full border-gray-300 rounded-md "
-                                    required
-                                    name="tax_rate"
-                                    v-model="form.tax_rate">
-                                    <option value="" selected>--- Seleccione El Itbis  ---</option>
-                                    <option
-                                        v-for="item in taxes"
-                                        :value="item.amount">
-                                        {{item.name }} | {{item.amount}}
-                                    </option>
-                                </select>
-
-                            </div>
+                            <Select
+                                v-model="form.tax_rate"
+                                :options="taxes"
+                                fluid
+                                option-value="amount"
+                                option-label="name" />
 
                             <InputError :message="form.errors.tax_rate" />
                         </div>
@@ -339,19 +306,11 @@ const submit = () => {
                             <InputLabel
                                 for="unit"
                                 value="Unidad *"/>
-                            <select
-                                name="unit"
+                            <Select
                                 v-model="form.unit"
-                                required
-                                class=" w-full border-gray-300 rounded-md ">
-                                <option selected disabled value="">
-                                    --- Seleccione la unidad ---
-                                </option>
-                                <option v-for="item in dataUnit"
-                                    :value="item">
-                                    {{item}}
-                                </option>
-                            </select>
+                                :options="dataUnit"
+                                placeholder="Seleccione Unidad de Medida"
+                                fluid/>
                             <!-- Error -->
                             <InputError :message="form.errors.unit" />
                         </div>

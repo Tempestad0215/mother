@@ -25,6 +25,13 @@ import PaymentInvoice from "@components/PaymentInvoice.vue";
 import ReturnForm from "@components/ReturnForm.vue";
 
 
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+import InputNumber from 'primevue/inputnumber';
+import ColumnGroup from 'primevue/columngroup';   // optional
+import Row from 'primevue/row';
+
+
 /*
 Utilizar el page para los datos de la pagina
  */
@@ -669,6 +676,23 @@ const getRncClient = async () => {
 }
 
 
+const oncellEditComplete = (event:any) => {
+    //Tomar los datos
+    let {data, newValue, field} = event;
+
+    //Datos para buscar
+    switch (field){
+        case 'price':
+            data[field] = newValue;
+            break;
+        default:
+            data['field'] = newValue;
+            break;
+    }
+
+    console.log(newValue);
+}
+
 
 </script>
 
@@ -923,80 +947,101 @@ const getRncClient = async () => {
 <!--                        Listado de los productos-->
                         <div
                             class="max-h-[400px] border-t-2 mt-3 border-black overflow-y-auto shadow-lg p-3 rounded-md">
-                            <table
-                                class="w-full  table-auto mt-4">
-                                <thead class="">
-                                    <tr
-                                        class="text-left border-b-2 border-gray-400">
-                                        <th>#</th>
-                                        <th>Producto/Servicio</th>
-                                        <th>Cantidad</th>
-                                        <th>Desc.</th>
-                                        <th>Itbis</th>
-                                        <th>Precio</th>
-                                        <th>Importe</th>
-                                        <th
-                                            v-if="form.info_sale.length > 1">
-                                            Atc
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr
-                                        class=""
-                                        v-for="(item, index) in form.info_sale" :key="index">
-                                        <td>{{index+1}}</td>
-                                        <td>
-                                            <div>
-                                                <p>{{item.code}}</p>
-                                                <p>{{item.product_name}}</p>
-                                            </div>
-
-                                        </td>
-                                        <td
-                                            class="max-w-[8rem">
-                                            <money
-                                                class="inputGeneral bg-transparent max-w-[7rem]"
-                                                v-model.number="item.stock"
-                                                v-bind="moneyConfig"
-                                                @blur="totalAmount(index)"
-                                                />
-                                        </td>
-                                        <td
-                                            class="max-w-[5.5rem]">
-                                            <money
-                                                max="100"
-                                                class="inputGeneral bg-transparent max-w-[5rem]"
-                                                v-model="item.discount"
-                                                v-bind="moneyConfigPer"
-                                                @blur="totalAmount(index)"
-                                            />
-                                        </td>
-                                        <td class="">
-                                            <span>
-                                                {{ getMoney(item.tax)}}
-                                            </span>
-                                        </td>
-                                        <td
-                                            class="">
-                                            {{ getMoney(item.price)}}
-                                        </td>
-
-                                        <td class="">
-                                            <span>
-                                                {{ getMoney(item.amount) }}
-                                            </span>
-                                        </td>
-                                        <td
-                                            v-if="form.info_sale.length > 1"
-                                            class="text-xl">
-                                            <i
-                                                @click="deleteItem(item.product_name, index)"
-                                                class=" icon-efect text-red-500 fa-solid fa-circle-xmark"></i>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <DataTable
+                                edit-mode="cell"
+                                :value="form.info_sale"
+                                @cell-edit-complete="oncellEditComplete"
+                                show-gridlines
+                                striped-rows  >
+                                <Column
+                                    #body="{index}"
+                                    header="#">
+                                    {{index + 1}}
+                                </Column>
+                                <Column field="product_name" header="Producto/Servicio"/>
+                                <Column
+                                    field="stock"
+                                    header="stock"
+                                    #editor="{data, field}">
+                                    <InputNumber
+                                        v-model="data[field]"
+                                        inputId="locale-us"
+                                        locale="en-US"
+                                        :allow-empty="false"
+                                        :max-fraction-digits="2"
+                                        :minFractionDigits="2"
+                                        autofocus
+                                        fluid/>
+                                </Column>
+                                <Column header="Itbis"
+                                        #body="{data}">
+                                    {{getMoney(data.tax)}}
+                                </Column>
+                                <Column
+                                    field="price"
+                                    header="Precio"
+                                    #editor="{data, field}">
+                                    <InputNumber
+                                        v-model="data[field]"
+                                        inputId="locale-us"
+                                        locale="en-US"
+                                        :allow-empty="false"
+                                        :max-fraction-digits="2"
+                                        :minFractionDigits="2"
+                                        autofocus
+                                        fluid/>
+                                </Column>
+                                <Column header="Importe"
+                                        #body="{data}">
+                                    {{getMoney(data.amount)}}
+                                </Column>
+                                <Column
+                                    header="Act"
+                                    #body="{data, index}">
+                                    <i
+                                        @click="deleteItem(data.product_name, index)"
+                                        class=" icon-efect text-red-500 fa-solid fa-circle-xmark"></i>
+                                </Column>
+                                <ColumnGroup
+                                    type="footer">
+                                    <Row>
+                                        <Column
+                                            footer="Itbis :"
+                                            :colspan="5"
+                                            footerStyle="text-align:right" />
+                                        <Column
+                                            :colspan="2"
+                                            :footer="getMoney(form.tax)" />
+                                    </Row>
+                                    <Row>
+                                        <Column
+                                            footer="Sub Total :"
+                                            :colspan="5"
+                                            footerStyle="text-align:right" />
+                                        <Column
+                                            :colspan="2"
+                                            :footer="getMoney(form.sub_total)" />
+                                    </Row>
+                                    <Row>
+                                        <Column
+                                            footer="Descuento :"
+                                            :colspan="5"
+                                            footerStyle="text-align:right" />
+                                        <Column
+                                            :colspan="2"
+                                            :footer="getMoney(form.discount_amount)" />
+                                    </Row>
+                                    <Row>
+                                        <Column
+                                            footer="Total :"
+                                            :colspan="5"
+                                            footerStyle="text-align:right" />
+                                        <Column
+                                            :colspan="2"
+                                            :footer="getMoney(form.amount)" />
+                                    </Row>
+                                </ColumnGroup>
+                            </DataTable>
 
                         </div>
 <!--                        Dato de la ventas-->
@@ -1040,32 +1085,7 @@ const getRncClient = async () => {
 
                                     </fieldset>
                                 </div>
-                                <div class="">
-                                    <div>
-                                        <h5 class="inline font-bold">Itbis...................: </h5>
-                                        <span class="">
-                                            {{getMoney(form.tax)}}
-                                        </span>
-                                    </div>
-                                    <div>
-                                        <h5 class="inline font-bold">Sub Total.........: </h5>
-                                        <span>
-                                            {{getMoney(form.sub_total)}}
-                                        </span>
-                                    </div>
-                                    <div>
-                                        <h5 class="inline font-bold">Descuento......: </h5>
-                                        <span>
-                                            {{getMoney(form.discount_amount)}}
-                                        </span>
-                                    </div>
-                                    <div>
-                                        <h5 class="inline font-bold">Total.................: </h5>
-                                        <span>
-                                            {{getMoney(form.amount)}}
-                                        </span>
-                                    </div>
-                                </div>
+
                             </div>
                         </div>
 

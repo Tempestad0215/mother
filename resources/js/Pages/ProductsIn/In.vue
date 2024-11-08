@@ -17,7 +17,8 @@ import LinkHeader from '@components/LinkHeader.vue';
 // import {appSettingI} from "@/Interfaces/Global";
 import {InputNumber} from "primevue";
 import {appSettingI} from "@/Interfaces/Global";
-
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
 
 /**
  * Datos de la pagina
@@ -300,7 +301,8 @@ const totalTax = () => {
                                 for="stock"
                                 value="Cantidad"/>
                             <InputNumber
-                                @blur="totalTax"
+                                @value-change="totalTax"
+                                :allow-empty="false"
                                 input-id="stock"
                                 locale="en-US"
                                 placeholder="Cantidad"
@@ -321,7 +323,8 @@ const totalTax = () => {
                                 value="Costo"/>
 
                             <InputNumber
-                                @blur="totalTax"
+                                @value-change="totalTax"
+                                :allow-empty="false"
                                 input-id="cost"
                                 locale="en-US"
                                 placeholder="Costo"
@@ -342,7 +345,8 @@ const totalTax = () => {
                                 value="Precio Especial"/>
 
                             <InputNumber
-                                @blur="totalTax"
+                                @value-change="totalTax"
+                                :allow-empty="false"
                                 input-id="cost"
                                 :min="setting.sequence ? form.cost : 0"
                                 locale="en-US"
@@ -364,7 +368,8 @@ const totalTax = () => {
                                 value="Precio Minímo"/>
 
                             <InputNumber
-                                @blur="totalTax"
+                                @value-change="totalTax"
+                                :allow-empty="false"
                                 :min="setting.sequence ? form.cost : 0"
                                 input-id="cost"
                                 locale="en-US"
@@ -387,7 +392,8 @@ const totalTax = () => {
                                 value="Precio"/>
 
                             <InputNumber
-                                @blur="totalTax"
+                                @value-change="totalTax"
+                                :allow-empty="false"
                                 input-id="cost"
                                 locale="en-US"
                                 placeholder="Precio"
@@ -409,8 +415,9 @@ const totalTax = () => {
 
 
                             <InputNumber
-                                @blur="totalTax"
+                                @value-change="totalTax"
                                 prefix="%"
+                                :allow-empty="false"
                                 input-id="cost"
                                 locale="en-US"
                                 placeholder="Descuento en %"
@@ -548,38 +555,35 @@ const totalTax = () => {
                     <div
                         class="max-h-[600px] overflow-y-auto ">
                         <!--                Datos de los productos para la entrada    -->
-                        <table
-                            class="table-auto w-full mt-5">
-                            <thead class="sticky top-0">
-                                <tr class="text-left">
-                                    <th >Cod. Barr.</th>
-                                    <th >Producto</th>
-                                    <!--                                <th>Descripcion</th>-->
-                                    <th>Cant.</th>
-                                    <th>Cost</th>
-                                    <th>Precio</th>
-                                    <th>Act</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            <tr
-                                class=""
-                                v-for="item in propsW.products?.data">
-                                <td class="">{{item.bar_code ? item.bar_code : 'N/A'}}</td>
-                                <td class="overflow-hidden">{{item.name}}</td>
-                                <!--                                <td>{{item.description}}</td>-->
-                                <td>{{item.stock}}</td>
-                                <td>{{ getMoney(item.cost)}}</td>
-                                <td>{{ getMoney(item.price)}}</td>
-                                <td class="text-xl space-x-3 ">
-                                    <i
-                                        @click="edit(item.id)"
-                                        title="Entrada"
-                                        class=" icon-efect fa-solid fa-dolly"></i>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
+                        <DataTable
+                            striped-rows
+                            show-gridlines
+                            :value="propsW.products.data" >
+                            <Column field="bar_code" header="Cod. Barr."  />
+                            <Column field="name" header="Nombre"  />
+                            <Column field="stock" header="Cantidad"  />
+                            <Column
+                                field="stock"
+                                header="Cantidad"
+                                #body="item">
+                                {{getMoney(item.data.cost)}}
+                            </Column>
+                            <Column
+                                field="stock"
+                                header="Cantidad"
+                                #body="item">
+                                {{getMoney(item.data.price)}}
+                            </Column>
+                            <Column
+                                field="stock"
+                                header="Act"
+                                #body="item">
+                                <i
+                                    @click="edit(item.data.id)"
+                                    title="Entrada"
+                                    class=" icon-efect fa-solid fa-dolly"></i>
+                            </Column>
+                        </DataTable>
 
                     </div>
                     <Pagination

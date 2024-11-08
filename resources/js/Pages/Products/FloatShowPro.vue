@@ -8,6 +8,10 @@ import Swal from "sweetalert2";
 import {successHttp} from "@/Global/Alert";
 import {getMoney} from "@/Global/Helpers";
 
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+import ColumnGroup from 'primevue/columngroup';   // optional
+import Row from 'primevue/row';
 
 /**
  * Informacion de la ventana
@@ -129,72 +133,48 @@ const detroy = (id:Number) => {
 
         <div
             class="max-h-[65vh] overflow-y-scroll ">
-            <table
-                class=" table-auto w-full mt-5">
-                <thead
-                    class="sticky top-0 bg-gray-300">
-                    <tr
-                        class=" text-left">
-                        <th >Codigo </th>
-                        <th >Cod. Barr</th>
-                        <th >Nombre</th>
-    <!--                    <th class="w-1/12">Descripción</th>-->
-    <!--                    <th class="w-1/12">Uni.</th>-->
-                        <th >Disp.</th>
-                        <th >Precio</th>
-                        <th >Atc</th>
-                    </tr>
-                </thead>
-                <tbody
-                    class="">
-                    <tr
-                        class=""
-                        v-for="(item, index) in propsW.products.data" :key="index">
-                        <td>{{item.code}}</td>
-                        <td>{{item.bar_code ? item.bar_code : 'N/A'}}</td>
-                        <td>{{item.name}}</td>
-    <!--                    <td>{{item.description}}</td>-->
-    <!--                    <td>{{item.unit ? item.unit : 'N/A'}}</td>-->
-                        <td>{{item.stock}}</td>
-                        <td>{{ getMoney(item.price)}}</td>
-                        <td
-                            class="text-center">
-                            <div
-                                class=" space-x-3">
-                                <!-- Entrada de producto -->
-                                <i
-                                    v-if="url !== 'Products/Show'"
-                                    title="Crear Entrada"
-                                    @click="selectData(item)"
-                                    class=" icon-efect fa-solid fa-circle-check"></i>
+            <DataTable show-gridlines striped-rows :value="propsW.products.data" >
+                <Column field="code" header="Cod."  />
+                <Column field="bar_code" header="Cod. Barra"  />
+                <Column field="name" header="Nombre"  />
+                <Column field="stock" header="Disp."  />
+                <Column field="price" header="Disp." >
+                    <template #body="{data}">
+                        {{getMoney(data.price)}}
+                    </template>
+                </Column>
+                <Column #body="{data}" field="name" header="Act" >
+                    <!-- Entrada de producto -->
+                    <i
+                        v-if="url !== 'Products/Show'"
+                        title="Crear Entrada"
+                        @click="selectData(data)"
+                        class=" icon-efect fa-solid fa-circle-check"></i>
 
-                                <!--                        <i-->
-                                <!--                            v-if="page.component !== 'Products/Sale' "-->
-                                <!--                            class="icon-efect fa-solid fa-arrows-down-to-line"></i>-->
+                    <!--                        <i-->
+                    <!--                            v-if="page.component !== 'Products/Sale' "-->
+                    <!--                            class="icon-efect fa-solid fa-arrows-down-to-line"></i>-->
 
-                                <!-- Ver los productos -->
-                                <!--                        <i-->
-                                <!--                            v-if="page.component !== 'Products/Sale' "-->
-                                <!--                            class="icon-efect  fa-solid fa-eye"></i>-->
+                    <!-- Ver los productos -->
+                    <!--                        <i-->
+                    <!--                            v-if="page.component !== 'Products/Sale' "-->
+                    <!--                            class="icon-efect  fa-solid fa-eye"></i>-->
 
-                                <!-- Editar -->
-                                <i
-                                    v-if="component === 'Products/Show' "
-                                    title="Editar"
-                                    @click="edit(item.id)"
-                                    class="icon-efect fa-solid fa-pen-to-square"></i>
+                    <!-- Editar -->
+                    <i
+                        v-if="component === 'Products/Show' "
+                        title="Editar"
+                        @click="edit(data.id)"
+                        class="ml-2 icon-efect fa-solid fa-pen-to-square"></i>
 
-                                <!-- Eliminar -->
-                                <i
-                                    v-if="component === 'Products/Show' && auth.user.role === 'admin' "
-                                    title="Eliminar"
-                                    @click="detroy(item.id)"
-                                    class="icon-efect fa-solid fa-trash"></i>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                    <!-- Eliminar -->
+                    <i
+                        v-if="component === 'Products/Show' && auth.user.role === 'admin' "
+                        title="Eliminar"
+                        @click="detroy(data.id)"
+                        class="ml-2 icon-efect fa-solid fa-trash"></i>
+                </Column>
+            </DataTable>
 
         </div>
 

@@ -18,7 +18,7 @@ class TransHelper
      */
     public static function store(Array $request, ProductTransType $type, int $sale_id = 0, int $product_id = 0, int $credit_note_id = 0):void
     {
-        
+
         //Crear el TransId
         $transId = $request['transID'] ?? null;
 
@@ -37,6 +37,8 @@ class TransHelper
         $proTrans->sale_id = $sale_id ?: null;
         $proTrans->credit_note_id = $credit_note_id ?: null;
         $proTrans->price = $request['price'];
+        $proTrans->min_price = $request['min_price'];
+        $proTrans->special_price = $request['special_price'];
         $proTrans->discount = $request['discount'];
         $proTrans->discount_amount = $request['discount_amount'];
         $proTrans->tax_rate = $request['tax_rate'];
