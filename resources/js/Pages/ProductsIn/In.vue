@@ -14,11 +14,8 @@ import FormSearch from "@components/FormSearch.vue";
 import {productDataI, productI, productTransI} from "@/Interfaces/Product";
 import Pagination from "@components/Pagination.vue";
 import LinkHeader from '@components/LinkHeader.vue';
-// import {appSettingI} from "@/Interfaces/Global";
 import {InputNumber} from "primevue";
 import {appSettingI} from "@/Interfaces/Global";
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
 
 /**
  * Datos de la pagina
@@ -555,36 +552,33 @@ const totalTax = () => {
                     <div
                         class="max-h-[600px] overflow-y-auto ">
                         <!--                Datos de los productos para la entrada    -->
-                        <DataTable
-                            striped-rows
-                            show-gridlines
-                            :value="propsW.products.data" >
-                            <Column field="bar_code" header="Cod. Barr."  />
-                            <Column field="name" header="Nombre"  />
-                            <Column field="stock" header="Cantidad"  />
-                            <Column
-                                field="stock"
-                                header="Cantidad"
-                                #body="item">
-                                {{getMoney(item.data.cost)}}
-                            </Column>
-                            <Column
-                                field="stock"
-                                header="Cantidad"
-                                #body="item">
-                                {{getMoney(item.data.price)}}
-                            </Column>
-                            <Column
-                                field="stock"
-                                header="Act"
-                                #body="item">
-                                <i
-                                    @click="edit(item.data.id)"
-                                    title="Entrada"
-                                    class=" icon-efect fa-solid fa-dolly"></i>
-                            </Column>
-                        </DataTable>
-
+                        <table class="w-full">
+                            <thead>
+                                <tr>
+                                    <th>Cod. Barra</th>
+                                    <th>Nombre</th>
+                                    <th>Disp.</th>
+                                    <th>Costo</th>
+                                    <th>Precio</th>
+                                    <th>Act</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(item) in propsW.products.data">
+                                    <td>{{item.bar_code || 'N/A'}}</td>
+                                    <td>{{item.name}}</td>
+                                    <td>{{item.stock}}</td>
+                                    <td>{{ getMoney(item.cost)}}</td>
+                                    <td>{{ getMoney(item.price)}}</td>
+                                    <td>
+                                        <i
+                                            @click="edit(item.id)"
+                                            title="Entrada"
+                                            class=" icon-efect fa-solid fa-dolly"></i>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                     <Pagination
                         :next="propsW.products?.next_page_url

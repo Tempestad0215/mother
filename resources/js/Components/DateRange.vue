@@ -4,24 +4,9 @@ import InputError from "@components/InputError.vue";
 import InputLabel from "@components/InputLabel.vue";
 
 
-/*
-Propiedades de la ventana
- */
-const propsW = defineProps<{
-    fromValue: string,
-    toValue: string,
-}>();
 
-
-/*
-Emitir los eventos
- */
-const emit = defineEmits<{
-    //Evento desde
-    (e: 'update:from', value: string):void;
-    //Eventos hasta
-    (e: 'update:to', value: string):void;
-}>()
+const from = defineModel('from');
+const to = defineModel('to')
 
 
 
@@ -45,8 +30,7 @@ Funciones
         <div>
             <InputLabel for="from" value="Desde" />
             <TextInput
-                @change="emit('update:from', ($event.target as HTMLInputElement).value)"
-                :value="propsW.fromValue"
+                v-model="from"
                 id="from"
                 name="from"
                 type="datetime-local"/>
@@ -57,8 +41,7 @@ Funciones
         <div class="ml-5">
             <InputLabel for="to" value="Hasta" />
             <TextInput
-                @change="emit('update:to', ($event.target as HTMLInputElement).value)"
-                :value="propsW.toValue"
+                v-model="to"
                 id="to"
                 name="to"
                 type="datetime-local"/>

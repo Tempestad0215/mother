@@ -7,6 +7,8 @@ export interface infoSaleI {
     deleted_at?: string | null;
     discount: number;
     discount_amount: number;
+    min_price: number;
+    special_price: number;
     price: number;
     product_id: number;
     product_name: string;

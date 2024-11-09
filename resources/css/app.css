@@ -60,13 +60,13 @@ body{
     Estilo para la tabla completa
      */
     th{
-        @apply border-2 border-gray-800 px-2 bg-gray-600 text-white;
+        @apply border-[1px] border-gray-800 px-2;
     }
     tr{
         @apply odd:bg-gray-300 rounded-md px-5 hover:bg-gray-500 hover:text-amber-50 duration-300;
     }
     td{
-        @apply border-2 border-gray-800 px-2
+        @apply border-[1px] border-gray-800 px-2
     }
 
     /**

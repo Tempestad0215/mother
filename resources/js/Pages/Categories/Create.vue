@@ -12,11 +12,6 @@ import Pagination from "@components/Pagination.vue";
 import Swal from "sweetalert2";
 import {paginationJoin} from "@/Global/Helpers";
 
-
-
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-
 /*
 Propiedades de la ventana
  */
@@ -189,21 +184,31 @@ const search = () => {
                 </div>
 
 <!--    Tabla de las categorias-->
-                <DataTable striped-rows show-gridlines :value="props.categories.data" >
-                    <Column field="name" header="Nombre" ></Column>
-                    <Column field="description" header="Descripcion" ></Column>
-                    <Column #body="item" header="Atc" >
-                        <i
-                            @click="edit(item.data)"
-                            title="Editar"
-                            class=" icon-efect fa-solid fa-pen-to-square"></i>
-                        <i
-                            @click="destroy(item.data)"
-                            title="Eliminar"
-                            class=" ml-3 icon-efect fa-solid fa-trash"></i>
-                    </Column>
-                </DataTable>
-
+                <table class="w-full">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Desripción</th>
+                            <th>Act</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(item) in props.categories.data">
+                            <td>{{item.name}}</td>
+                            <td>{{item.description}}</td>
+                            <td>
+                                <i
+                                    @click="edit(item)"
+                                    title="Editar"
+                                    class=" icon-efect fa-solid fa-pen-to-square"></i>
+                                <i
+                                    @click="destroy(item)"
+                                    title="Eliminar"
+                                    class=" ml-3 icon-efect fa-solid fa-trash"></i>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
                 <Pagination
                     :next="props.categories.next_page_url
                         ? paginationJoin(props.categories.next_page_url, formSearch.search, formSearch.perPage)

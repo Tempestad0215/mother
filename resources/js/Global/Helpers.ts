@@ -30,15 +30,15 @@ export const moneyConfig =  {
 /**
  * Esto es para porcentaje
  */
-export const moneyConfigPer =  {
-    decimal: '.',
-    thousands: ',',
-    prefix: '',
-    suffix: '%',
-    precision: 0,
-    masked: false,
-    allowBlank: false
-}
+// export const moneyConfigPer =  {
+//     decimal: '.',
+//     thousands: ',',
+//     prefix: '',
+//     suffix: '%',
+//     precision: 0,
+//     masked: false,
+//     allowBlank: false
+// }
 
 
 
@@ -77,16 +77,23 @@ export const getMoney = (value:number = 0) => {
 }
 
 
+
+
 /**
  * convertir a dinero sin prefijo
  * @param value
  */
-// export const formatNumberPlane = (value:number):string => {
-//     return  value.toLocaleString('en-US', {
-//         minimumFractionDigits: 2,
-//         maximumFractionDigits: 4,
-//     });
-// }
+export const formatNumberPlane = (value:number):string => {
+    // Limitar a dos decimales
+    const roundedAmount = Math.round(value * 100) / 100;
+
+    // Convertir a formato de moneda
+    return roundedAmount.toLocaleString('es-DO', {
+        // Cambia 'DOP' por la moneda que necesites
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+}
 
 
 

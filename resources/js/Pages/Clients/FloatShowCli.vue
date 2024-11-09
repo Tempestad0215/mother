@@ -5,13 +5,8 @@ import {router, useForm, usePage} from "@inertiajs/vue3";
 import Swal from "sweetalert2";
 import {successHttp} from "@/Global/Alert";
 import FormSearch from "@components/FormSearch.vue";
-import {computed} from "vue";
 import {paginationJoin} from "@/Global/Helpers";
 
-
-//Para la tabla
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
 
 /**
  * Datos de la ventana
@@ -34,9 +29,9 @@ const emit = defineEmits<{
 
 
 //Propiedades computada
-const isSale = computed(()=>{
-   return page.url.startsWith('/sale');
-});
+// const isSale = computed(()=>{
+//    return page.url.startsWith('/sale');
+// });
 
 
 
@@ -120,29 +115,43 @@ const destroy = (id:Number) => {
         </div>
 
         <div class=" max-h-[550px] overflow-y-auto">
-            <DataTable :value="props.clients.data">
-                <Column field="name" header="Nombre"  />
-                <Column field="personal_id" header="Ced./RNC/Pas"  />
-                <Column field="email" header="Correo"  />
-                <Column field="phone" header="Teléfono"  />
-                <Column header="Act"  #body="item">
-                    <i
-                        v-if="page.component !== 'Clients/Show'"
-                        title="Seleccionar"
-                        @click="emit('getData',item.data.id)"
-                        class="fa-solid fa-circle-check"></i>
-                    <i
-                        v-if="page.component === 'Clients/Show'"
-                        title="Editar"
-                        @click="edit(item.data.id)"
-                        class=" ml-2 icon-efect fa-solid fa-pen-to-square"></i>
-                    <i
-                        v-if="page.component === 'Clients/Show'"
-                        title="Eliminar"
-                        @click="destroy(item.data.id)"
-                        class="ml-2 icon-efect fa-solid fa-trash"></i>
-                </Column>
-            </DataTable>
+            <table class="w-full">
+                <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th>Ced./RNC/Pas</th>
+                      <th>Correo</th>
+                      <th>Teléfono</th>
+                      <th>Act</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(item) in props.clients.data">
+                        <td>{{item.name}}</td>
+                        <td>{{item.personal_id}}</td>
+                        <td>{{item.email}}</td>
+                        <td>{{item.phone}}</td>
+                        <td>
+                            <i
+                                v-if="page.component !== 'Clients/Show'"
+                                title="Seleccionar"
+                                @click="emit('getData',item)"
+                                class="fa-solid fa-circle-check"></i>
+                            <i
+                                v-if="page.component === 'Clients/Show'"
+                                title="Editar"
+                                @click="edit(item.id)"
+                                class=" ml-2 icon-efect fa-solid fa-pen-to-square"></i>
+                            <i
+                                v-if="page.component === 'Clients/Show'"
+                                title="Eliminar"
+                                @click="destroy(item.id)"
+                                class="ml-2 icon-efect fa-solid fa-trash"></i>
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
 
         </div>
 

@@ -7,7 +7,7 @@ import FloatBox from "@components/FloatBox.vue";
 import FloatShowPro from "@/Pages/Products/FloatShowPro.vue";
 import {computed, onMounted, onUpdated, Ref, ref} from "vue";
 import {productDataI, productI} from "@/Interfaces/Product";
-import {getMoney, getRncHelper, getSequenceType, moneyConfig, moneyConfigPer} from "@/Global/Helpers";
+import {getMoney, getRncHelper, getSequenceType} from "@/Global/Helpers";
 import LinkHeader from "@components/LinkHeader.vue";
 import Swal from "sweetalert2";
 import InputError from "@components/InputError.vue";
@@ -20,16 +20,10 @@ import SaleOpenShow from "@/Pages/ProductsSale/SaleOpenShow.vue";
 import {creditNotesSaleI, infoSaleI, saleDataI, saleDataPaginationI} from "@/Interfaces/Sale";
 import {invoiceTypeI, rncUserI, sequenceDataI} from "@/Interfaces/Setting";
 import ShowPdf from "@components/ShowPdf.vue";
-import {Money} from "v-money3";
 import PaymentInvoice from "@components/PaymentInvoice.vue";
 import ReturnForm from "@components/ReturnForm.vue";
-
-
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
 import InputNumber from 'primevue/inputnumber';
-import ColumnGroup from 'primevue/columngroup';   // optional
-import Row from 'primevue/row';
+import Textarea from 'primevue/textarea';
 
 
 /*
@@ -314,6 +308,8 @@ const getData = (item:productDataI) => {
 
     }else{
 
+        console.log(item);
+
        //Pasar los datos al formulario
        form.info_sale.push({
            amount: 0,
@@ -321,6 +317,8 @@ const getData = (item:productDataI) => {
            discount: item.discount,
            discount_amount: 0,
            price: item.price,
+           min_price: item.min_price,
+           special_price: item.special_price,
            product_id: item.id,
            product_name: item.name,
            stock: 1,
@@ -562,14 +560,16 @@ const getSaleOpen = (item:saleDataI) => {
     setTimeout(()=>{
         //Verificar Pasar los datos a la variable
         item.info_sale.map((el, index) => {
-            //colocar la informacion en la lista
 
+            //colocar la informacion en la lista
             form.info_sale.push({
                 transID: el.transID,
                 code: el.code,
                 product_id: el.product_id,
                 product_name: el.product_name,
                 price: el.price,
+                min_price: el.min_price,
+                special_price: el.special_price,
                 stock:  el.stock,
                 reserved: el.reserved,
                 amount: el.amount,
@@ -675,23 +675,6 @@ const getRncClient = async () => {
 
 }
 
-
-const oncellEditComplete = (event:any) => {
-    //Tomar los datos
-    let {data, newValue, field} = event;
-
-    //Datos para buscar
-    switch (field){
-        case 'price':
-            data[field] = newValue;
-            break;
-        default:
-            data['field'] = newValue;
-            break;
-    }
-
-    console.log(newValue);
-}
 
 
 </script>
@@ -947,101 +930,73 @@ const oncellEditComplete = (event:any) => {
 <!--                        Listado de los productos-->
                         <div
                             class="max-h-[400px] border-t-2 mt-3 border-black overflow-y-auto shadow-lg p-3 rounded-md">
-                            <DataTable
-                                edit-mode="cell"
-                                :value="form.info_sale"
-                                @cell-edit-complete="oncellEditComplete"
-                                show-gridlines
-                                striped-rows  >
-                                <Column
-                                    #body="{index}"
-                                    header="#">
-                                    {{index + 1}}
-                                </Column>
-                                <Column field="product_name" header="Producto/Servicio"/>
-                                <Column
-                                    field="stock"
-                                    header="stock"
-                                    #editor="{data, field}">
-                                    <InputNumber
-                                        v-model="data[field]"
-                                        inputId="locale-us"
-                                        locale="en-US"
-                                        :allow-empty="false"
-                                        :max-fraction-digits="2"
-                                        :minFractionDigits="2"
-                                        autofocus
-                                        fluid/>
-                                </Column>
-                                <Column header="Itbis"
-                                        #body="{data}">
-                                    {{getMoney(data.tax)}}
-                                </Column>
-                                <Column
-                                    field="price"
-                                    header="Precio"
-                                    #editor="{data, field}">
-                                    <InputNumber
-                                        v-model="data[field]"
-                                        inputId="locale-us"
-                                        locale="en-US"
-                                        :allow-empty="false"
-                                        :max-fraction-digits="2"
-                                        :minFractionDigits="2"
-                                        autofocus
-                                        fluid/>
-                                </Column>
-                                <Column header="Importe"
-                                        #body="{data}">
-                                    {{getMoney(data.amount)}}
-                                </Column>
-                                <Column
-                                    header="Act"
-                                    #body="{data, index}">
-                                    <i
-                                        @click="deleteItem(data.product_name, index)"
-                                        class=" icon-efect text-red-500 fa-solid fa-circle-xmark"></i>
-                                </Column>
-                                <ColumnGroup
-                                    type="footer">
-                                    <Row>
-                                        <Column
-                                            footer="Itbis :"
-                                            :colspan="5"
-                                            footerStyle="text-align:right" />
-                                        <Column
-                                            :colspan="2"
-                                            :footer="getMoney(form.tax)" />
-                                    </Row>
-                                    <Row>
-                                        <Column
-                                            footer="Sub Total :"
-                                            :colspan="5"
-                                            footerStyle="text-align:right" />
-                                        <Column
-                                            :colspan="2"
-                                            :footer="getMoney(form.sub_total)" />
-                                    </Row>
-                                    <Row>
-                                        <Column
-                                            footer="Descuento :"
-                                            :colspan="5"
-                                            footerStyle="text-align:right" />
-                                        <Column
-                                            :colspan="2"
-                                            :footer="getMoney(form.discount_amount)" />
-                                    </Row>
-                                    <Row>
-                                        <Column
-                                            footer="Total :"
-                                            :colspan="5"
-                                            footerStyle="text-align:right" />
-                                        <Column
-                                            :colspan="2"
-                                            :footer="getMoney(form.amount)" />
-                                    </Row>
-                                </ColumnGroup>
-                            </DataTable>
+                            <table class="w-full">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Producto/Servicio</th>
+                                        <th>Cantidad</th>
+                                        <th>Itbis</th>
+                                        <th>Precio</th>
+                                        <th>Desc.</th>
+                                        <th>Importe</th>
+                                        <th>Act</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(item, index) in form.info_sale" :key="index">
+                                        <td>
+                                            {{index+1}}
+                                        </td>
+                                        <td>
+                                            {{item.product_name}}
+                                        </td>
+                                        <td class="max-w-[5rem]">
+                                            <InputNumber
+                                                @valueChange="totalAmount(index)"
+                                                class="!bg-transparent"
+                                                v-model="item.stock"
+                                                inputId="locale-us"
+                                                locale="en-US"
+                                                :max-fraction-digits="2"
+                                                :minFractionDigits="2"
+                                                fluid/>
+                                        </td>
+                                        <td>
+                                            {{getMoney(item.tax)}}
+                                        </td>
+                                        <td class="max-w-[5rem]">
+                                            <InputNumber
+                                                @valueChange="totalAmount(index)"
+                                                v-model="item.price"
+                                                inputId="locale-us"
+                                                locale="en-US"
+                                                :max-fraction-digits="2"
+                                                :minFractionDigits="2"
+                                                fluid/>
+                                        </td>
+                                        <td class="max-w-[4rem]">
+                                            <InputNumber
+                                                @valueChange="totalAmount(index)"
+                                                v-model="item.discount"
+                                                :min="0"
+                                                :max="100"
+                                                :allow-empty="false"
+                                                prefix="%"
+                                                fluid/>
+                                        </td>
+                                        <td>
+                                            {{getMoney(item.amount)}}
+                                        </td>
+
+                                        <td>
+                                            <i
+                                                @click="deleteItem(item.product_name, index)"
+                                                class=" icon-efect text-red-500 fa-solid fa-circle-xmark"></i>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
 
                         </div>
 <!--                        Dato de la ventas-->
@@ -1057,33 +1012,44 @@ const oncellEditComplete = (event:any) => {
                             </div>
 
                             <!--                            Comentario de la venta-->
-                            <div class="grid grid-cols-4 items-center gap-4 mt-5">
-                                <div class=" col-span-3">
+                            <div class="grid grid-cols-4 items-center gap-4">
+                                <div class=" col-span-2">
                                     <fieldset class=" relative max-w-[400px]">
                                         <legend>
                                             Comentario
                                         </legend>
-                                        <textarea
-                                            title="Comentario de la venta"
-                                            class="border-gray-300 rounded-md min-h-[100px] max-h-[150px]"
-                                            name="note"
-                                            placeholder="Escribe tu comentario"
-                                            v-model.trim="form.comment"
-                                            maxlength="255"
-                                            id="note"
-                                            cols="50"
-                                            rows="3">
-
-                                        </textarea>
-
-                                        <span
-                                            class=" absolute inset-y-0 right-3 text-red-400">
-                                            {{ form.comment ? 255 - form.comment.length : 255 }}
-                                        </span>
-
+                                        <Textarea
+                                            v-model="form.comment"
+                                            autoResize
+                                            rows="3"
+                                            maxlength="250"
+                                            cols="50" />
                                         <InputError :message="form.errors.comment"/>
 
                                     </fieldset>
+                                </div>
+
+                                <div class=" col-end-7 col-span-2">
+                                    <table>
+                                        <tbody>
+                                            <tr>
+                                                <th class="text-left">Itbis :</th>
+                                                <td>{{getMoney(form.tax)}}</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="text-left">Sub Total :</th>
+                                                <td>{{getMoney(form.sub_total)}}</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="text-left">Decuento :</th>
+                                                <td>{{getMoney(form.discount_amount)}}</td>
+                                            </tr>
+                                            <tr>
+                                                <th class="text-left">Total :</th>
+                                                <td class="w-[15rem]" >{{getMoney(form.amount)}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
 
                             </div>

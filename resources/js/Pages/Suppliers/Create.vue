@@ -14,8 +14,6 @@ import Swal from "sweetalert2";
 import {paginationJoin} from "@/Global/Helpers";
 import InputMask from 'primevue/inputmask';
 
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
 
 
 /*
@@ -268,22 +266,35 @@ const search = () => {
 <!--        Table de datos-->
             <div>
                 <!--                Datos de los proveedores-->
-                <DataTable striped-rows show-gridlines :value="props.suppliers.data" >
-                    <Column field="company_name" header="Empresa"/>
-                    <Column field="contact" header="Contacto"/>
-                    <Column field="phone" header="Telefono"/>
-                    <Column field="email" header="Correo"/>
-                    <column #body="item" header="Act" >
-                        <i
-                            @click="edit(item.data)"
-                            title="Editar"
-                            class=" icon-efect fa-solid fa-pen-to-square"></i>
-                        <i
-                            @click="destroy(item.data)"
-                            title="Eliminar"
-                            class=" ml-3 icon-efect fa-solid fa-trash"></i>
-                    </column>
-                </DataTable>
+                <table class="w-full">
+                    <thead>
+                        <tr>
+                            <th>Empresa</th>
+                            <th>Contacto</th>
+                            <th>Teléfono</th>
+                            <th>Correo</th>
+                            <th>Act</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(item) in props.suppliers.data">
+                            <td>{{item.company_name}}</td>
+                            <td>{{item.contact}}</td>
+                            <td>{{item.phone}}</td>
+                            <td>{{item.email}}</td>
+                            <td>
+                                <i
+                                    @click="edit(item)"
+                                    title="Editar"
+                                    class=" icon-efect fa-solid fa-pen-to-square"></i>
+                                <i
+                                    @click="destroy(item)"
+                                    title="Eliminar"
+                                    class=" ml-3 icon-efect fa-solid fa-trash"></i>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
 
                 <!--                PAginacion-->

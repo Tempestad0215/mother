@@ -3,15 +3,12 @@ import {Head, router, useForm} from "@inertiajs/vue3";
 import AppLayout from "@layout/AppLayout.vue";
 import LinkHeader from "@components/LinkHeader.vue";
 import {productTransPI} from "@/Interfaces/Product";
-import {getMoney} from "@/Global/Helpers";
+import {formatNumberPlane, getMoney} from "@/Global/Helpers";
 import FormSearch from "@components/FormSearch.vue";
 import Pagination from "@components/Pagination.vue";
 import InputError from "@components/InputError.vue";
 import {successHttp} from "@/Global/Alert";
 import Swal from "sweetalert2";
-import Column from "primevue/column";
-import DataTable from "primevue/datatable";
-
 
 /**
  * Propiedades
@@ -124,49 +121,38 @@ const destroy = (id:number) => {
                     Transacciones
                 </h3>
             </div>
-
-
             <!--                Datos de los productos para la entrada    -->
-            <DataTable
-                striped-rows
-                show-gridlines
-                :value="props.trans.data" >
-                <Column field="product_name" header="Producto/Servicio"  />
-                <Column
-                    field="stock"
-                    header="Disponible"
-                    #body="item">
-
-                </Column>
-                <Column
-                    field="stock"
-                    header="Itbis"
-                    #body="item">
-                    {{getMoney(item.data.tax)}}
-                </Column>
-                <Column
-                    field="stock"
-                    header="Precio"
-                    #body="item">
-                    {{getMoney(item.data.price)}}
-                </Column>
-                <Column field="type" header="Tipo"  />
-                <Column
-                    field="stock"
-                    header="Act"
-                    #body="item">
-
-                    <span
-                        v-if="item.data.type != 'entrada'">
-                        N/A
-                    </span>
-                    <i
-                        v-if="item.data.type == 'entrada'"
-                        @click="destroy(item.data.id)"
-                        class=" icon-efect ml-3 fa-solid fa-trash"></i>
-                </Column>
-            </DataTable>
-
+            <table class="w-full">
+                <thead>
+                    <tr>
+                        <th>Producto/Servicio</th>
+                        <th>Disp.</th>
+                        <th>Itbis</th>
+                        <th>Precio</th>
+                        <th>Tipo</th>
+                        <th>Act</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(item) in props.trans.data">
+                        <td>{{item.product_name}}</td>
+                        <td>{{ formatNumberPlane(item.stock)}}</td>
+                        <td>{{ getMoney(item.tax)}}</td>
+                        <td>{{ getMoney(item.price)}}</td>
+                        <td>{{ item.type}}</td>
+                        <td>
+                            <span
+                                v-if="item.type != 'entrada'">
+                                N/A
+                            </span>
+                            <i
+                                v-if="item.type == 'entrada'"
+                                @click="destroy(item.id)"
+                                class=" icon-efect ml-3 fa-solid fa-trash"></i>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
 <!--            Paginacion-->
             <Pagination
                 :next="props.trans.links.next"
