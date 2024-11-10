@@ -7,11 +7,17 @@ import {salePaginationI} from "@/Interfaces/Sale";
 import {getMoney} from "@/Global/Helpers";
 import Pagination from "@components/Pagination.vue";
 import InputError from "@components/InputError.vue";
+import axios from "axios";
+import {useToast} from "primevue";
+
 
 /*
 Datos de la pagina
  */
 const page = usePage();
+
+//Uso del toast
+const toast = useToast();
 
 
 
@@ -149,6 +155,28 @@ const refund  = (id:number):void => {
 
 }
 
+/**
+ *
+ */
+const printFact = async (id:number) => {
+
+    //Data de la busqueda
+    const data = await axios.get(route('invoice.getA',{sale: id}));
+
+    //Verificar si es diferente de la impresion
+    if (data.status !== 200)
+    {
+        toast.add({
+            severity: 'error',
+            summary: "Mensaje de Error",
+            detail: "No se Puede Imprimir Este Documento",
+            life: 3000
+        });
+    }
+
+    console.log(data.status);
+}
+
 
 </script>
 
@@ -192,6 +220,7 @@ const refund  = (id:number):void => {
                         <th>Sub Total</th>
                         <th>Total</th>
                         <th>Mesa A/C</th>
+                        <th>Act</th>
 <!--                        <th v-if="page.props.auth.user.role === 'admin'">Act</th>-->
                     </tr>
                 </thead>
@@ -205,6 +234,11 @@ const refund  = (id:number):void => {
                         <td>{{getMoney(item.sub_total)}}</td>
                         <td>{{getMoney(item.amount)}}</td>
                         <td>{{item.close_table ? 'Cerrada' : 'Abierta'}}</td>
+                        <td>
+                            <i
+                                @click="printFact(item.id)"
+                                class=" icon-efect fa-solid fa-print"></i>
+                        </td>
 <!--                        <td >-->
 <!--&lt;!&ndash;                            Para la devoluciones&ndash;&gt;-->
 <!--                            <i-->

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import {typePaymentData} from "@/Global/ShareData";
-import {getMoney, moneyConfig} from "@/Global/Helpers";
+import {getMoney} from "@/Global/Helpers";
 import TextInput from "@components/TextInput.vue";
 import InputError from "@components/InputError.vue";
 import InputLabel from "@components/InputLabel.vue";
@@ -9,19 +9,18 @@ import PrimaryButton from "@components/PrimaryButton.vue";
 import {InertiaForm} from "@inertiajs/vue3";
 import {creditNotesSaleI} from "@/Interfaces/Sale";
 import axios from "axios";
-import {Money} from "v-money3";
 import {onMounted} from "vue";
+import InputNumber from 'primevue/inputnumber';
 
 
-
+//Definicar el props de la ventana
 const propsW = defineProps<{
     form: InertiaForm<any>,
 }>();
 
 
 onMounted(()=>{
-    console.log(typeof  creditNotes);
-})
+});
 
 
 //Valores para sincronizar a la vez
@@ -188,12 +187,15 @@ const deleteCreditNote = (index:number) => {
             <InputLabel
                 for="received"
                 value="Recibido" />
-            <money
-                class="inputGeneral w-full"
-                @blur="emit('returnedBlur')"
+            <InputNumber
                 v-model="form.received"
-                v-bind="moneyConfig"  />
-
+                inputId="locale-us"
+                @valueChange="emit('returnedBlur')"
+                locale="en-US"
+                :allow-empty="false"
+                :max-fraction-digits="2"
+                :minFractionDigits="2"
+                fluid />
 <!--            <TextInput-->
 
 <!--                class="w-full"-->

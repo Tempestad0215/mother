@@ -147,6 +147,7 @@ const detroy = (id:Number) => {
                         <td>{{item.stock}}</td>
                         <td>{{getMoney(item.price)}}</td>
                         <td>
+
                             <!-- Entrada de producto -->
                             <i
                                 v-if="url !== 'Products/Show'"

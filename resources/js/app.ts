@@ -16,6 +16,7 @@ import VueSweetalert2 from 'vue-sweetalert2';
 import money from 'v-money';
 import PrimeVue from 'primevue/config'
 import Aura from '@primevue/themes/aura';
+import ToastService from 'primevue/toastservice';
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
 
@@ -32,7 +33,8 @@ createInertiaApp({
                         darkModeSelector: false
                     }
                 }
-        })
+            })
+            .use(ToastService)
             .use(money as any)
             .use(ZiggyVue, Ziggy)
             .use(VueTheMask as any)

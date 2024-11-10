@@ -84,10 +84,12 @@ const destroy = (id:number) => {
 </script>
 
 <template>
+
+<!--    -->
     <Head title="Transacciones"/>
     <AppLayout>
 
-<!--        Cabecera de la pagina-->
+        <!-- Cabecera de la pagina-->
         <template #header >
             <LinkHeader
 
@@ -99,11 +101,10 @@ const destroy = (id:number) => {
                 :href="route('in.show')">
                 Mostrar
             </LinkHeader>
-
         </template>
 
 
-<!--        Contenido de la ventana-->
+        <!-- Contenido de la ventana-->
         <div class="bg-gray-200 rounded-md mx-auto overflow-hidden p-5">
             <div class="flex items-center justify-between">
 
@@ -121,7 +122,7 @@ const destroy = (id:number) => {
                     Transacciones
                 </h3>
             </div>
-            <!--                Datos de los productos para la entrada    -->
+            <!-- Datos de los productos para la entrada    -->
             <table class="w-full">
                 <thead>
                     <tr>
@@ -153,7 +154,7 @@ const destroy = (id:number) => {
                     </tr>
                 </tbody>
             </table>
-<!--            Paginacion-->
+            <!-- Paginacion-->
             <Pagination
                 :next="props.trans.links.next"
                 :prev="props.trans.links.prev"

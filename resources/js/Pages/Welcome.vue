@@ -11,9 +11,6 @@ import AppLayout from "@layout/AppLayout.vue";
         </template>
 
         <div>
-            <div class="">
-
-            </div>
 
         </div>
     </AppLayout>

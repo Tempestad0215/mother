@@ -65,6 +65,17 @@ onMounted( () => {
     {
         showFormReturn.value = true;
     }
+    //Para enviar a imprimir de una vez
+    // const iFrame = document.getElementById("pdfA") as HTMLIFrameElement;
+    //
+    // if (iFrame && iFrame.contentWindow)
+    // {
+    //     iFrame.contentWindow.focus(); //Poner el foco en la ventana
+    //     iFrame.contentWindow.print();//Imprimir la veentana
+    // }
+
+
+
 
 });
 
@@ -91,8 +102,6 @@ onUpdated( () => {
 
     //Verificar para actualizar los datos
     setDataForm();
-
-
 });
 
 /*
@@ -108,6 +117,7 @@ const showFormReturn:Ref<boolean> = ref(false);
 
 //DDATOS DEL dpf
 const pdfString:Ref<string | null> = ref(null);
+const showPdf:Ref<boolean> = ref(false);
 
 
 /*
@@ -151,7 +161,7 @@ const form = useForm({
 Propidades computada
  */
 const checkShowPdf = computed(()=>{
-
+    showPdf.value = propsW.pdf != '';
     //PAsar el valos de los datos
     return pdfString.value != null && pdfString.value != '';
 });
@@ -307,8 +317,6 @@ const getData = (item:productDataI) => {
         showProduct.value = false;
 
     }else{
-
-        console.log(item);
 
        //Pasar los datos al formulario
        form.info_sale.push({
@@ -1083,81 +1091,79 @@ const getRncClient = async () => {
             </div>
 
 <!--            Ventana de Devuelta-->
-            <Transition>
-                <FloatBox
-                    v-if="showReturn"
-                    @close="showReturn = false">
-                    <PaymentInvoice
-                        @amount-credit-note="amountCreditNote()"
-                        @returned-blur="returnedBlur()"
-                        @returned="returned()"
-                        @sen-data="sendData()"
-                        :form="form"
-                        v-model:type-payment="form.type_payment"
-                        v-model:credit-note="form.credit_notes_value"
-                        v-model:credit-notes="form.credit_notes"
-                        v-model:returned="form.returned"
-                       />
-                </FloatBox>
-            </Transition>
+            <FloatBox
+                header="Retornos"
+                v-model:show="showReturn">
+                <PaymentInvoice
+                    @amount-credit-note="amountCreditNote()"
+                    @returned-blur="returnedBlur()"
+                    @returned="returned()"
+                    @sen-data="sendData()"
+                    :form="form"
+                    v-model:type-payment="form.type_payment"
+                    v-model:credit-note="form.credit_notes_value"
+                    v-model:credit-notes="form.credit_notes"
+                    v-model:returned="form.returned"
+                   />
+            </FloatBox>
 
 <!--            Monstrar los PDF-->
-            <ShowPdf
-                id="pdfBox"
-                :pdf="pdfString"
-                v-show="checkShowPdf"
-                @close-window="pdfString = null "/>
+            <FloatBox
+                header="Ventana de Imprsión"
+                v-model:show="showPdf">
+                <ShowPdf
+                    ref="pdfBox"
+                    id="pdfBox"
+                    :pdf="pdfString"
+                    v-show="checkShowPdf"
+                    @close-window="pdfString = null "/>
+            </FloatBox>
+
 
             <!-- Mostrar flotante los clientes --->
-            <Transition>
-                <FloatBox
-                    @close="showClient = false"
-                    v-if="showClient">
-                    <FloatShowCli
-                        class=" w-4/5 rounded-md py-5"
-                        @get-data="selectClient"
-                        :clients="propsW.clients"/>
 
-                </FloatBox>
-            </Transition>
+            <FloatBox
+                header="Clientes"
+                v-model:show="showClient">
+                <FloatShowCli
+                    class=" w-4/5 rounded-md py-5"
+                    @get-data="selectClient"
+                    :clients="propsW.clients"/>
+
+            </FloatBox>
 
             <!-- Ventana de productos-->
-            <Transition>
-                <FloatBox
-                    class=""
-                    @close="showProduct = false"
-                    v-if="showProduct">
-                    <FloatShowPro
-                        class=" bg-gray-200 rounded-md px-10 py-5"
-                        @select="getData"
-                        :products="propsW.products"/>
-                </FloatBox>
-            </Transition>
+
+            <FloatBox
+                header="Productos"
+                v-model:show="showProduct">
+                <FloatShowPro
+                    class=" bg-gray-200 rounded-md px-10 py-5"
+                    @select="getData"
+                    :products="propsW.products"/>
+            </FloatBox>
 
 
             <!-- Vetana de las ordenes abierta -->
-            <Transition>
-                <FloatBox
-                    v-if="showSaleOpen"
-                    @close="showSaleOpen = false">
-                    <SaleOpenShow
-                        @sen-data="getSaleOpen"
-                        class=" bg-gray-200 rounded-md px-10 py-5"
-                        :sale-open="propsW.saleOpen"/>
-                </FloatBox>
-            </Transition>
+            <FloatBox
+                header="Cuentas Abiertas"
+                v-model:show="showSaleOpen">
+                <SaleOpenShow
+                    @sen-data="getSaleOpen"
+                    class=" bg-gray-200 rounded-md px-10 py-5"
+                    :sale-open="propsW.saleOpen"/>
+            </FloatBox>
 
 
 <!--            Formulario para la nota de credito-->
-            <Transition>
-                <FloatBox
-                    @close="showFormReturn = false"
-                    v-if="showFormReturn">
-                    <ReturnForm
-                        :error="page.props.errors.general"
-                        @closeFormReturn="showFormReturn = false"/>
-                </FloatBox>
-            </Transition>
+
+            <FloatBox
+                header="Devolución"
+                v-model:show="showFormReturn">
+                <ReturnForm
+                    :error="page.props.errors.general"
+                    @closeFormReturn="showFormReturn = false"/>
+            </FloatBox>
         </div>
 
     </AppLayout>
