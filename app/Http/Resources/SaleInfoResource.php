@@ -55,6 +55,8 @@ class SaleInfoResource extends JsonResource
                'discount' => $item->discount,
                'discount_amount' => $item->discount_amount,
                'price' => $item->price,
+               'min_price' => $item->min_price,
+               'special_price' => $item->special_price,
                'status' => $item->status,
                'stock' => $item->stock,
                'reserved' => $item->reserved,

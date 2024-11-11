@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use App\Helpers\ClientHelper;
 use App\Helpers\ProductHelper;
 use App\Helpers\SaleHelper;
-use App\Http\Requests\PostCounterRequest;
 use App\Http\Requests\StoreProductSaleRequest;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\Setting;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -38,6 +38,7 @@ class ProductSaleController extends Controller
         }
         //Intancia de los datos
         $dataSale = $this->dataSale($request);
+        $lastRecord = Sale::orderBy('id', 'desc')->first();
 
 
         //DEvolver la vista y los datos
@@ -46,20 +47,20 @@ class ProductSaleController extends Controller
             'clients' => $dataSale['clients'],
             'saleOpen' => $dataSale['saleOpen'],
             'invoiceType' => config('appconfig.invoiceType'),
-            'pdf' => null
+            'lastRecord' => $lastRecord?->id,
         ]);
     }
 
 
     /**
      * @param StoreProductSaleRequest $request
-     * @return Response
+     * @return RedirectResponse
      */
-    public function store(StoreProductSaleRequest $request)
+    public function store(StoreProductSaleRequest $request):RedirectResponse
     {
 
         // Evitar que se realicen 2 operaciones al mismo tiempo
-        $pdf = Cache::lock('sale', 5)->get(function () use (&$request) {
+        Cache::lock('sale', 5)->get(function () use (&$request) {
 
             //Intancia de los datos
             $saleHelper = new SaleHelper();
@@ -67,18 +68,20 @@ class ProductSaleController extends Controller
             return $saleHelper->store($request);
         });
 
-        //Intancia de los datos
-        $dataSale = $this->dataSale($request);
 
+        return back();
 
-        //DEvolver la vista y los datos
-        return Inertia::render('ProductsSale/Create', [
-            'products' => $dataSale['products'],
-            'clients' => $dataSale['clients'],
-            'saleOpen' => $dataSale['saleOpen'],
-            'invoiceType' => config('appconfig.invoiceType'),
-            'pdf' => $pdf
-        ]);
+//        //Intancia de los datos
+//        $dataSale = $this->dataSale($request);
+//
+//
+//        //DEvolver la vista y los datos
+//        return Inertia::render('ProductsSale/Create', [
+//            'products' => $dataSale['products'],
+//            'clients' => $dataSale['clients'],
+//            'saleOpen' => $dataSale['saleOpen'],
+//            'invoiceType' => config('appconfig.invoiceType'),
+//        ]);
 
     }
 
@@ -86,31 +89,33 @@ class ProductSaleController extends Controller
     /**
      * @param StoreProductSaleRequest $request
      * @param Sale $sale
-     * @return Response
+     * @return RedirectResponse
      */
-    public function update(StoreProductSaleRequest $request, Sale $sale)
+    public function update(StoreProductSaleRequest $request, Sale $sale):RedirectResponse
     {
 
-        $pdf = DB::transaction(function () use (&$request, &$sale) {
-            //Instanacia
-            $saleHelper = new SaleHelper();
+        DB::transaction(function () use (&$request, &$sale) {
+           //Instanacia
+           $saleHelper = new SaleHelper();
 
-            //Llamar el metodo
-            return $saleHelper->updateSale($request, $sale);
+           //Llamar el metodo
+           $saleHelper->updateSale($request, $sale);
 
         });
 
-        //Intancia de los datos
-        $dataSale = $this->dataSale($request);
+       return  back();
 
-        //REtornar la pagina con el DPF
-        return Inertia::render('ProductsSale/Create', [
-            'products' => $dataSale['products'],
-            'clients' => $dataSale['clients'],
-            'saleOpen' => $dataSale['saleOpen'],
-            'invoiceType' => config('appconfig.invoiceType'),
-            'pdf' => $pdf
-        ]);
+        //Intancia de los datos
+//        $dataSale = $this->dataSale($request);
+//
+//        //REtornar la pagina con el DPF
+//        return Inertia::render('ProductsSale/Create', [
+//            'products' => $dataSale['products'],
+//            'clients' => $dataSale['clients'],
+//            'saleOpen' => $dataSale['saleOpen'],
+//            'invoiceType' => config('appconfig.invoiceType'),
+//            'pdf' => $pdf
+//        ]);
 
     }
 
@@ -219,6 +224,24 @@ class ProductSaleController extends Controller
 //    {
 //        dd($request);
 //    }
+
+    /**
+     * Obtener la ultima factura
+     * @return JsonResponse
+     */
+    public function lastInvoice():JsonResponse
+    {
+        //Otener el ultimo registro
+        $lastRecord = Sale::orderBy('id', 'desc')->first();
+        $id = $lastRecord?->id;
+
+
+        //Intanciar la clase
+        $invoice = new InvoiceController();
+
+        //Se obtiene el ultimo registro
+        return $invoice->getA($id);
+    }
 
 
 }

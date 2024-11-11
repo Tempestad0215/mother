@@ -138,22 +138,20 @@ class SaleHelper
             }
 
 
-            //Para mostar el PDF
-            if ($sale->close_table)
-            {
+//            //Para mostar el PDF
+//            if ($sale->close_table)
+//            {
+//
+//                //Crear el PDF
+//                $pdf = new SaleInvoiceA($sale);
+//
+//                // Crear Base 64
+//                return base64_encode($pdf->setData());
+//
+//                //Instancia de la clase para imprimir
+//
+//            }
 
-                //Crear el PDF
-                $pdf = new SaleInvoiceA($sale);
-
-                // Crear Base 64
-                return base64_encode($pdf->setData());
-
-                //Instancia de la clase para imprimir
-
-            }
-
-            //Devolver nulo
-            return null;
         });
     }
 
@@ -280,9 +278,9 @@ class SaleHelper
     /**
      * @param StoreProductSaleRequest $request
      * @param Sale $sale
-     * @return string|null
+     * @return void
      */
-    public function updateSale(StoreProductSaleRequest $request, Sale $sale):string|null
+    public function updateSale(StoreProductSaleRequest $request, Sale $sale):void
     {
 
         //Obtener la info
@@ -403,21 +401,6 @@ class SaleHelper
 
         });
 
-        //Obtener la ventas registada recien
-        $saleUpdated = Sale::find($sale->id);
-
-
-        //Pra mostar el PDF
-        if ($saleUpdated->close_table)
-        {
-
-            //Instancia de la clase para imprimir
-            $pdf = new SaleInvoiceA($saleUpdated);
-            //Retornar los datos
-            return base64_encode($pdf->setData());
-        }
-
-        return  null;
     }
 
 

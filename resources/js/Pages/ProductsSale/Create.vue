@@ -5,7 +5,7 @@ import InputLabel from "@components/InputLabel.vue";
 import TextInput from "@components/TextInput.vue";
 import FloatBox from "@components/FloatBox.vue";
 import FloatShowPro from "@/Pages/Products/FloatShowPro.vue";
-import {computed, onMounted, onUpdated, Ref, ref} from "vue";
+import { onMounted, onUpdated, Ref, ref} from "vue";
 import {productDataI, productI} from "@/Interfaces/Product";
 import {getMoney, getRncHelper, getSequenceType} from "@/Global/Helpers";
 import LinkHeader from "@components/LinkHeader.vue";
@@ -41,7 +41,8 @@ const propsW = defineProps<{
     saleOpen : saleDataPaginationI,
     invoiceType: invoiceTypeI[],
     saleInfo?: saleDataI,
-    refund?: boolean
+    refund?: boolean,
+    lastRecord: number
 }>();
 
 /*
@@ -52,10 +53,6 @@ onMounted( () => {
     setDataForm();
     //Buscar la secuencia si esta en la configuracion
     if (page.props.setting.sequence)  getSequence(form.invoice_type);
-
-    //Pasar los datos a la variable si existe
-    if (propsW.pdf != undefined && propsW.pdf != "") pdfString.value = propsW.pdf;
-
 
     //Para verificar
     let msjError = "Este Codigo No es Validos, Introduzca Uno Validado";
@@ -88,8 +85,6 @@ onUpdated( () => {
     //Buscar la secuencia si esta en la configuracion
     if (page.props.setting.sequence) getSequence(form.invoice_type);
 
-    //Pasar los datos a la variable si existe
-    if (propsW.pdf != undefined && propsW.pdf != "") pdfString.value = propsW.pdf;
 
     //Para verificar
     let msjError = "Este Codigo No es Validos, Introduzca Uno Validado";
@@ -116,7 +111,7 @@ const showReturn:Ref<boolean> = ref(false);
 const showFormReturn:Ref<boolean> = ref(false);
 
 //DDATOS DEL dpf
-const pdfString:Ref<string | null> = ref(null);
+const pdfUrl:Ref<string> = ref("");
 const showPdf:Ref<boolean> = ref(false);
 
 
@@ -157,14 +152,6 @@ const form = useForm({
 });
 
 
-/*
-Propidades computada
- */
-const checkShowPdf = computed(()=>{
-    showPdf.value = propsW.pdf != '';
-    //PAsar el valos de los datos
-    return pdfString.value != null && pdfString.value != '';
-});
 
 
 /*
@@ -494,8 +481,14 @@ const sendData = ():void => {
                     preserveScroll: true,
                     onSuccess:() =>{
                         successHttp('Documento Actualizado Correctamente');
-                        //Verificar si fue cerrado la mesa
 
+                        //Verificar si la mensa esta cerrada
+                        if (form.close_table)
+                        {
+                            getPdf();
+                        }
+
+                        //Verificar si fue cerrado la mesa
                         form.reset();
                         showReturn.value = false;
 
@@ -514,6 +507,13 @@ const sendData = ():void => {
                 form.post(route('sale.store'),{
                     onSuccess:()=>{
                         successHttp('Venta Cerrada Correctamente');
+                        //Verificar si la mensa esta cerrada
+                        if (form.close_table)
+                        {
+                            //Llamar la ultima factura
+                            getLastInvoie();
+
+                        }
                         form.reset();
                         showReturn.value = false;
                         // readPDF(propsW.pdf);
@@ -530,6 +530,55 @@ const sendData = ():void => {
     }
 }
 
+
+/**
+ * Obteenr el PDF
+ */
+const getPdf = () => {
+    axios.get(route('invoice.getA',{sale: form.id}))
+        .then((data)=>{
+            if (data.status === 200)
+            {
+                showPdf.value = true;
+                pdfUrl.value = data.data.url;
+
+
+
+                setTimeout(()=>{
+                    pdfUrl.value = "";
+                    showPdf.value = false;
+                },1000)
+
+            }
+        }).catch(()=>{
+        console.log('error')
+    });
+}
+
+
+/**
+ * Obtener el ultimo registro
+ */
+const getLastInvoie = () => {
+    axios.get(route('sale.lastInvoice'))
+        .then((data)=>{
+            if (data.status === 200)
+            {
+                showPdf.value = true;
+                pdfUrl.value = data.data.url;
+
+
+
+                setTimeout(()=>{
+                    pdfUrl.value = "";
+                    showPdf.value = false;
+                },1000)
+
+            }
+        }).catch(()=>{
+
+    });
+}
 
 /**
  * Obtener el producto por codigo
@@ -683,6 +732,10 @@ const getRncClient = async () => {
 
 }
 
+
+const getErrorPdf = () => {
+    console.log('error');
+}
 
 
 </script>
@@ -1113,16 +1166,12 @@ const getRncClient = async () => {
             </FloatBox>
 
 <!--            Monstrar los PDF-->
-            <FloatBox
-                header="Ventana de Imprsión"
-                v-model:show="showPdf">
-                <ShowPdf
-                    ref="pdfBox"
-                    id="pdfBox"
-                    :pdf="pdfString ? pdfString : '' "
-                    v-show="checkShowPdf"
-                    @close-window="pdfString = null "/>
-            </FloatBox>
+
+            <ShowPdf
+                @send-error="getErrorPdf"
+                v-if="showPdf"
+                :pdf="pdfUrl">
+            </ShowPdf>
 
 
             <!-- Mostrar flotante los clientes --->
