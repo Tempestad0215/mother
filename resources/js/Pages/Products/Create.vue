@@ -67,16 +67,16 @@ const showSupplierForm = ref(false);
            </div>
 
 
-            <Transition>
-                <!-- Formulario para Agregar el suplidor -->
-                <FloatBox
-                    v-if="showSupplierForm"
-                    @close=" showSupplierForm = !showSupplierForm "  >
-                    <Float
-                    />
 
-                </FloatBox>
-            </Transition>
+            <!-- Formulario para Agregar el suplidor -->
+            <FloatBox
+                header="Registro de Proveedor"
+                v-model:show="showSupplierForm">
+                <Float
+                />
+
+            </FloatBox>
+
 
         </div>
 

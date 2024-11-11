@@ -37,7 +37,7 @@ const page = usePage();
 const propsW = defineProps<{
     products: productI,
     clients: clientI,
-    pdf: string | null,
+    pdf?: string,
     saleOpen : saleDataPaginationI,
     invoiceType: invoiceTypeI[],
     saleInfo?: saleDataI,
@@ -712,6 +712,11 @@ const getRncClient = async () => {
                 Mostrar
             </LinkHeader>
 
+<!--            <LinkHeader-->
+<!--                :href="route('sale.counter')">-->
+<!--                Recuento-->
+<!--            </LinkHeader>-->
+
         </template>
 
 <!--        //contenido-->
@@ -1114,7 +1119,7 @@ const getRncClient = async () => {
                 <ShowPdf
                     ref="pdfBox"
                     id="pdfBox"
-                    :pdf="pdfString"
+                    :pdf="pdfString ? pdfString : '' "
                     v-show="checkShowPdf"
                     @close-window="pdfString = null "/>
             </FloatBox>

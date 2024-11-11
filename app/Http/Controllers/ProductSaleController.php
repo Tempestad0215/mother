@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\ClientHelper;
 use App\Helpers\ProductHelper;
 use App\Helpers\SaleHelper;
+use App\Http\Requests\PostCounterRequest;
 use App\Http\Requests\StoreProductSaleRequest;
 use App\Models\Product;
 use App\Models\Sale;
@@ -202,6 +203,22 @@ class ProductSaleController extends Controller
 
 
     }
+
+
+    /**
+     * Contar de las monedas
+     * @param Request $request
+     * @return Response
+     */
+    public function counter()
+    {
+        return Inertia::render('ProductsSale/MoneyCounter');
+    }
+
+//    public function counterPost(PostCounterRequest $request)
+//    {
+//        dd($request);
+//    }
 
 
 }

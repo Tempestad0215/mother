@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {Head, router, useForm, usePage} from "@inertiajs/vue3";
+import {Head, useForm, usePage} from "@inertiajs/vue3";
 import AppLayout from "@layout/AppLayout.vue";
 import LinkHeader from "@components/LinkHeader.vue";
 import FormSearch from "@components/FormSearch.vue";
@@ -8,7 +8,10 @@ import {getMoney} from "@/Global/Helpers";
 import Pagination from "@components/Pagination.vue";
 import InputError from "@components/InputError.vue";
 import axios from "axios";
+import Toast from 'primevue/toast';
 import {useToast} from "primevue";
+import {ref, Ref} from "vue";
+import ShowPdf from "@components/ShowPdf.vue";
 
 
 /*
@@ -21,14 +24,16 @@ const toast = useToast();
 
 
 
-/**
+/*
  * Propiedades de la ventana
  */
 const propsW = defineProps<{
     sales: salePaginationI,
 }>();
 
-/**
+
+
+/*
  * Datos del formulario
  */
 const form = useForm({
@@ -36,6 +41,20 @@ const form = useForm({
     perPage: 15,
     general: "",
 });
+
+/*
+Datos de la ventana
+ */
+const urlPdf:Ref<string> = ref("");
+const pdfShow:Ref<boolean> = ref(false);
+
+
+
+/*
+Funciones
+ */
+
+
 
 //Enviar los datos
 const submit = () => {
@@ -149,14 +168,15 @@ const submit = () => {
  * Devolver la cuenta creada
  * @param id
  */
-const refund  = (id:number):void => {
-    //llmar la nota de credito
-    router.get(route('credit-note.index',{sale: id}));
-
-}
+// const refund  = (id:number):void => {
+//     //llmar la nota de credito
+//     router.get(route('credit-note.index',{sale: id}));
+//
+// }
 
 /**
- *
+ * Impirmir la factura seleccionada
+ * @param id
  */
 const printFact = async (id:number) => {
 
@@ -166,15 +186,41 @@ const printFact = async (id:number) => {
     //Verificar si es diferente de la impresion
     if (data.status !== 200)
     {
+        //Mensaje de error
         toast.add({
             severity: 'error',
             summary: "Mensaje de Error",
-            detail: "No se Puede Imprimir Este Documento",
+            detail: "No Se Puede Imprimir Este Documento",
             life: 3000
         });
+        //PAra cancelar la instruccion
+        return
     }
 
-    console.log(data.status);
+
+    //Poner la url
+    urlPdf.value = data.data.url;
+    pdfShow.value = true;
+
+
+    setTimeout(()=>{
+        urlPdf.value = "";
+        pdfShow.value = false;
+    },1000)
+
+    // window.print();
+}
+
+/**
+ * Erro al imprimir el pdf
+ */
+const getErrorPdf = (msj: string) => {
+    toast.add({
+        severity: 'error',
+        summary: "Mensaje de Error",
+        detail: msj,
+        life: 3000
+    });
 }
 
 
@@ -196,7 +242,11 @@ const printFact = async (id:number) => {
             </LinkHeader>
         </template>
 
-        <div class="bg-gray-200 max-w-[1180px] rounded-md p-5 mx-auto overflow-hidden">
+        <div
+            class="bg-gray-200 max-w-[1180px] rounded-md p-5 mx-auto overflow-hidden">
+<!--          Mensajes  -->
+            <Toast />
+<!--            Contenido-->
             <div class="flex justify-between items-center">
                 <form
                     @submit.prevent="submit">
@@ -236,6 +286,7 @@ const printFact = async (id:number) => {
                         <td>{{item.close_table ? 'Cerrada' : 'Abierta'}}</td>
                         <td>
                             <i
+                                title="Imprimir"
                                 @click="printFact(item.id)"
                                 class=" icon-efect fa-solid fa-print"></i>
                         </td>
@@ -279,7 +330,22 @@ const printFact = async (id:number) => {
 
             <!--           Mensajke de error-->
             <InputError :message="page.props.errors.comment"/>
+
+
+            <!--        <FloatBox-->
+            <!--            v-model:show="pdfShow"-->
+            <!--            header="Impresión">-->
+            <ShowPdf
+                @send-error="getErrorPdf"
+                v-if="pdfShow"
+                :pdf="urlPdf">
+
+            </ShowPdf>
+            <!--        </FloatBox>-->
+
         </div>
+
+
 
 
     </AppLayout>

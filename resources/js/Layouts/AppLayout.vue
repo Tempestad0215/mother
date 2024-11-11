@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import {computed, Ref, ref} from 'vue';
-import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import {computed, ref} from 'vue';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import NavLink from '@/Components/NavLink.vue';
 // import ToggleSwitch from 'primevue/toggleswitch';
 
@@ -11,7 +11,7 @@ import NavLink from '@/Components/NavLink.vue';
 Destructurar las variables
  */
 const {url, props} = usePage();
-const {auth} = props;
+// const {auth} = props;
 
 /*
 Propiedads de la ventana
@@ -24,7 +24,7 @@ defineProps({
 Datos de la ventana
  */
 const showOption = ref<boolean>(false);
-const darkMode:Ref<boolean> = ref(false);
+// const darkMode:Ref<boolean> = ref(false);
 
 
 
@@ -188,7 +188,7 @@ const isUrl = (params:string) => {
             <div
                 class=" pl-[80px] pt-[80px] rounded-md  ">
                     <div
-                        class=" max-w-[1100px] mx-auto bg-gray-200 rounded-md max-h-[90vh]">
+                        class=" md:max-w-[1100px] mx-auto bg-gray-200 rounded-md overflow-auto">
                         <slot/>
                     </div>
 
