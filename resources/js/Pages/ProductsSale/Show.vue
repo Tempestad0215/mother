@@ -261,7 +261,7 @@ const getErrorPdf = (msj: string) => {
             </div>
 
             <table
-                class="w-full table-auto mt-5">
+                class=" mt-3 styleTable w-full table-auto">
                 <thead >
                     <tr class=" border-b-2 border-gray-800 text-left">
                         <th>Code</th>

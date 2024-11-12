@@ -180,15 +180,13 @@ const isUrl = (params:string) => {
             <header
                 class=" flex items-center justify-center space-x-3 fixed top-0 h-20 max-h-16 flex-1 w-full bg-gray-200 z-20 px-5">
 
-
-
 <!--                Para el contenido-->
                 <slot name="header"/>
             </header>
             <div
-                class=" pl-[80px] pt-[80px] rounded-md  ">
+                class="flex pl-[80px] pt-[80px] rounded-md !max-h-[98vh] overflow-y-auto ">
                     <div
-                        class=" md:max-w-[1100px] mx-auto bg-gray-200 rounded-md overflow-auto">
+                        class=" flex-1 md:max-w-[1100px] mx-auto bg-gray-200 rounded-md">
                         <slot/>
                     </div>
 

@@ -123,7 +123,7 @@ const destroy = (id:number) => {
                 </h3>
             </div>
             <!-- Datos de los productos para la entrada    -->
-            <table class="w-full">
+            <table class="mt-3 styleTable w-full">
                 <thead>
                     <tr>
                         <th>Producto/Servicio</th>

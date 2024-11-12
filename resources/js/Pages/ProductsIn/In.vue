@@ -552,7 +552,7 @@ const totalTax = () => {
                     <div
                         class="max-h-[600px] overflow-y-auto ">
                         <!--                Datos de los productos para la entrada    -->
-                        <table class="w-full">
+                        <table class=" mt-3 styleTable w-full">
                             <thead>
                                 <tr>
                                     <th>Cod. Barra</th>
@@ -607,14 +607,13 @@ const totalTax = () => {
 <!--            </Transition>-->
 
             <!-- Mostrar registro de suplidores -->
-            <Transition>
-                    <FloatBox
-                        @close=" registerSupplier = false"
-                        v-if="registerSupplier">
-                        <FloatSupplier
-                            class="w-full"/>
-                    </FloatBox>
-            </Transition>
+
+                <FloatBox
+                    header="Suplidores">
+                    <FloatSupplier
+                        class="w-full"/>
+                </FloatBox>
+
         </div>
 
     </AppLayout>

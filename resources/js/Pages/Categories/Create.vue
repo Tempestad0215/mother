@@ -174,8 +174,8 @@ const search = () => {
                         @submit.prevent="search">
                         <FormSearch
                             holder="-- Buscar Categoria --"
-                            v-model="formSearch.search"
-                            v-model:select-value="formSearch.perPage">
+                            v-model:search="formSearch.search"
+                            v-model:per-page="formSearch.perPage">
                         </FormSearch>
                     </form>
                     <h3 class="text-3xl font-bold">
@@ -184,7 +184,7 @@ const search = () => {
                 </div>
 
 <!--    Tabla de las categorias-->
-                <table class="w-full">
+                <table class=" mt-3 styleTable w-full">
                     <thead>
                         <tr>
                             <th>Nombre</th>

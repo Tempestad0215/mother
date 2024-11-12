@@ -17,7 +17,6 @@ const emit =defineEmits<{
 
 onMounted(()=>{
 
-
     let iframe = document.getElementById("pdfA") as HTMLIFrameElement;
 
     //Estilo para ocultarlo

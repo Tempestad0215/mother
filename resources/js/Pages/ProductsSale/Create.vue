@@ -547,7 +547,7 @@ const getPdf = () => {
                 setTimeout(()=>{
                     pdfUrl.value = "";
                     showPdf.value = false;
-                },1000)
+                },1500)
 
             }
         }).catch(()=>{
@@ -572,7 +572,7 @@ const getLastInvoie = () => {
                 setTimeout(()=>{
                     pdfUrl.value = "";
                     showPdf.value = false;
-                },1000)
+                },1500)
 
             }
         }).catch(()=>{
@@ -996,7 +996,7 @@ const getErrorPdf = () => {
 <!--                        Listado de los productos-->
                         <div
                             class="max-h-[400px] border-t-2 mt-3 border-black overflow-y-auto shadow-lg p-3 rounded-md">
-                            <table class="w-full">
+                            <table class="styleTable w-full">
                                 <thead>
                                     <tr>
                                         <th>#</th>
@@ -1215,8 +1215,8 @@ const getErrorPdf = () => {
                 header="Devolución"
                 v-model:show="showFormReturn">
                 <ReturnForm
-                    :error="page.props.errors.general"
-                    @closeFormReturn="showFormReturn = false"/>
+                    @closeFormReturn="showFormReturn = false"
+                    :error="page.props.errors.general"/>
             </FloatBox>
         </div>
 

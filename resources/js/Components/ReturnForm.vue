@@ -5,7 +5,8 @@ import InputLabel from "@components/InputLabel.vue";
 import {useForm} from "@inertiajs/vue3";
 import InputError from "@components/InputError.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
-
+import SelectButton from 'primevue/selectbutton';
+import {ref} from "vue";
 /*
 Propiedades de la ventana
  */
@@ -31,7 +32,23 @@ Enviar el evento para emitir
 const emit = defineEmits<{
     (e:'closeFormReturn'): void;
     (e:'hasError'):void;
-}>()
+}>();
+
+
+
+/*
+Data de la ventana
+ */
+const options = ref([
+    {
+        name: 'Consultar',
+        value: true,
+    },
+    {
+        name: 'Seleccionar',
+        value: false,
+    }
+]);
 
 
 
@@ -75,38 +92,16 @@ const submit = () => {
                 <InputLabel
                     class="flex"
                     for="askReturn" value="Tipo de Consulta" />
-
-                <div class="flex flex-row justify-center">
-
-                    <!--                Consulta-->
-                    <div class="flex">
-                        <input
-                            class="peer hidden"
-                            :value="true"
-                            v-model="form.type"
-                            name="consulting"
-                            id="consulting"
-                            type="radio">
-                        <InputLabel
-                            class=" font-bold rounded-md border-2 border-gray-800 px-2 peer-checked:text-white peer-checked:bg-gray-900 duration-300"
-                            for="consulting"
-                            value="Consultar"/>
-                    </div>
-                    <!--                Consulta-->
-                    <div class="flex ml-5">
-                        <input
-                            class="peer hidden"
-                            :value="false"
-                            v-model="form.type"
-                            name="searchReturn"
-                            id="searchReturn"
-                            type="radio">
-                        <InputLabel
-                            class=" font-bold rounded-md border-2 border-gray-800 px-2 peer-checked:text-white peer-checked:bg-gray-900 duration-300"
-                            for="searchReturn"
-                            value="Seleccionar"/>
-                    </div>
+                <div class="flex justify-center">
+                    <SelectButton
+                        size="small"
+                        v-model="form.type"
+                        option-label="name"
+                        option-value="value"
+                        :options="options"
+                        fluid/>
                 </div>
+
             </div>
 
             <div

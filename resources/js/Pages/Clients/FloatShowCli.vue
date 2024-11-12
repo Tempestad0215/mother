@@ -115,7 +115,8 @@ const destroy = (id:Number) => {
         </div>
 
         <div class=" max-h-[550px] overflow-y-auto">
-            <table class="w-full">
+            <table
+                class="styleTable w-full">
                 <thead>
                     <tr>
                       <th>Nombre</th>

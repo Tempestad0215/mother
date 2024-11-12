@@ -110,15 +110,14 @@ const detroy = (id:Number) => {
 
 <template>
     <div
-         class="rounded-md max-h-[90vh] px-5 overflow-hidden ">
+         class="rounded-md ">
         <div
             class="flex justify-between">
             <div>
                 <form @submit.prevent="submit"  >
                     <FormSearch
-                        v-model="form.search"
-                        holder="Buscar"
-                        v-model:select-value="form.perPage"/>
+                        v-model:search="form.search"
+                        v-model:per-page="form.perPage"/>
                 </form>
             </div>
             <h3 class="text-3xl font-bold float-right mt-6">
@@ -127,8 +126,8 @@ const detroy = (id:Number) => {
         </div>
 
         <div
-            class="max-h-[65vh] overflow-y-scroll ">
-            <table class="w-full">
+            class="max-h-[50vh] overflow-y-auto ">
+            <table class=" mt-3 styleTable  w-full">
                 <thead>
                     <tr>
                         <th>Cod.</th>

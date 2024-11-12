@@ -3,7 +3,7 @@ import InputLabel from './InputLabel.vue';
 import {ref} from "vue";
 
 
-const search = defineModel<string>('searh');
+const search = defineModel<string>('search');
 const perPage = defineModel<number>('perPage',{
     default: 15
 });

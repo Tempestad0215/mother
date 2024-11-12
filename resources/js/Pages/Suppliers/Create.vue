@@ -253,9 +253,8 @@ const search = () => {
                     <form
                         @submit.prevent="search">
                         <FormSearch
-                            v-model:select-value="formSearch.perPage"
-                            holder="Buscar"
-                            v-model="formSearch.search"
+                            v-model:per-page="formSearch.perPage"
+                            v-model:search="formSearch.search"
                         />
                     </form>
                     <h3 class="text-3xl font-bold text-center">
@@ -264,9 +263,9 @@ const search = () => {
                 </div>
 
 <!--        Table de datos-->
-            <div>
+            <div class="mt-3">
                 <!--                Datos de los proveedores-->
-                <table class="w-full">
+                <table class=" styleTable w-full">
                     <thead>
                         <tr>
                             <th>Empresa</th>

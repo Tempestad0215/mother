@@ -13,9 +13,8 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductSaleController;
 use App\Http\Controllers\SettingController;
-use App\Invoices\SaleInvoiceA;
-use App\Models\Sale;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
@@ -252,6 +251,7 @@ Route::middleware([
      */
     Route::controller(ReportSaleController::class)
         ->prefix('report/sale')
+
         ->name('report-sale.')
         ->group(function (){
            Route::get('/','index')->name('index');
@@ -275,13 +275,17 @@ Route::middleware([
 
 
     Route::get('/test', function (){
-        $sale = Sale::find(24);
 
-        $pdf = new SaleInvoiceA($sale);
 
-        $pdf->setData();
+        return Hash::make('password');
 
-        $pdf->Output();
+//        $sale = Sale::find(24);
+//
+//        $pdf = new SaleInvoiceA($sale);
+//
+//        $pdf->setData();
+//
+//        $pdf->Output();
     });
 
 

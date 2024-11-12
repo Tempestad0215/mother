@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import AppLayout from "@layout/AppLayout.vue";
 import {Head, useForm} from "@inertiajs/vue3";
 import DateRange from "@components/DateRange.vue";
@@ -327,7 +326,7 @@ const submit = () => {
                 <div class="max-h-[20rem] overflow-y-auto">
                     <!--                Listado de produtos vendido-->
                     <table
-                        class="table-auto w-full mt-10">
+                        class=" styleTable table-auto w-full mt-10">
                         <caption class="text-xl italic underline">
                             Listado de Ventas
                         </caption>
