@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import {Head, router, useForm} from "@inertiajs/vue3";
 import AppLayout from "@layout/AppLayout.vue";
-import LinkHeader from "@components/LinkHeader.vue";
 import {productTransPI} from "@/Interfaces/Product";
 import {formatNumberPlane, getMoney} from "@/Global/Helpers";
 import FormSearch from "@components/FormSearch.vue";
@@ -91,16 +90,7 @@ const destroy = (id:number) => {
 
         <!-- Cabecera de la pagina-->
         <template #header >
-            <LinkHeader
 
-                :href="route('in.create')">
-                Entrada
-            </LinkHeader>
-            <LinkHeader
-                :active="true"
-                :href="route('in.show')">
-                Mostrar
-            </LinkHeader>
         </template>
 
 

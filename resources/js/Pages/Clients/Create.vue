@@ -8,7 +8,6 @@ import PrimaryButton from '@components/PrimaryButton.vue';
 import {onMounted, ref, Ref} from 'vue';
 import {clienteEditI} from '@/Interfaces/ClientInterface';
 import { successHttp } from '@/Global/Alert';
-import LinkHeader from "@components/LinkHeader.vue";
 import {getRncHelper} from "@/Global/Helpers";
 import {rncUserI} from "@/Interfaces/Setting";
 import Swal from "sweetalert2";
@@ -234,15 +233,7 @@ const getRnc = async () => {
     <AppLayout
         title="Cliente">
         <template #header >
-            <LinkHeader
-                :active="true"
-                :href="route('client.create')">
-                Registrar
-            </LinkHeader>
-            <LinkHeader
-                :href="route('client.show')">
-                Mostrar
-            </LinkHeader>
+
 
         </template>
 

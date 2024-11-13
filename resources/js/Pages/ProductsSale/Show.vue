@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import {Head, useForm, usePage} from "@inertiajs/vue3";
 import AppLayout from "@layout/AppLayout.vue";
-import LinkHeader from "@components/LinkHeader.vue";
 import FormSearch from "@components/FormSearch.vue";
 import {salePaginationI} from "@/Interfaces/Sale";
 import {getMoney} from "@/Global/Helpers";
@@ -42,6 +41,8 @@ const form = useForm({
     general: "",
 });
 
+
+
 /*
 Datos de la ventana
  */
@@ -53,8 +54,6 @@ const pdfShow:Ref<boolean> = ref(false);
 /*
 Funciones
  */
-
-
 
 //Enviar los datos
 const submit = () => {
@@ -230,16 +229,7 @@ const getErrorPdf = (msj: string) => {
     <Head title="Mostrar Ventas"/>
     <AppLayout>
         <template #header>
-            <LinkHeader
-                :href="route('sale.create')">
-                Ventas
-            </LinkHeader>
 
-            <LinkHeader
-                :active="true"
-                :href="route('sale.show')">
-                Mostrar
-            </LinkHeader>
         </template>
 
         <div
@@ -251,9 +241,8 @@ const getErrorPdf = (msj: string) => {
                 <form
                     @submit.prevent="submit">
                     <FormSearch
-                        holder="Buscar"
-                        v-model:select-value="form.perPage"
-                        v-model="form.search"/>
+                        v-model:per-page="form.perPage"
+                        v-model:search="form.search"/>
                 </form>
                 <h3 class="text-3xl font-bold">
                     Ventas

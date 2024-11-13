@@ -33,7 +33,6 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-
     /*
      * Ruta de bienvenida
      */

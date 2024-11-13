@@ -246,8 +246,7 @@ const search = () => {
             </div>
         </form>
 
-
-        <div class=" rounded-md">
+        <div class=" rounded-md px-5">
             <form
 
                 @submit.prevent="search">
@@ -258,7 +257,7 @@ const search = () => {
                     v-model="formSearch.search"/>
             </form>
             <table
-                class="w-full table-auto  rounded-md mt-5">
+                class="w-full table-auto styleTable mt-3">
                 <thead
                     class=" sticky top-0">
                     <tr

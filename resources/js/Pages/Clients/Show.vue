@@ -3,7 +3,6 @@ import type { clientI } from '@/Interfaces/ClientInterface';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import type { PropType } from 'vue';
-import LinkHeader from "@components/LinkHeader.vue";
 import FloatShowCli from "@/Pages/Clients/FloatShowCli.vue";
 
 
@@ -27,15 +26,7 @@ const props = defineProps({
     <AppLayout>
         <!-- Cabecera de la ventana -->
         <template #header>
-            <LinkHeader
-                :href="route('client.create')">
-                Registrar
-            </LinkHeader>
-            <LinkHeader
-                :active="true"
-                :href="route('client.create')">
-                Mostrar
-            </LinkHeader>
+
         </template>
 
         <!-- Contenido principal -->

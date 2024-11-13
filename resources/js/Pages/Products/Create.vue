@@ -5,7 +5,6 @@ import Float from '@/Pages/Suppliers/FloatSupp.vue'
 import FloatBox from '@/Components/FloatBox.vue'
 import {ref} from 'vue';
 import FloatProduct from '@/Pages/Products/FloatPro.vue';
-import LinkHeader from "@components/LinkHeader.vue";
 import {productSupplierI} from "@/Interfaces/Product";
 import {categoryI} from "@/Interfaces/Categories";
 import {supplierI} from "@/Interfaces/Supplier";
@@ -39,17 +38,6 @@ const showSupplierForm = ref(false);
     <AppLayout>
         <!-- cabecera -->
         <template #header >
-            <LinkHeader
-                :active="true"
-                :href="route('product.create')">
-                Registrar
-            </LinkHeader>
-<!--            Mostrar los productos -->
-            <LinkHeader
-                :href="route('product.show')">
-                Mostrar
-            </LinkHeader>
-
 
 
         </template>

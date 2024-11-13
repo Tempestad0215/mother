@@ -13,7 +13,6 @@ import {successHttp} from "@/Global/Alert";
 import FormSearch from "@components/FormSearch.vue";
 import {productDataI, productI, productTransI} from "@/Interfaces/Product";
 import Pagination from "@components/Pagination.vue";
-import LinkHeader from '@components/LinkHeader.vue';
 import {InputNumber} from "primevue";
 import {appSettingI} from "@/Interfaces/Global";
 
@@ -246,16 +245,7 @@ const totalTax = () => {
     <Head title="Entrada" />
     <AppLayout>
         <template #header >
-            <LinkHeader
-                :active="true"
-                :href="route('in.create')">
-                Entrada
-            </LinkHeader>
-            <LinkHeader
 
-                :href="route('in.show')">
-                Mostrar
-            </LinkHeader>
 
         </template>
 

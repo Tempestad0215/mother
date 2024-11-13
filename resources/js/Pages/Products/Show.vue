@@ -4,7 +4,6 @@ import { Head} from '@inertiajs/vue3';
 import { productI } from '@/Interfaces/Product';
 import { PropType } from 'vue';
 import FloatShowPro from "@/Pages/Products/FloatShowPro.vue";
-import LinkHeader from "@components/LinkHeader.vue";
 
 
 const props = defineProps({
@@ -24,15 +23,7 @@ const props = defineProps({
 
 <!--        Titulo de la ventana-->
         <template #header >
-            <LinkHeader
-                :href="route('product.create')">
-                Registrar
-            </LinkHeader>
-            <LinkHeader
-                :active="true"
-                :href="route('product.show')">
-                Mostrar
-            </LinkHeader>
+
         </template>
 
 

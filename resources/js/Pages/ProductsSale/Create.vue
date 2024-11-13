@@ -8,7 +8,6 @@ import FloatShowPro from "@/Pages/Products/FloatShowPro.vue";
 import { onMounted, onUpdated, Ref, ref} from "vue";
 import {productDataI, productI} from "@/Interfaces/Product";
 import {getMoney, getRncHelper, getSequenceType} from "@/Global/Helpers";
-import LinkHeader from "@components/LinkHeader.vue";
 import Swal from "sweetalert2";
 import InputError from "@components/InputError.vue";
 import {clientDataI, clientI} from "@/Interfaces/ClientInterface";
@@ -753,22 +752,6 @@ const getErrorPdf = () => {
 
 
         <template #header >
-
-            <LinkHeader
-                :active="true"
-                :href="route('sale.create')">
-                Ventas
-            </LinkHeader>
-
-            <LinkHeader
-                :href="route('sale.show')">
-                Mostrar
-            </LinkHeader>
-
-<!--            <LinkHeader-->
-<!--                :href="route('sale.counter')">-->
-<!--                Recuento-->
-<!--            </LinkHeader>-->
 
         </template>
 
