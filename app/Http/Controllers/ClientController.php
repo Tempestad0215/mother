@@ -172,7 +172,7 @@ class ClientController extends Controller
 
     /**
      * @param Request $request
-     * @return Client[]|Paginator|_IH_Client_C
+     * @return \Illuminate\Contracts\Pagination\Paginator
      */
     private function getTable(REquest $request)
     {
@@ -181,14 +181,8 @@ class ClientController extends Controller
         $perPage = $request->get('perPage',15);
 
         // Buscar en la base de datos
-        return Client::where('status',true)
-            ->where(function ($query) use ($search) {
-                $query->where('code','LIKE','%'. $search .'%')
-                    ->orWhere('name','like','%'. $search .'%')
-                    ->orWhere('personal_id','like','%'. $search .'%')
-                    ->orWhere('email','like','%'. $search .'%')
-                    ->orWhere('phone','like','%'. $search .'%');
-            })
+        return Client::search($search)
+            ->where('status',true)
             ->latest()
             ->simplePaginate($perPage);
 

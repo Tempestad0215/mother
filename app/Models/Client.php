@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Date;
+use Laravel\Scout\Attributes\SearchUsingFullText;
+use Laravel\Scout\Attributes\SearchUsingPrefix;
+use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Contracts\Auditable;
 
 
@@ -38,6 +41,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 class Client extends Model implements Auditable
 {
+    use Searchable;
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
     use softDeletes;
@@ -59,6 +63,24 @@ class Client extends Model implements Auditable
         'document' => ClientDocumentEnum::class,
         'status'=> 'boolean',
     ];
+
+
+    /**
+     * Para buscar los datos
+     * @return array
+     */
+    #[SearchUsingPrefix(['id', 'email'])]
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'document' => $this->document,
+            'phone' => $this->phone,
+            'email' => $this->email,
+        ];
+    }
+
 
 
     /**

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, Ref, ref} from 'vue';
+import { ref} from 'vue';
 import {Head, Link, router, usePage} from '@inertiajs/vue3';
 import PanelMenu from 'primevue/panelmenu';
 
@@ -20,13 +20,18 @@ defineProps({
 
 
 
+//Verificar si es admin
+const checkIsAdmin = ():boolean => {
+    return props.auth.user.role == 'admin';
+}
+
+
+
 
 /*
 Datos de la ventana
  */
 const showOption = ref<boolean>(false);
-const role:Ref<string> = ref(props.auth.user.role);
-const isAdmin:Ref<boolean> = ref(false);
 const menuItem = ref([
     {
         //Clientes
@@ -44,6 +49,7 @@ const menuItem = ref([
                 url: route('client.show')
             }
         ],
+        visible: checkIsAdmin()
     },
     {
         //Categorias
@@ -56,6 +62,7 @@ const menuItem = ref([
                 url: route('category.create')
             }
         ],
+        visible: checkIsAdmin()
     },
     {
         //Suplidores
@@ -68,6 +75,7 @@ const menuItem = ref([
                 url: route('supplier.create')
             }
         ],
+        visible: checkIsAdmin()
     },
     {
         //Productos
@@ -102,6 +110,7 @@ const menuItem = ref([
                 ]
             }
         ],
+        visible: checkIsAdmin()
     },
     {
         //Ventas
@@ -132,9 +141,11 @@ const menuItem = ref([
             },
 
         ],
+        visible: checkIsAdmin()
     },
     {
-        separator: true
+        separator: true,
+        visible: checkIsAdmin()
     },
     {
         label: 'Miembros',
@@ -150,7 +161,8 @@ const menuItem = ref([
                 icon: 'fa-solid fa-id-card',
                 url: route('profile.show'),
             }
-        ]
+        ],
+        visible: checkIsAdmin()
 
     },
     {
@@ -170,9 +182,10 @@ const menuItem = ref([
             }
 
         ],
+        visible: checkIsAdmin()
     },
     {
-      separator: true
+        separator: true,
     },
     {
         //Salir de la app
@@ -184,25 +197,8 @@ const menuItem = ref([
     },
 
 ]);
-const activeMenu = ref(null)
 
 
-const checkIsAdmin = (role:string) => {
-    return role === 'admin';
-}
-
-
-
-/*
-Propiedades computada
- */
-const checkRole = computed(()=>{
-   let role:string = props.auth.user.role;
-
-   //Devolver el tpo de datos que es
-   return role !== 'user'
-
-});
 
 
 
