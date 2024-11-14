@@ -38,7 +38,7 @@ class SequenceController extends Controller
             ]);
         }else{
 
-            abort(403, "No esta Autorizado Para Este Modulo");
+            abort(403, "Primero Debes Habilitar Esta Opcion");
         }
 
 

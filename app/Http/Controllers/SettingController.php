@@ -32,7 +32,7 @@ class SettingController extends Controller
     public function store(StoreSettingRequest $request)
     {
         //Verificar si existe venta con la cuenta abierta
-        $sale = Sale::where('close_table', '=', true)->exists();
+        $sale = Sale::where('close_table', false)->exists();
 
         //Verificar si existe para devolver el mensaje
         if ($sale && $request->get('sequence'))

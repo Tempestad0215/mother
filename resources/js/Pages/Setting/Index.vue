@@ -4,13 +4,18 @@ import AppLayout from "@layout/AppLayout.vue";
 import InputLabel from "@components/InputLabel.vue";
 import TextInput from "@components/TextInput.vue";
 import InputError from "@components/InputError.vue";
-import Swal from "sweetalert2";
-import LinkHeader from "@components/LinkHeader.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import {onMounted, onUpdated, Ref, ref} from "vue";
 // import {settingsDataI} from "@/Interfaces/Setting";
 import {successHttp} from "@/Global/Alert";
 import {taxI} from "@/Interfaces/Global";
+import Select from 'primevue/select';
+import ToggleButton from 'primevue/togglebutton';
+import Chip from 'primevue/chip';
+import InputGroup from 'primevue/inputgroup';
+import InputGroupAddon from 'primevue/inputgroupaddon';
+
+
 
 
 /*
@@ -152,20 +157,10 @@ const addTax = () => {
 
 //Eliminar los Itbis
 const removeTax = (index:number) => {
-    //Eliminar los datos seleccionado
-    Swal.fire({
-        title: "Desea eliminar este ITBIS?",
-        text: "Los Cambios Realizados Son Irreversible!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Si, Eliminar!"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            //Eliminar los datos
-            form.tax.splice(index, 1);
 
-        }
-    });
+    //Eliminar los datos
+    form.tax.splice(index, 1);
+
 
 }
 
@@ -202,20 +197,9 @@ const addUnit = () => {
 
 //Eliminar los Itbis
 const removeUnit = (index:number) => {
-    //Eliminar los datos seleccionado
-    Swal.fire({
-        title: "Desea eliminar esta Unidad?",
-        text: "Los Cambios Realizados Son Irreversible!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Si, Eliminar!"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            //Eliminar los datos
-            form.unit.splice(index, 1);
+    //Eliminar los datos
+    form.unit.splice(index, 1);
 
-        }
-    });
 
 }
 
@@ -227,19 +211,9 @@ const removeUnit = (index:number) => {
     <AppLayout>
 <!--Cabecera de la pagina-->
         <template #header>
-            <LinkHeader
-                :active="true"
-                :href="route('setting.index')">
-                Ajustes
-            </LinkHeader>
-            <LinkHeader
-                v-if="isSequence"
-                :href="route('sequence.create')">
-                Correlativos
-            </LinkHeader>
         </template>
 
-        <div class="max-w-[1180px] mx-auto bg-gray-200 rounded-md p-5">
+        <div class="max-w-[1180px] max-h-[90vh] overflow-y-auto mx-auto bg-gray-200 rounded-md p-5">
             <form
                 @submit.prevent="submit">
 
@@ -338,18 +312,10 @@ const removeUnit = (index:number) => {
                     </div>
                     <div>
                         <InputLabel for="company_type" value="Empresa" />
-                        <select
+                        <Select
                             v-model="form.company_type"
-                            class="border-gray-300 rounded-md w-full"
-                            form="company_type" id="company_type">
-                            <option selected value="">
-                                ----- Selecciona La Empresa -----
-                            </option>
-                            <option v-for="(item, index) in propsW.company_type" :key="index" >
-                                {{item}}
-                            </option>
-
-                        </select>
+                            fluid
+                            :options="propsW.company_type"/>
                     </div>
 
 
@@ -395,41 +361,10 @@ const removeUnit = (index:number) => {
                             <legend>
                                 Proteger Costo
                             </legend>
-                            <!--                       Si -->
-                            <div >
-                                <input
-                                    class="peer hidden"
-                                    :value="true"
-                                    v-model="form.cost"
-                                    type="radio"
-                                    name="yes_cost"
-                                    id="yes_cost">
-                                <label
-                                    class=" bg-gray-400 px-3 py-1 rounded-md peer-checked:bg-gray-800 peer-checked:text-white duration-300"
-                                    id="yes_cost"
-                                    for="yes_cost">
-                                    Si
-                                </label>
-
-                            </div>
-
-                            <!--                        No-->
-                            <div class="ml-5">
-                                <input
-                                    class="peer hidden"
-                                    :value="false"
-                                    v-model="form.cost"
-                                    type="radio"
-                                    name="no_cost"
-                                    id="no_cost">
-                                <label
-                                    class=" bg-gray-400 px-3 py-1 rounded-md peer-checked:bg-gray-800 peer-checked:text-white duration-300"
-                                    id="no_cost"
-                                    for="no_cost">
-                                    No
-                                </label>
-
-                            </div>
+                            <ToggleButton
+                                v-model="form.cost"
+                                onLabel="SI"
+                                offLabel="NO" />
                             <InputError :message="form.errors.cost"/>
                         </fieldset>
 
@@ -439,40 +374,11 @@ const removeUnit = (index:number) => {
                             <legend>
                                 Manejar Comprobante
                             </legend>
-                            <!--                        Si-->
-                            <div >
-                                <input
-                                    class="peer hidden"
-                                    :value="true"
-                                    v-model="form.sequence"
-                                    type="radio"
-                                    name="yes_sequence"
-                                    id="yes_sequence">
-                                <label
-                                    class=" bg-gray-400 px-3 py-1 rounded-md peer-checked:bg-gray-800 peer-checked:text-white duration-300"
-                                    id="yes_sequence"
-                                    for="yes_sequence">
-                                    Si
-                                </label>
+                            <ToggleButton
+                                v-model="form.sequence"
+                                onLabel="SI"
+                                offLabel="NO" />
 
-                            </div>
-                            <!--                        No-->
-                            <div class="ml-5">
-                                <input
-                                    class="peer hidden"
-                                    :value="false"
-                                    v-model="form.sequence"
-                                    type="radio"
-                                    name="no_sequence"
-                                    id="no_sequence">
-                                <label
-                                    class=" bg-gray-400 px-3 py-1 rounded-md peer-checked:bg-gray-800 peer-checked:text-white duration-300"
-                                    id="no_sequence"
-                                    for="no_sequence">
-                                    No
-                                </label>
-
-                            </div>
                             <InputError :message="form.errors.sequence"/>
                         </fieldset>
                     </div>
@@ -485,32 +391,31 @@ const removeUnit = (index:number) => {
                         <InputLabel
                             for="unit"
                             value="Unidades"/>
-                        <div class="relative">
+                        <InputGroup>
                             <TextInput
                                 :autocomplete="false"
                                 class="w-full pr-10"
                                 name="unit"
                                 v-model="form.unitValue"
                                 type="text" />
-                            <i
-                                @click="addUnit"
-                                class=" absolute inset-y-0 right-0 p-3 bg-gray-300 rounded-tr-md rounded-br-md flex items-center fa-solid fa-circle-plus"></i>
-                        </div>
+                            <InputGroupAddon>
+                                <i
+                                    @click="addUnit"
+                                    class=" icon-efect fa-solid fa-circle-plus"></i>
+                            </InputGroupAddon>
+                        </InputGroup>
+
                         <InputError :message="form.errors.unit"/>
                         <div
-                            class=""
+                            class=" text-sm"
                             v-if="form.unit.length > 0"
                             v-for="(item, index) in form.unit" :key="item">
-                            <p class=" border-b-2 border-gray-400 rounded-md px-5">
-                            <span>
-                                {{item}}
-                            </span>
-                                <span class="float-right">
-                                <i
-                                    @click="removeUnit(index)"
-                                    class=" text-red-500 fa-solid fa-circle-xmark"></i>
-                            </span>
-                            </p>
+                            <Chip
+                                @remove="removeUnit(index)"
+                                class="mt-2"
+                                removable
+                                :label="item"  />
+
                         </div>
                     </div>
 
@@ -520,38 +425,38 @@ const removeUnit = (index:number) => {
                         <InputLabel
                             for="tax"
                             value="Itbis"/>
-                        <div class="relative">
+                        <InputGroup>
                             <TextInput
                                 type="text"
                                 name="name"
                                 v-model="form.taxName"
                                 placeholder="Nombre"
-                                class="inline w-[40%] "/>
-                            <TextInput
-                                class=" inline w-[60%] pr-10"
-                                name="tax"
-                                placeholder="Valor"
-                                v-model="form.taxValue"
-                                type="number" />
-                            <i
-                                @click="addTax"
-                                class=" absolute inset-y-0 right-0 p-3 bg-gray-300 rounded-tr-md rounded-br-md flex items-center fa-solid fa-circle-plus"></i>
-                        </div>
+                                class="inline w-[17rem] "/>
+
+                                <TextInput
+                                    class=" inline  pr-10"
+                                    name="tax"
+                                    placeholder="Valor"
+                                    v-model="form.taxValue"
+                                    type="number" />
+
+                            <InputGroupAddon>
+                                <i
+                                    @click="addTax"
+                                    class=" icon-efect fa-solid fa-circle-plus"></i>
+                            </InputGroupAddon>
+                        </InputGroup>
                         <InputError :message="form.errors.tax"/>
                         <div
-                            class=""
+                            class="text-sm flex flex-wrap"
                             v-if="form.tax.length > 0"
                             v-for="(item, index) in form.tax" :key="index">
-                            <p class=" border-b-2 border-gray-400 rounded-md px-5">
-                            <span>
-                                 {{item.name}} - {{item.amount}}%
-                            </span>
-                                <span class="float-right">
-                                <i
-                                    @click="removeTax(index)"
-                                    class=" text-red-500 fa-solid fa-circle-xmark"></i>
-                            </span>
-                            </p>
+                            <Chip
+                                @remove="removeTax(index)"
+                                class="mt-2"
+                                removable
+                                :label="`${item.name} - ${item.amount}` "  />
+
                         </div>
                     </div>
 

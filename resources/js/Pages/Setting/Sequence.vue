@@ -11,6 +11,9 @@ import {successHttp} from "@/Global/Alert";
 import {sequenceDataI} from "@/Interfaces/Setting";
 import {onMounted} from "vue";
 import Swal from "sweetalert2";
+import Select from 'primevue/select';
+import InputNumber from 'primevue/inputnumber';
+import DatePicker from 'primevue/datepicker';
 
 
 /*
@@ -34,14 +37,18 @@ onMounted(() => {
         form.id = propsW.sequenceEdit.id;
         form.code = propsW.sequenceEdit.code;
         form.type = propsW.sequenceEdit.type;
-        form.from = propsW.sequenceEdit.from.toFixed(2);
-        form.to =  propsW.sequenceEdit.to.toFixed(2);
-        form.next = propsW.sequenceEdit.next.toFixed(2);
-        form.advise = propsW.sequenceEdit.advise.toFixed(2);
+        form.from = propsW.sequenceEdit.from;
+        form.to =  propsW.sequenceEdit.to;
+        form.next = propsW.sequenceEdit.next;
+        form.advise = propsW.sequenceEdit.advise;
         form.num_request = propsW.sequenceEdit.num_request;
         form.num_authorization = propsW.sequenceEdit.num_authorization;
-        form.date_request = propsW.sequenceEdit.date_request;
-        form.date_expire = propsW.sequenceEdit.date_expire;
+        form.date_request = propsW.sequenceEdit.date_request
+            ? propsW.sequenceEdit.date_request
+            : null;
+        form.date_expire = propsW.sequenceEdit.date_expire
+            ? propsW.sequenceEdit.date_expire
+            : null;
     }
 });
 
@@ -53,14 +60,14 @@ const form = useForm({
     id:0,
     code:"",
     type:"",
-    from:"",
-    next:"",
-    to:"",
-    advise:"",
+    from: 0,
+    next: 0,
+    to: 0,
+    advise:0,
     num_request:"",
     num_authorization:"",
-    date_request:"",
-    date_expire:"",
+    date_request: null as any,
+    date_expire: null as any,
     status:true,
     general:"",
 });
@@ -156,7 +163,7 @@ const destroy = (id:number):void => {
 
             <div class="col-span-2">
                 <!--            Tabla de las secuencias registrada-->
-                <table class="w-full" >
+                <table class="w-full styleTable" >
                     <caption class=" text-2xl font-bold">
                         Secuencias
                     </caption>
@@ -210,17 +217,12 @@ const destroy = (id:number):void => {
 <!--                    Tipo de sequencia-->
                     <div>
                         <InputLabel for="type"  value="Tipo"/>
-                        <select
-                            class="border-gray-300 rounded-md w-full"
+                        <Select
                             v-model="form.type"
-                            name="type" id="type"> >
-                            <option value="">------ Seleccione -----</option>
-                            <option
-                                v-for="(item, index) in propsW.sequenceType" :key="index"
-                                :value="item">
-                                {{item}}
-                            </option>
-                        </select>
+                            placeholder="Tipo Comprobante"
+                            :options="propsW.sequenceType"
+                            fluid/>
+
                         <InputError :message="form.errors.type"/>
                     </div>
 
@@ -229,12 +231,12 @@ const destroy = (id:number):void => {
                         <InputLabel
                             for="from"
                             value="Desde"/>
-                        <TextInput
-                            class="w-full"
-                            type="number"
-                            name="from"
+                        <InputNumber
                             v-model="form.from"
-                            id="from"/>
+                            inputId="locale-us"
+                            locale="en-US"
+                            fluid />
+
                         <InputError
                             :message="form.errors.from"/>
                     </div>
@@ -244,12 +246,11 @@ const destroy = (id:number):void => {
                         <InputLabel
                             for="to"
                             value="Hasta"/>
-                        <TextInput
-                            class="w-full"
-                            type="number"
-                            name="to"
+                        <InputNumber
                             v-model="form.to"
-                            id="to"/>
+                            inputId="locale-us"
+                            locale="en-US"
+                            fluid />
                         <InputError
                             :message="form.errors.to"/>
                     </div>
@@ -259,25 +260,14 @@ const destroy = (id:number):void => {
                         <InputLabel
                             for="advise"
                             value="Aviso"/>
-                        <TextInput
-                            class="w-full"
+                        <InputNumber
                             v-model="form.advise"
-                            type="number"
-                            name="to"
-                            id="to"/>
+                            inputId="locale-us"
+                            locale="en-US"
+                            fluid />
                         <InputError
                             :message="form.errors.advise"/>
                     </div>
-
-<!--                    siguiente-->
-                    <div>
-                        <InputLabel for="next" value="Siguiente"/>
-                        <span>{{form.next || 0}}</span>
-                    </div>
-
-
-
-
 
                 </fieldset>
 <!--                Informacion de numero-->
@@ -321,11 +311,9 @@ const destroy = (id:number):void => {
                     <!--                    Fecha de solicitud-->
                     <div>
                         <InputLabel for="date_request" value="Fecha de Solicitud"/>
-                        <TextInput
-                            class="w-full"
-                            type="date"
-                            name="date_request"
-                            v-model="form.date_request"/>
+                        <DatePicker
+                            v-model="form.date_request" />
+
                         <InputError :message="form.errors.date_request"/>
                     </div>
 
@@ -333,11 +321,8 @@ const destroy = (id:number):void => {
                     <!--                    Fecha Expira-->
                     <div>
                         <InputLabel for="date_expire" value="Fecha de Vencimiento"/>
-                        <TextInput
-                            class="w-full"
-                            type="date"
-                            name="date_expire"
-                            v-model="form.date_expire"/>
+                        <DatePicker
+                            v-model="form.date_expire" />
                         <InputError :message="form.errors.date_expire"/>
                     </div>
                 </fieldset>
