@@ -16,7 +16,7 @@ return new class extends Migration
     {
         Schema::create('pro_trans', function (Blueprint $table) {
             $table->id();
-            $table->string('code',30);
+            $table->string('code',30)->unique();
             $table->foreignIdFor(Sale::class,'sale_id')
                 ->nullable()
                 ->constrained('sales',)
@@ -47,6 +47,10 @@ return new class extends Migration
             $table->boolean('status')->default(true);
             $table->softDeletes();
             $table->timestamps();
+
+
+            //Full text
+            $table->fullText('code');
         });
     }
 

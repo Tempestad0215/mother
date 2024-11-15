@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Date;
+use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
@@ -49,6 +50,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  */
 class Product extends Model implements Auditable
 {
+    use Searchable;
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
     use softDeletes;
@@ -110,6 +112,20 @@ class Product extends Model implements Auditable
         'close_table' => 'boolean',
         'type' => ProductTypeEnum::class
     ];
+
+
+    /**
+     * @return string[]
+     */
+    public function toSearchableArray():array
+    {
+        return [
+            'code' => $this->code,
+            'bar_code' => $this->bar_code,
+            'name' => $this->name,
+            'description' => $this->description
+        ];
+    }
 
 
 

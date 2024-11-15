@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Supplier;
 use App\Http\Requests\StoreSupplierRequest;
 use App\Http\Requests\UpdateSupplierRequest;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -103,9 +103,9 @@ class SupplierController extends Controller
         $search = $request->get('search');
 
         //tomar los datos limitado a 10
-         $data = Supplier::where('status',true)
-             ->where('company_name', 'LIKE','%'.$search.'%')
-             ->limit(10)
+         $data = Supplier::search($search)
+             ->where('status',true)
+             ->take(10)
              ->get();
 
          //Devolver un json
@@ -113,25 +113,21 @@ class SupplierController extends Controller
 
     }
 
-    private function get(Request $request)
+    /**
+     * @param Request $request
+     * @return Paginator
+     */
+    private function get(Request $request):Paginator
     {
 
         //Tomar los datos de busqueda
         $search = $request->get('search');
 
         //Devolver los datos paginado a 15
-        return Supplier::where('status',true)
-            ->when($search, function (Builder $query, $search) {
-                $query->where('company_name', 'LIKE','%'.$search.'%')
-                    ->orWhere('code', 'LIKE','%'.$search.'%')
-                    ->orWhere('phone', 'LIKE','%'.$search.'%')
-                    ->orWhere('email', 'LIKE','%'.$search.'%')
-                    ->orWhere('contact', 'LIKE','%'.$search.'%');
-            })
-            ->where(function($query) use ($search){
-
-            })->latest()
-            ->paginate(15);
+        return Supplier::search($search)
+            ->where('status',true)
+            ->latest()
+            ->simplePaginate(15);
 
     }
 }

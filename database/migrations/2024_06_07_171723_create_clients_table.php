@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
-            $table->string('code',30);
+            $table->string('code',30)->unique();
             $table->string('name',75);
             $table->enum('document',['cedula','pasaporte','rnc','otro']);
             $table->string('phone',20)->nullable();
@@ -27,6 +27,12 @@ return new class extends Migration
             $table->boolean('status')->default(true);
             $table->softDeletes();
             $table->timestamps();
+
+            //Datos fulltext
+            $table->fullText('code');
+            $table->fullText('personal_id');
+            $table->fullText('phone');
+            $table->fullText('email');
         });
     }
 

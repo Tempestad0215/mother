@@ -67,7 +67,7 @@ const submit = () => {
         </div>
 
 
-        <table class="w-full mt-5">
+        <table class="w-full mt-5 styleTable">
             <thead class="text-left">
                 <tr>
                     <th>Cliente</th>

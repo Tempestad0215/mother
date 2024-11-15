@@ -20,6 +20,12 @@ return new class extends Migration {
                 ->constrained('sales')
                 ->onUpdate('restrict')
                 ->onDelete('restrict');
+
+
+            //Full text
+            $table->fullText('code');
+            $table->fullText('ncf');
+            $table->fullText('ncf_m');
         });
     }
 

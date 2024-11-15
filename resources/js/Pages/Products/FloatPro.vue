@@ -217,7 +217,7 @@ const submit = () => {
                             value="Proveedor *"/>
                         <InputGroup class="h-10">
                             <Select
-                                v-model="form.category_id"
+                                v-model="form.supplier_id"
                                 :options="propsW.suppliers"
                                 optionLabel="company_name"
                                 fluid

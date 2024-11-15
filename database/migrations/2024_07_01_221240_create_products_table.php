@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('code',30);
+            $table->string('code',30)->unique();
             $table->string('name',75);
             $table->string('description',255)->nullable();
             $table->string('sku',75)->nullable();
@@ -29,8 +29,8 @@ return new class extends Migration
 
             //Precio y costo
             $table->decimal('cost')->default(0);
-            $table->decimal('special_price');
-            $table->decimal('min_price');
+            $table->decimal('special_price')->default(0);
+            $table->decimal('min_price')->default(0);
             $table->decimal('price')->default(0);
 
             //Informacion del producto
@@ -51,6 +51,13 @@ return new class extends Migration
             $table->boolean('status')->default(true);
             $table->softDeletes();
             $table->timestamps();
+
+
+
+            //Texto de busqueda completa
+            $table->fullText('code');
+            $table->fullText('bar_code');
+            $table->fullText('sku');
         });
     }
 

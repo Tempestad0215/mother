@@ -13,13 +13,16 @@ return new class extends Migration
     {
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
-            $table->string('code',30);
+            $table->string('code',30)->unique();
             $table->text('content');
             $table->integer('commentable_id');
             $table->string('commentable_type');
             $table->boolean('status')->default(true);
             $table->softDeletes();
             $table->timestamps();
+
+            //para fulltext
+            $table->fullText('code');
         });
     }
 

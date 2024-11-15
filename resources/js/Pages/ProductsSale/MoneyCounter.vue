@@ -12,6 +12,12 @@ import InputGroupAddon from 'primevue/inputgroupaddon';
 import {getMoney} from "@/Global/Helpers";
 import DatePicker from 'primevue/datepicker';
 import FloatLabel from 'primevue/floatlabel';
+import Toast from 'primevue/toast';
+import {useToast} from "primevue";
+
+
+const toast = useToast()
+
 
 /*
 Datos del formulario
@@ -19,30 +25,30 @@ Datos del formulario
 const form = useForm({
     from: null, //Desde
     to: null, //Hasta
-    coinFirst: 0, //1
-    coinSecond: 0, //5
-    coinThird: 0, //10
-    coinFourth: 0, //25
-    coinFifth: 0, //50
-    coinSixth: 0, //100
-    coinSeventh: 0, //200
-    coinEighth: 0, //500
-    coinNinth: 0, //1000,
-    coinTenth: 0, //2000
+    coin_first: 0, //1
+    coin_second: 0, //5
+    coin_third: 0, //10
+    coin_fourth: 0, //25
+    coin_fifth: 0, //50
+    coin_sixth: 0, //100
+    coin_seventh: 0, //200
+    coin_eighth: 0, //500
+    coin_ninth: 0, //1000,
+    coin_tenth: 0, //2000
     card: 0,//TArjeta
     transfer: 0, //Transferencia
     check: 0, //Cheque
-    otherIncome: 0, //Otras monedas
+    other_income: 0, //Otras monedas
     expenses: 0, //Gatos
-    cashWithdrawals: 0, //Retiro de la caja
+    cash_withdrawals: 0, //Retiro de la caja
     refund: 0, //Devoluciones
-    otherExpenses: 0,// otros Egresos
-    openingBalance: 0, //Balance Inicial
-    totalCoin: 0, //Balance total
-    totalOtherMoney: 0, //Otros ingresos
-    totalExpenses: 0, //Gatos totales
+    other_expenses: 0,// otros Egresos
+    opening_balance: 0, //Balance Inicial
+    total_coin: 0, //Balance total
+    total_other_coin: 0, //Otros ingresos
+    total_expenses: 0, //Gatos totales
     diff: 0, //diferencia de dinero
-    totalNeto: 0, //total netoregistrado
+    total_neto: 0, //total netoregistrado
 });
 
 
@@ -66,21 +72,21 @@ const multCoin = (value:number, factor:number):number => {
  */
 const sumCoin = () => {
     //Total de todas las monedas
-    let coinTotal:number = form.coinFirst  + multCoin(form.coinSecond, 5) + multCoin(form.coinThird, 10) + multCoin(form.coinFourth, 25) + multCoin(form.coinFifth, 50) + multCoin(form.coinSixth, 100) + multCoin(form.coinSeventh, 200) + multCoin(form.coinEighth, 500) + multCoin(form.coinNinth, 1000) + multCoin(form.coinTenth, 2000);
+    let coinTotal:number = form.coin_first  + multCoin(form.coin_second, 5) + multCoin(form.coin_third, 10) + multCoin(form.coin_fourth, 25) + multCoin(form.coin_fifth, 50) + multCoin(form.coin_sixth, 100) + multCoin(form.coin_seventh, 200) + multCoin(form.coin_eighth, 500) + multCoin(form.coin_ninth, 1000) + multCoin(form.coin_tenth, 2000);
 
 
     //Obtener otros ingresos
-    let otherIncome:number = form.card + form.transfer + form.check + form.otherIncome;
+    let other_income:number = form.card + form.transfer + form.check + form.other_income;
 
     //Egresos
-    let expenses:number = form.expenses + form.cashWithdrawals + form.refund + form.otherExpenses;
+    let expenses:number = form.expenses + form.cash_withdrawals + form.refund + form.other_expenses;
 
     //Pasar los datos al formulario
-    form.totalCoin = coinTotal; //total de las monedas
-    form.totalOtherMoney = otherIncome; //total de otros ingresos
-    form.totalExpenses = expenses; //Gastos
-    form.totalNeto = coinTotal + otherIncome; // Total neto
-    form.diff = (form.totalNeto - form.openingBalance ) - expenses; // Calculo de diferencia
+    form.total_coin = coinTotal; //total de las monedas
+    form.total_other_coin = other_income; //total de otros ingresos
+    form.total_expenses = expenses; //Gastos
+    form.total_neto = coinTotal + other_income; // Total neto
+    form.diff = (form.total_neto - form.opening_balance ) - expenses; // Calculo de diferencia
 
 }
 
@@ -90,7 +96,26 @@ const sumCoin = () => {
  */
 const submit = () => {
     //enviar los datos
-    form.post(route('sale.counterPost'));
+    form.post(route('sale.report.store'),{
+        onSuccess: async () => {
+            //Para El mensaje de exito
+            toast.add({
+                severity: 'success',
+                summary: 'Datos Registrado Correctamente',
+                life: 3000,
+            });
+            //Limpiar el formulario
+            form.reset();
+        },
+        onError: async (error:any) => {
+            toast.add({
+                severity: 'error',
+                summary: 'Erro al crear El Conteo',
+                detail: error.general,
+                life: 5000
+            });
+        }
+    });
 }
 
 
@@ -119,13 +144,15 @@ const submit = () => {
 
         </template>
 <!--        Contenido de la ventana-->
-        <div class="p-5">
+        <div class="p-5 max-h-[90vh] overflow-y-auto">
+            <Toast />
+
             <h3 class="title text-center">
                 Cuadre de Caja
             </h3>
             <form
                 @submit.prevent="submit"
-                class=" text-sm grid grid-cols-2 gap-3 mt-5 overflow-y-auto" >
+                class=" grid grid-cols-2 gap-3 mt-5 overflow-y-auto" >
 
                 <div class="col-span-full flex gap-3 p-2">
                     <FloatLabel
@@ -173,7 +200,7 @@ const submit = () => {
                             <InputGroup>
                                 <InputNumber
                                     @valueChange="sumCoin"
-                                    v-model="form.coinFirst"
+                                    v-model="form.coin_first"
                                     inputId="coinOne"
                                     locale="en-US"
                                     :allow-empty="false"
@@ -184,19 +211,19 @@ const submit = () => {
                                     x 1
                                 </InputGroupAddon>
                                 <InputGroupAddon class="w-[12rem]">
-                                    = {{ getMoney(multCoin(form.coinFirst, 1))}}
+                                    = {{ getMoney(multCoin(form.coin_first, 1))}}
                                 </InputGroupAddon>
                             </InputGroup>
 
-                            <InputError :message="form.errors.coinFirst"/>
+                            <InputError :message="form.errors.coin_first"/>
                         </div>
                         <div>
-                            <InputLabel for="coinSecond" value="Moneda de 5" />
+                            <InputLabel for="coin_second" value="Moneda de 5" />
                             <InputGroup>
                                 <InputNumber
                                     @valueChange="sumCoin"
-                                    v-model="form.coinSecond"
-                                    inputId="coinSecond"
+                                    v-model="form.coin_second"
+                                    inputId="coin_second"
                                     locale="en-US"
                                     :allow-empty="false"
                                     :max-fraction-digits="2"
@@ -206,19 +233,19 @@ const submit = () => {
                                     x 5
                                 </InputGroupAddon>
                                 <InputGroupAddon class="w-[12rem]">
-                                    = {{getMoney(multCoin(form.coinSecond, 5)) }}
+                                    = {{getMoney(multCoin(form.coin_second, 5)) }}
                                 </InputGroupAddon>
                             </InputGroup>
 
-                            <InputError :message="form.errors.coinSecond"/>
+                            <InputError :message="form.errors.coin_second"/>
                         </div>
                         <div>
-                            <InputLabel for="coinThird" value="Moneda de 10" />
+                            <InputLabel for="coin_third" value="Moneda de 10" />
                             <InputGroup>
                                 <InputNumber
                                     @valueChange="sumCoin"
-                                    v-model="form.coinThird"
-                                    inputId="coinThird"
+                                    v-model="form.coin_third"
+                                    inputId="coin_third"
                                     locale="en-US"
                                     :allow-empty="false"
                                     :max-fraction-digits="2"
@@ -228,18 +255,18 @@ const submit = () => {
                                     x 10
                                 </InputGroupAddon>
                                 <InputGroupAddon class="w-[12rem]">
-                                    = {{getMoney(multCoin(form.coinThird, 10)) }}
+                                    = {{getMoney(multCoin(form.coin_third, 10)) }}
                                 </InputGroupAddon>
                             </InputGroup>
-                            <InputError :message="form.errors.coinThird"/>
+                            <InputError :message="form.errors.coin_third"/>
                         </div>
                         <div>
-                            <InputLabel for="coinFourth" value="Moneda de 25" />
+                            <InputLabel for="coin_fourth" value="Moneda de 25" />
                             <InputGroup>
                                 <InputNumber
                                     @valueChange="sumCoin"
-                                    v-model="form.coinFourth"
-                                    inputId="coinFourth"
+                                    v-model="form.coin_fourth"
+                                    inputId="coin_fourth"
                                     locale="en-US"
                                     :allow-empty="false"
                                     :max-fraction-digits="2"
@@ -249,18 +276,18 @@ const submit = () => {
                                     x 25
                                 </InputGroupAddon>
                                 <InputGroupAddon class="w-[12rem]">
-                                    = {{getMoney(multCoin(form.coinFourth, 25)) }}
+                                    = {{getMoney(multCoin(form.coin_fourth, 25)) }}
                                 </InputGroupAddon>
                             </InputGroup>
-                            <InputError :message="form.errors.coinFourth"/>
+                            <InputError :message="form.errors.coin_fourth"/>
                         </div>
                         <div>
-                            <InputLabel for="coinFifth" value="Papeleta de 50" />
+                            <InputLabel for="coin_fifth" value="Papeleta de 50" />
                             <InputGroup>
                                 <InputNumber
                                     @valueChange="sumCoin"
-                                    v-model="form.coinFifth"
-                                    inputId="coinFifth"
+                                    v-model="form.coin_fifth"
+                                    inputId="coin_fifth"
                                     locale="en-US"
                                     :allow-empty="false"
                                     :max-fraction-digits="2"
@@ -270,18 +297,18 @@ const submit = () => {
                                     x 50
                                 </InputGroupAddon>
                                 <InputGroupAddon class="w-[12rem]">
-                                    = {{getMoney(multCoin(form.coinFifth, 50)) }}
+                                    = {{getMoney(multCoin(form.coin_fifth, 50)) }}
                                 </InputGroupAddon>
                             </InputGroup>
-                            <InputError :message="form.errors.coinFifth"/>
+                            <InputError :message="form.errors.coin_fifth"/>
                         </div>
                         <div>
-                            <InputLabel for="coinSixth" value="Papeleta de 100" />
+                            <InputLabel for="coin_sixth" value="Papeleta de 100" />
                             <InputGroup>
                                 <InputNumber
                                     @valueChange="sumCoin"
-                                    v-model="form.coinSixth"
-                                    inputId="coinSixth"
+                                    v-model="form.coin_sixth"
+                                    inputId="coin_sixth"
                                     locale="en-US"
                                     :allow-empty="false"
                                     :max-fraction-digits="2"
@@ -291,18 +318,18 @@ const submit = () => {
                                     x 100
                                 </InputGroupAddon>
                                 <InputGroupAddon class="w-[12rem]">
-                                    = {{getMoney(multCoin(form.coinSixth, 100)) }}
+                                    = {{getMoney(multCoin(form.coin_sixth, 100)) }}
                                 </InputGroupAddon>
                             </InputGroup>
-                            <InputError :message="form.errors.coinSixth"/>
+                            <InputError :message="form.errors.coin_sixth"/>
                         </div>
                         <div>
-                            <InputLabel for="coinSeventh" value="Papeleta de 200" />
+                            <InputLabel for="coin_seventh" value="Papeleta de 200" />
                             <InputGroup>
                                 <InputNumber
                                     @valueChange="sumCoin"
-                                    v-model="form.coinSeventh"
-                                    inputId="coinSeventh"
+                                    v-model="form.coin_seventh"
+                                    inputId="coin_seventh"
                                     locale="en-US"
                                     :allow-empty="false"
                                     :max-fraction-digits="2"
@@ -312,18 +339,18 @@ const submit = () => {
                                     x 200
                                 </InputGroupAddon>
                                 <InputGroupAddon class="w-[12rem]">
-                                    = {{getMoney(multCoin(form.coinSeventh, 200)) }}
+                                    = {{getMoney(multCoin(form.coin_seventh, 200)) }}
                                 </InputGroupAddon>
                             </InputGroup>
-                            <InputError :message="form.errors.coinSeventh"/>
+                            <InputError :message="form.errors.coin_seventh"/>
                         </div>
                         <div>
-                            <InputLabel for="coinEighth" value="Papeleta de 500" />
+                            <InputLabel for="coin_eighth" value="Papeleta de 500" />
                             <InputGroup>
                                 <InputNumber
                                     @valueChange="sumCoin"
-                                    v-model="form.coinEighth"
-                                    inputId="coinEighth"
+                                    v-model="form.coin_eighth"
+                                    inputId="coin_eighth"
                                     locale="en-US"
                                     :allow-empty="false"
                                     :max-fraction-digits="2"
@@ -333,18 +360,18 @@ const submit = () => {
                                     x 500
                                 </InputGroupAddon>
                                 <InputGroupAddon class="w-[12rem]">
-                                    = {{getMoney(multCoin(form.coinEighth, 500)) }}
+                                    = {{getMoney(multCoin(form.coin_eighth, 500)) }}
                                 </InputGroupAddon>
                             </InputGroup>
-                            <InputError :message="form.errors.coinEighth"/>
+                            <InputError :message="form.errors.coin_eighth"/>
                         </div>
                         <div>
-                            <InputLabel for="coinNinth" value="Papeleta de 1,000" />
+                            <InputLabel for="coin_ninth" value="Papeleta de 1,000" />
                             <InputGroup>
                                 <InputNumber
                                     @valueChange="sumCoin"
-                                    v-model="form.coinNinth"
-                                    inputId="coinNinth"
+                                    v-model="form.coin_ninth"
+                                    inputId="coin_ninth"
                                     locale="en-US"
                                     :allow-empty="false"
                                     :max-fraction-digits="2"
@@ -354,18 +381,18 @@ const submit = () => {
                                     x 1000
                                 </InputGroupAddon>
                                 <InputGroupAddon class="w-[12rem]">
-                                    = {{getMoney(multCoin(form.coinNinth, 1000)) }}
+                                    = {{getMoney(multCoin(form.coin_ninth, 1000)) }}
                                 </InputGroupAddon>
                             </InputGroup>
-                            <InputError :message="form.errors.coinNinth"/>
+                            <InputError :message="form.errors.coin_ninth"/>
                         </div>
                         <div>
-                            <InputLabel for="coinTenth" value="Papeleta de 2,000" />
+                            <InputLabel for="coin_tenth" value="Papeleta de 2,000" />
                             <InputGroup>
                                 <InputNumber
                                     @valueChange="sumCoin"
-                                    v-model="form.coinTenth"
-                                    inputId="coinTenth"
+                                    v-model="form.coin_tenth"
+                                    inputId="coin_tenth"
                                     locale="en-US"
                                     :allow-empty="false"
                                     :max-fraction-digits="2"
@@ -375,10 +402,10 @@ const submit = () => {
                                     x 2000
                                 </InputGroupAddon>
                                 <InputGroupAddon class="w-[12rem]">
-                                    = {{getMoney(multCoin(form.coinTenth, 2000)) }}
+                                    = {{getMoney(multCoin(form.coin_tenth, 2000)) }}
                                 </InputGroupAddon>
                             </InputGroup>
-                            <InputError :message="form.errors.coinTenth"/>
+                            <InputError :message="form.errors.coin_tenth"/>
                         </div>
 
                     </Fieldset>
@@ -445,14 +472,14 @@ const submit = () => {
                                 value="Otras Monedas"/>
                             <InputNumber
                                 @valueChange="sumCoin"
-                                v-model="form.otherIncome"
+                                v-model="form.other_income"
                                 inputId="locale-us"
                                 locale="en-US"
                                 :allow-empty="false"
                                 :max-fraction-digits="2"
                                 :minFractionDigits="2"
                                 fluid />
-                            <InputError :message="form.errors.otherIncome"/>
+                            <InputError :message="form.errors.other_income"/>
                         </div>
                     </Fieldset>
 
@@ -481,18 +508,18 @@ const submit = () => {
                         <!--                        TRansferencia-->
                         <div>
                             <InputLabel
-                                for="cashWithdrawals"
+                                for="cash_withdrawals"
                                 value="Retiro de Caja"/>
                             <InputNumber
                                 @valueChange="sumCoin"
-                                v-model="form.cashWithdrawals"
+                                v-model="form.cash_withdrawals"
                                 inputId="locale-us"
                                 locale="en-US"
                                 :allow-empty="false"
                                 :max-fraction-digits="2"
                                 :minFractionDigits="2"
                                 fluid />
-                            <InputError :message="form.errors.cashWithdrawals"/>
+                            <InputError :message="form.errors.cash_withdrawals"/>
                         </div>
 
                         <!--                        TRansferencia-->
@@ -514,18 +541,18 @@ const submit = () => {
                         <!--                        TRansferencia-->
                         <div>
                             <InputLabel
-                                for="otherExpenses"
+                                for="other_expenses"
                                 value="Otros"/>
                             <InputNumber
                                 @valueChange="sumCoin"
-                                v-model="form.otherExpenses"
-                                inputId="otherExpenses"
+                                v-model="form.other_expenses"
+                                inputId="other_expenses"
                                 locale="en-US"
                                 :allow-empty="false"
                                 :max-fraction-digits="2"
                                 :minFractionDigits="2"
                                 fluid />
-                            <InputError :message="form.errors.otherExpenses"/>
+                            <InputError :message="form.errors.other_expenses"/>
                         </div>
                     </Fieldset>
 
@@ -537,14 +564,14 @@ const submit = () => {
                             <Fieldset legend="Saldo Inicial" >
                                 <InputNumber
                                     @valueChange="sumCoin"
-                                    v-model="form.openingBalance"
+                                    v-model="form.opening_balance"
                                     inputId="locale-us"
                                     locale="en-US"
                                     :allow-empty="false"
                                     :max-fraction-digits="2"
                                     :minFractionDigits="2"
                                     fluid />
-                                <InputError :message="form.errors.openingBalance"/>
+                                <InputError :message="form.errors.opening_balance"/>
                             </Fieldset>
                         </div>
                         <div class="mt-3">
@@ -556,7 +583,7 @@ const submit = () => {
                                         Efectivo Total:
                                     </span>
                                         <span class="">
-                                        {{getMoney(form.totalCoin)}}
+                                        {{getMoney(form.total_coin)}}
                                     </span>
                                 </p>
                                 <p>
@@ -564,7 +591,7 @@ const submit = () => {
                                         Total Otros Ingresos:
                                     </span>
                                         <span>
-                                        {{getMoney(form.totalOtherMoney)}}
+                                        {{getMoney(form.total_other_coin)}}
                                     </span>
                                 </p>
                                 <p>
@@ -573,7 +600,7 @@ const submit = () => {
                                     </span>
 
                                         <span>
-                                        {{getMoney(form.totalExpenses)}}
+                                        {{getMoney(form.total_expenses)}}
                                     </span>
                                 </p>
                                 <p>
@@ -582,7 +609,7 @@ const submit = () => {
                                     </span>
 
                                     <span>
-                                        {{getMoney(form.totalNeto)}}
+                                        {{getMoney(form.total_neto)}}
                                     </span>
                                 </p>
                                 <p>

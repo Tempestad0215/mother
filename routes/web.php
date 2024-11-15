@@ -1,6 +1,7 @@
 <?php
 
 use App\Helpers\UserHelper;
+use App\Http\Controllers\CashReportController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\InvoiceController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductSaleController;
 use App\Http\Controllers\SettingController;
+use App\Invoices\InvoiceCounterB5;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
@@ -186,7 +188,6 @@ Route::middleware([
            Route::get('/get','getJson')->name('get.json');
            Route::get('/show','show')->name('show');
            Route::get('/test/invoice', 'testInvoice')->name('test-invoice');
-           Route::get('/counter','counter')->name('counter');
            Route::get('/last/invoice','lastInvoice')->name('lastInvoice');
            Route::post('/counter','counterPost')->name('counterPost');
            Route::post('/','store')->name('store');
@@ -196,6 +197,19 @@ Route::middleware([
 
 
         });
+
+
+    /*
+     * Repotes de las ventas
+     */
+    Route::controller(CashReportController::class)
+        ->prefix('sale/report')
+        ->name('sale.report.')
+        ->group(function(){
+           Route::get('/','index')->name('index');
+           Route::post('/','store')->name('store');
+        });
+
 
     /**
      * Notas de credito o devoluciones
@@ -250,7 +264,6 @@ Route::middleware([
      */
     Route::controller(ReportSaleController::class)
         ->prefix('report/sale')
-
         ->name('report-sale.')
         ->group(function (){
            Route::get('/','index')->name('index');
@@ -276,7 +289,9 @@ Route::middleware([
     Route::get('/test', function (){
 
 
-        return Hash::make('password');
+       $pdf = new InvoiceCounterB5(1);
+
+       return $pdf->getData();
 
 //        $sale = Sale::find(24);
 //

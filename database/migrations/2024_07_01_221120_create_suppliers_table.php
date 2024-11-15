@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('suppliers', function (Blueprint $table) {
             $table->id();
-            $table->string('code',30);
+            $table->string('code',30)->unique();
             $table->string('contact',75)->nullable();
             $table->string('company_name',150);
             $table->string('phone',20)->nullable();
@@ -22,6 +22,12 @@ return new class extends Migration
             $table->boolean('status')->default(true);
             $table->softDeletes();
             $table->timestamps();
+
+            //full text
+            $table->fullText('code');
+            $table->fullText('phone');
+            $table->fullText('email');
+
         });
     }
 

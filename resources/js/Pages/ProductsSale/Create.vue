@@ -1014,8 +1014,15 @@ const getErrorPdf = () => {
                                         <td>
                                             {{getMoney(item.tax)}}
                                         </td>
+
+<!--                                        Precio solo modificar si es servicio-->
                                         <td class="max-w-[5rem]">
+                                            <span v-if="item.type === 'producto'">
+                                                {{getMoney(item.price)}}
+                                            </span>
+
                                             <InputNumber
+                                                v-if="item.type === 'servicio'"
                                                 @valueChange="totalAmount(index)"
                                                 v-model="item.price"
                                                 inputId="locale-us"

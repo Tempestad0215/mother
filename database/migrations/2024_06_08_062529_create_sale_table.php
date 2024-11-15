@@ -24,6 +24,11 @@ return new class extends Migration
             $table->boolean('close_table')->default(false);
             $table->json('credit_notes')->nullable();
             $table->float('credit_notes_amount')->default(0);
+
+
+            //Fulltext
+            $table->fullText('code');
+            $table->fullText('ncf');
         });
     }
 

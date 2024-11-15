@@ -6,13 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\DB;
+use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Contracts\Auditable;
 
 
 /**
  * @property int $id
+ * @property string $code
  * @property string|null $contact
  * @property string $company_name
  * @property string|null $phone
@@ -23,6 +23,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 class Supplier extends Model implements Auditable
 {
+    use Searchable;
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
     use softDeletes;
@@ -51,10 +52,25 @@ class Supplier extends Model implements Auditable
 
 
 
+
+    public function toSearchableArray():array
+    {
+        return [
+            'code' => $this->code,
+            'company_name' => $this->company_name,
+            'phone' => $this->phone,
+            'email' => $this->email,
+        ];
+    }
+
+
+
+
+
     /**
      * @return void
      */
-    protected static function boot()
+    protected static function boot():void
     {
         // Llamar el metodo principal
         parent::boot();
@@ -71,7 +87,7 @@ class Supplier extends Model implements Auditable
      * @return string
      */
     // funcion para generar el codigo
-    private static function generateCode()
+    private static function generateCode():string
     {
         // Obtener el ultimo registros
         $last = self::orderBy('id','desc')->first();

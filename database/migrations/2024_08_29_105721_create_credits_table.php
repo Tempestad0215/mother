@@ -25,6 +25,9 @@ return new class extends Migration
             $table->boolean('status')->default(true);
             $table->softDeletes();
             $table->timestamps();
+
+            //fulltext
+            $table->fullText('code');
         });
     }
 

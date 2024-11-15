@@ -13,12 +13,16 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->string('code',30);
+            $table->string('code',30)->unique();
             $table->string('name',75);
             $table->string('description',255)->nullable();
             $table->boolean('status')->default(true);
             $table->softDeletes();
             $table->timestamps();
+
+
+            //Full text
+            $table->fullText('code');
         });
     }
 

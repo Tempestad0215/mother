@@ -26,7 +26,7 @@ class SaleInvoiceA extends TCPDF
 
     public function __construct(
         public Sale $sale,
-        public $height = 180)
+        public $height = 168)
     {
 
 
@@ -34,7 +34,7 @@ class SaleInvoiceA extends TCPDF
         $this->sale->infoSale
             ->where('type', ProductTransType::VENTAS)
             ->each(function () {
-            $this->height += 6.5;
+            $this->height += 7.2;
         });
 
 
@@ -177,7 +177,7 @@ class SaleInvoiceA extends TCPDF
         $width = array(12,38,16);
 
         //Craer la columna
-        $this->SetY($this->headerEnd - 3);
+        $this->SetY($this->headerEnd - 5);
         $this->setFont('helvetica', '', 8);
 
 

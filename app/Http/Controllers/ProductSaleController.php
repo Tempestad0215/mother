@@ -210,15 +210,6 @@ class ProductSaleController extends Controller
     }
 
 
-    /**
-     * Contar de las monedas
-     * @param Request $request
-     * @return Response
-     */
-    public function counter()
-    {
-        return Inertia::render('ProductsSale/MoneyCounter');
-    }
 
 //    public function counterPost(PostCounterRequest $request)
 //    {

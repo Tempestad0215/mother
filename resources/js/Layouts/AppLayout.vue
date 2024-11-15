@@ -127,6 +127,17 @@ const menuItem = ref([
                 icon: 'fa-solid fa-list-ol',
                 url: route('sale.show')
             },
+            {
+                label: 'Informes',
+                icon: 'fa-solid fa-chart-pie',
+                items: [
+                    {
+                        label: 'Cuadre Caja',
+                        icon: 'fa-solid fa-cash-register',
+                        url: route('sale.report.index')
+                    }
+                ]
+            }
         ],
     },
     {

@@ -4,7 +4,6 @@ namespace App\Http\Requests;
 
 use App\Enums\ProductTypeEnum;
 use App\Models\Product;
-use App\Rules\CheckIsServiceRule;
 use App\Rules\SaveCostProductRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -45,6 +44,7 @@ class StoreProductInRequest extends FormRequest
     {
         //Para verificar si es servicio o no
         $product = Product::find($this->product_id);
+
 
         //Validar los datos
 

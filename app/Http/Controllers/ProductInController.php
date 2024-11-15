@@ -64,6 +64,7 @@ class ProductInController extends Controller
 
         DB::transaction(function () use ($request, $productIn) {
 
+            
             //Actulizar los datos
             $inHelper = new inHelper();
             $transHelper = new TransHelper();

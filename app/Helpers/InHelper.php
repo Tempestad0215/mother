@@ -71,7 +71,6 @@ class InHelper
     public function updateGeneral(Request $request, Product $product): void
     {
 
-
         $product->min_price = $request->get('min_price');
         $product->special_price = $request->get('special_price');
         $product->price = $request->get('price');

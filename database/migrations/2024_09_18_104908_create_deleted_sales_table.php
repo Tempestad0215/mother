@@ -20,6 +20,9 @@ return new class extends Migration {
             $table->boolean('close_table')->default(false);
             $table->softDeletes();
             $table->timestamps();
+
+            //fulltect
+            $table->fullText('code');
         });
     }
 

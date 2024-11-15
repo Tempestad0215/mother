@@ -10,7 +10,6 @@ use App\Http\Resources\ProSupRes;
 use App\Models\Setting;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -70,6 +69,7 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
+
         //Para asegurar que no se guarda si hay problema
         DB::transaction(function () use ($request) {
             $product = Product::create($request->validated());
@@ -220,13 +220,8 @@ class ProductController extends Controller
         $perPage = $request->get('perPage',15);
 
         // Realizar la busqueda
-        return  Product::where('status', true)
-            ->when($search, function (Builder $query) use ($search){
-                $query->where('code', 'like', '%'.$search.'%')
-                    ->orWhere('bar_code', 'like', '%'.$search.'%')
-                    ->orWhere('name', 'like', '%'.$search.'%')
-                    ->orWhere('description', 'like', '%'.$search.'%');
-            })
+        return  Product::search($search)
+            ->where('status', true)
             ->latest()
             ->simplePaginate($perPage);
 

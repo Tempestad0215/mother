@@ -61,6 +61,7 @@ return  [
     'coCode' => 'COM',
     'deSale' => 'CAN',
     'seqCode' => 'SEQ',
+    'couCode' => 'CON',
 
 
 
