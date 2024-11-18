@@ -223,15 +223,13 @@ class ProductSaleController extends Controller
     public function lastInvoice():JsonResponse
     {
         //Otener el ultimo registro
-        $lastRecord = Sale::orderBy('id', 'desc')->first();
-        $id = $lastRecord?->id;
-
+        $sale = Sale::orderBy('id', 'desc')->first();
 
         //Intanciar la clase
         $invoice = new InvoiceController();
 
         //Se obtiene el ultimo registro
-        return $invoice->getA($id);
+        return $invoice->getA($sale,);
     }
 
 

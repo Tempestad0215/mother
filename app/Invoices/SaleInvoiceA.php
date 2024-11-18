@@ -10,6 +10,7 @@ use App\Models\Setting;
 use Carbon\Carbon;
 use TCPDF;
 use Illuminate\Support\Str;
+use function Illuminate\Events\queueable;
 
 
 /**
@@ -22,6 +23,7 @@ class SaleInvoiceA extends TCPDF
     protected float $headerEnd = 0;
     private int $line = 68;
     private Setting $setting;
+    private array $format;
 
 
     public function __construct(
@@ -42,10 +44,10 @@ class SaleInvoiceA extends TCPDF
 //        dd($this->sale->infoSale->count(),  $this->height);
 
         //Crea el formato de imprsion
-        $format = array(72, $this->height);
+        $this->format = array(72, $this->height);
 
         //Llmar el contructor
-        parent::__construct('P', 'mm', $format);
+        parent::__construct('P', 'mm', $this->format);
 
         //Colocar el magen
         $this->SetMargins(2, 5, 2);
@@ -68,6 +70,8 @@ class SaleInvoiceA extends TCPDF
 
         //Titulo de la ventana
         $this->setY('10');
+
+        //        //Titulo de la ventana
         $this->Cell(0, 5, $this->setting->name, 0, 1, 'C', 0, '', 0, false, 'M' );
 
         //Direccions

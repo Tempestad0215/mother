@@ -14,6 +14,9 @@ import DatePicker from 'primevue/datepicker';
 import FloatLabel from 'primevue/floatlabel';
 import Toast from 'primevue/toast';
 import {useToast} from "primevue";
+import axios from "axios";
+import {ref, Ref} from "vue";
+import ShowPdf from "@components/ShowPdf.vue";
 
 
 const toast = useToast()
@@ -53,6 +56,13 @@ const form = useForm({
 
 
 /*
+Datos de la ventana
+ */
+const pdfUrl:Ref<string> = ref("");
+const showPdf:Ref<boolean> = ref(false);
+
+
+/*
 Funciones
  */
 
@@ -64,6 +74,36 @@ Funciones
  */
 const multCoin = (value:number, factor:number):number => {
     return value * factor;
+}
+
+
+/**
+ * Obtener el PDF
+ */
+const getPdf = () => {
+    axios.get(route('sale.report.get'))
+        .then((data)=>{
+            if (data.status === 200)
+            {
+                //Para mostrar el pdf
+                showPdf.value = true;
+                pdfUrl.value = data.data.url;
+
+                //Resetear las varibales
+                setTimeout(()=>{
+                    pdfUrl.value = "";
+                    showPdf.value = false;
+                },1500)
+
+            }
+        }).catch(()=>{
+            toast.add({
+                severity: 'error',
+                summary: 'Error Al Generar PDF',
+                detail: 'Intente Generar El PDF Nuevamente',
+                life: 5000
+            });
+    });
 }
 
 
@@ -104,17 +144,33 @@ const submit = () => {
                 summary: 'Datos Registrado Correctamente',
                 life: 3000,
             });
+
+            //Para mostrar el PDF
+            getPdf()
+
             //Limpiar el formulario
             form.reset();
         },
         onError: async (error:any) => {
             toast.add({
                 severity: 'error',
-                summary: 'Erro al crear El Conteo',
+                summary: 'Erro Al Crear El Conteo',
                 detail: error.general,
                 life: 5000
             });
         }
+    });
+}
+
+
+/**
+ * Mensaje de error del pdf
+ */
+const getErrorPdf = () => {
+    toast.add({
+        severity: 'error',
+        summary: 'Error Al Intentar Mostrar PDF',
+        life: 1500,
     });
 }
 
@@ -623,6 +679,15 @@ const submit = () => {
                                 </p>
 
                             </Fieldset>
+
+                            <div v-if="Object.keys(form.errors).length > 0">
+                                <ol >
+                                    <li v-for="error in form.errors" :key="error"
+                                        class="text-red-500">
+                                        {{error}}
+                                    </li>
+                                </ol>
+                            </div>
                         </div>
 
 <!--                        Boton para enviar los datos-->
@@ -635,10 +700,17 @@ const submit = () => {
                     </div>
 
                 </div>
-
-
-
             </form>
+
+
+
+            <ShowPdf
+                @send-error="getErrorPdf"
+                v-if="showPdf"
+                :pdf="pdfUrl">
+            </ShowPdf>
+
+
         </div>
 
     </AppLayout>

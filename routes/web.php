@@ -14,9 +14,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductSaleController;
 use App\Http\Controllers\SettingController;
-use App\Invoices\InvoiceCounterB5;
 use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
@@ -59,6 +57,9 @@ Route::middleware([
            ->name('index');
        Route::post('/','store')->name('store');
     });
+
+
+
     /*
      * Secuencia de RNC
      */
@@ -73,8 +74,6 @@ Route::middleware([
             Route::get('/{sequence}','edit')->name('edit');
             Route::delete('/{sequence}','destroy')->name('destroy');
         });
-
-
 
 
     /**
@@ -208,6 +207,7 @@ Route::middleware([
         ->group(function(){
            Route::get('/','index')->name('index');
            Route::post('/','store')->name('store');
+           Route::get('/print','get')->name('get');
         });
 
 
@@ -281,26 +281,5 @@ Route::middleware([
         ->group(function (){
            Route::get('/getA/{sale}','getA')->name('getA');
         });
-
-
-
-
-
-    Route::get('/test', function (){
-
-
-       $pdf = new InvoiceCounterB5(1);
-
-       return $pdf->getData();
-
-//        $sale = Sale::find(24);
-//
-//        $pdf = new SaleInvoiceA($sale);
-//
-//        $pdf->setData();
-//
-//        $pdf->Output();
-    });
-
 
 });

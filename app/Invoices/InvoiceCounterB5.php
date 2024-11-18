@@ -15,15 +15,20 @@ class InvoiceCounterB5 extends TCPDF
     private float $headerEnd;
     private int $line = 68;
 
-
-    public function __construct(int $id)
+    /**
+     * Contructor del metodo
+     * @param MoneyCounter $moneyCounter
+     */
+    public function __construct(
+        MoneyCounter $moneyCounter,
+    )
     {
         //Para poner los datos del counter
-        $this->moneyCounter = MoneyCounter::find($id);
+        $this->moneyCounter = $moneyCounter;
         $this->setting = Setting::first();
 
         //crear la altura de los datos
-        $format = [72, 150];
+        $format = [72, 230];
 
 
         //Llamar el constructor del padre
@@ -49,7 +54,8 @@ class InvoiceCounterB5 extends TCPDF
 
         $this->setFont('times', 'B', 14);
 
-        //Titulo de la ventana
+
+//        //Titulo de la ventana
         $this->setY('5');
         $this->Cell(0, 5, $this->setting->name, 0, 1, 'C', 0, '', 0, false, 'M' );
 
@@ -78,104 +84,172 @@ class InvoiceCounterB5 extends TCPDF
         $this->Ln(5);
 
 
+        //Fecha de informee
+        $this->Cell(20,5,'Desde :');
+        $this->Cell(30,5,$this->moneyCounter->from ,0,1);
+
+        $this->Cell(20,5,'Hasta :');
+        $this->Cell(30,5,$this->moneyCounter->to,0,1);
+
+
+
         $this->setFont('times', 'B', 14);
         //Titulo de la ventana
-        $this->Cell(0, 5, 'Conteo De Papeleta', 0, 1, 'C', 0, '', 0, false, 'M' );
+        $this->Cell(0, 5, 'Conteo De Papeleta', 0, 1, 'C');
 
 
 
         $this->setFont('helvetica', '', 10);
         //Crea el encabezado de la tabla
-        $headerTable = <<<EOD
-            <table
-                style="border: 1px solid black;">
-                <tr
-                    >
-                    <th
-                        style="width:30mm; border: 1px solid black;" >
-                        Cant.</th>
-
-                    <th
-                         style="width:38mm; border: 1px solid black;">
-                        Importe</th>
-                </tr>
-            </table>
-            EOD;
-
-
-        //Crea el encabezado de los productos
-        $this->writeHTML($headerTable, 1, false, true);
 
         $this->headerEnd = $this->GetY();
     }
 
 
-
-
-    public function getData()
+    /**
+     * @return string
+     */
+    public function setData():string
     {
-        $this->setMargins(4, 2, 2);
+        //Para colocar el inicio
+        $this->setY($this->headerEnd + 5);
+        //Tipo de letras
         $this->setFont('helvetica', '', 10);
-        $dataTable = <<<EOD
-            <table>
-                <tr>
-                    <td>{$this->moneyCounter->coin_first} * 1</td>
-                    <td>{$this->moneyCounter->coin_first}</td>
-                </tr>
-                <tr>
-                    <td>{$this->moneyCounter->coin_second} * 5</td>
-                    <td>{$this->resultCount($this->moneyCounter->coin_second,5) }</td>
-                </tr>
-                <tr>
-                    <td>{$this->moneyCounter->coin_third} * 10</td>
-                    <td>{$this->resultCount($this->moneyCounter->coin_third,10) }</td>
-                </tr>
-                <tr>
-                    <td>{$this->moneyCounter->coin_fourth} * 25</td>
-                    <td>{$this->resultCount($this->moneyCounter->coin_fourth,25) }</td>
-                </tr>
-                <tr>
-                    <td>{$this->moneyCounter->coin_fifth} * 50</td>
-                    <td>{$this->resultCount($this->moneyCounter->coin_fifth,50) }</td>
-                </tr>
-                <tr>
-                    <td>{$this->moneyCounter->coin_sixth} * 100</td>
-                    <td>{$this->resultCount($this->moneyCounter->coin_sixth,100) }</td>
-                </tr>
-                <tr>
-                    <td>{$this->moneyCounter->coin_seventh} * 200</td>
-                    <td>{$this->resultCount($this->moneyCounter->coin_seventh,200) }</td>
-                </tr>
-                <tr>
-                    <td>{$this->moneyCounter->coin_eighth} * 500</td>
-                    <td>{$this->resultCount($this->moneyCounter->coin_eighth,500) }</td>
-                </tr>
-                <tr>
-                    <td>{$this->moneyCounter->coin_ninth} * 1,000</td>
-                    <td>{$this->resultCount($this->moneyCounter->coin_ninth,1000) }</td>
-                </tr>
-                <tr>
-                    <td>{$this->moneyCounter->coin_tenth} * 2,000</td>
-                    <td>{$this->resultCount($this->moneyCounter->coin_tenth,2000) }</td>
-                </tr>
 
-            </table>
-        EOD;
+        $wType = 35; //Ancho de la ventana
+        $wQuantity = 33; //Ancho de la cantidad
 
-        $this->setY($this->headerEnd - 3);
-        $this->writeHTML($dataTable, true, false, true);
+        // Agregar la datos
+        $this->Cell($wType,5, 'Tipo', 1, 0, 'C', 0);
+        $this->Cell($wQuantity,5, 'Cantidad', 1, 1, 'C', 0);
+
+        //Colocar el tipod e monedaa
+
+        $this->Cell($wType,5, 'Moneda de 1', 0, 0, 'L', 0);
+        $this->Cell($wQuantity,5,number_format($this->moneyCounter->coin_first,2), 0, 1, 'C', 0);
+
+        //Moneda de 5
+        $this->Cell($wType,5, 'Moneda de 5', 0, 0, 'L', 0);
+        $this->Cell($wQuantity,5,number_format($this->moneyCounter->coin_second,2), 0, 1, 'C', 0);
+
+        //Moneda de 10
+        $this->Cell($wType,5, 'Moneda de 10', 0, 0, 'L', 0);
+        $this->Cell($wQuantity,5,number_format($this->moneyCounter->coin_third,2), 0, 1, 'C', 0);
+
+        //Moneda de 25
+        $this->Cell($wType,5, 'Moneda de 25', 0, 0, 'L', 0);
+        $this->Cell($wQuantity,5,number_format($this->moneyCounter->coin_fourth,2), 0, 1, 'C', 0);
+
+        //Moneda de 50
+        $this->Cell($wType,5, 'Papeleta de 50', 0, 0, 'L', 0);
+        $this->Cell($wQuantity,5,number_format($this->moneyCounter->coin_fifth,2), 0, 1, 'C', 0);
+
+        //Moneda de 100
+        $this->Cell($wType,5, 'Papeleta de 100', 0, 0, 'L', 0);
+        $this->Cell($wQuantity,5,number_format($this->moneyCounter->coin_sixth,2), 0, 1, 'C', 0);
+
+        //Moneda de 200
+        $this->Cell($wType,5, 'Papeleta de 200', 0, 0, 'L', 0);
+        $this->Cell($wQuantity,5,number_format($this->moneyCounter->coin_seventh,2), 0, 1, 'C', 0);
+
+        //Moneda de 500
+        $this->Cell($wType,5, 'Papeleta de 500', 0, 0, 'L', 0);
+        $this->Cell($wQuantity,5,number_format($this->moneyCounter->coin_eighth,2), 0, 1, 'C', 0);
+
+        //Moneda de 1000
+        $this->Cell($wType,5, 'Papeleta de 1,000', 0, 0, 'L', 0);
+        $this->Cell($wQuantity,5,number_format($this->moneyCounter->coin_ninth,2), 0, 1, 'C', 0);
+
+        //Moneda de 1000
+        $this->Cell($wType,5, 'Papeleta de 2,000', 0, 0, 'L', 0);
+        $this->Cell($wQuantity,5,number_format($this->moneyCounter->coin_tenth,2), 0, 1, 'C', 0);
 
 
-        return $this->Output('doc.pdf','I');
+        //Otros ingresos
+        $this->setFont('Times','U',14);
+        $this->Cell(0,5, 'Otros Ingresos', 0, 1, 'C', 0);
+
+
+
+        //Tarjetas
+        $this->setFont('Helvetica','',10);
+        $this->Cell($wType,5, 'Tarjeta', 0, 0, 'L', 0 );
+        $this->Cell($wQuantity,5,number_format($this->moneyCounter->card,2), 0, 1, 'C', 0);
+
+
+        //Tarjetas
+        $this->Cell($wType,5, 'Tranferencia', 0, 0, 'L', 0 );
+        $this->Cell($wQuantity,5,number_format($this->moneyCounter->transfer,2), 0, 1, 'C', 0);
+
+        //Cheque
+        $this->Cell($wType,5, 'Cheque', 0, 0, 'L', 0 );
+        $this->Cell($wQuantity,5,number_format($this->moneyCounter->check,2), 0, 1, 'C', 0);
+
+
+        //Otros ingresos
+        $this->Cell($wType,5, 'Otros Ingresos', 0, 0, 'L', 0);
+        $this->Cell($wQuantity,5,number_format($this->moneyCounter->other_income,2), 0, 1, 'C', 0);
+
+
+        //Otros Gastos
+        $this->setFont('Times','U',14);
+        $this->Cell(0,5, 'Otros Gastos', 0, 1, 'C', 0);
+
+
+        //Tarjetas
+        $this->setFont('Helvetica','',10);
+        $this->Cell($wType,5, 'Gatos', 0, 0, 'L', 0 );
+        $this->Cell($wQuantity,5,number_format($this->moneyCounter->expenses,2), 0, 1, 'C', 0);
+
+
+        //Retiro de caja
+        $this->Cell($wType,5, 'Retiro Caja', 0, 0, 'L', 0 );
+        $this->Cell($wQuantity,5,number_format($this->moneyCounter->cash_withdrawals,2), 0, 1, 'C', 0);
+
+        //Devoluciones
+        $this->Cell($wType,5, 'Devoluciones', 0, 0, 'L', 0);
+        $this->Cell($wQuantity,5,number_format($this->moneyCounter->refund,2), 0, 1, 'C', 0);
+
+        //Otros Gastos
+        $this->Cell($wType,5, 'Otros Gatos', 0, 0, 'L', 0 );
+        $this->Cell($wQuantity,5, number_format($this->moneyCounter->other_expenses,2), 0, 1, 'C', 0);
+
+
+
+        //Balance Inicial
+        $this->setFont('Times','U',14);
+        $this->Cell(0,5, 'Balance Inicial', 0, 1, 'C', 0);
+        $this->setFont('helvetica','',10);
+        $this->Cell(0,5, number_format($this->moneyCounter->opening_balance,2)  , 0, 1, 'C', 0);
+
+
+        //Titulod e resultado
+        $this->setFont('Times','U',14);
+        $this->Cell(0,5, 'Resultado', 0, 1, 'C', 0);
+
+
+        //Tarjetas
+        $this->setFont('Helvetica','',10);
+        $this->Cell($wType,5, 'Ingresos', 0, 0, 'L', 0 );
+        $this->Cell($wQuantity,5, number_format($this->moneyCounter->total_coin,2), 0, 1, 'C', 0);
+
+        //Otros ingresos
+        $this->Cell($wType,5, 'Otros Ingresos', 0, 0, 'L', 0 );
+        $this->Cell($wQuantity,5, number_format( $this->moneyCounter->total_other_coin, 2), 0, 1, 'C', 0);
+
+        //Gastos
+        $this->Cell($wType,5, 'Gastos', 0, 0, 'L', 0 );
+        $this->Cell($wQuantity,5, number_format($this->moneyCounter->total_expenses,2), 0, 1, 'C', 0);
+
+        //Difrencia
+        $this->Cell($wType,5, 'Beneficios', 0, 0, 'L', 0 );
+        $this->Cell($wQuantity,5, number_format($this->moneyCounter->diff,2), 0, 1, 'C', 0);
+
+
+        return $this->Output('test.pdf','S');
     }
 
 
-
-
-    private function resultCount(float $coint, int $factor)
-    {
-        return number_format($coint * $factor,2);
-    }
 
 
 }
