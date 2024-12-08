@@ -179,6 +179,7 @@ const submit = () => {
  */
 const printFact = async (id:number) => {
 
+
     //Data de la busqueda
     const data = await axios.get(route('invoice.getA',{sale: id}));
 
@@ -195,6 +196,7 @@ const printFact = async (id:number) => {
         //PAra cancelar la instruccion
         return
     }
+
 
 
     //Poner la url

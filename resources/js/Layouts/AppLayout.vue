@@ -130,6 +130,7 @@ const menuItem = ref([
             {
                 label: 'Informes',
                 icon: 'fa-solid fa-chart-pie',
+                visible: checkIsAdmin(),
                 items: [
                     {
                         label: 'Cuadre Caja',

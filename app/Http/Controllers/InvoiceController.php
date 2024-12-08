@@ -106,6 +106,7 @@ class InvoiceController extends Controller
      */
     public function getA(Sale $sale): JsonResponse
     {
+
         return $this->generatePDF(
             $sale,
             SaleInvoiceA::class,

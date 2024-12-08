@@ -23,6 +23,10 @@ import PaymentInvoice from "@components/PaymentInvoice.vue";
 import ReturnForm from "@components/ReturnForm.vue";
 import InputNumber from 'primevue/inputnumber';
 import Textarea from 'primevue/textarea';
+import InputText from 'primevue/inputtext';
+import ToggleButton from 'primevue/togglebutton';
+
+
 
 
 /*
@@ -108,6 +112,7 @@ const sequenceData:Ref<sequenceDataI | undefined> = ref(undefined);
 const showClientRnc:Ref<boolean> = ref(false);
 const showReturn:Ref<boolean> = ref(false);
 const showFormReturn:Ref<boolean> = ref(false);
+
 
 //DDATOS DEL dpf
 const pdfUrl:Ref<string> = ref("");
@@ -938,23 +943,10 @@ const getErrorPdf = () => {
                                 <!--Tipo de factura-->
                                 <div class="ml-3">
                                     <InputLabel for="type" value="Tipo de Venta"/>
-                                    <select
-                                        title="Tipo de Venta"
-                                        v-model="form.type"
-                                        class="border-gray-200 rounded-md"
-                                        name="type"
-                                        id="type">
-                                        <option
-                                            :disabled="propsW.refund"
-                                            value="ventas">Ventas</option>
-                                        <option
-                                            :disabled="propsW.refund"
-                                            value="contizacion">Cotizacion</option>
-                                        <option
-                                            :disabled="!propsW.refund"
-                                            value="devolucion">Devolución</option>
-                                    <!--<option value="">Credito</option>-->
-                                    </select>
+                                    <InputText
+                                        readonly
+                                        default-value="ventas"
+                                        v-model="form.type"/>
                                     <InputError :message="form.errors.type"/>
                                 </div>
                                 <!--Tipo de cuenta si abierta o cerrada-->
@@ -964,13 +956,10 @@ const getErrorPdf = () => {
                                     <InputLabel
                                         for="type_account"
                                         value="Cuenta"/>
-                                    <select
-                                        title="Tipo de Cuenta"
+                                    <ToggleButton
                                         v-model="form.close_table"
-                                        class="border-gray-200 rounded-md">
-                                        <option :value="false">Abierta</option>
-                                        <option :value="true">Cerrada</option>
-                                    </select>
+                                        onLabel="Cerrada"
+                                        offLabel="Abierta" />
                                 </div>
                             </div>
 

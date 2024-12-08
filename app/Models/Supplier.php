@@ -52,12 +52,15 @@ class Supplier extends Model implements Auditable
 
 
 
-
+    /*
+     * Para buscar los datos
+     */
     public function toSearchableArray():array
     {
         return [
             'code' => $this->code,
             'company_name' => $this->company_name,
+            'contact' => $this->contact,
             'phone' => $this->phone,
             'email' => $this->email,
         ];

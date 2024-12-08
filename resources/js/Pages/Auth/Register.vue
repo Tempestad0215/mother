@@ -7,12 +7,15 @@ import TextInput from '@/Components/TextInput.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import ActionMessage from '@/Components/ActionMessage.vue';
 import {userI, userPaginationI} from "@/Interfaces/User";
-import {computed} from "vue";
+import {computed, ref, Ref} from "vue";
 import Swal from "sweetalert2";
 import {successHttp} from "@/Global/Alert";
 import FormSearch from "@components/FormSearch.vue";
 import Pagination from "@components/Pagination.vue";
 import {paginationJoin} from "@/Global/Helpers";
+import Select from 'primevue/select';
+import ToggleButton from 'primevue/togglebutton';
+
 
 /*
 Propiedad de la ventana
@@ -44,6 +47,24 @@ const formSearch = useForm({
     search:"",
     perPage: 15
 });
+
+/*
+Datos d la ventana
+ */
+const role:Ref<any[]> = ref([
+    {
+        name: 'user',
+        label: 'USER',
+    },
+    {
+        name: 'supervisor',
+        label: 'SUPERVIOR',
+    },
+    {
+        name: 'admin',
+        label: 'ADMIN',
+    }
+]);
 
 
 
@@ -179,26 +200,22 @@ const search = () => {
                 v-if="form.update"
                 class="flex-1">
                 <InputLabel for="modifyPassoword" value="Modificar Contraseña" />
-                <select
-                    name="modifyPassowrd"
+                <ToggleButton
                     v-model="form.modify_password"
-                    class=" w-full rounded-md border-gray-300">
-                    <option :value="false" >NO</option>
-                    <option :value="true" >SI</option>
-                </select>
+                    onLabel="SI"
+                    offLabel="NO" />
 
             </div>
 
             <!-- Rol de usuarios -->
             <div class="flex-1">
                 <InputLabel for="role" value="Rol *"  />
-                <select
+                <Select
+                    :options="role"
                     v-model="form.role"
-                    class=" w-full /4 rounded-md border-gray-300">
-                    <option value="user">USER</option>
-                    <option value="supervisor">SUPERVISOR</option>
-                    <option value="admin">ADMIN</option>
-                </select>
+                    option-label="label"
+                    option-value="name"
+                    fluid/>
 
                 <!-- Mensaje de error -->
                 <InputError class="mt-2" :message="form.errors.role" />

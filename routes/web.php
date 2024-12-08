@@ -14,6 +14,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductSaleController;
 use App\Http\Controllers\SettingController;
+use App\Http\Middleware\IsAdminMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -48,7 +49,7 @@ Route::middleware([
     /*
      * Configuracion de la app
      */
-    Route::controller(SettingController::class)
+    Route::middleware([IsAdminMiddleware::class])->controller(SettingController::class)
         ->prefix('setting')
         ->name('setting.')
         ->group(function () {
@@ -63,7 +64,7 @@ Route::middleware([
     /*
      * Secuencia de RNC
      */
-    Route::controller(SequenceController::class)
+    Route::middleware([IsAdminMiddleware::class])->controller(SequenceController::class)
         ->prefix('setting/sequence')
         ->name('sequence.')
         ->group(function () {
@@ -99,7 +100,7 @@ Route::middleware([
     /**
      * Usuario
      */
-    Route::controller(UserController::class)
+    Route::middleware([IsAdminMiddleware::class])->controller(UserController::class)
     ->prefix('user')
     ->name('user.')
     ->group(function () {
@@ -282,4 +283,14 @@ Route::middleware([
            Route::get('/getA/{sale}','getA')->name('getA');
         });
 
+
+//
+//    Route::get('/test',function(){
+////        $sale = \App\Models\Sale::find(1);
+////
+////       $pdf = new \App\Invoices\SaleInvoiceA($sale);
+////
+////       return $pdf->setData();
+//
+//    });
 });

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Date;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
+use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
@@ -24,6 +25,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 class User extends Authenticatable implements Auditable
 {
+    use Searchable;
     use HasApiTokens;
     use HasFactory;
     use HasProfilePhoto;
@@ -56,6 +58,7 @@ class User extends Authenticatable implements Auditable
         'two_factor_secret',
     ];
 
+
     /**
      * The accessors to append to the model's array form.
      *
@@ -77,6 +80,20 @@ class User extends Authenticatable implements Auditable
             'password' => 'hashed',
             'status' => 'boolean',
             'role' => UserRoleEnum::class
+        ];
+    }
+
+
+    /**
+     * Para buscar los datos
+     * @return array
+     */
+    public function toSearchableArray():array
+    {
+        return [
+            'name' => $this->name,
+            'email' => $this->email,
+            'role' => $this->role,
         ];
     }
 }

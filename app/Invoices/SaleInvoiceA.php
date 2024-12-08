@@ -10,7 +10,6 @@ use App\Models\Setting;
 use Carbon\Carbon;
 use TCPDF;
 use Illuminate\Support\Str;
-use function Illuminate\Events\queueable;
 
 
 /**
@@ -28,7 +27,7 @@ class SaleInvoiceA extends TCPDF
 
     public function __construct(
         public Sale $sale,
-        public $height = 168)
+        public $height = 172)
     {
 
 
