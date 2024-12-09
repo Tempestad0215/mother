@@ -10,6 +10,8 @@ import {categoryI} from "@/Interfaces/Categories";
 import {supplierI} from "@/Interfaces/Supplier";
 
 
+
+
 //Propiedades de la ventana
 const props = defineProps<{
     productEdit? : productSupplierI,

@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import { ref} from 'vue';
+import {onMounted, onUnmounted, ref} from 'vue';
 import {Head, Link, router, usePage} from '@inertiajs/vue3';
+import LinkHeader from "@components/LinkHeader.vue";
+import Divider from "@components/Divider.vue";
+import ImageMenu from "@components/ImageMenu.vue";
 
 
 /*
@@ -18,13 +21,41 @@ defineProps({
 });
 
 
+const menuImageRef = ref<HTMLElement | null>(null);
+
+
+/*
+Al momento de cargar
+ */
+onMounted(()=>{
+   document.addEventListener("click", handleClick)
+});
+
+/*
+Cuando se cancela el evento
+ */
+onUnmounted(() => {
+    document.removeEventListener("click", handleClick)
+})
+
+
+
+/*
+Funciones
+ */
+/**
+ * Verificar si el click fue afuera
+ */
+const handleClick = (event: MouseEvent) => {
+    if (menuImageRef.value && !menuImageRef.value.contains(event.target as Node)){
+        showOption.value = false;
+    }
+}
 
 //Verificar si es admin
 const checkIsAdmin = ():boolean => {
     return props.auth.user.role == 'admin';
 }
-
-
 
 
 /*
@@ -218,67 +249,43 @@ const menuItem = ref([
 <template>
     <Head :title="title"/>
 
+<!--    Contenido de la ventana-->
+    <div class=" flex">
+        <aside class=" bg-gray-100 h-screen w-[10rem]">
+<!--            Mostrar la imagen del menu-->
+            <ImageMenu :url="props.auth.user.profile_photo_url"/>
+<!--            Dividir la linea-->
+            <Divider/>
 
-    <div class="">
-        <aside class=" fixed bg-gray-200 w-[10rem] h-screen z-30">
-            <img
-                @click="showOption = !showOption"
-                class="rounded-full mx-auto mt-5"
-                :src="props.auth.user ? props.auth.user.profile_photo_url : ''"
-                alt="Imagen de nombre">
-
-
-
+            <div>
+                <LinkHeader
+                    title="Cliente"
+                    :href="route('category.create')">
+                    Cliente
+                    <i class="relative left-12 fa-solid fa-user"></i>
+                </LinkHeader>
+            </div>
 
         </aside>
-        <Transition>
-            <div
-                v-if="showOption"
-                class=" absolute top-14 left-12 w-52 rounded-md bg-gray-200 z-40 border-2 border-gray-500">
-                <ol class=" text-xl text-center select-none">
-                    <Link
-                        class="image-link"
-                        :href="route('profile.show')">
-                        Perfil
-                    </Link>
-                    <Link
-                        class="image-link"
-                        :href="route('register')">
-                        Usuario
-                    </Link>
-                    <Link
-                        class="image-link"
-                        method="post"
-                        :href="route('logout')">
-                        Salir
-                    </Link>
 
-                </ol>
-            </div>
-        </Transition>
 
 
 <!-- Contenido de la ventana-->
         <div
             class="flex-col flex-1">
-<!--            <div class="float-right">-->
-<!--                &lt;!&ndash;                Para el modo nocturno&ndash;&gt;-->
-<!--                <ToggleSwitch-->
-<!--                    v-model="darkMode" />-->
-<!--            </div>-->
+
+<!--            Cabecera de la ventana-->
             <header
-                class=" flex items-center justify-center space-x-3 fixed top-0 h-[4rem] flex-1 w-full bg-gray-200 z-20">
+                class=" h-[4rem] w-full bg-gray-100 z-20">
 
 <!--                Para el contenido-->
                 <slot name="header"/>
             </header>
-            <div
-                class="flex pl-[11rem] pt-[5rem] rounded-md ">
-                    <div
-                        class=" flex-1 md:max-w-[1100px] mx-auto bg-gray-200 rounded-md">
-                        <slot/>
-                    </div>
 
+<!--            Contendio de la ventaa-->
+            <div
+                class="p-3 max-h-[90vh] overflow-x-auto">
+                <slot/>
             </div>
         </div>
     </div>

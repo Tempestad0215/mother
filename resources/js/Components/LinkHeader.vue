@@ -14,7 +14,7 @@ const props = defineProps({
 });
 
 const isActive = computed(()=>{
-    return props.active ? 'bg-gray-800 text-white' : '';
+    return props.active ? 'bg-green-600 text-white' : '';
 });
 
 
@@ -22,9 +22,10 @@ const isActive = computed(()=>{
 
 <template>
     <Link
-        class="bg-gray-300 px-3 py-1 rounded-md hover:bg-gray-800 ease-in-out duration-300 hover:text-white"
+        class=" block bg-green-300 px-3 py-1 rounded-md hover:bg-green-600 ease-in-out duration-300 hover:text-white"
         :class="isActive"
         :href="props.href">
         <slot/>
     </Link>
+
 </template>

@@ -467,10 +467,9 @@ const getRnc = async () => {
                     <div>
                         <InputLabel for="comment" value="Comentario"/>
 
-                        <Textarea
+                        <textarea
                             v-model="form.comment"
                             rows="2"
-                            auto-resize
                             cols="60" />
                         <InputError :message="form.errors.comment"/>
                     </div>

@@ -82,6 +82,6 @@ body{
     Link de la imagen
      */
     .image-link{
-        @apply block border-b-2 border-gray-400 rounded-md  hover:bg-gray-600 hover:text-white duration-300;
+        @apply block border-b even:bg-green-400 bg-green-300 border-green-700  hover:bg-green-600 hover:text-white duration-300;
     }
 }
