@@ -13,9 +13,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('advances', function (Blueprint $table) {
-            $table->id();
-            $table->string('code',30)->unique();
-            $table->foreignIdFor(Client::class,'client_id')->constrained('clients')->onUpdate('restrict')->onDelete('restrict');
+            $table->uuid()->primary();
+            $table->foreignUuid(Client::class);
             $table->decimal('amount',15,4);
             $table->date('date');
             $table->date('expire')->nullable();
@@ -24,10 +23,6 @@ return new class extends Migration
             $table->boolean('status')->default(true);
             $table->softDeletes();
             $table->timestamps();
-
-
-            //fulltext
-            $table->fullText('code');
         });
     }
 

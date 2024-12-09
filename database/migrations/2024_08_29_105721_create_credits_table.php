@@ -13,9 +13,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('credits', function (Blueprint $table) {
-            $table->id();
-            $table->string('code', 30)->unique();
-            $table->foreignIdFor(Client::class, 'client_id');
+            $table->uuid()->primary();
+            $table->foreignUuid(Client::class);
             $table->decimal('limit_amount',14,4);
             $table->integer('limit_day');
             $table->integer('expired_day');
@@ -25,9 +24,6 @@ return new class extends Migration
             $table->boolean('status')->default(true);
             $table->softDeletes();
             $table->timestamps();
-
-            //fulltext
-            $table->fullText('code');
         });
     }
 

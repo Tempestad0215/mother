@@ -13,8 +13,6 @@ import {successHttp} from "@/Global/Alert";
 import FormSearch from "@components/FormSearch.vue";
 import Pagination from "@components/Pagination.vue";
 import {paginationJoin} from "@/Global/Helpers";
-import Select from 'primevue/select';
-import ToggleButton from 'primevue/togglebutton';
 
 
 /*

@@ -14,8 +14,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('products', function (Blueprint $table) {
-            $table->id();
-            $table->string('code',30)->unique();
+            $table->uuid()->primary();
             $table->string('name',75);
             $table->string('description',255)->nullable();
             $table->string('sku',75)->nullable();
@@ -44,8 +43,8 @@ return new class extends Migration
 
 
             //Relaciones de los productos
-            $table->foreignIdFor(Category::class,'category_id');
-            $table->foreignIdFor(Supplier::class, 'supplier_id');
+            $table->foreignUuid(Category::class);
+            $table->foreignUuid(Supplier::class);
             $table->enum('type',['producto','servicio'])->default('producto');
             $table->boolean('inventoried')->default(true);
             $table->boolean('status')->default(true);
@@ -55,7 +54,6 @@ return new class extends Migration
 
 
             //Texto de busqueda completa
-            $table->fullText('code');
             $table->fullText('bar_code');
             $table->fullText('sku');
         });

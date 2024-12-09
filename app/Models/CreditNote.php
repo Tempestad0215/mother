@@ -91,42 +91,4 @@ class CreditNote extends Model
     }
 
 
-
-    /**
-     * @return void
-     */
-    protected static function boot():void
-    {
-        // Llamar el metodo principal
-        parent::boot();
-
-        //Generar el codigo
-        static::creating(function ($sale) {
-            $sale->code = self::generateCode($sale->type);
-        });
-    }
-
-
-
-    /**
-     * @param SaleTypeEnum $type
-     * @return string
-     *
-     */
-    // funcion para generar el codigo
-    private static function generateCode(SaleTypeEnum $type):string
-    {
-        // Obtener el ultimo registros
-        $last = self::where('type', $type)->orderBy('id','desc')->first();
-
-        // Generar el proximo ID
-        $nextID = $last ? $last->id + 1 : 1;
-
-        $code = config('appconfig.saleRet');
-
-        // craer el codigp
-        return $code.str_pad($nextID, 6,'0', STR_PAD_LEFT);
-    }
-
-
 }

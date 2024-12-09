@@ -16,14 +16,8 @@ return new class extends Migration {
             $table->decimal('n_available',15,4);
             $table->string('type',20)->default('Devolucion');
             $table->boolean('status')->default(true);
-            $table->foreignIdFor(Sale::class, 'sale_id')
-                ->constrained('sales')
-                ->onUpdate('restrict')
-                ->onDelete('restrict');
-
-
+            $table->foreignUuid(Sale::class);
             //Full text
-            $table->fullText('code');
             $table->fullText('ncf');
             $table->fullText('ncf_m');
         });

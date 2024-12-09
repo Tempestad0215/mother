@@ -26,8 +26,7 @@ return new class extends Migration
             $table->float('credit_notes_amount')->default(0);
 
 
-            //Fulltext
-            $table->fullText('code');
+            //Fulltext;
             $table->fullText('ncf');
         });
     }

@@ -15,22 +15,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pro_trans', function (Blueprint $table) {
-            $table->id();
-            $table->string('code',30)->unique();
-            $table->foreignIdFor(Sale::class,'sale_id')
-                ->nullable()
-                ->constrained('sales',)
-                ->onUpdate('restrict')
-                ->onDelete('restrict');
-            $table->foreignIdFor(Product::class,'product_id')
-                ->constrained('products')
-                ->onUpdate('restrict')
-                ->onDelete('restrict');
-            $table->foreignIdFor(CreditNote::class,'credit_note_id')
-                ->nullable()
-                ->constrained('credit_notes')
-                ->onUpdate('restrict')
-                ->onDelete('restrict');
+            $table->uuid()->primary();
+            $table->foreignUuid(Sale::class)
+                ->nullable();
+            $table->foreignUuid(Product::class);
+            $table->foreignUuid(CreditNote::class)
+                ->nullable();
             $table->string('product_name',75);
             $table->decimal('stock',15,4);
             $table->decimal('reserved');
@@ -47,10 +37,6 @@ return new class extends Migration
             $table->boolean('status')->default(true);
             $table->softDeletes();
             $table->timestamps();
-
-
-            //Full text
-            $table->fullText('code');
         });
     }
 

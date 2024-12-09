@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\UserRoleEnum;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -14,8 +15,10 @@ use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Permission\Traits\HasRoles;
 
 /**
+ * @property string $uuid
  * @property string $name
  * @property string $email
  * @property UserRoleEnum $role
@@ -33,6 +36,13 @@ class User extends Authenticatable implements Auditable
     use TwoFactorAuthenticatable;
     use \OwenIt\Auditing\Auditable;
     use softDeletes;
+    use HasUuids;
+    use HasRoles;
+
+
+    protected $primaryKey = 'uuid';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     /**
      * The attributes that are mass assignable.
@@ -42,7 +52,6 @@ class User extends Authenticatable implements Auditable
     protected $fillable = [
         'name',
         'email',
-        'role',
         'password',
     ];
 

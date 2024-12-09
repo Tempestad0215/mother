@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Scout\Searchable;
@@ -44,6 +45,7 @@ class MoneyCounter extends Model
 {
     use Searchable;
     use HasFactory;
+    use HasUuids;
 
     //table
     protected $table = 'money_counter';
@@ -111,41 +113,6 @@ class MoneyCounter extends Model
             get: fn(string $value) => Carbon::parse($value)->format('Y-m-d:H:I'),
             set: fn(string $value) => Carbon::parse($value)->format('Y-m-d:H:I'),
         );
-    }
-
-
-    /**
-     * @return void
-     */
-    protected static function boot():void
-    {
-        // Llamar el metodo principal
-        parent::boot();
-
-        //Generar el codigo
-        static::creating(function ($product) {
-            $product->code = self::generateCode();
-        });
-    }
-
-
-    /**
-     * @return string
-     */
-    // funcion para generar el codigo
-    private static function generateCode():string
-    {
-        // Obtener el ultimo registros
-        $last = self::orderBy('id','desc')->first();
-
-        // Generar el proximo ID
-        $nextID = $last ? $last->id + 1 : 1;
-
-        // Devolver los datos
-        $code = config('appconfig.couCode');
-
-        // craer el codigp
-        return $code.str_pad($nextID, 6,'0', STR_PAD_LEFT);
     }
 
 }

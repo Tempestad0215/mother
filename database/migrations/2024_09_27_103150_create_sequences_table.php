@@ -8,8 +8,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('sequences', function (Blueprint $table) {
-            $table->id();
-            $table->string('code');
+            $table->uuid()->primary();
             $table->enum('type', ['B01','B02','B03','B04','B11','B12','B13','B14','B15','B16','B17']);
             $table->integer('from');
             $table->integer('next');
@@ -22,10 +21,6 @@ return new class extends Migration {
             $table->boolean('status')->default(1);
             $table->softDeletes();
             $table->timestamps();
-
-
-            //fulltext
-            $table->fullText('code');
         });
     }
 

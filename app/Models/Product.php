@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ProductTypeEnum;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -54,6 +55,7 @@ class Product extends Model implements Auditable
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
     use softDeletes;
+    use HasUuids;
 
 
     /**
@@ -180,42 +182,6 @@ class Product extends Model implements Auditable
     public function trans():HasMany
     {
         return $this->hasMany(ProTrans::class);
-    }
-
-
-
-    /**
-     * @return void
-     */
-    protected static function boot():void
-    {
-        // Llamar el metodo principal
-        parent::boot();
-
-        //Generar el codigo
-        static::creating(function ($product) {
-            $product->code = self::generateCode();
-        });
-    }
-
-
-    /**
-     * @return string
-     */
-    // funcion para generar el codigo
-    private static function generateCode():string
-    {
-        // Obtener el ultimo registros
-        $last = self::orderBy('id','desc')->first();
-
-        // Generar el proximo ID
-        $nextID = $last ? $last->id + 1 : 1;
-
-        // Devolver los datos
-        $code = config('appconfig.proCode');
-
-        // craer el codigp
-        return $code.str_pad($nextID, 6,'0', STR_PAD_LEFT);
     }
 
 }

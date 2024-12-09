@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref} from 'vue';
 import {Head, Link, router, usePage} from '@inertiajs/vue3';
-import PanelMenu from 'primevue/panelmenu';
 
 
 /*
@@ -49,7 +48,7 @@ const menuItem = ref([
                 url: route('client.show')
             }
         ],
-        visible: checkIsAdmin()
+
     },
     {
         //Categorias
@@ -62,7 +61,7 @@ const menuItem = ref([
                 url: route('category.create')
             }
         ],
-        visible: checkIsAdmin()
+
     },
     {
         //Suplidores
@@ -75,7 +74,7 @@ const menuItem = ref([
                 url: route('supplier.create')
             }
         ],
-        visible: checkIsAdmin()
+
     },
     {
         //Productos
@@ -110,7 +109,7 @@ const menuItem = ref([
                 ]
             }
         ],
-        visible: checkIsAdmin()
+
     },
     {
         //Ventas
@@ -130,7 +129,6 @@ const menuItem = ref([
             {
                 label: 'Informes',
                 icon: 'fa-solid fa-chart-pie',
-                visible: checkIsAdmin(),
                 items: [
                     {
                         label: 'Cuadre Caja',
@@ -153,11 +151,11 @@ const menuItem = ref([
             },
 
         ],
-        visible: checkIsAdmin()
+
     },
     {
         separator: true,
-        visible: checkIsAdmin()
+
     },
     {
         label: 'Miembros',
@@ -174,7 +172,7 @@ const menuItem = ref([
                 url: route('profile.show'),
             }
         ],
-        visible: checkIsAdmin()
+
 
     },
     {
@@ -194,7 +192,7 @@ const menuItem = ref([
             }
 
         ],
-        visible: checkIsAdmin()
+
     },
     {
         separator: true,
@@ -229,10 +227,6 @@ const menuItem = ref([
                 :src="props.auth.user ? props.auth.user.profile_photo_url : ''"
                 alt="Imagen de nombre">
 
-            <div class="mt-5">
-                <PanelMenu
-                    :model="menuItem"/>
-            </div>
 
 
 

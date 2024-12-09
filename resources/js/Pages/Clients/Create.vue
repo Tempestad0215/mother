@@ -11,13 +11,6 @@ import { successHttp } from '@/Global/Alert';
 import {getRncHelper} from "@/Global/Helpers";
 import {rncUserI} from "@/Interfaces/Setting";
 import Swal from "sweetalert2";
-import Select from "primevue/select";
-import InputText from "primevue/inputtext";
-import ToggleButton from 'primevue/togglebutton';
-import InputGroup from 'primevue/inputgroup';
-import InputGroupAddon from 'primevue/inputgroupaddon';
-import InputMask from 'primevue/inputmask';
-import Textarea from 'primevue/textarea';
 
 /**
  * propsW de la vantana
@@ -254,12 +247,12 @@ const getRnc = async () => {
                     <!--                Tipo de cliente-->
                     <div>
                         <InputLabel for="tye" value="Tipo"/>
-                        <Select
-                            v-model="form.type"
-                            :options="typeClient"
-                            placeholder="Tipo Cliente"
-                            option-label="name"
-                            option-value="code"/>
+<!--                        <Select-->
+<!--                            v-model="form.type"-->
+<!--                            :options="typeClient"-->
+<!--                            placeholder="Tipo Cliente"-->
+<!--                            option-label="name"-->
+<!--                            option-value="code"/>-->
                         <InputError :message="form.errors.type"/>
                     </div>
 
@@ -267,12 +260,12 @@ const getRnc = async () => {
                     <!--Tipo de documento-->
                     <div class="ml-3">
                         <InputLabel for="document" value="Documento"/>
-                        <Select
-                            v-model="form.document"
-                            :options="typoDocument"
-                            default-value="cedula"
-                            option-label="name"
-                            option-value="code"/>
+<!--                        <Select-->
+<!--                            v-model="form.document"-->
+<!--                            :options="typoDocument"-->
+<!--                            default-value="cedula"-->
+<!--                            option-label="name"-->
+<!--                            option-value="code"/>-->
                         <InputError :message="form.errors.document"/>
                     </div>
 
@@ -280,9 +273,9 @@ const getRnc = async () => {
                     <!-- Estatus del cliente -->
                     <div class="ml-3">
                         <InputLabel value="Activo"/>
-                        <ToggleButton
-                            v-model="form.status"
-                            onLabel="SI" offLabel="NO" />
+<!--                        <ToggleButton-->
+<!--                            v-model="form.status"-->
+<!--                            onLabel="SI" offLabel="NO" />-->
                         <InputError :message="form.errors.status" />
                     </div>
 
@@ -298,7 +291,7 @@ const getRnc = async () => {
                         <InputLabel
                             for="name"
                             value="Nombre Completo *"/>
-                        <InputText
+                        <TextInput
                             placeholder="Nombre Completo"
                             fluid
                             v-model="form.name"
@@ -314,35 +307,13 @@ const getRnc = async () => {
                             for="personal_id"
                             value="Cédula / Pasaporte /RNC"/>
 
-                        <InputGroup>
-                            <InputMask
-                                v-if="form.document === 'cedula'"
-                                id="basic"
-                                v-model="form.personal_id"
-                                mask="999-9999999-9"
-                                placeholder="125-6536895-6" />
+                        <TextInput
+                            v-if="form.document === 'cedula'"
+                            id="basic"
+                            v-model="form.personal_id"
+                            mask="999-9999999-9"
+                            placeholder="125-6536895-6" />
 
-                            <InputMask
-                                v-if="form.document === 'rnc'"
-                                id="basic"
-                                v-model="form.personal_id"
-                                mask="999-99999-9"
-                                placeholder="563-54569-8" />
-
-                            <InputMask
-                                v-if="form.document === 'pasaporte'"
-                                id="basic"
-                                v-model="form.personal_id"
-                                mask="a*?9999999"
-                                placeholder="AA1234567" />
-                            <InputGroupAddon>
-                                <i
-                                    @click="getRnc()"
-                                    title="Buscar RNC"
-                                    class=" fa-solid fa-magnifying-glass"></i>
-                            </InputGroupAddon>
-
-                        </InputGroup>
 
 
 
@@ -355,7 +326,7 @@ const getRnc = async () => {
                         <InputLabel
                             for="phone"
                             value="Teléfono"/>
-                        <InputMask
+                        <TextInput
                             id="basic"
                             v-model="form.phone"
                             fluid
@@ -371,7 +342,7 @@ const getRnc = async () => {
                         <InputLabel
                             for="phone"
                             value="Correo"/>
-                        <InputText
+                        <TextInput
                             placeholder="example@example.com"
                             fluid
                             v-model="form.email"
@@ -388,7 +359,7 @@ const getRnc = async () => {
                             for="phone"
                             value="Dirección"/>
 
-                        <InputText
+                        <TextInput
                             placeholder="Puerto Plata, Padres Las Casas #12"
                             fluid
                             v-model="form.address"

@@ -12,17 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('comments', function (Blueprint $table) {
-            $table->id();
-            $table->string('code',30)->unique();
+            $table->uuid()->primary();
             $table->text('content');
-            $table->integer('commentable_id');
-            $table->string('commentable_type');
+            $table->uuidMorphs('commentable');
             $table->boolean('status')->default(true);
             $table->softDeletes();
             $table->timestamps();
-
-            //para fulltext
-            $table->fullText('code');
         });
     }
 

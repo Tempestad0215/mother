@@ -1,25 +1,16 @@
 <script setup lang="ts">
 import AppLayout from "@layout/AppLayout.vue";
 import LinkHeader from "@components/LinkHeader.vue";
-import InputNumber from 'primevue/inputnumber';
 import InputLabel from "@components/InputLabel.vue";
 import {useForm} from "@inertiajs/vue3";
 import InputError from "@components/InputError.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
-import Fieldset from 'primevue/fieldset';
-import InputGroup from 'primevue/inputgroup';
-import InputGroupAddon from 'primevue/inputgroupaddon';
 import {getMoney} from "@/Global/Helpers";
-import DatePicker from 'primevue/datepicker';
-import FloatLabel from 'primevue/floatlabel';
-import Toast from 'primevue/toast';
-import {useToast} from "primevue";
 import axios from "axios";
 import {ref, Ref} from "vue";
 import ShowPdf from "@components/ShowPdf.vue";
+import TextInput from "@components/TextInput.vue";
 
-
-const toast = useToast()
 
 
 /*
@@ -97,12 +88,7 @@ const getPdf = () => {
 
             }
         }).catch(()=>{
-            toast.add({
-                severity: 'error',
-                summary: 'Error Al Generar PDF',
-                detail: 'Intente Generar El PDF Nuevamente',
-                life: 5000
-            });
+
     });
 }
 
@@ -138,12 +124,6 @@ const submit = () => {
     //enviar los datos
     form.post(route('sale.report.store'),{
         onSuccess: async () => {
-            //Para El mensaje de exito
-            toast.add({
-                severity: 'success',
-                summary: 'Datos Registrado Correctamente',
-                life: 3000,
-            });
 
             //Para mostrar el PDF
             getPdf()
@@ -152,12 +132,7 @@ const submit = () => {
             form.reset();
         },
         onError: async (error:any) => {
-            toast.add({
-                severity: 'error',
-                summary: 'Erro Al Crear El Conteo',
-                detail: error.general,
-                life: 5000
-            });
+
         }
     });
 }
@@ -167,11 +142,7 @@ const submit = () => {
  * Mensaje de error del pdf
  */
 const getErrorPdf = () => {
-    toast.add({
-        severity: 'error',
-        summary: 'Error Al Intentar Mostrar PDF',
-        life: 1500,
-    });
+
 }
 
 
@@ -201,7 +172,6 @@ const getErrorPdf = () => {
         </template>
 <!--        Contenido de la ventana-->
         <div class="p-5 max-h-[90vh] overflow-y-auto">
-            <Toast />
 
             <h3 class="title text-center">
                 Cuadre de Caja
@@ -254,8 +224,7 @@ const getErrorPdf = () => {
                         <div>
                             <InputLabel for="coinOne" value="Moneda de 1" />
                             <InputGroup>
-                                <InputNumber
-                                    @valueChange="sumCoin"
+                                <TextInput
                                     v-model="form.coin_first"
                                     inputId="coinOne"
                                     locale="en-US"

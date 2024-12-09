@@ -13,17 +13,13 @@ class DataBaseHelper
      */
     public static function saleTable(Blueprint $table):void
     {
-        $table->id();
-        $table->string('code',30)->unique();
+        $table->uuid()->primary();
         $table->string('ncf',30)->nullable()->unique();
         $table->string('invoice_type',30)->nullable();
         $table->string('client_name')->nullable()->default('');
         $table->string('client_rnc',30)->nullable();
-        $table->foreignIdFor(Client::class,'client_id')
-            ->nullable()
-            ->constrained('clients')
-            ->onUpdate('restrict')
-            ->onDelete('restrict');
+        $table->foreignUuid(Client::class)
+            ->nullable();
         $table->decimal('discount_amount',15,4)->default(0);
         $table->decimal('tax',15,4);
         $table->decimal('sub_total',15,4);

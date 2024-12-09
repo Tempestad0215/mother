@@ -45,7 +45,6 @@ Route::middleware([
         ]);
     });
 
-
     /*
      * Configuracion de la app
      */
@@ -58,8 +57,6 @@ Route::middleware([
            ->name('index');
        Route::post('/','store')->name('store');
     });
-
-
 
     /*
      * Secuencia de RNC
@@ -75,7 +72,6 @@ Route::middleware([
             Route::get('/{sequence}','edit')->name('edit');
             Route::delete('/{sequence}','destroy')->name('destroy');
         });
-
 
     /**
      * Dashboard de la app
@@ -139,8 +135,6 @@ Route::middleware([
             Route::get('/get','getJson')->name('get.json');
         });
 
-
-
     /**
      * Suplidores
      */
@@ -155,8 +149,6 @@ Route::middleware([
         Route::patch('/destroy/{supplier}','destroy')->name('destroy');
 
     });
-
-
 
     /**
      * Productos
@@ -198,7 +190,6 @@ Route::middleware([
 
         });
 
-
     /*
      * Repotes de las ventas
      */
@@ -210,7 +201,6 @@ Route::middleware([
            Route::post('/','store')->name('store');
            Route::get('/print','get')->name('get');
         });
-
 
     /**
      * Notas de credito o devoluciones
@@ -226,7 +216,6 @@ Route::middleware([
             Route::patch('/{sale}','store')->name('store');
 
         });
-
 
     /**
      * Ventas
@@ -259,7 +248,6 @@ Route::middleware([
            Route::post('/daily','getDailyByDate')->name('getDailyByDate');
         });
 
-
     /**
      * Reporte de Ventas
      */
@@ -271,7 +259,6 @@ Route::middleware([
            Route::get('/json','reportSaleRange')->name('range');
 
         });
-
 
     /**
      * Facturas del sistema

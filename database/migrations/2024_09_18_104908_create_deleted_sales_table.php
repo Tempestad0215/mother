@@ -9,9 +9,8 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('deleted_sales', function (Blueprint $table) {
-            $table->id();
-            $table->string('code',30)->unique();
-            $table->foreignIdFor(Sale::class, 'sale_id');
+            $table->uuid()->primary();
+            $table->foreignUuid(Sale::class);
             $table->decimal('discount_amount',15,4)->default(0);
             $table->decimal('tax',15,4);
             $table->decimal('sub_total',15,4);
@@ -20,9 +19,6 @@ return new class extends Migration {
             $table->boolean('close_table')->default(false);
             $table->softDeletes();
             $table->timestamps();
-
-            //fulltect
-            $table->fullText('code');
         });
     }
 

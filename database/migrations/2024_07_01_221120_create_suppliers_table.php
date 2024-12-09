@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('suppliers', function (Blueprint $table) {
-            $table->id();
-            $table->string('code',30)->unique();
+            $table->uuid()->primary();
             $table->string('contact',75)->nullable();
             $table->string('company_name',150);
             $table->string('phone',20)->nullable();
@@ -24,7 +23,6 @@ return new class extends Migration
             $table->timestamps();
 
             //full text
-            $table->fullText('code');
             $table->fullText('phone');
             $table->fullText('email');
 

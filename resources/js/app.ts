@@ -3,8 +3,6 @@ import '../css/app.css';
 // If you don't need the styles, do not connect
 import 'sweetalert2/dist/sweetalert2.min.css';
 
-// Importa los estilos de PrimeVue y el tema // Tema principal // Estilos base
-import 'primeicons/primeicons.css';
 
 
 import { createApp, h, DefineComponent } from 'vue';
@@ -14,11 +12,13 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import VueTheMask from 'vue-the-mask';
 import VueSweetalert2 from 'vue-sweetalert2';
 import money from 'v-money';
-import PrimeVue from 'primevue/config'
-import Aura from '@primevue/themes/aura';
-import ToastService from 'primevue/toastservice';
+
+
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
+
+
+
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
@@ -26,15 +26,6 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         createApp({ render: () => h(App, props) })
             .use(plugin)
-            .use(PrimeVue,{
-                theme: {
-                    preset: Aura,
-                    options:{
-                        darkModeSelector: false
-                    }
-                }
-            })
-            .use(ToastService)
             .use(money as any)
             .use(ZiggyVue, Ziggy)
             .use(VueTheMask as any)

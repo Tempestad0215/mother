@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\SalePaymentEnum;
 use App\Enums\SaleTypeEnum;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -46,6 +47,7 @@ class Sale extends Model implements Auditable
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
     use softDeletes;
+    use HasUuids;
 
 
     // La tabla que se ve a utilizar
@@ -149,54 +151,6 @@ class Sale extends Model implements Auditable
             get: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i:s'),
             set: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i:s'),
         );
-    }
-
-
-
-
-    /**
-     * @return void
-     */
-    protected static function boot():void
-    {
-        // Llamar el metodo principal
-        parent::boot();
-
-        //Generar el codigo
-        static::creating(function ($sale) {
-            $sale->code = self::generateCode($sale->type);
-        });
-    }
-
-
-
-    /**
-     * @param SaleTypeEnum $type
-     * @return string
-     *
-     */
-    // funcion para generar el codigo
-    private static function generateCode(SaleTypeEnum $type):string
-    {
-        // Obtener el ultimo registros
-        $last = self::where('type', $type)->orderBy('id','desc')->first();
-
-        // Generar el proximo ID
-        $nextID = $last ? $last->id + 1 : 1;
-
-
-
-        if ($type->value === SaleTypeEnum::COTIZACION->value)
-        {
-            $code = config('appconfig.quoCode');
-        }else{
-
-            $code = config('appconfig.saleCode');
-        }
-
-
-        // craer el codigp
-        return $code.str_pad($nextID, 6,'0', STR_PAD_LEFT);
     }
 
 }

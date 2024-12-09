@@ -30,19 +30,19 @@ class AppServiceProvider extends ServiceProvider
         //
 
         //Verificar si es administrador
-        Gate::define('is-admin', function (User $user) {
-
-            //Verificar si es adminitrador
-            if($user->role->value == 'admin')
-            {
-                //Permitir si es administrador
-                return Response::allow();
-            }else{
-                //Denegar el acceso si no es adminitrador
-                return Response::deny('No esta autorizado, comunicarse con el administrador');
-            }
-
-        });
+//        Gate::define('is-admin', function (User $user) {
+//
+//            //Verificar si es adminitrador
+//            if($user->role->value == 'admin')
+//            {
+//                //Permitir si es administrador
+//                return Response::allow();
+//            }else{
+//                //Denegar el acceso si no es adminitrador
+//                return Response::deny('No esta autorizado, comunicarse con el administrador');
+//            }
+//
+//        });
 
         //Evitar envolver los datos
         JsonResource::withoutWrapping();

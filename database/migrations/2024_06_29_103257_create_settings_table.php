@@ -13,14 +13,12 @@ return new class extends Migration
         Schema::create('settings', function (Blueprint $table) {
 
             //Id
-            $table->id();
-
+            $table->uuid()->primary();
             //Datos de la empresa necesarios
             $table->string('name',150);
             $table->string('email',150)->unique();
             $table->string('phone',30)->nullable()->unique();
             $table->string('address',255)->nullable();
-            $table->string('logo',255)->nullable();
             $table->string('website',255)->nullable();
             $table->string('company_id',30)->nullable();
             $table->json('tax')->nullable();
