@@ -72,10 +72,10 @@ body{
     Estilo para la tabla completa
      */
     .styleTable thead {
-        @apply text-left border-b-2 border-gray-800 bg-gray-600 text-white;
+        @apply text-left border-b-2 bg-blue-600 text-white;
     }
     .styleTable tbody tr{
-        @apply hover:bg-gray-600 hover:text-white border-t border-b border-gray-800 duration-300 hover:cursor-pointer even:bg-gray-300;
+        @apply hover:bg-blue-800 hover:text-white border-t border-b  duration-300 hover:cursor-pointer even:bg-blue-400;
     }
     .styleTable tbody tr td{
         @apply px-2;

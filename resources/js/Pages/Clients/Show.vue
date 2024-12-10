@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import type { clientI } from '@/Interfaces/ClientInterface';
+import type {clientDataI } from '@/Interfaces/Client';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import type { PropType } from 'vue';
 import FloatShowCli from "@/Pages/Clients/FloatShowCli.vue";
+import TabLink from "@components/TabLink.vue";
 
 
 // Datos del backend
 const props = defineProps({
     clients:{
-        type: Object as PropType<clientI>,
+        type: Object as PropType<clientDataI>,
         required: true
     }
 });
@@ -26,13 +27,21 @@ const props = defineProps({
     <AppLayout>
         <!-- Cabecera de la ventana -->
         <template #header>
-
+            <TabLink
+                :href="route('client.create')">
+                Registrar
+            </TabLink>
+            <TabLink
+                :active="true"
+                :href="route('client.show')">
+                Mostrar
+            </TabLink>
         </template>
 
         <!-- Contenido principal -->
         <div>
            <FloatShowCli
-               :clients="<clientI>props.clients"
+               :clients="props.clients"
                 />
 
         </div>

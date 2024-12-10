@@ -7,6 +7,7 @@ use App\Http\Resources\ClientCommentResource;
 use App\Models\Client;
 use App\Http\Requests\StoreClientsRequest;
 use App\Http\Requests\UpdateClientsRequest;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -170,18 +171,20 @@ class ClientController extends Controller
 
     /**
      * @param Request $request
-     * @return \Illuminate\Contracts\Pagination\Paginator
+     * @return Paginator
      */
     private function getTable(REquest $request)
     {
         // Tomar los datos
         $search = trim($request->get('search'));
-        $perPage = $request->get('perPage',15);
+        $perPage = $request->get('perPage',30);
+
+
 
         // Buscar en la base de datos
         return Client::search($search)
             ->where('status',true)
-            ->latest()
+            ->latest('created_at')
             ->simplePaginate($perPage);
 
     }

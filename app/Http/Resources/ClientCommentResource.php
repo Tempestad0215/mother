@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @property int $id
+ * @property string $uuid
  * @property string $code
  * @property string $name
  * @property string $phone
@@ -33,8 +33,7 @@ class ClientCommentResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'code' => $this->code,
+            'uuid' => $this->uuid,
             'name' => $this->name,
             'personal_id' => $this->personal_id,
             'phone' => $this->phone,
@@ -44,9 +43,9 @@ class ClientCommentResource extends JsonResource
             'type' => $this->type,
             'status' => $this->status,
             'comment' => [
-                'id' => $this->comment->id,
-                'content' => $this->comment->content,
-                'created_at' => $this->comment->created_at,
+                'uuid' => $this->comment?->uuid,
+                'content' => $this->comment?->content,
+                'created_at' => $this->comment?->created_at,
             ],
             'created_at' => $this->created_at
 

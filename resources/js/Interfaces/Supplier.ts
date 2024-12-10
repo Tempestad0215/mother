@@ -14,7 +14,7 @@ export interface supplierI {
 }
 
 
-export interface supplierPaginationI {
+export interface supplierDataI {
     current_page: number
     data: supplierI[]
     first_page_url: (string|null)

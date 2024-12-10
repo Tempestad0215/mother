@@ -1,5 +1,5 @@
-export interface categoryI{
-    id: number;
+export interface categoryBaseI{
+    uuid: string;
     code: string;
     name: string;
     description: string | null;
@@ -10,7 +10,7 @@ export interface categoryI{
 
 export interface categoryPaginationI {
     current_page: number
-    data: categoryI[]
+    data: categoryBaseI[]
     first_page_url: (string|null)
     from: number
     next_page_url: (string|null)

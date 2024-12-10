@@ -11,7 +11,7 @@ use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
- * @property int $uuid
+ * @property string $uuid
  * @property string $code
  * @property string $name
  * @property null|string $description
@@ -67,7 +67,6 @@ class Category extends Model implements Auditable
     public function toSearchableArray():array
     {
         return [
-            'code' => $this->code,
             'name' => $this->name,
             'description' => $this->description,
         ];

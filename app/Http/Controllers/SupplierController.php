@@ -52,9 +52,16 @@ class SupplierController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Supplier $supplier)
+    public function show(Request $request)
     {
-        //
+
+        //Tomaar los datos de busqueda
+        $data = $this->get($request);
+
+        //devolver la vista y los datos
+        return Inertia::render("Suppliers/SupplierShow",[
+           'suppliers' =>  $data
+        ]);
     }
 
     /**

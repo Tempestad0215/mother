@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Pagination from "@components/Pagination.vue";
-import {clientDataI, clientI} from "@/Interfaces/ClientInterface";
+import {clientDataI, baseClient} from "@/Interfaces/Client";
 import {router, useForm, usePage} from "@inertiajs/vue3";
 import Swal from "sweetalert2";
 import {successHttp} from "@/Global/Alert";
@@ -17,14 +17,14 @@ const page = usePage();
  * Datos del back end
  */
 const props = defineProps<{
-    clients: clientI;
+    clients: clientDataI;
 }>();
 
 /**
  * Para emitir los eventos
  */
 const emit = defineEmits<{
-    (e: 'getData', item:clientDataI):void
+    (e: 'getData', item:baseClient):void
 }>();
 
 
@@ -40,7 +40,7 @@ const emit = defineEmits<{
  */
 const form = useForm({
     search:"",
-    perPage:15
+    perPage:30
 });
 
 
@@ -61,14 +61,16 @@ const submit = () => {
 }
 
 // Editar
-const edit = (id:Number) => {
+const edit = (id:string) => {
+
+    console.log(id);
 
     // Hacer la peticion
     router.get(route('client.edit', id));
 }
 
 // Eliminar el resistros
-const destroy = (id:Number) => {
+const destroy = (id:string) => {
 
     // Enviar los datos
     Swal.fire({
@@ -97,7 +99,7 @@ const destroy = (id:Number) => {
 </script>
 
 <template>
-    <div class=" bg-gray-200 p-5 rounded-md">
+    <div class=" bg-blue-300 p-5 rounded-md">
         <div class=" mb-4 flex justify-between items-center ">
             <form
                 @submit.prevent="submit"
@@ -114,25 +116,25 @@ const destroy = (id:Number) => {
             </h3>
         </div>
 
-        <div class=" max-h-[550px] overflow-y-auto">
+        <div class="">
             <table
-                class="styleTable w-full">
+                class="styleTable table-fixed w-full">
                 <thead>
                     <tr>
-                      <th>Nombre</th>
+                      <th class="w-[20rem]">Nombre</th>
                       <th>Ced./RNC/Pas</th>
-                      <th>Correo</th>
-                      <th>Teléfono</th>
-                      <th>Act</th>
+                      <th class="w-[20rem]" >Correo</th>
+                      <th class="w-[12rem]">Teléfono</th>
+                      <th class="w-[6rem]">Act</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="(item) in props.clients.data">
                         <td>{{item.name}}</td>
                         <td>{{item.personal_id}}</td>
-                        <td>{{item.email}}</td>
+                        <td class=" truncate">{{item.email}}</td>
                         <td>{{item.phone}}</td>
-                        <td>
+                        <td class="">
                             <i
                                 v-if="page.component !== 'Clients/Show'"
                                 title="Seleccionar"
@@ -141,12 +143,12 @@ const destroy = (id:Number) => {
                             <i
                                 v-if="page.component === 'Clients/Show'"
                                 title="Editar"
-                                @click="edit(item.id)"
+                                @click="edit(item.uuid)"
                                 class=" ml-2 icon-efect fa-solid fa-pen-to-square"></i>
                             <i
                                 v-if="page.component === 'Clients/Show'"
                                 title="Eliminar"
-                                @click="destroy(item.id)"
+                                @click="destroy(item.uuid)"
                                 class="ml-2 icon-efect fa-solid fa-trash"></i>
                         </td>
                     </tr>

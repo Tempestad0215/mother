@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, type Ref } from 'vue'
+import {onMounted, onUnmounted, onUpdated, ref, type Ref} from 'vue'
 
 
 /**
  * Datos para la ventana
  */
 const propsW = defineProps<{
-    defaultValue?: string,
+    defaultValue?: string;
     labelValue: string;
     idValue?: string;
     isReadOnly?: boolean;
@@ -34,21 +34,11 @@ const dropdownRef = ref<HTMLElement | null>(null);
 onMounted(() => {
     document.addEventListener('click', handleClickOutside);
 
-    //si existe el valor defecto
-    if (propsW.defaultValue)
-    {
-        //Busscar los datos coincidente
-       let data:Record<string, unknown> = <Record<string, unknown>>propsW.options.find((el:Record<string, unknown>) => el[propsW.optionLabel])
-
-        //Para enviar los datos
-        sendData(data);
-    }
 });
 
 onUnmounted(() => {
     document.removeEventListener('click', handleClickOutside);
 });
-
 
 
 /*
@@ -68,7 +58,6 @@ const sendData = (item:Record<string, unknown>) => {
         showData.value = false;
     }
 
-    // model = optionValue ? item[optionValue as keyof typeof item] : null*
 }
 
 // Cierra el menú si el clic ocurre fuera del componente

@@ -124,7 +124,7 @@ class CategoryController extends Controller{
 
         return Category::search($search)
             ->where('status',true)
-            ->latest()
+            ->latest('created_at')
             ->simplePaginate($perPage);
 
     }

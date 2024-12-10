@@ -10,7 +10,7 @@ import {productDataI, productI} from "@/Interfaces/Product";
 import {getMoney, getRncHelper, getSequenceType} from "@/Global/Helpers";
 import Swal from "sweetalert2";
 import InputError from "@components/InputError.vue";
-import {clientDataI, clientI} from "@/Interfaces/ClientInterface";
+import {clientDataI, clientI} from "@/Interfaces/Client";
 import FloatShowCli from "@/Pages/Clients/FloatShowCli.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import {successHttp} from "@/Global/Alert";

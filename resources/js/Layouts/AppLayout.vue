@@ -257,12 +257,24 @@ const menuItem = ref([
 <!--            Dividir la linea-->
             <Divider/>
 
-            <div>
+            <div class="space-y-2">
                 <LinkHeader
-                    title="Cliente"
+                    title="Clientes"
                     :href="route('client.create')">
                     Cliente
                     <i class=" fa-solid fa-user"></i>
+                </LinkHeader>
+                <LinkHeader
+                    title="Categorias"
+                    :href="route('category.create')">
+                    Categorias
+                    <i class="fa-solid fa-code-branch"></i>
+                </LinkHeader>
+                <LinkHeader
+                    title="Suplidores"
+                    :href="route('supplier.create')">
+                    Suplidores
+                    <i class="fa-solid fa-truck-field"></i>
                 </LinkHeader>
             </div>
 
@@ -276,7 +288,7 @@ const menuItem = ref([
 
 <!--            Cabecera de la ventana-->
             <header
-                class=" h-[4rem] w-full bg-blue-300 z-20">
+                class=" h-[4rem] flex items-center justify-center space-x-3 w-full bg-blue-300 z-20 border-b-2">
 
 <!--                Para el contenido-->
                 <slot name="header"/>

@@ -6,7 +6,7 @@ import InputError from "@components/InputError.vue";
 import {useForm} from "@inertiajs/vue3";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import {successHttp} from "@/Global/Alert";
-import {categoryI, categoryPaginationI} from "@/Interfaces/Categories";
+import {categoryBaseI, categoryPaginationI} from "@/Interfaces/Categories";
 import FormSearch from "@components/FormSearch.vue";
 import Pagination from "@components/Pagination.vue";
 import Swal from "sweetalert2";
@@ -23,7 +23,7 @@ const props = defineProps<{
 Formularios
  */
 const form = useForm({
-    id:0,
+    uuid: "",
     name:"",
     description:"",
     update: false,
@@ -35,7 +35,7 @@ Formulario de busqueda
  */
 const formSearch = useForm({
     search:"",
-    perPage:15
+    perPage:30
 });
 
 
@@ -46,7 +46,7 @@ const submit = () => {
     //si es para actualizar
     if(form.update)
     {
-        form.patch(route('category.update',{category: form.id}),{
+        form.patch(route('category.update',{category: form.uuid}),{
             onSuccess: ()=>{
                 successHttp('Datos actualizado correctamente');
             }
@@ -66,8 +66,8 @@ const submit = () => {
  * Para editar los datos
  * @param item
  */
-const edit = (item:categoryI) => {
-    form.id = item.id;
+const edit = (item:categoryBaseI) => {
+    form.uuid = item.uuid;
     form.name = item.name;
     form.description = item.description ? item.description : "";
     form.update = true;
@@ -78,9 +78,9 @@ const edit = (item:categoryI) => {
  * Para eliminar los datos
  * @param item
  */
-const destroy = (item:categoryI) => {
+const destroy = (item:categoryBaseI) => {
 
-    form.id = item.id;
+    form.uuid = item.uuid;
 
     Swal.fire({
         title: `Desea eliminar la categoria: ${item.name}?`,
@@ -93,7 +93,7 @@ const destroy = (item:categoryI) => {
         cancelButtonText: "Cancelar"
     }).then((result) => {
         if (result.isConfirmed) {
-            form.patch(route('category.destroy',{category: form.id}),{
+            form.patch(route('category.destroy',{category: form.uuid}),{
                 onSuccess: () => {
                     successHttp('Datos eliminado correctamente');
                 }
@@ -126,7 +126,7 @@ const search = () => {
         <div class="max-h-[85vh] overflow-y-auto">
             <form
                 @submit.prevent="submit"
-                class="bg-gray-200 max-w-[1100px] mx-auto rounded-md p-5 grid grid-cols-2 gap-3">
+                class="bg-blue-300 max-w-[1100px] mx-auto rounded-md p-5 grid grid-cols-2 gap-3">
                 <h3 class=" text-2xl font-bold col-span-full text-center">
                     Registro de Categoria
                 </h3>
@@ -168,7 +168,7 @@ const search = () => {
             </form>
 
 
-            <div class="bg-gray-200 max-w-[1100px] mx-auto rounded-md px-5 ">
+            <div class="bg-blue-300 mt-3 max-w-[1100px] mx-auto rounded-md px-5 ">
                 <div class="flex justify-between items-center">
                     <form
                         @submit.prevent="search">
@@ -184,18 +184,18 @@ const search = () => {
                 </div>
 
 <!--    Tabla de las categorias-->
-                <table class=" mt-3 styleTable w-full">
+                <table class=" mt-3 styleTable table-fixed w-full">
                     <thead>
                         <tr>
-                            <th>Nombre</th>
+                            <th class="w-[25rem]">Nombre</th>
                             <th>Desripción</th>
-                            <th>Act</th>
+                            <th class="w-[6rem]">Act</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="(item) in props.categories.data">
-                            <td>{{item.name}}</td>
-                            <td>{{item.description}}</td>
+                            <td class="truncate">{{item.name}}</td>
+                            <td class="truncate">{{item.description}}</td>
                             <td>
                                 <i
                                     @click="edit(item)"

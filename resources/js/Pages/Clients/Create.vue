@@ -6,19 +6,20 @@ import TextInput from '@components/TextInput.vue';
 import InputError from '@components/InputError.vue';
 import PrimaryButton from '@components/PrimaryButton.vue';
 import {computed, onMounted, reactive, ref, Ref} from 'vue';
-import {clienteEditI} from '@/Interfaces/ClientInterface';
+import {clientEditI} from '@/Interfaces/Client';
 import { successHttp } from '@/Global/Alert';
-import {getRncHelper} from "@/Global/Helpers";
-import {rncUserI} from "@/Interfaces/Setting";
-import Swal from "sweetalert2";
+// import {getRncHelper} from "@/Global/Helpers";
+// import {rncUserI} from "@/Interfaces/Setting";
+// import Swal from "sweetalert2";
 import ToggleButton from "@components/ToggleButton.vue";
 import SelectOption from "@components/SelectOption.vue";
+import TabLink from "@components/TabLink.vue";
 
 /**
  * propsW de la vantana
  */
 const propsW = defineProps<{
-    clientEdit?: clienteEditI,
+    clientEdit?: clientEditI,
     update?: boolean,
 }> ();
 
@@ -33,10 +34,14 @@ const propsW = defineProps<{
  */
 onMounted(()=>{
 
+
+    //colocar datos por defecto
+    form.document = "cedula";
+    form.type = "contado";
     //Verificar si existe datos para poner en el formulario
     if(propsW.clientEdit)
     {
-        form.id = propsW.clientEdit.id;
+        form.uuid = propsW.clientEdit.uuid;
         form.name = propsW.clientEdit.name;
         form.document = propsW.clientEdit.document
         form.personal_id = propsW.clientEdit.personal_id ? propsW.clientEdit.personal_id : "";
@@ -47,13 +52,15 @@ onMounted(()=>{
         form.status = propsW.clientEdit.status;
         form.type = propsW.clientEdit.type;
     }
+
+
 });
 
 
 /*
 Datos de la ventana
  */
-const classRnc:Ref<string> = ref("");
+// const classRnc:Ref<string> = ref("");
 const typeClient:Ref<Array<any>> = ref([
     {
         name: "Contado",
@@ -116,14 +123,14 @@ const selectedMask = computed(()=>{
  * DAtos del formulario
  */
 const form = useForm({
-    id:0,
+    uuid:"",
     name:"",
     personal_id:"",
     phone:"",
     email:"",
     address:"",
-    type: 'contado',
-    document:"cedula",
+    type: propsW.clientEdit ? propsW.clientEdit.type : "contado",
+    document: propsW.clientEdit ? propsW.clientEdit.document : "cedula",
     credit_limit: "",
     credit_day:"",
     credit_balance:"",
@@ -151,7 +158,7 @@ const submit = ():void => {
     // Si es actualziar
     if(propsW.update)
     {
-        form.patch(route('client.update', form.id),{
+        form.patch(route('client.update', form.uuid),{
             onSuccess:()=>{
                 successHttp('Datos actualizado correctamente');
             }
@@ -168,71 +175,70 @@ const submit = ():void => {
             }
         });
     }
-
 }
 
 
 /**
  * Otener el RNC
  */
-const getRnc = async () => {
-    if (form.document === 'rnc')
-    {
-
-        //Obtener la informacion del RNC
-        let info:string = await getRncHelper(form.personal_id);
-
-
-        if (info === "SUSPENDIDO")
-        {
-            form.setError("personal_id", "Este Contribuyente Esta Suspendido, Por Favor Elegir Otro");
-            //Variable de error
-            classRnc.value = "border-red-800 text-red-500 animate-pulse";
-        }else if (info === "ERROR")
-        {
-            form.setError("personal_id", "Este Contribuyente No Pudo Ser Encontrado");
-            //Variable de error
-            classRnc.value = "border-red-800 text-red-500 animate-pulse";
-
-        }else if (info === "CANCELLED")
-        {
-
-        }
-        else{
-
-            //Pasar los datos del json y transformar
-            let infoParse:rncUserI = JSON.parse(info);
-            //Poner los datos en verde
-            classRnc.value = "border-green-800 text-green-500";
-            //Mostrar el mensaje de la razon social
-            await Swal.fire({
-                title: "Datos Contribuyente",
-                html: `
-                <p>
-                    <strong>RNC :</strong>
-                    ${infoParse.rnc}
-                </p>
-                <p>
-                    <strong>Razon Social :</strong>
-                    ${infoParse.razon_social}
-                </p>
-            `,
-                icon: "info"
-            });
-
-            //Cambiar el nombre a razon social
-            form.name = infoParse.razon_social;
-
-        }
-        //Limpiar el error luego de 5 segundo
-        setTimeout(() => {
-            form.clearErrors("personal_id");
-            classRnc.value = "";
-        },5000);
-    }
-
-
-}
+// const getRnc = async () => {
+//     if (form.document === 'rnc')
+//     {
+//
+//         //Obtener la informacion del RNC
+//         let info:string = await getRncHelper(form.personal_id);
+//
+//
+//         if (info === "SUSPENDIDO")
+//         {
+//             form.setError("personal_id", "Este Contribuyente Esta Suspendido, Por Favor Elegir Otro");
+//             //Variable de error
+//             classRnc.value = "border-red-800 text-red-500 animate-pulse";
+//         }else if (info === "ERROR")
+//         {
+//             form.setError("personal_id", "Este Contribuyente No Pudo Ser Encontrado");
+//             //Variable de error
+//             classRnc.value = "border-red-800 text-red-500 animate-pulse";
+//
+//         }else if (info === "CANCELLED")
+//         {
+//
+//         }
+//         else{
+//
+//             //Pasar los datos del json y transformar
+//             let infoParse:rncUserI = JSON.parse(info);
+//             //Poner los datos en verde
+//             classRnc.value = "border-green-800 text-green-500";
+//             //Mostrar el mensaje de la razon social
+//             await Swal.fire({
+//                 title: "Datos Contribuyente",
+//                 html: `
+//                 <p>
+//                     <strong>RNC :</strong>
+//                     ${infoParse.rnc}
+//                 </p>
+//                 <p>
+//                     <strong>Razon Social :</strong>
+//                     ${infoParse.razon_social}
+//                 </p>
+//             `,
+//                 icon: "info"
+//             });
+//
+//             //Cambiar el nombre a razon social
+//             form.name = infoParse.razon_social;
+//
+//         }
+//         //Limpiar el error luego de 5 segundo
+//         setTimeout(() => {
+//             form.clearErrors("personal_id");
+//             classRnc.value = "";
+//         },5000);
+//     }
+//
+//
+// }
 
 
 
@@ -246,7 +252,15 @@ const getRnc = async () => {
     <AppLayout
         title="Cliente">
         <template #header >
-
+            <TabLink
+                :active="true"
+                :href="route('client.create')">
+                Registrar
+            </TabLink>
+            <TabLink
+                :href="route('client.show')">
+                Mostrar
+            </TabLink>
 
         </template>
 
@@ -262,7 +276,6 @@ const getRnc = async () => {
                 </h2>
 
 
-
                 <div class="flex justify-end items-center">
                     <!--                Tipo de cliente-->
                     <div>
@@ -271,7 +284,7 @@ const getRnc = async () => {
                             label-value="Tipo"
                             option-label="name"
                             v-model="form.type"
-                            default-value="contado"
+                            :default-value="form.type"
                             :is-read-only="true"
                             option-value="code"
                             placeholder="--Tipo--"
@@ -285,7 +298,7 @@ const getRnc = async () => {
                         <InputLabel for="document" value="Documento"/>
                         <SelectOption
                             v-model="form.document"
-                            default-value="cedula"
+                            :default-value="form.document"
                             label-value="Tipo"
                             :is-read-only="true"
                             option-label="name"
@@ -478,7 +491,7 @@ const getRnc = async () => {
 
 
 <!--                Informacion extra-->
-                <fieldset class="field">
+                <fieldset class="field flex">
                     <legend>
                         Info Extra
                     </legend>

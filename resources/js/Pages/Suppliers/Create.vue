@@ -12,6 +12,7 @@ import {supplierI, supplierPaginationI} from "@/Interfaces/Supplier";
 import Pagination from "@components/Pagination.vue";
 import Swal from "sweetalert2";
 import {paginationJoin} from "@/Global/Helpers";
+import TabLink from "@components/TabLink.vue";
 
 
 
@@ -133,16 +134,14 @@ const search = () => {
     <!-- Contenido -->
     <AppLayout>
         <template #header >
-<!--            <LinkHeader-->
-<!--                :href="route('supplier.create')"-->
-<!--                :active="true">-->
-<!--                Registrar-->
-<!--            </LinkHeader>-->
-<!--            <LinkHeader-->
-<!--                :href="route('supplier.show')"-->
-<!--                :active="true">-->
-<!--                Mostrar-->
-<!--            </LinkHeader>-->
+            <TabLink
+                :href="route('supplier.create')">
+                Registrar
+            </TabLink>
+            <TabLink
+                :href="route('supplier.create')">
+                Registrar
+            </TabLink>
 
 
         </template>
@@ -151,14 +150,12 @@ const search = () => {
         <div class="max-w-[1100px] mx-auto max-h-[85vh] overflow-y-auto">
 
             <form
-                class=" bg-gray-200 rounded-md p-5"
+                class=" bg-blue-300 rounded-md p-5"
                 @submit.prevent="submit">
 
                 <h2 class=" text-2xl font-bold text-center mb-4">
                     {{ form.update ? 'Actualización' :  'Registro'}} de Suplidor
                 </h2>
-
-
 
                 <div class=" grid grid-cols-2 gap-3 ">
                     <!-- Nombre de la empresa -->
@@ -201,12 +198,11 @@ const search = () => {
                         <InputLabel
                             for="phone"
                             value="Teléfono"/>
-                        <InputMask
-                            fluid
-                            id="phone"
+                        <TextInput
+                            v-mask="['+# (###) ###-####','+## (###) ###-####']"
                             v-model="form.phone"
-                            mask="+9 (999) 999-9999"
-                            placeholder="+9 (999) 999-9999" />
+                            placeholder="+1 (###) ###-####"
+                            name="phone"/>
 
                         <!-- Error -->
                         <InputError :message="form.errors.phone" />
@@ -248,70 +244,6 @@ const search = () => {
             </form>
 
 
-            <div class="bg-gray-200 rounded-md px-5">
-                <div class="flex justify-between items-center">
-                    <form
-                        @submit.prevent="search">
-                        <FormSearch
-                            v-model:per-page="formSearch.perPage"
-                            v-model:search="formSearch.search"
-                        />
-                    </form>
-                    <h3 class="text-3xl font-bold text-center">
-                        Suplidores
-                    </h3>
-                </div>
-
-<!--        Table de datos-->
-            <div class="mt-3">
-                <!--                Datos de los proveedores-->
-                <table class=" styleTable w-full">
-                    <thead>
-                        <tr>
-                            <th>Empresa</th>
-                            <th>Contacto</th>
-                            <th>Teléfono</th>
-                            <th>Correo</th>
-                            <th>Act</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(item) in props.suppliers.data">
-                            <td>{{item.company_name}}</td>
-                            <td>{{item.contact}}</td>
-                            <td>{{item.phone}}</td>
-                            <td>{{item.email}}</td>
-                            <td>
-                                <i
-                                    @click="edit(item)"
-                                    title="Editar"
-                                    class=" icon-efect fa-solid fa-pen-to-square"></i>
-                                <i
-                                    @click="destroy(item)"
-                                    title="Eliminar"
-                                    class=" ml-3 icon-efect fa-solid fa-trash"></i>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-                <!--                PAginacion-->
-                <Pagination
-                    :next=" props.suppliers.next_page_url
-                        ? paginationJoin(props.suppliers.next_page_url, formSearch.search, formSearch.perPage)
-                        : ''"
-                    :prev=" props.suppliers.prev_page_url
-                        ? paginationJoin(props.suppliers.prev_page_url, formSearch.search, formSearch.perPage)
-                        : ''"
-                    :total-page="props.suppliers?.to"
-                    :current-page="props.suppliers?.current_page"
-                />
-
-
-
-
-            </div>
 
         </div>
     </AppLayout>

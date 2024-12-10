@@ -14,7 +14,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 
 /**
- * @property int $id
+ * @property string $uuid
  * @property string $content
  * @property int $commentable_id
  * @property string $commentable_type
@@ -52,14 +52,15 @@ class Comment extends Model implements Auditable
         );
     }
 
+    /**
+     * @return Attribute
+     */
     protected function createdAt():Attribute
     {
         return Attribute::make(
             get: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i:s')
         );
     }
-
-
 
 
     /**

@@ -74,11 +74,10 @@ class Client extends Model implements Auditable
      * Para buscar los datos
      * @return array
      */
-    #[SearchUsingPrefix(['id', 'email'])]
+    #[SearchUsingPrefix([ 'email'])]
     public function toSearchableArray(): array
     {
         return [
-            'id' => $this->id,
             'name' => $this->name,
             'document' => $this->document,
             'phone' => $this->phone,
