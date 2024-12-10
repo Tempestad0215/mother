@@ -10,11 +10,6 @@ import {useForm, usePage} from '@inertiajs/vue3';
 import {onMounted, Ref, ref} from 'vue';
 import {categoryI} from "@/Interfaces/Categories";
 import {taxI} from "@/Interfaces/Global";
-import ToggleButton from 'primevue/togglebutton';
-import Select from 'primevue/select';
-import InputGroup from 'primevue/inputgroup';
-import InputGroupAddon from 'primevue/inputgroupaddon';
-import SelectButton from 'primevue/selectbutton';
 
 
 /**
@@ -147,10 +142,10 @@ const submit = () => {
 
             <div class="flex flex-col float-right text-center">
                 <InputLabel for="inventoried" value="Inventariar" />
-                <ToggleButton
-                    v-model="form.inventoried"
-                    onLabel="SI"
-                    offLabel="NO" />
+<!--                <ToggleButton-->
+<!--                    v-model="form.inventoried"-->
+<!--                    onLabel="SI"-->
+<!--                    offLabel="NO" />-->
             </div>
 
 
@@ -197,13 +192,13 @@ const submit = () => {
 
                     <div>
                         <InputLabel for="category" value="Categoria" />
-                        <Select
-                            v-model="form.category_id"
-                            :options="propsW.categories"
-                            optionLabel="name"
-                            fluid
-                            option-value="id"
-                            placeholder="Elige La Categoria"/>
+<!--                        <Select-->
+<!--                            v-model="form.category_id"-->
+<!--                            :options="propsW.categories"-->
+<!--                            optionLabel="name"-->
+<!--                            fluid-->
+<!--                            option-value="id"-->
+<!--                            placeholder="Elige La Categoria"/>-->
 
 <!--                        Mensaje de error-->
                         <InputError :message="form.errors.category_id"/>
@@ -215,22 +210,22 @@ const submit = () => {
                         <InputLabel
                             for="supplier_id"
                             value="Proveedor *"/>
-                        <InputGroup class="h-10">
-                            <Select
-                                v-model="form.supplier_id"
-                                :options="propsW.suppliers"
-                                optionLabel="company_name"
-                                fluid
-                                option-value="id"
-                                placeholder="Elige La Categoria"
-                                class="w-full md:w-56" />
-                            <InputGroupAddon>
-                                <i
-                                    @click="emit('showSupplier')"
-                                    class="icon-efect fa-solid fa-circle-plus"></i>
-                            </InputGroupAddon>
+<!--                        <InputGroup class="h-10">-->
+<!--                            <Select-->
+<!--                                v-model="form.supplier_id"-->
+<!--                                :options="propsW.suppliers"-->
+<!--                                optionLabel="company_name"-->
+<!--                                fluid-->
+<!--                                option-value="id"-->
+<!--                                placeholder="Elige La Categoria"-->
+<!--                                class="w-full md:w-56" />-->
+<!--                            <InputGroupAddon>-->
+<!--                                <i-->
+<!--                                    @click="emit('showSupplier')"-->
+<!--                                    class="icon-efect fa-solid fa-circle-plus"></i>-->
+<!--                            </InputGroupAddon>-->
 
-                        </InputGroup>
+<!--                        </InputGroup>-->
                         <!-- Error -->
                         <InputError :message="form.errors.search" />
                     </div>

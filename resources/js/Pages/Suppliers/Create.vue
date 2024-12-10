@@ -12,7 +12,7 @@ import {supplierI, supplierPaginationI} from "@/Interfaces/Supplier";
 import Pagination from "@components/Pagination.vue";
 import Swal from "sweetalert2";
 import {paginationJoin} from "@/Global/Helpers";
-import InputMask from 'primevue/inputmask';
+
 
 
 

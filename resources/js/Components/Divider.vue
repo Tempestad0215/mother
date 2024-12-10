@@ -3,6 +3,6 @@
 </script>
 
 <template>
-    <div class="border border-green-700 my-2 rounded-md">
+    <div class="border  my-2 rounded-md">
     </div>
 </template>

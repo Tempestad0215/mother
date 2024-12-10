@@ -96,6 +96,12 @@ class Client extends Model implements Auditable
         return $this->morphOne(Comment::class, 'commentable');
     }
 
+
+    public function image():MorphOne
+    {
+        return $this->morphOne(Image::class, 'imageable');
+    }
+
     /**
      * Cliente
      * @return HasOne

@@ -53,7 +53,19 @@ body{
     Input general
      */
     .inputGeneral {
-        @apply border-gray-300 focus:border-green-300 focus:ring-green-300 rounded-md shadow-sm w-full pr-[60px] focus:ring-0;
+        @apply border-orange-500 focus:border-blue-400 focus:ring-blue-800 rounded-md shadow-sm w-full pr-[60px] focus:ring-0;
+    }
+
+    .area{
+        @apply border-orange-500 rounded-md min-h-[3rem] max-h-[6rem] focus:ring-0 focus:border-blue-800;
+    }
+
+    .field {
+        @apply border-2 p-5 rounded-md grid grid-cols-2 gap-3;
+    }
+
+    .file{
+        @apply block file:bg-blue-600 file:text-white file:border file:border-orange-500 file:rounded-md file:font-bold rounded-md;
     }
 
     /*
@@ -82,6 +94,6 @@ body{
     Link de la imagen
      */
     .image-link{
-        @apply block border-b even:bg-green-400 bg-green-300 border-green-700  hover:bg-green-600 hover:text-white duration-300;
+        @apply block border-b rounded-md even:bg-blue-500 bg-blue-300 border-blue-800  hover:bg-blue-800 hover:text-white duration-300;
     }
 }

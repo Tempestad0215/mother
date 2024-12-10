@@ -26,6 +26,7 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         createApp({ render: () => h(App, props) })
             .use(plugin)
+            .use(VueTheMask)
             .use(money as any)
             .use(ZiggyVue, Ziggy)
             .use(VueTheMask as any)

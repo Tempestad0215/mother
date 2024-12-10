@@ -7,8 +7,6 @@ import {getMoney} from "@/Global/Helpers";
 import Pagination from "@components/Pagination.vue";
 import InputError from "@components/InputError.vue";
 import axios from "axios";
-import Toast from 'primevue/toast';
-import {useToast} from "primevue";
 import {ref, Ref} from "vue";
 import ShowPdf from "@components/ShowPdf.vue";
 
@@ -19,7 +17,6 @@ Datos de la pagina
 const page = usePage();
 
 //Uso del toast
-const toast = useToast();
 
 
 
@@ -186,13 +183,6 @@ const printFact = async (id:number) => {
     //Verificar si es diferente de la impresion
     if (data.status !== 200)
     {
-        //Mensaje de error
-        toast.add({
-            severity: 'error',
-            summary: "Mensaje de Error",
-            detail: "No Se Puede Imprimir Este Documento",
-            life: 3000
-        });
         //PAra cancelar la instruccion
         return
     }
@@ -216,12 +206,6 @@ const printFact = async (id:number) => {
  * Erro al imprimir el pdf
  */
 const getErrorPdf = (msj: string) => {
-    toast.add({
-        severity: 'error',
-        summary: "Mensaje de Error",
-        detail: msj,
-        life: 3000
-    });
 }
 
 
@@ -237,7 +221,6 @@ const getErrorPdf = (msj: string) => {
         <div
             class="bg-gray-200 max-w-[1180px] rounded-md p-5 mx-auto overflow-hidden">
 <!--          Mensajes  -->
-            <Toast />
 <!--            Contenido-->
             <div class="flex justify-between items-center">
                 <form

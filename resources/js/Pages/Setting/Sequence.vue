@@ -11,9 +11,6 @@ import {successHttp} from "@/Global/Alert";
 import {sequenceDataI} from "@/Interfaces/Setting";
 import {onMounted} from "vue";
 import Swal from "sweetalert2";
-import Select from 'primevue/select';
-import InputNumber from 'primevue/inputnumber';
-import DatePicker from 'primevue/datepicker';
 
 
 /*

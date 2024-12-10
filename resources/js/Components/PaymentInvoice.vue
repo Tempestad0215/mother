@@ -10,7 +10,6 @@ import {InertiaForm} from "@inertiajs/vue3";
 import {creditNotesSaleI} from "@/Interfaces/Sale";
 import axios from "axios";
 import {onMounted} from "vue";
-import InputNumber from 'primevue/inputnumber';
 
 
 //Definicar el props de la ventana

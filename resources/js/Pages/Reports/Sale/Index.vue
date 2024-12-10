@@ -9,9 +9,7 @@ import {getMoney, setHour} from "@/Global/Helpers";
 import InputError from "@components/InputError.vue";
 import {totalSoldAmountI} from "@/Interfaces/Report";
 import { saleFullI} from "@/Interfaces/Sale";
-import InputNumber from 'primevue/inputnumber';
 import {route} from "../../../../../vendor/tightenco/ziggy";
-import Select from 'primevue/select';
 
 
 

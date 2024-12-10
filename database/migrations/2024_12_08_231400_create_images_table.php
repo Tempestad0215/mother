@@ -8,9 +8,10 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('images', function (Blueprint $table) {
-            $table->timestamps();
+            $table->uuid()->primary();
             $table->string('name');
-            $table->morphs('imageable');
+            $table->uuidMorphs('imageable');
+            $table->timestamps();
             $table->softDeletes();
         });
     }

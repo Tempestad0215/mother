@@ -6,6 +6,7 @@ import { onMounted, onUnmounted, ref, type Ref } from 'vue'
  * Datos para la ventana
  */
 const propsW = defineProps<{
+    defaultValue?: string,
     labelValue: string;
     idValue?: string;
     isReadOnly?: boolean;
@@ -32,6 +33,16 @@ const dropdownRef = ref<HTMLElement | null>(null);
 
 onMounted(() => {
     document.addEventListener('click', handleClickOutside);
+
+    //si existe el valor defecto
+    if (propsW.defaultValue)
+    {
+        //Busscar los datos coincidente
+       let data:Record<string, unknown> = <Record<string, unknown>>propsW.options.find((el:Record<string, unknown>) => el[propsW.optionLabel])
+
+        //Para enviar los datos
+        sendData(data);
+    }
 });
 
 onUnmounted(() => {
@@ -77,7 +88,7 @@ const handleClickOutside = (event: MouseEvent) => {
         class="relative w-fit ">
         <input
             @click="showData = !showData"
-            class=" border-[.1rem] px-2 pr-6 min-w-full rounded-md focus:ring-0 focus:border-green-400 focus:outline-none"
+            class=" border border-orange-500 px-2 pr-6 min-w-full rounded-md focus:ring-0 focus:border-blue-800 focus:outline-none h-[2.5rem]"
             :class="{'read-only': isReadOnly}"
             type="text"
             :placeholder="propsW.placeholder"
@@ -89,10 +100,10 @@ const handleClickOutside = (event: MouseEvent) => {
            :class="{'rotate-180' : showData}"></i>
 
         <ol
-            class=" opacity-0 -z-50 bg-green-100 absolute w-full rounded-md transition duration-100 ease-linear border border-green-700"
+            class=" opacity-0 -z-50 bg-blue-300 absolute w-full rounded-md transition duration-100 ease-linear border border-blue-800"
             :class="{'opacity-100 z-10': showData}">
             <li
-                class="px-3 border-b border-green-700 rounded-md text-sm odd:bg-green-200"
+                class="px-3 border-b border-blue-600 rounded-md text-sm odd:bg-blue-400 font-semibold "
                 v-for="(item, index) in options" :key="index"
                 @click="sendData(item)">
                 <!--          Para dividir la ceda-->

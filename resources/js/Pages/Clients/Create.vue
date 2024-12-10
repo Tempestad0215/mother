@@ -5,12 +5,14 @@ import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@components/TextInput.vue';
 import InputError from '@components/InputError.vue';
 import PrimaryButton from '@components/PrimaryButton.vue';
-import {onMounted, ref, Ref} from 'vue';
+import {computed, onMounted, reactive, ref, Ref} from 'vue';
 import {clienteEditI} from '@/Interfaces/ClientInterface';
 import { successHttp } from '@/Global/Alert';
 import {getRncHelper} from "@/Global/Helpers";
 import {rncUserI} from "@/Interfaces/Setting";
 import Swal from "sweetalert2";
+import ToggleButton from "@components/ToggleButton.vue";
+import SelectOption from "@components/SelectOption.vue";
 
 /**
  * propsW de la vantana
@@ -19,6 +21,12 @@ const propsW = defineProps<{
     clientEdit?: clienteEditI,
     update?: boolean,
 }> ();
+
+
+
+
+
+
 
 /**
  * Al momento de cargar
@@ -56,7 +64,7 @@ const typeClient:Ref<Array<any>> = ref([
     //     code: 'credito'
     // }
 ])
-const typoDocument:Ref<Array<any>> = ref([
+const typeDocument:Ref<Array<any>> = ref([
     {
         name: "Cédula",
         code: 'cedula'
@@ -71,7 +79,20 @@ const typoDocument:Ref<Array<any>> = ref([
     //     name: "Credito",
     //     code: 'credito'
     // }
-])
+]);
+
+
+//Posibles mascara para docuemntos
+const masks = reactive<Record<string, string>>({
+    cedula: '###-#######-#',
+    pasaporte: 'A########',
+    rnc: '###-######'
+});
+
+
+const selectedMask = computed(()=>{
+    return masks[form.document] || '';
+})
 
 
 
@@ -90,7 +111,6 @@ const typoDocument:Ref<Array<any>> = ref([
 //    //Retorna true cuando es a contado
 //    return false;
 // });
-
 
 /**
  * DAtos del formulario
@@ -114,7 +134,7 @@ const form = useForm({
     advance_balance:"",
     status: true,
     comment:"",
-
+    image: ""
 });
 
 
@@ -233,7 +253,7 @@ const getRnc = async () => {
         <!-- Formulario de registro -->
         <div>
             <form
-                class="bg-gray-200  rounded-md p-5 max-w-[1100px] mx-auto"
+                class="bg-blue-300  rounded-md p-5 max-w-[1100px] mx-auto"
                 @submit.prevent="submit">
 
 <!--                Titulo del formulario-->
@@ -247,12 +267,15 @@ const getRnc = async () => {
                     <!--                Tipo de cliente-->
                     <div>
                         <InputLabel for="tye" value="Tipo"/>
-<!--                        <Select-->
-<!--                            v-model="form.type"-->
-<!--                            :options="typeClient"-->
-<!--                            placeholder="Tipo Cliente"-->
-<!--                            option-label="name"-->
-<!--                            option-value="code"/>-->
+                        <SelectOption
+                            label-value="Tipo"
+                            option-label="name"
+                            v-model="form.type"
+                            default-value="contado"
+                            :is-read-only="true"
+                            option-value="code"
+                            placeholder="--Tipo--"
+                            :options="typeClient"/>
                         <InputError :message="form.errors.type"/>
                     </div>
 
@@ -260,19 +283,26 @@ const getRnc = async () => {
                     <!--Tipo de documento-->
                     <div class="ml-3">
                         <InputLabel for="document" value="Documento"/>
-<!--                        <Select-->
-<!--                            v-model="form.document"-->
-<!--                            :options="typoDocument"-->
-<!--                            default-value="cedula"-->
-<!--                            option-label="name"-->
-<!--                            option-value="code"/>-->
+                        <SelectOption
+                            v-model="form.document"
+                            default-value="cedula"
+                            label-value="Tipo"
+                            :is-read-only="true"
+                            option-label="name"
+                            option-value="code"
+                            placeholder="--Documento--"
+                            :options="typeDocument"/>
                         <InputError :message="form.errors.document"/>
                     </div>
 
 
                     <!-- Estatus del cliente -->
                     <div class="ml-3">
-                        <InputLabel value="Activo"/>
+                        <ToggleButton
+                            v-model="form.status"
+                            off-label="Inactivo"
+                            on-label="Activo"
+                            label="Estado"/>
 <!--                        <ToggleButton-->
 <!--                            v-model="form.status"-->
 <!--                            onLabel="SI" offLabel="NO" />-->
@@ -283,7 +313,7 @@ const getRnc = async () => {
 
 
 <!--                Datos personales-->
-                <fieldset class="border-2 border-gray-400 p-5 rounded-md grid grid-cols-2 gap-3">
+                <fieldset class="field">
                     <legend>
                         Datos Personales
                     </legend>
@@ -308,15 +338,10 @@ const getRnc = async () => {
                             value="Cédula / Pasaporte /RNC"/>
 
                         <TextInput
-                            v-if="form.document === 'cedula'"
                             id="basic"
                             v-model="form.personal_id"
-                            mask="999-9999999-9"
+                            v-mask="selectedMask"
                             placeholder="125-6536895-6" />
-
-
-
-
                         <!-- Error -->
                         <InputError :message="form.errors.personal_id" />
                     </div>
@@ -330,7 +355,7 @@ const getRnc = async () => {
                             id="basic"
                             v-model="form.phone"
                             fluid
-                            mask="+9 (999) 999-9999"
+                            v-mask="['+# (###) ###-####', '+## (###) ###-####']"
                             placeholder="+1 (829) 352-6526" />
 
                         <!-- Error -->
@@ -363,7 +388,7 @@ const getRnc = async () => {
                             placeholder="Puerto Plata, Padres Las Casas #12"
                             fluid
                             v-model="form.address"
-                            type="email"
+                            type="text"
                             maxlength="150"/>
 
                         <!-- Error -->
@@ -378,7 +403,7 @@ const getRnc = async () => {
                 <div class="grid grid-cols-2 gap-4">
                     <fieldset
                         v-if="form.type === 'credito'"
-                        class="border-2 border-gray-400 p-5 rounded-md grid grid-cols-2 gap-3">
+                        class="field">
                         <legend>
                             Datos Credito
                         </legend>
@@ -420,7 +445,7 @@ const getRnc = async () => {
 <!--                  Datos de anticipo  -->
                     <fieldset
                         v-if="form.type === 'anticipo'"
-                        class="border-2 border-gray-400 p-5 rounded-md grid grid-cols-2 gap-3">
+                        class="field">
                         <legend>
                             Datos Anticipo
                         </legend>
@@ -447,32 +472,43 @@ const getRnc = async () => {
                                 type="date" />
                             <InputError :message="form.errors.advance_expire" />
                         </div>
-<!--                        <div>-->
-<!--                            <InputLabel for="advance_balance" value="Balance Disponible"/>-->
-<!--                            <p>-->
-<!--                                {{getMoney(12530.12)}}-->
-<!--                            </p>-->
-<!--                            <InputError />-->
-<!--                        </div>-->
 
                     </fieldset>
-
                 </div>
 
 
-
-                <!-- Datos de comentario y  -->
-                <div class="flex mt-5">
-
+<!--                Informacion extra-->
+                <fieldset class="field">
+                    <legend>
+                        Info Extra
+                    </legend>
                     <div>
                         <InputLabel for="comment" value="Comentario"/>
-
                         <textarea
+                            name="comment"
+                            class="area"
                             v-model="form.comment"
                             rows="2"
                             cols="60" />
                         <InputError :message="form.errors.comment"/>
                     </div>
+
+                    <div class="">
+                        <InputLabel for="comment" value="Imagen" />
+                        <TextInput
+                            @input=" form.image = $event.target.files[0]"
+                            class="file"
+                            type="file"
+                            name="image" />
+                    </div>
+                </fieldset>
+
+
+
+                <!-- Datos de comentario y  -->
+                <div class="flex mt-5 gap-3">
+
+
 
 
 

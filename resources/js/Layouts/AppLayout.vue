@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {onMounted, onUnmounted, ref} from 'vue';
-import {Head, Link, router, usePage} from '@inertiajs/vue3';
+import {Head, router, usePage} from '@inertiajs/vue3';
 import LinkHeader from "@components/LinkHeader.vue";
 import Divider from "@components/Divider.vue";
 import ImageMenu from "@components/ImageMenu.vue";
@@ -251,7 +251,7 @@ const menuItem = ref([
 
 <!--    Contenido de la ventana-->
     <div class=" flex">
-        <aside class=" bg-gray-100 h-screen w-[10rem]">
+        <aside class=" bg-blue-300 h-screen w-[10rem]">
 <!--            Mostrar la imagen del menu-->
             <ImageMenu :url="props.auth.user.profile_photo_url"/>
 <!--            Dividir la linea-->
@@ -260,9 +260,9 @@ const menuItem = ref([
             <div>
                 <LinkHeader
                     title="Cliente"
-                    :href="route('category.create')">
+                    :href="route('client.create')">
                     Cliente
-                    <i class="relative left-12 fa-solid fa-user"></i>
+                    <i class=" fa-solid fa-user"></i>
                 </LinkHeader>
             </div>
 
@@ -276,7 +276,7 @@ const menuItem = ref([
 
 <!--            Cabecera de la ventana-->
             <header
-                class=" h-[4rem] w-full bg-gray-100 z-20">
+                class=" h-[4rem] w-full bg-blue-300 z-20">
 
 <!--                Para el contenido-->
                 <slot name="header"/>

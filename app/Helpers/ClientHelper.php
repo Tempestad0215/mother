@@ -6,6 +6,7 @@ use App\Http\Requests\StoreClientsRequest;
 use App\Models\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use function PHPUnit\Framework\isNull;
 
 class ClientHelper
 {
@@ -40,6 +41,9 @@ class ClientHelper
         DB::transaction(function () use ($request) {
 
 
+            //Inmtancia
+            $general = new General();
+
             //Obtener el tipo
             $type = (int) $request->get('type');
 
@@ -47,6 +51,8 @@ class ClientHelper
             //Guardar los datos validado
            $client = Client::create($request->validated());
 
+
+           //guardar el comentario si existe
            if ($request->get('comment') !== null)
            {
                //Tomar el nombre del comentario
@@ -54,6 +60,11 @@ class ClientHelper
                $commentHelper->updateOrInsert($client, $request->get('comment'));
            }
 
+           // Obtner el nombre de la imagen ya guardado
+           $oldImage = $client->image?->name;
+
+           //Guardar la imagen y quedarse con el nombre
+           $general->saveImage($request, $oldImage, $client);
 
 
            //si es avance

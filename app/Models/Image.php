@@ -13,6 +13,11 @@ class Image extends Model
     use HasUuids;
 
 
+    protected $primaryKey = 'uuid';
+    protected $keyType = 'string';
+    public $incrementing = false;
+
+
     /**
      * @var array
      */

@@ -10,12 +10,10 @@ use App\Http\Requests\UpdateClientsRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
-use LaravelIdea\Helper\App\Models\_IH_Client_C;
 
 class ClientController extends Controller
 {

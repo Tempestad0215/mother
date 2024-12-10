@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Dialog from 'primevue/dialog';
 
 const propsW = defineProps<{
     header: string,
@@ -15,10 +14,10 @@ const show = defineModel<boolean>('show',{
 
 
 <template>
-        <Dialog
-            :header="propsW.header"
-            modal
-            v-model:visible="show">
-            <slot/>
-        </Dialog>
+<!--        <Dialog-->
+<!--            :header="propsW.header"-->
+<!--            modal-->
+<!--            v-model:visible="show">-->
+<!--            <slot/>-->
+<!--        </Dialog>-->
 </template>

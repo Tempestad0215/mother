@@ -5,7 +5,6 @@ import InputLabel from "@components/InputLabel.vue";
 import {useForm} from "@inertiajs/vue3";
 import InputError from "@components/InputError.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
-import SelectButton from 'primevue/selectbutton';
 import {ref} from "vue";
 /*
 Propiedades de la ventana
@@ -93,13 +92,13 @@ const submit = () => {
                     class="flex"
                     for="askReturn" value="Tipo de Consulta" />
                 <div class="flex justify-center">
-                    <SelectButton
-                        size="small"
-                        v-model="form.type"
-                        option-label="name"
-                        option-value="value"
-                        :options="options"
-                        fluid/>
+<!--                    <SelectButton-->
+<!--                        size="small"-->
+<!--                        v-model="form.type"-->
+<!--                        option-label="name"-->
+<!--                        option-value="value"-->
+<!--                        :options="options"-->
+<!--                        fluid/>-->
                 </div>
 
             </div>

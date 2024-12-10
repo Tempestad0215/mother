@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import {Link} from "@inertiajs/vue3";
-import {onMounted, onUnmounted, Ref, ref} from "vue";
+import {Link, router} from "@inertiajs/vue3";
+import { Ref, ref} from "vue";
 
 defineProps<{
     url: string;
@@ -8,47 +8,34 @@ defineProps<{
 
 //Par mostar la ventana
 const show:Ref<boolean> = ref(false);
-const menuImageRef = ref<HTMLImageElement |null>(null);
-
-//al momento de cargar
-onMounted(()=>{
-    document.addEventListener('click', handleClick);
-});
-
-//al momento de desmontar
-onUnmounted(()=>{
-    document.removeEventListener('click', handleClick);
-});
 
 
-
-const handleClick = (e: MouseEvent) => {
-    if (show.value && !menuImageRef.value?.contains(e.target as Node)){
-        show.value = false;
-    }
-
-    console.log(menuImageRef.value);
+/**
+ * funcion para salir
+ */
+const logOut = () => {
+    router.post(route('logout'));
 }
 
 
 </script>
 
 <template>
-    <div>
+    <div class="mt-3 relative">
         <img
             @click="show = !show"
-            class="rounded-full w-[5rem] mx-auto"
+            class="rounded-full w-[5rem] mx-auto cursor-pointer"
             :src="url ? url : ''"
             alt="Imagen de nombre">
+
 
         <Transition>
             <div
                 v-if="show"
                 ref="menuImageRef"
-                class=" absolute top-14 left-12 w-52 rounded-md bg-gray-100 z-9999 border-2 border-green-700">
+                class=" absolute top-[2rem] left-[7.5rem] w-52 rounded-md bg-gray-100 z-9999 border border-orange-500">
                 <ol
-
-                    class=" text-xl text-center select-none ">
+                    class=" text-xl text-center select-none rounded-md ">
                     <Link
                         class="image-link"
                         :href="route('profile.show')">
@@ -59,15 +46,11 @@ const handleClick = (e: MouseEvent) => {
                         :href="route('register')">
                         Usuario
                     </Link>
-                    <!--                    <button type="button">-->
-                    <!--                        Salir-->
-                    <!--                    </button>-->
-                    <!--                    <Link-->
-                    <!--                        class="image-link"-->
-                    <!--                        method="__post"-->
-                    <!--                        :href="route('logout')">-->
-                    <!--                        Salir-->
-                    <!--                    </Link>-->
+                    <button
+                        class="image-link w-full"
+                        @click="logOut">
+                        Salir
+                    </button>
 
                 </ol>
             </div>
@@ -76,7 +59,3 @@ const handleClick = (e: MouseEvent) => {
 
 
 </template>
-
-<style scoped>
-
-</style>

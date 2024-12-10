@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Enums\ClientDocumentEnum;
 use App\Enums\ClientTypeEnum;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -20,7 +21,7 @@ class StoreClientsRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
@@ -41,6 +42,8 @@ class StoreClientsRequest extends FormRequest
             'type' => ['required', Rule::enum(ClientTypeEnum::class)],
             'status' => ['required','boolean'],
             'document' =>  ['nullable', Rule::enum(ClientDocumentEnum::class)],
+            'comment' => ['nullable','string','max:255'],
+            'file' => ['nullable','file','mimes:png,jpg,jpeg','max:2048'],
 
             //Validacion de los avance
             'advance_amount' => [Rule::requiredIf($isAdvanced),'nullable','numeric'],

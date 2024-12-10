@@ -9,11 +9,6 @@ import {onMounted, onUpdated, Ref, ref} from "vue";
 // import {settingsDataI} from "@/Interfaces/Setting";
 import {successHttp} from "@/Global/Alert";
 import {taxI} from "@/Interfaces/Global";
-import Select from 'primevue/select';
-import ToggleButton from 'primevue/togglebutton';
-import Chip from 'primevue/chip';
-import InputGroup from 'primevue/inputgroup';
-import InputGroupAddon from 'primevue/inputgroupaddon';
 
 
 

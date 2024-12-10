@@ -52,13 +52,13 @@ const submit = () => {
 <template>
 <!--    Titulo de la pagina-->
     <Head title="Inicio" />
-    <div class="bg-gray-200 h-screen ">
-        <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
+    <div class=" h-screen ">
+        <div v-if="status" class="mb-4 font-medium text-sm ">
             {{ status }}
         </div>
         <!--        formulario de inicio-->
         <form
-            class="max-w-[600px] mx-auto bg-gray-100 p-10 rounded-md flex-col items-center shadow-md "
+            class="max-w-[600px] mx-auto bg-blue-500 p-10 rounded-md flex-col items-center shadow-md "
             @submit.prevent="submit">
 
             <img
@@ -96,12 +96,12 @@ const submit = () => {
             <div class="block mt-4">
                 <label class="flex items-center">
                     <Checkbox v-model:checked="form.remember" name="remember" />
-                    <span class="ms-2 text-sm text-gray-600">Recuerdame</span>
+                    <span class="ms-2 text-sm ">Recuerdame</span>
                 </label>
             </div>
 
             <div class="flex items-center justify-end mt-4">
-                <Link v-if="canResetPassword" :href="route('password.request')" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <Link v-if="canResetPassword" :href="route('password.request')" class="underline text-sm  rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                     Olvidó su contraseña?
                 </Link>
 

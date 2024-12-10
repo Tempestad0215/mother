@@ -13,7 +13,6 @@ import {successHttp} from "@/Global/Alert";
 import FormSearch from "@components/FormSearch.vue";
 import {productDataI, productI, productTransI} from "@/Interfaces/Product";
 import Pagination from "@components/Pagination.vue";
-import {InputNumber} from "primevue";
 import {appSettingI} from "@/Interfaces/Global";
 
 /**
