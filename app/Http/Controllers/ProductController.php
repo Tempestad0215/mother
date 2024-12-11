@@ -44,6 +44,7 @@ class ProductController extends Controller
         //Verificar si existe configuracion
         $setting = Setting::first();
 
+
         //si existe la configuracion
         if(isset($setting))
         {
@@ -72,6 +73,7 @@ class ProductController extends Controller
 
         //Para asegurar que no se guarda si hay problema
         DB::transaction(function () use ($request) {
+
             $product = Product::create($request->validated());
             // Guardar los datos del productos
             if ($request->get('type') === 'servicio')

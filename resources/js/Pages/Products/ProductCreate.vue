@@ -6,8 +6,9 @@ import FloatBox from '@/Components/FloatBox.vue'
 import {ref} from 'vue';
 import FloatProduct from '@/Pages/Products/ProductFloat.vue';
 import {productSupplierI} from "@/Interfaces/Product";
-import {categoryI} from "@/Interfaces/Categories";
+import {categoryBaseI} from "@/Interfaces/Categories";
 import {supplierI} from "@/Interfaces/Supplier";
+import LinkHeader from "@components/LinkHeader.vue";
 
 
 
@@ -16,7 +17,7 @@ import {supplierI} from "@/Interfaces/Supplier";
 const props = defineProps<{
     productEdit? : productSupplierI,
     update? : boolean,
-    categories: categoryI[],
+    categories: categoryBaseI[],
     suppliers: supplierI[]
 }>();
 
@@ -40,6 +41,15 @@ const showSupplierForm = ref(false);
     <AppLayout>
         <!-- cabecera -->
         <template #header >
+            <LinkHeader
+                :active="true"
+                :href="route('product.create')">
+                Registrar
+            </LinkHeader>
+            <LinkHeader
+                :href="route('product.show')">
+                Registrar
+            </LinkHeader>
 
 
         </template>
@@ -47,7 +57,7 @@ const showSupplierForm = ref(false);
         <!-- Contenido de la ventana de los productos -->
         <div class="max-w-[1100px] mx-auto">
            <div
-               class="bg-gray-200 p-5 rounded-md">
+               class="bg-blue-300 p-5 rounded-md">
                <FloatProduct
                    :suppliers="props.suppliers"
                    :categories="props.categories"

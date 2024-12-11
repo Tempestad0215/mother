@@ -236,6 +236,7 @@ const removeUnit = (index:number) => {
                         <TextInput
                             name="name"
                             v-model="form.name"
+                            placeholder="Jose Manuel"
                             required
                             maxLength="75"
                             class="w-full"/>
@@ -248,6 +249,7 @@ const removeUnit = (index:number) => {
                             value="Correo *"/>
                         <TextInput
                             v-model="form.email"
+                            placeholder="jose@example.com"
                             required
                             class="w-full"
                             maxLength="75"
@@ -263,6 +265,8 @@ const removeUnit = (index:number) => {
                             name="phone"
                             v-model="form.phone"
                             required
+                            placeholder="+1 (425) 456-6456"
+                            v-mask="['+# (###) ###-####','+## (###) ###-####']"
                             maxLength="30"
                             class="w-full"
                             type="text" />
@@ -276,6 +280,7 @@ const removeUnit = (index:number) => {
                         <TextInput
                             name="address"
                             v-model="form.address"
+                            placeholder="Camino Real #12"
                             maxLength="255"
                             class="w-full"
                             type="text" />
@@ -288,6 +293,7 @@ const removeUnit = (index:number) => {
                             value="Pagina Web"/>
                         <TextInput
                             name="website"
+                            placeholder="www.paginaweb.com"
                             v-model="form.website"
                             maxLength="255"
                             class="w-full"
@@ -302,13 +308,15 @@ const removeUnit = (index:number) => {
                         <TextInput
                             v-model="form.company_id"
                             name="id"
+                            placeholder="123-456891"
+                            v-mask="['###-######']"
                             maxLength="30"
                             class="w-full"
                             type="text" />
                         <InputError :message="form.errors.company_id"/>
                     </div>
                     <div>
-                        <InputLabel for="company_type" value="Empresa" />
+                        <InputLabel for="company_type" value="Tipo de Negocio" />
                         <SelectOption
                             class="w-full"
                             label-value=""
@@ -316,12 +324,7 @@ const removeUnit = (index:number) => {
                             option-value=""
                             v-model="form.company_type"
                             :options="propsW.company_type"/>
-
                     </div>
-
-
-
-
 
                     <!--Tiempo fiscal-->
                     <div>
@@ -376,8 +379,6 @@ const removeUnit = (index:number) => {
                     </div>
 
 
-
-
                     <!--Unidades de medida-->
                     <div>
                         <InputLabel
@@ -387,8 +388,11 @@ const removeUnit = (index:number) => {
                             <TextInput
                                 class="pr-8"
                                 name="unit"
+                                placeholder="Unidad"
                                 v-model="form.unitValue"/>
-                            <i class=" flex items-center inset-y-0 absolute right-0 p-2 bg-transparent fa-solid fa-square-plus"></i>
+                            <i
+                                @click="addUnit"
+                                class=" flex items-center inset-y-0 absolute right-0 p-2 bg-transparent fa-solid fa-square-plus"></i>
 
                         </div>
 
@@ -397,9 +401,12 @@ const removeUnit = (index:number) => {
                         <div
                             class=" text-sm"
                             v-if="form.unit.length > 0"
-                            v-for="(item, index) in form.unit" :key="item">
-                            <span>
+                            v-for="(item, index) in form.unit" :key="index">
+                            <span
+                                @click="removeUnit(index)"
+                                class=" px-3 py-1 mt-1 bg-blue-400 rounded-md flex items-center justify-between">
                                 {{item}}
+                                <i class="p-1 cursor-pointer text-[1.2rem] fa-regular fa-rectangle-xmark"></i>
                             </span>
 
                         </div>
@@ -421,8 +428,10 @@ const removeUnit = (index:number) => {
                                 class="pr-8"
                                 placeholder="ITBIS Valor"
                                 name="unit"
-                                v-model="form.taxName"/>
-                            <i class=" flex items-center inset-y-0 absolute right-0 p-2 bg-transparent fa-solid fa-square-plus"></i>
+                                v-model="form.taxValue"/>
+                            <i
+                                @click="addTax"
+                                class=" flex items-center inset-y-0 absolute right-0 p-2 bg-transparent fa-solid fa-square-plus"></i>
 
                         </div>
                         <InputError :message="form.errors.tax"/>
@@ -430,11 +439,12 @@ const removeUnit = (index:number) => {
                             class="text-sm flex flex-wrap"
                             v-if="form.tax.length > 0"
                             v-for="(item, index) in form.tax" :key="index">
-                            <Chip
-                                @remove="removeTax(index)"
-                                class="mt-2"
-                                removable
-                                :label="`${item.name} - ${item.amount}` "  />
+                            <span
+                                @click="removeTax(index)"
+                                class=" px-3 py-1 mt-1 bg-blue-400 rounded-md flex flex-1 items-center justify-between">
+                                {{item.name}} = {{item.amount}}
+                                <i class="p-1 cursor-pointer text-[1.2rem] fa-regular fa-rectangle-xmark"></i>
+                            </span>
 
                         </div>
                     </div>

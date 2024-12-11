@@ -54,27 +54,32 @@ class Sale extends Model implements Auditable
     protected $table = 'sales';
 
 
+    /**
+     * Guardar los datos
+     * @var array
+     */
+    protected $guarded = [];
     // Datos para actualizar masivamente
-    protected $fillable = [
-        'code',
-        'ncf',
-        'ncf_m',
-        'client_name',
-        'client_rnc',
-        'client_id',
-        'discount_amount',
-        'tax',
-        'sub_total',
-        'amount',
-        'type',
-        'type_payment',
-        'status',
-        'close_table',
-        'credit_notes',
-        'credit_notes_amount',
-        'returned',
-        'received'
-    ];
+//    protected $fillable = [
+//        'code',
+//        'ncf',
+//        'ncf_m',
+//        'client_name',
+//        'client_rnc',
+//        'client_id',
+//        'discount_amount',
+//        'tax',
+//        'sub_total',
+//        'amount',
+//        'type',
+//        'type_payment',
+//        'status',
+//        'close_table',
+//        'credit_notes',
+//        'credit_notes_amount',
+//        'returned',
+//        'received'
+//    ];
 
 
     //Formatear los datos

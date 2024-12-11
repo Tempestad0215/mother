@@ -10,6 +10,10 @@ import {useForm, usePage} from '@inertiajs/vue3';
 import {onMounted, Ref, ref} from 'vue';
 import {categoryBaseI} from "@/Interfaces/Categories";
 import {taxI} from "@/Interfaces/Global";
+import SelectOption from "@components/SelectOption.vue";
+import {Money} from "v-money3";
+import {moneyConfig} from "@/Global/Helpers";
+import ToggleButton from "@components/ToggleButton.vue";
 
 
 /**
@@ -92,6 +96,7 @@ onMounted(()=>{
         form.tax_rate = propsW.productEdit.tax_rate;
         form.unit = propsW.productEdit.unit;
     }
+
 });
 
 
@@ -141,7 +146,11 @@ const submit = () => {
 
 
             <div class="flex flex-col float-right text-center">
-                <InputLabel for="inventoried" value="Inventariar" />
+                <ToggleButton
+                    label="Inventario"
+                    v-model="form.inventoried"
+                    on-label="SI"
+                    off-label="NO"/>
 <!--                <ToggleButton-->
 <!--                    v-model="form.inventoried"-->
 <!--                    onLabel="SI"-->
@@ -151,7 +160,7 @@ const submit = () => {
 
 <!--Informacion General-->
             <div class=" clear-both">
-                <fieldset class=" grid grid-cols-2 gap-3 field-box">
+                <fieldset class="field">
                     <legend>
                         Informacion
                     </legend>
@@ -192,13 +201,14 @@ const submit = () => {
 
                     <div>
                         <InputLabel for="category" value="Categoria" />
-<!--                        <Select-->
-<!--                            v-model="form.category_id"-->
-<!--                            :options="propsW.categories"-->
-<!--                            optionLabel="name"-->
-<!--                            fluid-->
-<!--                            option-value="id"-->
-<!--                            placeholder="Elige La Categoria"/>-->
+                        <SelectOption
+                            class="w-full"
+                            placeholder="--Categoria--"
+                            :is-read-only="true"
+                            option-label="name"
+                            v-model="form.category_id"
+                            option-value="uuid"
+                            :options="propsW.categories.map(category => ({...category}))"/>
 
 <!--                        Mensaje de error-->
                         <InputError :message="form.errors.category_id"/>
@@ -210,29 +220,22 @@ const submit = () => {
                         <InputLabel
                             for="supplier_id"
                             value="Proveedor *"/>
-<!--                        <InputGroup class="h-10">-->
-<!--                            <Select-->
-<!--                                v-model="form.supplier_id"-->
-<!--                                :options="propsW.suppliers"-->
-<!--                                optionLabel="company_name"-->
-<!--                                fluid-->
-<!--                                option-value="id"-->
-<!--                                placeholder="Elige La Categoria"-->
-<!--                                class="w-full md:w-56" />-->
-<!--                            <InputGroupAddon>-->
-<!--                                <i-->
-<!--                                    @click="emit('showSupplier')"-->
-<!--                                    class="icon-efect fa-solid fa-circle-plus"></i>-->
-<!--                            </InputGroupAddon>-->
+                        <SelectOption
+                            class="w-full"
+                            placeholder="--Categoria--"
+                            :is-read-only="true"
+                            v-model="form.supplier_id"
+                            option-label="company_name"
+                            option-value="uuid"
+                            :options="propsW.suppliers.map(supplier => ({...supplier}))"/>
 
-<!--                        </InputGroup>-->
                         <!-- Error -->
                         <InputError :message="form.errors.search" />
                     </div>
                 </fieldset>
 
                 <div class=" grid grid-cols-2 gap-4 mt-3">
-                    <fieldset class=" grid grid-cols-2 gap-3 field-box">
+                    <fieldset class="field">
                         <legend>
                             Extra
                         </legend>
@@ -265,11 +268,14 @@ const submit = () => {
                             <InputLabel
                                 class=" mb-2"
                                 for="type" value="Tipo" />
-                            <SelectButton
-                                v-model="form.type"
-                                :options="typeOptions"
+                            <SelectOption
+                                placeholder="--Tipo Producto--"
                                 option-label="name"
-                                option-value="value"/>
+                                :is-read-only="true"
+                                v-model="form.type"
+                                option-value="value"
+                                :options="typeOptions"/>
+
                             <InputError :message="form.errors.type"/>
                         </div>
 
@@ -277,7 +283,7 @@ const submit = () => {
                     </fieldset>
 
 <!--Detalle del producto-->
-                    <fieldset class=" grid grid-cols-2 gap-3 field-box">
+                    <fieldset class="field">
                         <legend>
                             Datalles
                         </legend>
@@ -285,12 +291,14 @@ const submit = () => {
                             <InputLabel
                                 for="tax_rate"
                                 value="Impuesto *" />
-                            <Select
-                                v-model="form.tax_rate"
-                                :options="taxes"
-                                fluid
+                            <SelectOption
+                                class="w-full"
+                                placeholder="--ITBIS--"
+                                option-label="name"
+                                :is-read-only="true"
                                 option-value="amount"
-                                option-label="name" />
+                                v-model="form.tax_rate"
+                                :options="taxes.map(tax => ({...tax}))"/>
 
                             <InputError :message="form.errors.tax_rate" />
                         </div>
@@ -300,12 +308,16 @@ const submit = () => {
                             class="">
                             <InputLabel
                                 for="unit"
-                                value="Unidad *"/>
-                            <Select
+                                value="Unidadades *"/>
+                            <SelectOption
+                                class="w-full"
+                                placeholder="--Tipo Producto--"
+                                :is-read-only="true"
+                                option-label="name"
+                                option-value="amount"
                                 v-model="form.unit"
-                                :options="dataUnit"
-                                placeholder="Seleccione Unidad de Medida"
-                                fluid/>
+                                :options="dataUnit"/>
+
                             <!-- Error -->
                             <InputError :message="form.errors.unit" />
                         </div>
@@ -313,10 +325,10 @@ const submit = () => {
                             <InputLabel
                                 for="weight"
                                 value="Peso"/>
-                            <TextInput
-                                v-model="form.weigth"
-                                class="w-full"
-                                name="waight"/>
+                            <Money
+                                class="inputGeneral"
+                                v-bind="moneyConfig"
+                                v-model="form.weigth" />
                             <InputError :message="form.errors.weigth"/>
                         </div>
                         <div>

@@ -13,31 +13,30 @@ class General
 
     /**
      * @param Request $request
-     * @param string|null $oldName
      * @param Model $model
      * @return string|null
      */
-    public function saveImage(Request $request, ?string $oldName, Model $model): string|null
+    public function saveImage(Request $request, Model $model): string|null
     {
 
 
         // Verificar si el request tiene la imagen
         if ($request->hasFile('image')) {
 
-            return DB::transaction(function () use ($request, $model, $oldName) {
+            return DB::transaction(function () use ($request, $model) {
                 // Sacar El nombre de la imagen
                 $name = $request->file('image')->hashName();
 
+                //Imagen antigua
+                $oldImage = $model->image?->name;
+
                 // Eliminar la imagen si existe
-                if ($oldName && Storage::disk('images')->exists($oldName)) {
-                    Storage::disk('images')->delete($oldName);
+                if ($oldImage && Storage::disk('images')->exists($oldImage)) {
+                    Storage::disk('images')->delete($oldImage);
                 }
 
                 // Guadar la imagen
                 $request->file('image')->storeAs('images', $name);
-
-                //Imagen antigua
-                $oldImage = $model->image?->name;
 
                 //si la imagen existe, quiere decir que ya se creo una relacion
                 if ($oldImage)

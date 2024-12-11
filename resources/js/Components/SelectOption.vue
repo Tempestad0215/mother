@@ -6,7 +6,6 @@ import { onMounted, onUnmounted, ref, type Ref } from 'vue';
  */
 const propsW = defineProps<{
     defaultValue?: string;
-    labelValue: string;
     idValue?: string;
     isReadOnly?: boolean;
     optionLabel: string; // Se usa solo si las opciones son objetos
@@ -82,11 +81,11 @@ const handleClickOutside = (event: MouseEvent) => {
         ></i>
 
         <ol
-            class="opacity-0 -z-50 bg-blue-300 absolute w-full rounded-md transition duration-100 ease-linear border border-blue-800"
+            class="opacity-0 -z-50 bg-blue-300 absolute w-full rounded-md transition duration-100 ease-linear border border-blue-800 max-h-[15rem] overflow-x-auto"
             :class="{'opacity-100 z-10': showData}"
         >
             <li
-                class="px-3 border-b border-blue-600 rounded-md text-sm odd:bg-blue-400 font-semibold"
+                class="px-3 border-b border-blue-600 rounded-md text-sm odd:bg-blue-400 font-semibold cursor-pointer "
                 v-for="(item, index) in propsW.options"
                 :key="index"
                 @click="sendData(item)"

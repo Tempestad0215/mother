@@ -43,8 +43,8 @@ return new class extends Migration
 
 
             //Relaciones de los productos
-            $table->foreignUuid(Category::class);
-            $table->foreignUuid(Supplier::class);
+            $table->foreignUuid('category_id');
+            $table->foreignUuid('supplier_id');
             $table->enum('type',['producto','servicio'])->default('producto');
             $table->boolean('inventoried')->default(true);
             $table->boolean('status')->default(true);

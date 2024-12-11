@@ -78,7 +78,7 @@ body{
         @apply hover:bg-blue-800 hover:text-white border-t border-b  duration-300 hover:cursor-pointer even:bg-blue-400;
     }
     .styleTable tbody tr td{
-        @apply px-2;
+        @apply px-2 truncate;
     }
     /*th{*/
     /*    @apply border-[1px] border-gray-800 px-2;*/

@@ -38,7 +38,6 @@ class SettingHelper
                     'tax' => $request->tax,
                     'unit' => $request->unit,
                     'fiscal_year' => $request->fiscal_year,
-                    'logo' => $imageName,
                     'save_cost' => $request->cost,
                     'sequence' => $request->sequence
                 ]);
@@ -54,7 +53,6 @@ class SettingHelper
                     'tax' => $request->tax,
                     'unit' => $request->unit,
                     'fiscal_year' => $request->fiscal_year,
-                    'logo' => $imageName,
                     'save_cost' => $request->cost,
                     'sequence' => $request->sequence
                 ]);

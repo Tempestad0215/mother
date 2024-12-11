@@ -26,13 +26,14 @@ class StoreProductRequest extends FormRequest
     {
         $isArticle = $this->get('type') === 'producto';
 
+
         return [
             'inventoried' => ['required','boolean'],
             'name' => ['required','string','min:3','max:75'],
             'description' => ['nullable','string','max:150'],
             'unit' => [Rule::requiredIf($isArticle),'string','nullable'],
-            'supplier_id' => ['required','numeric','exists:suppliers,id'],
-            'category_id' => ['required','numeric','exists:categories,id'],
+            'supplier_id' => ['required','uuid','exists:suppliers,uuid'],
+            'category_id' => ['required','uuid','exists:categories,uuid'],
             'bar_code' => ['nullable','string','max:100'],
             'brand' => ['nullable','string','max:75'],
             'sku' => ['nullable','string','max:75'],

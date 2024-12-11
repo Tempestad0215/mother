@@ -33,7 +33,7 @@ const emit = defineEmits(['select']);
  */
 const form = useForm({
     search:'',
-    perPage: 15
+    perPage: 30
 });
 
 
@@ -126,16 +126,16 @@ const detroy = (id:Number) => {
         </div>
 
         <div
-            class="max-h-[50vh] overflow-y-auto ">
-            <table class=" mt-3 styleTable  w-full">
+            class="">
+            <table class=" mt-3 styleTable table-fixed  w-full">
                 <thead>
                     <tr>
-                        <th>Cod.</th>
-                        <th>Cod. Barra</th>
-                        <th>Nombre</th>
-                        <th>Disp.</th>
-                        <th>Precio</th>
-                        <th>Act</th>
+                        <th class="w-[8rem]">Cod.</th>
+                        <th class="w-[8rem]">Cod. Barra</th>
+                        <th class="w-[12rem]">Nombre</th>
+                        <th class="w-[5rem]">Disp.</th>
+                        <th class="w-[7rem]">Precio</th>
+                        <th class="w-[5rem]">Act</th>
                     </tr>
                 </thead>
                 <tbody>

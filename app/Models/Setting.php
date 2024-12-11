@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\CompanyTypeEnum;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
@@ -34,7 +35,6 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
  * @property boolean $save_cost
  * @property boolean $sequence
  * @property Date $deleted_at
- *
  */
 
 
@@ -45,6 +45,8 @@ class Setting extends Model implements Auditable
     use \OwenIt\Auditing\Auditable;
     use softDeletes;
     use HasFactory;
+    use HasUuids;
+
 
 
     protected $primaryKey = 'uuid';
