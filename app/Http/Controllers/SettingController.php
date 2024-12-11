@@ -18,7 +18,7 @@ class SettingController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Setting/Index',[
+        return Inertia::render('Setting/SettingIndex',[
             'setting' => Setting::first(),
             'company_type' => config('appconfig.company_type'),
         ]);

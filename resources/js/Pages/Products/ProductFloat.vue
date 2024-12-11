@@ -8,7 +8,7 @@ import {productSupplierI} from '@/Interfaces/Product';
 import { supplierI } from '@/Interfaces/Supplier';
 import {useForm, usePage} from '@inertiajs/vue3';
 import {onMounted, Ref, ref} from 'vue';
-import {categoryI} from "@/Interfaces/Categories";
+import {categoryBaseI} from "@/Interfaces/Categories";
 import {taxI} from "@/Interfaces/Global";
 
 
@@ -23,7 +23,7 @@ const {props} = usePage();
 const propsW = defineProps<{
     productEdit? : productSupplierI,
     update? : boolean,
-    categories: categoryI[],
+    categories: categoryBaseI[],
     suppliers: supplierI[]
 }>();
 

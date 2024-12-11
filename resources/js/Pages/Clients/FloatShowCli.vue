@@ -99,7 +99,7 @@ const destroy = (id:string) => {
 </script>
 
 <template>
-    <div class=" bg-blue-300 p-5 rounded-md">
+    <div class=" bg-blue-300 p-5 rounded-md max-w-[70rem] mx-auto">
         <div class=" mb-4 flex justify-between items-center ">
             <form
                 @submit.prevent="submit"
@@ -122,19 +122,19 @@ const destroy = (id:string) => {
                 <thead>
                     <tr>
                       <th class="w-[20rem]">Nombre</th>
-                      <th>Ced./RNC/Pas</th>
+                      <th class="w-[10rem]">Ced./RNC/Pas</th>
                       <th class="w-[20rem]" >Correo</th>
-                      <th class="w-[12rem]">Teléfono</th>
+                      <th class="w-[10rem]">Teléfono</th>
                       <th class="w-[6rem]">Act</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="(item) in props.clients.data">
-                        <td>{{item.name}}</td>
-                        <td>{{item.personal_id}}</td>
+                        <td class="truncate">{{item.name}}</td>
+                        <td class="truncate">{{item.personal_id}}</td>
                         <td class=" truncate">{{item.email}}</td>
-                        <td>{{item.phone}}</td>
-                        <td class="">
+                        <td class="truncate">{{item.phone}}</td>
+                        <td class="truncate">
                             <i
                                 v-if="page.component !== 'Clients/Show'"
                                 title="Seleccionar"

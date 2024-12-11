@@ -52,11 +52,6 @@ const handleClick = (event: MouseEvent) => {
     }
 }
 
-//Verificar si es admin
-const checkIsAdmin = ():boolean => {
-    return props.auth.user.role == 'admin';
-}
-
 
 /*
 Datos de la ventana
@@ -261,7 +256,7 @@ const menuItem = ref([
                 <LinkHeader
                     title="Clientes"
                     :href="route('client.create')">
-                    Cliente
+                    Clientes
                     <i class=" fa-solid fa-user"></i>
                 </LinkHeader>
                 <LinkHeader
@@ -275,6 +270,12 @@ const menuItem = ref([
                     :href="route('supplier.create')">
                     Suplidores
                     <i class="fa-solid fa-truck-field"></i>
+                </LinkHeader>
+                <LinkHeader
+                    title="Productos"
+                    :href="route('product.create')">
+                    Productos
+                    <i class="fa-solid fa-boxes-packing"></i>
                 </LinkHeader>
             </div>
 

@@ -53,7 +53,7 @@ body{
     Input general
      */
     .inputGeneral {
-        @apply border-orange-500 focus:border-blue-400 focus:ring-blue-800 rounded-md shadow-sm w-full pr-[60px] focus:ring-0;
+        @apply border-orange-500 h-[2rem] focus:border-blue-400 focus:ring-blue-800 rounded-md shadow-sm w-full focus:ring-0;
     }
 
     .area{

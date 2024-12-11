@@ -65,11 +65,15 @@ class SupplierController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show the form for editing the specified res ource.
      */
     public function edit(Supplier $supplier)
     {
-        //
+        //Para edditar el suplidor
+        return Inertia::render("Suppliers/Create",[
+            'supplierEdit' => $supplier,
+            'update' => true
+        ]);
     }
 
     /**
@@ -133,7 +137,7 @@ class SupplierController extends Controller
         //Devolver los datos paginado a 15
         return Supplier::search($search)
             ->where('status',true)
-            ->latest()
+            ->latest('created_at')
             ->simplePaginate(15);
 
     }

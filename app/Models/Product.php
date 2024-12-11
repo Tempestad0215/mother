@@ -14,7 +14,7 @@ use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
- * @property int $id
+ * @property string $uuid
  * @property string $type
  * @property boolean $inventoried
  * @property boolean $status
@@ -58,40 +58,47 @@ class Product extends Model implements Auditable
     use HasUuids;
 
 
+    protected $primaryKey = 'uuid';
+    protected $keyType = 'string';
+    public $incrementing = false;
+
+
     /**
      * Datos para guardar automatico
      * @var string[]
      */
-    protected $fillable = [
-        'code',
-        'name',
-        'description',
-        'unit',
-        'stock',
-        'reserved',
-        'cost',
-        'special_price',
-        'min_price',
-        'price',
-        'supplier_id',
-        'category_id',
-        'sku',
-        'bar_code',
-        'weight',
-        'dimensions',
-        'brand',
-        'discount',
-        'discount_amount',
-        'product_tax',
-        'benefits',
-        'tax',
-        'tax_rate',
-        'status',
-        'comment',
-        'close_table',
-        'type',
-        'inventoried'
-    ];
+    protected $guarded = [];
+//
+//    protected $fillable = [
+//        'code',
+//        'name',
+//        'description',
+//        'unit',
+//        'stock',
+//        'reserved',
+//        'cost',
+//        'special_price',
+//        'min_price',
+//        'price',
+//        'supplier_id',
+//        'category_id',
+//        'sku',
+//        'bar_code',
+//        'weight',
+//        'dimensions',
+//        'brand',
+//        'discount',
+//        'discount_amount',
+//        'product_tax',
+//        'benefits',
+//        'tax',
+//        'tax_rate',
+//        'status',
+//        'comment',
+//        'close_table',
+//        'type',
+//        'inventoried'
+//    ];
 
 
     /**
@@ -122,7 +129,6 @@ class Product extends Model implements Auditable
     public function toSearchableArray():array
     {
         return [
-            'code' => $this->code,
             'bar_code' => $this->bar_code,
             'name' => $this->name,
             'description' => $this->description

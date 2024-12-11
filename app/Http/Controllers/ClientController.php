@@ -48,7 +48,7 @@ class ClientController extends Controller
         // Tomar los datos
         $data = $this->getTable($request);
 
-        return Inertia::render('Clients/Create',[
+        return Inertia::render('Clients/ClientCreate',[
             'clients' => $data,
             'test' => config('Setting.cliCode')
         ]);
@@ -86,7 +86,7 @@ class ClientController extends Controller
 
 
         //Devolver los datos
-        return Inertia::render('Clients/Show',[
+        return Inertia::render('Clients/ClientShow',[
             'clients' => $data
         ]);
 
@@ -99,7 +99,7 @@ class ClientController extends Controller
     public function edit(Client $client)
     {
         // Devolver la vista con los datos
-        return Inertia::render('Clients/Create',[
+        return Inertia::render('Clients/ClientCreate',[
             'update' => true,
             'clientEdit' => new ClientCommentResource($client) ,
         ]);

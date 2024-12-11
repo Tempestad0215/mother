@@ -48,7 +48,7 @@ class ProductController extends Controller
         if(isset($setting))
         {
             //Devolver correctamente
-            return Inertia::render('Products/Create',[
+            return Inertia::render('Products/ProductCreate',[
                 'products' => $data,
                 'categories' => $categoryHelper->getAllCategories(),
                 'suppliers' => $supplierHelper->getAllSuppliers(),
@@ -103,7 +103,7 @@ class ProductController extends Controller
 
         //Devolver la vista con los datos
 
-        return Inertia::render('Products/Show',[
+        return Inertia::render('Products/ProductShow',[
             'products' => $data
         ]);
 
@@ -122,7 +122,7 @@ class ProductController extends Controller
         $dataProducts = $this->get($request);
         $dataEdit = new ProSupRes($product);
 
-        return Inertia::render('Products/Create',[
+        return Inertia::render('Products/ProductCreate',[
             'productEdit' => $dataEdit,
             'products' => $dataProducts,
             'update' => true,
@@ -222,7 +222,7 @@ class ProductController extends Controller
         // Realizar la busqueda
         return  Product::search($search)
             ->where('status', true)
-            ->latest()
+            ->latest('created_at')
             ->simplePaginate($perPage);
 
     }

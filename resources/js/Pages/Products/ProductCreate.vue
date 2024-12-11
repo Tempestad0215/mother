@@ -4,7 +4,7 @@ import { Head } from '@inertiajs/vue3';
 import Float from '@/Pages/Suppliers/FloatSupp.vue'
 import FloatBox from '@/Components/FloatBox.vue'
 import {ref} from 'vue';
-import FloatProduct from '@/Pages/Products/FloatPro.vue';
+import FloatProduct from '@/Pages/Products/ProductFloat.vue';
 import {productSupplierI} from "@/Interfaces/Product";
 import {categoryI} from "@/Interfaces/Categories";
 import {supplierI} from "@/Interfaces/Supplier";

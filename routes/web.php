@@ -48,12 +48,11 @@ Route::middleware([
     /*
      * Configuracion de la app
      */
-    Route::middleware([IsAdminMiddleware::class])->controller(SettingController::class)
+    Route::controller(SettingController::class)
         ->prefix('setting')
         ->name('setting.')
         ->group(function () {
        Route::get('/', 'index')
-           ->middleware('can:is-admin')
            ->name('index');
        Route::post('/','store')->name('store');
     });
@@ -113,27 +112,28 @@ Route::middleware([
     ->name('client.')
     ->group(function () {
         Route::get('/','create')->name('create');
-        Route::post('/','store')->name('store');
+        Route::get('/get','getJson')->name('get.json');
         Route::get('/show','show')->name('show');
         Route::get('/edit/{client}','edit')->name('edit');
+        Route::post('/','store')->name('store');
         Route::patch('/{client}','update')->name('update');
-        Route::patch('/destroy/{client}','destroy')->name('destroy');
-        Route::get('/get','getJson')->name('get.json');
+        Route::delete('/destroy/{client}','destroy')->name('destroy');
+
     });
 
     /**
      * Categoria
      */
     Route::controller(CategoryController::class)
-        ->prefix('category')
-        ->name('category.')
-        ->group(function () {
-            Route::get('/','create')->name('create');
-            Route::post('/','store')->name('store');
-            Route::patch('/{category}','update')->name('update');
-            Route::patch('/destroy/{category}','destroy')->name('destroy');
-            Route::get('/get','getJson')->name('get.json');
-        });
+    ->prefix('category')
+    ->name('category.')
+    ->group(function () {
+        Route::get('/','create')->name('create');
+        Route::post('/','store')->name('store');
+        Route::patch('/{category}','update')->name('update');
+        Route::patch('/destroy/{category}','destroy')->name('destroy');
+        Route::get('/get','getJson')->name('get.json');
+    });
 
     /**
      * Suplidores
@@ -143,10 +143,12 @@ Route::middleware([
     ->name('supplier.')
     ->group(function(){
          Route::get('/','create')->name('create');
-        Route::post('/','store')->name('store');
+         Route::get('/show','show')->name('show');
         Route::get('/get','getJson')->name('get.json');
-        Route::patch('/{supplier}','update')->name('update');
-        Route::patch('/destroy/{supplier}','destroy')->name('destroy');
+         Route::get('/{supplier}','edit')->name('edit');
+         Route::post('/','store')->name('store');
+         Route::patch('/{supplier}','update')->name('update');
+         Route::delete('/destroy/{supplier}','destroy')->name('destroy');
 
     });
 
@@ -173,23 +175,20 @@ Route::middleware([
      * Ventas
      */
     Route::controller(ProductSaleController::class)
-        ->prefix('sale')
-        ->name('sale.')
-        ->group(function(){
-           Route::get('/','create')->name('create');
-           Route::get('/get','getJson')->name('get.json');
-           Route::get('/show','show')->name('show');
-           Route::get('/test/invoice', 'testInvoice')->name('test-invoice');
-           Route::get('/last/invoice','lastInvoice')->name('lastInvoice');
-           Route::post('/counter','counterPost')->name('counterPost');
-           Route::post('/','store')->name('store');
-           Route::patch('/update/{sale}','update')->name('update');
-           Route::patch('/item/destroy/{product}/{sale}','destroyItem')->name('destroy.item');
-           Route::patch('/destroy/{sale}/{inventoried}','destroySale')->name('destroy-sale');
-
-
-        });
-
+    ->prefix('sale')
+    ->name('sale.')
+    ->group(function(){
+       Route::get('/','create')->name('create');
+       Route::get('/get','getJson')->name('get.json');
+       Route::get('/show','show')->name('show');
+       Route::get('/test/invoice', 'testInvoice')->name('test-invoice');
+       Route::get('/last/invoice','lastInvoice')->name('lastInvoice');
+       Route::post('/counter','counterPost')->name('counterPost');
+       Route::post('/','store')->name('store');
+       Route::patch('/update/{sale}','update')->name('update');
+       Route::patch('/item/destroy/{product}/{sale}','destroyItem')->name('destroy.item');
+       Route::patch('/destroy/{sale}/{inventoried}','destroySale')->name('destroy-sale');
+    });
     /*
      * Repotes de las ventas
      */
@@ -207,77 +206,64 @@ Route::middleware([
      *
      */
     Route::controller(CreditNoteController::class)
-        ->prefix('credit-note')
-        ->name('credit-note.')
-        ->group(function (){
-            Route::get('/','index')->name('index');
-            Route::get('/get/balance/{code}','getBalance')->name('balance');
-            Route::get('/get/{code}','creditNoteGet')->name('get');
-            Route::patch('/{sale}','store')->name('store');
-
-        });
+    ->prefix('credit-note')
+    ->name('credit-note.')
+    ->group(function (){
+        Route::get('/','index')->name('index');
+        Route::get('/get/balance/{code}','getBalance')->name('balance');
+        Route::get('/get/{code}','creditNoteGet')->name('get');
+        Route::patch('/{sale}','store')->name('store');
+    });
 
     /**
      * Ventas
      */
     Route::controller(ProductInController::class)
-        ->prefix('in')
-        ->name('in.')
-        ->group(function(){
-            Route::get('/','index')->name('create');
-            Route::get('show','show')->name('show');
-            Route::patch('/{productIn}','store')->name('store');
-            Route::get('/entrance/{productIn}','entrance')->name('entrance');
-            Route::get('/entrance/edit/{trans}','edit')->name('edit');
-            Route::patch('/update/{trans}','update')->name('update');
-            Route::patch('/destroy/{trans}','destroy')->name('destroy');
-
-        });
+    ->prefix('in')
+    ->name('in.')
+    ->group(function(){
+        Route::get('/','index')->name('create');
+        Route::get('show','show')->name('show');
+        Route::patch('/{productIn}','store')->name('store');
+        Route::get('/entrance/{productIn}','entrance')->name('entrance');
+        Route::get('/entrance/edit/{trans}','edit')->name('edit');
+        Route::patch('/update/{trans}','update')->name('update');
+        Route::patch('/destroy/{trans}','destroy')->name('destroy');
+    });
 
     /**
      * Reportes
      */
     Route::controller(ReportController::class)
-        ->prefix('report')
-        ->name('report.')
-        ->group(function (){
-           Route::get('/','index')->name('index');
-            Route::get('/day','getDay')->name('day');
-           Route::get('/day/date','getDailyByDate')->name('day.date');
-           Route::get('/product/low','stockLow')->name('product.low');
-           Route::post('/daily','getDailyByDate')->name('getDailyByDate');
-        });
+    ->prefix('report')
+    ->name('report.')
+    ->group(function (){
+       Route::get('/','index')->name('index');
+       Route::get('/day','getDay')->name('day');
+       Route::get('/day/date','getDailyByDate')->name('day.date');
+       Route::get('/product/low','stockLow')->name('product.low');
+       Route::post('/daily','getDailyByDate')->name('getDailyByDate');
+    });
 
     /**
      * Reporte de Ventas
      */
     Route::controller(ReportSaleController::class)
-        ->prefix('report/sale')
-        ->name('report-sale.')
-        ->group(function (){
-           Route::get('/','index')->name('index');
-           Route::get('/json','reportSaleRange')->name('range');
-
-        });
+    ->prefix('report/sale')
+    ->name('report-sale.')
+    ->group(function (){
+       Route::get('/','index')->name('index');
+       Route::get('/json','reportSaleRange')->name('range');
+    });
 
     /**
      * Facturas del sistema
      */
     Route::controller(InvoiceController::class)
-        ->prefix('invoice')
-        ->name('invoice.')
-        ->group(function (){
-           Route::get('/getA/{sale}','getA')->name('getA');
-        });
+    ->prefix('invoice')
+    ->name('invoice.')
+    ->group(function (){
+       Route::get('/getA/{sale}','getA')->name('getA');
+    });
 
-
-//
-//    Route::get('/test',function(){
-////        $sale = \App\Models\Sale::find(1);
-////
-////       $pdf = new \App\Invoices\SaleInvoiceA($sale);
-////
-////       return $pdf->setData();
-//
-//    });
 });

@@ -62,7 +62,6 @@ class Supplier extends Model implements Auditable
     public function toSearchableArray():array
     {
         return [
-            'code' => $this->code,
             'company_name' => $this->company_name,
             'contact' => $this->contact,
             'phone' => $this->phone,

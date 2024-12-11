@@ -9,6 +9,8 @@ import {onMounted, onUpdated, Ref, ref} from "vue";
 // import {settingsDataI} from "@/Interfaces/Setting";
 import {successHttp} from "@/Global/Alert";
 import {taxI} from "@/Interfaces/Global";
+import SelectOption from "@components/SelectOption.vue";
+import ToggleButton from "@components/ToggleButton.vue";
 
 
 
@@ -207,8 +209,8 @@ const removeUnit = (index:number) => {
 <!--Cabecera de la pagina-->
         <template #header>
         </template>
-
-        <div class="max-w-[1180px] max-h-[90vh] overflow-y-auto mx-auto bg-gray-200 rounded-md p-5">
+        <div
+            class="max-w-[70rem] mx-auto bg-blue-300 rounded-md p-5">
             <form
                 @submit.prevent="submit">
 
@@ -222,8 +224,8 @@ const removeUnit = (index:number) => {
                 </div>
 
                 <!-- Informaicon de la emprea-->
-                <fieldset class=" mt-5 grid grid-cols-3 gap-3 border-2 border-gray-400 p-5 rounded-md">
-                    <legend class="px-3">
+                <fieldset class="field">
+                    <legend class="">
                         Datos de la Empresa
                     </legend>
                     <!-- Nombre-->
@@ -307,10 +309,14 @@ const removeUnit = (index:number) => {
                     </div>
                     <div>
                         <InputLabel for="company_type" value="Empresa" />
-                        <Select
+                        <SelectOption
+                            class="w-full"
+                            label-value=""
+                            option-label=""
+                            option-value=""
                             v-model="form.company_type"
-                            fluid
                             :options="propsW.company_type"/>
+
                     </div>
 
 
@@ -337,45 +343,36 @@ const removeUnit = (index:number) => {
                         <TextInput
                             @input="form.logo = $event.target.files[0]"
                             multiple="false"
-                            class=""
+                            class="file"
                             type="file"/>
                         <InputError/>
                     </div>
                 </fieldset>
 
                 <!--            Datos de inventario-->
-                <fieldset class="border-2 border-gray-400 p-5 rounded-md grid grid-cols-2 gap-3">
+                <fieldset class="field">
                     <legend class="px-3">
                         Inventario
                     </legend>
 
                     <!--               Proteger costo -->
                     <div class="col-span-full grid grid-cols-2 gap-3 ">
-
-                        <fieldset class="flex">
-                            <legend>
-                                Proteger Costo
-                            </legend>
+                        <div>
                             <ToggleButton
+                                label="Proteger costo"
                                 v-model="form.cost"
-                                onLabel="SI"
-                                offLabel="NO" />
+                                on-label="SI"
+                                off-label="NO"/>
+
                             <InputError :message="form.errors.cost"/>
-                        </fieldset>
-
-
-                        <!-- Manejar comprobantes -->
-                        <fieldset class="flex">
-                            <legend>
-                                Manejar Comprobante
-                            </legend>
+                        </div>
+                        <div>
                             <ToggleButton
-                                v-model="form.sequence"
-                                onLabel="SI"
-                                offLabel="NO" />
-
-                            <InputError :message="form.errors.sequence"/>
-                        </fieldset>
+                                label="Manejar Comprobante"
+                                v-model="form.cost"
+                                on-label="SI"
+                                off-label="NO"/>
+                        </div>
                     </div>
 
 
@@ -386,30 +383,24 @@ const removeUnit = (index:number) => {
                         <InputLabel
                             for="unit"
                             value="Unidades"/>
-                        <InputGroup>
+                        <div class="relative">
                             <TextInput
-                                :autocomplete="false"
-                                class="w-full pr-10"
+                                class="pr-8"
                                 name="unit"
-                                v-model="form.unitValue"
-                                type="text" />
-                            <InputGroupAddon>
-                                <i
-                                    @click="addUnit"
-                                    class=" icon-efect fa-solid fa-circle-plus"></i>
-                            </InputGroupAddon>
-                        </InputGroup>
+                                v-model="form.unitValue"/>
+                            <i class=" flex items-center inset-y-0 absolute right-0 p-2 bg-transparent fa-solid fa-square-plus"></i>
+
+                        </div>
+
 
                         <InputError :message="form.errors.unit"/>
                         <div
                             class=" text-sm"
                             v-if="form.unit.length > 0"
                             v-for="(item, index) in form.unit" :key="item">
-                            <Chip
-                                @remove="removeUnit(index)"
-                                class="mt-2"
-                                removable
-                                :label="item"  />
+                            <span>
+                                {{item}}
+                            </span>
 
                         </div>
                     </div>
@@ -418,29 +409,22 @@ const removeUnit = (index:number) => {
                     <!--Itbis-->
                     <div>
                         <InputLabel
-                            for="tax"
-                            value="Itbis"/>
-                        <InputGroup>
+                            for="unit"
+                            value="Unidades"/>
+                        <div class="relative flex gap-3">
                             <TextInput
-                                type="text"
-                                name="name"
-                                v-model="form.taxName"
-                                placeholder="Nombre"
-                                class="inline w-[17rem] "/>
+                                class="pr-8"
+                                placeholder="ITBIS Name"
+                                name="unit"
+                                v-model="form.taxName"/>
+                            <TextInput
+                                class="pr-8"
+                                placeholder="ITBIS Valor"
+                                name="unit"
+                                v-model="form.taxName"/>
+                            <i class=" flex items-center inset-y-0 absolute right-0 p-2 bg-transparent fa-solid fa-square-plus"></i>
 
-                                <TextInput
-                                    class=" inline  pr-10"
-                                    name="tax"
-                                    placeholder="Valor"
-                                    v-model="form.taxValue"
-                                    type="number" />
-
-                            <InputGroupAddon>
-                                <i
-                                    @click="addTax"
-                                    class=" icon-efect fa-solid fa-circle-plus"></i>
-                            </InputGroupAddon>
-                        </InputGroup>
+                        </div>
                         <InputError :message="form.errors.tax"/>
                         <div
                             class="text-sm flex flex-wrap"

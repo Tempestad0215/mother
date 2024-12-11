@@ -7,60 +7,61 @@ import TextInput from '@components/TextInput.vue';
 import InputError from '@components/InputError.vue';
 import ActionMessage from '@components/ActionMessage.vue';
 import PrimaryButton from '@components/PrimaryButton.vue';
-import FormSearch from "@components/FormSearch.vue";
-import {supplierI, supplierPaginationI} from "@/Interfaces/Supplier";
-import Pagination from "@components/Pagination.vue";
-import Swal from "sweetalert2";
-import {paginationJoin} from "@/Global/Helpers";
 import TabLink from "@components/TabLink.vue";
+import {supplierI} from "@/Interfaces/Supplier";
+import {onMounted} from "vue";
 
+
+
+const propsW = defineProps<{
+    supplierEdit: supplierI,
+    update?: boolean
+}>();
 
 
 
 /*
-Propiedades de la ventana
+Al momento de cargar
  */
-const props = defineProps<{
-    suppliers: supplierPaginationI
-}>();
+onMounted(()=>{
+    if (propsW.supplierEdit)
+    {
+        form.uuid = propsW.supplierEdit.uuid;
+        form.contact = propsW.supplierEdit.contact ?? "";
+        form.company_name = propsW.supplierEdit.company_name;
+        form.phone = propsW.supplierEdit.phone ?? "";
+        form.email = propsW.supplierEdit.email ?? "";
+    }
+
+});
 
 
 /*
 Formulario
  */
 const form = useForm({
-    id:0,
+    uuid: "",
     contact:"",
     company_name:"",
     phone:"",
     email:"",
-    update: false,
 });
 
-/**
- * Formaulario de busqueda
- */
-const formSearch = useForm({
-    search:"",
-    perPage: 15
-});
 
 
 /**
  *Enviar los datos
  */
 const submit = () => {
-
     // Si es actualziar
-    if(form.update)
+    if(propsW.update)
     {
-        form.patch(route('supplier.update', {supplier: form.id}),{
+        form.patch(route('supplier.update', {supplier: form.uuid}),{
             onSuccess:()=>{
                 successHttp('Datos actualizado correctamente');
             }
         })
     }else{
-
         // Enviar los datos
         form.post(route('supplier.store'),{
             onSuccess:()=>{
@@ -69,59 +70,7 @@ const submit = () => {
             }
         });
     }
-
 }
-
-/**
- *
- * @param item
- */
-const edit = (item:supplierI) => {
-    form.update = true;
-    form.id = item.id;
-    form.contact = item.contact ? item.contact : "";
-    form.company_name = item.company_name;
-    form.phone = item.phone ? item.phone : "";
-    form.email = item.email ? item.email : "";
-}
-
-/**
- *
- * @param item
- */
-const destroy = (item:supplierI) => {
-    form.id = item.id;
-
-    Swal.fire({
-        title: `Desea Eliminar el suplidor : ${item.company_name}?`,
-        text: "Los cambios realizados son irreversible!",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Si, eliminar!",
-        cancelButtonText: "Cancelar"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            form.patch(route('supplier.destroy',{supplier: form.id}),{
-                onSuccess: ()=>{
-                    successHttp('Datos eliminado correctamente');
-                }
-            })
-        }
-    });
-}
-
-/**
- *Buscar los datos
- */
-const search = () => {
-    formSearch.get('',{
-        preserveScroll: true,
-        preserveState: true
-    });
-}
-
 
 </script>
 
@@ -135,12 +84,13 @@ const search = () => {
     <AppLayout>
         <template #header >
             <TabLink
+                :active="true"
                 :href="route('supplier.create')">
                 Registrar
             </TabLink>
             <TabLink
-                :href="route('supplier.create')">
-                Registrar
+                :href="route('supplier.show')">
+                Mostrar
             </TabLink>
 
 
@@ -226,8 +176,6 @@ const search = () => {
                     </div>
                 </div>
 
-
-
                 <!-- Botones para enviar -->
                 <div class="mt-4 flex justify-end items-center space-x-5">
                     <!-- Mensaje al crear -->
@@ -236,14 +184,12 @@ const search = () => {
                     </ActionMessage>
                     <PrimaryButton
                         :disabled="form.processing">
-                        {{ form.update ? 'Actualizar' :  'Registrar'}}
+                        {{ propsW.update ? 'Actualizar' :  'Registrar'}}
                     </PrimaryButton>
 
                 </div>
 
             </form>
-
-
 
         </div>
     </AppLayout>

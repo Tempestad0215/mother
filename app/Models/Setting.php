@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\CompanyTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Date;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -17,6 +18,7 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
  * @mixin EloquentBuilder
  * @mixin QueryBuilder
  *
+ * @property string $uuid
  * @property string $name
  * @property string $email
  * @property string $phone
@@ -42,28 +44,40 @@ class Setting extends Model implements Auditable
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
     use softDeletes;
+    use HasFactory;
+
+
+    protected $primaryKey = 'uuid';
+    protected $keyType = 'string';
+    public $incrementing = false;
+
+
+    /**
+     * @var array
+     */
+    protected $guarded = [];
 
     /**
      * @var string[]
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'phone',
-        'address',
-        'logo',
-        'website',
-        'company_id',
-        'tax',
-        'tax.name',
-        'tax.value',
-        'unit',
-        'fiscal_year',
-        'company_type',
-        'status',
-        'save_cost',
-        'sequence'
-    ];
+//    protected $fillable = [
+//        'name',
+//        'email',
+//        'phone',
+//        'address',
+//        'logo',
+//        'website',
+//        'company_id',
+//        'tax',
+//        'tax.name',
+//        'tax.value',
+//        'unit',
+//        'fiscal_year',
+//        'company_type',
+//        'status',
+//        'save_cost',
+//        'sequence'
+//    ];
 
     /**
      * @var string[]
@@ -76,4 +90,16 @@ class Setting extends Model implements Auditable
         'sequence' => 'boolean',
         'company_type' => CompanyTypeEnum::class,
     ];
+
+
+    /**
+     * Relacion polimorfica para la imagen
+     * @return MorphOne
+     */
+    public function image():MorphOne
+    {
+        return $this->morphOne(Image::class, 'imageable');
+    }
+
+
 }

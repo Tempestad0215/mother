@@ -2,12 +2,11 @@
 
 
 export interface supplierI {
-    code: string;
     company_name: string;
     contact: string | null;
     created_at: string;
     email: string| null;
-    id: number
+    uuid: string;
     phone: string | null;
     status: number;
     updated_at: string
