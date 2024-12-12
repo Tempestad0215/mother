@@ -38,7 +38,7 @@ class ProductSaleController extends Controller
         }
         //Intancia de los datos
         $dataSale = $this->dataSale($request);
-        $lastRecord = Sale::orderBy('id', 'desc')->first();
+        $lastRecord = Sale::orderBy('created_at', 'desc')->first();
 
 
         //DEvolver la vista y los datos

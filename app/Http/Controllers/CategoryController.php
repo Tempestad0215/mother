@@ -21,7 +21,7 @@ class CategoryController extends Controller{
         $data = $this->get($request);
 
         //Devolver la vista con los datos
-        return Inertia::render('Categories/Create',[
+        return Inertia::render('Categories/CategoryCreate',[
             'categories' => $data
             ]);
 

@@ -216,7 +216,7 @@ Route::middleware([
     });
 
     /**
-     * Ventas
+     * Entradas
      */
     Route::controller(ProductInController::class)
     ->prefix('in')

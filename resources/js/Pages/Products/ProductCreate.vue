@@ -5,17 +5,18 @@ import Float from '@/Pages/Suppliers/FloatSupp.vue'
 import FloatBox from '@/Components/FloatBox.vue'
 import {ref} from 'vue';
 import FloatProduct from '@/Pages/Products/ProductFloat.vue';
-import {productSupplierI} from "@/Interfaces/Product";
+import {productBaseI} from "@/Interfaces/Product";
 import {categoryBaseI} from "@/Interfaces/Categories";
 import {supplierI} from "@/Interfaces/Supplier";
 import LinkHeader from "@components/LinkHeader.vue";
+import TabLink from "@components/TabLink.vue";
 
 
 
 
 //Propiedades de la ventana
 const props = defineProps<{
-    productEdit? : productSupplierI,
+    productEdit? : productBaseI,
     update? : boolean,
     categories: categoryBaseI[],
     suppliers: supplierI[]
@@ -41,15 +42,20 @@ const showSupplierForm = ref(false);
     <AppLayout>
         <!-- cabecera -->
         <template #header >
-            <LinkHeader
+            <TabLink
                 :active="true"
                 :href="route('product.create')">
                 Registrar
-            </LinkHeader>
-            <LinkHeader
+            </TabLink>
+            <TabLink
+                :href="route('in.create')">
+                Entrada
+            </TabLink>
+
+            <TabLink
                 :href="route('product.show')">
-                Registrar
-            </LinkHeader>
+                Mostrar
+            </TabLink>
 
 
         </template>

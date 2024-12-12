@@ -123,7 +123,7 @@ const search = () => {
 
         </template>
 
-        <div class="max-h-[85vh] overflow-y-auto">
+        <div class="">
             <form
                 @submit.prevent="submit"
                 class="bg-blue-300 max-w-[1100px] mx-auto rounded-md p-5 grid grid-cols-2 gap-3">

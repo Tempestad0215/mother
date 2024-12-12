@@ -234,11 +234,6 @@ const menuItem = ref([
 
 ]);
 
-
-
-
-
-
 </script>
 
 <template>
@@ -276,6 +271,12 @@ const menuItem = ref([
                     :href="route('product.create')">
                     Productos
                     <i class="fa-solid fa-boxes-packing"></i>
+                </LinkHeader>
+                <LinkHeader
+                    title="Ventas"
+                    :href="route('sale.create')">
+                    Ventas
+                    <i class="fa-solid fa-cash-register"></i>
                 </LinkHeader>
             </div>
 

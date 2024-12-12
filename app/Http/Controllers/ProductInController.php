@@ -41,7 +41,7 @@ class ProductInController extends Controller
         $data = $this->getProduct($request);
 
         //Devolver la vista con los datos
-        return Inertia::render('ProductsIn/In', [
+        return Inertia::render('ProductsIn/ProductIn', [
             'products' => $data,
         ]);
     }
@@ -64,7 +64,7 @@ class ProductInController extends Controller
 
         DB::transaction(function () use ($request, $productIn) {
 
-            
+
             //Actulizar los datos
             $inHelper = new inHelper();
             $transHelper = new TransHelper();
@@ -103,7 +103,7 @@ class ProductInController extends Controller
         $data = $this->getProduct($request);
 
         // Devolver la vista con los datos
-        return Inertia::render('ProductsIn/In', [
+        return Inertia::render('ProductsIn/ProductIn', [
             'products' => $data,
             'productEntrance' => $productIn,
         ]);
@@ -122,7 +122,7 @@ class ProductInController extends Controller
         $data = $this->getProduct($request);
 
         //Devolver la vista con los datos
-        return Inertia::render('ProductsIn/In', [
+        return Inertia::render('ProductsIn/ProductIn', [
             'trans' => new ProductTransResource($trans),
             'products' => $data,
             'update' => true
@@ -145,7 +145,7 @@ class ProductInController extends Controller
 
 
         //Devolver la vista con los datos
-        return Inertia::render('ProductsIn/ShowTrans', [
+        return Inertia::render('ProductsIn/ProductShowTrans', [
             'trans' => $data
         ]);
     }

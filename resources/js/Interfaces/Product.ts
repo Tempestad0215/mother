@@ -3,7 +3,7 @@ import {linksI, metaI} from "@/Interfaces/Global";
 
 export interface productI {
     current_page: number;
-    data: productDataI[];
+    data: productFullI[];
     first_page_url: string | null;
     from: number;
     next_page_url: string | null;
@@ -14,72 +14,11 @@ export interface productI {
 }
 
 
-export interface productDataI {
-    id: number;
-    code:string;
-    name: string;
-    sku:string;
-    bar_code: string | null;
-    weight: string;
-    dimensions: string | null;
-    brand: string | null;
-    description: string | null;
-    unit: string;
-    stock: number;
-    reserved: number;
-    min_price: number;
-    special_price: number;
-    price: number;
-    cost?: number;
-    discount: number;
-    tax_rate: number;
-    tax: number;
-    type:string;
-    product_no_tax: number;
-    category_id: number;
-    supplier_id: number;
-    updated_at?: string
-    created_at?: string
-}
-
-
-export interface proTransSaleI{
-    amount: number;
-    code: string;
-    discount: number;
-    discount_amount: number;
-    id: number;
-    price: number;
-    product_id: number;
-    product_name: string;
-    sale_id: number;
-    status: number;
-    stock: number;
-    tax: number;
-    tax_rate: number;
-    type: string;
-}
-
-// export interface productDataFullI {
-//     id: number
-//     name: string
-//     description: string | null,
-//     bar_code: string | null,
-//     sku: string | null,
-//     brand: string | null,
-//     dimensions: string | null
-//     unit: string
-//     stock: number
-//     cost: number
-//     tax_rate: number
-//     weight: string
-//     created_at: string
-//     updated_at: string
-// }
-
-export interface productSupplierI {
-    id: number;
-    code: number;
+/**
+ *
+ */
+export interface productBaseI {
+    uuid: string;
     name: string;
     description: string | null;
     bar_code: string | null;
@@ -90,58 +29,44 @@ export interface productSupplierI {
     stock: number;
     cost: number;
     type: string;
-    supplier_id: number;
-    category_id: number;
+    supplier_id: string;
+    category_id: string;
     tax_rate: number;
     weight: string;
     created_at: string;
     updated_at: string;
 }
 
-export  interface  productSaleI{
-    id: number;
-    name: string;
-    code: string;
-    quantity: number;
+/**
+ *
+ */
+export interface productFullI extends productBaseI {
+    reserved: number;
+    min_price: number;
+    special_price: number;
     price: number;
-    stock: number;
-    amount: number;
     discount: number;
-    discount_amount:number;
     tax: number;
-    type: string;
-    total_tax: number;
-    tax_rate: number;
-    product_tax: number;
     product_no_tax: number;
-    stockTotal: number;
 }
 
 
 /**
  * Producto y trans
  */
-export interface productTransI {
+export interface productTransI extends productBaseI {
     amount: number;
-    code: string;
-    created_at: string;
     discount: number;
     discount_amount: number;
-    id: number;
-    cost: number;
-    tax_rate: number;
     price: number;
     min_price: number;
     special_price: number;
     product_code: string;
-    product_id: number;
+    product_id: string;
     product_name: string;
     sale_id: number;
     status: boolean;
-    stock: number;
     tax: number;
-    type: string;
-    updated_at: string;
 }
 
 /**

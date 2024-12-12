@@ -3,14 +3,13 @@
 export interface infoSaleI {
     transID?: number;
     amount: number;
-    code: string;
     deleted_at?: string | null;
     discount: number;
     discount_amount: number;
     min_price: number;
     special_price: number;
     price: number;
-    product_id: number;
+    product_id: string;
     product_name: string;
     sale_id?: number;
     status?: boolean;
@@ -24,7 +23,7 @@ export interface infoSaleI {
 }
 
 interface saleI{
-    id: number;
+    uuid: string;
     code: string;
     client_name: string;
     tax: number;
@@ -34,21 +33,20 @@ interface saleI{
 }
 
 export interface saleDataI {
-    client_id: number;
+    client_id: string;
     client_name: string;
     client_rnc: string;
     close_table: boolean;
     invoice_type:string;
     ncf: string;
     ncf_m: string;
-    code: string;
     comment:  {
         id: number,
         content: string,
     } | null;
     created_at: string;
     discount: number;
-    id: number;
+    id: string;
     info_sale: infoSaleI[];
     status: boolean;
     sub_total: number;

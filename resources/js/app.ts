@@ -29,7 +29,6 @@ createInertiaApp({
             .use(VueTheMask)
             .use(money as any)
             .use(ZiggyVue, Ziggy)
-            .use(VueTheMask as any)
             .use(VueSweetalert2)
             .mount(el);
     },    progress: {

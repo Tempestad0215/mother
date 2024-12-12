@@ -6,11 +6,11 @@ import TextInput from "@components/TextInput.vue";
 import FloatBox from "@components/FloatBox.vue";
 import FloatShowPro from "@/Pages/Products/FloatShowPro.vue";
 import { onMounted, onUpdated, Ref, ref} from "vue";
-import {productDataI, productI} from "@/Interfaces/Product";
+import {productFullI, productI} from "@/Interfaces/Product";
 import {getMoney, getRncHelper, getSequenceType} from "@/Global/Helpers";
 import Swal from "sweetalert2";
 import InputError from "@components/InputError.vue";
-import {clientDataI, clientI} from "@/Interfaces/Client";
+import {clientBaseI, clientDataI} from "@/Interfaces/Client";
 import FloatShowCli from "@/Pages/Clients/FloatShowCli.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import {successHttp} from "@/Global/Alert";
@@ -34,7 +34,7 @@ const page = usePage();
  */
 const propsW = defineProps<{
     products: productI,
-    clients: clientI,
+    clients: clientDataI,
     pdf?: string,
     saleOpen : saleDataPaginationI,
     invoiceType: invoiceTypeI[],
@@ -118,12 +118,12 @@ const showPdf:Ref<boolean> = ref(false);
  * Formulario
  */
 const form = useForm({
-    id: 0,
+    id: "",
     code_value: "",
     ncf:"",
     ncf_m:"",
     client_name: "",
-    client_id: 0,
+    client_id: "",
     client_rnc:"",
     client_rnc_status:"",
     client_social:"",
@@ -292,12 +292,12 @@ const checkInvoiceType = async ()=>{
  * Obtener los datos de productos
  * @param item
  */
-const getData = (item:productDataI) => {
+const getData = (item:productFullI) => {
     //Obtener los datos de productos
-    let info:infoSaleI | undefined = form.info_sale.find((el) => el.product_id === item.id);
+    let info:infoSaleI | undefined = form.info_sale.find((el) => el.product_id === item.uuid);
 
     // Verificar si el producto exite
-    if (info?.product_id  === item.id)
+    if (info?.product_id  === item.uuid)
     {
         info.stock += 1;
         showProduct.value = false;
@@ -307,13 +307,12 @@ const getData = (item:productDataI) => {
        //Pasar los datos al formulario
        form.info_sale.push({
            amount: 0,
-           code: item.code,
            discount: item.discount,
            discount_amount: 0,
            price: item.price,
            min_price: item.min_price,
            special_price: item.special_price,
-           product_id: item.id,
+           product_id: item.uuid,
            product_name: item.name,
            stock: 1,
            reserved: 1,
@@ -327,7 +326,7 @@ const getData = (item:productDataI) => {
     }
 
     // //Conseguir el index para poder realizar el calculo
-    let index = form.info_sale.findIndex((el) => el.product_id === item.id);
+    let index = form.info_sale.findIndex((el) => el.product_id === item.uuid);
 
     //Calcular el indice
     totalAmount(index);
@@ -368,7 +367,7 @@ const deleteItem = async (name:string , index:number) => {
         if (!propsW.refund)
         {
 
-            if(form.id !== 0)
+            if(form.id !== "")
             {
                 //Enviar los datos para actualizar
                 form.transform((data) => ({
@@ -435,10 +434,10 @@ const totalSale = () => {
  * @param item
  */
 //Seleccionar el cliente
-const selectClient = (item:clientDataI) =>  {
+const selectClient = (item:clientBaseI) =>  {
     //Pasar los datos al formulario
     form.client_name = item.name;
-    form.client_id = item.id;
+    form.client_id = item.uuid;
     showClient.value = false;
 }
 
@@ -591,7 +590,7 @@ const getBycode = () => {
         axios.get(route('product.get.code', {search: form.code_value}))
             .then((res) =>{
                 //Formatear los datos
-                const product:productDataI = res.data;
+                const product:productFullI = res.data;
                 //Pasar los datos al metodo
                 getData(product);
                 //Limpiar campo y errores en caso de tenerlo
@@ -620,7 +619,6 @@ const getSaleOpen = (item:saleDataI) => {
             //colocar la informacion en la lista
             form.info_sale.push({
                 transID: el.transID,
-                code: el.code,
                 product_id: el.product_id,
                 product_name: el.product_name,
                 price: el.price,
@@ -920,7 +918,7 @@ const getErrorPdf = () => {
                                         :disabled="form.invoice_type == 'B04'"
                                         @change="checkInvoiceType"
                                         v-model="form.invoice_type"
-                                        class="border-gray-200 rounded-md"
+                                        class="inputGeneral py-0"
                                         name="type"
                                         id="type">
                                         <option
@@ -936,25 +934,29 @@ const getErrorPdf = () => {
 
 
                                 <!--Tipo de factura-->
-                                <div class="ml-3">
+                                <div class="ml-2">
                                     <InputLabel for="type" value="Tipo de Venta"/>
-                                    <InputText
-                                        readonly
-                                        default-value="ventas"
-                                        v-model="form.type"/>
+                                    <select
+                                        class="inputGeneral py-0"
+                                        v-model="form.type">
+                                        <option value="ventas" >CONTADO</option>
+                                        <option value="cotizacion" >CREDITO</option>
+                                    </select>
                                     <InputError :message="form.errors.type"/>
                                 </div>
                                 <!--Tipo de cuenta si abierta o cerrada-->
                                 <div
                                     v-if="!propsW.refund"
-                                    class="ml-3">
+                                    class="ml-2">
                                     <InputLabel
                                         for="type_account"
                                         value="Cuenta"/>
-                                    <ToggleButton
+                                    <select
                                         v-model="form.close_table"
-                                        onLabel="Cerrada"
-                                        offLabel="Abierta" />
+                                        class="inputGeneral py-0">
+                                        <option :value="false">ABIERTA</option>
+                                        <option :value="true">CERRADA</option>
+                                    </select>
                                 </div>
                             </div>
 

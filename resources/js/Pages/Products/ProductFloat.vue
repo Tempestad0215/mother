@@ -4,7 +4,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { successHttp } from '@/Global/Alert';
-import {productSupplierI} from '@/Interfaces/Product';
+import {productBaseI} from '@/Interfaces/Product';
 import { supplierI } from '@/Interfaces/Supplier';
 import {useForm, usePage} from '@inertiajs/vue3';
 import {onMounted, Ref, ref} from 'vue';
@@ -25,7 +25,7 @@ const {props} = usePage();
  * Propiedades de la ventana
  */
 const propsW = defineProps<{
-    productEdit? : productSupplierI,
+    productEdit? : productBaseI,
     update? : boolean,
     categories: categoryBaseI[],
     suppliers: supplierI[]
@@ -42,13 +42,13 @@ const emit = defineEmits(['showSupplier']);
  * Datos del formulario
  */
 const form = useForm({
-    id: 0,
+    uuid: "",
     name: "",
     description: "",
     unit: "",
     type: "producto",
-    category_id:0,
-    supplier_id:0,
+    category_id: "",
+    supplier_id: "",
     inventoried: true,
     search:"",
     tax_rate: 0,
@@ -86,7 +86,7 @@ onMounted(()=>{
     // Pasar los datos a editar
     if(propsW.productEdit)
     {
-        form.id = propsW.productEdit.id;
+        form.uuid = propsW.productEdit.uuid;
         form.name = propsW.productEdit.name;
         form.type = propsW.productEdit.type;
         form.description = propsW.productEdit.description ? propsW.productEdit.description : "";
@@ -107,7 +107,7 @@ const submit = () => {
 
     if(propsW.update)
     {
-        form.patch(route('product.update',form.id),{
+        form.patch(route('product.update',form.uuid),{
             onSuccess:()=>{
                 successHttp('Datos actualizado correctamente')
 

@@ -2,7 +2,7 @@
 // Cliente para la tabla
 import {commentI} from "@/Interfaces/Comment";
 
-export interface baseClient {
+export interface clientBaseI {
     address: string | null
     created_at: string
     email: string | null
@@ -17,7 +17,7 @@ export interface baseClient {
 
 export interface clientDataI {
     current_page: number
-    data: baseClient[]
+    data: clientBaseI[]
     first_page_url: (string | null)
     from: number
     next_page_url: (string|null)
@@ -28,7 +28,7 @@ export interface clientDataI {
 }
 
 // Editar
-export interface clientEditI extends baseClient {
+export interface clientEditI extends clientBaseI {
     document: string;
     type: string,
     comment: commentI
