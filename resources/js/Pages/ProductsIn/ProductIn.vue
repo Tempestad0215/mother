@@ -215,10 +215,10 @@ const totalTax = () => {
     <Head title="Entrada" />
     <AppLayout>
         <template #header >
-            <TabLink3
+            <TabLink
                 :href="route('product.create')">
                 Registrar
-            </TabLink3>
+            </TabLink>
             <TabLink
                 :active="true"
                 :href="route('in.create')">
@@ -535,7 +535,8 @@ const totalTax = () => {
             <!-- Mostrar registro de suplidores -->
 
                 <FloatBox
-                    header="Suplidores">
+                    header="Suplidores"
+                    v-if="false">
                     <FloatSupplier
                         class="w-full"/>
                 </FloatBox>

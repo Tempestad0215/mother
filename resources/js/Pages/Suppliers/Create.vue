@@ -104,7 +104,7 @@ const submit = () => {
                 @submit.prevent="submit">
 
                 <h2 class=" text-2xl font-bold text-center mb-4">
-                    {{ form.update ? 'Actualización' :  'Registro'}} de Suplidor
+                    {{ propsW.update ? 'Actualización' :  'Registro'}} de Suplidor
                 </h2>
 
                 <div class=" grid grid-cols-2 gap-3 ">
@@ -180,7 +180,7 @@ const submit = () => {
                 <div class="mt-4 flex justify-end items-center space-x-5">
                     <!-- Mensaje al crear -->
                     <ActionMessage :on="form.recentlySuccessful" >
-                        {{ form.update ? ' !Actualizado' :  '! Registrado'}}
+                        {{ propsW.update ? ' !Actualizado' :  '! Registrado'}}
                     </ActionMessage>
                     <PrimaryButton
                         :disabled="form.processing">

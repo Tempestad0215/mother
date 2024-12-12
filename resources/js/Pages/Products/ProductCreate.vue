@@ -56,8 +56,6 @@ const showSupplierForm = ref(false);
                 :href="route('product.show')">
                 Mostrar
             </TabLink>
-
-
         </template>
 
         <!-- Contenido de la ventana de los productos -->
@@ -72,20 +70,14 @@ const showSupplierForm = ref(false);
                    @show-supplier="showSupplierForm = true"/>
            </div>
 
-
-
             <!-- Formulario para Agregar el suplidor -->
             <FloatBox
                 header="Registro de Proveedor"
-                v-model:show="showSupplierForm">
+                @close="showSupplierForm = false"
+                v-if="showSupplierForm">
                 <Float
                 />
-
             </FloatBox>
-
-
         </div>
-
     </AppLayout>
-
 </template>

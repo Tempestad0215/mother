@@ -21,7 +21,7 @@ const logOut = () => {
 </script>
 
 <template>
-    <div class="mt-3 relative">
+    <div class="mt-3 relative ">
         <img
             @click="show = !show"
             class="rounded-full w-[5rem] mx-auto cursor-pointer"
@@ -33,7 +33,7 @@ const logOut = () => {
             <div
                 v-if="show"
                 ref="menuImageRef"
-                class=" absolute top-[2rem] left-[7.5rem] w-52 rounded-md bg-gray-100 z-9999 border border-orange-500">
+                class=" absolute top-[2rem] left-[7.5rem] w-52 rounded-md bg-gray-100 z-40 border border-orange-500">
                 <ol
                     class=" text-xl text-center select-none rounded-md ">
                     <Link

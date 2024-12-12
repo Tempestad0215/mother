@@ -15,6 +15,16 @@ export const moneyConfig =  {
     allowBlank: false
 }
 
+export const configPercent =  {
+    prefix: '',
+    suffix: '%',
+    min: 0,
+    max: 100,
+    precision: 2,
+    masked: false,
+    allowBlank: false
+}
+
 /**
  * PAra mostar los numeros enteros
  */

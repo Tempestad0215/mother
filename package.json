@@ -30,6 +30,7 @@
         "chart.js": "^4.4.5",
         "fast-glob": "3.3.2",
         "micromatch": "^4.0.8",
+        "uuid": "^11.0.3",
         "v-money": "^0.8.1",
         "v-money3": "3.24.1",
         "vue-chartjs": "^5.3.1",

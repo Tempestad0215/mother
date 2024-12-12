@@ -8,12 +8,11 @@ import PrimaryButton from '@components/PrimaryButton.vue';
 import {computed, onMounted, reactive, ref, Ref} from 'vue';
 import {clientEditI} from '@/Interfaces/Client';
 import { successHttp } from '@/Global/Alert';
-// import {getRncHelper} from "@/Global/Helpers";
-// import {rncUserI} from "@/Interfaces/Setting";
-// import Swal from "sweetalert2";
 import ToggleButton from "@components/ToggleButton.vue";
-import SelectOption from "@components/SelectOption.vue";
 import TabLink from "@components/TabLink.vue";
+import {Money} from "v-money3";
+import {configPercent, moneyConfig} from "@/Global/Helpers";
+
 
 /**
  * propsW de la vantana
@@ -21,20 +20,12 @@ import TabLink from "@components/TabLink.vue";
 const propsW = defineProps<{
     clientEdit?: clientEditI,
     update?: boolean,
-}> ();
-
-
-
-
-
-
+}>();
 
 /**
  * Al momento de cargar
  */
 onMounted(()=>{
-
-
     //colocar datos por defecto
     form.document = "cedula";
     form.type = "contado";
@@ -52,8 +43,6 @@ onMounted(()=>{
         form.status = propsW.clientEdit.status;
         form.type = propsW.clientEdit.type;
     }
-
-
 });
 
 
@@ -66,10 +55,14 @@ const typeClient:Ref<Array<any>> = ref([
         name: "Contado",
         code: 'contado'
     },
-    // {
-    //     name: "Credito",
-    //     code: 'credito'
-    // }
+    {
+        name: "Credito",
+        code: 'credito'
+    },
+    {
+        name: "Anticipo",
+        code: 'anticipo'
+    }
 ])
 const typeDocument:Ref<Array<any>> = ref([
     {
@@ -101,24 +94,6 @@ const selectedMask = computed(()=>{
     return masks[form.document] || '';
 })
 
-
-
-/**
- * Propiedades computada
- */
-
-//Veriificar si es credito o contado
-// const isMandatory = computed(()=>{
-//     //Retorna true cuando es credito o anticipo
-//    if(form.type === "credito" || form.type === "anticipo")
-//    {
-//        return true;
-//    }
-//
-//    //Retorna true cuando es a contado
-//    return false;
-// });
-
 /**
  * DAtos del formulario
  */
@@ -129,16 +104,13 @@ const form = useForm({
     phone:"",
     email:"",
     address:"",
-    type: propsW.clientEdit ? propsW.clientEdit.type : "contado",
+    type: propsW.clientEdit ? propsW.clientEdit.type : "credito",
     document: propsW.clientEdit ? propsW.clientEdit.document : "cedula",
-    credit_limit: "",
-    credit_day:"",
-    credit_balance:"",
-    credit_expired:"",
-    advance_amount:"",
-    advance_date:"",
-    advance_expire:"",
-    advance_balance:"",
+    limit: "",
+    due_date: "",
+    balance:"",
+    consumed:"",
+    late_fee_interest:"",
     status: true,
     comment:"",
     image: ""
@@ -280,15 +252,15 @@ const submit = ():void => {
                     <!--                Tipo de cliente-->
                     <div>
                         <InputLabel for="tye" value="Tipo"/>
-                        <SelectOption
-                            label-value="Tipo"
-                            option-label="name"
+                        <select
                             v-model="form.type"
-                            :default-value="form.type"
-                            :is-read-only="true"
-                            option-value="code"
-                            placeholder="--Tipo--"
-                            :options="typeClient"/>
+                            class="inputGeneral py-1">
+                            <option
+                                v-for="(item, index) in typeClient" :key="index"
+                                :value="item.code">
+                                {{item.name}}
+                            </option>
+                        </select>
                         <InputError :message="form.errors.type"/>
                     </div>
 
@@ -296,15 +268,15 @@ const submit = ():void => {
                     <!--Tipo de documento-->
                     <div class="ml-3">
                         <InputLabel for="document" value="Documento"/>
-                        <SelectOption
+                        <select
                             v-model="form.document"
-                            :default-value="form.document"
-                            label-value="Tipo"
-                            :is-read-only="true"
-                            option-label="name"
-                            option-value="code"
-                            placeholder="--Documento--"
-                            :options="typeDocument"/>
+                            class="inputGeneral py-1">
+                            <option
+                                v-for="(item, index) in typeDocument" :key="index"
+                                :value="item.code">
+                                {{item.name}}
+                            </option>
+                        </select>
                         <InputError :message="form.errors.document"/>
                     </div>
 
@@ -354,7 +326,7 @@ const submit = ():void => {
                             id="basic"
                             v-model="form.personal_id"
                             v-mask="selectedMask"
-                            placeholder="125-6536895-6" />
+                            :placeholder="selectedMask" />
                         <!-- Error -->
                         <InputError :message="form.errors.personal_id" />
                     </div>
@@ -410,83 +382,51 @@ const submit = ():void => {
                 </fieldset>
                 <!-- Nombre -->
 
-
-
 <!--             Datos de credito-->
-                <div class="grid grid-cols-2 gap-4">
+                <div class="">
                     <fieldset
-                        v-if="form.type === 'credito'"
-                        class="field">
+                        v-if="form.type !== 'contado'"
+                        class="field flex justify-between">
                         <legend>
-                            Datos Credito
+                            Informacion de Pagos
                         </legend>
                         <div>
                             <InputLabel for="credit_limit" value="Limite de credito"/>
-                            <TextInput
-                                v-model="form.credit_limit"
-                                class="w-full"
-                                type="number" />
-                            <InputError :message="form.errors.credit_limit"/>
+                            <Money
+                                class="inputGeneral"
+                                v-bind="moneyConfig"
+                                v-model="form.limit" />
+                            <InputError :message="form.errors.limit"/>
                         </div>
 
                         <div>
                             <InputLabel for="credit_day" value="Dias para pagar"/>
-                            <TextInput
-                                v-model="form.credit_day"
-                                class="w-full"
-                                type="number" />
-                            <InputError :message="form.errors.credit_day" />
+                            <Money
+                                class="inputGeneral"
+                                v-bind="moneyConfig"
+                                v-model="form.due_date" />
+                            <InputError :message="form.errors.due_date" />
                         </div>
-
-<!--                        <div>-->
-<!--                            <InputLabel for="curren_balance" value="Balance Actual"/>-->
-<!--                            <p>-->
-<!--                                {{getMoney(1253.26)}}-->
-<!--                            </p>-->
-<!--                            <InputError/>-->
-<!--                        </div>-->
-<!--                        <div>-->
-<!--                            <InputLabel for="credit_expired" value="Balance Vencido"/>-->
-<!--                            <p>-->
-<!--                                {{getMoney(0.0)}}-->
-<!--                            </p>-->
-<!--                            <InputError/>-->
-<!--                        </div>-->
+                        <div>
+                            <InputLabel for="credit_day" value="Interes por Mora"/>
+                            <Money
+                                class="inputGeneral"
+                                v-bind="configPercent"
+                                v-model="form.late_fee_interest" />
+                            <InputError :message="form.errors.due_date" />
+                        </div>
+<!--                        Balance-->
+                        <div>
+                            <InputLabel for="" value="Balance"/>
+                            <span>125.32</span>
+                        </div>
+<!--                        Consumido-->
+                        <div>
+                            <InputLabel for="" value="Consumido"/>
+                            <span>125.32</span>
+                        </div>
                     </fieldset>
 
-
-<!--                  Datos de anticipo  -->
-                    <fieldset
-                        v-if="form.type === 'anticipo'"
-                        class="field">
-                        <legend>
-                            Datos Anticipo
-                        </legend>
-                        <div>
-                            <InputLabel for="advance_amount" value="Cantidad"/>
-                            <TextInput
-                                v-model="form.advance_amount"
-                                class="w-full"
-                                type="number" />
-                            <InputError :message="form.errors.advance_amount" />
-                        </div>
-                        <div>
-                            <InputLabel for="advance_date" value="Fecha"/>
-                            <TextInput
-                                v-model="form.advance_date"
-                                class="w-full"
-                                type="date" />
-                            <InputError :message="form.errors.advance_date" />
-                        </div>
-                        <div>
-                            <InputLabel for="advance_expire" value="Fecha de vencimiento"/>
-                            <TextInput
-                                v-model="form.advance_expire"
-                                type="date" />
-                            <InputError :message="form.errors.advance_expire" />
-                        </div>
-
-                    </fieldset>
                 </div>
 
 
