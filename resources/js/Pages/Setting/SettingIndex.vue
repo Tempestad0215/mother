@@ -372,9 +372,10 @@ const removeUnit = (index:number) => {
                         <div>
                             <ToggleButton
                                 label="Manejar Comprobante"
-                                v-model="form.cost"
+                                v-model="form.sequence"
                                 on-label="SI"
                                 off-label="NO"/>
+                            <InputError :message="form.errors.sequence"/>
                         </div>
                     </div>
 

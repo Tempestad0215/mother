@@ -7,7 +7,7 @@ import FloatBox from "@components/FloatBox.vue";
 import FloatShowPro from "@/Pages/Products/FloatShowPro.vue";
 import { onMounted, onUpdated, Ref, ref} from "vue";
 import {productFullI, productI} from "@/Interfaces/Product";
-import {getMoney, getRncHelper, getSequenceType} from "@/Global/Helpers";
+import {getMoney, getRncHelper, getSequenceType, moneyConfig} from "@/Global/Helpers";
 import Swal from "sweetalert2";
 import InputError from "@components/InputError.vue";
 import {clientBaseI, clientDataI} from "@/Interfaces/Client";
@@ -21,6 +21,7 @@ import {invoiceTypeI, rncUserI, sequenceDataI} from "@/Interfaces/Setting";
 import ShowPdf from "@components/ShowPdf.vue";
 import PaymentInvoice from "@components/PaymentInvoice.vue";
 import ReturnForm from "@components/ReturnForm.vue";
+import {Money} from "v-money3";
 
 
 
@@ -756,7 +757,7 @@ const getErrorPdf = () => {
 <!--        //contenido-->
         <div>
             <div
-                class=" bg-gray-200 p-5 max-w-[1180px] rounded-md mx-auto overflow-hidden">
+                class=" bg-blue-300 p-5 max-w-[1180px] rounded-md mx-auto overflow-hidden">
                 <form
                     class=" max-w-3/5">
                     <div >
@@ -987,15 +988,10 @@ const getErrorPdf = () => {
                                             {{item.product_name}}
                                         </td>
                                         <td class="max-w-[5rem]">
-                                            <InputNumber
-                                                @valueChange="totalAmount(index)"
-                                                class="!bg-transparent"
-                                                v-model="item.stock"
-                                                inputId="locale-us"
-                                                locale="en-US"
-                                                :max-fraction-digits="2"
-                                                :minFractionDigits="2"
-                                                fluid/>
+                                            <Money
+                                                @blur="totalAmount(index)"
+                                                v-bind="moneyConfig"
+                                                v-model="item.stock"/>
                                         </td>
                                         <td>
                                             {{getMoney(item.tax)}}
@@ -1006,26 +1002,20 @@ const getErrorPdf = () => {
                                             <span v-if="item.type === 'producto'">
                                                 {{getMoney(item.price)}}
                                             </span>
-
-                                            <InputNumber
+                                            <Money
                                                 v-if="item.type === 'servicio'"
-                                                @valueChange="totalAmount(index)"
-                                                v-model="item.price"
-                                                inputId="locale-us"
-                                                locale="en-US"
-                                                :max-fraction-digits="2"
-                                                :minFractionDigits="2"
-                                                fluid/>
+                                                @blur="totalAmount(index)"
+                                                v-bind="moneyConfig"
+                                                v-model="item.price"/>
                                         </td>
                                         <td class="max-w-[4rem]">
-                                            <InputNumber
-                                                @valueChange="totalAmount(index)"
-                                                v-model="item.discount"
+                                            <Money
+                                                v-if="item.type === 'servicio'"
+                                                @blur="totalAmount(index)"
+                                                v-bind="moneyConfig"
                                                 :min="0"
                                                 :max="100"
-                                                :allow-empty="false"
-                                                prefix="%"
-                                                fluid/>
+                                                v-model="item.discount"/>
                                         </td>
                                         <td>
                                             {{getMoney(item.amount)}}
@@ -1055,22 +1045,11 @@ const getErrorPdf = () => {
 
                             <!--                            Comentario de la venta-->
                             <div class="grid grid-cols-4 items-center gap-4">
-                                <div class=" col-span-2">
-                                    <fieldset class=" relative max-w-[400px]">
-                                        <legend>
-                                            Comentario
-                                        </legend>
-                                        <Textarea
-                                            v-model="form.comment"
-                                            autoResize
-                                            rows="3"
-                                            maxlength="250"
-                                            cols="50" />
-                                        <InputError :message="form.errors.comment"/>
-
-                                    </fieldset>
-                                </div>
-
+                                <textarea
+                                    v-model.trim="form.comment"
+                                    cols="60"
+                                    class="area col-span-2">
+                                </textarea>
                                 <div class=" col-end-7 col-span-2">
                                     <table>
                                         <tbody>
@@ -1127,7 +1106,8 @@ const getErrorPdf = () => {
 <!--            Ventana de Devuelta-->
             <FloatBox
                 header="Retornos"
-                v-model:show="showReturn">
+                @close="showReturn = false"
+                v-if="showReturn">
                 <PaymentInvoice
                     @amount-credit-note="amountCreditNote()"
                     @returned-blur="returnedBlur()"
@@ -1154,7 +1134,8 @@ const getErrorPdf = () => {
 
             <FloatBox
                 header="Clientes"
-                v-model:show="showClient">
+                @close="showClient = false"
+                v-if="showClient">
                 <FloatShowCli
                     class=" w-4/5 rounded-md py-5"
                     @get-data="selectClient"
@@ -1166,7 +1147,8 @@ const getErrorPdf = () => {
 
             <FloatBox
                 header="Productos"
-                v-model:show="showProduct">
+                @close="showProduct = false"
+                v-if="showProduct">
                 <FloatShowPro
                     class=" bg-gray-200 rounded-md px-10 py-5"
                     @select="getData"
@@ -1177,7 +1159,8 @@ const getErrorPdf = () => {
             <!-- Vetana de las ordenes abierta -->
             <FloatBox
                 header="Cuentas Abiertas"
-                v-model:show="showSaleOpen">
+                @close="showSaleOpen = false"
+                v-if="showSaleOpen">
                 <SaleOpenShow
                     @sen-data="getSaleOpen"
                     class=" bg-gray-200 rounded-md px-10 py-5"
@@ -1189,7 +1172,8 @@ const getErrorPdf = () => {
 
             <FloatBox
                 header="Devolución"
-                v-model:show="showFormReturn">
+                @close="showFormReturn = false"
+                v-if="showFormReturn">
                 <ReturnForm
                     @closeFormReturn="showFormReturn = false"
                     :error="page.props.errors.general"/>
