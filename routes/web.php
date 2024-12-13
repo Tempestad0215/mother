@@ -216,6 +216,7 @@ Route::middleware([
     });
 
     /**
+     *
      * Entradas
      */
     Route::controller(ProductInController::class)

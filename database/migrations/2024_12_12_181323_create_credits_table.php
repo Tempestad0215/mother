@@ -10,7 +10,7 @@ return new class extends Migration {
         Schema::create('credits', function (Blueprint $table) {
             $table->uuid()->primary();
             $table->uuidMorphs('creditable');
-            $table->integer('due_date');
+            $table->integer('due_date')->nullable();
             $table->decimal('limit');
             $table->decimal('balance');
             $table->decimal('consumed');

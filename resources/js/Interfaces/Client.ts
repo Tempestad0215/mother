@@ -32,6 +32,11 @@ export interface clientEditI extends clientBaseI {
     document: string;
     type: string,
     comment: commentI
+    limit: number;
+    due_date: number;
+    late_fee_interest: number;
+    balance: number;
+    consumed: number;
 }
 
 

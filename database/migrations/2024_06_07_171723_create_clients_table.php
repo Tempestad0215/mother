@@ -19,10 +19,9 @@ return new class extends Migration
             $table->string('personal_id',50)->nullable( );
             $table->string('email',150)->nullable()->unique();
             $table->string('address',255)->nullable();
-            $table->boolean('receive_email')->default(false);
             $table->enum('type',['contado','credito','anticipo'])->default('contado');
-
-
+            $table->enum('type_price',[1,2,3]);
+            $table->boolean('receive_email');
             $table->boolean('status')->default(true);
             $table->softDeletes();
             $table->timestamps();

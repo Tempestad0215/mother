@@ -11,7 +11,7 @@ import { successHttp } from '@/Global/Alert';
 import ToggleButton from "@components/ToggleButton.vue";
 import TabLink from "@components/TabLink.vue";
 import {Money} from "v-money3";
-import {configPercent, moneyConfig} from "@/Global/Helpers";
+import {configPercent, getMoney, moneyConfig} from "@/Global/Helpers";
 
 
 /**
@@ -26,9 +26,6 @@ const propsW = defineProps<{
  * Al momento de cargar
  */
 onMounted(()=>{
-    //colocar datos por defecto
-    form.document = "cedula";
-    form.type = "contado";
     //Verificar si existe datos para poner en el formulario
     if(propsW.clientEdit)
     {
@@ -42,6 +39,13 @@ onMounted(()=>{
         form.comment = propsW.clientEdit.comment.content;
         form.status = propsW.clientEdit.status;
         form.type = propsW.clientEdit.type;
+
+    //     Informacion de datos de credito
+        form.limit = propsW.clientEdit.limit ?? 0;
+        form.due_date = propsW.clientEdit.due_date ?? 0;
+        form.late_fee_interest = propsW.clientEdit.late_fee_interest ?? 0;
+
+
     }
 });
 
@@ -104,19 +108,19 @@ const form = useForm({
     phone:"",
     email:"",
     address:"",
-    type: propsW.clientEdit ? propsW.clientEdit.type : "credito",
+    type: propsW.clientEdit ? propsW.clientEdit.type : "contado",
     document: propsW.clientEdit ? propsW.clientEdit.document : "cedula",
-    limit: "",
-    due_date: "",
-    balance:"",
-    consumed:"",
-    late_fee_interest:"",
+    limit: 0,
+    due_date: 0,
+    balance: 0,
+    consumed: 0,
+    late_fee_interest:0,
     status: true,
+    receive_email: false,
+    type_price: 1,
     comment:"",
     image: ""
 });
-
-
 
 /*
 Funciones
@@ -148,72 +152,6 @@ const submit = ():void => {
         });
     }
 }
-
-
-/**
- * Otener el RNC
- */
-// const getRnc = async () => {
-//     if (form.document === 'rnc')
-//     {
-//
-//         //Obtener la informacion del RNC
-//         let info:string = await getRncHelper(form.personal_id);
-//
-//
-//         if (info === "SUSPENDIDO")
-//         {
-//             form.setError("personal_id", "Este Contribuyente Esta Suspendido, Por Favor Elegir Otro");
-//             //Variable de error
-//             classRnc.value = "border-red-800 text-red-500 animate-pulse";
-//         }else if (info === "ERROR")
-//         {
-//             form.setError("personal_id", "Este Contribuyente No Pudo Ser Encontrado");
-//             //Variable de error
-//             classRnc.value = "border-red-800 text-red-500 animate-pulse";
-//
-//         }else if (info === "CANCELLED")
-//         {
-//
-//         }
-//         else{
-//
-//             //Pasar los datos del json y transformar
-//             let infoParse:rncUserI = JSON.parse(info);
-//             //Poner los datos en verde
-//             classRnc.value = "border-green-800 text-green-500";
-//             //Mostrar el mensaje de la razon social
-//             await Swal.fire({
-//                 title: "Datos Contribuyente",
-//                 html: `
-//                 <p>
-//                     <strong>RNC :</strong>
-//                     ${infoParse.rnc}
-//                 </p>
-//                 <p>
-//                     <strong>Razon Social :</strong>
-//                     ${infoParse.razon_social}
-//                 </p>
-//             `,
-//                 icon: "info"
-//             });
-//
-//             //Cambiar el nombre a razon social
-//             form.name = infoParse.razon_social;
-//
-//         }
-//         //Limpiar el error luego de 5 segundo
-//         setTimeout(() => {
-//             form.clearErrors("personal_id");
-//             classRnc.value = "";
-//         },5000);
-//     }
-//
-//
-// }
-
-
-
 
 </script>
 
@@ -263,7 +201,22 @@ const submit = ():void => {
                         </select>
                         <InputError :message="form.errors.type"/>
                     </div>
-
+<!--        Tipo de precio del cliente-->
+                    <div class="ml-3">
+                        <InputLabel
+                            for="type_price"
+                            value="Tipo Precio"/>
+                        <select
+                            v-model="form.type_price"
+                            class="inputGeneral py-1"
+                            name="type_price"
+                            id="type_price">
+                            <option :value="1">Normal</option>
+                            <option :value="2">Especial</option>
+                            <option :value="1">Minimo</option>
+                        </select>
+                        <InputError :message="form.errors.comment"/>
+                    </div>
 
                     <!--Tipo de documento-->
                     <div class="ml-3">
@@ -278,6 +231,18 @@ const submit = ():void => {
                             </option>
                         </select>
                         <InputError :message="form.errors.document"/>
+                    </div>
+                    <!-- Rcibir correo de esta app -->
+                    <div class="ml-3">
+                        <ToggleButton
+                            v-model="form.receive_email"
+                            off-label="NO"
+                            on-label="SI"
+                            label="Correos"/>
+                        <!--                        <ToggleButton-->
+                        <!--                            v-model="form.status"-->
+                        <!--                            onLabel="SI" offLabel="NO" />-->
+                        <InputError :message="form.errors.status" />
                     </div>
 
 
@@ -386,7 +351,7 @@ const submit = ():void => {
                 <div class="">
                     <fieldset
                         v-if="form.type !== 'contado'"
-                        class="field flex justify-between">
+                        class="field grid grid-cols-5 gap-3">
                         <legend>
                             Informacion de Pagos
                         </legend>
@@ -410,7 +375,7 @@ const submit = ():void => {
                         <div>
                             <InputLabel for="credit_day" value="Interes por Mora"/>
                             <Money
-                                class="inputGeneral"
+                                class="inputGeneral w-full"
                                 v-bind="configPercent"
                                 v-model="form.late_fee_interest" />
                             <InputError :message="form.errors.due_date" />
@@ -418,12 +383,16 @@ const submit = ():void => {
 <!--                        Balance-->
                         <div>
                             <InputLabel for="" value="Balance"/>
-                            <span>125.32</span>
+                            <span class="flex justify-center items-center bg-white px-3 rounded-md h-[2rem] " >
+                                {{getMoney(form.balance)}}
+                            </span>
                         </div>
 <!--                        Consumido-->
                         <div>
                             <InputLabel for="" value="Consumido"/>
-                            <span>125.32</span>
+                            <span class="flex justify-center items-center bg-white px-3 rounded-md h-[2rem] " >
+                                {{getMoney(form.consumed)}}
+                            </span>
                         </div>
                     </fieldset>
 

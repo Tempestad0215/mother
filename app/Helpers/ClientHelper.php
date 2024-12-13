@@ -25,7 +25,7 @@ class ClientHelper
         //conseguir los datos del cliente
         return Client::where('status', true)
             ->where('name','LIKE','%'.$search.'%' )
-            ->latest()
+            ->latest('created_at')
             ->simplePaginate($perPage);
 
     }
@@ -41,15 +41,26 @@ class ClientHelper
         DB::transaction(function () use ($request) {
 
 
+
             //Inmtancia
             $general = new General();
 
             //Obtener el tipo
-            $type = (int) $request->get('type');
+            $type = $request->get('type');
 
 
             //Guardar los datos validado
-           $client = Client::create($request->validated());
+           $client = Client::create($request->only([
+               'name',
+               'email',
+               'personal_id',
+               'phone',
+               'address',
+               'type',
+               'document',
+               'receive_email',
+               'status',
+               'type_price']));
 
 
            //guardar el comentario si existe
@@ -57,33 +68,44 @@ class ClientHelper
            {
                //Tomar el nombre del comentario
                $commentHelper = new CommentHelper();
-               $commentHelper->updateOrInsert($client, $request->get('comment'));
+               $commentHelper->updateOrInsert(
+                   $client,
+                   $request->get('comment'));
            }
-
-           // Obtner el nombre de la imagen ya guardado
-           $oldImage = $client->image?->name;
 
            //Guardar la imagen y quedarse con el nombre
-           $general->saveImage($request, $oldImage, $client);
+           $general->saveImage($request, $client);
 
-
-           //si es avance
-           if($type === 3)
+           if ($type != 'contado')
            {
-               //Crear la instancia
-               $advanceHelper = new AdvanceHelper();
+               $client->credit()->create([
+                   'limit' => $request->get('limit'),
+                   'due_date' => $request->get('due_date'),
+                   'balance' => $request->get('limit'),
+                   'consumed' =>  0,
+                   'late_fee_interest' => $request->get('late_fee_interest'),
+               ]);
 
-               //Guardar los datos
-               $advanceHelper->store($request, $client->id);
-
-               //Si es credito
-           }else if($type === 2){
-
-               //Crear la instancia
-               $creditHelper = new CreditHelper();
-               //Enviar los datos
-               $creditHelper->store($request, $client->id);
            }
+
+
+//           //si es avance
+//           if($type === 3)
+//           {
+//               //Crear la instancia
+//               $advanceHelper = new AdvanceHelper();
+//
+//               //Guardar los datos
+//               $advanceHelper->store($request, $client->id);
+//
+//               //Si es credito
+//           }else if($type === 2){
+//
+//               //Crear la instancia
+//               $creditHelper = new CreditHelper();
+//               //Enviar los datos
+//               $creditHelper->store($request, $client->id);
+//           }
 
 
         });

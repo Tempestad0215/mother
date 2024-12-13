@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Pagination from "@components/Pagination.vue";
-import {clientDataI, baseClient} from "@/Interfaces/Client";
+import {clientDataI, clientBaseI} from "@/Interfaces/Client";
 import {router, useForm, usePage} from "@inertiajs/vue3";
 import Swal from "sweetalert2";
 import {successHttp} from "@/Global/Alert";
@@ -24,7 +24,7 @@ const props = defineProps<{
  * Para emitir los eventos
  */
 const emit = defineEmits<{
-    (e: 'getData', item:baseClient):void
+    (e: 'getData', item:clientBaseI):void
 }>();
 
 
@@ -62,9 +62,6 @@ const submit = () => {
 
 // Editar
 const edit = (id:string) => {
-
-    console.log(id);
-
     // Hacer la peticion
     router.get(route('client.edit', id));
 }
@@ -121,9 +118,9 @@ const destroy = (id:string) => {
                 class="styleTable table-fixed w-full">
                 <thead>
                     <tr>
-                      <th class="w-[20rem]">Nombre</th>
+                      <th class="w-[15rem]">Nombre</th>
                       <th class="w-[10rem]">Ced./RNC/Pas</th>
-                      <th class="w-[20rem]" >Correo</th>
+                      <th class="w-[18rem]" >Correo</th>
                       <th class="w-[10rem]">Teléfono</th>
                       <th class="w-[6rem]">Act</th>
                     </tr>
@@ -136,17 +133,17 @@ const destroy = (id:string) => {
                         <td class="truncate">{{item.phone}}</td>
                         <td class="truncate">
                             <i
-                                v-if="page.component !== 'Clients/Show'"
+                                v-if="page.component !== 'Clients/ClientShow'"
                                 title="Seleccionar"
                                 @click="emit('getData',item)"
                                 class="fa-solid fa-circle-check"></i>
                             <i
-                                v-if="page.component === 'Clients/Show'"
+                                v-if="page.component === 'Clients/ClientShow'"
                                 title="Editar"
                                 @click="edit(item.uuid)"
                                 class=" ml-2 icon-efect fa-solid fa-pen-to-square"></i>
                             <i
-                                v-if="page.component === 'Clients/Show'"
+                                v-if="page.component === 'Clients/ClientShow'"
                                 title="Eliminar"
                                 @click="destroy(item.uuid)"
                                 class="ml-2 icon-efect fa-solid fa-trash"></i>

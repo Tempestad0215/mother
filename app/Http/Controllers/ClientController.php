@@ -48,9 +48,9 @@ class ClientController extends Controller
         // Tomar los datos
         $data = $this->getTable($request);
 
+        /*Vista con la pagina*/
         return Inertia::render('Clients/ClientCreate',[
             'clients' => $data,
-            'test' => config('Setting.cliCode')
         ]);
 
     }
@@ -160,7 +160,7 @@ class ClientController extends Controller
                 $query->where('name','like','%'. $search .'%')
                     ->orWhere('phone','like','%'. $search .'%');
             })
-            ->latest()
+            ->latest('created_at')
             ->limit(5)
             ->get();
 
@@ -173,12 +173,11 @@ class ClientController extends Controller
      * @param Request $request
      * @return Paginator
      */
-    private function getTable(REquest $request)
+    private function getTable(Request $request)
     {
         // Tomar los datos
         $search = trim($request->get('search'));
         $perPage = $request->get('perPage',30);
-
 
 
         // Buscar en la base de datos
