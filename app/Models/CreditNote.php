@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\SalePaymentEnum;
+use App\Enums\TypePaymentEnum;
 use App\Enums\SaleTypeEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -31,7 +31,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon $deleted_at
  * @property ProTrans[] $trans
  * @property Sale[] $sale,
- * @property SalePaymentEnum $type_payment,
+ * @property TypePaymentEnum $type_payment,
  * @property float $received
  * @property float $returned
  */

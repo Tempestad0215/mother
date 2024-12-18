@@ -1,4 +1,4 @@
-
+import {creditI} from "@/Interfaces/Credits";
 
 
 export interface supplierI {
@@ -9,6 +9,11 @@ export interface supplierI {
     uuid: string;
     phone: string | null;
     status: number;
+    payment: {
+        name: string;
+        value: string;
+    } | null;
+    credit?: creditI
     updated_at: string
 }
 
@@ -23,4 +28,12 @@ export interface supplierDataI {
     per_page: number
     prev_page_url: (string|null)
     to: number
+}
+
+export interface supplierCreditI extends supplierI{
+    limit: number;
+    due_date: number;
+    balance: number;
+    consumed: number;
+    late_fee_interest: number;
 }

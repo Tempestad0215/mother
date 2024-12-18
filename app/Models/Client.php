@@ -95,8 +95,6 @@ class Client extends Model implements Auditable
         ];
     }
 
-
-
     /**
      * Relaciones
      */

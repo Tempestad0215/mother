@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum SalePaymentEnum:string
+enum TypePaymentEnum:string
 {
     case CONTADO = 'contado';
     case CREDITO = 'credito';
@@ -10,4 +10,5 @@ enum SalePaymentEnum:string
     case TARJETA = 'tarjeta';
     case TRANSFERENCIA = 'transferencia';
     case ANTICIPO = 'anticipo';
+    case OTROS = 'otros';
 }

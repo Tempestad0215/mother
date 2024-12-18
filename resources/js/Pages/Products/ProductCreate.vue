@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import Float from '@/Pages/Suppliers/FloatSupp.vue'
+import Float from '@/Pages/Suppliers/SupplierFloat.vue'
 import FloatBox from '@/Components/FloatBox.vue'
 import {ref} from 'vue';
 import FloatProduct from '@/Pages/Products/ProductFloat.vue';

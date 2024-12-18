@@ -15,9 +15,11 @@ return new class extends Migration
             $table->uuid()->primary();
             $table->string('contact',75)->nullable();
             $table->string('company_name',150);
+            $table->enum('type_payment',['contado','credito','cheque','tarjeta','transferencia','anticipo','otros']);
             $table->string('phone',20)->nullable();
             $table->string('email',150)->nullable()->unique();
             $table->boolean('receive_email')->default(false);
+            $table->string('account_bank',30)->nullable();
             $table->boolean('status')->default(true);
             $table->softDeletes();
             $table->timestamps();

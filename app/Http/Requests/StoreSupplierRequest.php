@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\TypePaymentEnum;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreSupplierRequest extends FormRequest
 {
@@ -25,7 +27,10 @@ class StoreSupplierRequest extends FormRequest
             'contact' => ['nullable','string','max:75'],
             'company_name' => ['required','string','min:3','max:75'],
             'phone' => ['nullable','string','max:25'],
-            'email' => ['nullable','string','max:150','unique:suppliers,email']
+            'type_payment' => ['required',Rule::enum(TypePaymentEnum::class),'string'],
+            'email' => ['nullable','string','max:150','unique:suppliers,email'],
+            'account_bank' => ['string','nullable','max:30'],
+            'comment' => ['nullable','string','min:3','max:255'],
         ];
     }
 }

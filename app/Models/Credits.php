@@ -7,6 +7,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Date;
+
+
+/**
+ * @property string $uuid;
+ * @property numeric $due_date;
+ * @property numeric $limit;
+ * @property numeric $balance;
+ * @property numeric $consumed;
+ * @property numeric late_fee_interest;
+ * @property Date $deleted_at
+ * @property Date $created_at
+ * @property Date $updated_at
+ *
+ *
+ */
 
 class Credits extends Model
 {

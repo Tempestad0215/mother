@@ -22,6 +22,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\CreditNoteController;
 
 
+
 // La ruita de registro bloquerar
 
 

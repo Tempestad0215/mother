@@ -9,6 +9,9 @@ import Swal from "sweetalert2";
 import {successHttp} from "@/Global/Alert";
 import {Head} from "@inertiajs/vue3"
 import TabLink from "@components/TabLink.vue";
+import {ref, Ref} from "vue";
+import FloatBox from "@components/FloatBox.vue";
+import SupplierSee from "@/Pages/Suppliers/SupplierSee.vue";
 
 
 /*
@@ -17,6 +20,10 @@ Propiedades
 const propsW = defineProps<{
     suppliers: supplierDataI
 }>()
+
+
+const supplierData:Ref<supplierI | null> = ref(null);
+const seeSupplier:Ref<boolean> = ref(false);
 
 /*
 Fomulario
@@ -72,6 +79,15 @@ const search = () => {
     });
 }
 
+/**
+ * Ver
+ */
+const see = (item:supplierI) => {
+    //Pasar los datos a la variable
+    supplierData.value = item;
+    seeSupplier.value = true;
+}
+
 
 </script>
 
@@ -89,7 +105,7 @@ const search = () => {
                 Mostrar
             </TabLink>
         </template>
-        <div class="bg-blue-300 p-5 rounded-md">
+        <div class="bg-blue-300 p-5 rounded-md max-w-[70rem] mx-auto">
             <!--        Table de datos-->
             <div class="mt-3">
                 <div class="flex justify-between items-center">
@@ -121,7 +137,10 @@ const search = () => {
                         <td class="truncate">{{item.contact}}</td>
                         <td class="truncate">{{item.phone}}</td>
                         <td class="truncate">{{item.email}}</td>
-                        <td>
+                        <td class="space-x-2" >
+                            <i
+                                @click="see(item)"
+                                class="icon-efect fa-regular fa-eye"></i>
                             <i
                                 @click="edit(item)"
                                 title="Editar"
@@ -149,5 +168,14 @@ const search = () => {
             />
         </div>
     </AppLayout>
+
+
+    <FloatBox
+        :header="`Ver Suplidor : ${supplierData?.company_name}`"
+        @close="seeSupplier = false"
+        v-if="seeSupplier">
+        <supplier-see
+            :supplier="supplierData"/>
+    </FloatBox>
 
 </template>

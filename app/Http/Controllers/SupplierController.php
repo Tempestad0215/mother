@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\SupplierResource;
 use App\Models\Supplier;
 use App\Http\Requests\StoreSupplierRequest;
 use App\Http\Requests\UpdateSupplierRequest;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use phpDocumentor\Reflection\Types\Mixed_;
 
 class SupplierController extends Controller
 {
@@ -28,8 +31,9 @@ class SupplierController extends Controller
         //Tomaar los datos de busqueda
         $data = $this->get($request);
 
+
         //Devolver la vista con los datos
-        return Inertia::render("Suppliers/Create",[
+        return Inertia::render("Suppliers/SupplierCreate",[
             'suppliers' => $data
         ]);
 
@@ -40,9 +44,32 @@ class SupplierController extends Controller
      */
     public function store(StoreSupplierRequest $request)
     {
-       // Guardar los datos de supplidor
-        Supplier::create($request->validated());
 
+        DB::transaction(function () use ($request) {
+            // Guardar los datos de supplidor
+            $supplier = Supplier::create($request->only(['type_payment','company_name','contact','phone','email','account_bank']));
+
+            //si existe el comentario pues se guarda los datos
+            if ($request->has('comment'))
+            {
+                $supplier->comment()->create([
+                    'content' => $request->comment,
+                ]);
+            }
+
+            //si tiene otro tipo que no sea contado
+            if ($request->get('type_payment') != 'contado')
+            {
+                $supplier->credit()->create([
+                    'due_date' => $request->due_date,
+                    'limit' => $request->limit,
+                    'balance' => $request->limit,
+                    'consumed' => 0,
+                    'late_fee_interest' => $request->late_fee_interest,
+                ]);
+            }
+
+        });
 
         //Devolver hacia atras
         return back();
@@ -58,6 +85,7 @@ class SupplierController extends Controller
         //Tomaar los datos de busqueda
         $data = $this->get($request);
 
+
         //devolver la vista y los datos
         return Inertia::render("Suppliers/SupplierShow",[
            'suppliers' =>  $data
@@ -70,7 +98,7 @@ class SupplierController extends Controller
     public function edit(Supplier $supplier)
     {
         //Para edditar el suplidor
-        return Inertia::render("Suppliers/Create",[
+        return Inertia::render("Suppliers/SupplierCreate",[
             'supplierEdit' => $supplier,
             'update' => true
         ]);
@@ -126,19 +154,22 @@ class SupplierController extends Controller
 
     /**
      * @param Request $request
-     * @return Paginator
+     * @return mixed
      */
-    private function get(Request $request):Paginator
+    private function get(Request $request):mixed
     {
 
         //Tomar los datos de busqueda
         $search = $request->get('search');
 
         //Devolver los datos paginado a 15
-        return Supplier::search($search)
+        $suppliers = Supplier::search($search)
             ->where('status',true)
             ->latest('created_at')
             ->simplePaginate(15);
+
+
+        return SupplierResource::collection($suppliers)->response()->getData(true);
 
     }
 }

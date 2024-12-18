@@ -8,7 +8,7 @@ import PrimaryButton from '@components/PrimaryButton.vue';
 import InputError from '@components/InputError.vue';
 import FloatBox from '@components/FloatBox.vue';
 import {onMounted, Ref, ref} from 'vue';
-import FloatSupplier from '@/Pages/Suppliers/FloatSupp.vue';
+import FloatSupplier from '@/Pages/Suppliers/SupplierFloat.vue';
 import {successHttp} from "@/Global/Alert";
 import FormSearch from "@components/FormSearch.vue";
 import {productFullI, productI, productTransI} from "@/Interfaces/Product";
