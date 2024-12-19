@@ -39,7 +39,7 @@ class StoreProductRequest extends FormRequest
             'sku' => ['nullable','string','max:75'],
             'type' => [Rule::enum(ProductTypeEnum::class), 'required'],
             'tax_rate' => ['required','numeric'],
-            'branch' => ['nullable','string','max:75'],
+            'price' => ['required', 'numeric',Rule::notIn(0.00)],
             'weight' => ['nullable','numeric'],
             'dimensions' => ['nullable','string','max:255'],
         ];

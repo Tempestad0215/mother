@@ -74,13 +74,30 @@ class ProductController extends Controller
         //Para asegurar que no se guarda si hay problema
         DB::transaction(function () use ($request) {
 
-            $product = Product::create($request->validated());
+            //Guardar los datos del productos
+            $product = Product::create($request->only([
+                'inventoried',
+                'name',
+                'description',
+                'unit',
+                'supplier_id',
+                'category_id',
+                'barcode',
+                'brand',
+                'sku',
+                'type',
+                'tax_rate',
+                'price',
+                'weight',
+                'dimensions'
+            ]));
+
+
             // Guardar los datos del productos
             if ($request->get('type') === 'servicio')
             {
                 //Actualizar datos por fuera cuando son servicio
                 $product->inventoried = false;
-                $product->price = 1;
                 $product->unit = "N/A";
                 $product->tax = $request->get('tax_rate') / 100;
                 $product->save();

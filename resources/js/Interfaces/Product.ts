@@ -25,6 +25,7 @@ export interface productBaseI {
     sku: string | null;
     brand: string | null;
     dimensions: string | null;
+    proce: number;
     unit: string;
     stock: number;
     cost: number;

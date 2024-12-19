@@ -2,7 +2,7 @@
 
 import FormSearch from "@components/FormSearch.vue";
 import Pagination from "@components/Pagination.vue";
-import {productDataI, productI} from "@/Interfaces/Product";
+import {productBaseI, productI} from "@/Interfaces/Product";
 import {router, useForm, usePage} from "@inertiajs/vue3";
 import Swal from "sweetalert2";
 import {successHttp} from "@/Global/Alert";
@@ -52,17 +52,17 @@ const submit = () => {
 
 
 //editar el producto
-const edit = (id:number) => {
+const edit = (id:string) => {
     router.get(route('product.edit', {id: id}));
 }
 
 //Seleccionar
-const selectData = (item:productDataI) => {
+const selectData = (item:productBaseI) => {
     //Verificar si es la URL
     if (url.startsWith('/product'))
     {
         //Enviar los datos
-        router.get(route('in.entrance',{productIn: item.id}));
+        router.get(route('in.entrance',{productIn: item.uuid}));
     }else{
         //Enviar los datos
         emit('select',item);
@@ -72,7 +72,7 @@ const selectData = (item:productDataI) => {
 }
 
 //Eliminar el producto
-const detroy = (id:Number) => {
+const detroy = (id:string) => {
     Swal.fire({
         title: "Esta seguro?",
         text: "Los cambios realizados son irreversible!",
@@ -130,18 +130,18 @@ const detroy = (id:Number) => {
             <table class=" mt-3 styleTable table-fixed  w-full">
                 <thead>
                     <tr>
-                        <th class="w-[8rem]">Cod.</th>
-                        <th class="w-[8rem]">Cod. Barra</th>
-                        <th class="w-[12rem]">Nombre</th>
-                        <th class="w-[5rem]">Disp.</th>
-                        <th class="w-[7rem]">Precio</th>
-                        <th class="w-[5rem]">Act</th>
+                        <th class="w-[10rem]">Cod. Barra</th>
+                        <th class="w-[10rem]">Ref.</th>
+                        <th class="w-[20rem]">Nombre</th>
+                        <th class="w-[10rem]">Disp.</th>
+                        <th class="w-[10rem]">Precio</th>
+                        <th class="w-[6rem]">Act</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="(item) in propsW.products.data">
-                        <td>{{item.code}}</td>
                         <td>{{item.bar_code || 'N/A'}}</td>
+                        <td>{{item.sku || 'N/A'}}</td>
                         <td>{{item.name}}</td>
                         <td>{{item.stock}}</td>
                         <td>{{getMoney(item.price)}}</td>
@@ -154,27 +154,18 @@ const detroy = (id:Number) => {
                                 @click="selectData(item)"
                                 class=" icon-efect fa-solid fa-circle-check"></i>
 
-                            <!--                        <i-->
-                            <!--                            v-if="page.component !== 'Products/Sale' "-->
-                            <!--                            class="icon-efect fa-solid fa-arrows-down-to-line"></i>-->
-
-                            <!-- Ver los productos -->
-                            <!--                        <i-->
-                            <!--                            v-if="page.component !== 'Products/Sale' "-->
-                            <!--                            class="icon-efect  fa-solid fa-eye"></i>-->
-
                             <!-- Editar -->
                             <i
                                 v-if="component === 'Products/Show' "
                                 title="Editar"
-                                @click="edit(item.id)"
+                                @click="edit(item.uuid)"
                                 class="ml-2 icon-efect fa-solid fa-pen-to-square"></i>
 
                             <!-- Eliminar -->
                             <i
                                 v-if="component === 'Products/Show' && auth.user.role === 'admin' "
                                 title="Eliminar"
-                                @click="detroy(item.id)"
+                                @click="detroy(item.uuid)"
                                 class="ml-2 icon-efect fa-solid fa-trash"></i>
                         </td>
                     </tr>

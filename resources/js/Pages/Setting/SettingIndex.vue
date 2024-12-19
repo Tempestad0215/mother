@@ -387,7 +387,7 @@ const removeUnit = (index:number) => {
                             value="Unidades"/>
                         <div class="relative">
                             <TextInput
-                                class="pr-8"
+                                class="pr-8 w-full "
                                 name="unit"
                                 placeholder="Unidad"
                                 v-model="form.unitValue"/>
@@ -426,7 +426,7 @@ const removeUnit = (index:number) => {
                                 name="unit"
                                 v-model="form.taxName"/>
                             <TextInput
-                                class="pr-8"
+                                class="pr-8 w-full "
                                 placeholder="ITBIS Valor"
                                 name="unit"
                                 v-model="form.taxValue"/>

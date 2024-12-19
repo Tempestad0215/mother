@@ -19,9 +19,6 @@ import TabLink from "@components/TabLink.vue";
 /**
  * Datos de la pagina
  */
-// const {props} = usePage();
-// const setting:appSettingI = usePage().props.setting
-
 
 /**
  * Propiedades de la ventana
@@ -263,7 +260,7 @@ const totalTax = () => {
                             for="stock"
                             value="Cantidad"/>
                         <Money
-                            class="inputGeneral"
+                            class="inputGeneral w-full"
                             @input="totalTax"
                             v-bind="moneyConfig"
                             v-model="form.stock" />
@@ -279,7 +276,7 @@ const totalTax = () => {
                             for="cost"
                             value="Costo"/>
                         <Money
-                            class="inputGeneral"
+                            class="inputGeneral w-full"
                             @input="totalTax"
                             v-bind="moneyConfig"
                             v-model="form.cost" />
@@ -295,7 +292,7 @@ const totalTax = () => {
                             for="minPrice"
                             value="Precio Especial"/>
                         <Money
-                            class="inputGeneral"
+                            class="inputGeneral w-full"
                             @input="totalTax"
                             v-bind="moneyConfig"
                             v-model="form.special_price" />
@@ -310,7 +307,7 @@ const totalTax = () => {
                             for="minPrice"
                             value="Precio Minímo"/>
                         <Money
-                            class="inputGeneral"
+                            class="inputGeneral w-full"
                             @input="totalTax"
                             v-bind="moneyConfig"
                             v-model="form.min_price" />
@@ -326,7 +323,7 @@ const totalTax = () => {
                             for="price"
                             value="Precio"/>
                         <Money
-                            class="inputGeneral"
+                            class="inputGeneral w-full"
                             @input="totalTax"
                             v-bind="moneyConfig"
                             v-model="form.price" />
@@ -341,7 +338,7 @@ const totalTax = () => {
                             for="discount"
                             value="Descuento"/>
                         <Money
-                            class="inputGeneral"
+                            class="inputGeneral w-full"
                             @input="totalTax"
                             v-bind="moneyConfig"
                             v-model="form.discount" />
@@ -364,7 +361,8 @@ const totalTax = () => {
                             <InputLabel
                                 for="tax_rate"
                                 value="ITBIS %"/>
-                            <span>
+                            <span
+                                class="span-white">
                                 {{ form.tax_rate || 0 }} %
                             </span>
                         </div>
@@ -374,7 +372,8 @@ const totalTax = () => {
                             <InputLabel
                                 for="tax"
                                 value="ITBIS * 1 " />
-                            <span>
+                            <span
+                                class="span-white">
                                 {{getMoney(form.tax)}}
                             </span>
                         </div>
@@ -384,7 +383,8 @@ const totalTax = () => {
                             <InputLabel
                                 for="price-no-tax"
                                 value="Precio - ITBIS * 1" />
-                            <span>
+                            <span
+                                class="span-white">
                                 {{getMoney(form.product_no_tax)}}
                             </span>
                         </div>
@@ -394,7 +394,8 @@ const totalTax = () => {
                             <InputLabel
                                 for="price-no-tax"
                                 value="Precio + ITBIS * 1" />
-                            <span>
+                            <span
+                                class="span-white">
                                 {{getMoney(form.product_tax)}}
                             </span>
                         </div>
@@ -404,7 +405,8 @@ const totalTax = () => {
                             <InputLabel
                                 for="tax-aomount"
                                 value="Total del impuesto" />
-                            <span>
+                            <span
+                                class="span-white">
                                 {{getMoney(form.tax_amount)}}
                             </span>
                         </div>
@@ -414,7 +416,8 @@ const totalTax = () => {
                             <InputLabel
                                 for="discount"
                                 value="Descuento" />
-                            <span>
+                            <span
+                                class="span-white">
                                 {{getMoney(form.discount_amount)}}
                             </span>
                         </div>
@@ -425,7 +428,8 @@ const totalTax = () => {
                             <InputLabel
                                 for="discount"
                                 value="Total Ingresado" />
-                            <span>
+                            <span
+                                class="span-white">
                                 {{getMoney(form.amount)}}
                             </span>
                         </div>
@@ -436,7 +440,8 @@ const totalTax = () => {
                             <InputLabel
                                 for="benefit"
                                 value="Beneficio * 1" />
-                            <span>
+                            <span
+                                class="span-white">
                                 {{getMoney(form.benefits)}}
                             </span>
                         </div>

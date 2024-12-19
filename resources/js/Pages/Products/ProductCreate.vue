@@ -7,8 +7,6 @@ import {ref} from 'vue';
 import FloatProduct from '@/Pages/Products/ProductFloat.vue';
 import {productBaseI} from "@/Interfaces/Product";
 import {categoryBaseI} from "@/Interfaces/Categories";
-import {supplierI} from "@/Interfaces/Supplier";
-import LinkHeader from "@components/LinkHeader.vue";
 import TabLink from "@components/TabLink.vue";
 
 

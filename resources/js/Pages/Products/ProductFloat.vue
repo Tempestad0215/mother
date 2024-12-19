@@ -10,7 +10,6 @@ import {useForm, usePage} from '@inertiajs/vue3';
 import {onMounted, Ref, ref} from 'vue';
 import {categoryBaseI} from "@/Interfaces/Categories";
 import {taxI} from "@/Interfaces/Global";
-import SelectOption from "@components/SelectOption.vue";
 import {Money} from "v-money3";
 import {moneyConfig} from "@/Global/Helpers";
 import ToggleButton from "@components/ToggleButton.vue";
@@ -46,6 +45,7 @@ const form = useForm({
     name: "",
     description: "",
     unit: "",
+    price: 0,
     type: "producto",
     category_id: "",
     supplier_id: "",
@@ -138,25 +138,10 @@ const submit = () => {
     <div  >
         <form
             @submit.prevent="submit" >
-
 <!--Titulo-->
             <h3 class="text-2xl font-bold text-center">
                 Registro de producto
             </h3>
-
-
-            <div class="flex flex-col float-right text-center">
-                <ToggleButton
-                    label="Inventario"
-                    v-model="form.inventoried"
-                    on-label="SI"
-                    off-label="NO"/>
-<!--                <ToggleButton-->
-<!--                    v-model="form.inventoried"-->
-<!--                    onLabel="SI"-->
-<!--                    offLabel="NO" />-->
-            </div>
-
 
 <!--Informacion General-->
             <div class=" clear-both">
@@ -164,7 +149,6 @@ const submit = () => {
                     <legend>
                         Informacion
                     </legend>
-
 
                     <!-- Nombre -->
                     <div>
@@ -183,7 +167,6 @@ const submit = () => {
                         <InputError :message="form.errors.name" />
                     </div>
 
-
                     <!-- Descricion -->
                     <div class="">
                         <InputLabel
@@ -201,15 +184,23 @@ const submit = () => {
 
                     <div>
                         <InputLabel for="category" value="Categoria" />
-                        <SelectOption
-                            class="w-full"
-                            placeholder="--Categoria--"
-                            :is-read-only="true"
-                            option-label="name"
+                        <select
                             v-model="form.category_id"
-                            option-value="uuid"
-                            :options="propsW.categories.map(category => ({...category}))"/>
-
+                            class=" w-full inputGeneral py-1 ">
+                            <option
+                                selected
+                                disabled
+                                value="" >
+                                -- Categoria --
+                            </option>
+                            <option
+                                class="even:bg-blue-200"
+                                v-for="(item, index) in propsW.categories"
+                                :key="index"
+                                :value="item.uuid">
+                                {{item.name}}
+                            </option>
+                        </select>
 <!--                        Mensaje de error-->
                         <InputError :message="form.errors.category_id"/>
 
@@ -220,15 +211,18 @@ const submit = () => {
                         <InputLabel
                             for="supplier_id"
                             value="Proveedor *"/>
-                        <SelectOption
-                            class="w-full"
-                            placeholder="--Categoria--"
-                            :is-read-only="true"
+                        <select
                             v-model="form.supplier_id"
-                            option-label="company_name"
-                            option-value="uuid"
-                            :options="propsW.suppliers.map(supplier => ({...supplier}))"/>
-
+                            class=" w-full inputGeneral py-1 ">
+                            <option selected disabled value="" >-- Suplidor --</option>
+                            <option
+                                class="even:bg-blue-200"
+                                v-for="(item, index) in propsW.suppliers"
+                                :key="index"
+                                :value="item.uuid">
+                                {{item.company_name}}
+                            </option>
+                        </select>
                         <!-- Error -->
                         <InputError :message="form.errors.search" />
                     </div>
@@ -264,22 +258,31 @@ const submit = () => {
 
 
 <!--Opciones de producto, si sera producto o servicio-->
-                        <div class=" flex flex-col">
+                        <div class="">
                             <InputLabel
                                 class=" mb-2"
                                 for="type" value="Tipo" />
-                            <SelectOption
-                                placeholder="--Tipo Producto--"
-                                option-label="name"
-                                :is-read-only="true"
+                            <select
                                 v-model="form.type"
-                                option-value="value"
-                                :options="typeOptions"/>
-
+                                class=" w-full inputGeneral py-1 ">
+                                <option
+                                    class="even:bg-blue-200"
+                                    v-for="(item, index) in typeOptions"
+                                    :key="index"
+                                    :value="item.value">
+                                    {{item.name}}
+                                </option>
+                            </select>
                             <InputError :message="form.errors.type"/>
                         </div>
 
-
+                        <div class="">
+                            <ToggleButton
+                                label="Inventario"
+                                v-model="form.inventoried"
+                                on-label="SI"
+                                off-label="NO"/>
+                        </div>
                     </fieldset>
 
 <!--Detalle del producto-->
@@ -287,21 +290,33 @@ const submit = () => {
                         <legend>
                             Datalles
                         </legend>
+<!--                        Unidades-->
                         <div>
                             <InputLabel
                                 for="tax_rate"
                                 value="Impuesto *" />
-                            <SelectOption
-                                class="w-full"
-                                placeholder="--ITBIS--"
-                                option-label="name"
-                                :is-read-only="true"
-                                option-value="amount"
+                            <select
                                 v-model="form.tax_rate"
-                                :options="taxes.map(tax => ({...tax}))"/>
-
+                                class=" w-full inputGeneral py-1 ">
+                                <option
+                                    class="even:bg-blue-200"
+                                    v-for="(item, index) in taxes"
+                                    :key="index"
+                                    :value="item.amount">
+                                    {{item.name}}
+                                </option>
+                            </select>
                             <InputError :message="form.errors.tax_rate" />
                         </div>
+<!--                        Informacion de venta-->
+                        <div>
+                            <InputLabel for="sale_price" value="Precio de Venta"/>
+                            <Money
+                                class="inputGeneral w-full"
+                                v-bind="moneyConfig"
+                                v-model="form.price"/>
+                        </div>
+
                         <!-- Unidad -->
                         <div
                             v-if="form.type === 'producto'"
@@ -309,15 +324,18 @@ const submit = () => {
                             <InputLabel
                                 for="unit"
                                 value="Unidadades *"/>
-                            <SelectOption
-                                class="w-full"
-                                placeholder="--Tipo Producto--"
-                                :is-read-only="true"
-                                option-label="name"
-                                option-value="amount"
+                            <select
                                 v-model="form.unit"
-                                :options="dataUnit"/>
-
+                                class=" w-full inputGeneral py-1 ">
+                                <option selected disabled value="" >-- UNIDAD --</option>
+                                <option
+                                    class="even:bg-blue-200"
+                                    v-for="(item, index) in dataUnit"
+                                    :key="index"
+                                    :value="item">
+                                    {{item}}
+                                </option>
+                            </select>
                             <!-- Error -->
                             <InputError :message="form.errors.unit" />
                         </div>
@@ -326,7 +344,7 @@ const submit = () => {
                                 for="weight"
                                 value="Peso"/>
                             <Money
-                                class="inputGeneral"
+                                class="inputGeneral w-full"
                                 v-bind="moneyConfig"
                                 v-model="form.weigth" />
                             <InputError :message="form.errors.weigth"/>
@@ -343,7 +361,7 @@ const submit = () => {
                         </div>
                         <div
                             v-if="form.type === 'producto'"
-                            class="col-span-full">
+                            class="">
                             <InputLabel
                                 for="dimension"
                                 value="Dimensiones"/>
@@ -368,11 +386,5 @@ const submit = () => {
                 </PrimaryButton>
             </div>
         </form>
-
-
-        <div>
-<!--            <FloatShowPro -->
-<!--                :products=""/>-->
-        </div>
     </div>
 </template>
