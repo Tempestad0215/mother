@@ -2,12 +2,10 @@
 
 namespace App\Models;
 
-use App\Enums\TypePaymentEnum;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -21,8 +19,6 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property string|null $phone
  * @property string|null $email
  * @property boolean $status
- * @property TypePaymentEnum $type_payment
- * @property Comment $comment
  * @property string $deleted_at
 */
 
@@ -39,15 +35,18 @@ class Supplier extends Model implements Auditable
     protected $keyType = 'string';
 
 
-    //Para guarda
-    protected $guarded = [];
+    protected $fillable = [
+        'contact',
+        'company_name',
+        'phone',
+        'email',
+        'status',
+        'deleted_at'
+    ];
 
 
-    //Formatear los datos
     protected $casts = [
-        'status' => 'boolean',
-        'type_payment' => TypePaymentEnum::class,
-        'receive_email' => 'boolean'
+        'status' => 'boolean'
     ];
 
 
@@ -55,23 +54,6 @@ class Supplier extends Model implements Auditable
     public function product():HasMany
     {
         return $this->hasMany(Product::class);
-    }
-
-
-    /*
-     *
-     */
-    public function comment():MorphOne
-    {
-        return $this->morphOne(Comment::class, 'commentable');
-    }
-
-    /**
-     * @return MorphOne
-     */
-    public function credit():MorphOne
-    {
-        return $this->morphOne(Credits::class, 'creditable');
     }
 
     /*
