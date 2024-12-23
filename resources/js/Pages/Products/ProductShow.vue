@@ -4,6 +4,7 @@ import { Head} from '@inertiajs/vue3';
 import { productI } from '@/Interfaces/Product';
 import { PropType } from 'vue';
 import FloatShowPro from "@/Pages/Products/FloatShowPro.vue";
+import TabLink from "@components/TabLink.vue";
 
 
 const props = defineProps({
@@ -23,7 +24,19 @@ const props = defineProps({
 
 <!--        Titulo de la ventana-->
         <template #header >
-
+            <TabLink
+                :href="route('product.create')">
+                Registrar
+            </TabLink>
+            <TabLink
+                :href="route('in.create')">
+                Entrada
+            </TabLink>
+            <TabLink
+                :active="true"
+                :href="route('product.show')">
+                Mostrar
+            </TabLink>
         </template>
 
 

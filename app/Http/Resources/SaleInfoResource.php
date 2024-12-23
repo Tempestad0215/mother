@@ -42,7 +42,8 @@ class SaleInfoResource extends JsonResource
         $data = collect($this->infoSale);
 
         //Recorrer los datos para guardarlos
-        $data->map(function (ProTrans $item) use (&$infoFinal) {
+        $data->each(function (ProTrans $item) use (&$infoFinal) {
+
 
             //Agregar los datos
            $infoFinal[] = [
@@ -62,7 +63,8 @@ class SaleInfoResource extends JsonResource
                'reserved' => $item->reserved,
                'tax' => $item->tax,
                'tax_rate' => $item->tax_rate,
-               'type' => $item->type,
+               'type' => $item->product->type,
+               'trans_type' => $item->type,
            ];
 
         });

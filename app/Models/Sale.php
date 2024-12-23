@@ -16,7 +16,7 @@ use Illuminate\Support\Carbon;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
- * @property int $id
+ * @property string $uuid
  * @property string $code
  * @property string $ncf
  * @property string $ncf_m
@@ -52,6 +52,10 @@ class Sale extends Model implements Auditable
 
     // La tabla que se ve a utilizar
     protected $table = 'sales';
+
+    protected $primaryKey = 'uuid';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
 
     /**
@@ -107,14 +111,14 @@ class Sale extends Model implements Auditable
      */
     public function client():BelongsTo
     {
-        return $this->belongsTo(Client::class);
+        return $this->belongsTo(Client::class, 'client_id','uuid');
     }
 
 
 
     public function credit_note():HasMany
     {
-        return $this->hasMany(CreditNote::class);
+        return $this->hasMany(CreditNote::class,'sale_id','uuid');
     }
 
 
@@ -127,7 +131,7 @@ class Sale extends Model implements Auditable
      */
     public function infoSale():HasMany
     {
-        return $this->hasMany(ProTrans::class);
+        return $this->hasMany(ProTrans::class,'sale_id','uuid');
     }
 
 

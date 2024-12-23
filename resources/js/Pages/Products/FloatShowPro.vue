@@ -117,7 +117,7 @@ const detroy = (id:string) => {
                 <form @submit.prevent="submit"  >
                     <FormSearch
                         v-model:search="form.search"
-                        v-model:per-page="form.perPage"/>
+                        v-model:per-page.number="form.perPage"/>
                 </form>
             </div>
             <h3 class="text-3xl font-bold float-right mt-6">

@@ -106,7 +106,7 @@ const destroy = (id:string) => {
                 class="">
                 <FormSearch
                     v-model:search="form.search"
-                    v-model:per-page="form.perPage"/>
+                    v-model:per-page.number="form.perPage"/>
 
 
             </form>
@@ -136,17 +136,17 @@ const destroy = (id:string) => {
                         <td class="truncate">{{item.phone}}</td>
                         <td class="truncate">
                             <i
-                                v-if="page.component !== 'Clients/Show'"
+                                v-if="page.component !== 'Clients/ClientShow'"
                                 title="Seleccionar"
                                 @click="emit('getData',item)"
-                                class="fa-solid fa-circle-check"></i>
+                                class="icon-efect fa-solid fa-circle-check"></i>
                             <i
-                                v-if="page.component === 'Clients/Show'"
+                                v-if="page.component === 'Clients/ClientShow'"
                                 title="Editar"
                                 @click="edit(item.uuid)"
                                 class=" ml-2 icon-efect fa-solid fa-pen-to-square"></i>
                             <i
-                                v-if="page.component === 'Clients/Show'"
+                                v-if="page.component === 'Clients/ClientShow'"
                                 title="Eliminar"
                                 @click="destroy(item.uuid)"
                                 class="ml-2 icon-efect fa-solid fa-trash"></i>

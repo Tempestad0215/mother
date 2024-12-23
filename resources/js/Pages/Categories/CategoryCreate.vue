@@ -175,7 +175,7 @@ const search = () => {
                         <FormSearch
                             holder="-- Buscar Categoria --"
                             v-model:search="formSearch.search"
-                            v-model:per-page="formSearch.perPage">
+                            v-model:per-page.number="formSearch.perPage">
                         </FormSearch>
                     </form>
                     <h3 class="text-3xl font-bold">

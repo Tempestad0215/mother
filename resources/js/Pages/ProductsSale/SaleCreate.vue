@@ -22,6 +22,7 @@ import ShowPdf from "@components/ShowPdf.vue";
 import PaymentInvoice from "@components/PaymentInvoice.vue";
 import ReturnForm from "@components/ReturnForm.vue";
 import {Money} from "v-money3";
+import TabLink from "@components/TabLink.vue";
 
 
 
@@ -41,7 +42,7 @@ const propsW = defineProps<{
     invoiceType: invoiceTypeI[],
     saleInfo?: saleDataI,
     refund?: boolean,
-    lastRecord: number
+    lastRecord: string
 }>();
 
 /*
@@ -61,17 +62,6 @@ onMounted( () => {
     {
         showFormReturn.value = true;
     }
-    //Para enviar a imprimir de una vez
-    // const iFrame = document.getElementById("pdfA") as HTMLIFrameElement;
-    //
-    // if (iFrame && iFrame.contentWindow)
-    // {
-    //     iFrame.contentWindow.focus(); //Poner el foco en la ventana
-    //     iFrame.contentWindow.print();//Imprimir la veentana
-    // }
-
-
-
 
 });
 
@@ -151,13 +141,9 @@ const form = useForm({
     pending: 0,
 });
 
-
-
-
 /*
 Funciones
  */
-
 
 /**
  * Poner los datos en el formuilario
@@ -632,6 +618,7 @@ const getSaleOpen = (item:saleDataI) => {
                 discount_amount: el.discount_amount,
                 tax: el.tax,
                 type: el.type,
+                trans_type: el.trans_type,
                 tax_rate: el.tax_rate,
                 status: el.status
             });
@@ -751,7 +738,15 @@ const getErrorPdf = () => {
 
 
         <template #header >
-
+            <TabLink
+                :active="true"
+                :href="route('sale.create')">
+                Ventas
+            </TabLink>
+            <TabLink
+                :href="route('sale.show')">
+                Mostrar
+            </TabLink>
         </template>
 
 <!--        //contenido-->
@@ -989,6 +984,7 @@ const getErrorPdf = () => {
                                         </td>
                                         <td class="max-w-[5rem]">
                                             <Money
+                                                class=" bg-transparent h-[2rem] max-w-[6rem] rounded-md border-none"
                                                 @blur="totalAmount(index)"
                                                 v-bind="moneyConfig"
                                                 v-model="item.stock"/>
@@ -1003,6 +999,7 @@ const getErrorPdf = () => {
                                                 {{getMoney(item.price)}}
                                             </span>
                                             <Money
+                                                class=" bg-transparent h-[2rem] max-w-[6rem] rounded-md border-none"
                                                 v-if="item.type === 'servicio'"
                                                 @blur="totalAmount(index)"
                                                 v-bind="moneyConfig"
@@ -1010,7 +1007,7 @@ const getErrorPdf = () => {
                                         </td>
                                         <td class="max-w-[4rem]">
                                             <Money
-                                                v-if="item.type === 'servicio'"
+                                                class=" bg-transparent h-[2rem] max-w-[5rem] rounded-md border-none"
                                                 @blur="totalAmount(index)"
                                                 v-bind="moneyConfig"
                                                 :min="0"
@@ -1137,7 +1134,7 @@ const getErrorPdf = () => {
                 @close="showClient = false"
                 v-if="showClient">
                 <FloatShowCli
-                    class=" w-4/5 rounded-md py-5"
+                    class=" max-w-4/5 rounded-md py-5"
                     @get-data="selectClient"
                     :clients="propsW.clients"/>
 
@@ -1150,7 +1147,7 @@ const getErrorPdf = () => {
                 @close="showProduct = false"
                 v-if="showProduct">
                 <FloatShowPro
-                    class=" bg-gray-200 rounded-md px-10 py-5"
+                    class=" bg-blue-300  rounded-md px-10 py-5"
                     @select="getData"
                     :products="propsW.products"/>
             </FloatBox>
@@ -1163,7 +1160,7 @@ const getErrorPdf = () => {
                 v-if="showSaleOpen">
                 <SaleOpenShow
                     @sen-data="getSaleOpen"
-                    class=" bg-gray-200 rounded-md px-10 py-5"
+                    class=" bg-blue-300 max-w-4/5 rounded-md px-10 py-5"
                     :sale-open="propsW.saleOpen"/>
             </FloatBox>
 

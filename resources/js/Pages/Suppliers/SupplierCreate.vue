@@ -16,7 +16,7 @@ import {Money} from "v-money3";
 
 
 const propsW = defineProps<{
-    supplierEdit: supplierI,
+    supplierEdit?: supplierI,
     update?: boolean
 }>();
 

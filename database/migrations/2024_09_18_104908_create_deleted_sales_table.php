@@ -11,10 +11,10 @@ return new class extends Migration {
         Schema::create('deleted_sales', function (Blueprint $table) {
             $table->uuid()->primary();
             $table->foreignUuid(Sale::class);
-            $table->decimal('discount_amount',15,4)->default(0);
-            $table->decimal('tax',15,4);
-            $table->decimal('sub_total',15,4);
-            $table->decimal('amount',15,4);
+            $table->decimal('discount_amount')->default(0);
+            $table->decimal('tax');
+            $table->decimal('sub_total');
+            $table->decimal('amount');
             $table->boolean('status')->default(true);
             $table->boolean('close_table')->default(false);
             $table->softDeletes();

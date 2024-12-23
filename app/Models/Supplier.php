@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\TypePaymentEnum;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -46,7 +47,8 @@ class Supplier extends Model implements Auditable
 
 
     protected $casts = [
-        'status' => 'boolean'
+        'status' => 'boolean',
+        'type_payment' => TypePaymentEnum::class,
     ];
 
 

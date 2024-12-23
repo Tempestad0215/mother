@@ -9,6 +9,7 @@ import InputError from "@components/InputError.vue";
 import axios from "axios";
 import {ref, Ref} from "vue";
 import ShowPdf from "@components/ShowPdf.vue";
+import TabLink from "@components/TabLink.vue";
 
 
 /*
@@ -174,7 +175,7 @@ const submit = () => {
  * Impirmir la factura seleccionada
  * @param id
  */
-const printFact = async (id:number) => {
+const printFact = async (id:string) => {
 
 
     //Data de la busqueda
@@ -194,10 +195,10 @@ const printFact = async (id:number) => {
     pdfShow.value = true;
 
 
-    setTimeout(()=>{
-        urlPdf.value = "";
-        pdfShow.value = false;
-    },1000)
+    // setTimeout(()=>{
+    //     urlPdf.value = "";
+    //     pdfShow.value = false;
+    // },5000)
 
     // window.print();
 }
@@ -215,11 +216,19 @@ const getErrorPdf = (msj: string) => {
     <Head title="Mostrar Ventas"/>
     <AppLayout>
         <template #header>
-
+            <TabLink
+                :href="route('sale.create')">
+                Ventas
+            </TabLink>
+            <TabLink
+                :active="true"
+                :href="route('sale.show')">
+                Mostrar
+            </TabLink>
         </template>
 
         <div
-            class="bg-gray-200 max-w-[1180px] rounded-md p-5 mx-auto overflow-hidden">
+            class="bg-blue-300 max-w-[1180px] rounded-md p-5 mx-auto overflow-hidden">
 <!--          Mensajes  -->
 <!--            Contenido-->
             <div class="flex justify-between items-center">
@@ -261,7 +270,7 @@ const getErrorPdf = (msj: string) => {
                         <td>
                             <i
                                 title="Imprimir"
-                                @click="printFact(item.id)"
+                                @click="printFact(item.uuid)"
                                 class=" icon-efect fa-solid fa-print"></i>
                         </td>
 <!--                        <td >-->

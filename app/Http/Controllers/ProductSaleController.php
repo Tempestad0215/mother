@@ -42,12 +42,12 @@ class ProductSaleController extends Controller
 
 
         //DEvolver la vista y los datos
-        return Inertia::render('ProductsSale/Create', [
+        return Inertia::render('ProductsSale/SaleCreate', [
             'products' => $dataSale['products'],
             'clients' => $dataSale['clients'],
             'saleOpen' => $dataSale['saleOpen'],
             'invoiceType' => config('appconfig.invoiceType'),
-            'lastRecord' => $lastRecord?->id,
+            'lastRecord' => $lastRecord?->uuid,
         ]);
     }
 
@@ -67,21 +67,8 @@ class ProductSaleController extends Controller
             //Llamar el metodo
             return $saleHelper->store($request);
         });
-
-
+        //Devolver atras
         return back();
-
-//        //Intancia de los datos
-//        $dataSale = $this->dataSale($request);
-//
-//
-//        //DEvolver la vista y los datos
-//        return Inertia::render('ProductsSale/Create', [
-//            'products' => $dataSale['products'],
-//            'clients' => $dataSale['clients'],
-//            'saleOpen' => $dataSale['saleOpen'],
-//            'invoiceType' => config('appconfig.invoiceType'),
-//        ]);
 
     }
 
@@ -103,19 +90,8 @@ class ProductSaleController extends Controller
 
         });
 
+        //Devolver atras
        return  back();
-
-        //Intancia de los datos
-//        $dataSale = $this->dataSale($request);
-//
-//        //REtornar la pagina con el DPF
-//        return Inertia::render('ProductsSale/Create', [
-//            'products' => $dataSale['products'],
-//            'clients' => $dataSale['clients'],
-//            'saleOpen' => $dataSale['saleOpen'],
-//            'invoiceType' => config('appconfig.invoiceType'),
-//            'pdf' => $pdf
-//        ]);
 
     }
 
@@ -133,7 +109,7 @@ class ProductSaleController extends Controller
         //Tomar los datos
         $sales = $saleHelper->getSalePagination($request);
 
-        return Inertia::render('ProductsSale/Show',[
+        return Inertia::render('ProductsSale/SaleShow',[
             'sales' => $sales
         ]);
     }

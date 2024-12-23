@@ -9,7 +9,6 @@ import {onMounted, onUpdated, Ref, ref} from "vue";
 // import {settingsDataI} from "@/Interfaces/Setting";
 import {successHttp} from "@/Global/Alert";
 import {taxI} from "@/Interfaces/Global";
-import SelectOption from "@components/SelectOption.vue";
 import ToggleButton from "@components/ToggleButton.vue";
 
 
@@ -93,7 +92,7 @@ const form = useForm({
     unit:[] as string[],
     is_branch: false,
     fiscal_year: "",
-    company_type: "",
+    company_type: "BAR",
     logo:"",
     cost: true,
     sequence: true,
@@ -317,13 +316,16 @@ const removeUnit = (index:number) => {
                     </div>
                     <div>
                         <InputLabel for="company_type" value="Tipo de Negocio" />
-                        <SelectOption
-                            class="w-full"
-                            label-value=""
-                            option-label=""
-                            option-value=""
-                            v-model="form.company_type"
-                            :options="propsW.company_type"/>
+                        <select
+                            class="inputGeneral py-1 w-full"
+                            v-model="form.company_type">
+                            <option
+                                v-for="(item, index) in propsW.company_type"
+                                :key="index"
+                                :value="item">
+                                {{item}}
+                            </option>
+                        </select>
                     </div>
 
                     <!--Tiempo fiscal-->

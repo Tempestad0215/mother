@@ -70,7 +70,6 @@ class SaleHelper
                 'client_rnc' => $request->get('client_rnc'),
                 'ncf' => $request->get('ncf'),
                 'discount_amount' => $request->get('discount_amount'),
-                'discount' => $request->get('discount'),
                 'tax' => $request->get('tax'),
                 'sub_total' => $request->get('sub_total'),
                 'amount' => $request->get('amount'),
@@ -117,41 +116,10 @@ class SaleHelper
                     $transType = ProductTransType::RESERVA;
                 }
 
-
                 //Crear la transaccion individual
-                TransHelper::store($value, $transType, $sale->id);
-
-//                ProTrans::create([
-//                    'product_id' => $value['product_id'],
-//                    'product_name' => $value['product_name'],
-//                    'sale_id' => $sale->id,
-//                    'stock' => $value['stock'],
-//                    'price' => $value['price'],
-//                    'tax_rate' => $value['tax_rate'],
-//                    'tax' => $value['tax'],
-//                    'amount' => $value['amount'],
-//                    'discount' => $value['discount'],
-//                    'discount_amount' => $value['discount_amount'],
-//                    'type' => $request->get('close_table') ? ProductTransType::VENTAS : ProductTransType::RESERVA
-//                ]);
+                TransHelper::store($value, $transType, $sale->uuid);
 
             }
-
-
-//            //Para mostar el PDF
-//            if ($sale->close_table)
-//            {
-//
-//                //Crear el PDF
-//                $pdf = new SaleInvoiceA($sale);
-//
-//                // Crear Base 64
-//                return base64_encode($pdf->setData());
-//
-//                //Instancia de la clase para imprimir
-//
-//            }
-
         });
     }
 
@@ -421,7 +389,7 @@ class SaleHelper
         })->where(function (Builder $query) use ($search) {
             $query->where('client_name', 'LIKE', "%$search%");
         })->with('infoSale')
-            ->latest()
+            ->latest('created_at')
             ->simplePaginate(15);
 
 

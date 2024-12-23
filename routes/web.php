@@ -268,4 +268,8 @@ Route::middleware([
        Route::get('/getA/{sale}','getA')->name('getA');
     });
 
+    Route::get('/test', function (){
+       return response()->file('ghola.png');
+    });
+
 });

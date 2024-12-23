@@ -18,6 +18,7 @@ export interface infoSaleI {
     tax: number;
     tax_rate: number;
     type?: string;
+    trans_type?: string;
     updated_at?: string;
     created_at?: string;
 }

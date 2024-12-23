@@ -42,6 +42,7 @@ class StoreProductInRequest extends FormRequest
      */
     public function rules(): array
     {
+
         //Para verificar si es servicio o no
         $product = Product::find($this->product_id);
 
@@ -49,7 +50,7 @@ class StoreProductInRequest extends FormRequest
         //Validar los datos
 
         return [
-            'product_id' => ['required','exists:products,id'],
+            'product_id' => ['required','exists:products,uuid'],
             'stock' => [Rule::requiredIf($product->type == ProductTypeEnum::PRODUCTO), 'required', 'numeric'],
             'cost' => ['required', 'numeric'],
             'special_price' => ['required','numeric', new SaveCostProductRule($this->cost)],

@@ -274,6 +274,7 @@ const submit = ():void => {
                         <TextInput
                             placeholder="Nombre Completo"
                             fluid
+                            class="w-full"
                             v-model="form.name"
                             maxlength="75"
                             />
@@ -289,6 +290,7 @@ const submit = ():void => {
 
                         <TextInput
                             id="basic"
+                            class="w-full"
                             v-model="form.personal_id"
                             v-mask="selectedMask"
                             :placeholder="selectedMask" />
@@ -304,6 +306,7 @@ const submit = ():void => {
                         <TextInput
                             id="basic"
                             v-model="form.phone"
+                            class="w-full"
                             fluid
                             v-mask="['+# (###) ###-####', '+## (###) ###-####']"
                             placeholder="+1 (829) 352-6526" />
@@ -320,6 +323,7 @@ const submit = ():void => {
                         <TextInput
                             placeholder="example@example.com"
                             fluid
+                            class="w-full"
                             v-model="form.email"
                             type="email"
                             maxlength="150"/>
@@ -337,6 +341,7 @@ const submit = ():void => {
                         <TextInput
                             placeholder="Puerto Plata, Padres Las Casas #12"
                             fluid
+                            class="w-full"
                             v-model="form.address"
                             type="text"
                             maxlength="150"/>

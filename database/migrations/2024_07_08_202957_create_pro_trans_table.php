@@ -1,8 +1,5 @@
 <?php
 
-use App\Models\CreditNote;
-use App\Models\Sale;
-use App\Models\Product;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,22 +13,22 @@ return new class extends Migration
     {
         Schema::create('pro_trans', function (Blueprint $table) {
             $table->uuid()->primary();
-            $table->foreignUuid(Sale::class)
+            $table->foreignUuid('sale_id')
                 ->nullable();
-            $table->foreignUuid(Product::class);
-            $table->foreignUuid(CreditNote::class)
+            $table->foreignUuid('product_id');
+            $table->foreignUuid('credit_note_id')
                 ->nullable();
             $table->string('product_name',75);
-            $table->decimal('stock',15,4);
+            $table->decimal('stock');
             $table->decimal('reserved');
-            $table->decimal('price',15,4);
-            $table->decimal('min_price',15,4);
-            $table->decimal('special_price',15,4);
+            $table->decimal('price');
+            $table->decimal('min_price');
+            $table->decimal('special_price');
             $table->decimal('tax_rate');
             $table->decimal('tax');
-            $table->decimal('amount',15,4);
+            $table->decimal('amount');
             $table->boolean('ride')->default(false);
-            $table->decimal('discount',4)->default(0);
+            $table->decimal('discount')->default(0);
             $table->decimal('discount_amount');
             $table->enum('type',['entrada','ventas','salida','cancelacion','ajuste','reserva','eliminado','devolucion']);
             $table->boolean('status')->default(true);

@@ -15,11 +15,11 @@ return new class extends Migration
         Schema::create('advances', function (Blueprint $table) {
             $table->uuid()->primary();
             $table->foreignUuid(Client::class);
-            $table->decimal('amount',15,4);
+            $table->decimal('amount');
             $table->date('date');
             $table->date('expire')->nullable();
-            $table->decimal('balance',15,4);
-            $table->decimal('consumed',15,4);
+            $table->decimal('balance');
+            $table->decimal('consumed');
             $table->boolean('status')->default(true);
             $table->softDeletes();
             $table->timestamps();

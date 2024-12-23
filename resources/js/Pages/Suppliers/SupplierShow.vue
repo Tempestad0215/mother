@@ -113,7 +113,7 @@ const see = (item:supplierI) => {
                         @submit.prevent="search">
                         <FormSearch
                             v-model:per-page="form.perPage"
-                            v-model:search="form.search"
+                            v-model:search.number="form.search"
                         />
                     </form>
                     <h3 class="text-3xl font-bold text-center">

@@ -38,8 +38,8 @@ return new class extends Migration
             $table->decimal('tax_rate')->default(0);
             $table->decimal('benefits')->default(0);
 
-            $table->decimal('discount',15,4)->default(0);
-            $table->decimal('discount_amount',14,4)->default(0);
+            $table->decimal('discount')->default(0);
+            $table->decimal('discount_amount')->default(0);
 
 
             //Relaciones de los productos

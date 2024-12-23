@@ -18,12 +18,12 @@ class DataBaseHelper
         $table->string('invoice_type',30)->nullable();
         $table->string('client_name')->nullable()->default('');
         $table->string('client_rnc',30)->nullable();
-        $table->foreignUuid(Client::class)
+        $table->foreignUuid('client_id')
             ->nullable();
-        $table->decimal('discount_amount',15,4)->default(0);
-        $table->decimal('tax',15,4);
-        $table->decimal('sub_total',15,4);
-        $table->decimal('amount',15,4);
+        $table->decimal('discount_amount')->default(0);
+        $table->decimal('tax');
+        $table->decimal('sub_total');
+        $table->decimal('amount');
 
 
         $table->softDeletes();

@@ -1,8 +1,4 @@
 <script setup lang="ts">
-
-/*
-Propiedades de la ventana
- */
 import {onMounted} from "vue";
 
 const propsW = defineProps<{
@@ -12,7 +8,7 @@ const propsW = defineProps<{
 
 const emit =defineEmits<{
     (e: 'sendError', msj: string): void;
-}>()
+}>();
 
 
 onMounted(()=>{
@@ -29,6 +25,12 @@ onMounted(()=>{
 
     if (iframe && iframe.contentWindow)
     {
+        //Elimianr el contneedor al cerrar
+        iframe.contentWindow.onafterprint = () => {
+            console.log('cerrado');
+            iframe.remove();
+        }
+
         iframe.contentWindow.print();
 
     }else{
@@ -44,14 +46,11 @@ onMounted(()=>{
 </script>
 
 <template>
-    <div class="">
-        <iframe
-            id="pdfA"
-            @wheel.passive="true"
-            class="w-[70rem] mx-auto px-10 h-[80vh]"
-            :src="propsW.pdf" >
-        </iframe>
-    </div>
-
+    <iframe
+        id="pdfA"
+        @wheel.passive="true"
+        class="w-[70rem] mx-auto px-10 h-[80vh]"
+        :src="propsW.pdf" >
+    </iframe>
 </template>
 

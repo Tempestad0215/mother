@@ -20,7 +20,7 @@ const show = defineModel<boolean>('show',{
 <template>
     <Transition>
         <div
-            class="bg-black w-full h-screen bg-opacity-60 absolute left-0 top-0 flex justify-center pt-[5rem]">
+            class="bg-black w-full h-screen bg-opacity-60 absolute left-0 top-0 flex justify-center pt-[5rem] pb-[5rem]">
 
             <i
                 @click="$emit('close')"

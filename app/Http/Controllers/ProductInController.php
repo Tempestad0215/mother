@@ -46,13 +46,6 @@ class ProductInController extends Controller
         ]);
     }
 
-    /**
-     * @return void
-     */
-//    public function create()
-//    {
-//
-//    }
 
     /**
      * @param StoreProductInRequest $request
@@ -62,34 +55,24 @@ class ProductInController extends Controller
     public function store(StoreProductInRequest $request, Product $productIn): RedirectResponse
     {
 
+        // Para asegurar la transaccion
         DB::transaction(function () use ($request, $productIn) {
 
-
-            //Actulizar los datos
+            // Actulizar los datos
             $inHelper = new inHelper();
             $transHelper = new TransHelper();
 
-            //Actualizar los datos del producto
+            // Actualizar los datos del producto
             $inHelper->updateProduct($request, $productIn);
 
-            //Crear los datos de la transaccion
-            $transHelper->store($request->toArray(), ProductTransType::ENTRADA, 0, $productIn->id);
-
-
+            // Crear los datos de la transaccion
+            $transHelper->store($request->toArray(), ProductTransType::ENTRADA, 0, $productIn->uuid);
         });
 
         //Devolver hacia atras
         return back();
 
     }
-
-    /**
-     * Display the specified resource.
-     */
-    // public function show(ProductIn $productIn)
-    // {
-    //     //
-    // }
 
     /**
      * @param Request $request

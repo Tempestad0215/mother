@@ -42,16 +42,17 @@ class  StoreProductSaleRequest extends FormRequest
         //Tomar los datos de la info_sale
         $info_sale = $this->input('info_sale');
 
+
         // Crear la validacion de los datos
         return [
             'id' => ['nullable', 'numeric'],
             'ncf' => ['nullable','string','max:30',Rule::requiredIf($sequence)],
             'invoice_type' => ['nullable','max:6','string', Rule::requiredIf($sequence)],
             'client_name' => ['nullable', 'string','min:3','max:75'],
-            'client_id' => ['nullable','integer'],
+            'client_id' => ['nullable','string','uuid'],
             'client_rnc' => ['nullable','string','max:20'],
             'info_sale' => ['required','array', new CheckStock($info_sale)],
-            'info_sale.*.product_id' => ['required','numeric','exists:products,id'],
+            'info_sale.*.product_id' => ['required','string','exists:products,uuid'],
             'info_sale.*.code' => ['nullable','string','min:4','max:50'],
             'info_sale.*.product_name' => ['required','string','min:3','max:75'],
             'info_sale.*.stock' => ['required','numeric'],

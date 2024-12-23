@@ -11,15 +11,15 @@ class TransHelper
     /**
      * @param array $request
      * @param ProductTransType $type
-     * @param int $sale_id
-     * @param int $product_id
-     * @param int $credit_note_id
+     * @param string $sale_id
+     * @param string $product_id
+     * @param string $credit_note_id
      * @return void
      */
-    public static function store(Array $request, ProductTransType $type, int $sale_id = 0, int $product_id = 0, int $credit_note_id = 0):void
+    public static function store(Array $request, ProductTransType $type, string $sale_id = "", string $product_id = "", string $credit_note_id = ""):void
     {
 
-        
+
         //Crear el TransId
         $transId = $request['transID'] ?? null;
 

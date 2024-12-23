@@ -13,7 +13,7 @@ return new class extends Migration {
             DataBaseHElper::saleTable($table);
             //Datos solo de nota de credito
             $table->string('ncf_m',30)->nullable();
-            $table->decimal('n_available',15,4);
+            $table->decimal('n_available');
             $table->string('type',20)->default('Devolucion');
             $table->boolean('status')->default(true);
             $table->foreignUuid(Sale::class);

@@ -50,28 +50,36 @@ class ProTrans extends Model implements Auditable
 
     protected $table = 'pro_trans';
 
+    protected $primaryKey = 'uuid';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
+
+    /*
+     * Almacenar todos los datos
+     */
+    protected $guarded = [];
     /**
      * @var string[]
      */
-    protected $fillable = [
-        'product_id',
-        'product_name',
-        'sale_id',
-        'credit_note_id',
-        'stock',
-        'price',
-        'min_price',
-        'special_price',
-        'discount',
-        'discount_amount',
-        'tax_rate',
-        'tax',
-        'tax_amount',
-        'amount',
-        'type',
-        'status'
-    ];
+//    protected $fillable = [
+//        'product_id',
+//        'product_name',
+//        'sale_id',
+//        'credit_note_id',
+//        'stock',
+//        'price',
+//        'min_price',
+//        'special_price',
+//        'discount',
+//        'discount_amount',
+//        'tax_rate',
+//        'tax',
+//        'tax_amount',
+//        'amount',
+//        'type',
+//        'status'
+//    ];
 
     //formatear los datos
     protected $casts = [
@@ -101,7 +109,7 @@ class ProTrans extends Model implements Auditable
      */
     public function product():belongsTo
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class, 'product_id','uuid');
     }
 
     /**
