@@ -100,19 +100,17 @@ class InvoiceController extends Controller
 
 
     /**
-     * Buscar La Facbtura A
      * @param Sale $sale
-     * @return JsonResponse
+     * @return void
      */
-    public function getA(Sale $sale): JsonResponse
+    public function getA(Sale $sale):void
     {
+        //Instancia del pdf
+        $pdf = new SaleInvoiceA($sale);
 
-        return $this->generatePDF(
-            $sale,
-            SaleInvoiceA::class,
-            'invoice-temp.pdf'
-        );
-
+        //llamar el pdf seleccionado
+        $pdf->getPDFData();
+        $pdf->Output('invoice.pdf');
     }
 
 

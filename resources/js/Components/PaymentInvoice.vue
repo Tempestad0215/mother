@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import {typePaymentData} from "@/Global/ShareData";
-import {getMoney} from "@/Global/Helpers";
+import {getMoney, moneyConfig} from "@/Global/Helpers";
 import TextInput from "@components/TextInput.vue";
 import InputError from "@components/InputError.vue";
 import InputLabel from "@components/InputLabel.vue";
@@ -10,6 +10,7 @@ import {InertiaForm} from "@inertiajs/vue3";
 import {creditNotesSaleI} from "@/Interfaces/Sale";
 import axios from "axios";
 import {onMounted} from "vue";
+import {Money} from "v-money3";
 
 
 //Definicar el props de la ventana
@@ -111,44 +112,51 @@ const deleteCreditNote = (index:number) => {
 <template>
     <!--Datos de la ventana-->
     <div
-        class="bg-gray-200 p-5 rounded-md min-w-[40rem]  max-w-[60px]  h-fit mx-auto">
+        class="bg-blue-300 p-5 rounded-md min-w-[40rem]  max-w-[60px]  h-fit mx-auto">
         <h3 class="text-2xl text-center">
             Datos de pagos
         </h3>
 
-        <!--Tipo de apgo-->
-        <div class="mt-3">
-            <InputLabel
-                for="typePayment"
-                value="Tipo Pago" />
-            <select
-                autofocus
-                v-model="typePayment"
-                id="typePayment"
-                class="rounded-md border-gray-300 w-full">
-                <option
-                    v-for="(item, index) in typePaymentData" :key="index"
-                    :value="item.value">
-                    {{item.name}}
-                </option>
-            </select>
+        <div class="flex items-center gap-3">
+            <!--Tipo de apgo-->
+            <div class="flex-1">
+                <InputLabel
+                    for="typePayment"
+                    value="Tipo Pago" />
+                <select
+                    autofocus
+                    v-model="typePayment"
+                    id="typePayment"
+                    class="inputGeneral py-1 w-full">
+                    <option
+                        class="even:bg-blue-400"
+                        v-for="(item, index) in typePaymentData" :key="index"
+                        :value="item.value">
+                        {{item.name}}
+                    </option>
+                </select>
+            </div>
+            <div class="flex-1">
+                <InputLabel
+                    for="credit_notes"
+                    value="Notas Creditos"/>
+                <div class="relative">
+                    <TextInput
+                        class="w-full"
+                        v-model.trim="creditNote"
+                        type="search"/>
+                    <i
+                        @click="getCreditNote"
+                        class="icon-efect absolute right-0 p-2 flex items-center inset-y-0 fa-solid fa-magnifying-glass"></i>
+                </div>
+                <!--                            Mensaje de error-->
+                <InputError :message="form.errors.credit_notes_value"/>
+            </div>
         </div>
+
         <!--                        Aplicar nota de credito-->
         <div class=" mt-3">
-            <InputLabel
-                for="credit_notes"
-                value="Notas Creditos"/>
-            <div class="relative">
-                <TextInput
-                    class="w-[calc(100%-3rem)]"
-                    v-model.trim="creditNote"
-                    type="search"/>
-                <i
-                    @click="getCreditNote"
-                    class=" bg-gray-400 hover:text-white duration-300 ease-linear rounded-md text-2xl p-2 absolute right-0 flex items-center inset-y-0 fa-solid fa-magnifying-glass"></i>
-            </div>
-            <!--                            Mensaje de error-->
-            <InputError :message="form.errors.credit_notes_value"/>
+
             <!--                            Mostrar las notas de creditos asociada a esa venta-->
             <table class="table-auto w-full mt-3">
                 <caption class="font-bold text-3xl">
@@ -186,20 +194,11 @@ const deleteCreditNote = (index:number) => {
             <InputLabel
                 for="received"
                 value="Recibido" />
-            <InputNumber
+            <Money
+                class="inputGeneral"
+                @blur="emit('returnedBlur')"
                 v-model="form.received"
-                inputId="locale-us"
-                @valueChange="emit('returnedBlur')"
-                locale="en-US"
-                :allow-empty="false"
-                :max-fraction-digits="2"
-                :minFractionDigits="2"
-                fluid />
-<!--            <TextInput-->
-
-<!--                class="w-full"-->
-<!--                type="number"-->
-<!--                v-model.trim="form.received"/>-->
+                v-bind="moneyConfig"/>
         </div>
 
 <!--        Mensaje de error-->

@@ -45,7 +45,7 @@ class  StoreProductSaleRequest extends FormRequest
 
         // Crear la validacion de los datos
         return [
-            'id' => ['nullable', 'numeric'],
+            'id' => ['nullable', 'string','uuid'],
             'ncf' => ['nullable','string','max:30',Rule::requiredIf($sequence)],
             'invoice_type' => ['nullable','max:6','string', Rule::requiredIf($sequence)],
             'client_name' => ['nullable', 'string','min:3','max:75'],
@@ -71,7 +71,7 @@ class  StoreProductSaleRequest extends FormRequest
             'received' => ['required','numeric'],
             'returned' => ['required','numeric'],
             'credit_notes' => ['nullable','array'],
-            'credit_notes.*.id' => ['nullable','numeric'],
+            'credit_notes.*.id' => ['nullable','string','uuid'],
             'credit_notes_amount' => ['nullable','numeric'],
             'comment' => [Rule::requiredIf(Route::is('credit-note.store')),'max:255'],
             'close_table' => ['required','boolean'],

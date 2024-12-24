@@ -42,7 +42,7 @@ const propsW = defineProps<{
     invoiceType: invoiceTypeI[],
     saleInfo?: saleDataI,
     refund?: boolean,
-    lastRecord: string
+    pdfUuid?: string
 }>();
 
 /*
@@ -460,6 +460,8 @@ const sendData = ():void => {
             //si es para actualizar
             if (form.update)
             {
+
+
                 //Enviar los datos para actualizar
                 form.patch(route('sale.update',{sale: form.id}),{
                     preserveState: true,
@@ -476,9 +478,6 @@ const sendData = ():void => {
                         //Verificar si fue cerrado la mesa
                         form.reset();
                         showReturn.value = false;
-
-
-
                     },
                     onError:()=>{
                         setTimeout(()=>{
@@ -1043,6 +1042,7 @@ const getErrorPdf = () => {
                             <!--                            Comentario de la venta-->
                             <div class="grid grid-cols-4 items-center gap-4">
                                 <textarea
+                                    placeholder="Comentario"
                                     v-model.trim="form.comment"
                                     cols="60"
                                     class="area col-span-2">
@@ -1102,7 +1102,7 @@ const getErrorPdf = () => {
 
 <!--            Ventana de Devuelta-->
             <FloatBox
-                header="Retornos"
+                header="Devueltas"
                 @close="showReturn = false"
                 v-if="showReturn">
                 <PaymentInvoice

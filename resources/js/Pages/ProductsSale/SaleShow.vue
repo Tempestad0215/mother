@@ -6,9 +6,7 @@ import {salePaginationI} from "@/Interfaces/Sale";
 import {getMoney} from "@/Global/Helpers";
 import Pagination from "@components/Pagination.vue";
 import InputError from "@components/InputError.vue";
-import axios from "axios";
 import {ref, Ref} from "vue";
-import ShowPdf from "@components/ShowPdf.vue";
 import TabLink from "@components/TabLink.vue";
 
 
@@ -172,27 +170,50 @@ const submit = () => {
 // }
 
 /**
- * Impirmir la factura seleccionada
- * @param id
+ *
  */
-const printFact = async (id:string) => {
+const printFact = async (uuid:string) => {
 
+    const popupOptions = `
+        width=800,
+        height=600,
+        top=${(screen.height - 600) / 2},
+        left=${(screen.width - 800) / 2},
+        resizable=no,
+        scrollbars=no,
+        status=no
+    `;
 
-    //Data de la busqueda
-    const data = await axios.get(route('invoice.getA',{sale: id}));
+    // Abrir la ventana emergente
+    const popupWindow = window.open(route('invoice.getA',{sale: uuid}), '_blank', popupOptions);
 
-    //Verificar si es diferente de la impresion
-    if (data.status !== 200)
-    {
-        //PAra cancelar la instruccion
-        return
+    // Verificar que la ventana se haya abierto
+    if (!popupWindow || popupWindow.closed || typeof popupWindow.closed === 'undefined') {
+        alert('Permite las ventanas emergentes en tu navegador.');
+        return;
     }
 
+    // Esperar a que la ventana se cargue y luego iniciar la impresión
+    popupWindow.onload = () => {
+        popupWindow.print(); // Llamar la función de imprimir
+    };
 
 
-    //Poner la url
-    urlPdf.value = data.data.url;
-    pdfShow.value = true;
+    // //Data de la busqueda
+    // const data = await axios.get(route('invoice.getA',{sale: id}));
+    //
+    // //Verificar si es diferente de la impresion
+    // if (data.status !== 200)
+    // {
+    //     //PAra cancelar la instruccion
+    //     return
+    // }
+    //
+    //
+    //
+    // //Poner la url
+    // urlPdf.value = data.data.url;
+    // pdfShow.value = true;
 
 
     // setTimeout(()=>{
@@ -203,12 +224,42 @@ const printFact = async (id:string) => {
     // window.print();
 }
 
+
 /**
  * Erro al imprimir el pdf
  */
-const getErrorPdf = (msj: string) => {
-}
+// const getErrorPdf = (msj: string) => {
+// }
 
+
+/*
+Para imprimir los mensaje del nevegador
+ */
+const printTest = () => {
+    const popupOptions = `
+        width=800,
+        height=600,
+        top=${(screen.height - 600) / 2},
+        left=${(screen.width - 800) / 2},
+        resizable=no,
+        scrollbars=no,
+        status=no
+    `;
+
+    // Abrir la ventana emergente
+    const popupWindow = window.open(route('test'), '_blank', popupOptions);
+
+    // Verificar que la ventana se haya abierto
+    if (!popupWindow || popupWindow.closed || typeof popupWindow.closed === 'undefined') {
+        alert('Permite las ventanas emergentes en tu navegador.');
+        return;
+    }
+
+    // Esperar a que la ventana se cargue y luego iniciar la impresión
+    popupWindow.onload = () => {
+        popupWindow.print(); // Llamar la función de imprimir
+    };
+}
 
 </script>
 
@@ -247,7 +298,6 @@ const getErrorPdf = (msj: string) => {
                 class=" mt-3 styleTable w-full table-auto">
                 <thead >
                     <tr class=" border-b-2 border-gray-800 text-left">
-                        <th>Code</th>
                         <th>Cliente</th>
                         <th>Itbis</th>
                         <th>Sub Total</th>
@@ -261,7 +311,6 @@ const getErrorPdf = (msj: string) => {
                     <tr
                         class="hoverTable"
                         v-for="(item,index) in propsW.sales.data" :key="index">
-                        <td>{{item.code}}</td>
                         <td>{{item.client_name}}</td>
                         <td>{{ getMoney(item.tax)}}</td>
                         <td>{{getMoney(item.sub_total)}}</td>
@@ -273,24 +322,6 @@ const getErrorPdf = (msj: string) => {
                                 @click="printFact(item.uuid)"
                                 class=" icon-efect fa-solid fa-print"></i>
                         </td>
-<!--                        <td >-->
-<!--&lt;!&ndash;                            Para la devoluciones&ndash;&gt;-->
-<!--                            <i-->
-<!--                                @click="refund(item.id)"-->
-<!--                                class=" icon-efect fa-solid fa-right-left mr-2"></i>-->
-
-<!--&lt;!&ndash;&lt;!&ndash;                            Si no existe nada&ndash;&gt;&ndash;&gt;-->
-<!--&lt;!&ndash;                            <span v-if="item.close_table">&ndash;&gt;-->
-<!--&lt;!&ndash;                                N/A&ndash;&gt;-->
-<!--&lt;!&ndash;                            </span>&ndash;&gt;-->
-
-<!--&lt;!&ndash;                            <i&ndash;&gt;-->
-<!--&lt;!&ndash;                                v-if="page.props.auth.user.role === 'admin'&ndash;&gt;-->
-<!--&lt;!&ndash;                                && !item.close_table&ndash;&gt;-->
-<!--&lt;!&ndash;                                && !page.props.setting.sequence  "&ndash;&gt;-->
-<!--&lt;!&ndash;                                @click="destroy(item.id)"&ndash;&gt;-->
-<!--&lt;!&ndash;                                class="icon-efect fa-solid fa-trash"></i>&ndash;&gt;-->
-<!--                        </td>-->
                     </tr>
                 </tbody>
             </table>
@@ -310,21 +341,8 @@ const getErrorPdf = (msj: string) => {
                     ? propsW.sales.next_page_url+'&perPage='+form.perPage
                     : ''"/>
 
-
             <!--           Mensajke de error-->
             <InputError :message="page.props.errors.comment"/>
-
-
-            <!--        <FloatBox-->
-            <!--            v-model:show="pdfShow"-->
-            <!--            header="Impresión">-->
-            <ShowPdf
-                @send-error="getErrorPdf"
-                v-if="pdfShow"
-                :pdf="urlPdf">
-
-            </ShowPdf>
-            <!--        </FloatBox>-->
 
         </div>
 

@@ -63,28 +63,6 @@ class Sale extends Model implements Auditable
      * @var array
      */
     protected $guarded = [];
-    // Datos para actualizar masivamente
-//    protected $fillable = [
-//        'code',
-//        'ncf',
-//        'ncf_m',
-//        'client_name',
-//        'client_rnc',
-//        'client_id',
-//        'discount_amount',
-//        'tax',
-//        'sub_total',
-//        'amount',
-//        'type',
-//        'type_payment',
-//        'status',
-//        'close_table',
-//        'credit_notes',
-//        'credit_notes_amount',
-//        'returned',
-//        'received'
-//    ];
-
 
     //Formatear los datos
     protected  $casts = [
@@ -114,16 +92,14 @@ class Sale extends Model implements Auditable
         return $this->belongsTo(Client::class, 'client_id','uuid');
     }
 
-
-
+    /**
+     *Relacion notas de creditos
+     * @return HasMany
+     */
     public function credit_note():HasMany
     {
         return $this->hasMany(CreditNote::class,'sale_id','uuid');
     }
-
-
-
-    //Relacion para los datos de las ventas
 
     /**
      * Retorno de valor
@@ -133,10 +109,6 @@ class Sale extends Model implements Auditable
     {
         return $this->hasMany(ProTrans::class,'sale_id','uuid');
     }
-
-
-
-    //Formatear los datos
 
     /**
      * Formatear la fehca de creacion

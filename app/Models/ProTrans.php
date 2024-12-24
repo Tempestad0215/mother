@@ -14,7 +14,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 
 /**
- * @property int $id
+ * @property string $uuid
  * @property string $code
  * @property int $product_id
  * @property string $product_name

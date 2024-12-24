@@ -170,11 +170,11 @@ class SaleInvoiceA extends TCPDF
 
 
     /**
-     * Poner el contenido y devolver los datos
-     * @return string
+     * Incluir los datos para enviar al navegador sin guardar como archivo
+     * @return void
      */
 
-    public function setData():string
+    public function setData():void
     {
         //ancho de la columna
         $width = array(12,38,16);
@@ -209,7 +209,7 @@ class SaleInvoiceA extends TCPDF
 
 
         //Devolver el PDF como una cadena
-        return $this->Output('','S');
+//        $this->Output($this->sale->client_name);
 
 
     }

@@ -10,7 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;
 
 /**
- * @property int $id
+ * @property string $uuid
  * @property string $invoice_type
  * @property string $ncf
  * @property string $ncf_m
@@ -47,7 +47,7 @@ class SaleInfoResource extends JsonResource
 
             //Agregar los datos
            $infoFinal[] = [
-               'transID' => $item->id,
+               'transID' => $item->uuid,
                'code' => $item->product->code ?? null,
                'product_id' => $item->product_id,
                'product_name' => $item->product_name,
@@ -72,7 +72,7 @@ class SaleInfoResource extends JsonResource
 
         //DEvolver los datos
         return [
-            'id' => $this->id,
+            'id' => $this->uuid,
             'invoice_type' => $this->invoice_type,
             'ncf' => $this->ncf,
             'ncf_m' => $this->ncf_m,
@@ -88,7 +88,7 @@ class SaleInfoResource extends JsonResource
             'close_table' => $this->close_table,
             'info_sale' => $infoFinal,
             'comment' => $this->comment ? [
-                'id' => $this->comment->id,
+                'id' => $this->comment->uuid,
                 'content' => $this->comment->content
             ]: null,
         ];

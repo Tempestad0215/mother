@@ -6,6 +6,7 @@ use App\Helpers\ClientHelper;
 use App\Helpers\ProductHelper;
 use App\Helpers\SaleHelper;
 use App\Http\Requests\StoreProductSaleRequest;
+use App\Invoices\SaleInvoiceA;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\Setting;
@@ -54,21 +55,33 @@ class ProductSaleController extends Controller
 
     /**
      * @param StoreProductSaleRequest $request
-     * @return RedirectResponse
+     * @return Response
      */
-    public function store(StoreProductSaleRequest $request):RedirectResponse
+    public function store(StoreProductSaleRequest $request)
     {
 
+        $data = null;
         // Evitar que se realicen 2 operaciones al mismo tiempo
-        Cache::lock('sale', 5)->get(function () use (&$request) {
+        Cache::lock('sale', 5)->get(function () use (&$request, &$data) {
 
             //Intancia de los datos
             $saleHelper = new SaleHelper();
             //Llamar el metodo
-            return $saleHelper->store($request);
+            $data = $saleHelper->store($request);
+
         });
-        //Devolver atras
-        return back();
+
+        //Intancia de los datos
+        $dataSale = $this->dataSale($request);
+
+        //DEvolver la vista y los datos
+        return Inertia::render('ProductsSale/SaleCreate', [
+            'products' => $dataSale['products'],
+            'clients' => $dataSale['clients'],
+            'saleOpen' => $dataSale['saleOpen'],
+            'invoiceType' => config('appconfig.invoiceType'),
+            'pdfUuid' => $data->uuid
+        ]);
 
     }
 
@@ -196,17 +209,17 @@ class ProductSaleController extends Controller
      * Obtener la ultima factura
      * @return JsonResponse
      */
-    public function lastInvoice():JsonResponse
-    {
-        //Otener el ultimo registro
-        $sale = Sale::orderBy('id', 'desc')->first();
-
-        //Intanciar la clase
-        $invoice = new InvoiceController();
-
-        //Se obtiene el ultimo registro
-        return $invoice->getA($sale,);
-    }
+//    public function lastInvoice():JsonResponse
+//    {
+//        //Otener el ultimo registro
+//        $sale = Sale::orderBy('id', 'desc')->first();
+//
+//        //Intanciar la clase
+//        $invoice = new InvoiceController();
+//
+//        //Se obtiene el ultimo registro
+//        return $invoice->getA($sale,);
+//    }
 
 
 }

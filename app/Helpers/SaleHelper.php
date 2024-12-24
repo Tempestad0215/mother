@@ -46,13 +46,13 @@ class SaleHelper
 
     /**
      * @param StoreProductSaleRequest $request
-     * @return null|string
+     * @return Sale|mixed
      */
-    public function store(StoreProductSaleRequest $request):string|null
+    public function store(StoreProductSaleRequest $request):Sale|null
     {
 
         //Para asegurar que se cumplan los registro
-        return DB::transaction(function () use ($request) {
+         return DB::transaction(function () use ($request) {
             //Obtener la configuracion
 
             //Incrementar la secuencia enviada
@@ -84,7 +84,6 @@ class SaleHelper
             //Actualizar los datos de la notas de credito
             CreditNoteHelper::updateAvailableFor($creditNotes, $request->get('amount'));
 
-
             //Verificar si existe el comentario
             if ($request->get('comment') !== null)
             {
@@ -93,7 +92,6 @@ class SaleHelper
                     'content' => $request->get('comment'),
                 ]);
             }
-
 
             //Recorrer la ventas para descontar los productos
             foreach ($request->get('info_sale') as $value)
@@ -120,6 +118,8 @@ class SaleHelper
                 TransHelper::store($value, $transType, $sale->uuid);
 
             }
+
+            return $sale;
         });
     }
 
@@ -327,48 +327,19 @@ class SaleHelper
                 );
             }
 
-
             //Reducir las notas de creditos seleccionada
             CreditNoteHelper::updateAvailableFor($creditNotes, $request->get('amount'));
 
-
             if ($closeTable)
             {
-
                 //Crear la transacciones
-                TransHelper::store($item, ProductTransType::VENTAS, $sale->id);
-
+                TransHelper::store($item, ProductTransType::VENTAS, $sale->uuid);
 
             }else{
-
-
                 //Crear la transacciones
-                TransHelper::store($item, ProductTransType::RESERVA, $sale->id);
-                //Crear la transaccion individual
-//                ProTrans::updateOrCreate([
-//                    'id' => $request->get('id'),
-//                    'product_id' => $item['product_id'],
-//                ],
-//                    [
-//                        'product_id' => $item['product_id'],
-//                        'product_name' => $item['product_name'],
-//                        'stock' => $item['stock'],
-//                        'price' => $item['price'],
-//                        'tax' => $item['tax'],
-//                        'tax_rate' => $item['tax_rate'],
-//                        'amount' => $item['amount'],
-//                        'discount' => $item['discount'],
-//                        'discount_amount' => $item['discount_amount'],
-//                        'type' => ProductTransType::RESERVA
-//                    ]);
+                TransHelper::store($item, ProductTransType::RESERVA, $sale->uuid);
             }
-
-
-
-
-
         });
-
     }
 
 
