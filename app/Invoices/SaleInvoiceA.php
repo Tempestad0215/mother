@@ -30,17 +30,12 @@ class SaleInvoiceA extends TCPDF
         public $height = 172)
     {
 
-
         //Aumentar la linea por cada linea agregada
         $this->sale->infoSale
             ->where('type', ProductTransType::VENTAS)
             ->each(function () {
             $this->height += 7.2;
         });
-
-
-
-//        dd($this->sale->infoSale->count(),  $this->height);
 
         //Crea el formato de imprsion
         $this->format = array(72, $this->height);
@@ -134,7 +129,6 @@ class SaleInvoiceA extends TCPDF
             $this->Cell(0, 5, $this->sale->client_name, 0, 1, 'L', 0, '', 0, false, '' );
         }
 
-
         //Crear linea divisora
         $this->Line($this->GetX(),$this->GetY(),$this->GetX()+$this->line,$this->GetY());
         $this->Ln(2);
@@ -158,10 +152,8 @@ class SaleInvoiceA extends TCPDF
                 </table>
                 EOD;
 
-
         //Crea el encabezado de los productos
         $this->writeHTML($headerTable, 1, false, true);
-
 
         //Tomar el ultimo valor de Y
         $this->headerEnd = $this->GetY();
@@ -173,7 +165,6 @@ class SaleInvoiceA extends TCPDF
      * Incluir los datos para enviar al navegador sin guardar como archivo
      * @return void
      */
-
     public function setData():void
     {
         //ancho de la columna
@@ -182,8 +173,6 @@ class SaleInvoiceA extends TCPDF
         //Craer la columna
         $this->SetY($this->headerEnd - 5);
         $this->setFont('helvetica', '', 8);
-
-
 
         //Crear la linea de los productos
         $this->sale->infoSale->where('type', '=', ProductTransType::VENTAS)
@@ -204,16 +193,8 @@ class SaleInvoiceA extends TCPDF
 
             $this->setY($this->GetY()+3);
             $this->Line($this->GetX(),$this->GetY(),$this->GetX()+68,$this->GetY());
-
         });
-
-
-        //Devolver el PDF como una cadena
-//        $this->Output($this->sale->client_name);
-
-
     }
-
 
 
     /**
@@ -223,9 +204,7 @@ class SaleInvoiceA extends TCPDF
     public function Footer():void
     {
 
-
         $xLocation = 18;
-
 
         $this->setY(-100);
         $this->setFont('helvetica', '', 10);
@@ -274,7 +253,6 @@ class SaleInvoiceA extends TCPDF
 
         $this->Line($this->GetX(),$this->GetY(),$this->GetX()+$this->line,$this->GetY());
 
-
         //Tomar la auditoria de creacion
         $audit = $this->sale->audits()->firstWhere('event','created');
 
@@ -290,9 +268,7 @@ class SaleInvoiceA extends TCPDF
         $this->Cell(30,5, 'Fecha Impresión :', 0, 0, 'L', false, '', '', false,'');
         $this->Cell(0, 5, Carbon::now() , 0, 1, 'L', 0, '', 0, false, '' );
 
-
         //Crear codigo de barra
-
         $this->write1DBarcode(
             $this->sale->code,       // El valor del código de barras
             'C128',              // Tipo de código de barras (C128 es adecuado para alfanuméricos)

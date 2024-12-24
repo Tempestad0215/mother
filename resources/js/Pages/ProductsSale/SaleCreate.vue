@@ -7,7 +7,7 @@ import FloatBox from "@components/FloatBox.vue";
 import FloatShowPro from "@/Pages/Products/FloatShowPro.vue";
 import { onMounted, onUpdated, Ref, ref} from "vue";
 import {productFullI, productI} from "@/Interfaces/Product";
-import {getMoney, getRncHelper, getSequenceType, moneyConfig} from "@/Global/Helpers";
+import {getMoney, getRncHelper, getSequenceType, moneyConfig, printPdf} from "@/Global/Helpers";
 import Swal from "sweetalert2";
 import InputError from "@components/InputError.vue";
 import {clientBaseI, clientDataI} from "@/Interfaces/Client";
@@ -18,7 +18,6 @@ import axios from "axios";
 import SaleOpenShow from "@/Pages/ProductsSale/SaleOpenShow.vue";
 import {creditNotesSaleI, infoSaleI, saleDataI, saleDataPaginationI} from "@/Interfaces/Sale";
 import {invoiceTypeI, rncUserI, sequenceDataI} from "@/Interfaces/Setting";
-import ShowPdf from "@components/ShowPdf.vue";
 import PaymentInvoice from "@components/PaymentInvoice.vue";
 import ReturnForm from "@components/ReturnForm.vue";
 import {Money} from "v-money3";
@@ -27,7 +26,7 @@ import TabLink from "@components/TabLink.vue";
 
 
 /*
-Utilizar el page para los datos de la pagina
+Utilizar el page para los datos de la página
  */
 const page = usePage();
 
@@ -37,56 +36,12 @@ const page = usePage();
 const propsW = defineProps<{
     products: productI,
     clients: clientDataI,
-    pdf?: string,
     saleOpen : saleDataPaginationI,
     invoiceType: invoiceTypeI[],
     saleInfo?: saleDataI,
     refund?: boolean,
-    pdfUuid?: string
+    pdfUuid?: string,
 }>();
-
-/*
-al momento de cargar
- */
-onMounted( () => {
-    //Verificar si existe los datos para devoluicion
-    setDataForm();
-    //Buscar la secuencia si esta en la configuracion
-    if (page.props.setting.sequence)  getSequence(form.invoice_type);
-
-    //Para verificar
-    let msjError = "Este Codigo No es Validos, Introduzca Uno Validado";
-
-    //Valizar si es igual
-    if (page.props.errors.general === msjError)
-    {
-        showFormReturn.value = true;
-    }
-
-});
-
-
-
-/*
- * al momento de cargar
- */
-onUpdated( () => {
-    //Buscar la secuencia si esta en la configuracion
-    if (page.props.setting.sequence) getSequence(form.invoice_type);
-
-
-    //Para verificar
-    let msjError = "Este Codigo No es Validos, Introduzca Uno Validado";
-
-    //Valizar si es igual
-    if (page.props.errors.general === msjError)
-    {
-        showFormReturn.value = true;
-    }
-
-    //Verificar para actualizar los datos
-    setDataForm();
-});
 
 /*
  * Datos de la ventana
@@ -142,6 +97,47 @@ const form = useForm({
 });
 
 /*
+al momento de cargar
+ */
+onMounted( () => {
+    //Verificar si existe los datos para devoluicion
+    setDataForm();
+    //Buscar la secuencia si está en la configuration
+    if (page.props.setting.sequence)  getSequence(form.invoice_type);
+
+    //Para verificar
+    let msjError = "Este Codigo No es Validos, Introduzca Uno Validado";
+
+    //Valizar si es igual
+    if (page.props.errors.general === msjError)
+    {
+        showFormReturn.value = true;
+    }
+
+});
+
+/*
+ * al momento de cargar
+ */
+onUpdated( () => {
+    //Buscar la secuencia si está en la configuracion
+    if (page.props.setting.sequence) getSequence(form.invoice_type);
+
+    //Para verificar
+    let msjError = "Este Codigo No es Validos, Introduzca Uno Validado";
+
+    //Valizar si es igual
+    if (page.props.errors.general === msjError)
+    {
+        showFormReturn.value = true;
+    }
+
+    // Enviar los datos
+    setDataForm();
+});
+
+
+/*
 Funciones
  */
 
@@ -167,7 +163,6 @@ const setDataForm = () => {
     }
 }
 
-
 /*
  * Obtener los datos de la sequencia
  */
@@ -177,7 +172,7 @@ const setDataForm = () => {
  */
 const getSequence = async (type: string) => {
 
-    //Verifocar so existe la secuencia
+    //Verificar si existe la secuencia
     if (!page.props.setting.sequence)
     {
         //Realizar la buqueda
@@ -214,7 +209,7 @@ const returnedBlur = ():boolean => {
     //Primero verifica la cantidad
     returned()
 
-    //Verificar el calculo
+    //Verificar el cálculo
     if(form.returned < 0)
     {
         //Enviar el mensaje de error
@@ -232,7 +227,7 @@ const returnedBlur = ():boolean => {
  */
 const returned = ():void => {
 
-    //Verificar el calculo de los datos
+    //Verificar el cálculo de los datos
     let received:number = form.received ;
     let amount:number = form.amount;
     let creditAmount:number = form.credit_notes_amount;
@@ -312,7 +307,7 @@ const getData = (item:productFullI) => {
         showProduct.value = false;
     }
 
-    // //Conseguir el index para poder realizar el calculo
+    // //Conseguir el index para poder realizar el cálculo
     let index = form.info_sale.findIndex((el) => el.product_id === item.uuid);
 
     //Calcular el indice
@@ -343,7 +338,7 @@ const deleteItem = async (name:string , index:number) => {
     //Verificar si se ha confirmado
     if(result.isConfirmed)
     {
-        //Tomar datos la ventas
+        //Tomar datos la venta
         let info:infoSaleI = form.info_sale[index];
 
 
@@ -370,14 +365,14 @@ const deleteItem = async (name:string , index:number) => {
                 }));
             }
         }
-        //REalizar el calculo de nuevo
+        //REalizar el cálculo de nuevo
         totalSale();
     }
 
 }
 
 /**
- * Calcular el  itbis y otros datos de la ventana
+ * Calcular el itbis y otros datos de la ventana
  * @param index
  */
 const totalAmount = (index:number) => {
@@ -403,8 +398,6 @@ const totalAmount = (index:number) => {
  */
 // Calculo de los datos finales
 const totalSale = () => {
-
-
     //Calcular el total
     form.tax = form.info_sale.reduce((tax:number, item:infoSaleI) => tax + item.tax, 0);
     form.sub_total = form.info_sale.reduce((subTotal:number, item:infoSaleI) => subTotal + item.amount, 0);
@@ -449,9 +442,7 @@ const sendData = ():void => {
                 },3500);
             }
         });
-
     }else{
-
         //Verificar si no hay problema con nada
         if (!returnedBlur() && form.close_table)
         {
@@ -460,33 +451,29 @@ const sendData = ():void => {
             //si es para actualizar
             if (form.update)
             {
-
-
-                //Enviar los datos para actualizar
-                form.patch(route('sale.update',{sale: form.id}),{
-                    preserveState: true,
-                    preserveScroll: true,
-                    onSuccess:() =>{
-                        successHttp('Documento Actualizado Correctamente');
-
-                        //Verificar si la mensa esta cerrada
-                        if (form.close_table)
+                // Actualizar los datos y capturar
+                axios.patch(route('sale.update', {sale: form.id}), form)
+                    .then((res) => {
+                        if (res.status === 200)
                         {
-                            getPdf();
+                            //si esta cerrada se vas a imprimir
+                            if (form.close_table)
+                            {
+                                //Mostrar el pdf de impresion
+                                printPdf(res.data.pdfUuid);
+                            }
+                            // Limpiar el formulario
+                            form.reset();
                         }
-
-                        //Verificar si fue cerrado la mesa
-                        form.reset();
-                        showReturn.value = false;
-                    },
-                    onError:()=>{
-                        setTimeout(()=>{
-                            form.clearErrors();
-                        },5000)
-                    },
+                    }).catch((err) => {
+                        //Mensaje de error
+                        Swal.fire({
+                            title: "Error en esta solicitud",
+                            text: "Error : "+err.message,
+                            icon: "question",
+                        });
                 });
             }else{
-
                 //Guardar los datos por primera vez
                 form.post(route('sale.store'),{
                     onSuccess:()=>{
@@ -513,32 +500,6 @@ const sendData = ():void => {
         }
     }
 }
-
-
-/**
- * Obteenr el PDF
- */
-const getPdf = () => {
-    axios.get(route('invoice.getA',{sale: form.id}))
-        .then((data)=>{
-            if (data.status === 200)
-            {
-                showPdf.value = true;
-                pdfUrl.value = data.data.url;
-
-
-
-                setTimeout(()=>{
-                    pdfUrl.value = "";
-                    showPdf.value = false;
-                },1500)
-
-            }
-        }).catch(()=>{
-        console.log('error')
-    });
-}
-
 
 /**
  * Obtener el ultimo registro
@@ -569,7 +530,7 @@ const getLastInvoie = () => {
  */
 const getBycode = () => {
 
-    //Verificar que tenga mas de 6 caracter
+    //Verificar que tenga más de 6 caracter
     if(form.code_value.length > 6)
     {
         //realizar la busqueda en automatico
@@ -660,7 +621,7 @@ const checkSale = () => {
         sendData();
     }
 
-    //Llamar el metodo para el calculo
+    //Llamar el metodo para el cálculo
     returned();
 
 }
@@ -670,9 +631,9 @@ const checkSale = () => {
  * Calcular la nota de credito
  */
 const amountCreditNote = () => {
-    //REalizar el calculo de notas de credito
+    //REalizar el cálculo de notas de credito
     form.credit_notes_amount = form.credit_notes.reduce((acc, cur) => acc + cur.n_available, 0);
-    //Datos pendiente por pagar
+    //Datos pendientes por pagar
     form.returned = form.credit_notes_amount - form.amount;
     form.pending = (form.credit_notes_amount - form.amount) < 0 ?(form.credit_notes_amount - form.amount) : 0;
 
@@ -691,7 +652,7 @@ const getRncClient = async () => {
         //Obtener el resultado de los
         const result = await getRncHelper(form.client_rnc);
 
-        //Verificar los estado del RNC
+        //Verificar el estado del RNC
         if (result === "SUSPENDIDO")
         {
             form.setError("client_rnc", "Este Contribuyente Esta Suspendido, Por Favor Elegir Otro");
@@ -707,7 +668,7 @@ const getRncClient = async () => {
             //Formatear el json
             const info:rncUserI = JSON.parse(result);
 
-            //Poner cada datos en su lugar
+            //Poner cada dato en su lugar
             form.client_name = info.razon_social;
             form.client_rnc_status = info.status;
         }
@@ -716,467 +677,445 @@ const getRncClient = async () => {
 
 }
 
-
-const getErrorPdf = () => {
-    console.log('error');
-}
-
-
 </script>
-
-
-
 
 <template>
 <!--Titulo de la ventana-->
     <Head title="Sale" />
 <!--    Contenido general-->
     <AppLayout>
-
 <!--        Cabecera de la ventana-->
-
-
-        <template #header >
-            <TabLink
-                :active="true"
-                :href="route('sale.create')">
-                Ventas
-            </TabLink>
-            <TabLink
-                :href="route('sale.show')">
-                Mostrar
-            </TabLink>
-        </template>
+    <template #header >
+        <TabLink
+            :active="true"
+            :href="route('sale.create')">
+            Ventas
+        </TabLink>
+        <TabLink
+            :href="route('sale.show')">
+            Mostrar
+        </TabLink>
+    </template>
 
 <!--        //contenido-->
-        <div>
-            <div
-                class=" bg-blue-300 p-5 max-w-[1180px] rounded-md mx-auto overflow-hidden">
-                <form
-                    class=" max-w-3/5">
-                    <div >
-                        <div class="flex">
-                            <div>
+    <div>
+        <div
+            class=" bg-blue-300 p-5 max-w-[1180px] rounded-md mx-auto overflow-hidden">
+            <form
+                class=" max-w-3/5">
+                <div >
+                    <div class="flex">
+                        <div>
 <!--                                Botones para buscar datos-->
-                                <div class="flex space-x-5 items-center ">
+                            <div class="flex space-x-5 items-center ">
 
-                                    <div class="relative">
-                                        <input-label
-                                            for="product"
-                                            value="Cliente" />
+                                <div class="relative">
+                                    <input-label
+                                        for="product"
+                                        value="Cliente" />
 
-                                        <div class="relative">
-                                            <TextInput
-                                                type="search"
-                                                :readonly="form.invoice_type === 'B04' "
-                                                class=" w-[400px] pr-10"
-                                                v-model.trim="form.client_name"
-                                                placeholder="Cliente"/>
-<!--                                            Colocar al lado esto-->
-                                            <div
-                                                class="absolute inset-y-0 right-0 flex items-center">
-                                                <i
-                                                    v-if="form.invoice_type !== 'B04'"
-                                                    title="Buscar Cliente"
-                                                    @click="showClient = !showClient"
-                                                    class=" icon-efect text-2xl pr-3 fa-solid fa-magnifying-glass-plus"></i>
-                                            </div>
-                                        </div>
-
-                                        <InputError
-                                            :message="form.errors.client_id"/>
-                                    </div>
-                                </div>
-                                <InputError :message="form.errors.client_name"/>
-
-
-                                <!--RNC del cliente-->
-                                <div v-if="showClientRnc && page.props.setting.sequence" >
-                                    <InputLabel
-                                        for="client_rnc"
-                                        value="RNC" />
                                     <div class="relative">
                                         <TextInput
-                                            v-model="form.client_rnc"
-                                            class="w-[400px] pr-[32px]"
-                                            type="search" />
-                                        <i
-                                            @click="getRncClient"
-                                            class=" absolute right-0 inset-y-0 flex items-center icon-efect p-2 text-2xl fa-solid fa-magnifying-glass"></i>
+                                            type="search"
+                                            :readonly="form.invoice_type === 'B04' "
+                                            class=" w-[400px] pr-10"
+                                            v-model.trim="form.client_name"
+                                            placeholder="Cliente"/>
+<!--                                            Colocar al lado esto-->
+                                        <div
+                                            class="absolute inset-y-0 right-0 flex items-center">
+                                            <i
+                                                v-if="form.invoice_type !== 'B04'"
+                                                title="Buscar Cliente"
+                                                @click="showClient = !showClient"
+                                                class=" icon-efect text-2xl pr-3 fa-solid fa-magnifying-glass-plus"></i>
+                                        </div>
                                     </div>
 
-                                    <InputError :message="form.errors.client_rnc"/>
+                                    <InputError
+                                        :message="form.errors.client_id"/>
                                 </div>
                             </div>
+                            <InputError :message="form.errors.client_name"/>
+
+
+                            <!--RNC del cliente-->
+                            <div v-if="showClientRnc && page.props.setting.sequence" >
+                                <InputLabel
+                                    for="client_rnc"
+                                    value="RNC" />
+                                <div class="relative">
+                                    <TextInput
+                                        v-model="form.client_rnc"
+                                        class="w-[400px] pr-[32px]"
+                                        type="search" />
+                                    <i
+                                        @click="getRncClient"
+                                        class=" absolute right-0 inset-y-0 flex items-center icon-efect p-2 text-2xl fa-solid fa-magnifying-glass"></i>
+                                </div>
+
+                                <InputError :message="form.errors.client_rnc"/>
+                            </div>
+                        </div>
 
 <!--                            Mensaje cargando-->
-                            <div
-                                class=" flex-1 flex justify-end animate-pulse "
-                                v-if="form.sequence_type == '' && page.props.setting.sequence">
-                                Cargando....
-                            </div>
+                        <div
+                            class=" flex-1 flex justify-end animate-pulse "
+                            v-if="form.sequence_type == '' && page.props.setting.sequence">
+                            Cargando....
+                        </div>
 
 <!--                            Datos de comprobante-->
-                            <div
-                                class="flex flex-col-reverse"
-                                v-if="form.sequence_type !== ''">
+                        <div
+                            class="flex flex-col-reverse"
+                            v-if="form.sequence_type !== ''">
 <!--                                Mensaje de cargando-->
 
 
-                                <!--Numero de comprobantes-->
-                                <fieldset class="border-2 border-gray-400 rounded-md px-2 mx-3 w-[350px] ">
-                                    <legend>
-                                        {{form.sequence_type}}
-                                    </legend>
-                                    <p class="truncate"><strong>NCF :</strong> {{form.ncf}}</p>
-                                    <p
-                                        v-if="form.invoice_type === 'B04'"
-                                        class="truncate"><strong>NCF M. :</strong> {{form.ncf_m}}</p>
-                                </fieldset>
+                            <!--Numero de comprobantes-->
+                            <fieldset class="border-2 border-gray-400 rounded-md px-2 mx-3 w-[350px] ">
+                                <legend>
+                                    {{form.sequence_type}}
+                                </legend>
+                                <p class="truncate"><strong>NCF :</strong> {{form.ncf}}</p>
+                                <p
+                                    v-if="form.invoice_type === 'B04'"
+                                    class="truncate"><strong>NCF M. :</strong> {{form.ncf_m}}</p>
+                            </fieldset>
 
 
 
-                                <!--Numero de comprobantes-->
-                                <fieldset
-                                    v-if="showClientRnc"
-                                    class=" border-2 border-gray-400 rounded-md px-2 mx-3 w-[350px] max-w-[400px]">
-                                    <legend>
-                                        Datos Tributario
-                                    </legend>
-                                    <p><strong>RNC :</strong> {{form.client_rnc}}</p>
-                                    <p class="max-w-[300px] truncate">
-                                        <strong>Razon Social :</strong>
-                                        {{form.client_name}}
-                                    </p>
-                                </fieldset>
+                            <!--Numero de comprobantes-->
+                            <fieldset
+                                v-if="showClientRnc"
+                                class=" border-2 border-gray-400 rounded-md px-2 mx-3 w-[350px] max-w-[400px]">
+                                <legend>
+                                    Datos Tributario
+                                </legend>
+                                <p><strong>RNC :</strong> {{form.client_rnc}}</p>
+                                <p class="max-w-[300px] truncate">
+                                    <strong>Razon Social :</strong>
+                                    {{form.client_name}}
+                                </p>
+                            </fieldset>
 
 
 
-                            </div>
                         </div>
+                    </div>
 
 <!--                        Datos del formulario-->
-                        <div class=" flex justify-between items-center mt-3">
-                            <div class="flex">
-                                <form
-                                    v-if="form.invoice_type !== 'B04' "
-                                    @submit.prevent="getBycode">
-                                    <InputLabel
-                                        for="Product"
-                                        value="Codigo"/>
+                    <div class=" flex justify-between items-center mt-3">
+                        <div class="flex">
+                            <form
+                                v-if="form.invoice_type !== 'B04' "
+                                @submit.prevent="getBycode">
+                                <InputLabel
+                                    for="Product"
+                                    value="Codigo"/>
 
-                                    <TextInput
-                                        placeholder="Producto"
-                                        maxLength="15"
-                                        class="w-[400px]"
-                                        @blur="getBycode"
-                                        v-model="form.code_value"
-                                    />
+                                <TextInput
+                                    placeholder="Producto"
+                                    maxLength="15"
+                                    class="w-[400px]"
+                                    @blur="getBycode"
+                                    v-model="form.code_value"
+                                />
 
-                                    <InputError :message="form.errors.code_value"/>
-                                </form>
-                                <!-- Buscar los datos necesario -->
-                                <div
-                                    v-if="!propsW.refund"
-                                    class="ml-3">
-                                    <InputLabel value="Datos"/>
+                                <InputError :message="form.errors.code_value"/>
+                            </form>
+                            <!-- Buscar los datos necesario -->
+                            <div
+                                v-if="!propsW.refund"
+                                class="ml-3">
+                                <InputLabel value="Datos"/>
 
 <!--                                    Btn de producto-->
-                                    <i
-                                        title="Productos"
-                                        @click="showProduct = !showProduct"
-                                        class="icon-efect text-3xl fa-solid fa-box-open"></i>
+                                <i
+                                    title="Productos"
+                                    @click="showProduct = !showProduct"
+                                    class="icon-efect text-3xl fa-solid fa-box-open"></i>
 
 <!--                                    Btn de Cuentas abierta-->
-                                    <i
-                                        title="Cuentas Abiertas"
-                                        @click="showSaleOpen = !showSaleOpen"
-                                        class=" ml-3 icon-efect text-3xl  fa-solid fa-table-cells-row-unlock"></i>
+                                <i
+                                    title="Cuentas Abiertas"
+                                    @click="showSaleOpen = !showSaleOpen"
+                                    class=" ml-3 icon-efect text-3xl  fa-solid fa-table-cells-row-unlock"></i>
 
 <!--                                 BTN Devolucion-->
-                                    <i
-                                        title="Devoluciones"
-                                        @click="showFormReturn = !showFormReturn"
-                                        class=" ml-3 icon-efect text-3xl fa-solid fa-arrow-rotate-left"></i>
+                                <i
+                                    title="Devoluciones"
+                                    @click="showFormReturn = !showFormReturn"
+                                    class=" ml-3 icon-efect text-3xl fa-solid fa-arrow-rotate-left"></i>
 
-                                </div>
                             </div>
-
-
-                            <div class="flex">
-                                <!--Tipo de factura-->
-                                <div
-                                    v-if="page.props.setting.sequence"
-                                    class="ml-3">
-                                    <InputLabel for="type" value="Tipo de Factura"/>
-                                    <select
-                                        :disabled="form.invoice_type == 'B04'"
-                                        @change="checkInvoiceType"
-                                        v-model="form.invoice_type"
-                                        class="inputGeneral py-0"
-                                        name="type"
-                                        id="type">
-                                        <option
-                                            v-for="(item, index) in propsW.invoiceType" :key="index"
-                                            :disabled="item.type == 'B04' && page.url == '/sale' "
-                                            :value="item.type">
-                                            {{item.type}} - {{ item.name }}
-                                        </option>
-                                        <!--                                        <option value="">Credito</option>-->
-                                    </select>
-                                    <InputError :message="form.errors.invoice_type"/>
-                                </div>
-
-
-                                <!--Tipo de factura-->
-                                <div class="ml-2">
-                                    <InputLabel for="type" value="Tipo de Venta"/>
-                                    <select
-                                        class="inputGeneral py-0"
-                                        v-model="form.type">
-                                        <option value="ventas" >CONTADO</option>
-                                        <option value="cotizacion" >CREDITO</option>
-                                    </select>
-                                    <InputError :message="form.errors.type"/>
-                                </div>
-                                <!--Tipo de cuenta si abierta o cerrada-->
-                                <div
-                                    v-if="!propsW.refund"
-                                    class="ml-2">
-                                    <InputLabel
-                                        for="type_account"
-                                        value="Cuenta"/>
-                                    <select
-                                        v-model="form.close_table"
-                                        class="inputGeneral py-0">
-                                        <option :value="false">ABIERTA</option>
-                                        <option :value="true">CERRADA</option>
-                                    </select>
-                                </div>
-                            </div>
-
                         </div>
+
+
+                        <div class="flex">
+                            <!--Tipo de factura-->
+                            <div
+                                v-if="page.props.setting.sequence"
+                                class="ml-3">
+                                <InputLabel for="type" value="Tipo de Factura"/>
+                                <select
+                                    :disabled="form.invoice_type == 'B04'"
+                                    @change="checkInvoiceType"
+                                    v-model="form.invoice_type"
+                                    class="inputGeneral py-0"
+                                    name="type"
+                                    id="type">
+                                    <option
+                                        v-for="(item, index) in propsW.invoiceType" :key="index"
+                                        :disabled="item.type == 'B04' && page.url == '/sale' "
+                                        :value="item.type">
+                                        {{item.type}} - {{ item.name }}
+                                    </option>
+                                    <!--                                        <option value="">Credito</option>-->
+                                </select>
+                                <InputError :message="form.errors.invoice_type"/>
+                            </div>
+
+
+                            <!--Tipo de factura-->
+                            <div class="ml-2">
+                                <InputLabel for="type" value="Tipo de Venta"/>
+                                <select
+                                    class="inputGeneral py-0"
+                                    v-model="form.type">
+                                    <option value="ventas" >CONTADO</option>
+                                    <option value="cotizacion" >CREDITO</option>
+                                </select>
+                                <InputError :message="form.errors.type"/>
+                            </div>
+                            <!--Tipo de cuenta si abierta o cerrada-->
+                            <div
+                                v-if="!propsW.refund"
+                                class="ml-2">
+                                <InputLabel
+                                    for="type_account"
+                                    value="Cuenta"/>
+                                <select
+                                    v-model="form.close_table"
+                                    class="inputGeneral py-0">
+                                    <option :value="false">ABIERTA</option>
+                                    <option :value="true">CERRADA</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
 
 <!--                        Listado de los productos-->
-                        <div
-                            class="max-h-[400px] border-t-2 mt-3 border-black overflow-y-auto shadow-lg p-3 rounded-md">
-                            <table class="styleTable w-full">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Producto/Servicio</th>
-                                        <th>Cantidad</th>
-                                        <th>Itbis</th>
-                                        <th>Precio</th>
-                                        <th>Desc.</th>
-                                        <th>Importe</th>
-                                        <th>Act</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="(item, index) in form.info_sale" :key="index">
-                                        <td>
-                                            {{index+1}}
-                                        </td>
-                                        <td>
-                                            {{item.product_name}}
-                                        </td>
-                                        <td class="max-w-[5rem]">
-                                            <Money
-                                                class=" bg-transparent h-[2rem] max-w-[6rem] rounded-md border-none"
-                                                @blur="totalAmount(index)"
-                                                v-bind="moneyConfig"
-                                                v-model="item.stock"/>
-                                        </td>
-                                        <td>
-                                            {{getMoney(item.tax)}}
-                                        </td>
+                    <div
+                        class="max-h-[400px] border-t-2 mt-3 border-black overflow-y-auto shadow-lg p-3 rounded-md">
+                        <table class="styleTable w-full">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Producto/Servicio</th>
+                                    <th>Cantidad</th>
+                                    <th>Itbis</th>
+                                    <th>Precio</th>
+                                    <th>Desc.</th>
+                                    <th>Importe</th>
+                                    <th>Act</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(item, index) in form.info_sale" :key="index">
+                                    <td>
+                                        {{index+1}}
+                                    </td>
+                                    <td>
+                                        {{item.product_name}}
+                                    </td>
+                                    <td class="max-w-[5rem]">
+                                        <Money
+                                            class=" bg-transparent h-[2rem] max-w-[6rem] rounded-md border-none"
+                                            @blur="totalAmount(index)"
+                                            v-bind="moneyConfig"
+                                            v-model="item.stock"/>
+                                    </td>
+                                    <td>
+                                        {{getMoney(item.tax)}}
+                                    </td>
 
 <!--                                        Precio solo modificar si es servicio-->
-                                        <td class="max-w-[5rem]">
-                                            <span v-if="item.type === 'producto'">
-                                                {{getMoney(item.price)}}
-                                            </span>
-                                            <Money
-                                                class=" bg-transparent h-[2rem] max-w-[6rem] rounded-md border-none"
-                                                v-if="item.type === 'servicio'"
-                                                @blur="totalAmount(index)"
-                                                v-bind="moneyConfig"
-                                                v-model="item.price"/>
-                                        </td>
-                                        <td class="max-w-[4rem]">
-                                            <Money
-                                                class=" bg-transparent h-[2rem] max-w-[5rem] rounded-md border-none"
-                                                @blur="totalAmount(index)"
-                                                v-bind="moneyConfig"
-                                                :min="0"
-                                                :max="100"
-                                                v-model="item.discount"/>
-                                        </td>
-                                        <td>
-                                            {{getMoney(item.amount)}}
-                                        </td>
+                                    <td class="max-w-[5rem]">
+                                        <span v-if="item.type === 'producto'">
+                                            {{getMoney(item.price)}}
+                                        </span>
+                                        <Money
+                                            class=" bg-transparent h-[2rem] max-w-[6rem] rounded-md border-none"
+                                            v-if="item.type === 'servicio'"
+                                            @blur="totalAmount(index)"
+                                            v-bind="moneyConfig"
+                                            v-model="item.price"/>
+                                    </td>
+                                    <td class="max-w-[4rem]">
+                                        <Money
+                                            class=" bg-transparent h-[2rem] max-w-[5rem] rounded-md border-none"
+                                            @blur="totalAmount(index)"
+                                            v-bind="moneyConfig"
+                                            :min="0"
+                                            :max="100"
+                                            v-model="item.discount"/>
+                                    </td>
+                                    <td>
+                                        {{getMoney(item.amount)}}
+                                    </td>
 
-                                        <td>
-                                            <i
-                                                @click="deleteItem(item.product_name, index)"
-                                                class=" icon-efect text-red-500 fa-solid fa-circle-xmark"></i>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                                    <td>
+                                        <i
+                                            @click="deleteItem(item.product_name, index)"
+                                            class=" icon-efect text-red-500 fa-solid fa-circle-xmark"></i>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
 
-                        </div>
+                    </div>
 <!--                        Dato de la ventas-->
-                        <div>
-                            <!--                            Mensaje generales-->
-                            <div>
-                                <InputError :message="form.errors.general"/>
-                            </div>
-
-
-                            <div>
-                                <InputError :message="form.errors.info_sale"/>
-                            </div>
-
-                            <!--                            Comentario de la venta-->
-                            <div class="grid grid-cols-4 items-center gap-4">
-                                <textarea
-                                    placeholder="Comentario"
-                                    v-model.trim="form.comment"
-                                    cols="60"
-                                    class="area col-span-2">
-                                </textarea>
-                                <div class=" col-end-7 col-span-2">
-                                    <table>
-                                        <tbody>
-                                            <tr>
-                                                <th class="text-left">Itbis :</th>
-                                                <td>{{getMoney(form.tax)}}</td>
-                                            </tr>
-                                            <tr>
-                                                <th class="text-left">Sub Total :</th>
-                                                <td>{{getMoney(form.sub_total)}}</td>
-                                            </tr>
-                                            <tr>
-                                                <th class="text-left">Decuento :</th>
-                                                <td>{{getMoney(form.discount_amount)}}</td>
-                                            </tr>
-                                            <tr>
-                                                <th class="text-left">Total :</th>
-                                                <td class="w-[15rem]" >{{getMoney(form.amount)}}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                            </div>
-                        </div>
-
-
-<!--                        Mensaje de erro-->
+                    <div>
+                        <!--                            Mensaje generales-->
                         <div>
                             <InputError :message="form.errors.general"/>
                         </div>
-<!--                        Devuelta y demas detos-->
-                        <div class=" mt-2 w-64 float-right">
 
-                            <div class="">
+
+                        <div>
+                            <InputError :message="form.errors.info_sale"/>
+                        </div>
+
+                        <!--                            Comentario de la venta-->
+                        <div class="grid grid-cols-4 items-center gap-4">
+                            <textarea
+                                placeholder="Comentario"
+                                v-model.trim="form.comment"
+                                cols="60"
+                                class="area col-span-2">
+                            </textarea>
+                            <div class=" col-end-7 col-span-2">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <th class="text-left">Itbis :</th>
+                                            <td>{{getMoney(form.tax)}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="text-left">Sub Total :</th>
+                                            <td>{{getMoney(form.sub_total)}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="text-left">Decuento :</th>
+                                            <td>{{getMoney(form.discount_amount)}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="text-left">Total :</th>
+                                            <td class="w-[15rem]" >{{getMoney(form.amount)}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+<!--                        Mensaje de erro-->
+                    <div>
+                        <InputError :message="form.errors.general"/>
+                    </div>
+<!--                        Devuelta y demas detos-->
+                    <div class=" mt-2 w-64 float-right">
+
+                        <div class="">
 <!--                                <SecondaryButton-->
 <!--                                    type="button">-->
 <!--                                    Limpiar-->
 <!--                                </SecondaryButton>-->
-                                <PrimaryButton
-                                    :disabled="form.processing"
-                                    @click="checkSale"
-                                    type="button">
-                                    {{form.close_table ? 'Cerrar Venta' : 'Registrar'}}
-                                </PrimaryButton>
-                            </div>
-
+                            <PrimaryButton
+                                :disabled="form.processing"
+                                @click="checkSale"
+                                type="button">
+                                {{form.close_table ? 'Cerrar Venta' : 'Registrar'}}
+                            </PrimaryButton>
                         </div>
 
                     </div>
-                </form>
-            </div>
 
-<!--            Ventana de Devuelta-->
-            <FloatBox
-                header="Devueltas"
-                @close="showReturn = false"
-                v-if="showReturn">
-                <PaymentInvoice
-                    @amount-credit-note="amountCreditNote()"
-                    @returned-blur="returnedBlur()"
-                    @returned="returned()"
-                    @sen-data="sendData()"
-                    :form="form"
-                    v-model:type-payment="form.type_payment"
-                    v-model:credit-note="form.credit_notes_value"
-                    v-model:credit-notes="form.credit_notes"
-                    v-model:returned="form.returned"
-                   />
-            </FloatBox>
+                </div>
+            </form>
+        </div>
 
-<!--            Monstrar los PDF-->
-
-            <ShowPdf
-                @send-error="getErrorPdf"
-                v-if="showPdf"
-                :pdf="pdfUrl">
-            </ShowPdf>
-
+<!--                Ventana de Devuelta-->
+        <FloatBox
+            header="Retornos"
+            @close="showReturn = false"
+            v-if="showReturn">
+            <PaymentInvoice
+                @amount-credit-note="amountCreditNote()"
+                @returned-blur="returnedBlur()"
+                @returned="returned()"
+                @sen-data="sendData()"
+                :form="form"
+                v-model:type-payment="form.type_payment"
+                v-model:credit-note="form.credit_notes_value"
+                v-model:credit-notes="form.credit_notes"
+                v-model:returned="form.returned"
+               />
+        </FloatBox>
 
             <!-- Mostrar flotante los clientes --->
 
-            <FloatBox
-                header="Clientes"
-                @close="showClient = false"
-                v-if="showClient">
-                <FloatShowCli
-                    class=" max-w-4/5 rounded-md py-5"
-                    @get-data="selectClient"
-                    :clients="propsW.clients"/>
+        <FloatBox
+            header="Clientes"
+            @close="showClient = false"
+            v-if="showClient">
+            <FloatShowCli
+                class=" max-w-4/5 rounded-md py-5"
+                @get-data="selectClient"
+                :clients="propsW.clients"/>
 
-            </FloatBox>
+        </FloatBox>
 
-            <!-- Ventana de productos-->
+        <!-- Ventana de productos-->
 
-            <FloatBox
-                header="Productos"
-                @close="showProduct = false"
-                v-if="showProduct">
-                <FloatShowPro
-                    class=" bg-blue-300  rounded-md px-10 py-5"
-                    @select="getData"
-                    :products="propsW.products"/>
-            </FloatBox>
+        <FloatBox
+            header="Productos"
+            @close="showProduct = false"
+            v-if="showProduct">
+            <FloatShowPro
+                class=" bg-blue-300  rounded-md px-10 py-5"
+                @select="getData"
+                :products="propsW.products"/>
+        </FloatBox>
 
 
-            <!-- Vetana de las ordenes abierta -->
-            <FloatBox
-                header="Cuentas Abiertas"
-                @close="showSaleOpen = false"
-                v-if="showSaleOpen">
-                <SaleOpenShow
-                    @sen-data="getSaleOpen"
-                    class=" bg-blue-300 max-w-4/5 rounded-md px-10 py-5"
-                    :sale-open="propsW.saleOpen"/>
-            </FloatBox>
+        <!-- Vetana de las ordenes abierta -->
+        <FloatBox
+            header="Cuentas Abiertas"
+            @close="showSaleOpen = false"
+            v-if="showSaleOpen">
+            <SaleOpenShow
+                @sen-data="getSaleOpen"
+                class=" bg-blue-300 max-w-4/5 rounded-md px-10 py-5"
+                :sale-open="propsW.saleOpen"/>
+        </FloatBox>
 
 
 <!--            Formulario para la nota de credito-->
 
-            <FloatBox
-                header="Devolución"
-                @close="showFormReturn = false"
-                v-if="showFormReturn">
-                <ReturnForm
-                    @closeFormReturn="showFormReturn = false"
-                    :error="page.props.errors.general"/>
-            </FloatBox>
-        </div>
-
+        <FloatBox
+            header="Devolución"
+            @close="showFormReturn = false"
+            v-if="showFormReturn">
+            <ReturnForm
+                @closeFormReturn="showFormReturn = false"
+                :error="page.props.errors.general"/>
+        </FloatBox>
+    </div>
     </AppLayout>
 </template>
 

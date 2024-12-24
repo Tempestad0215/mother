@@ -109,7 +109,7 @@ class InvoiceController extends Controller
         $pdf = new SaleInvoiceA($sale);
 
         //llamar el pdf seleccionado
-        $pdf->getPDFData();
+        $pdf->setData();
         $pdf->Output('invoice.pdf');
     }
 

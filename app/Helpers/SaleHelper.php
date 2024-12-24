@@ -246,9 +246,9 @@ class SaleHelper
     /**
      * @param StoreProductSaleRequest $request
      * @param Sale $sale
-     * @return void
+     * @return Sale
      */
-    public function updateSale(StoreProductSaleRequest $request, Sale $sale):void
+    public function updateSale(StoreProductSaleRequest $request, Sale $sale)
     {
 
         //Obtener la info
@@ -257,7 +257,7 @@ class SaleHelper
         $closeTable = $request->get('close_table');
 
         //Recorrer los datos
-        $infoRequest->map(callback: function ($item) use (&$sale, &$closeTable, &$request) {
+        $infoRequest->map(callback: function ($item) use (&$sale, &$closeTable, &$request){
 
             //convertir la info sale a collection
             $infoSale = collect($sale->infoSale);
@@ -340,6 +340,9 @@ class SaleHelper
                 TransHelper::store($item, ProductTransType::RESERVA, $sale->uuid);
             }
         });
+
+
+        return $sale;
     }
 
 

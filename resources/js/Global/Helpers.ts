@@ -125,38 +125,6 @@ export const getCoin = (value:number) => {
 }
 
 
-/**
- *
- * @param value
- */
-// export const readPDF = (value:string) => {
-//
-//     //Decodificar la cadena
-//     const binaryString = atob(value);
-//     const len = binaryString.length;
-//     const bytes = new Uint8Array(len);
-//
-//     for (let i = 0; i < len; i++) {
-//         bytes[i] = binaryString.charCodeAt(i);
-//     }
-//
-//     //Crear el b los a partir del array de byte
-//     const blob = new Blob([bytes], {type: 'application/pdf'});
-//
-//     //Crear la Url para abrir
-//     const url = URL.createObjectURL(blob);
-//
-//     const newTab = window.open(url, '_blank');
-//
-//     if(newTab)
-//     {
-//         newTab.focus();
-//     }else{
-//         console.error('No se pudo abrir la nueva pestaña. Asegúrate de que el navegador ' +
-//             'no esté bloqueando ventanas emergentes.');
-//     }
-// }
-
 
 /*
  * Buscar el RNC de los datos
@@ -296,6 +264,34 @@ const getDateInUtc4 = (date:Date):string => {
  */
 export const paginationJoin = (url:string, search:string, perPage:number) => {
     return url+'&search='+search+'&perPage='+perPage;
+}
+
+
+
+export const printPdf = (uuid: string) => {
+    const popupOptions = `
+        width=800,
+        height=600,
+        top=${(screen.height - 600) / 2},
+        left=${(screen.width - 800) / 2},
+        resizable=no,
+        scrollbars=no,
+        status=no
+    `;
+
+    // Abrir la ventana emergente
+    const popupWindow = window.open(route('invoice.getA',{sale: uuid}), '_blank', popupOptions);
+
+    // Verificar que la ventana se haya abierto
+    if (!popupWindow || popupWindow.closed || typeof popupWindow.closed === 'undefined') {
+        alert('Permite las ventanas emergentes en tu navegador.');
+        return;
+    }
+
+    // Esperar a que la ventana se cargue y luego iniciar la impresión
+    popupWindow.onload = () => {
+        popupWindow.print(); // Llamar la función de imprimir
+    };
 }
 
 

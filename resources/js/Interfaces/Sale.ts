@@ -23,7 +23,7 @@ export interface infoSaleI {
     created_at?: string;
 }
 
-interface saleI{
+export interface saleI{
     uuid: string;
     code: string;
     client_name: string;

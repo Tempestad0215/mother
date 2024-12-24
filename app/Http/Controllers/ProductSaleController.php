@@ -6,7 +6,6 @@ use App\Helpers\ClientHelper;
 use App\Helpers\ProductHelper;
 use App\Helpers\SaleHelper;
 use App\Http\Requests\StoreProductSaleRequest;
-use App\Invoices\SaleInvoiceA;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\Setting;
@@ -55,9 +54,9 @@ class ProductSaleController extends Controller
 
     /**
      * @param StoreProductSaleRequest $request
-     * @return Response
+     * @return RedirectResponse
      */
-    public function store(StoreProductSaleRequest $request)
+    public function store(StoreProductSaleRequest $request):RedirectResponse
     {
 
         $data = null;
@@ -71,40 +70,28 @@ class ProductSaleController extends Controller
 
         });
 
-        //Intancia de los datos
-        $dataSale = $this->dataSale($request);
-
-        //DEvolver la vista y los datos
-        return Inertia::render('ProductsSale/SaleCreate', [
-            'products' => $dataSale['products'],
-            'clients' => $dataSale['clients'],
-            'saleOpen' => $dataSale['saleOpen'],
-            'invoiceType' => config('appconfig.invoiceType'),
-            'pdfUuid' => $data->uuid
+        //Retroceder
+        return back()->with([
+            'data' => 'funciona muy bien'
         ]);
 
     }
 
 
-    /**
-     * @param StoreProductSaleRequest $request
-     * @param Sale $sale
-     * @return RedirectResponse
-     */
-    public function update(StoreProductSaleRequest $request, Sale $sale):RedirectResponse
+
+    public function update(StoreProductSaleRequest $request, Sale $sale)
     {
 
-        DB::transaction(function () use (&$request, &$sale) {
+       $sale =  DB::transaction(function () use (&$request, &$sale) {
            //Instanacia
            $saleHelper = new SaleHelper();
-
            //Llamar el metodo
-           $saleHelper->updateSale($request, $sale);
+           return $saleHelper->updateSale($request, $sale);
+       });
 
-        });
+       //DEvolver el id de la venta
+       return response()->json(['pdfUuid' => $sale->uuid]);
 
-        //Devolver atras
-       return  back();
 
     }
 
