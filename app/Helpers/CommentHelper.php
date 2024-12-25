@@ -16,7 +16,7 @@ class CommentHelper
     {
 
         //Sarcar el id del modelo
-        $id = $model->id;
+        $id = $model->uuid;
         //Obtener la clase
         $getClass = get_class($model);
 

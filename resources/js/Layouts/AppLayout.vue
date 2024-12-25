@@ -278,6 +278,12 @@ const menuItem = ref([
                     Ventas
                     <i class="fa-solid fa-cash-register"></i>
                 </LinkHeader>
+                <LinkHeader
+                    title="Ventas"
+                    :href="route('report-sale.index')">
+                    Reportes
+                    <i class="fa-solid fa-clipboard"></i>
+                </LinkHeader>
             </div>
 
         </aside>

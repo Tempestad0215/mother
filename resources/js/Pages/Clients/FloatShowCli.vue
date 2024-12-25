@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Pagination from "@components/Pagination.vue";
-import {clientDataI, baseClient} from "@/Interfaces/Client";
+import {clientBaseI, clientDataI} from "@/Interfaces/Client";
 import {router, useForm, usePage} from "@inertiajs/vue3";
 import Swal from "sweetalert2";
 import {successHttp} from "@/Global/Alert";
@@ -24,15 +24,8 @@ const props = defineProps<{
  * Para emitir los eventos
  */
 const emit = defineEmits<{
-    (e: 'getData', item:baseClient):void
+    (e: 'getData', item:clientBaseI):void
 }>();
-
-
-//Propiedades computada
-// const isSale = computed(()=>{
-//    return page.url.startsWith('/sale');
-// });
-
 
 
 /**
@@ -42,7 +35,6 @@ const form = useForm({
     search:"",
     perPage:30
 });
-
 
 /**
  * funciones
@@ -62,9 +54,6 @@ const submit = () => {
 
 // Editar
 const edit = (id:string) => {
-
-    console.log(id);
-
     // Hacer la peticion
     router.get(route('client.edit', id));
 }
@@ -94,8 +83,6 @@ const destroy = (id:string) => {
     });
 }
 
-
-
 </script>
 
 <template>
@@ -121,11 +108,12 @@ const destroy = (id:string) => {
                 class="styleTable table-fixed w-full">
                 <thead>
                     <tr>
-                      <th class="w-[20rem]">Nombre</th>
+                      <th class="w-[15rem]">Nombre</th>
                       <th class="w-[10rem]">Ced./RNC/Pas</th>
                       <th class="w-[20rem]" >Correo</th>
                       <th class="w-[10rem]">Teléfono</th>
-                      <th class="w-[6rem]">Act</th>
+                      <th class="w-[5rem]">Tipo</th>
+                      <th class="w-[5rem]">Act</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -134,6 +122,7 @@ const destroy = (id:string) => {
                         <td class="truncate">{{item.personal_id}}</td>
                         <td class=" truncate">{{item.email}}</td>
                         <td class="truncate">{{item.phone}}</td>
+                        <td class="truncate">{{item.type}}</td>
                         <td class="truncate">
                             <i
                                 v-if="page.component !== 'Clients/ClientShow'"

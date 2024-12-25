@@ -113,10 +113,8 @@ class ClientController extends Controller
      */
     public function update(UpdateClientsRequest $request, Client $client)
     {
-
-        // Actualizar todos los datos
-        $client->update($request->validated());
-
+        //Actualizar los datos
+        $this->clientHelper->update($request, $client);
         // Devolver hacia atras
         return back();
 

@@ -39,11 +39,13 @@ onMounted(()=>{
         form.comment = propsW.clientEdit.comment.content;
         form.status = propsW.clientEdit.status;
         form.type = propsW.clientEdit.type;
+        form.type_price = propsW.clientEdit.type_price
 
     //     Informacion de datos de credito
-        form.limit = propsW.clientEdit.limit ?? 0;
+        form.amount = propsW.clientEdit.amount ?? 0;
         form.due_date = propsW.clientEdit.due_date ?? 0;
-        form.late_fee_interest = propsW.clientEdit.late_fee_interest ?? 0;
+        form.late_fee = propsW.clientEdit.late_fee ?? 0;
+        form.balance = propsW.clientEdit.balance ?? 0;
 
 
     }
@@ -86,7 +88,7 @@ const typeDocument:Ref<Array<any>> = ref([
 ]);
 
 
-//Posibles mascara para docuemntos
+//Posibles máscara para documents
 const masks = reactive<Record<string, string>>({
     cedula: '###-#######-#',
     pasaporte: 'A########',
@@ -110,11 +112,11 @@ const form = useForm({
     address:"",
     type: propsW.clientEdit ? propsW.clientEdit.type : "contado",
     document: propsW.clientEdit ? propsW.clientEdit.document : "cedula",
-    limit: 0,
+    amount: 0,
     due_date: 0,
     balance: 0,
     consumed: 0,
-    late_fee_interest:0,
+    late_fee:0,
     status: true,
     receive_email: false,
     type_price: 1,
@@ -365,8 +367,8 @@ const submit = ():void => {
                             <Money
                                 class="inputGeneral"
                                 v-bind="moneyConfig"
-                                v-model="form.limit" />
-                            <InputError :message="form.errors.limit"/>
+                                v-model="form.amount" />
+                            <InputError :message="form.errors.amount"/>
                         </div>
 
                         <div>
@@ -382,7 +384,7 @@ const submit = ():void => {
                             <Money
                                 class="inputGeneral w-full"
                                 v-bind="configPercent"
-                                v-model="form.late_fee_interest" />
+                                v-model="form.late_fee" />
                             <InputError :message="form.errors.due_date" />
                         </div>
 <!--                        Balance-->

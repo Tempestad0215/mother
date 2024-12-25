@@ -183,15 +183,14 @@ class SaleInvoiceA extends TCPDF
 
             //Informaciond e productos
             $this->setFont('helvetica', '', 8);
-            $this->Cell($width[0],5, $item->product->code, 0, 0, 'L', false, '', '');
-            $this->setXY($width[0] + 2.5,$this->GetY()+3);
+//            $this->setXY($width[0],5);
             $this->Cell($width[1],5, Str::limit($item->product->name, 20)  , 0, 0, 'L', false, '', 1);
 
             //Informacion de importe
-            $this->setXY(54,$this->GetY()-3);
+            $this->setXY(54,$this->GetY());
             $this->Cell($width[0],5,number_format($item->amount,2) , 0, 1, 'L', false, '', '');
 
-            $this->setY($this->GetY()+3);
+            $this->setY($this->GetY());
             $this->Line($this->GetX(),$this->GetY(),$this->GetX()+68,$this->GetY());
         });
     }

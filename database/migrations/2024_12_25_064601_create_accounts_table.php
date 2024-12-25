@@ -7,14 +7,14 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('credits', function (Blueprint $table) {
+        Schema::create('accounts', function (Blueprint $table) {
             $table->uuid()->primary();
-            $table->uuidMorphs('creditable');
-            $table->integer('due_date')->nullable();
-            $table->decimal('limit');
-            $table->decimal('balance');
-            $table->decimal('consumed');
-            $table->decimal('late_fee_interest')->nullable();
+            $table->uuidMorphs('accountable');
+            $table->enum('type',['payable','receivable']);
+            $table->decimal('amount',15);
+            $table->decimal('balance',15);
+            $table->integer('due_date');
+            $table->decimal('late_fee')->default(0);
             $table->boolean('status')->default(true);
             $table->timestamps();
             $table->softDeletes();
@@ -23,6 +23,6 @@ return new class extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists('credits');
+        Schema::dropIfExists('accounts');
     }
 };

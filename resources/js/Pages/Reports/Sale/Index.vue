@@ -5,11 +5,12 @@ import DateRange from "@components/DateRange.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import InputLabel from "@components/InputLabel.vue";
 import {onMounted, reactive, ref} from "vue";
-import {getMoney, setHour} from "@/Global/Helpers";
+import {getMoney, moneyConfig, setHour} from "@/Global/Helpers";
 import InputError from "@components/InputError.vue";
 import {totalSoldAmountI} from "@/Interfaces/Report";
 import { saleFullI} from "@/Interfaces/Sale";
 import {route} from "../../../../../vendor/tightenco/ziggy";
+import {Money} from "v-money3";
 
 
 
@@ -18,9 +19,9 @@ const propsW = defineProps<{
     data: saleFullI[];
     total: totalSoldAmountI;
     totalSold: number,
-    from: string | null;
-    to: string | null;
-    typePayment: string | null;
+    from? : string | null;
+    to?: string | null;
+    type_payment?: string | null;
 }>();
 
 
@@ -29,7 +30,7 @@ const propsW = defineProps<{
 Formulario
  */
 const form = useForm({
-    typePayment:"*",
+    type_payment:"*",
     from: "",
     to: "",
 });
@@ -43,27 +44,28 @@ onMounted(()=>{
     if (!propsW.from || !propsW.to) {
         form.from = setHour(1,0,0,0);
         form.to = setHour(23,59,0,0);
+        form.type_payment = "*";
     }else{
         //Colocar los datos de los parametros
         form.from = route().params.from;
         form.to = route().params.to;
-        form.typePayment = route().params.typePayment;
+        form.type_payment = route().params.type_payment;
     }
 
 
     //Pasar los datos recolectado
     if (propsW.total)
     {
-        infoReport.totalSold = propsW.totalSold;
-        infoReport.contado = propsW.total.contado;
-        infoReport.tarjeta = propsW.total.tarjeta;
-        infoReport.credito = propsW.total.credito;
-        infoReport.cheque = propsW.total.cheque;
-        infoReport.transferencia = propsW.total.transferencia;
-        infoReport.discount_amount = propsW.total.discount;
-        infoReport.tax = propsW.total.tax;
+        infoReport.totalSold = propsW.totalSold ?? 0;
+        infoReport.cash = propsW.total.cash ?? 0;
+        infoReport.card = propsW.total.card ?? 0;
+        infoReport.credit = propsW.total.credit ?? 0;
+        infoReport.check = propsW.total.check ?? 0;
+        infoReport.transfer = propsW.total.transfer ?? 0;
+        infoReport.discount_amount = propsW.total.discount ?? 0;
+        infoReport.tax = propsW.total.tax ?? 0;
         infoReport.amount =  propsW.total.amount - propsW.total.tax;
-        infoReport.gross = propsW.total.amount;
+        infoReport.gross = propsW.total.amount ?? 0;
 
     }
 
@@ -75,11 +77,11 @@ Datos de la ventana
  */
 const infoReport = reactive({
     totalSold: 0,
-    contado: 0,
-    tarjeta: 0,
-    credito: 0,
-    cheque: 0,
-    transferencia:0,
+    cash: 0,
+    card: 0,
+    credit: 0,
+    check: 0,
+    transfer:0,
     discount_amount: 0,
     tax: 0,
     amount: 0,
@@ -91,20 +93,20 @@ const typeOption = ref([
         value:""
     },
     {
-        name:"Contado",
-        value:"contado"
+        name:"cash",
+        value:"cash"
     },
     {
-        name:"Credito",
-        value:"credito"
+        name:"credit",
+        value:"credit"
     },
     {
-        name:"Cheque",
-        value:"cheque"
+        name:"check",
+        value:"check"
     },
     {
-        name:"Transferencia",
-        value:"transferencia"
+        name:"transfer",
+        value:"transfer"
     },
     {
         name:"Anticipo",
@@ -123,25 +125,6 @@ const submit = () => {
     form.get(route('report-sale.index'));
 }
 
-
-/**
- * Devoler los parametros
- */
-// const getParams = () => {
-//     //Tomar los datos del parametros
-//     let from = new URL(window.location.href)
-//     //Para tomar los parametros
-//     let params = new URLSearchParams(from.search);
-//
-//
-//     //Devolver los datos
-//     return {
-//         from: params.get("from"),
-//         to: params.get("to"),
-//     }
-//
-//
-// }
 </script>
 
 <template>
@@ -151,7 +134,7 @@ const submit = () => {
 
 <!--    Contenido de la ventana-->
     <AppLayout>
-        <div class=" p-5 ">
+        <div class=" bg-blue-300 rounded-md p-5 max-w-[70rem] ">
             <h3 class="title text-center">
                 Reportes de Ventas
             </h3>
@@ -170,15 +153,18 @@ const submit = () => {
                     <div>
                         <InputLabel for="type_payment" value="Tipo de pago"/>
                         <!--                    Colocar filtrar por tipo de pago-->
-                        <Select
-                            v-model="form.typePayment"
-                            :options="typeOption"
-                            optionLabel="name"
-                            option-value="value"
-                            placeholder="Selecciona El Tipo"
-                            class="w-[15rem]"
-                            fluid/>
-                        <InputError :message="form.errors.typePayment"/>
+                        <select
+                            class="inputGeneral py-1"
+                            v-model="form.type_payment">
+                            <option selected disabled value="*">-- Tipo Pago --</option>
+                            <option
+                                v-for="(item, index) in typeOption"
+                                :key="index"
+                                :value="item.value">
+                                {{item.name}}
+                            </option>
+                        </select>
+                        <InputError :message="form.errors.type_payment"/>
                     </div>
 
 
@@ -201,123 +187,92 @@ const submit = () => {
                     <!--                    Productos vendid-->
                     <div>
                         <InputLabel for="productSold" value="Productos Vendidos"/>
-                        <InputNumber
+                        <Money
+                            class="inputGeneral"
+                            readonly
                             v-model="infoReport.totalSold"
-                            inputId="locale-us"
-                            locale="en-US"
-                            :allow-empty="false"
-                            :minFractionDigits="2"
-                            :max-fraction-digits="2"
-                            fluid />
+                            v-bind="moneyConfig"/>
                     </div>
-                    <!--Tipo de pago contado-->
+                    <!--Tipo de pago cash-->
                     <div>
-                        <InputLabel for="productSold" value="Contado"/>
-                        <InputNumber
-                            v-model="infoReport.contado"
-                            inputId="locale-us"
-                            locale="en-US"
-                            :allow-empty="false"
-                            :minFractionDigits="2"
-                            :max-fraction-digits="2"
-                            fluid />
+                        <InputLabel for="productSold" value="cash"/>
+                        <Money
+                            class="inputGeneral"
+                            readonly
+                            v-model="infoReport.cash"
+                            v-bind="moneyConfig"/>
                     </div>
-                    <!--Tipo de pago tarjeta-->
+                    <!--Tipo de pago card-->
                     <div>
-                        <InputLabel for="productSold" value="Tarjeta"/>
-                        <InputNumber
-                            v-model="infoReport.tarjeta"
-                            inputId="locale-us"
-                            locale="en-US"
-                            :allow-empty="false"
-                            :minFractionDigits="2"
-                            :max-fraction-digits="2"
-                            fluid />
+                        <InputLabel for="productSold" value="card"/>
+                        <Money
+                            class="inputGeneral"
+                            readonly
+                            v-model="infoReport.card"
+                            v-bind="moneyConfig"/>
                     </div>
-                    <!--Tipo de pago credito-->
+                    <!--Tipo de pago credit-->
                     <div>
-                        <InputLabel for="productSold" value="Credito"/>
-                        <InputNumber
-                            v-model="infoReport.credito"
-                            inputId="locale-us"
-                            locale="en-US"
-                            :allow-empty="false"
-                            :minFractionDigits="2"
-                            :max-fraction-digits="2"
-                            fluid />
+                        <InputLabel for="productSold" value="credit"/>
+                        <Money
+                            class="inputGeneral"
+                            readonly
+                            v-model="infoReport.credit"
+                            v-bind="moneyConfig"/>
                     </div>
-                    <!--Tipo de pago en cheque-->
+                    <!--Tipo de pago en check-->
                     <div>
-                        <InputLabel for="productSold" value="Cheque"/>
-                        <InputNumber
-                            v-model="infoReport.cheque"
-                            inputId="locale-us"
-                            locale="en-US"
-                            :allow-empty="false"
-                            :minFractionDigits="2"
-                            :max-fraction-digits="2"
-                            fluid />
+                        <InputLabel for="productSold" value="check"/>
+                        <Money
+                            class="inputGeneral"
+                            readonly
+                            v-model="infoReport.check"
+                            v-bind="moneyConfig"/>
                     </div>
-                    <!--Tipo de pago en Transferencia-->
+                    <!--Tipo de pago en transfer-->
                     <div>
-                        <InputLabel for="productSold" value="Transferencia"/>
-                        <InputNumber
-                            v-model="infoReport.transferencia"
-                            inputId="locale-us"
-                            locale="en-US"
-                            :allow-empty="false"
-                            :minFractionDigits="2"
-                            :max-fraction-digits="2"
-                            fluid />
+                        <InputLabel for="productSold" value="transfer"/>
+                        <Money
+                            class="inputGeneral"
+                            readonly
+                            v-model="infoReport.transfer"
+                            v-bind="moneyConfig"/>
                     </div>
                     <!-- Decuento Total Aplicado-->
                     <div>
                         <InputLabel for="productSold" value="Descuento Total"/>
-                        <InputNumber
+                        <Money
+                            class="inputGeneral"
                             v-model="infoReport.discount_amount"
-                            inputId="locale-us"
-                            locale="en-US"
-                            :allow-empty="false"
-                            :minFractionDigits="2"
-                            :max-fraction-digits="2"
-                            fluid />
+                            v-bind="moneyConfig"/>
                     </div>
                     <!--Itbis Total vendido-->
                     <div>
                         <InputLabel for="productSold" value="ITBIS Total"/>
-                        <InputNumber
+                        <Money
+                            class="inputGeneral"
+                            readonly
                             v-model="infoReport.tax"
-                            inputId="locale-us"
-                            locale="en-US"
-                            :allow-empty="false"
-                            :minFractionDigits="2"
-                            :max-fraction-digits="2"
-                            fluid />
+                            v-bind="moneyConfig"/>
                     </div>
                     <!--Balance total vendido en el rango de fecha-->
                     <div>
                         <InputLabel for="productSold" value="Balance Total"/>
-                        <InputNumber
+                        <Money
+                            class="inputGeneral"
+                            readonly
                             v-model="infoReport.amount"
-                            inputId="locale-us"
-                            locale="en-US"
-                            :allow-empty="false"
-                            :minFractionDigits="2"
-                            :max-fraction-digits="2"
-                            fluid />
+                            v-bind="moneyConfig"/>
                     </div>
 
                     <!--Balance total vendido en el rango de fecha-->
                     <div>
                         <InputLabel for="productSold" value="Balance Neto"/>
-                        <InputNumber
+                        <Money
+                            class="inputGeneral"
+                            readonly
                             v-model="infoReport.gross"
-                            inputId="locale-us"
-                            locale="en-US"
-                            :allow-empty="false"
-                            :minFractionDigits="2"
-                            :max-fraction-digits="2"
-                            fluid />
+                            v-bind="moneyConfig"/>
                     </div>
                 </fieldset>
 

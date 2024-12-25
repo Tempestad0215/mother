@@ -7,8 +7,10 @@ export interface clientBaseI {
     created_at: string
     email: string | null
     personal_id: string | null
+    type_price: number
     uuid: string
     name: string
+    type: string
     phone: string | null
     status: boolean
     updated_at: string
@@ -30,13 +32,11 @@ export interface clientDataI {
 // Editar
 export interface clientEditI extends clientBaseI {
     document: string;
-    type: string,
     comment: commentI
-    limit: number;
+    amount: number;
     due_date: number;
-    late_fee_interest: number;
+    late_fee: number;
     balance: number;
-    consumed: number;
 }
 
 

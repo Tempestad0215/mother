@@ -25,12 +25,12 @@ export interface mostSoldI {
 total de ventas
  */
 export interface totalSoldAmountI {
-    contado: number;
-    credito: number;
-    cheque: number;
-    tarjeta: number;
-    anticipo: number;
-    transferencia: number;
+    cash: number;
+    credit: number;
+    check: number;
+    card: number;
+    deposit: number;
+    transfer: number;
     tax:number;
     discount:number;
     amount: number;

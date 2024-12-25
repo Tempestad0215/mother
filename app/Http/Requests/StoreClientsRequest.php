@@ -47,9 +47,9 @@ class StoreClientsRequest extends FormRequest
             'file' => ['nullable','file','mimes:png,jpg,jpeg','max:2048'],
 
             //Validacion de los avance
-            'limit' => [Rule::requiredIf($isRequired),'nullable','numeric'],
+            'amount' => [Rule::requiredIf($isRequired),'nullable','numeric'],
             'due_date' => [Rule::requiredIf($isRequired),'nullable','numeric'],
-            'late_fee_interest' => [Rule::requiredIf($isRequired),'nullable','numeric'],
+            'late_fee' => [Rule::requiredIf($isRequired),'nullable','numeric'],
         ];
     }
 }

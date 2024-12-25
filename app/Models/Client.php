@@ -110,9 +110,9 @@ class Client extends Model implements Auditable
     }
 
 
-    public function credit():MorphOne
+    public function account():MorphOne
     {
-        return $this->morphOne(Credits::class, 'creditable');
+        return $this->morphOne(Account::class, 'accountable');
     }
 
     /**
