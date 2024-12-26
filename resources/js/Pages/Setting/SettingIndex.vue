@@ -10,6 +10,7 @@ import {onMounted, onUpdated, Ref, ref} from "vue";
 import {successHttp} from "@/Global/Alert";
 import {taxI} from "@/Interfaces/Global";
 import ToggleButton from "@components/ToggleButton.vue";
+import TabLink from "@components/TabLink.vue";
 
 
 
@@ -207,6 +208,15 @@ const removeUnit = (index:number) => {
     <AppLayout>
 <!--Cabecera de la pagina-->
         <template #header>
+            <TabLink
+                :active="true"
+                :href="route('setting.index')">
+                Ajustes
+            </TabLink>
+            <TabLink
+                :href="route('currency.index')">
+                Tasa Cambio
+            </TabLink>
         </template>
         <div
             class="max-w-[70rem] mx-auto bg-blue-300 rounded-md p-5">

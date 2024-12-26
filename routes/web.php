@@ -4,6 +4,7 @@ use App\Helpers\UserHelper;
 use App\Http\Controllers\CashReportController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductInController;
@@ -268,41 +269,17 @@ Route::middleware([
        Route::get('/getA/{sale}','getA')->name('getA');
     });
 
-    Route::get('/test', function (){
-       $pdf = new TCPDF('P', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
-       $pdf->SetCreator('hola mundp');
-       $pdf->SetTitle('hola mundp');
-
-       $pdf->setBarcode(date('d-m-Y'));
-
-       $pdf->SetFont('helvetica', 'B', 20);
-
-       $pdf->AddPage();
-
-        // define barcode style
-        $style = array(
-            'position' => '',
-            'align' => 'C',
-            'stretch' => false,
-            'fitwidth' => true,
-            'cellfitalign' => '',
-            'border' => true,
-            'hpadding' => 'auto',
-            'vpadding' => 'auto',
-            'fgcolor' => array(0,0,0),
-            'bgcolor' => false, //array(255,255,255),
-            'text' => true,
-            'font' => 'helvetica',
-            'fontsize' => 8,
-            'stretchtext' => 4
-        );
-
-
-        // CODE 39 - ANSI MH10.8M-1983 - USD-3 - 3 of 9.
-        $pdf->Cell(0, 0, 'CODE 39 - ANSI MH10.8M-1983 - USD-3 - 3 of 9', 0, 1);
-        $pdf->write1DBarcode('CODE 39', 'C39', '', '', '', 18, 0.4, $style, 'N');
-
-        $pdf->Output('code39.pdf');
-    })->name('test');
+  /*
+   *
+   */
+    Route::controller(CurrencyController::class)
+    ->prefix('currency')
+    ->name('currency.')
+    ->group(function (){
+        Route::get('/','index')->name('index');
+        Route::post('/','store')->name('store');
+        Route::delete('/{currency}','destroy')->name('destroy');
+        Route::put('/restore/{currency}','restore')->name('restore');
+    });
 
 });

@@ -10,8 +10,9 @@ import PrimaryButton from '@components/PrimaryButton.vue';
 import TabLink from "@components/TabLink.vue";
 import {supplierI} from "@/Interfaces/Supplier";
 import {onMounted} from "vue";
-import {configPercent, getMoney, moneyConfig} from "@/Global/Helpers";
+import {getMoney, moneyConfig} from "@/Global/Helpers";
 import {Money} from "v-money3";
+import ToggleButton from "@components/ToggleButton.vue";
 
 
 
@@ -45,6 +46,8 @@ const form = useForm({
     phone:"",
     email:"",
     type_payment:"contado",
+    is_recurring: false,
+    payment_day: null,
     account_bank:"",
     comment:"",
     limit:"",
@@ -52,8 +55,6 @@ const form = useForm({
     late_fee_interest:"",
     balance:0,
     consumed:0,
-
-
 });
 
 
@@ -117,6 +118,9 @@ const submit = () => {
                 </h2>
 
 
+
+
+
                 <fieldset
                     class="field grid grid-cols-2 gap-3 ">
                     <legend>Info General</legend>
@@ -126,6 +130,7 @@ const submit = () => {
                             v-model="form.type_payment"
                             class="inputGeneral py-0 w-full">
                             <option value="contado" >Contado</option>
+                            <option value="anticipo" >Anticipo</option>
                             <option value="credito" >Credito</option>
                             <option value="tarjeta" >Tarjeta</option>
                             <option value="cheque" >Cheque</option>
@@ -214,6 +219,29 @@ const submit = () => {
                         <InputError :message="form.errors.account_bank" />
                     </div>
 
+<!--                    Informacion de pago-->
+                    <div class="flex justify-between">
+                        <div>
+                            <ToggleButton
+                                v-model="form.is_recurring"
+                                label="Pago Recurrente"
+                                on-label="SI"
+                                off-label="NO"/>
+                        </div>
+
+                        <div>
+                            <InputLabel
+                                for="payment_day"
+                                value="Dia de pago"/>
+                            <TextInput
+                                name="payment_day"
+                                type="number"
+                                v-model="form.payment_day"/>
+                        </div>
+
+                    </div>
+
+
 <!--                    Comentaio-->
 
                     <div>
@@ -230,15 +258,15 @@ const submit = () => {
 
 <!--                Informacion de credito-->
                 <fieldset
-                    v-if="form.type_payment !== 'contado'"
-                    class="field grid grid-cols-5 gap-3">
+                    v-if="form.type_payment == 'anticipo' || form.type_payment == 'credito'"
+                    class="field grid grid-cols-4 gap-3">
                     <legend>
                         Informacion de Pagos
                     </legend>
                     <div>
                         <InputLabel for="credit_limit" value="Limite de credito"/>
                         <Money
-                            class="inputGeneral"
+                            class="inputGeneral w-full"
                             v-bind="moneyConfig"
                             v-model="form.limit" />
                         <InputError :message="form.errors.limit"/>
@@ -247,17 +275,9 @@ const submit = () => {
                     <div>
                         <InputLabel for="credit_day" value="Dias para pagar"/>
                         <Money
-                            class="inputGeneral"
+                            class="inputGeneral w-full"
                             v-bind="moneyConfig"
                             v-model="form.due_date" />
-                        <InputError :message="form.errors.due_date" />
-                    </div>
-                    <div>
-                        <InputLabel for="credit_day" value="Interes por Mora"/>
-                        <Money
-                            class="inputGeneral w-full"
-                            v-bind="configPercent"
-                            v-model="form.late_fee_interest" />
                         <InputError :message="form.errors.due_date" />
                     </div>
                     <!--                        Balance-->
@@ -275,7 +295,6 @@ const submit = () => {
                         </span>
                     </div>
                 </fieldset>
-
 
 
                 <!-- Botones para enviar -->
