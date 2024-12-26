@@ -7,3 +7,15 @@ export interface currencyI {
     status: boolean;
     deleted_at: string;
 }
+
+
+export interface currencyDayI {
+    day: number;
+    us: number;
+    eur: number;
+}
+
+export interface monthDayI {
+    name:string;
+    day:number;
+}

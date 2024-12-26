@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Currency;
+use App\Models\ExchangeRate;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -88,6 +89,21 @@ class CurrencyController extends Controller
         //Retornar hacia atras
         return back();
     }
+
+    public function checkExchange()
+    {
+        // Verificar si existe la mondea primaria
+        $exits = ExchangeRate::where('created_at', '!=', now())->exists();
+
+        //Tomar los datos de la moneda
+        $currencies = Currency::all();
+
+       return response()->json([
+           'exits' => $exits,
+           'currencies' => $currencies
+       ]);
+    }
+
 
 
 

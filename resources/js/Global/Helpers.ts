@@ -25,34 +25,38 @@ export const configPercent =  {
     allowBlank: false
 }
 
-/**
- * PAra mostar los numeros enteros
- */
-// export const moneyConfigInt =  {
-//     decimal: '.',
-//     thousands: ',',
-//     prefix: '',
-//     suffix: '',
-//     precision: 0,
-//     masked: false
-// }
+// /**
+//  * Para crear los meses del año
+//  */
+export const month = [
+    { name: 'Enero', day: 31 },
+    { name: 'Febrero', day: 28 },
+    { name: 'Marzo', day: 31 },
+    { name: 'Abril', day: 30 },
+    { name: 'Mayo', day: 31 },
+    { name: 'Junio', day: 30 },
+    { name: 'Julio', day: 31 },
+    { name: 'Agosto', day: 31 },
+    { name: 'Septiembre', day: 30 },
+    { name: 'Octubre', day: 31 },
+    { name: 'Noviembre', day: 30 },
+    { name: 'Diciembre', day: 31 }
+];
 
 /**
- * Esto es para porcentaje
+ *
  */
-// export const moneyConfigPer =  {
-//     decimal: '.',
-//     thousands: ',',
-//     prefix: '',
-//     suffix: '%',
-//     precision: 0,
-//     masked: false,
-//     allowBlank: false
-// }
+export const getYear = ():number[] => {
+    //Para guartdar los datos
+    const years:number[] = [];
 
-
-
-
+    //Crear el listado de a;os
+    for (let i = 2015; i <= new Date().getFullYear(); i++) {
+        years.push(i);
+    }
+    //Retornar los years
+    return years;
+}
 
 /**
  * Limpiar y convertir a float
@@ -74,7 +78,6 @@ export const formatNumber = (val:string | number):number  =>
 
 }
 
-
 /**
  * Convertir a dinero
  * @param value
@@ -85,46 +88,6 @@ export const getMoney = (value:number = 0) => {
         currency: 'DOP',
     }).format(value);
 }
-
-
-
-
-/**
- * convertir a dinero sin prefijo
- * @param value
- */
-export const formatNumberPlane = (value:number):string => {
-    // Limitar a dos decimales
-    const roundedAmount = Math.round(value * 100) / 100;
-
-    // Convertir a formato de moneda
-    return roundedAmount.toLocaleString('es-DO', {
-        // Cambia 'DOP' por la moneda que necesites
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
-}
-
-
-
-
-/**
- * convertir los datos a centimo
- * @param value
- */
-export const getPenny = (value:number) => {
-    return value * 100;
-}
-
-/**
- * Convertir a pesos normales
- * @param value
- */
-export const getCoin = (value:number) => {
-    return value / 100;
-}
-
-
 
 /*
  * Buscar el RNC de los datos
@@ -240,8 +203,6 @@ export const setHour = (h:number, m:number, s:number, ms:number):string => {
     return  getDateInUtc4(date);
 }
 
-
-
 /**
  * Convertir los datos
  * @param date
@@ -265,36 +226,3 @@ const getDateInUtc4 = (date:Date):string => {
 export const paginationJoin = (url:string, search:string, perPage:number) => {
     return url+'&search='+search+'&perPage='+perPage;
 }
-
-
-
-export const printPdf = (uuid: string) => {
-    const popupOptions = `
-        width=800,
-        height=600,
-        top=${(screen.height - 600) / 2},
-        left=${(screen.width - 800) / 2},
-        resizable=no,
-        scrollbars=no,
-        status=no
-    `;
-
-    // Abrir la ventana emergente
-    const popupWindow = window.open(route('invoice.getA',{sale: uuid}), '_blank', popupOptions);
-
-    // Verificar que la ventana se haya abierto
-    if (!popupWindow || popupWindow.closed || typeof popupWindow.closed === 'undefined') {
-        alert('Permite las ventanas emergentes en tu navegador.');
-        return;
-    }
-
-    // Esperar a que la ventana se cargue y luego iniciar la impresión
-    popupWindow.onload = () => {
-        popupWindow.print(); // Llamar la función de imprimir
-    };
-}
-
-
-
-
-

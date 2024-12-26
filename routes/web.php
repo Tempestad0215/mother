@@ -269,14 +269,16 @@ Route::middleware([
        Route::get('/getA/{sale}','getA')->name('getA');
     });
 
+
   /*
-   *
+   *Monedas
    */
     Route::controller(CurrencyController::class)
     ->prefix('currency')
     ->name('currency.')
     ->group(function (){
         Route::get('/','index')->name('index');
+        Route::get('/check-exchange','checkExchange')->name('check');
         Route::post('/','store')->name('store');
         Route::delete('/{currency}','destroy')->name('destroy');
         Route::put('/restore/{currency}','restore')->name('restore');

@@ -13,14 +13,17 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 
 /**
- * @property int $id
- * @property string $code
- * @property string|null $contact
- * @property string $company_name
- * @property string|null $phone
- * @property string|null $email
- * @property boolean $status
- * @property string $deleted_at
+ * @property string uuid
+ * @property string code
+ * @property string|null contact
+ * @property string company_name
+ * @property string|null phone
+ * @property string|null email
+ * @property integer payment_day
+ * @property boolean status
+ * @property string created_at
+ * @property string updated_at
+ * @property string deleted_at
 */
 
 class Supplier extends Model implements Auditable
@@ -42,7 +45,7 @@ class Supplier extends Model implements Auditable
         'phone',
         'email',
         'status',
-        'deleted_at'
+        'payment_day'
     ];
 
 

@@ -25,6 +25,7 @@
         "vue-tsc": "^2.0.26"
     },
     "dependencies": {
+        "@formkit/tempo": "^0.1.2",
         "@fortawesome/fontawesome-svg-core": "6.6.0",
         "@fortawesome/vue-fontawesome": "3.0.8",
         "chart.js": "^4.4.5",

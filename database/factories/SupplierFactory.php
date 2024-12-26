@@ -21,6 +21,7 @@ class SupplierFactory extends Factory
             'company_name' => fake()->company(),
             'phone' => fake()->phoneNumber(),
             'email' => fake()->email(),
+            'payment_day' => fake()->numberBetween(1, 60),
         ];
     }
 }

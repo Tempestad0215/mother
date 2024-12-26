@@ -56,7 +56,10 @@ class ExchangeRate extends Model implements Auditable
      */
     protected $casts = [
         'is_confirmed' => 'boolean',
-        'status' => 'boolean'
+        'status' => 'boolean',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime'
     ];
 
 }
