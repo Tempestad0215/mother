@@ -10,10 +10,9 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @property string uuid
- * @property string currency_id
- * @property Date date
- * @property float rate
- * @property boolean is_confirmed
+ * @property array rate_info
+ * @property string month
+ * @property int year
  * @property boolean status
  * @property string created_at
  * @property string updated_at
@@ -41,11 +40,9 @@ class ExchangeRate extends Model implements Auditable
      * @var array
      */
     protected $fillable = [
-        'currency_id',
-        'exchange_rate',
-        'date',
-        'rate',
-        'is_confirmed',
+        'rate_info',
+        'month',
+        'year',
         'status'
     ];
 
@@ -55,7 +52,7 @@ class ExchangeRate extends Model implements Auditable
      * @var string[]
      */
     protected $casts = [
-        'is_confirmed' => 'boolean',
+        'rate_info' => 'array',
         'status' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',

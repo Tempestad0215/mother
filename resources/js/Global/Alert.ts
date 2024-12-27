@@ -11,3 +11,12 @@ export const successHttp = (msj:string) => {
         timer: 1500
       });
 }
+
+export const errorHttp = (msj:string) => {
+    Swal.fire({
+        position: "center",
+        icon: "error",
+        title: "Error",
+        text: msj
+      });
+}

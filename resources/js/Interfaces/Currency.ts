@@ -11,8 +11,9 @@ export interface currencyI {
 
 export interface currencyDayI {
     day: number;
-    us: number;
+    usd: number;
     eur: number;
+    dop: number;
 }
 
 export interface monthDayI {

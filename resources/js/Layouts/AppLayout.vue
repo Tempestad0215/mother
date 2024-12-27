@@ -13,8 +13,6 @@ Destructurar las variables
  */
 const {props} = usePage();
 
-
-
 /*
 Propiedads de la ventana
  */
@@ -24,20 +22,26 @@ defineProps({
 
 
 const menuImageRef = ref<HTMLElement | null>(null);
-
+const showExchange = ref<boolean>(false);
 
 /*
 Al momento de cargar
  */
 onMounted(()=>{
-   document.addEventListener("click", handleClick)
+   document.addEventListener("click", handleClick);
+
+    //Ventana de cambio
+    showExchangeWindow();
 });
 
 /*
 Cuando se cancela el evento
  */
 onUnmounted(() => {
-    document.removeEventListener("click", handleClick)
+    document.removeEventListener("click", handleClick);
+
+    //Ventana de cambio
+    showExchangeWindow();
 })
 
 
@@ -53,6 +57,15 @@ const handleClick = (event: MouseEvent) => {
         showOption.value = false;
     }
 }
+
+const showExchangeWindow = () => {
+    //Esto es para monstrar la ventana de cambio
+    if (props.isExchange) {
+        showExchange.value = true;
+    }
+
+}
+
 
 
 /*
@@ -312,8 +325,10 @@ const menuItem = ref([
         </div>
 
         <FloatBox
+            v-if="showExchange"
             header="Tasa de Cambio">
-            <Exchange/>
+            <Exchange
+                @closeWindow="showExchange = false"/>
         </FloatBox>
     </div>
 

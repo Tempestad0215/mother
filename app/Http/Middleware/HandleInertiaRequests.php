@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Helpers\GeneralHelper;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -36,8 +37,13 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        //Intancia de los datos
+        $generalHelper = new GeneralHelper();
+
+        //Compartir los datos globales
         return array_merge(parent::share($request), [
             'setting' => fn() => Setting::first(),
+            'isExchange' => fn() => $generalHelper->checkExchange()
         ]);
     }
 }

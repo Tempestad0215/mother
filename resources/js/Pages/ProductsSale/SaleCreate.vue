@@ -7,7 +7,7 @@ import FloatBox from "@components/FloatBox.vue";
 import FloatShowPro from "@/Pages/Products/FloatShowPro.vue";
 import { onMounted, onUpdated, Ref, ref} from "vue";
 import {productFullI, productI} from "@/Interfaces/Product";
-import {getMoney, getRncHelper, getSequenceType, moneyConfig, printPdf} from "@/Global/Helpers";
+import {getMoney, getRncHelper, getSequenceType, moneyConfig} from "@/Global/Helpers";
 import Swal from "sweetalert2";
 import InputError from "@components/InputError.vue";
 import {clientBaseI, clientDataI} from "@/Interfaces/Client";

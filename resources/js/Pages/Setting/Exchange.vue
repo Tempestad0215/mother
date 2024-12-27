@@ -4,9 +4,9 @@ import {onMounted, ref} from "vue";
 import axios from "axios";
 import {currencyDayI, currencyI, monthDayI} from "@/Interfaces/Currency";
 import {getYear, moneyConfig, month} from "@/Global/Helpers";
-import Swal from "sweetalert2";
 import {useForm} from "@inertiajs/vue3";
 import {Money} from "v-money3";
+import { errorHttp, successHttp } from "@/Global/Alert";
 
 
 /**
@@ -18,22 +18,25 @@ const currencies = ref<currencyI | null>(null);
 formulario
  */
 const form = useForm({
-    currentMonth: new Date().getMonth()  + 1 as number,
-    currentMonthName: "",
-    currentYear: 0,
+    month: new Date().getMonth()  + 1 as number,
+    mont_name: "",
+    year: 0,
     rate_info: [] as currencyDayI[],
 });
 
+/*
+Evento para emitir
+ */
+const emit = defineEmits<{
+    (e:'closeWindow')
+}>();
+
 
 onMounted(()=>{
-    //Revisar la tasa del dia
-    check();
-
-    form.currentMonth = new Date().getMonth() + 1;
+    form.month = new Date().getMonth() + 1;
     //Pasar los datos al formulario
-    form.currentYear = new Date().getFullYear();
-    form.currentMonthName = month[form.currentMonth - 1 ].name;
-
+    form.year = new Date().getFullYear();
+    form.mont_name = month[form.month - 1 ].name;
 
     days();
 });
@@ -46,23 +49,6 @@ const getPart = (value:string) => {
     return value.slice(0,3)+'...';
 }
 
-
-/**
- * verificar si existe la tasa del dia
- */
-const check = ()=>{
-    axios.get(route('currency.check'))
-        .then((res)=>{
-            currencies.value = res.data.currencies;
-        }).catch((err)=>{
-        Swal.fire({
-            title: "Error",
-            text: "Mensaje : "+err.message,
-            icon: "question",
-            timer: 3500,
-        });
-    });
-}
 
 
 const getMonthDay = (monthValue:number, year:number):monthDayI => {
@@ -88,30 +74,64 @@ const getMonthDay = (monthValue:number, year:number):monthDayI => {
  */
 const days = ()=>{
     //Obtener los dias por mes y año
-    const monthDay:monthDayI = getMonthDay(form.currentMonth - 1, form.currentYear);
+    const monthDay:monthDayI = getMonthDay(form.month - 1, form.year);
 
-    form.reset('rate_info');
+    //Para cargar los datos de la moneda de cambio
+    axios.get(route('currency.get.exchange', {month: form.month , year: form.year}))
+    .then((res) => {
+        if(res.status === 200 && res.data.message === 'Datos Obtenido Correctamente')
+        {
 
-    // Agregar los numeros a los dias
-    for(let i:number =1; i <= monthDay.day; i++){
-        form.rate_info.push({
-            day: i,
-            eur: 0,
-            us: 0
-        });
-    }
+            form.rate_info = res.data.data.rate_info;
+        }else{
 
+            form.reset('rate_info');
+            // Agregar los numeros a los dias
+            for(let i:number =1; i <= monthDay.day; i++){
+                form.rate_info.push({
+                    day: i,
+                    eur: 0,
+                    usd: 0,
+                    dop: 0,
+                });
+            }
+        }
+    })
+    .catch(err => {
+        errorHttp(err.message);
+    });
+}
 
+/**
+ * Guardar los datos
+ */
+const submit = () => {
+    axios.post(route('currency.exchange.store'), form)
+    .then((res)=>{
 
+        //Si el mensaje es de existo
+        if(res.status === 200)
+        {
+            //Mensaje de exito
+            successHttp('Datos Actualizado Correctamente');
+            emit('closeWindow');
+        }
+    })
+    .catch((err)=>{
+        // Mensaje de error
+        errorHttp(err.message);
+    })
 }
 
 </script>
 
 <template>
-    <form class="bg-blue-300 p-5 rounded-md max-h-[40rem] overflow-y-auto">
+    <form
+        @submit.prevent="submit"
+        class="bg-blue-300 p-5 rounded-md max-h-[40rem] overflow-y-auto">
         <div class="pt-3 flex justify-between">
             <select
-                v-model="form.currentMonth"
+                v-model="form.month"
                 class="inputGeneral py-1"
                 @change="days">
                 <option
@@ -124,7 +144,7 @@ const days = ()=>{
 
 
             <select
-                v-model="form.currentYear"
+                v-model="form.year"
                 class="inputGeneral py-1"
                 @change="days">
                 <option
@@ -138,9 +158,9 @@ const days = ()=>{
         <table class="styleTable table-auto w-full mt-3">
             <thead>
                 <tr>
-                    <th >{{getPart(form.currentMonthName)}}</th>
+                    <th >{{getPart(form.mont_name)}}</th>
                     <th>EUR</th>
-                    <th>US</th>
+                    <th>USD</th>
                 </tr>
             </thead>
             <tbody>
@@ -157,7 +177,7 @@ const days = ()=>{
                     <td>
                         <Money
                             class="inputGeneral bg-transparent border-0"
-                            v-model="item.us"
+                            v-model="item.usd"
                             v-bind="moneyConfig"/>
                     </td>
                 </tr>

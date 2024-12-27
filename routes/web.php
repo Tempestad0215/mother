@@ -279,7 +279,9 @@ Route::middleware([
     ->group(function (){
         Route::get('/','index')->name('index');
         Route::get('/check-exchange','checkExchange')->name('check');
+        Route::get('/getExchange/{month}/{year}','getExchange')->name('get.exchange');
         Route::post('/','store')->name('store');
+        Route::post('/exchange','exchangeStore')->name('exchange.store');
         Route::delete('/{currency}','destroy')->name('destroy');
         Route::put('/restore/{currency}','restore')->name('restore');
     });
