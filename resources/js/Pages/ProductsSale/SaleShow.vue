@@ -3,7 +3,7 @@ import {Head, useForm, usePage} from "@inertiajs/vue3";
 import AppLayout from "@layout/AppLayout.vue";
 import FormSearch from "@components/FormSearch.vue";
 import {saleI, salePaginationI} from "@/Interfaces/Sale";
-import {getMoney} from "@/Global/Helpers";
+import {getMoney, printPdf} from "@/Global/Helpers";
 import Pagination from "@components/Pagination.vue";
 import InputError from "@components/InputError.vue";
 import TabLink from "@components/TabLink.vue";

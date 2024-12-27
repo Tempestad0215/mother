@@ -31,8 +31,6 @@ class  StoreProductSaleRequest extends FormRequest
      */
     public function rules(): array
     {
-
-
         //datos de configuracion
         $sequence = Setting::pluck('sequence')->first() ??  false;
 
@@ -41,7 +39,6 @@ class  StoreProductSaleRequest extends FormRequest
 
         //Tomar los datos de la info_sale
         $info_sale = $this->input('info_sale');
-
 
         // Crear la validacion de los datos
         return [

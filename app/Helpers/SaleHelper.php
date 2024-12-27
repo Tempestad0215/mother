@@ -184,15 +184,10 @@ class SaleHelper
             {
                 $product->stock += $productStock;
             }
-
             //Guardar los datos
             $product->save();
-
-
         });
-
     }
-
 
     /**
      * Eliminar Ventas Abiertas
@@ -222,9 +217,6 @@ class SaleHelper
                     $product->save();
                 }
             }
-
-
-
             //Crear la venta eliminada
             $deleteSale = DeletedSale::create([
                 'sale_id' => $sale->id,

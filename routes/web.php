@@ -184,7 +184,6 @@ Route::middleware([
        Route::get('/get','getJson')->name('get.json');
        Route::get('/show','show')->name('show');
        Route::get('/test/invoice', 'testInvoice')->name('test-invoice');
-       Route::get('/last/invoice','lastInvoice')->name('lastInvoice');
        Route::post('/counter','counterPost')->name('counterPost');
        Route::post('/','store')->name('store');
        Route::patch('/update/{sale}','update')->name('update');

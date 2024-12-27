@@ -120,7 +120,7 @@ const submit = () => {
     .catch((err)=>{
         // Mensaje de error
         errorHttp(err.message);
-    })
+    });
 }
 
 </script>

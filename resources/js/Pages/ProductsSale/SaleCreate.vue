@@ -7,13 +7,13 @@ import FloatBox from "@components/FloatBox.vue";
 import FloatShowPro from "@/Pages/Products/FloatShowPro.vue";
 import { onMounted, onUpdated, Ref, ref} from "vue";
 import {productFullI, productI} from "@/Interfaces/Product";
-import {getMoney, getRncHelper, getSequenceType, moneyConfig} from "@/Global/Helpers";
+import {getMoney, getRncHelper, getSequenceType, moneyConfig, printPdf} from "@/Global/Helpers";
 import Swal from "sweetalert2";
 import InputError from "@components/InputError.vue";
 import {clientBaseI, clientDataI} from "@/Interfaces/Client";
 import FloatShowCli from "@/Pages/Clients/FloatShowCli.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
-import {successHttp} from "@/Global/Alert";
+import { successHttp} from "@/Global/Alert";
 import axios from "axios";
 import SaleOpenShow from "@/Pages/ProductsSale/SaleOpenShow.vue";
 import {creditNotesSaleI, infoSaleI, saleDataI, saleDataPaginationI} from "@/Interfaces/Sale";
@@ -53,11 +53,7 @@ const sequenceData:Ref<sequenceDataI | undefined> = ref(undefined);
 const showClientRnc:Ref<boolean> = ref(false);
 const showReturn:Ref<boolean> = ref(false);
 const showFormReturn:Ref<boolean> = ref(false);
-
-
-//DDATOS DEL dpf
-const pdfUrl:Ref<string> = ref("");
-const showPdf:Ref<boolean> = ref(false);
+const errors = ref<string[] | null>(null);
 
 
 /*
@@ -281,7 +277,7 @@ const getData = (item:productFullI) => {
     // Verificar si el producto exite
     if (info?.product_id  === item.uuid)
     {
-        info.stock += 1;
+        info.stock += 1.00;
         showProduct.value = false;
 
     }else{
@@ -475,55 +471,27 @@ const sendData = ():void => {
                 });
             }else{
                 //Guardar los datos por primera vez
-                form.post(route('sale.store'),{
-                    onSuccess:()=>{
-                        successHttp('Venta Cerrada Correctamente');
-                        //Verificar si la mensa esta cerrada
+                axios.post(route('sale.create'), form)
+                    .then((res) => {
+                        // La cuenta es cerrada
                         if (form.close_table)
                         {
-                            //Llamar la ultima factura
-                            getLastInvoie();
-
+                            // Imprimir el pdf
+                            printPdf(res.data.uuid);
                         }
+                        //Limpiar el fomulario
                         form.reset();
                         showReturn.value = false;
-                        // readPDF(propsW.pdf);
-                        //Actualizar la ventana
-                    },
-                    onError:()=>{
-                        setTimeout(()=>{
-                            form.clearErrors();
-                        },5000)
-                    },
-                });
+                    })
+                    .catch((err) => {
+                       form.errors = err.response.data.errors;
+                    });
+
             }
         }
     }
 }
 
-/**
- * Obtener el ultimo registro
- */
-const getLastInvoie = () => {
-    axios.get(route('sale.lastInvoice'))
-        .then((data)=>{
-            if (data.status === 200)
-            {
-                showPdf.value = true;
-                pdfUrl.value = data.data.url;
-
-
-
-                setTimeout(()=>{
-                    pdfUrl.value = "";
-                    showPdf.value = false;
-                },1500)
-
-            }
-        }).catch(()=>{
-
-    });
-}
 
 /**
  * Obtener el producto por codigo
@@ -935,7 +903,7 @@ const getRncClient = async () => {
                                             class=" bg-transparent h-[2rem] max-w-[6rem] rounded-md border-none"
                                             @blur="totalAmount(index)"
                                             v-bind="moneyConfig"
-                                            v-model="item.stock"/>
+                                            v-model.number="item.stock"/>
                                     </td>
                                     <td>
                                         {{getMoney(item.tax)}}
@@ -951,7 +919,7 @@ const getRncClient = async () => {
                                             v-if="item.type === 'servicio'"
                                             @blur="totalAmount(index)"
                                             v-bind="moneyConfig"
-                                            v-model="item.price"/>
+                                            v-model.number="item.price"/>
                                     </td>
                                     <td class="max-w-[4rem]">
                                         <Money
@@ -960,7 +928,7 @@ const getRncClient = async () => {
                                             v-bind="moneyConfig"
                                             :min="0"
                                             :max="100"
-                                            v-model="item.discount"/>
+                                            v-model.number="item.discount"/>
                                     </td>
                                     <td>
                                         {{getMoney(item.amount)}}
@@ -984,8 +952,8 @@ const getRncClient = async () => {
                         </div>
 
 
-                        <div>
-                            <InputError :message="form.errors.info_sale"/>
+                        <div v-for="(item) in form.errors?.info_sale">
+                            <InputError :message="item"/>
                         </div>
 
                         <!--                            Comentario de la venta-->

@@ -3,7 +3,7 @@ import {Head, router, useForm} from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
 import InputLabel from '@components/InputLabel.vue';
 import TextInput from '@components/TextInput.vue';
-import {formatNumber, getCoin, getMoney, getPenny, moneyConfig} from '@/Global/Helpers';
+import {formatNumber, getMoney, moneyConfig} from '@/Global/Helpers';
 import PrimaryButton from '@components/PrimaryButton.vue';
 import InputError from '@components/InputError.vue';
 import FloatBox from '@components/FloatBox.vue';

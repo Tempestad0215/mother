@@ -52,14 +52,12 @@ class ProductSaleController extends Controller
     }
 
 
-    /**
-     * @param StoreProductSaleRequest $request
-     * @return RedirectResponse
-     */
-    public function store(StoreProductSaleRequest $request):RedirectResponse
+    public function store(StoreProductSaleRequest $request)
     {
 
+        // Variable para colocar los datos
         $data = null;
+
         // Evitar que se realicen 2 operaciones al mismo tiempo
         Cache::lock('sale', 5)->get(function () use (&$request, &$data) {
 
@@ -70,14 +68,10 @@ class ProductSaleController extends Controller
 
         });
 
-        //Retroceder
-        return back()->with([
-            'data' => 'funciona muy bien'
-        ]);
+        // Repuesta
+        return response()->json($data);
 
     }
-
-
 
     public function update(StoreProductSaleRequest $request, Sale $sale)
     {
@@ -159,8 +153,6 @@ class ProductSaleController extends Controller
         return back();
 
     }
-
-
     /**
      * @param Request $request
      * @return array
@@ -182,31 +174,5 @@ class ProductSaleController extends Controller
             'saleOpen' => $saleOpen
         ];
 
-
     }
-
-
-
-//    public function counterPost(PostCounterRequest $request)
-//    {
-//        dd($request);
-//    }
-
-    /**
-     * Obtener la ultima factura
-     * @return JsonResponse
-     */
-//    public function lastInvoice():JsonResponse
-//    {
-//        //Otener el ultimo registro
-//        $sale = Sale::orderBy('id', 'desc')->first();
-//
-//        //Intanciar la clase
-//        $invoice = new InvoiceController();
-//
-//        //Se obtiene el ultimo registro
-//        return $invoice->getA($sale,);
-//    }
-
-
 }

@@ -1,9 +1,12 @@
 import Swal from "sweetalert2";
 import axios from "axios";
+import {string} from "fast-glob/out/utils";
+import {errorHttp} from "@/Global/Alert";
 
 
-/*
-* Variables compartida general
+/**
+ *
+ * Configuracionde dinero
  */
 export const moneyConfig =  {
     decimal: '.',
@@ -15,6 +18,9 @@ export const moneyConfig =  {
     allowBlank: false
 }
 
+/**
+ * configuracion de porcentaje
+ */
 export const configPercent =  {
     prefix: '',
     suffix: '%',
@@ -225,4 +231,39 @@ const getDateInUtc4 = (date:Date):string => {
  */
 export const paginationJoin = (url:string, search:string, perPage:number) => {
     return url+'&search='+search+'&perPage='+perPage;
+}
+
+
+/**
+ * Para imprimir los pdf
+ * @param uuid
+ */
+export const printPdf = (uuid: string) => {
+    const width:number = 800; // Ancho predeterminado
+    const height:number = 600; // Altura predeterminada
+
+    // Calcular la posición para centrar la ventana
+    const screenWidth:number = window.screen.width;
+    const screenHeight:number = window.screen.height;
+    const left:number = (screenWidth - width) / 2;
+    const top:number = (screenHeight - height) / 2;
+
+    // Crear características de la ventana emergente
+    const popupFeatures = `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,resizable=yes`;
+
+    //crea la ventana de impresion
+    const printWindow = window.open(route('invoice.getA',{sale: uuid}),'_blank', popupFeatures);
+
+    //Error de la cosas
+    if (!printWindow) {
+        errorHttp('No se Puede Abrir La Ventana');
+        return;
+    }
+
+    // Al momento de cargar la ventana
+    printWindow.onload = () => {
+
+        //Imprimir la ventana
+        printWindow.print();
+    }
 }
