@@ -41,23 +41,23 @@ const propsW = defineProps<{
             </div>
             <div>
                 <p>Limite</p>
-                <span class="span-white">{{ getMoney(propsW.supplier?.credit?.limit) }}</span>
+                <span class="span-white">{{ getMoney(propsW.supplier?.account?.amount) }}</span>
             </div>
             <div>
                 <p>Plazo en Dias</p>
-                <span class="span-white">{{ propsW.supplier?.credit?.due_date ?? 0 }}</span>
+                <span class="span-white">{{ propsW.supplier?.account?.due_date ?? 0 }}</span>
             </div>
             <div>
                 <p>Balance</p>
-                <span class="span-white">{{ getMoney(propsW.supplier?.credit?.balance) }}</span>
+                <span class="span-white">{{ getMoney(propsW.supplier?.account?.balance) }}</span>
             </div>
             <div>
                 <p>Consumido</p>
-                <span class="span-white">{{ getMoney(propsW.supplier?.credit?.consumed) }}</span>
+                <span class="span-white">{{ getMoney(propsW.supplier?.account?.consumed) }}</span>
             </div>
             <div>
                 <p>Interes Por Mora</p>
-                <span class="span-white">{{ propsW.supplier?.credit?.late_fee_interest ?? 0 }} %</span>
+                <span class="span-white">{{ propsW.supplier?.account?.late_fee ?? 0 }} %</span>
             </div>
         </fieldset>
     </div>

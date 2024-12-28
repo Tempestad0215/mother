@@ -4,25 +4,27 @@ namespace App\Http\Resources;
 
 use App\Enums\TypePaymentEnum;
 use App\Models\Comment;
-use App\Models\Credits;
+use App\Models\Account;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 
 /**
- * @property int $uuid
- * @property string|null $contact
- * @property string $company_name
- * @property string|null $phone
- * @property string|null $email
- * @property boolean $status
- * @property boolean $receive_email
- * @property string $account_bank
- * @property TypePaymentEnum $type_payment
- * @property Credits $credit
- * @property Comment $comment
+ * @property int uuid
+ * @property string|null contact
+ * @property string company_name
+ * @property string|null phone
+ * @property string|null email
+ * @property boolean status
+ * @property boolean receive_email
+ * @property string account_bank
+ * @property TypePaymentEnum type_payment
+ * @property Account account
+ * @property Comment comment
  *
- * @property string $deleted_at
+ * @property string created_at
+ * @property string updated_at
+ * @property string deleted_at
  */
 class SupplierResource extends JsonResource
 {
@@ -42,14 +44,14 @@ class SupplierResource extends JsonResource
             'email' => $this->email,
             'receive_email' => $this->receive_email,
             'account_bank' => $this->account_bank,
-            'credit' => $this->when(isset($this->credit), function () use ($request) {
+            'account' => $this->when(isset($this->account), function () use ($request) {
                 return [
-                    'uuid' =>  $this->credit->uuid,
-                    'limit' => $this->credit->limit,
-                    'due_date' => $this->credit->due_date,
-                    'balance' => $this->credit->balance,
-                    'consumed' => $this->credit->consumed,
-                    'late_fee_interest' => $this->credit->late_fee_interest,
+                    'uuid' =>  $this->account->uuid,
+                    'amount' => $this->account->amount,
+                    'due_date' => $this->account->due_date,
+                    'balance' => $this->account->balance,
+                    'consumed' => (($this->account->amount * 100 ) - ($this->account->balance * 100)) / 100,
+                    'late_fee_interest' => $this->account->late_fee,
                 ];
             })
         ];

@@ -40,7 +40,16 @@ class Account extends Model implements Auditable
     /*
      * Guardar los datos
      */
-    protected $guarded = [];
+    protected $fillable = [
+        'accountable_id',
+        'accountable_type',
+        'type',
+        'amount',
+        'balance',
+        'due_date',
+        'late_fee',
+        'status',
+    ];
 
 
     /**

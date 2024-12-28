@@ -21,7 +21,7 @@ return new class extends Migration
             $table->boolean('receive_email')->default(false);
             $table->string('account_bank',30)->nullable();
             $table->boolean('is_recurring')->default(false);
-            $table->integer('payment_day');
+            $table->integer('payment_day')->nullable()->comment('Dia de pago del mes');
             $table->boolean('status')->default(true);
             $table->softDeletes();
             $table->timestamps();

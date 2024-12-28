@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\TypeAccountEnum;
 use App\Http\Resources\SupplierResource;
 use App\Models\Supplier;
 use App\Http\Requests\StoreSupplierRequest;
@@ -47,7 +48,7 @@ class SupplierController extends Controller
 
         DB::transaction(function () use ($request) {
             // Guardar los datos de supplidor
-            $supplier = Supplier::create($request->only(['type_payment','company_name','contact','phone','email','account_bank']));
+            $supplier = Supplier::create($request->validated());
 
             //si existe el comentario pues se guarda los datos
             if ($request->has('comment'))
@@ -60,12 +61,12 @@ class SupplierController extends Controller
             //si tiene otro tipo que no sea contado
             if ($request->get('type_payment') != 'contado')
             {
-                $supplier->credit()->create([
-                    'due_date' => $request->due_date,
-                    'limit' => $request->limit,
-                    'balance' => $request->limit,
-                    'consumed' => 0,
-                    'late_fee_interest' => $request->late_fee_interest,
+                $supplier->account()->create([
+                    'type' => TypeAccountEnum::PAGAR,
+                    'amount' => $request->get('amount'),
+                    'due_date' => $request->get('due_date'),
+                    'balance' => $request->get('amount'),
+                    'late_fee' => $request->get('late_fee'),
                 ]);
             }
 

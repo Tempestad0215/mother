@@ -9,7 +9,7 @@ import ActionMessage from '@components/ActionMessage.vue';
 import PrimaryButton from '@components/PrimaryButton.vue';
 import TabLink from "@components/TabLink.vue";
 import {supplierI} from "@/Interfaces/Supplier";
-import {onMounted} from "vue";
+import {computed, onMounted} from "vue";
 import {getMoney, moneyConfig} from "@/Global/Helpers";
 import {Money} from "v-money3";
 import ToggleButton from "@components/ToggleButton.vue";
@@ -46,16 +46,26 @@ const form = useForm({
     phone:"",
     email:"",
     type_payment:"contado",
+    receive_email: false,
     is_recurring: false,
     payment_day: null,
-    account_bank:"",
-    comment:"",
-    limit:"",
-    due_date:"",
-    late_fee_interest:"",
-    balance:0,
-    consumed:0,
+    account_bank: "",
+    comment: "",
+    amount: 0,
+    due_date: 0,
+    late_fee: 0,
+    consumed: 0
 });
+
+
+
+/*
+Propiedades computada
+ */
+const balance = computed(()=>{
+   return getMoney((form.amount - form.consumed))
+});
+
 
 
 
@@ -223,6 +233,13 @@ const submit = () => {
                     <div class="flex justify-between">
                         <div>
                             <ToggleButton
+                                v-model="form.receive_email"
+                                label="Rec. Correo"
+                                on-label="SI"
+                                off-label="NO"/>
+                        </div>
+                        <div>
+                            <ToggleButton
                                 v-model="form.is_recurring"
                                 label="Pago Recurrente"
                                 on-label="SI"
@@ -268,8 +285,8 @@ const submit = () => {
                         <Money
                             class="inputGeneral w-full"
                             v-bind="moneyConfig"
-                            v-model="form.limit" />
-                        <InputError :message="form.errors.limit"/>
+                            v-model="form.amount" />
+                        <InputError :message="form.errors.amount"/>
                     </div>
 
                     <div>
@@ -284,7 +301,7 @@ const submit = () => {
                     <div>
                         <InputLabel for="" value="Balance"/>
                         <span class="flex justify-center items-center bg-white px-3 rounded-md h-[2rem] " >
-                            {{getMoney(form.balance)}}
+                            {{balance}}
                         </span>
                     </div>
                     <!--                        Consumido-->

@@ -9,7 +9,6 @@ use App\Http\Requests\StoreProductSaleRequest;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\Setting;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;

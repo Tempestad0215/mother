@@ -1,4 +1,4 @@
-import {creditI} from "@/Interfaces/Credits";
+import {creditI} from "@/Interfaces/Account";
 
 
 export interface supplierI {
@@ -13,7 +13,7 @@ export interface supplierI {
         name: string;
         value: string;
     } | null;
-    credit?: creditI
+    account?: creditI
     updated_at: string
 }
 
@@ -30,10 +30,10 @@ export interface supplierDataI {
     to: number
 }
 
-export interface supplierCreditI extends supplierI{
-    limit: number;
+export interface supplierAccountI extends supplierI{
+    amount: number;
     due_date: number;
     balance: number;
     consumed: number;
-    late_fee_interest: number;
+    late_fee: number;
 }

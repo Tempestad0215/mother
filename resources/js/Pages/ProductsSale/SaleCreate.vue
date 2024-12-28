@@ -422,7 +422,7 @@ const selectClient = (item:clientBaseI) =>  {
  * Enviar los datos para guardar
  */
 const sendData = ():void => {
-
+    // Verificar si esta el retorno
     if (propsW.refund)
     {
         // Enviar los datos para las devoluciones
