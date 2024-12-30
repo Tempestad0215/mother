@@ -213,16 +213,11 @@ const removeUnit = (index:number) => {
                 :href="route('setting.index')">
                 Ajustes
             </TabLink>
-            <TabLink
-                :href="route('currency.index')">
-                Tasa Cambio
-            </TabLink>
         </template>
         <div
             class="max-w-[70rem] mx-auto bg-blue-300 rounded-md p-5">
             <form
                 @submit.prevent="submit">
-
                 <!--Muestra del logo-->
                 <div class="">
                     <img
@@ -231,7 +226,6 @@ const removeUnit = (index:number) => {
                         alt="logo"
                         width="150">
                 </div>
-
                 <!-- Informaicon de la emprea-->
                 <fieldset class="field">
                     <legend class="">
@@ -337,7 +331,6 @@ const removeUnit = (index:number) => {
                             </option>
                         </select>
                     </div>
-
                     <!--Tiempo fiscal-->
                     <div>
                         <InputLabel
@@ -350,8 +343,6 @@ const removeUnit = (index:number) => {
                             type="date" />
                         <InputError :message="form.errors.fiscal_year"/>
                     </div>
-
-
                     <!--Logo-->
                     <div>
                         <InputLabel for="logo" value="Logo"/>
@@ -363,7 +354,6 @@ const removeUnit = (index:number) => {
                         <InputError/>
                     </div>
                 </fieldset>
-
                 <!--            Datos de inventario-->
                 <fieldset class="field">
                     <legend class="px-3">
@@ -390,7 +380,6 @@ const removeUnit = (index:number) => {
                             <InputError :message="form.errors.sequence"/>
                         </div>
                     </div>
-
 
                     <!--Unidades de medida-->
                     <div>

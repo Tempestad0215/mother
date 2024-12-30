@@ -134,7 +134,7 @@ const submit = () => {
 
 <!--    Contenido de la ventana-->
     <AppLayout>
-        <div class=" bg-blue-300 rounded-md p-5 max-w-[70rem] ">
+        <div class=" bg-blue-300 rounded-md p-5 max-w-[70rem] mx-auto ">
             <h3 class="title text-center">
                 Reportes de Ventas
             </h3>

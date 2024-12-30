@@ -23,7 +23,7 @@ class GeneralHelper
             ->first();
 
         //Convertir a collection
-        $rateCollect = collect($exchange->rate_info);
+        $rateCollect = collect($exchange?->rate_info);
 
         //Obtner el dia en numero
         $today = Carbon::now()->dayOfMonth();

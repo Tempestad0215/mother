@@ -11,7 +11,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 /**
  * @property string uuid
  * @property array rate_info
- * @property string month
+ * @property int month
  * @property int year
  * @property boolean status
  * @property string created_at

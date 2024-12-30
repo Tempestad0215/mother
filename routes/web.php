@@ -8,6 +8,7 @@ use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductInController;
+use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReportSaleController;
 use App\Http\Controllers\SequenceController;
@@ -276,13 +277,22 @@ Route::middleware([
     ->prefix('currency')
     ->name('currency.')
     ->group(function (){
-        Route::get('/','index')->name('index');
         Route::get('/check-exchange','checkExchange')->name('check');
         Route::get('/getExchange/{month}/{year}','getExchange')->name('get.exchange');
-        Route::post('/','store')->name('store');
         Route::post('/exchange','exchangeStore')->name('exchange.store');
         Route::delete('/{currency}','destroy')->name('destroy');
         Route::put('/restore/{currency}','restore')->name('restore');
+    });
+
+
+    /*
+     * Compra
+     */
+    Route::controller(PurchaseController::class)
+    ->prefix('purchase')
+    ->name('purchase.')
+    ->group(function (){
+        Route::get('/','index')->name('index');
     });
 
 });

@@ -9,10 +9,9 @@ return new class extends Migration {
     {
         Schema::create('exchange_rates', function (Blueprint $table) {
             $table->uuid()->primary();
-            $table->foreignUuid('currency_id');
-            $table->date('date');
-            $table->decimal('rate');
-            $table->boolean('is_confirmed')->default(false);
+            $table->json('rate_info');
+            $table->integer('month');
+            $table->integer('year');
             $table->boolean('status')->default(true);
             $table->timestamps();
             $table->softDeletes();

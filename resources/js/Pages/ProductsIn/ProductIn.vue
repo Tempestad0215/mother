@@ -187,19 +187,19 @@ const edit = (id:string)=>{
 const totalTax = () => {
     // Sacar los datos para el calculo
     let stock:number = form.stock || 0.00;
-    let cost:number =  getPenny(form.cost || 0.00);
-    let price:number = getPenny(form.price || 0.00);
+    let cost:number =  (form.cost || 0.00) * 100;
+    let price:number = (form.price || 0.00) * 100;
     let taxRate:number = form.tax_rate;
     let discount:number = form.discount / 100;
 
 
     // Tomar los datos para sacar el impuesto
-    form.tax =  getCoin(price * taxRate);
-    form.discount_amount = getCoin(price * discount);
-    form.product_no_tax = getCoin(price) - form.tax;
+    form.tax =  (price * taxRate) / 100;
+    form.discount_amount = (price * discount) / 100;
+    form.product_no_tax = ((price) - (form.tax * 100)) / 100;
     form.product_tax = form.price;
-    form.amount = getCoin( stock * price);
-    form.benefits =  getCoin(price - cost);
+    form.amount = ( stock * price) / 100;
+    form.benefits =  (price - cost) / 100;
     form.tax_amount = form.stock * form.tax;
 
 }

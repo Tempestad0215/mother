@@ -1,39 +1,7 @@
-# Ignorar archivos y directorios innecesarios
 
-# Archivos de configuración de IDEs
-.vscode/
-.idea/
-
-# Archivos de caché de Laravel
-/storage/*
-!storage/app/public
 
 # Archivos de caché de Composer
 /vendor/
 
 # Archivos de caché de Laravel
 /node_modules/
-
-# Archivos de entorno
-.env
-
-# Archivos de log
-*.log
-
-# Archivos temporales
-*.tmp
-*.swp
-.DS_Store
-
-# Carpeta de pruebas
-/tests/
-
-# Carpeta de documentación
-/docs/
-
-# Archivos de backup
-*.bak
-*.old
-
-# Otros archivos de sistema
-Thumbs.db

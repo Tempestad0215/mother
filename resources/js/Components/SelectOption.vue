@@ -65,7 +65,9 @@ const handleClickOutside = (event: MouseEvent) => {
 </script>
 
 <template>
-    <div ref="dropdownRef" class="relative w-fit">
+    <div
+        ref="dropdownRef"
+        class="relative w-fit h-[2rem]">
         <input
             @click="showData = !showData"
             class="border border-orange-500 px-2 pr-6 min-w-full rounded-md focus:ring-0 focus:border-blue-800 focus:outline-none h-[2rem]"
