@@ -295,4 +295,14 @@ Route::middleware([
         Route::get('/','index')->name('index');
     });
 
+    Route::get('/test', function () {
+        $template = view('pdfs.test')->render();
+
+
+        \Spatie\Browsershot\Browsershot::html($template)
+            ->paperSize(80, 295)
+            ->showBackground()
+            ->save(storage_path('app/public/pdfs/test.pdf'));
+    });
+
 });
