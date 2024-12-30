@@ -5,12 +5,6 @@ import path from 'path';
 
 
 export default defineConfig({
-    server:{
-        host: true,
-        hmr:{
-            host: 'mother.test'
-        }
-    },
     "resolve":{
         alias:{
             '@': path.resolve(__dirname, 'resources/js'),

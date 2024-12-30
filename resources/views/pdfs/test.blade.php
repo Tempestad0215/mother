@@ -7,6 +7,14 @@
     <title>Document</title>
 </head>
 <body>
+    <div>
+        <img
+            class="w-[5rem] rounded-md"
+            src="{{public_path('logo.jpeg')}}" alt="">
+
+        {{public_path('logo.jpeg')}}
+    </div>
+
     <div class="bg-red-400 text-center text-red-700">
         esta contendioo des de la prueba de todo los tiempos
     </div>
