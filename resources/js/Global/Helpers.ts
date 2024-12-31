@@ -251,7 +251,7 @@ export const printPdf = (uuid: string) => {
     const popupFeatures = `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,resizable=yes`;
 
     //crea la ventana de impresion
-    const printWindow = window.open(route('invoice.getA',{sale: uuid}),'_blank', popupFeatures);
+    const printWindow = window.open(route('invoice.belt.sale',{sale: uuid}),'_blank', popupFeatures);
 
     //Error de la cosas
     if (!printWindow) {

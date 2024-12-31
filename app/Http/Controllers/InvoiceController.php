@@ -7,6 +7,7 @@ use App\Invoices\SaleInvoiceA;
 use App\Models\MoneyCounter;
 use App\Models\Sale;
 use App\Models\Setting;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
@@ -41,16 +42,25 @@ class InvoiceController extends Controller
 //            'sale' => $sale
 //        ])->render();
 
-        $partUuid = collect(explode('-', $sale->uuid));
+        //Para aumentar la altura de la pagina
+        $height = 160;
+
+        //Para manejar de forma sencilla los datos
+        $infoSale = collect($sale->infoSale);
+
+        //Incrementar el tamaño
+        $infoSale->each(function () use (&$height) {
+            $height += 10;
+        });
 
 
 
-        return Pdf::view('pdfs.test',[
+        return Pdf::view('pdfs.belt.first',[
             'setting' => Setting::first(),
             'sale' => $sale,
-            'partUuid' => $partUuid->first(),
+            'datePrint' => Carbon::now()->format('d/m/y H:i:s')
         ])->margins(2,2,2,2)
-            ->paperSize(80, 295)
+            ->paperSize(80, $height)
             ->name('test.pdf');
 
 

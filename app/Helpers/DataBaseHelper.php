@@ -14,6 +14,7 @@ class DataBaseHelper
     public static function saleTable(Blueprint $table):void
     {
         $table->uuid()->primary();
+        $table->string("code", 30)->unique();
         $table->string('ncf',30)->nullable()->unique();
         $table->string('invoice_type',30)->nullable();
         $table->string('client_name')->nullable()->default('');

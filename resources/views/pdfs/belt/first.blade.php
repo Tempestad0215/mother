@@ -93,6 +93,17 @@
         </tbody>
     </table>
 
+
+    {{--Informacion de pago y devuelta--}}
+    <h3 class="border-t border-b border-black text-center">
+        Información de pago
+    </h3>
+    <div class="text-sm">
+        <p> <strong>Tipo de pago : </strong> {{$sale->type_payment->name}}</p>
+        <p> <strong>Pagó con :</strong> {{number_format($sale->received,2)}}</p>
+        <p> <strong>Devuelta :</strong> {{number_format($sale->returned,2)}}</p>
+    </div>
+
 {{--    Comentario y datos finales--}}
     <div class="text-sm mt-3 border-t border-black">
         <p>
@@ -104,7 +115,7 @@
     </div>
 
 {{--    Informaciond el comentario--}}
-    <div class="text-sm mt-3">
+    <div class="text-sm mt-3 border-t border-b border-black">
         <p>
             <span class="font-bold">Comentario:</span>
             {{$sale->comment->content}}
@@ -113,18 +124,15 @@
 
 {{--Codigo de barra--}}
     <div class=" text-center w-[90%] mx-auto mt-3">
-        {!! DNS1D::getBarcodeHtml($partUuid ,'C128') !!}
-        <spa>* {{$partUuid}} *</spa>
+        {!! DNS1D::getBarcodeHtml($sale->code ,'C128') !!}
+        <spa>* {{$sale->code}} *</spa>
     </div>
 
 
-    <div>
-        <p>Usuario :</p>
-        <span>{{$sale->audits[0]->user->name}}</span>
+    <div class="border-t border-black text-sm">
+        <p>Le Atendió : {{$sale->audits[0]->user->name}} </p>
+        <p>Impresión : {{$datePrint}}</p>
     </div>
-
-
-
 
 </body>
 </html>

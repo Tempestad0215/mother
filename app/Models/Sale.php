@@ -16,29 +16,29 @@ use Illuminate\Support\Carbon;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
- * @property string $uuid
- * @property string $code
- * @property string $ncf
- * @property string $ncf_m
- * @property string $client_rnc
- * @property string $client_name
- * @property int $client_id
- * @property float $discount_amount
- * @property float $tax
- * @property float $sub_total
- * @property float $amount
- * @property boolean $status
- * @property SaleTypeEnum $type
- * @property bool $close_table
- * @property Carbon $created_at
- * @property Carbon $updated_at
- * @property Carbon $deleted_at
- * @property ProTrans[] $infoSale
- * @property TypePaymentEnum $type_payment
- * @property float $received
- * @property float $returned
- * @property integer[] $credit_notes
- * @property float $credit_notes_amount
+ * @property string uuid
+ * @property string code
+ * @property string ncf
+ * @property string ncf_m
+ * @property string client_rnc
+ * @property string client_name
+ * @property int client_id
+ * @property float discount_amount
+ * @property float tax
+ * @property float sub_total
+ * @property float amount
+ * @property boolean status
+ * @property SaleTypeEnum type
+ * @property bool close_table
+ * @property Carbon created_at
+ * @property Carbon updated_at
+ * @property Carbon deleted_at
+ * @property ProTrans[] infoSale
+ * @property TypePaymentEnum type_payment
+ * @property float received
+ * @property float returned
+ * @property string[] credit_notes
+ * @property float credit_notes_amount
  */
 
 
@@ -52,7 +52,6 @@ class Sale extends Model implements Auditable
 
     // La tabla que se ve a utilizar
     protected $table = 'sales';
-
     protected $primaryKey = 'uuid';
     public $incrementing = false;
     protected $keyType = 'string';
@@ -62,7 +61,26 @@ class Sale extends Model implements Auditable
      * Guardar los datos
      * @var array
      */
-    protected $guarded = [];
+    protected $fillable = [
+        'ncf',
+        'invoice_type',
+        'code',
+        'client_name',
+        'client_id',
+        'client_rnc',
+        'discount_amount',
+        'tax',
+        'sub_total',
+        'amount',
+        'type',
+        'type_payment',
+        'received',
+        'returned',
+        'status',
+        'close_table',
+        'credit_notes',
+        'credit_notes_amount'
+    ];
 
     //Formatear los datos
     protected  $casts = [
@@ -133,5 +151,43 @@ class Sale extends Model implements Auditable
             set: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i:s'),
         );
     }
+
+    /**
+     * @return void
+     */
+    protected static function boot():void
+    {
+        // Llamar el metodo principal
+        parent::boot();
+
+        //Generar el codigo los codigos
+        static::creating(function ($sale) {
+            $sale->code = self::generateCode();
+        });
+    }
+
+
+
+    /**
+     * @return string
+     */
+    // funcion para generar el codigo
+    private static function generateCode():string
+    {
+        // Obtener el ultimo registros
+        $total = self::count();
+
+
+
+        // Generar el proximo ID
+        $nextID = $total ? $total + 1 : 1;
+
+        // Devolver los datos
+        $code = config('appconfig.saleCode');
+
+        // craer el codigp
+        return $code.str_pad($nextID, 6,'0', STR_PAD_LEFT);
+    }
+
 
 }

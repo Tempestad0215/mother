@@ -266,7 +266,7 @@ Route::middleware([
     ->prefix('invoice')
     ->name('invoice.')
     ->group(function (){
-       Route::get('/invoice-belt/sale/{sale}','beltSale')->name('belt.sale');
+       Route::get('/belt/sale/{sale}','beltSale')->name('belt.sale');
        Route::get('/getA/{sale}','getA')->name('getA');
     });
 
