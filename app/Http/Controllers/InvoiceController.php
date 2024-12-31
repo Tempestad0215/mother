@@ -6,9 +6,12 @@ use App\Invoices\InvoiceCounterB5;
 use App\Invoices\SaleInvoiceA;
 use App\Models\MoneyCounter;
 use App\Models\Sale;
+use App\Models\Setting;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
+use Milon\Barcode\DNS2D;
+use Spatie\LaravelPdf\Facades\Pdf;
 
 class InvoiceController extends Controller
 {
@@ -25,6 +28,36 @@ class InvoiceController extends Controller
         //llamar el pdf seleccionado
         $pdf->setData();
         $pdf->Output('invoice.pdf');
+    }
+
+
+
+    public function beltSale(Sale $sale)
+    {
+
+        //convertir a string
+//        $template = view('pdfs.test',[
+//            'setting' => Setting::first(),
+//            'sale' => $sale
+//        ])->render();
+
+        $partUuid = collect(explode('-', $sale->uuid));
+
+
+
+        return Pdf::view('pdfs.test',[
+            'setting' => Setting::first(),
+            'sale' => $sale,
+            'partUuid' => $partUuid->first(),
+        ])->margins(2,2,2,2)
+            ->paperSize(80, 295)
+            ->name('test.pdf');
+
+
+//        Browsershot::html($template)
+//            ->paperSize(80,295)
+//            ->margins(2,2,2,2)
+//            ->savePdf(storage_path('/app/public/pdfs/test.pdf'));
     }
 
     /**

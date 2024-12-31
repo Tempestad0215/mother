@@ -266,6 +266,7 @@ Route::middleware([
     ->prefix('invoice')
     ->name('invoice.')
     ->group(function (){
+       Route::get('/invoice-belt/sale/{sale}','beltSale')->name('belt.sale');
        Route::get('/getA/{sale}','getA')->name('getA');
     });
 
@@ -293,23 +294,6 @@ Route::middleware([
     ->name('purchase.')
     ->group(function (){
         Route::get('/','index')->name('index');
-    });
-
-    Route::get('/test', function () {
-        $header = view('pdfs.belt.header')->render();
-        $footer = view('pdfs.belt.footer')->render();
-        $template = view('pdfs.test')->render();
-
-
-        \Spatie\Browsershot\Browsershot::html($template)
-            ->headerHtml($header)
-            ->footerHtml($footer)
-            ->margins(2, 2,2,2)
-            ->paperSize(80, 295)
-            ->showBackground()
-            ->save(storage_path('app/public/pdfs/test.pdf'));
-
-        return 'devuelta';
     });
 
 });
