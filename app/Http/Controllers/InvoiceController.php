@@ -50,11 +50,10 @@ class InvoiceController extends Controller
 
         //Incrementar el tamaño
         $infoSale->each(function () use (&$height) {
-            $height += 10;
+            $height += 13;
         });
 
-
-
+        // Devolvemos el pdf para impresion
         return Pdf::view('pdfs.belt.first',[
             'setting' => Setting::first(),
             'sale' => $sale,

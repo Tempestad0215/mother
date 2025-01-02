@@ -27,9 +27,9 @@ class ProductHelper
 
     /**
      * @param Request $request
-     * @return Product[]|LengthAwarePaginator|_IH_Product_C
+     * @return Paginator|_IH_Product_C
      */
-    public function get(Request $request):LengthAwarePaginator|_IH_Product_C
+    public function get(Request $request):Paginator|_IH_Product_C
     {
         //Obtuser los datos de búsqueda
         $search = $request->get('search','');
@@ -48,7 +48,7 @@ class ProductHelper
                         $query->where('type', ProductTypeEnum::PRODUCTO)
                             ->where('stock','>',0);
                     });
-            })->paginate();
+            })->simplePaginate($perPage);
 
     }
 

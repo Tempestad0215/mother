@@ -86,7 +86,7 @@ const destroy = (id:string) => {
 </script>
 
 <template>
-    <div class=" bg-blue-300 p-5 rounded-md max-w-[70rem] mx-auto">
+    <div class=" bg-blue-300 p-5 rounded-md max-w-[70rem] overflow-y-auto mx-auto">
         <div class=" mb-4 flex justify-between items-center ">
             <form
                 @submit.prevent="submit"
@@ -94,8 +94,6 @@ const destroy = (id:string) => {
                 <FormSearch
                     v-model:search="form.search"
                     v-model:per-page.number="form.perPage"/>
-
-
             </form>
 
             <h3 class="text-3xl font-bold text-gray-900">
@@ -103,7 +101,7 @@ const destroy = (id:string) => {
             </h3>
         </div>
 
-        <div class="">
+        <div class=" max-h-[60vh] overflow-y-auto">
             <table
                 class="styleTable table-fixed w-full">
                 <thead>
@@ -142,11 +140,8 @@ const destroy = (id:string) => {
                         </td>
                     </tr>
                 </tbody>
-
             </table>
-
         </div>
-
 
         <!-- PAginacion -->
         <Pagination

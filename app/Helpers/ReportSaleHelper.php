@@ -16,18 +16,17 @@ class ReportSaleHelper
      * @param string|null $typePayment
      * @return array
      */
-    public static function repotSaleRange(string $from, string $to, string $typePayment = null): array
+    public function repotSaleRange(string $from, string $to, string $typePayment = null): array
     {
 
         //buscar los datos de la ventas
         $query = Sale::whereBetween('created_at', [$from, $to])
-            ->where('status', '=', true);
+            ->where('status', true);
 
         //Si existe tipo de apgo
         if ($typePayment)
         {
-
-            $query->where('type_payment','=', $typePayment);
+            $query->where('type_payment', $typePayment);
         }
 
         //conseguir los datos
@@ -42,22 +41,22 @@ class ReportSaleHelper
         {
             //suma los productos vendidos
             $productsSold = ProTrans::where('status', true)
-                ->whereIn('sale_id', $data->pluck('id'))
+                ->whereIn('sale_id', $data->pluck('uuid'))
                 ->sum('stock');
 
             //Para almacenar los datos
             $dataTotal = [
-                'contado' => $data->where('type_payment', TypePaymentEnum::CONTADO)->sum('amount'),
+                'cash' => $data->where('type_payment', TypePaymentEnum::CONTADO)->sum('amount'),
 
-                'credito' => $data->where('type_payment', TypePaymentEnum::CREDITO)->sum('amount') ?? 0,
+                'credit' => $data->where('type_payment', TypePaymentEnum::CREDITO)->sum('amount') ?? 0,
 
-                'cheque' => $data->where('type_payment', TypePaymentEnum::CHEQUE)->sum('amount'),
+                'check' => $data->where('type_payment', TypePaymentEnum::CHEQUE)->sum('amount'),
 
-                'tarjeta' => $data->where('type_payment', TypePaymentEnum::TARJETA)->sum('amount'),
+                'card' => $data->where('type_payment', TypePaymentEnum::TARJETA)->sum('amount'),
 
-                'anticipo' => $data->where('type_payment', TypePaymentEnum::ANTICIPO)->sum('amount'),
+                'advance' => $data->where('type_payment', TypePaymentEnum::ANTICIPO)->sum('amount'),
 
-                'transferencia' => $data->where('type_payment', TypePaymentEnum::TRANSFERENCIA)->sum('amount'),
+                'transfer' => $data->where('type_payment', TypePaymentEnum::TRANSFERENCIA)->sum('amount'),
 
                 'tax' => $data->sum('tax'),
 
@@ -67,13 +66,7 @@ class ReportSaleHelper
             ];
         }
 
-
-
-
-
-
-
-
+        // Devolver los datgos
         return [
             'saleInfo' => $data,
             'total' => $dataTotal,

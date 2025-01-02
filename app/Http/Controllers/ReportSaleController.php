@@ -20,7 +20,9 @@ class ReportSaleController extends Controller
         $typePayment = $request->get('typePayment');
 
         //Llmar el metodo para
-       $data =  ReportSaleHelper::repotSaleRange($from, $to, $typePayment);
+        $reportSaleHelper = new ReportSaleHelper();
+        //Llamar el metodo con los datos
+        $data =  $reportSaleHelper->repotSaleRange($from, $to, $typePayment);
 
        //Tranformar los datos
         return Inertia::render('Reports/Sale/SaleIndex',[
@@ -32,6 +34,6 @@ class ReportSaleController extends Controller
             'typePayment' => $request->get('typePayment'),
         ]);
     }
-    
+
 
 }

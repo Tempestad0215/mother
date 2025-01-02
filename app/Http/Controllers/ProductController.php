@@ -239,8 +239,11 @@ class ProductController extends Controller
         $perPage = $request->get('perPage',15);
 
         // Realizar la busqueda
-        return  Product::search($search)
-            ->where('status', true)
+        return  Product::where(function ($query) use (&$search) {
+            $query->where('name', 'LIKE', '%' . $search . '%')
+                ->orWhere('description', 'LIKE', '%' . $search . '%')
+                ->orWhere('sku', 'LIKE', '%' . $search . '%');
+        })->where('status', true)
             ->latest('created_at')
             ->simplePaginate($perPage);
 
