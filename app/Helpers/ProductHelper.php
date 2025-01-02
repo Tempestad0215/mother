@@ -6,7 +6,9 @@ use App\Enums\ProductTypeEnum;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
+use LaravelIdea\Helper\App\Models\_IH_Product_C;
 
 
 class ProductHelper
@@ -23,35 +25,32 @@ class ProductHelper
     }
 
 
-
-
     /**
      * @param Request $request
-     * @return Paginator
+     * @return Product[]|LengthAwarePaginator|_IH_Product_C
      */
-    public function get(Request $request):Paginator
+    public function get(Request $request):LengthAwarePaginator|_IH_Product_C
     {
-        //Obtner los datos de busqueda
-        $search = $request->get('search');
+        //Obtuser los datos de búsqueda
+        $search = $request->get('search','');
         $perPage = $request->get('perPage',15);
 
         //Pasar los datos a la variable
-        return Product::where('status', '=',true)
-            ->where(function ($query) use ($search) {
-                $query->where('name', 'like',"%$search%")
-                    ->orWhereNull('name');
-            })->where(function (Builder $builder) {
-                $builder->where(function (Builder $q){
-                    $q->where('type', '=',ProductTypeEnum::PRODUCTO)
-                        ->where('stock', '>', 0);
-                })->orWhere(function (Builder $p){
-                   $p->where('type', '=',ProductTypeEnum::SERVICIO);
-                });
+        return Product::where('status', true)
+            ->where(function ($query) use (&$search) {
+                $query->where('name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('description', 'LIKE', '%' . $search . '%')
+                    ->orWhere('sku', 'LIKE', '%' . $search . '%');
             })
-            ->latest()
-            ->simplePaginate($perPage);
-    }
+            ->where(function (Builder $builder) {
+                $builder->where('type', ProductTypeEnum::SERVICIO)
+                    ->orWhere(function (Builder $query) {
+                        $query->where('type', ProductTypeEnum::PRODUCTO)
+                            ->where('stock','>',0);
+                    });
+            })->paginate();
 
+    }
 
 
 

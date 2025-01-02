@@ -37,6 +37,7 @@ const form = useForm({
 });
 
 
+
 /**
  * Funciones
  */
@@ -124,8 +125,9 @@ const detroy = (id:string) => {
         </div>
 
         <div
-            class="">
-            <table class=" mt-3 styleTable table-fixed  w-full">
+            class="max-h-[65vh] overflow-y-auto overflow-x-hidden">
+            <table
+                class=" mt-3 styleTable table-fixed  w-full">
                 <thead>
                     <tr>
                         <th class="w-[10rem]">Cod. Barra</th>

@@ -195,7 +195,7 @@ const submit = () => {
                     </div>
                     <!--Tipo de pago cash-->
                     <div>
-                        <InputLabel for="productSold" value="cash"/>
+                        <InputLabel for="cash" value="Efectivo"/>
                         <Money
                             class="inputGeneral"
                             readonly
@@ -204,7 +204,7 @@ const submit = () => {
                     </div>
                     <!--Tipo de pago card-->
                     <div>
-                        <InputLabel for="productSold" value="card"/>
+                        <InputLabel for="tarjeta" value="Tarjetas"/>
                         <Money
                             class="inputGeneral"
                             readonly
@@ -213,7 +213,7 @@ const submit = () => {
                     </div>
                     <!--Tipo de pago credit-->
                     <div>
-                        <InputLabel for="productSold" value="credit"/>
+                        <InputLabel for="credito" value="Creditos"/>
                         <Money
                             class="inputGeneral"
                             readonly
@@ -222,7 +222,7 @@ const submit = () => {
                     </div>
                     <!--Tipo de pago en check-->
                     <div>
-                        <InputLabel for="productSold" value="check"/>
+                        <InputLabel for="check" value="Cheques"/>
                         <Money
                             class="inputGeneral"
                             readonly
@@ -231,7 +231,7 @@ const submit = () => {
                     </div>
                     <!--Tipo de pago en transfer-->
                     <div>
-                        <InputLabel for="productSold" value="transfer"/>
+                        <InputLabel for="transfer" value="Transferencia"/>
                         <Money
                             class="inputGeneral"
                             readonly
@@ -240,7 +240,7 @@ const submit = () => {
                     </div>
                     <!-- Decuento Total Aplicado-->
                     <div>
-                        <InputLabel for="productSold" value="Descuento Total"/>
+                        <InputLabel for="discount" value="Descuento Total"/>
                         <Money
                             class="inputGeneral"
                             v-model="infoReport.discount_amount"
@@ -248,7 +248,7 @@ const submit = () => {
                     </div>
                     <!--Itbis Total vendido-->
                     <div>
-                        <InputLabel for="productSold" value="ITBIS Total"/>
+                        <InputLabel for="tax" value="ITBIS Total"/>
                         <Money
                             class="inputGeneral"
                             readonly
@@ -257,7 +257,7 @@ const submit = () => {
                     </div>
                     <!--Balance total vendido en el rango de fecha-->
                     <div>
-                        <InputLabel for="productSold" value="Balance Total"/>
+                        <InputLabel for="amount" value="Balance Total"/>
                         <Money
                             class="inputGeneral"
                             readonly
@@ -267,7 +267,7 @@ const submit = () => {
 
                     <!--Balance total vendido en el rango de fecha-->
                     <div>
-                        <InputLabel for="productSold" value="Balance Neto"/>
+                        <InputLabel for="gross" value="Balance Neto"/>
                         <Money
                             class="inputGeneral"
                             readonly

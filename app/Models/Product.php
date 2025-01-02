@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ProductTypeEnum;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,50 +15,53 @@ use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
- * @property string $uuid
- * @property string $type
- * @property boolean $inventoried
- * @property boolean $status
- * @property string $code
- * @property string $name
- * @property null|string $description
- * @property string $unit
- * @property float $stock
- * @property float $reserved
- * @property float $cost
- * @property float $special_price
- * @property float $min_price
- * @property float $price
- * @property string $sku
- * @property string $bar_code
- * @property float $weight
- * @property string $dimensions
- * @property string $brand
- * @property float $tax_rate
- * @property float  $tax
- * @property float $discount
- * @property float $discount_amount
- * @property float $product_no_tax
- * @property float $benefits
- * @property string $comment
- * @property bool $close_table
- * @property  int $supplier_id
- * @property int $category_id
- * @property string $created_at
- * @property string $updated_at
- * @property Date $deleted_at
+ * @property string uuid
+ * @property string type
+ * @property boolean inventoried
+ * @property boolean status
+ * @property string code
+ * @property string name
+ * @property string description
+ * @property string unit
+ * @property float stock
+ * @property float reserved
+ * @property float cost
+ * @property float special_price
+ * @property float min_price
+ * @property float price
+ * @property string sku
+ * @property string bar_code
+ * @property float weight
+ * @property string dimensions
+ * @property string brand
+ * @property float tax_rate
+ * @property float tax
+ * @property float discount
+ * @property float discount_amount
+ * @property float product_no_tax
+ * @property float benefits
+ * @property string comment
+ * @property bool close_table
+ * @property  int supplier_id
+ * @property int category_id
+ * @property string created_at
+ * @property string updated_at
+ * @property Date deleted_at
  *
  * @method static create(mixed $validated)
  */
 class Product extends Model implements Auditable
 {
-    use Searchable;
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
     use softDeletes;
     use HasUuids;
 
 
+    /**
+     * Para el id de los datos
+     * @var string
+     */
     protected $primaryKey = 'uuid';
     protected $keyType = 'string';
     public $incrementing = false;
@@ -67,38 +71,36 @@ class Product extends Model implements Auditable
      * Datos para guardar automatico
      * @var string[]
      */
-    protected $guarded = [];
-//
-//    protected $fillable = [
-//        'code',
-//        'name',
-//        'description',
-//        'unit',
-//        'stock',
-//        'reserved',
-//        'cost',
-//        'special_price',
-//        'min_price',
-//        'price',
-//        'supplier_id',
-//        'category_id',
-//        'sku',
-//        'bar_code',
-//        'weight',
-//        'dimensions',
-//        'brand',
-//        'discount',
-//        'discount_amount',
-//        'product_tax',
-//        'benefits',
-//        'tax',
-//        'tax_rate',
-//        'status',
-//        'comment',
-//        'close_table',
-//        'type',
-//        'inventoried'
-//    ];
+    protected $fillable = [
+        'code',
+        'name',
+        'description',
+        'unit',
+        'stock',
+        'reserved',
+        'cost',
+        'special_price',
+        'min_price',
+        'price',
+        'supplier_id',
+        'category_id',
+        'sku',
+        'bar_code',
+        'weight',
+        'dimensions',
+        'brand',
+        'discount',
+        'discount_amount',
+        'product_tax',
+        'benefits',
+        'tax',
+        'tax_rate',
+        'status',
+        'comment',
+        'close_table',
+        'type',
+        'inventoried'
+    ];
 
 
     /**
@@ -106,7 +108,6 @@ class Product extends Model implements Auditable
      * @var string[]
      */
     protected $hidden = [
-        'status',
         'created_at',
         'update_at'
     ];
@@ -121,21 +122,6 @@ class Product extends Model implements Auditable
         'close_table' => 'boolean',
         'type' => ProductTypeEnum::class
     ];
-
-
-    /**
-     * @return string[]
-     */
-    public function toSearchableArray():array
-    {
-        return [
-            'bar_code' => $this->bar_code,
-            'name' => $this->name,
-            'description' => $this->description
-        ];
-    }
-
-
 
 
 //    protected function price():Attribute
@@ -165,6 +151,7 @@ class Product extends Model implements Auditable
 //            get: fn(float $value) => number_format($value,2)
 //        );
 //    }
+
 
 
 
