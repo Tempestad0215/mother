@@ -23,7 +23,7 @@ class ReportSaleController extends Controller
        $data =  ReportSaleHelper::repotSaleRange($from, $to, $typePayment);
 
        //Tranformar los datos
-        return Inertia::render('Reports/Sale/Index',[
+        return Inertia::render('Reports/Sale/SaleIndex',[
             'data' => $data['saleInfo'],
             'total' => $data['total'],
             'totalSold' => $data['totalSold'],
@@ -32,9 +32,6 @@ class ReportSaleController extends Controller
             'typePayment' => $request->get('typePayment'),
         ]);
     }
-
-
-
-//    public function repotSaleRange(Req)
+    
 
 }

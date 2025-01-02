@@ -23,35 +23,33 @@ class ProductHelper
     }
 
 
-
-
-    /**
-     * @param Request $request
-     * @return Paginator
-     */
-    public function get(Request $request):Paginator
+    public function get(Request $request)
     {
-        //Obtner los datos de busqueda
-        $search = $request->get('search');
+        //Obtuser los datos de búsqueda
+        $search = $request->get('search','');
         $perPage = $request->get('perPage',15);
 
         //Pasar los datos a la variable
-        return Product::where('status', '=',true)
-            ->where(function ($query) use ($search) {
-                $query->where('name', 'like',"%$search%")
-                    ->orWhereNull('name');
-            })->where(function (Builder $builder) {
-                $builder->where(function (Builder $q){
-                    $q->where('type', '=',ProductTypeEnum::PRODUCTO)
-                        ->where('stock', '>', 0);
-                })->orWhere(function (Builder $p){
-                   $p->where('type', '=',ProductTypeEnum::SERVICIO);
-                });
-            })
-            ->latest()
-            ->simplePaginate($perPage);
-    }
+        $data = Product::where('status', true)
+            ->where(function ($query) use (&$search) {
+                $query->where('name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('description', 'LIKE', '%' . $search . '%')
+                    ->orWhere('sku', 'LIKE', '%' . $search . '%');
+            })->simplePaginate($perPage);
 
+//            ->where(function (Builder $builder) {
+//                $builder->where('type', ProductTypeEnum::SERVICIO)
+//                    ->orWhere(function (Builder $query) {
+//                        $query->where('type', ProductTypeEnum::PRODUCTO)
+//                            ->where('stock','>',0);
+//                    });
+//            })->paginate();
+
+
+        dd($data);
+
+
+    }
 
 
 

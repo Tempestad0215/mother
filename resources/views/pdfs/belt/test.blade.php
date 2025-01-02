@@ -123,9 +123,6 @@
         <span>{{$sale->audits[0]->user->name}}</span>
     </div>
 
-
-
-
 </body>
 </html>
 

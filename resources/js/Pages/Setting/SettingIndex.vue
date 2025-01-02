@@ -35,7 +35,6 @@ Datos de la ventana
 const isSequence:Ref<boolean> = ref(false);
 
 
-
 /*
 Al momento de cargar
  */
@@ -72,8 +71,6 @@ onUpdated(() =>{
     }
 
 });
-
-
 
 
 /*
