@@ -19,13 +19,14 @@ export interface productI {
  */
 export interface productBaseI {
     uuid: string;
+    code: string;
     name: string;
     description: string | null;
     bar_code: string | null;
     sku: string | null;
     brand: string | null;
     dimensions: string | null;
-    proce: number;
+    process: number;
     unit: string;
     stock: number;
     cost: number;

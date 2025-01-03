@@ -44,10 +44,14 @@ const submit = () => {
     // Limpiar los errores
     form.clearErrors();
     // Enviar el formularios
-    form.get(`?search=${form.search}`,{
-        preserveScroll: true,
-        preserveState: true
+    router.get(``,{page:1, perPage:form.perPage, search:form.search},{
+        preserveState: true,
+        preserveScroll: true
     });
+    // form.get(`?page=1&perPage=${form.perPage}&search=${form.search}`,{
+    //     preserveScroll: true,
+    //     preserveState: true
+    // });
 
 
 }

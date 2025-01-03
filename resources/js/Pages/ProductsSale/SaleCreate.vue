@@ -484,7 +484,7 @@ const sendData = ():void => {
                         showReturn.value = false;
                     })
                     .catch((err) => {
-                       form.errors = err.response.data.errors;
+                        form.errors = err.response.data.errors;
                     });
 
             }
@@ -553,13 +553,10 @@ const getSaleOpen = (item:saleDataI) => {
             //Calcular el total
             totalAmount(index);
         })
-
     },2);
-
 
     //calcular el total de las ventas
     totalSale();
-
 
     //colocar los datos en el formulario
     form.client_id = item.client_id;

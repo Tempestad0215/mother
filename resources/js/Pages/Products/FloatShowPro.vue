@@ -7,6 +7,7 @@ import {router, useForm, usePage} from "@inertiajs/vue3";
 import Swal from "sweetalert2";
 import {successHttp} from "@/Global/Alert";
 import {getMoney} from "@/Global/Helpers";
+import {onMounted} from "vue";
 
 /**
  * Informacion de la ventana
@@ -20,6 +21,17 @@ const {auth} = props;
 const propsW = defineProps<{
     products: productI
 }>();
+
+
+onMounted(()=>{
+    //Tomar el parametros de buscar
+    const search:string = route().params.search;
+
+    //si existe el search
+    if(search){
+        form.search = search;
+    }
+});
 
 
 /**
@@ -43,10 +55,19 @@ const form = useForm({
  */
 // Funciones
 const submit = () => {
-    form.get( ``, {
+
+    router.get(``,{
+        page:1,
+        perPage:form.perPage,
+        search:form.search
+    },{
+        preserveState: true,
         preserveScroll: true,
-        preserveState: true
     });
+    // form.get( ``, {
+    //     preserveScroll: true,
+    //     preserveState: true
+    // });
 }
 
 
