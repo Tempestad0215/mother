@@ -83,14 +83,13 @@ class CreditNoteController extends Controller
 
 
             //DEvolver la vista y los datos
-            return Inertia::render('ProductsSale/Create', [
+            return Inertia::render('ProductsSale/SaleCreate', [
                 'products' => $dataSale['products'],
                 'clients' => $dataSale['clients'],
                 'saleOpen' => $dataSale['saleOpen'],
                 'invoiceType' => config('appconfig.invoiceType'),
                 'saleInfo' => $saleInfo,
                 'refund' => true,
-                'pdf' => ''
             ]);
         }
     }

@@ -77,7 +77,7 @@ const submit = () => {
 </script>
 
 <template>
-    <div class="bg-gray-200 p-5 rounded-lg">
+    <div class="bg-blue-300 p-5 rounded-lg">
         <h3
             class="title">
             Formulario Para Devolución
@@ -92,13 +92,18 @@ const submit = () => {
                     class="flex"
                     for="askReturn" value="Tipo de Consulta" />
                 <div class="flex justify-center">
-<!--                    <SelectButton-->
-<!--                        size="small"-->
-<!--                        v-model="form.type"-->
-<!--                        option-label="name"-->
-<!--                        option-value="value"-->
-<!--                        :options="options"-->
-<!--                        fluid/>-->
+                    <select
+                        class="inputGeneral py-1 w-full"
+                        v-model="form.type"
+                        name="askReturn"
+                        id="askReturn">
+                        <option
+                            v-for="(item, index) in options"
+                            :key="index"
+                            :value="item.value">
+                            {{item.name}}
+                        </option>
+                    </select>
                 </div>
 
             </div>

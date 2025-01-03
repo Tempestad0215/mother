@@ -17,6 +17,9 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductSaleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Middleware\IsAdminMiddleware;
+use App\Models\Sale;
+use App\Models\Setting;
+use Carbon\Carbon;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -295,5 +298,6 @@ Route::middleware([
     ->group(function (){
         Route::get('/','index')->name('index');
     });
+
 
 });

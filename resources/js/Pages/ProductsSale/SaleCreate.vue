@@ -426,18 +426,18 @@ const sendData = ():void => {
     if (propsW.refund)
     {
         // Enviar los datos para las devoluciones
-        form.patch(route('credit-note.store',{sale: form.id}),{
-            only: ['products','clients','saleOpen','invoiceType','pdf'],
-            onSuccess: () => {
-                form.reset();
-                successHttp('Nota de Credito Creada Correctamente');
-            },
-            onError:()=>{
-                setTimeout(()=>{
-                    form.clearErrors('general');
-                },3500);
-            }
-        });
+        // form.patch(route('credit-note.store',{sale: form.uuid}),{
+        //     only: ['products','clients','saleOpen','invoiceType','pdf'],
+        //     onSuccess: () => {
+        //         form.reset();
+        //         successHttp('Nota de Credito Creada Correctamente');
+        //     },
+        //     onError:()=>{
+        //         setTimeout(()=>{
+        //             form.clearErrors('general');
+        //         },3500);
+        //     }
+        // });
     }else{
         //Verificar si no hay problema con nada
         if (!returnedBlur() && form.close_table)
@@ -848,8 +848,15 @@ const getRncClient = async () => {
                                 <select
                                     class="inputGeneral py-0"
                                     v-model="form.type">
-                                    <option value="ventas" >CONTADO</option>
-                                    <option value="cotizacion" >CREDITO</option>
+                                    <option
+                                        :disabled="propsW.refund"
+                                        value="ventas" >CONTADO</option>
+                                    <option
+                                        :disabled="propsW.refund"
+                                        value="cotizacion" >CREDITO</option>
+                                    <option
+                                        :disabled="!propsW.refund"
+                                        value="devolucion" >Devolucion</option>
                                 </select>
                                 <InputError :message="form.errors.type"/>
                             </div>
@@ -1014,7 +1021,7 @@ const getRncClient = async () => {
             </form>
         </div>
 
-<!--                Ventana de Devuelta-->
+<!-- Ventana de Devuelta-->
         <FloatBox
             header="Retornos"
             @close="showReturn = false"
@@ -1032,8 +1039,7 @@ const getRncClient = async () => {
                />
         </FloatBox>
 
-            <!-- Mostrar flotante los clientes --->
-
+        <!-- Mostrar flotante los clientes --->
         <FloatBox
             header="Clientes"
             @close="showClient = false"
@@ -1046,7 +1052,6 @@ const getRncClient = async () => {
         </FloatBox>
 
         <!-- Ventana de productos-->
-
         <FloatBox
             header="Productos"
             @close="showProduct = false"
@@ -1070,8 +1075,7 @@ const getRncClient = async () => {
         </FloatBox>
 
 
-<!--            Formulario para la nota de credito-->
-
+        <!-- Formulario para la nota de credito-->
         <FloatBox
             header="Devolución"
             @close="showFormReturn = false"

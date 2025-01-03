@@ -11,7 +11,6 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
-use Milon\Barcode\DNS2D;
 use Spatie\LaravelPdf\Facades\Pdf;
 
 class InvoiceController extends Controller
@@ -35,13 +34,6 @@ class InvoiceController extends Controller
 
     public function beltSale(Sale $sale)
     {
-
-        //convertir a string
-//        $template = view('pdfs.test',[
-//            'setting' => Setting::first(),
-//            'sale' => $sale
-//        ])->render();
-
         //Para aumentar la altura de la pagina
         $height = 160;
 
@@ -62,11 +54,6 @@ class InvoiceController extends Controller
             ->paperSize(80, $height)
             ->name('test.pdf');
 
-
-//        Browsershot::html($template)
-//            ->paperSize(80,295)
-//            ->margins(2,2,2,2)
-//            ->savePdf(storage_path('/app/public/pdfs/test.pdf'));
     }
 
     /**

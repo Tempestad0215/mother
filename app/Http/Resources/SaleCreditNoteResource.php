@@ -16,27 +16,26 @@ use Illuminate\Support\Carbon;
 use Illuminate\Validation\ValidationException;
 
 /**
- * @property int $id
- * @property string $invoice_type
- * @property string $ncf
- * @property string $ncf_m
- * @property string $code
- * @property string $client_name
- * @property int $client_id
- * @property float $discount_amount
- * @property float $tax
- * @property float $sub_total
- * @property float $amount
- * @property boolean $status
- * @property SaleTypeEnum $type
- * @property bool $close_table
- * @property Carbon $created_at,
- * @property Carbon $updated_at
- * @property Carbon $deleted_at
- * @property ProTrans[] $infoSale
- * @property ProTrans[] $sale
- * @property ProTrans[] $trans
- * @property Comment $comment
+ * @property string uuid
+ * @property string invoice_type
+ * @property string ncf
+ * @property string ncf_m
+ * @property string client_name
+ * @property int client_id
+ * @property float discount_amount
+ * @property float tax
+ * @property float sub_total
+ * @property float amount
+ * @property boolean status
+ * @property SaleTypeEnum type
+ * @property bool close_table
+ * @property Carbon created_at,
+ * @property Carbon updated_at
+ * @property Carbon deleted_at
+ * @property ProTrans[] infoSale
+ * @property ProTrans[] sale
+ * @property ProTrans[] trans
+ * @property Comment comment
  */
 
 class SaleCreditNoteResource extends JsonResource
@@ -77,12 +76,12 @@ class SaleCreditNoteResource extends JsonResource
             //Verificar si el stock == 0
             if ($stockAmount > 0) {
 
+
                 //Crear la informacion
                 $info[] = [
-                    "id" => $item['id'],
-                    "code" => $productFirst->code,
+                    "id" => $item['uuid'],
                     "sale_id" => $item['sale_id'],
-                    "product_id" => $productFirst->id,
+                    "product_id" => $productFirst->uuid,
                     "credit_note_id" => null,
                     "product_name" => $productFirst->name,
                     "stock" => $stockAmount ?: $item['stock'],
@@ -167,14 +166,12 @@ class SaleCreditNoteResource extends JsonResource
             ]);
         }
 
-
         //Devolver los datos formateado
         return [
-            "id" => $this->id,
+            "id" => $this->uuid,
             "invoice_type" => $this->invoice_type,
             "ncf" => $this->ncf,
             "ncf_m" => $this->ncf_m,
-            "code" => $this->code,
             "client_name" => $this->client_name,
             "client_id" => $this->client_id,
             "discount_amount" => $this->discount_amount,
