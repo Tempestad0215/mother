@@ -174,7 +174,7 @@ class Product extends Model implements Auditable
     //Transacciones
     public function trans():HasMany
     {
-        return $this->hasMany(ProTrans::class);
+        return $this->hasMany(ProTrans::class, 'product_id','uuid');
     }
 
 }

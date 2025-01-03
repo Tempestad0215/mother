@@ -53,7 +53,6 @@ const sequenceData:Ref<sequenceDataI | undefined> = ref(undefined);
 const showClientRnc:Ref<boolean> = ref(false);
 const showReturn:Ref<boolean> = ref(false);
 const showFormReturn:Ref<boolean> = ref(false);
-const errors = ref<string[] | null>(null);
 
 
 /*
@@ -426,18 +425,18 @@ const sendData = ():void => {
     if (propsW.refund)
     {
         // Enviar los datos para las devoluciones
-        // form.patch(route('credit-note.store',{sale: form.uuid}),{
-        //     only: ['products','clients','saleOpen','invoiceType','pdf'],
-        //     onSuccess: () => {
-        //         form.reset();
-        //         successHttp('Nota de Credito Creada Correctamente');
-        //     },
-        //     onError:()=>{
-        //         setTimeout(()=>{
-        //             form.clearErrors('general');
-        //         },3500);
-        //     }
-        // });
+        form.patch(route('credit-note.store',{sale: form.id}),{
+            only: ['products','clients','saleOpen','invoiceType','pdf'],
+            onSuccess: () => {
+                form.reset();
+                successHttp('Nota de Credito Creada Correctamente');
+            },
+            onError:()=>{
+                setTimeout(()=>{
+                    form.clearErrors('general');
+                },3500);
+            }
+        });
     }else{
         //Verificar si no hay problema con nada
         if (!returnedBlur() && form.close_table)

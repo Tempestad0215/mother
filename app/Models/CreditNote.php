@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\TypePaymentEnum;
 use App\Enums\SaleTypeEnum;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
 /**
- * @property int $id
+ * @property string $uuid
  * @property string $code
  * @property string $ncf
  * @property string $ncf_m
@@ -39,6 +40,14 @@ use Illuminate\Support\Carbon;
 class CreditNote extends Model
 {
     use SoftDeletes;
+    use HasUuids;
+
+
+
+    protected $primaryKey = 'uuid';
+    protected $keyType = 'string';
+    public $incrementing = false;
+
 
 
     // La tabla que se ve a utilizar

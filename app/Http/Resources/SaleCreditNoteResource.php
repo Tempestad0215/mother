@@ -79,20 +79,22 @@ class SaleCreditNoteResource extends JsonResource
 
                 //Crear la informacion
                 $info[] = [
-                    "id" => $item['uuid'],
-                    "sale_id" => $item['sale_id'],
-                    "product_id" => $productFirst->uuid,
-                    "credit_note_id" => null,
-                    "product_name" => $productFirst->name,
-                    "stock" => $stockAmount ?: $item['stock'],
-                    "price" => $item['price'],
-                    "tax_rate" => $item['tax_rate'],
-                    "tax" => $item['tax'],
-                    "amount" => $item['amount'],
-                    "discount" => $item['discount'],
-                    "discount_amount" => $item['discount_amount'],
-                    "type" => SaleTypeEnum::VENTAS->value,
-                    "status" => $item['status']
+                    'id' => $item['uuid'],
+                    'sale_id' => $item['sale_id'],
+                    'product_id' => $productFirst->uuid,
+                    'credit_note_id' => null,
+                    'product_name' => $productFirst->name,
+                    'stock' => $stockAmount ?: $item['stock'],
+                    'price' => $item['price'],
+                    'special_price' => $item['special_price'],
+                    'min_price' => $item['min_price'],
+                    'tax_rate' => $item['tax_rate'],
+                    'tax' => $item['tax'],
+                    'amount' => $item['amount'],
+                    'discount' => $item['discount'],
+                    'discount_amount' => $item['discount_amount'],
+                    'type' => SaleTypeEnum::VENTAS->value,
+                    'status' => $item['status']
                 ];
             }
 

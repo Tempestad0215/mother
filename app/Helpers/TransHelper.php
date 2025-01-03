@@ -26,8 +26,11 @@ class TransHelper
         //Verificar si existe la transcciones antiguia
         $transOld = ProTrans::find($transId);
 
+
         //Verificar si existe o no
         $proTrans = $transOld && $type == ProductTransType::RESERVA ? $transOld : new ProTrans();
+
+
 
 
         //Crear la transacion
