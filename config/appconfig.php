@@ -48,20 +48,25 @@ return  [
     /*
      * Codigo de los modelos
      */
-    'proCode' => 'PRO',
-    'saleCode' => 'FACT',
+    'accCode' => 'CUN',
+    'product' => 'PRO',
+    'saleCode' => 'FAC',
     'quoCode' => 'COT',
     'saleRet' => 'DEV',
-    'transCode' => 'TRA',
+    'proTrans' => 'TRA',
     'cliCode' => 'CLI',
     'catCode' => 'CAT',
-    'supCode' => 'SUP',
+    'supplier' => 'SUP',
     'creCode' => 'CRE',
     'advCode' =>  'ADV',
     'coCode' => 'COM',
     'deSale' => 'CAN',
     'seqCode' => 'SEQ',
     'couCode' => 'CON',
+    'delSale' => 'VCA',
+    'exchange' => 'CAM',
+    'counter' => 'MON',
+    'purchase' => 'COM',
 
 
 

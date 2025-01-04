@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://cdn.tailwindcss.com"></script>
-    <title>Document</title>
+    <title>Devolución</title>
 </head>
 <body class="max-w-[80mm]">
 
@@ -14,7 +14,7 @@
 {{--        src="{{public_path('logo.jpeg')}}" alt="">--}}
 {{--  Informacion de la empresa   --}}
 <h3 class="text-xl text-center">{{$setting->name}}</h3>
-<div class="text-xs text-center border-b border-black">
+<div class="text-xs text-center border-b ">
     <p>{{$setting->email}}</p>
     <p>{{$setting->phone}}</p>
     <p>{{$setting->address}}</p>
@@ -26,36 +26,41 @@
     {{--    Fecha de documento    --}}
     <p>
         Fecha Documento:
-        <span>{{$sale->created_at}}</span>
+        <span>{{$creditNote->created_at}}</span>
     </p>
     {{--    Si existe    --}}
     <p >
         Cliente:
-        <span>{{$sale->client_name}}</span>
+        <span>{{$creditNote->client_name}}</span>
     </p>
     {{--    Si existe    --}}
-    @if( isset($sale->client_rnc))
+    @if( isset($creditNote->client_rnc))
         <p>
             RNC:
-            <span>{{$sale->client_rnc}}</span>
+            <span>{{$creditNote->client_rnc}}</span>
         </p>
     @endif
 </div>
+
+{{--Titulo de la factura--}}
+<h3 class="border-b border-t font-bold text-center ">
+    Devolución
+</h3>
 
 {{--    Datos del productos--}}
 <table
     class="w-full table-fixed mt-2">
     <thead>
     <tr
-        class="border-t border-b border-black">
+        class="border-t border-b ">
         <th class="w-[40mm] max-w-[40mm]">Descripción</th>
         <th class="w-[28mm] max-w-[18mm]" >Itbis</th>
         <th class="w-[18mm] max-w-[18mm]" >Valor</th>
     </tr>
     </thead>
     <tbody class="text-xs">
-    @foreach($sale->infoSale as $products )
-        <tr class="border-b border-black">
+    @foreach($creditNote->trans as $products )
+        <tr class="border-b ">
             <td>
                 <p>{{$products->stock}} x {{number_format($products->price,2)}}</p>
                 <p>{{$products->product_name}}</p>
@@ -76,36 +81,26 @@
     <tbody>
     <tr>
         <th class="text-right">Itbis :</th>
-        <td>{{number_format($sale->tax,2)}}</td>
+        <td>{{number_format($creditNote->tax,2)}}</td>
     </tr>
     <tr>
         <th class="text-right">Sub Total :</th>
-        <td>{{number_format($sale->sub_total,2)}}</td>
+        <td>{{number_format($creditNote->sub_total,2)}}</td>
     </tr>
     <tr>
         <th class="text-right">Decuento :</th>
-        <td>{{number_format($sale->discount_amount,2)}}</td>
+        <td>{{number_format($creditNote->discount_amount,2)}}</td>
     </tr>
     <tr>
         <th class="text-right">Total :</th>
-        <td class="" >{{ number_format($sale->amount,2)}}</td>
+        <td class="" >{{ number_format($creditNote->amount,2)}}</td>
     </tr>
     </tbody>
 </table>
 
 
-{{--Informacion de pago y devuelta--}}
-<h3 class="border-t border-b border-black text-center">
-    Información de pago
-</h3>
-<div class="text-sm">
-    <p> <strong>Tipo de pago : </strong> {{$sale->type_payment->name}}</p>
-    <p> <strong>Pagó con :</strong> {{number_format($sale->received,2)}}</p>
-    <p> <strong>Devuelta :</strong> {{number_format($sale->returned,2)}}</p>
-</div>
-
 {{--    Comentario y datos finales--}}
-<div class="text-sm mt-3 border-t border-black">
+<div class="text-sm mt-3 border-t ">
     <p>
             <span class="font-bold">
                 Nota Importante:
@@ -115,22 +110,25 @@
 </div>
 
 {{--    Informaciond el comentario--}}
-<div class="text-sm mt-3 border-t border-b border-black">
+<div class="text-sm mt-3 border-t border-b ">
     <p>
         <span class="font-bold">Comentario:</span>
-        {{$sale->comment->content}}
+        {{$creditNote->comment->content}}
     </p>
 </div>
 
 {{--Codigo de barra--}}
-<div class=" text-center w-[90%] mx-auto mt-3">
-    {!! DNS1D::getBarcodeHtml($sale->code ,'C128') !!}
-    <spa>* {{$sale->code}} *</spa>
+<div class="mt-3 text-center">
+    <div class="relative pl-[13%]">
+        {!! DNS1D::getBarcodeHtml($creditNote->code ,'C128') !!}
+    </div>
+
+    <span>* {{$creditNote->code}} *</span>
 </div>
 
 
-<div class="border-t border-black text-sm">
-    <p>Le Atendió : {{$sale->audits[0]->user->name}} </p>
+<div class="border-t  text-sm">
+{{--    <p>Le Atendió : {{$creditNote->audits[0]->user->name}} </p>--}}
     <p>Impresión : {{$datePrint}}</p>
 </div>
 

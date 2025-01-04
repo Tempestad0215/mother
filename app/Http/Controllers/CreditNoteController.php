@@ -98,21 +98,25 @@ class CreditNoteController extends Controller
     /**
      * @param StoreProductSaleRequest $request
      * @param Sale $sale
-     * @return RedirectResponse
+     * @return JsonResponse
      */
-    public function store(StoreProductSaleRequest $request, Sale $sale):RedirectResponse
+    public function store(StoreProductSaleRequest $request, Sale $sale):JsonResponse
     {
 
         //Intancia
         $creditNoteHelper = new CreditNoteHelper();
 
         //Llamar el metodo
-        $creditNoteHelper->creditNoteStore($request, $sale);
+        $creditNote = $creditNoteHelper->creditNoteStore($request, $sale);
 
-        return redirect()->route('sale.create');
+        //Devolver el json con el id para imprimir
+        return response()->json([
+            'success' => true,
+            'uuid' => $creditNote->uuid,
+            'message' => 'Registro Creado Correctamente'
+        ]);
 
     }
-
 
     /**
      * @param string $code

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('suppliers', function (Blueprint $table) {
             $table->uuid()->primary();
+            $table->string('code',30)->unique()->comment('codigo unido para cada registro');
             $table->string('contact',75)->nullable();
             $table->string('company_name',150);
             $table->enum('type_payment',['contado','credito','cheque','tarjeta','transferencia','anticipo','otros']);

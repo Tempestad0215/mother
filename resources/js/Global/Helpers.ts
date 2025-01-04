@@ -235,9 +235,9 @@ export const paginationJoin = (url:string, search:string, perPage:number) => {
 
 /**
  * Para imprimir los pdf
- * @param uuid
+ * @param urlName
  */
-export const printPdf = (uuid: string) => {
+export const printPdf = (urlName: string) => {
     const width:number = 800; // Ancho predeterminado
     const height:number = 600; // Altura predeterminada
 
@@ -251,7 +251,7 @@ export const printPdf = (uuid: string) => {
     const popupFeatures = `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,resizable=yes`;
 
     //crea la ventana de impresion
-    const printWindow = window.open(route('invoice.belt.sale',{sale: uuid}),'_blank', popupFeatures);
+    const printWindow = window.open(urlName,'_blank', popupFeatures);
 
     //Error de la cosas
     if (!printWindow) {

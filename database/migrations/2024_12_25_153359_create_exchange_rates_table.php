@@ -9,6 +9,7 @@ return new class extends Migration {
     {
         Schema::create('exchange_rates', function (Blueprint $table) {
             $table->uuid()->primary();
+            $table->string('code',30)->unique();
             $table->json('rate_info');
             $table->integer('month');
             $table->integer('year');

@@ -14,6 +14,7 @@ return new class extends Migration
     {
         Schema::create('advances', function (Blueprint $table) {
             $table->uuid()->primary();
+            $table->string('code',30)->unique();
             $table->foreignUuid(Client::class);
             $table->decimal('amount');
             $table->date('date');

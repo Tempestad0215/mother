@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Invoices\InvoiceCounterB5;
 use App\Invoices\SaleInvoiceA;
+use App\Models\CreditNote;
 use App\Models\MoneyCounter;
 use App\Models\Sale;
 use App\Models\Setting;
@@ -54,6 +55,28 @@ class InvoiceController extends Controller
             ->paperSize(80, $height)
             ->name('test.pdf');
 
+    }
+
+
+    public function beltNote(CreditNote $creditNote)
+    {
+
+        //Para aumentar la altura de la pagina
+        $height = 140;
+
+        //Para manejar de forma sencilla los datos
+        $infoSale = collect($creditNote->trans);
+
+        //Incrementar el tamaño
+        $infoSale->each(function () use (&$height) {
+            $height += 13;
+        });
+
+        return Pdf::view('pdfs.belt.CreditNote',[
+            'setting' => Setting::first(),
+            'creditNote' => $creditNote,
+            'datePrint' => Carbon::now()->format('d/m/y H:i:s')
+        ])->paperSize(80, $height);
     }
 
     /**

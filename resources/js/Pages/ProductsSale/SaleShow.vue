@@ -52,7 +52,7 @@ const submit = () => {
 const printFact =  (item:saleI) => {
     if (item.close_table)
     {
-        printPdf(item.uuid);
+        printPdf(route('invoice.belt.sale',{sale: item.uuid}));
     }else{
         Swal.fire({
             title: "Error",

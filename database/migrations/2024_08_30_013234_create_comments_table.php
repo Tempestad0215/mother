@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('comments', function (Blueprint $table) {
             $table->uuid()->primary();
+            $table->string('code',30)->unique();
             $table->text('content');
             $table->uuidMorphs('commentable');
             $table->boolean('status')->default(true);

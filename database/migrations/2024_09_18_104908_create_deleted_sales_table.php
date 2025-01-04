@@ -10,6 +10,7 @@ return new class extends Migration {
     {
         Schema::create('deleted_sales', function (Blueprint $table) {
             $table->uuid()->primary();
+            $table->string('code',30)->unique();
             $table->foreignUuid(Sale::class);
             $table->decimal('discount_amount')->default(0);
             $table->decimal('tax');

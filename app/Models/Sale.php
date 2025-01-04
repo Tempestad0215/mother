@@ -18,6 +18,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 /**
  * @property string uuid
  * @property string code
+ * @property string invoice_type
  * @property string ncf
  * @property string ncf_m
  * @property string client_rnc
@@ -161,12 +162,10 @@ class Sale extends Model implements Auditable
         parent::boot();
 
         //Generar el codigo los codigos
-        static::creating(function ($sale) {
-            $sale->code = self::generateCode();
+        static::creating(function ($model) {
+            $model->code = self::generateCode();
         });
     }
-
-
 
     /**
      * @return string
@@ -176,8 +175,6 @@ class Sale extends Model implements Auditable
     {
         // Obtener el ultimo registros
         $total = self::count();
-
-
 
         // Generar el proximo ID
         $nextID = $total ? $total + 1 : 1;

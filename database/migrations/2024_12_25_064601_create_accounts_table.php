@@ -9,6 +9,7 @@ return new class extends Migration {
     {
         Schema::create('accounts', function (Blueprint $table) {
             $table->uuid()->primary();
+            $table->string('code', 30)->unique();
             $table->uuidMorphs('accountable');
             $table->enum('type',['payable','receivable']);
             $table->decimal('amount',15);

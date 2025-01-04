@@ -9,6 +9,7 @@ return new class extends Migration {
     {
         Schema::create('images', function (Blueprint $table) {
             $table->uuid()->primary();
+            $table->string('code',30)->unique();
             $table->string('name');
             $table->uuidMorphs('imageable');
             $table->timestamps();

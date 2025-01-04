@@ -21,12 +21,12 @@ class CreditNoteHelper
     /**
      * @param StoreProductSaleRequest $request
      * @param Sale $sale
-     * @return void
+     * @return CreditNote
      */
-    public function creditNoteStore(StoreProductSaleRequest $request, Sale $sale):void
+    public function creditNoteStore(StoreProductSaleRequest $request, Sale $sale): CreditNote
     {
         //Asegurar que los procesos se cumplan
-        DB::transaction(function () use ($request, $sale) {
+         return DB::transaction(function () use ($request, $sale) {
 
             //Convertir a collection
             $infoCollect = collect($request->get('info_sale'));
@@ -81,17 +81,15 @@ class CreditNoteHelper
                 $result  =  $saleInfo['stock'] - $item['stock'];
 
 
-                //TODO Fue comentado para verificar la devoluicion de servicio
                 //Si el producto es de servicio el resultado debe ser 0
-//                if ($product->type == ProductTypeEnum::SERVICIO && $result != 0)
-//                {
-//                    // Devolver error si no coincide
-//                    throw ValidationException::withMessages([
-//                        'general' => "Por Favor, No Puede Modificar La Cantidad Del Item: $product->name"
-//                    ]);
-//
-//                }else
-                if ($result < 0)
+                if ($product->type == ProductTypeEnum::SERVICIO && $result != 0)
+                {
+                    // Devolver error si no coincide
+                    throw ValidationException::withMessages([
+                        'general' => "Por Favor, No Puede Modificar La Cantidad Del Item: $product->name"
+                    ]);
+
+                }else if ($result < 0)
                 {
                     // Devolver error si no coincide
                     throw  ValidationException::withMessages([
@@ -159,8 +157,8 @@ class CreditNoteHelper
                 ]);
             }
 
-            //DEvolver exito
-            return redirect()->route('sale.create');
+            //Devolver el dato para el json
+            return $creditNote;
         });
 
     }
@@ -263,5 +261,7 @@ class CreditNoteHelper
 
 
     }
+
+
 
 }

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('money_counter', function (Blueprint $table) {
             $table->uuid()->primary();
+            $table->string('code',30)->unique();
             $table->date('from');
             $table->date('to');
             $table->decimal('coin_first')->default(0);

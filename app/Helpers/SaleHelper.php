@@ -13,6 +13,7 @@ use App\Models\DeletedSale;
 use App\Models\Product;
 use App\Models\ProTrans;
 use App\Models\Sale;
+use App\Models\Setting;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
@@ -54,6 +55,7 @@ class SaleHelper
         //Para asegurar que se cumplan los registro
          return DB::transaction(function () use ($request) {
             //Obtener la configuracion
+             $setting = Setting::first();
 
             //Incrementar la secuencia enviada
             SequenceHelper::incrementSequence(SequenceTypeEnum::from($request->get('invoice_type')));
@@ -66,6 +68,7 @@ class SaleHelper
             // Crear la venta
             $sale = Sale::create([
                 'client_name' => $request->get('client_name'),
+                'invoice_type' => $setting->sequence ? $request->get('invoice_type') : null,
                 'client_id' => $request->get('client_id') ?: null,
                 'client_rnc' => $request->get('client_rnc'),
                 'ncf' => $request->get('ncf'),

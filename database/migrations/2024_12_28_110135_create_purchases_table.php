@@ -9,6 +9,7 @@ return new class extends Migration {
     {
         Schema::create('purchases', function (Blueprint $table) {
             $table->uuid()->primary();
+            $table->string('code',30)->unique()->comment('codigo unido para cada registro');
             $table->uuid('supplier_id')->comment('Relacion con el suplidor de la orden');
             $table->json('info')->comment('information del pedido');
             $table->decimal('amount')->comment('valor total de la compra');

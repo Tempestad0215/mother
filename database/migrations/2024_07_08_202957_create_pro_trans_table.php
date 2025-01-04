@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('pro_trans', function (Blueprint $table) {
             $table->uuid()->primary();
+            $table->string('code',30)->unique();
             $table->foreignUuid('sale_id')
                 ->nullable();
             $table->foreignUuid('product_id');

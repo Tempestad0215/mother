@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {Head, useForm, usePage} from "@inertiajs/vue3";
+import {Head, router, useForm, usePage} from "@inertiajs/vue3";
 import AppLayout from "@layout/AppLayout.vue";
 import InputLabel from "@components/InputLabel.vue";
 import TextInput from "@components/TextInput.vue";
@@ -13,7 +13,7 @@ import InputError from "@components/InputError.vue";
 import {clientBaseI, clientDataI} from "@/Interfaces/Client";
 import FloatShowCli from "@/Pages/Clients/FloatShowCli.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
-import { successHttp} from "@/Global/Alert";
+import {errorHttp, successHttp} from "@/Global/Alert";
 import axios from "axios";
 import SaleOpenShow from "@/Pages/ProductsSale/SaleOpenShow.vue";
 import {creditNotesSaleI, infoSaleI, saleDataI, saleDataPaginationI} from "@/Interfaces/Sale";
@@ -146,6 +146,8 @@ const setDataForm = () => {
         form.id = propsW.saleInfo.id;
         form.ncf_m = propsW.saleInfo.ncf;
         form.client_name = propsW.saleInfo.client_name;
+        form.client_id = propsW.saleInfo.client_id;
+        form.client_rnc = propsW.saleInfo.client_rnc;
         form.info_sale = propsW.saleInfo.info_sale;
         form.invoice_type = page.props.setting.sequence ? "B04" : "";
         form.type = "devolucion";
@@ -425,18 +427,19 @@ const sendData = ():void => {
     if (propsW.refund)
     {
         // Enviar los datos para las devoluciones
-        form.patch(route('credit-note.store',{sale: form.id}),{
-            only: ['products','clients','saleOpen','invoiceType','pdf'],
-            onSuccess: () => {
-                form.reset();
-                successHttp('Nota de Credito Creada Correctamente');
-            },
-            onError:()=>{
-                setTimeout(()=>{
-                    form.clearErrors('general');
-                },3500);
-            }
-        });
+        axios.patch(route('credit-note.store',{sale: form.id}),form)
+            .then(res => {
+                if (res.data.success)
+                {
+                    //Imprimir el pdf
+                    printPdf(route('invoice.belt.note',{creditNote: res.data.uuid}));
+                    //Limpiar el pdf
+                    router.get(route('sale.create'));
+                }
+            })
+            .catch(err => {
+                errorHttp('Error :' + err.response.data.message);
+            });
     }else{
         //Verificar si no hay problema con nada
         if (!returnedBlur() && form.close_table)
@@ -455,7 +458,7 @@ const sendData = ():void => {
                             if (form.close_table)
                             {
                                 //Mostrar el pdf de impresion
-                                printPdf(res.data.pdfUuid);
+                                printPdf(route('invoice.belt.sale', {sale: res.data.pdfUuid}));
                             }
                             // Limpiar el formulario
                             form.reset();
