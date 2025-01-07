@@ -112,10 +112,10 @@ const submit = () => {
                 :href="route('supplier.show')">
                 Mostrar
             </TabLink>
-            <TabLink
-                :href="route('purchase.index')">
-                Compras
-            </TabLink>
+<!--            <TabLink-->
+<!--                :href="route('purchase.index')">-->
+<!--                Compras-->
+<!--            </TabLink>-->
 
 
         </template>

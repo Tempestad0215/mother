@@ -17,40 +17,40 @@ class RoleSeeder extends Seeder
         //Permisos
         $dashboard = Permission::create([
             'name' => 'dashboard',
-            'guard_name' => 'api']);
+            ]);
         $create = Permission::create([
             'name' => 'create',
-            'guard_name' => 'api']);
+            ]);
         $update = Permission::create([
             'name' => 'update',
-            'guard_name' => 'api']);
+            ]);
         $insert = Permission::create([
             'name' => 'insert',
-            'guard_name' => 'api']);
+            ]);
         $delete = Permission::create([
             'name' => 'delete',
-            'guard_name' => 'api']);
+            ]);
         $setting = Permission::create([
             'name' => 'setting',
-            'guard_name' => 'api']);
+            ]);
         $sequence = Permission::create([
             'name' => 'sequence',
-            'guard_name' => 'api']);
+            ]);
         $products = Permission::create([
             'name' => 'products',
-            'guard_name' => 'api']);
+            ]);
         $categories = Permission::create([
             'name' => 'categories',
-            'guard_name' => 'api']);
+            ]);
         $clients = Permission::create([
             'name' => 'clients',
-            'guard_name' => 'api']);
+            ]);
         $inventoy = Permission::create([
             'name' => 'inventory',
-            'guard_name' => 'api']);
+            ]);
         $sale = Permission::create([
             'name' => 'sale',
-            'guard_name' => 'api']);
+            ]);
 
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 

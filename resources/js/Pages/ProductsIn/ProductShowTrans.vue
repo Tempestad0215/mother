@@ -2,7 +2,7 @@
 import {Head, router, useForm} from "@inertiajs/vue3";
 import AppLayout from "@layout/AppLayout.vue";
 import {productTransPI} from "@/Interfaces/Product";
-import {formatNumberPlane, getMoney} from "@/Global/Helpers";
+import { getMoney} from "@/Global/Helpers";
 import FormSearch from "@components/FormSearch.vue";
 import Pagination from "@components/Pagination.vue";
 import InputError from "@components/InputError.vue";
@@ -48,7 +48,7 @@ const submit = () => {
 // }
 
 //Eliminar la transaccion
-const destroy = (id:number) => {
+const destroy = (uuid:string) => {
     Swal.fire({
         title: "Desea Eliminar?",
         text: "Los Cambios Realizados Son Irreversible!",
@@ -60,7 +60,7 @@ const destroy = (id:number) => {
         cancelButtonText: "Cancelar"
     }).then((result) => {
         if (result.isConfirmed) {
-            router.patch(route('in.destroy',{trans: id}),{},{
+            router.patch(route('in.destroy',{trans: uuid}),{},{
                 preserveScroll: true,
                 preserveState: true,
                 onSuccess: () => {
@@ -127,7 +127,7 @@ const destroy = (id:number) => {
                 <tbody>
                     <tr v-for="(item) in props.trans.data">
                         <td>{{item.product_name}}</td>
-                        <td>{{ formatNumberPlane(item.stock)}}</td>
+                        <td>{{ item.stock}}</td>
                         <td>{{ getMoney(item.tax)}}</td>
                         <td>{{ getMoney(item.price)}}</td>
                         <td>{{ item.type}}</td>
@@ -138,7 +138,7 @@ const destroy = (id:number) => {
                             </span>
                             <i
                                 v-if="item.type == 'entrada'"
-                                @click="destroy(item.id)"
+                                @click="destroy(item.uuid)"
                                 class=" icon-efect ml-3 fa-solid fa-trash"></i>
                         </td>
                     </tr>

@@ -13,6 +13,7 @@ import {successHttp} from "@/Global/Alert";
 import FormSearch from "@components/FormSearch.vue";
 import Pagination from "@components/Pagination.vue";
 import {paginationJoin} from "@/Global/Helpers";
+import ToggleButton from "@components/ToggleButton.vue";
 
 
 /*
@@ -109,9 +110,6 @@ const submit = () => {
 // editar los datos
 const edit = (item:userI) => {
 
-    console.log(item);
-
-
     //Pasar los datos al formulario
     form.id = item.id;
     form.name = item.name;
@@ -161,7 +159,7 @@ const search = () => {
         </template>
 
         <form
-            class="bg-gray-200 p-5 rounded-md grid grid-cols-2 gap-3"
+            class="bg-blue-300 max-w-[70rem] p-5 rounded-md grid grid-cols-2 gap-3"
             @submit.prevent="submit">
 
             <h3 class="text-3xl font-bold text-center col-span-full ">
@@ -199,21 +197,28 @@ const search = () => {
                 class="flex-1">
                 <InputLabel for="modifyPassoword" value="Modificar Contraseña" />
                 <ToggleButton
+                    label="Modificar Password"
+                    on-label="SI"
                     v-model="form.modify_password"
-                    onLabel="SI"
-                    offLabel="NO" />
+                    off-label="NO"/>
 
             </div>
 
             <!-- Rol de usuarios -->
             <div class="flex-1">
                 <InputLabel for="role" value="Rol *"  />
-                <Select
-                    :options="role"
+                <select
+                    class="inputGeneral py-1 w-full"
                     v-model="form.role"
-                    option-label="label"
-                    option-value="name"
-                    fluid/>
+                    name="role"
+                    id="role">
+                    <option
+                        v-for="(item, index) in role"
+                        :key="index"
+                        :value="item.name">
+                        {{ item.label}}
+                    </option>
+                </select>
 
                 <!-- Mensaje de error -->
                 <InputError class="mt-2" :message="form.errors.role" />
@@ -261,7 +266,7 @@ const search = () => {
             </div>
         </form>
 
-        <div class=" rounded-md px-5">
+        <div class=" rounded-md p-5 bg-blue-300 mt-3">
             <form
 
                 @submit.prevent="search">

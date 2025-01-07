@@ -7,11 +7,9 @@ use App\Http\Resources\SupplierResource;
 use App\Models\Supplier;
 use App\Http\Requests\StoreSupplierRequest;
 use App\Http\Requests\UpdateSupplierRequest;
-use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
-use phpDocumentor\Reflection\Types\Mixed_;
 
 class SupplierController extends Controller
 {
@@ -126,9 +124,7 @@ class SupplierController extends Controller
     {
 
         // Actualizar los datos
-        $supplier->update([
-            'deleted_at' => now()
-        ]);
+        $supplier->delete();
 
         //Devolver hacia atras
         return back();

@@ -23,13 +23,14 @@ defineProps({
 
 const menuImageRef = ref<HTMLElement | null>(null);
 const showExchange = ref<boolean>(false);
-
 /*
 Al momento de cargar
  */
 onMounted(()=>{
    document.addEventListener("click", handleClick);
 
+
+    console.log(window.location.pathname)
     //Ventana de cambio
     showExchangeWindow();
 });
@@ -44,6 +45,14 @@ onUnmounted(() => {
     showExchangeWindow();
 })
 
+
+/**
+ * funciones computada
+ */
+
+const isActive = (url:string):boolean => {
+    return  window.location.pathname.startsWith(url);
+}
 
 
 /*
@@ -87,41 +96,48 @@ const showOption = ref<boolean>(false);
 
             <div class="space-y-2">
                 <LinkHeader
+                    :class="{'link-active': isActive('/client')}"
                     title="Clientes"
                     :href="route('client.create')">
                     Clientes
                     <i class=" fa-solid fa-user"></i>
                 </LinkHeader>
                 <LinkHeader
+                    :class="{'link-active': isActive('/category')}"
                     title="Categorias"
                     :href="route('category.create')">
                     Categorias
                     <i class="fa-solid fa-code-branch"></i>
                 </LinkHeader>
                 <LinkHeader
+                    :class="{'link-active': isActive('/supplier')}"
                     title="Suplidores"
                     :href="route('supplier.create')">
                     Suplidores
                     <i class="fa-solid fa-truck-field"></i>
                 </LinkHeader>
                 <LinkHeader
+                    :class="{'link-active': isActive('/product')}"
                     title="Productos"
                     :href="route('product.create')">
                     Productos
                     <i class="fa-solid fa-boxes-packing"></i>
                 </LinkHeader>
                 <LinkHeader
+                    :class="{'link-active': isActive('/sale')}"
                     title="Ventas"
                     :href="route('sale.create')">
                     Ventas
                     <i class="fa-solid fa-cash-register"></i>
                 </LinkHeader>
                 <LinkHeader
+                    :class="{'link-active': isActive('/report')}"
                     title="Ventas"
                     :href="route('report-sale.index')">
                     Reportes
                     <i class="fa-solid fa-clipboard"></i>
                 </LinkHeader>
+
             </div>
 
         </aside>

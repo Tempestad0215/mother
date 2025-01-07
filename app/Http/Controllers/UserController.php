@@ -9,7 +9,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
-use Illuminate\Validation\Rules\Unique;
 
 class UserController extends Controller
 {
@@ -56,13 +55,8 @@ class UserController extends Controller
                 'role' => ['required',Rule::enum(UserRoleEnum::class)],
             ]);
         }
-
-
-        ;
-
         //Actualziar los datos
         $user->update($validated);
-
         //Retornar hacia atras
         return back();
     }

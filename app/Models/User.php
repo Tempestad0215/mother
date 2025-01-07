@@ -28,7 +28,6 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements Auditable
 {
-    use Searchable;
     use HasApiTokens;
     use HasFactory;
     use HasProfilePhoto;
@@ -43,6 +42,9 @@ class User extends Authenticatable implements Auditable
     protected $primaryKey = 'uuid';
     public $incrementing = false;
     protected $keyType = 'string';
+
+
+    protected $guard_name = 'web';
 
     /**
      * The attributes that are mass assignable.
@@ -89,16 +91,4 @@ class User extends Authenticatable implements Auditable
     }
 
 
-    /**
-     * Para buscar los datos
-     * @return array
-     */
-    public function toSearchableArray():array
-    {
-        return [
-            'name' => $this->name,
-            'email' => $this->email,
-            'role' => $this->role,
-        ];
-    }
 }

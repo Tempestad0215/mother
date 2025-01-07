@@ -28,8 +28,7 @@ const propsW = defineProps<{
  */
 const form = useForm({
     search: "",
-    perPage: 15,
-    general: "",
+    perPage: 30,
 });
 
 
@@ -81,7 +80,6 @@ const printFact =  (item:saleI) => {
                 Mostrar
             </TabLink>
             <TabLink
-                :active="true"
                 :href="route('credit-note.show')">
                 Mostrar
             </TabLink>

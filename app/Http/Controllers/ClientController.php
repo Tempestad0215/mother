@@ -25,8 +25,6 @@ class ClientController extends Controller
         $this->clientHelper = new ClientHelper();
     }
 
-
-
     /**
      * @return void
      */
@@ -128,15 +126,10 @@ class ClientController extends Controller
     {
 
         //Verificar si el usuario tiene permiso
-        Gate::authorize('destroy', Auth::user());
-
+//        Gate::authorize('destroy', Auth::user());
 
         // Actualizar los datos
-        $client->status = true;
-        $client->save();
-
-
-
+        $client->delete();
 
         // Retornar hacia atras
         return back();

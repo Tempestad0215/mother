@@ -77,7 +77,7 @@ const destroy = (id:string) => {
         cancelButtonText: "Cancelar",
     }).then((result) => {
         if (result.isConfirmed) {
-            router.patch(route('client.destroy', id), {}, {
+            router.delete(route('client.destroy', id), {
                 onSuccess: () => {
                     // Mensaje de exito
                     successHttp('Datos eliminado correctamente');

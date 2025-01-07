@@ -7,7 +7,6 @@ import {getMoney, printPdf} from "@/Global/Helpers";
 import Pagination from "@components/Pagination.vue";
 import InputError from "@components/InputError.vue";
 import TabLink from "@components/TabLink.vue";
-import Swal from "sweetalert2";
 
 
 /*
@@ -52,8 +51,6 @@ const printFact =  (item:creditNotesSaleI) => {
     printPdf(route('invoice.belt.note',{creditNote: item.uuid}));
 
 }
-
-
 </script>
 
 <template>
