@@ -101,6 +101,16 @@ class CreditNoteHelper
                     //Crear la transaccion individual
                     TransHelper::store($item, ProductTransType::DEVOLUCION, $sale->uuid,"", $creditNote->uuid);
 
+                    // Verificar si la nota de credito y la venta es 0
+                    $amount = $sale->amount - $creditNote->amount;
+
+                    //si el salgo es igual a 0 se coloca la venta en status 0
+                    if ($amount == 0)
+                    {
+                        $sale->update([
+                            'status' => false
+                        ]);
+                    }
                     //Verificar que el producto sea el mismo que el de la transation
                     $productCheck = $product->trans->where('uuid', $item['id'])->first();
 
@@ -135,8 +145,9 @@ class CreditNoteHelper
                     //Si el resultado es cero, pues se
                     if ($result == 0.0)
                     {
+
                         // Actualizar el status del producto
-                        ProTrans::where('uuid', $saleInfo->id)
+                        ProTrans::where('uuid', $saleInfo->uuid)
                             ->update([
                                 'status' => false
                             ]);

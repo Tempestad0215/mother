@@ -54,16 +54,20 @@
             </tr>
         </thead>
         <tbody class="text-xs">
-            @foreach($sale->infoSale as $products )
+            @foreach($sale->infoSale->where('type','ventas') as $products )
                 <tr class="border-b border-black">
-                    <td>
-                        <p>{{$products->stock}} x {{number_format($products->price,2)}}</p>
+                    <td class="truncate text-xs">
+
+                        <p class="">
+                            {{$products->stock}} x {{number_format($products->price,2)}} |
+                            {{$products->code}}
+                        </p>
                         <p>{{$products->product_name}}</p>
                     </td>
-                    <td>
+                    <td class="px-3">
                         {{ number_format($products->tax,2)}}
                     </td>
-                    <td>
+                    <td class="px-3" >
                         {{ number_format($products->amount,2)}}
                     </td>
                 </tr>
@@ -123,8 +127,11 @@
     </div>
 
 {{--Codigo de barra--}}
-    <div class=" text-center w-[90%] mx-auto mt-3">
-        {!! DNS1D::getBarcodeHtml($sale->code ,'C128') !!}
+    <div class=" text-center mt-3">
+        <div class="pl-[10%]">
+            {!! DNS1D::getBarcodeHtml($sale->code ,'C128') !!}
+        </div>
+
         <spa>* {{$sale->code}} *</spa>
     </div>
 

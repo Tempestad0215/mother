@@ -96,7 +96,7 @@ class ReportHelper
             $q->where('type','=', ProductTransType::VENTAS )
             ->whereBetween('created_at', [Carbon::today()->subDays(30), Carbon::today()]);
         })->withSum('trans', 'stock')
-        ->orderBy('id', 'desc')
+        ->orderBy('created_at')
         ->limit(10)
         ->get();
 

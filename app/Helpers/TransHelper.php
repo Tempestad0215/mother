@@ -19,19 +19,14 @@ class TransHelper
     public static function store(Array $request, ProductTransType $type, string $sale_id = "", string $product_id = "", string $credit_note_id = ""):void
     {
 
-
         //Crear el TransId
         $transId = $request['transID'] ?? null;
 
         //Verificar si existe la transcciones antiguia
         $transOld = ProTrans::find($transId);
 
-
         //Verificar si existe o no
         $proTrans = $transOld && $type == ProductTransType::RESERVA ? $transOld : new ProTrans();
-
-
-
 
         //Crear la transacion
         $proTrans->product_id = $product_id ?: $request['product_id'];

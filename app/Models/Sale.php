@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ProductTypeEnum;
 use App\Enums\TypePaymentEnum;
 use App\Enums\SaleTypeEnum;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
@@ -111,14 +113,25 @@ class Sale extends Model implements Auditable
         return $this->belongsTo(Client::class, 'client_id','uuid');
     }
 
+
     /**
-     *Relacion notas de creditos
      * @return HasMany
+     *
      */
     public function credit_note():HasMany
     {
-        return $this->hasMany(CreditNote::class,'sale_id','uuid');
+        return $this->hasMany(CreditNote::class, 'sale_id','uuid');
     }
+
+
+    /**
+     * @return HasManyThrough
+     */
+    public function credit_trans():HasManyThrough
+    {
+        return $this->hasManyThrough(ProTrans::class, CreditNote::class, 'sale_id','credit_note_id','uuid');
+    }
+
 
     /**
      * Retorno de valor

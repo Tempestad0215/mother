@@ -55,7 +55,7 @@ return  [
     'saleRet' => 'DEV',
     'proTrans' => 'TRA',
     'cliCode' => 'CLI',
-    'catCode' => 'CAT',
+    'category' => 'CAT',
     'supplier' => 'SUP',
     'creCode' => 'CRE',
     'advCode' =>  'ADV',

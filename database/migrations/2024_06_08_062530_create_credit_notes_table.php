@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->decimal('n_available');
             $table->string('type',20)->default('Devolucion');
             $table->boolean('status')->default(true);
-            $table->foreignUuid(Sale::class);
+            $table->foreignUuid('sale_id');
             //Full text
             $table->fullText('ncf');
             $table->fullText('ncf_m');

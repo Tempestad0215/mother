@@ -2,17 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ProductTransType;
+use App\Enums\ProductTypeEnum;
 use App\Invoices\InvoiceCounterB5;
 use App\Invoices\SaleInvoiceA;
 use App\Models\CreditNote;
 use App\Models\MoneyCounter;
+use App\Models\ProTrans;
 use App\Models\Sale;
 use App\Models\Setting;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
+use phpDocumentor\Reflection\Types\Integer;
 use Spatie\LaravelPdf\Facades\Pdf;
+use function PHPUnit\Framework\isNull;
 
 class InvoiceController extends Controller
 {
@@ -38,13 +44,14 @@ class InvoiceController extends Controller
         //Para aumentar la altura de la pagina
         $height = 160;
 
-        //Para manejar de forma sencilla los datos
-        $infoSale = collect($sale->infoSale);
+        $infoData = collect($sale->infoSale->where('type', ProductTransType::VENTAS));
 
-        //Incrementar el tamaño
-        $infoSale->each(function () use (&$height) {
-            $height += 13;
+        //Para recorrer los datos
+        $infoData->each(function () use (&$height) {
+            // Para aumentar el size del PDF
+            $height += 15;
         });
+
 
         // Devolvemos el pdf para impresion
         return Pdf::view('pdfs.belt.first',[
@@ -76,7 +83,8 @@ class InvoiceController extends Controller
             'setting' => Setting::first(),
             'creditNote' => $creditNote,
             'datePrint' => Carbon::now()->format('d/m/y H:i:s')
-        ])->paperSize(80, $height);
+        ])->paperSize(80, $height)
+            ->margins(2,2,2,2);
     }
 
     /**

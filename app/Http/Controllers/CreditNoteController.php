@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Helpers\CreditNoteHelper;
 use App\Http\Requests\StoreProductSaleRequest;
 use App\Http\Resources\SaleCreditNoteResource;
+use App\Models\CreditNote;
 use App\Models\Sale;
 use App\Models\Sequence;
 use App\Models\Setting;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -145,6 +147,37 @@ class CreditNoteController extends Controller
     }
 
 
+    public function show(Request $request)
+    {
+        //Para la busqueda
+//        $startDate = $request->get('startDate');
+//        $endDate = $request->get('endDate');
+        $search = $request->get('search');
+        $perPage = $request->get('perPage');
+
+
+         // Tomar los datos
+        $data = CreditNote::where('status', true)
+            ->where(function (Builder $query) use ($search) {
+                $query->where('client_name', 'LIKE', "%{$search}%");
+            })
+            ->orderByDesc('created_at')
+            ->simplePaginate($perPage);
+
+
+        // Devolver la vista con los datos
+        return Inertia::render('ProductsSale/CreditShow', [
+            'sales' => $data
+        ]);
+
+    }
+
+
+
+    /**
+     * @param string $code
+     * @return void
+     */
     public function getBalance(string $code)
     {
         CreditNoteHelper::getBalance($code);

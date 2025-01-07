@@ -170,9 +170,9 @@ class SaleHelper
             $idTransProduct = $request->get('info')['transID'];
 
 
-            //Actualizar los datos
-            ProTrans::where('id',$idTransProduct)->update([
+            ProTrans::where('uuid',$idTransProduct)->update([
                 'deleted_at' => now(),
+                'reserved' => 0,
                 'type' => ProductTransType::ELIMINADO,
             ]);
 

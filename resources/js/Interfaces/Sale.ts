@@ -108,9 +108,25 @@ export interface salePaginationI {
     to: number
 }
 
-export interface creditNotesSaleI{
-    id: number;
+
+/**
+ * Paginacion de credito
+ */
+export interface creditPaginationI {
+    current_page: number
+    data: creditNotesSaleI[]
+    first_page_url: (string | null)
+    from: number
+    next_page_url: (string|null)
+    path: string
+    per_page: number
+    prev_page_url: (string|null)
+    to: number
+}
+
+
+
+export interface creditNotesSaleI extends saleI{
     ncf: string;
     n_available: number;
-    code: string;
 }

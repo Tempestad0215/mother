@@ -2,7 +2,7 @@
 import {Head, useForm, usePage} from "@inertiajs/vue3";
 import AppLayout from "@layout/AppLayout.vue";
 import FormSearch from "@components/FormSearch.vue";
-import {saleI, salePaginationI} from "@/Interfaces/Sale";
+import {creditNotesSaleI, creditPaginationI} from "@/Interfaces/Sale";
 import {getMoney, printPdf} from "@/Global/Helpers";
 import Pagination from "@components/Pagination.vue";
 import InputError from "@components/InputError.vue";
@@ -20,7 +20,7 @@ const page = usePage();
  * Propiedades de la ventana
  */
 const propsW = defineProps<{
-    sales: salePaginationI,
+    sales: creditPaginationI,
 }>();
 
 /*
@@ -28,8 +28,7 @@ const propsW = defineProps<{
  */
 const form = useForm({
     search: "",
-    perPage: 15,
-    general: "",
+    perPage: 30,
 });
 
 
@@ -39,7 +38,7 @@ Funciones
 
 //Enviar los datos
 const submit = () => {
-    form.get('',{
+    form.get('?page=1',{
         preserveScroll: true,
         preserveState: true
     });
@@ -49,26 +48,16 @@ const submit = () => {
  * Para imprimir las facturas
  * @param item
  */
-const printFact =  (item:saleI) => {
-    if (item.close_table)
-    {
-        printPdf(route('invoice.belt.sale',{sale: item.uuid}));
-    }else{
-        Swal.fire({
-            title: "Error",
-            text: "Esta orden no esta cerrada",
-            icon: "info",
-            timer: 3000,
-            position: "center"
-        });
-    }
+const printFact =  (item:creditNotesSaleI) => {
+    printPdf(route('invoice.belt.note',{creditNote: item.uuid}));
+
 }
 
 
 </script>
 
 <template>
-    <Head title="Mostrar Ventas"/>
+    <Head title="Notas de Creditos"/>
     <AppLayout>
         <template #header>
             <TabLink
@@ -76,21 +65,20 @@ const printFact =  (item:saleI) => {
                 Ventas
             </TabLink>
             <TabLink
-                :active="true"
                 :href="route('sale.show')">
                 Mostrar
             </TabLink>
             <TabLink
                 :active="true"
-                :href="route('credit-note.show')">
+                :href="route('sale.show')">
                 Mostrar
             </TabLink>
         </template>
 
         <div
             class="bg-blue-300 max-w-[1180px] rounded-md p-5 mx-auto overflow-hidden">
-<!--          Mensajes  -->
-<!--            Contenido-->
+            <!--          Mensajes  -->
+            <!--            Contenido-->
             <div class="flex justify-between items-center">
                 <form
                     @submit.prevent="submit">
@@ -99,39 +87,39 @@ const printFact =  (item:saleI) => {
                         v-model:search="form.search"/>
                 </form>
                 <h3 class="text-3xl font-bold">
-                    Ventas
+                    Notas de Creditos
                 </h3>
             </div>
 
             <table
                 class=" mt-3 styleTable w-full table-auto">
                 <thead >
-                    <tr class=" border-b-2 border-gray-800 text-left">
-                        <th>Cliente</th>
-                        <th>Itbis</th>
-                        <th>Sub Total</th>
-                        <th>Total</th>
-                        <th>Mesa A/C</th>
-                        <th>Act</th>
-<!--                        <th v-if="page.props.auth.user.role === 'admin'">Act</th>-->
-                    </tr>
+                <tr class=" border-b-2 border-gray-800 text-left">
+                    <th>Cliente</th>
+                    <th>Itbis</th>
+                    <th>Sub Total</th>
+                    <th>Total</th>
+                    <th>Balance</th>
+                    <th>Act</th>
+                    <!--                        <th v-if="page.props.auth.user.role === 'admin'">Act</th>-->
+                </tr>
                 </thead>
                 <tbody>
-                    <tr
-                        class="hoverTable"
-                        v-for="(item,index) in propsW.sales.data" :key="index">
-                        <td>{{item.client_name}}</td>
-                        <td>{{ getMoney(item.tax)}}</td>
-                        <td>{{getMoney(item.sub_total)}}</td>
-                        <td>{{getMoney(item.amount)}}</td>
-                        <td>{{item.close_table ? 'Cerrada' : 'Abierta'}}</td>
-                        <td>
-                            <i
-                                title="Imprimir"
-                                @click="printFact(item)"
-                                class=" icon-efect fa-solid fa-print"></i>
-                        </td>
-                    </tr>
+                <tr
+                    class="hoverTable"
+                    v-for="(item,index) in propsW.sales.data" :key="index">
+                    <td>{{item.client_name}}</td>
+                    <td>{{ getMoney(item.tax)}}</td>
+                    <td>{{getMoney(item.sub_total)}}</td>
+                    <td>{{getMoney(item.amount)}}</td>
+                    <td>{{item.n_available}}</td>
+                    <td>
+                        <i
+                            title="Imprimir"
+                            @click="printFact(item)"
+                            class=" icon-efect fa-solid fa-print"></i>
+                    </td>
+                </tr>
                 </tbody>
             </table>
 
@@ -139,7 +127,7 @@ const printFact =  (item:saleI) => {
                 <InputError :message="page.props.errors.general"/>
             </div>
 
-<!--            PAginacion de la ventana-->
+            <!--            PAginacion de la ventana-->
             <Pagination
                 :current-page="propsW.sales.current_page"
                 :total-page="propsW.sales.to"

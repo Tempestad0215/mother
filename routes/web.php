@@ -215,6 +215,7 @@ Route::middleware([
     ->name('credit-note.')
     ->group(function (){
         Route::get('/','index')->name('index');
+        Route::get('/show', 'show')->name('show');
         Route::get('/get/balance/{code}','getBalance')->name('balance');
         Route::get('/get/{code}','creditNoteGet')->name('get');
         Route::patch('/{sale}','store')->name('store');
@@ -302,24 +303,8 @@ Route::middleware([
 
 
     Route::get('/test', function () {
-        $credit = \App\Models\CreditNote::first();
-
-        //Para aumentar la altura de la pagina
-        $height = 140;
-
-        //Para manejar de forma sencilla los datos
-        $infoSale = collect($credit->trans);
-
-        //Incrementar el tamaño
-        $infoSale->each(function () use (&$height) {
-            $height += 13;
-        });
-
-       return \Spatie\LaravelPdf\Facades\Pdf::view('pdfs.belt.CreditNote',[
-           'setting' => Setting::first(),
-           'creditNote' => $credit,
-           'datePrint' => Carbon::now()->format('d/m/y H:i:s')
-       ])->paperSize(80, $height);
+        return \Spatie\LaravelPdf\Facades\Pdf::view('pdfs.report.sale')
+            ->margins(2,2,2,2);
     });
 
 

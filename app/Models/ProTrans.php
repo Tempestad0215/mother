@@ -14,28 +14,28 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 
 /**
- * @property string $uuid
- * @property string $code
- * @property int $product_id
- * @property string $product_name
- * @property int $sale_id
- * @property int $credit_note_id
- * @property float $stock
- * @property float $reserved
- * @property float $price
- * @property float $min_price
- * @property float $special_price
- * @property float $discount
- * @property float $discount_amount
- * @property float $tax_rate
- * @property float $tax
- * @property float $tax_amount
- * @property float $amount
- * @property boolean $status
- * @property ProductTransType $type
- * @property Carbon $created_at
- * @property Carbon $updated_at
- * @property Carbon $deleted_at
+ * @property string uuid
+ * @property string code
+ * @property int product_id
+ * @property string product_name
+ * @property int sale_id
+ * @property int credit_note_id
+ * @property float stock
+ * @property float reserved
+ * @property float price
+ * @property float min_price
+ * @property float special_price
+ * @property float discount
+ * @property float discount_amount
+ * @property float tax_rate
+ * @property float tax
+ * @property float tax_amount
+ * @property float amount
+ * @property boolean status
+ * @property ProductTransType type
+ * @property Carbon created_at
+ * @property Carbon updated_at
+ * @property Carbon deleted_at
  */
 
 class ProTrans extends Model implements Auditable
@@ -49,12 +49,14 @@ class ProTrans extends Model implements Auditable
     use HasUuids;
 
 
-
+    /**
+     * @var string
+     */
     protected $table = 'pro_trans';
 
-
-
-
+    /**
+     * @var string
+     */
     protected $primaryKey = 'uuid';
     public $incrementing = false;
     protected $keyType = 'string';
@@ -149,7 +151,10 @@ class ProTrans extends Model implements Auditable
         static::creating(function ($model) {
             $model->code = self::generateCode();
         });
+
+
     }
+
 
 
 
@@ -161,7 +166,7 @@ class ProTrans extends Model implements Auditable
     private static function generateCode():string
     {
         // Obtener el ultimo registros
-        $total = self::count();
+        $total = self::withTrashed()->count();
 
         // Generar el proximo ID
         $nextID = $total ? $total + 1 : 1;

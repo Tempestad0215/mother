@@ -32,7 +32,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property Carbon updated_at
  * @property Carbon deleted_at
  * @property ProTrans[] trans
- * @property Sale[] sale,
+ * @property Sale[] sale_id,
  * @property TypePaymentEnum type_payment,
  * @property float received
  * @property float returned

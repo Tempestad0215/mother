@@ -60,10 +60,6 @@ const submit = () => {
                     v-model="form.search"
                 />
             </form>
-
-            <h3 class="text-3xl font-bold mt-5">
-                Cuentas Abiertas
-            </h3>
         </div>
 
 

@@ -356,8 +356,13 @@ const deleteItem = async (name:string , index:number) => {
                 })).patch(route('sale.destroy.item',{product: info.product_id, sale: form.id},{
                     preserveScroll: true,
                     preserveState: true,
+                    onFinish: ()=>{
+                        console.log('elimiando');
+                    },
                     onSuccess: () => {
                         successHttp(`Item : ${info.product_name} Eliminado Correctamente` );
+
+
                     }
                 }));
             }
@@ -426,20 +431,28 @@ const sendData = ():void => {
     // Verificar si esta el retorno
     if (propsW.refund)
     {
+
+        form.patch(route('credit-note.store', {sale: form.id}),{
+            onSuccess: () => {
+                console.log('enviado');
+            }
+        });
+
         // Enviar los datos para las devoluciones
-        axios.patch(route('credit-note.store',{sale: form.id}),form)
-            .then(res => {
-                if (res.data.success)
-                {
-                    //Imprimir el pdf
-                    printPdf(route('invoice.belt.note',{creditNote: res.data.uuid}));
-                    //Limpiar el pdf
-                    router.get(route('sale.create'));
-                }
-            })
-            .catch(err => {
-                errorHttp('Error :' + err.response.data.message);
-            });
+        // axios.patch(route('credit-note.store',{sale: form.id}),form)
+        //     .then(res => {
+        //         if (res.data.success)
+        //         {
+        //             //Imprimir el pdf
+        //             printPdf(route('invoice.belt.note',{creditNote: res.data.uuid}));
+        //             //Limpiar el pdf
+        //             // router.get(route('sale.create'));
+        //             router.visit(route('sale.create'));
+        //         }
+        //     })
+        //     .catch(err => {
+        //         errorHttp('Error :' + err.response.data.message);
+        //     });
     }else{
         //Verificar si no hay problema con nada
         if (!returnedBlur() && form.close_table)
@@ -462,14 +475,13 @@ const sendData = ():void => {
                             }
                             // Limpiar el formulario
                             form.reset();
+                            successHttp('Datos Registrado Correctamente');
+                            // Recargar los datos
+                            router.reload({only:['products','clients','saleOpen','invoiceType','refund']});
                         }
                     }).catch((err) => {
                         //Mensaje de error
-                        Swal.fire({
-                            title: "Error en esta solicitud",
-                            text: "Error : "+err.message,
-                            icon: "question",
-                        });
+                        errorHttp(`Error : ${err.message}`);
                 });
             }else{
                 //Guardar los datos por primera vez
@@ -479,14 +491,18 @@ const sendData = ():void => {
                         if (form.close_table)
                         {
                             // Imprimir el pdf
-                            printPdf(res.data.uuid);
+                            printPdf(route('invoice.belt.sale', {sale: res.data.pdfUuid}));
                         }
                         //Limpiar el fomulario
                         form.reset();
                         showReturn.value = false;
+                        //Recargar los datos
+                        router.reload({only:['products','clients','saleOpen','invoiceType','refund']});
                     })
                     .catch((err) => {
-                        form.errors = err.response.data.errors;
+                        form.errors = err.response?.data.errors;
+                        //Mensaje de error
+                        errorHttp(`Error : ${err.message}`);
                     });
 
             }
@@ -897,7 +913,8 @@ const getRncClient = async () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="(item, index) in form.info_sale" :key="index">
+                                <tr
+                                    v-for="(item, index) in form.info_sale" :key="index">
                                     <td>
                                         {{index+1}}
                                     </td>

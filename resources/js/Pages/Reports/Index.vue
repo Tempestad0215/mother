@@ -1,15 +1,10 @@
 <script setup lang="ts">
-
 import AppLayout from "@layout/AppLayout.vue";
 import {Head} from "@inertiajs/vue3";
 import {onMounted} from "vue";
 import LinkHeader from "@components/LinkHeader.vue";
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
 import ProductMostSold from "@/Charts/ProductMostSold.vue";
 import {mostSoldI} from "@/Interfaces/Report";
-import DateRange from "@components/DateRange.vue";
-
-ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
 
 
@@ -19,11 +14,6 @@ ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 defineProps<{
     mostSold: mostSoldI[];
 }>();
-
-
-
-
-
 
 /*
  * Al momento de cargar
@@ -52,18 +42,6 @@ onMounted(()=>{
 //    sub_total: 0,
 //    amount: 0
 // });
-
-
-
-
-
-
-
-
-
-
-
-
 
 </script>
 
@@ -98,9 +76,7 @@ onMounted(()=>{
             </LinkHeader>
         </template>
 
-        <div class="bg-gray-200 rounded-md p-5">
-
-
+        <div class="bg-gray-200 rounded-md p-5 max-w-[70rem]">
 
 <!--         Productos  Mas Vendido-->
             <ProductMostSold

@@ -68,7 +68,9 @@ class ProductSaleController extends Controller
         });
 
         // Repuesta
-        return response()->json($data);
+        return response()->json([
+            'pdfUuid' => $data->uuid,
+        ]);
 
     }
 
