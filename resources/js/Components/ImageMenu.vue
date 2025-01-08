@@ -46,6 +46,11 @@ const logOut = () => {
                         :href="route('register')">
                         Usuario
                     </Link>
+                    <Link
+                        class="image-link"
+                        :href="route('setting.index')">
+                        Ajuste
+                    </Link>
                     <button
                         class="image-link w-full"
                         @click="logOut">

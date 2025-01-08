@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Enums\TypePaymentEnum;
-use App\Enums\SaleTypeEnum;
+use App\Enums\PATYEnum;
+use App\Enums\SATYEnum;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,7 +33,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property Carbon deleted_at
  * @property ProTrans[] trans
  * @property Sale[] sale_id,
- * @property TypePaymentEnum type_payment,
+ * @property PATYEnum type_payment,
  * @property float received
  * @property float returned
  */

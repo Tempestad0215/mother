@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\TypePaymentEnum;
+use App\Enums\PATYEnum;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -18,7 +18,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property string|null contact
  * @property string company_name
  * @property string|null phone
- * @property TypePaymentEnum type_payment
+ * @property PATYEnum type_payment
  * @property string|null email
  * @property bool receive_email
  * @property string account_bank
@@ -63,7 +63,7 @@ class Supplier extends Model implements Auditable
     // formatear los datos
     protected $casts = [
         'status' => 'boolean',
-        'type_payment' => TypePaymentEnum::class,
+        'type_payment' => PATYEnum::class,
     ];
 
 

@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Enums\UserRoleEnum;
+use App\Enums\USRROEnum;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -12,7 +12,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property string $name
  * @property string $email
  * @property string $profile_photo_url
- * @property UserRoleEnum $role
+ * @property USRROEnum $role
  * @property bool $status
  */
 class UserResource extends JsonResource

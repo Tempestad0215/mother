@@ -2,7 +2,7 @@
 
 namespace App\Rules;
 
-use App\Enums\ProductTypeEnum;
+use App\Enums\PROTYEnum;
 use App\Models\Product;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -45,7 +45,7 @@ class CheckStock implements ValidationRule
                 $quantity -= $product->reserved;
 
                 //Realizar la verificacion
-                if($quantity > $product->stock && $product->type == ProductTypeEnum::PRODUCTO ){
+                if($quantity > $product->stock && $product->type == PROTYEnum::PRODUCTO ){
                     // Enviar el mensaje de que no puede ser mayor
                     $existsError = true;
                     $errorMessage = 'El Producto "' . $info['product_name'] . '" no tiene suficiente stock.';

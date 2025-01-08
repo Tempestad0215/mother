@@ -29,8 +29,6 @@ Al momento de cargar
 onMounted(()=>{
    document.addEventListener("click", handleClick);
 
-
-    console.log(window.location.pathname)
     //Ventana de cambio
     showExchangeWindow();
 });
@@ -137,9 +135,7 @@ const showOption = ref<boolean>(false);
                     Reportes
                     <i class="fa-solid fa-clipboard"></i>
                 </LinkHeader>
-
             </div>
-
         </aside>
 
 

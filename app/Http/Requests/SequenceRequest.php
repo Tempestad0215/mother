@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\SequenceTypeEnum;
+use App\Enums\SETYEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Validation\Rule;
@@ -11,7 +11,7 @@ use Illuminate\Validation\Rule;
 /**
  * @property int $id
  * @property string $code
- * @property SequenceTypeEnum $type
+ * @property SETYEnum $type
  * @property int $from
  * @property int $next
  * @property int $to
@@ -47,7 +47,7 @@ class SequenceRequest extends FormRequest
 
         return [
             'id' => ['nullable','integer'],
-            'type' => ['required', Rule::enum(SequenceTypeEnum::class)],
+            'type' => ['required', Rule::enum(SETYEnum::class)],
             'from' => ['required','integer'],
             'to' => ['required','integer', "min:$from"],
             'advise' => ['required','integer', 'min:2',"max:$total"],

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\CompanyTypeEnum;
+use App\Enums\COTYEnum;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -29,7 +29,7 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
  * @property string $company_id
  * @property array $tax
  * @property array $unit
- * @property CompanyTypeEnum $company_type
+ * @property COTYEnum $company_type
  * @property string $fiscal_year
  * @property boolean $status
  * @property boolean $save_cost
@@ -90,7 +90,7 @@ class Setting extends Model implements Auditable
         'status' => 'boolean',
         'save_cost' => 'boolean',
         'sequence' => 'boolean',
-        'company_type' => CompanyTypeEnum::class,
+        'company_type' => COTYEnum::class,
     ];
 
 

@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Enums\TypePaymentEnum;
+use App\Enums\PATYEnum;
 use App\Models\Comment;
 use App\Models\Account;
 use Illuminate\Http\Request;
@@ -18,7 +18,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property boolean status
  * @property boolean receive_email
  * @property string account_bank
- * @property TypePaymentEnum type_payment
+ * @property PATYEnum type_payment
  * @property Account account
  * @property Comment comment
  *

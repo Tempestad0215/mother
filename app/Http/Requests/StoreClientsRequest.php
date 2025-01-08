@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\ClientDocumentEnum;
-use App\Enums\ClientTypeEnum;
+use App\Enums\CLDOCENUM;
+use App\Enums\CLTYEnum;
 use App\Enums\ClientTypePriceEnum;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -39,11 +39,11 @@ class StoreClientsRequest extends FormRequest
             'personal_id' => ['nullable','string','max:50',Rule::requiredIf($isRequired)],
             'email'=> ['nullable','string','email','max:150', Rule::unique('clients','email'),Rule::requiredIf($isRequired)],
             'address' => ['nullable','string','max:255',Rule::requiredIf($isRequired)],
-            'type' => ['required', Rule::enum(ClientTypeEnum::class),'string'],
+            'type' => ['required', Rule::enum(CLTYEnum::class),'string'],
             'type_price' => [Rule::enum(ClientTypePriceEnum::class),'numeric','required'],
             'receive_email' => ['required','boolean'],
             'status' => ['required','boolean'],
-            'document' =>  ['required', Rule::enum(ClientDocumentEnum::class)],
+            'document' =>  ['required', Rule::enum(CLDOCENUM::class)],
             'file' => ['nullable','file','mimes:png,jpg,jpeg','max:2048'],
 
             //Validacion de los avance

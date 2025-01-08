@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\ProductTypeEnum;
+use App\Enums\PROTYEnum;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -120,7 +120,7 @@ class Product extends Model implements Auditable
     protected $casts = [
         'status' => 'boolean',
         'close_table' => 'boolean',
-        'type' => ProductTypeEnum::class
+        'type' => PROTYEnum::class
     ];
 
 

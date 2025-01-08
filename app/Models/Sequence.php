@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\SequenceTypeEnum;
+use App\Enums\SETYEnum;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
@@ -14,7 +14,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 /**
  * @property int $id
  * @property string $code
- * @property SequenceTypeEnum $type
+ * @property SETYEnum $type
  * @property int $from
  * @property int $next
  * @property int $to
@@ -58,7 +58,7 @@ class Sequence extends Model implements Auditable
      * @var \class-string[]
      */
     protected $casts = [
-        'type' => SequenceTypeEnum::class,
+        'type' => SETYEnum::class,
     ];
 
 

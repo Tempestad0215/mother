@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\TypePaymentEnum;
-use App\Enums\SaleTypeEnum;
+use App\Enums\PATYEnum;
+use App\Enums\SATYEnum;
 use App\Models\Setting;
 use App\Rules\CheckStock;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -63,8 +63,8 @@ class  StoreProductSaleRequest extends FormRequest
             'amount' => ['required','numeric'],
             'sub_total' => ['required','numeric'],
             'discount_amount' => ['required','numeric'],
-            'type' => ['required',Rule::enum(SaleTypeEnum::class)],
-            'type_payment' => ['nullable',Rule::requiredIf(SaleTypeEnum::DEVOLUCION->value !== $type) ,Rule::enum(TypePaymentEnum::class)],
+            'type' => ['required',Rule::enum(SATYEnum::class)],
+            'type_payment' => ['nullable',Rule::requiredIf(SATYEnum::DEVOLUCION->value !== $type) ,Rule::enum(PATYEnum::class)],
             'received' => ['required','numeric'],
             'returned' => ['required','numeric'],
             'credit_notes' => ['nullable','array'],

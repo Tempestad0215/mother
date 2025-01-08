@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\ProductTypeEnum;
+use App\Enums\PROTYEnum;
 use App\Models\Product;
 use App\Rules\SaveCostProductRule;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -51,7 +51,7 @@ class StoreProductInRequest extends FormRequest
 
         return [
             'product_id' => ['required','exists:products,uuid'],
-            'stock' => [Rule::requiredIf($product->type == ProductTypeEnum::PRODUCTO), 'required', 'numeric'],
+            'stock' => [Rule::requiredIf($product->type == PROTYEnum::PRODUCTO), 'required', 'numeric'],
             'cost' => ['required', 'numeric'],
             'special_price' => ['required','numeric', new SaveCostProductRule($this->cost)],
             'min_price' => ['required', 'numeric'],

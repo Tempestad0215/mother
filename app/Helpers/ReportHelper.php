@@ -2,8 +2,8 @@
 
 namespace App\Helpers;
 
-use App\Enums\ProductTransType;
-use App\Enums\ProductTypeEnum;
+use App\Enums\PROTRTYEnum;
+use App\Enums\PROTYEnum;
 use App\Models\Product;
 use App\Models\Sale;
 use Carbon\Carbon;
@@ -93,7 +93,7 @@ class ReportHelper
     {
         //Tomar los datos con mas stock vendido
         $data = Product::whereHas('trans', function (Builder $q){
-            $q->where('type','=', ProductTransType::VENTAS )
+            $q->where('type','=', PROTRTYEnum::VENTAS )
             ->whereBetween('created_at', [Carbon::today()->subDays(30), Carbon::today()]);
         })->withSum('trans', 'stock')
         ->orderBy('created_at')
@@ -129,7 +129,7 @@ class ReportHelper
     {
         //Tomar los productos con stock bajo
         return Product::where('stock','<',11)
-            ->where('type','=',ProductTypeEnum::PRODUCTO)
+            ->where('type','=',PROTYEnum::PRODUCTO)
             ->orderBy('stock')
             ->limit(10)
             ->get(['id','code','name','stock']);

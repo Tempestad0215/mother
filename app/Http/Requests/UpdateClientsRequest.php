@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\ClientDocumentEnum;
+use App\Enums\CLDOCENUM;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -32,7 +32,7 @@ class UpdateClientsRequest extends FormRequest
             'phone' => ['required','string','max:20'],
             'email'=> ['nullable','string','email','max:150',Rule::unique('clients','email')->ignore($id)],
             'address' => ['nullable','string','max:150'],
-            'document' =>  ['required', Rule::enum(ClientDocumentEnum::class)],
+            'document' =>  ['required', Rule::enum(CLDOCENUM::class)],
         ];
     }
 }
