@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\ACO;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -8,11 +9,12 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('trans_cos', function (Blueprint $table) {
-            $table->uuid()->primary();
-            $table->foreignUuid('account_co_id');
-            $table->string('description');
+            $table->id();
+            $table->foreignIdFor(ACO::class,'account_co_id');
             $table->decimal('amount', 20);
-            $table->enum('type',['sale','payment','discount','refund']);
+            $table->enum('type',['CREDITO','DEBITO']);
+            $table->decimal('debit',15)->default(0);
+            $table->decimal('credit',15)->default(0);
             $table->timestamp('date')->useCurrent();
             $table->timestamps();
             $table->softDeletes();

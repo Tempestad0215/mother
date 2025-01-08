@@ -8,7 +8,7 @@ export interface acoBaseI {
     name: string;
     type: string;
     updated_at: string;
-    uuid: string;
+    id: number;
 
 }
 

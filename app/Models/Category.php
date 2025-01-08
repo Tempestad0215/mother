@@ -12,7 +12,7 @@ use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
- * @property string uuid
+ * @property integer id
  * @property string code
  * @property string name
  * @property null|string description
@@ -27,14 +27,6 @@ class Category extends Model implements Auditable
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
     use softDeletes;
-    use HasUuids;
-
-    /**
-     * @var string
-     */
-    protected $primaryKey = 'uuid';
-    public $incrementing = false;
-    protected $keyType = 'string';
 
     /**
      * @var string[]

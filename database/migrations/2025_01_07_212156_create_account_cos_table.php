@@ -8,7 +8,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('account_cos', function (Blueprint $table) {
-            $table->uuid()->primary();
+            $table->id();
             $table->string('code',30)->unique();
             $table->string('name');
             $table->enum('type',['ACTIVO','PASIVO','INGRESO','GASTO','CAPITAL']);

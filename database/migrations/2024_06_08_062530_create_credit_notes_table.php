@@ -14,9 +14,9 @@ return new class extends Migration {
             //Datos solo de nota de credito
             $table->string('ncf_m',30)->nullable();
             $table->decimal('n_available');
-            $table->string('type',20)->default('Devolucion');
+            $table->string('type',20)->default('DEVOLUCION');
             $table->boolean('status')->default(true);
-            $table->foreignUuid('sale_id');
+            $table->foreignIdFor(Sale::class, 'sale_id');
             //Full text
             $table->fullText('ncf');
             $table->fullText('ncf_m');

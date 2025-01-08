@@ -3,19 +3,16 @@
 namespace App\Models;
 
 use App\Enums\PROTYEnum;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Date;
-use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
- * @property string uuid
+ * @property int id
  * @property string type
  * @property boolean inventoried
  * @property boolean status
@@ -55,16 +52,6 @@ class Product extends Model implements Auditable
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
     use softDeletes;
-    use HasUuids;
-
-
-    /**
-     * Para el id de los datos
-     * @var string
-     */
-    protected $primaryKey = 'uuid';
-    protected $keyType = 'string';
-    public $incrementing = false;
 
 
     /**

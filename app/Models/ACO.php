@@ -11,7 +11,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 
 /**
- * @property string uuid
+ * @property integer id
  * @property string code
  * @property string name
  * @property ACOEnum type
@@ -21,7 +21,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  */
 class ACO extends Model implements Auditable
 {
-    use SoftDeletes, HasUuids;
+    use SoftDeletes;
     use \OwenIt\Auditing\Auditable;
 
     /**
@@ -29,13 +29,6 @@ class ACO extends Model implements Auditable
      */
     protected $table = 'account_cos';
 
-
-    /**
-     * @var string
-     */
-    protected $primaryKey = 'uuid';
-    protected $keyType = 'string';
-    public $incrementing = false;
 
 
     /**

@@ -12,7 +12,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 
 /**
- * @property string uuid;
+ * @property integer id;
  * @property string accountable_type;
  * @property string accountable_id;
  * @property ACTYEnum type;
@@ -30,12 +30,6 @@ class Account extends Model implements Auditable
 {
     use SoftDeletes;
     use \OwenIt\Auditing\Auditable;
-    use HasUuids;
-
-    protected $primaryKey = 'uuid';
-    protected $keyType = 'string';
-    public $incrementing = false;
-
 
     /*
      * Guardar los datos

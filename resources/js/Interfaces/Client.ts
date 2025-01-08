@@ -2,13 +2,16 @@
 // Cliente para la tabla
 import {commentI} from "@/Interfaces/Comment";
 
+/**
+ *
+ */
 export interface clientBaseI {
     address: string | null
     created_at: string
     email: string | null
     personal_id: string | null
     type_price: number
-    uuid: string
+    id: number
     name: string
     type: string
     phone: string | null
@@ -16,7 +19,9 @@ export interface clientBaseI {
     updated_at: string
 }
 
-
+/**
+ *
+ */
 export interface clientDataI {
     current_page: number
     data: clientBaseI[]
@@ -29,7 +34,9 @@ export interface clientDataI {
     to: number
 }
 
-// Editar
+/**
+ *
+ */
 export interface clientEditI extends clientBaseI {
     document: string;
     comment: commentI

@@ -6,10 +6,10 @@ import TextInput from "@components/TextInput.vue";
 import {ref} from "vue";
 import InputError from "@components/InputError.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
-import FormSearch from "@components/FormSearch.vue";
 import {successHttp} from "@/Global/Alert";
 import {acoBaseI, acoTableI} from "@/Interfaces/ACO";
 import Swal from "sweetalert2";
+import TabLink from "@components/TabLink.vue";
 
 
 /*
@@ -28,7 +28,7 @@ const type = ref(['ACTIVO','PASIVO','INGRESO','GASTO','CAPITAL']);
  * Formularios
  */
 const form = useForm({
-    uuid:"",
+    id:0,
     code:"",
     name:"",
     type:"",
@@ -45,20 +45,27 @@ const formSearch = useForm({
 /*
 funciones
  */
-const search = () => {
-
-}
-
 /**
  * Enviar los datos
  */
 const submit = () => {
-    form.post(route('aco.store'),{
-        onSuccess: () => {
-            successHttp('Datos Registrado Correctamente');
-            form.reset();
-        }
-    });
+    if (form.update) {
+        form.put(route('aco.update',{aco: form.id}),{
+            onSuccess: () => {
+                successHttp('Datos Actualizado Correctamente');
+            }
+        });
+    }else{
+        form.post(route('aco.store'),{
+            onSuccess: () => {
+                successHttp('Datos Registrado Correctamente');
+                form.reset();
+            }
+        });
+    }
+
+
+
 }
 
 /**
@@ -66,7 +73,7 @@ const submit = () => {
  * @param item
  */
 const edit = (item:acoBaseI) => {
-    form.uuid = item.uuid;
+    form.id = item.id;
     form.code = item.code;
     form.name = item.name;
     form.type = item.type;
@@ -85,7 +92,7 @@ const destroy = (item:acoBaseI) => {
         cancelButtonText: "Cancelar",
     }).then((result) => {
         if (result.isConfirmed) {
-            router.delete(route('aco.destroy',{aco: item.uuid}),{
+            router.delete(route('aco.destroy',{aco: item.id}),{
                 onSuccess: () => {
                     successHttp('Datos Eliminado Correctamente');
                 }
@@ -102,7 +109,15 @@ const destroy = (item:acoBaseI) => {
     <Head title="Cuentas Contables" />
     <AppLayout>
         <template #header>
-
+            <TabLink
+                :href="route('setting.index')">
+                Ajustes
+            </TabLink>
+            <TabLink
+                :active="true"
+                :href="route('aco.index')">
+                Cuentas
+            </TabLink>
         </template>
 
 <!--        Contenido de la vantana-->
@@ -166,12 +181,9 @@ const destroy = (item:acoBaseI) => {
 
 <!--            Cuentas registrada -->
             <div class="mt-3 p-5 bg-blue-300 rounded-md">
-                <form @submit.prevent="search">
-                    <FormSearch
-                        v-model:search="formSearch.search"
-                        v-model:per-page="formSearch.perPage"
-                        />
-                </form>
+                <h3 class="title text-center">
+                    Listado de Cuentas
+                </h3>
                 <table
                     class="styleTable table-auto w-full mt-3">
                     <thead>
@@ -203,6 +215,32 @@ const destroy = (item:acoBaseI) => {
                 </table>
             </div>
 
+
+<!--            Relaciones de las cuentas contables-->
+            <div class="mt-3 bg-blue-300 p-5 rounded-md">
+                <h3 class="title text-center">
+                    Relaciones De Cuenta
+                </h3>
+                <form>
+                    <!-- Ventas-->
+                    <div>
+                        <InputLabel for="account" value="Venta" />
+                        <select></select>
+                    </div>
+
+                    <!-- Compras -->
+                    <div>
+                        <InputLabel for="account" value="Venta" />
+                        <select></select>
+                    </div>
+
+                    <!-- Devoluciones -->
+                    <div>
+                        <InputLabel for="account" value="Venta" />
+                        <select></select>
+                    </div>
+                </form>
+            </div>
         </div>
     </AppLayout>
 </template>

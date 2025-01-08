@@ -4,8 +4,7 @@ namespace App\Models;
 
 use App\Enums\CLDOCENUM;
 use App\Enums\CLTYEnum;
-use App\Enums\ClientTypePriceEnum;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use App\Enums\CLTYPRIEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -18,7 +17,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 
 /**
- * @property string $uuid;
+ * @property integer id;
  * @property string $name
  * @property string $phone
  * @property string $personal_id
@@ -32,7 +31,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property float $late_fee_interest
  * @property float $balance
  * @property float $consumed
- * @property ClientTypePriceEnum $type_price
+ * @property CLTYPRIEnum $type_price
  * @property boolean $receive_email
  * @property Date $deleted_at
  * @property Date $created_at
@@ -47,35 +46,26 @@ class Client extends Model implements Auditable
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
     use softDeletes;
-    use HasUuids;
-
-    protected $primaryKey = 'uuid';
-    protected $keyType = 'string';
-    public $incrementing = false;
-
 
     /**
-     * Para guardar los datos
-     * @var array
+     * @var string[]
      */
-    protected $guarded = [];
-
-//    protected $fillable = [
-//        'name',
-//        'document',
-//        'personal_id',
-//        'phone',
-//        'email',
-//        'address',
-//        'status',
-//        'type'
-//    ];
+    protected $fillable = [
+        'name',
+        'document',
+        'personal_id',
+        'phone',
+        'email',
+        'address',
+        'status',
+        'type'
+    ];
 
 
     protected $casts = [
         'type' => CLTYEnum::class,
         'document' => CLDOCENUM::class,
-        'type_price' => ClientTypePriceEnum::class,
+        'type_price' => CLTYPRIEnum::class,
         'status'=> 'boolean',
     ];
 
@@ -138,9 +128,6 @@ class Client extends Model implements Auditable
             $model->code = self::generateCode();
         });
     }
-
-
-
 
     /**
      * @return string

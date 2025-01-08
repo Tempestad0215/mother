@@ -8,7 +8,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('sequences', function (Blueprint $table) {
-            $table->uuid()->primary();
+            $table->id();
             $table->string('code',30)->unique()->comment('codigo unido para cada registro');
             $table->enum('type', ['B01','B02','B03','B04','B11','B12','B13','B14','B15','B16','B17']);
             $table->integer('from');

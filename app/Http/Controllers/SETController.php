@@ -53,21 +53,4 @@ class SETController extends Controller
         return back();
 
     }
-
-
-//    /**
-//     * @return JsonResponse
-//     */
-//    public function getJson()
-//    {
-//        //Buscar los datos de la configuracion
-//        $data = Setting::first();
-//
-//        //Devolver los datos
-//        return response()->json($data);
-//    }
-
-
-
-
 }

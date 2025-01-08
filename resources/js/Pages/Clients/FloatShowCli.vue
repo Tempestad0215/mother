@@ -57,13 +57,13 @@ const submit = () => {
 }
 
 // Editar
-const edit = (id:string) => {
+const edit = (id:number) => {
     // Hacer la peticion
     router.get(route('client.edit', id));
 }
 
 // Eliminar el resistros
-const destroy = (id:string) => {
+const destroy = (id:number) => {
 
     // Enviar los datos
     Swal.fire({
@@ -134,12 +134,12 @@ const destroy = (id:string) => {
                             <i
                                 v-if="page.component === 'Clients/ClientShow'"
                                 title="Editar"
-                                @click="edit(item.uuid)"
+                                @click="edit(item.id)"
                                 class=" ml-2 icon-efect fa-solid fa-pen-to-square"></i>
                             <i
                                 v-if="page.component === 'Clients/ClientShow'"
                                 title="Eliminar"
-                                @click="destroy(item.uuid)"
+                                @click="destroy(item.id)"
                                 class="ml-2 icon-efect fa-solid fa-trash"></i>
                         </td>
                     </tr>

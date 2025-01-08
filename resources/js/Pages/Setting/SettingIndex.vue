@@ -6,7 +6,6 @@ import TextInput from "@components/TextInput.vue";
 import InputError from "@components/InputError.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import {onMounted, onUpdated, Ref, ref} from "vue";
-// import {settingsDataI} from "@/Interfaces/Setting";
 import {successHttp} from "@/Global/Alert";
 import {taxI} from "@/Interfaces/Global";
 import ToggleButton from "@components/ToggleButton.vue";

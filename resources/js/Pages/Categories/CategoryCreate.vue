@@ -23,7 +23,7 @@ const props = defineProps<{
 Formularios
  */
 const form = useForm({
-    uuid: "",
+    id: 0,
     name:"",
     description:"",
     update: false,
@@ -46,7 +46,7 @@ const submit = () => {
     //si es para actualizar
     if(form.update)
     {
-        form.patch(route('category.update',{category: form.uuid}),{
+        form.patch(route('category.update',{category: form.id}),{
             onSuccess: ()=>{
                 successHttp('Datos actualizado correctamente');
             }
@@ -67,7 +67,7 @@ const submit = () => {
  * @param item
  */
 const edit = (item:categoryBaseI) => {
-    form.uuid = item.uuid;
+    form.id = item.id;
     form.name = item.name;
     form.description = item.description ? item.description : "";
     form.update = true;
@@ -79,9 +79,9 @@ const edit = (item:categoryBaseI) => {
  * @param item
  */
 const destroy = (item:categoryBaseI) => {
-
-    form.uuid = item.uuid;
-
+    //colocar el id al formulario
+    form.id = item.id;
+    // Preguntar antes de eliminar
     Swal.fire({
         title: `Desea eliminar la categoria: ${item.name}?`,
         text: "Los cambios realizados son irreversible!",
@@ -93,10 +93,12 @@ const destroy = (item:categoryBaseI) => {
         cancelButtonText: "Cancelar"
     }).then((result) => {
         if (result.isConfirmed) {
-            form.patch(route('category.destroy',{category: form.uuid}),{
+            form.patch(route('category.destroy',{category: form.id}),{
                 onSuccess: () => {
                     successHttp('Datos eliminado correctamente');
+                    form.reset();
                 }
+
             })
         }
     });

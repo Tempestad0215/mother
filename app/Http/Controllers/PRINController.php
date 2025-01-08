@@ -66,7 +66,7 @@ class PRINController extends Controller
             $inHelper->updateProduct($request, $productIn);
 
             // Crear los datos de la transaccion
-            $transHelper->store($request->toArray(), PROTRTYEnum::ENTRADA, 0, $productIn->uuid);
+            $transHelper->store($request->toArray(), PROTRTYEnum::ENTRADA, 0, $productIn->id);
         });
 
         //Devolver hacia atras

@@ -19,7 +19,7 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
  * @mixin EloquentBuilder
  * @mixin QueryBuilder
  *
- * @property string $uuid
+ * @property int id
  * @property string $name
  * @property string $email
  * @property string $phone
@@ -45,14 +45,6 @@ class Setting extends Model implements Auditable
     use \OwenIt\Auditing\Auditable;
     use softDeletes;
     use HasFactory;
-    use HasUuids;
-
-
-
-    protected $primaryKey = 'uuid';
-    protected $keyType = 'string';
-    public $incrementing = false;
-
 
     /**
      * @var array

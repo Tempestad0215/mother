@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\CreditNote;
+use App\Models\Product;
+use App\Models\Sale;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,12 +15,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pro_trans', function (Blueprint $table) {
-            $table->uuid()->primary();
+            $table->id();
             $table->string('code',30)->unique();
-            $table->foreignUuid('sale_id')
+            $table->foreignIdFor(Sale::class,'sale_id')
                 ->nullable();
-            $table->foreignUuid('product_id');
-            $table->foreignUuid('credit_note_id')
+            $table->foreignIdFor(Product::class,'product_id');
+            $table->foreignIdFor(CreditNote::class,'credit_note_id')
                 ->nullable();
             $table->string('product_name',75);
             $table->decimal('stock');
@@ -31,7 +34,7 @@ return new class extends Migration
             $table->boolean('ride')->default(false);
             $table->decimal('discount')->default(0);
             $table->decimal('discount_amount');
-            $table->enum('type',['entrada','ventas','salida','cancelacion','ajuste','reserva','eliminado','devolucion']);
+            $table->enum('type',['ENTRADA','VENTAS','SALIDA','CANCELACION','AJUSTE','RESERVA','ELIMINADO','DEVOLUCION']);
             $table->boolean('status')->default(true);
             $table->softDeletes();
             $table->timestamps();

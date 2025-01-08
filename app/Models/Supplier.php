@@ -14,7 +14,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 
 /**
- * @property string uuid
+ * @property int id
  * @property string|null contact
  * @property string company_name
  * @property string|null phone
@@ -36,13 +36,6 @@ class Supplier extends Model implements Auditable
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
     use softDeletes;
-    use HasUuids;
-
-
-    //Para la llave primaria
-    protected $primaryKey = 'uuid';
-    public $incrementing = false;
-    protected $keyType = 'string';
 
 
     //Registro masivo

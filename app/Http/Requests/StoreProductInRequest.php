@@ -50,7 +50,7 @@ class StoreProductInRequest extends FormRequest
         //Validar los datos
 
         return [
-            'product_id' => ['required','exists:products,uuid'],
+            'product_id' => ['required','exists:products,id','integer'],
             'stock' => [Rule::requiredIf($product->type == PROTYEnum::PRODUCTO), 'required', 'numeric'],
             'cost' => ['required', 'numeric'],
             'special_price' => ['required','numeric', new SaveCostProductRule($this->cost)],

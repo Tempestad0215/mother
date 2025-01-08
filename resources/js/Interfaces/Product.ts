@@ -18,7 +18,7 @@ export interface productI {
  *
  */
 export interface productBaseI {
-    uuid: string;
+    id: number;
     code: string;
     name: string;
     description: string | null;
@@ -64,7 +64,7 @@ export interface productTransI extends productBaseI {
     min_price: number;
     special_price: number;
     product_code: string;
-    product_id: string;
+    product_id: number;
     product_name: string;
     sale_id: number;
     status: boolean;

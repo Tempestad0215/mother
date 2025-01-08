@@ -18,7 +18,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
- * @property string $uuid
+ * @property int id
  * @property string $name
  * @property string $email
  * @property USRROEnum $role
@@ -35,13 +35,8 @@ class User extends Authenticatable implements Auditable
     use TwoFactorAuthenticatable;
     use \OwenIt\Auditing\Auditable;
     use softDeletes;
-    use HasUuids;
     use HasRoles;
 
-
-    protected $primaryKey = 'uuid';
-    public $incrementing = false;
-    protected $keyType = 'string';
 
 
     protected $guard_name = 'web';

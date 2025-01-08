@@ -13,7 +13,7 @@ return new class extends Migration
         Schema::create('settings', function (Blueprint $table) {
 
             //Id
-            $table->uuid()->primary();
+            $table->id();
             //Datos de la empresa necesarios
             $table->string('name',150);
             $table->string('email',150)->unique();
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('company_id',30)->nullable();
             $table->json('tax')->nullable();
             $table->json('unit');
-            $table->enum('company_type', ['BAR','GYM','RESPUESTO','SUPERMERCADO','OTRO']);
+            $table->enum('company_type', ['BAR','GYM','REPUESTO','SUPERMERCADO','OTRO']);
             $table->boolean('save_cost')->default(true);
             $table->boolean('sequence')->default(true);
             //Datos fiscales de las empresa

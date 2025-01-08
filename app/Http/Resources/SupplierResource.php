@@ -10,7 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 
 /**
- * @property int uuid
+ * @property int id
  * @property string|null contact
  * @property string company_name
  * @property string|null phone
@@ -33,7 +33,7 @@ class SupplierResource extends JsonResource
     {
 
         return [
-            'uuid' => $this->uuid,
+            'id' => $this->id,
             'contact' => $this->contact,
             'company_name' => $this->company_name,
             'payment' => [
@@ -46,7 +46,7 @@ class SupplierResource extends JsonResource
             'account_bank' => $this->account_bank,
             'account' => $this->when(isset($this->account), function () use ($request) {
                 return [
-                    'uuid' =>  $this->account->uuid,
+                    'id' =>  $this->account->id,
                     'amount' => $this->account->amount,
                     'due_date' => $this->account->due_date,
                     'balance' => $this->account->balance,

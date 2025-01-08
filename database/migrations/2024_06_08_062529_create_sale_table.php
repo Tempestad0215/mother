@@ -17,7 +17,7 @@ return new class extends Migration
 
             //Datos solo de la ventas
             $table->enum('type', ['ventas','cotizacion']);
-            $table->enum('type_payment',['contado','credito','cheque','tarjeta','transferencia','anticipo'])->default('contado');
+            $table->enum('type_payment',['CONTADO','CREDITO','CHEQUE','TARJETA','TRANSFERENCIA','ANTICIPO'])->default('CONTADO');
             $table->decimal('received')->default(0);
             $table->decimal('returned')->default(0);
             $table->boolean('status')->default(true);

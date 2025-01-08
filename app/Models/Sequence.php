@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Enums\SETYEnum;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -12,7 +11,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 
 /**
- * @property int $id
+ * @property int id
  * @property string $code
  * @property SETYEnum $type
  * @property int $from
@@ -32,7 +31,6 @@ class Sequence extends Model implements Auditable
 
     use softDeletes;
     use \OwenIt\Auditing\Auditable;
-    use HasUuids;
 
     //Tabla a utilizar
     protected $table = 'sequences';

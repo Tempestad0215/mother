@@ -41,7 +41,7 @@ const emit = defineEmits(['showSupplier']);
  * Datos del formulario
  */
 const form = useForm({
-    uuid: "",
+    id: 0,
     name: "",
     description: "",
     unit: "",
@@ -86,7 +86,7 @@ onMounted(()=>{
     // Pasar los datos a editar
     if(propsW.productEdit)
     {
-        form.uuid = propsW.productEdit.uuid;
+        form.id = propsW.productEdit.id;
         form.name = propsW.productEdit.name;
         form.type = propsW.productEdit.type;
         form.description = propsW.productEdit.description ? propsW.productEdit.description : "";
@@ -107,7 +107,7 @@ const submit = () => {
 
     if(propsW.update)
     {
-        form.patch(route('product.update',form.uuid),{
+        form.patch(route('product.update',form.id),{
             onSuccess:()=>{
                 successHttp('Datos actualizado correctamente')
 
@@ -197,7 +197,7 @@ const submit = () => {
                                 class="even:bg-blue-200"
                                 v-for="(item, index) in propsW.categories"
                                 :key="index"
-                                :value="item.uuid">
+                                :value="item.id">
                                 {{item.name}}
                             </option>
                         </select>
@@ -219,7 +219,7 @@ const submit = () => {
                                 class="even:bg-blue-200"
                                 v-for="(item, index) in propsW.suppliers"
                                 :key="index"
-                                :value="item.uuid">
+                                :value="item.id">
                                 {{item.company_name}}
                             </option>
                         </select>

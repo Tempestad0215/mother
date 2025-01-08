@@ -64,15 +64,12 @@ const submit = () => {
         preserveState: true,
         preserveScroll: true,
     });
-    // form.get( ``, {
-    //     preserveScroll: true,
-    //     preserveState: true
-    // });
+
 }
 
 
 //editar el producto
-const edit = (id:string) => {
+const edit = (id:number) => {
     router.get(route('product.edit', {id: id}));
 }
 
@@ -82,17 +79,16 @@ const selectData = (item:productBaseI) => {
     if (url.startsWith('/product'))
     {
         //Enviar los datos
-        router.get(route('in.entrance',{productIn: item.uuid}));
+        router.get(route('in.entrance',{productIn: item.id}));
     }else{
         //Enviar los datos
         emit('select',item);
     }
 
-
 }
 
 //Eliminar el producto
-const detroy = (id:string) => {
+const detroy = (id:number) => {
     Swal.fire({
         title: "Esta seguro?",
         text: "Los cambios realizados son irreversible!",
@@ -179,14 +175,14 @@ const detroy = (id:string) => {
                             <i
                                 v-if="component === 'Products/Show' "
                                 title="Editar"
-                                @click="edit(item.uuid)"
+                                @click="edit(item.id)"
                                 class="ml-2 icon-efect fa-solid fa-pen-to-square"></i>
 
                             <!-- Eliminar -->
                             <i
                                 v-if="component === 'Products/Show' && auth.user.role === 'admin' "
                                 title="Eliminar"
-                                @click="detroy(item.uuid)"
+                                @click="detroy(item.id)"
                                 class="ml-2 icon-efect fa-solid fa-trash"></i>
                         </td>
                     </tr>

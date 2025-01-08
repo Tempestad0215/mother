@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use App\Enums\CLDOCENUM;
 use App\Enums\CLTYEnum;
-use App\Enums\ClientTypePriceEnum;
+use App\Enums\CLTYPRIEnum;
 use App\Models\Account;
 use App\Models\Comment;
 use Illuminate\Http\Request;
@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Date;
 
 
 /**
- * @property string uuid;
+ * @property int id;
  * @property string name
  * @property string phone
  * @property string personal_id
@@ -27,7 +27,7 @@ use Illuminate\Support\Facades\Date;
  * @property float late_fee_interest
  * @property float balance
  * @property float consumed
- * @property ClientTypePriceEnum type_price
+ * @property CLTYPRIEnum type_price
  * @property boolean receive_email
  * @property Account account
  * @property Comment comment
@@ -45,7 +45,7 @@ class ClientCommentResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'uuid' => $this->uuid,
+            'id' => $this->id,
             'name' => $this->name,
             'personal_id' => $this->personal_id,
             'phone' => $this->phone,
@@ -56,7 +56,7 @@ class ClientCommentResource extends JsonResource
             'type_price' => $this->type_price,
             'status' => $this->status,
             'comment' => [
-                'uuid' => $this->comment?->uuid,
+                'id' => $this->comment?->id,
                 'content' => $this->comment?->content,
                 'created_at' => $this->comment?->created_at,
             ],

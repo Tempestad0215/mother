@@ -6,7 +6,7 @@ export interface supplierI {
     contact: string | null;
     created_at: string;
     email: string| null;
-    uuid: string;
+    id: number;
     phone: string | null;
     status: number;
     payment: {

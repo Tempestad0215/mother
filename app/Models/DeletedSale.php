@@ -11,7 +11,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 
 /**
- * @property int $id
+ * @property int id
  * @property string $code
  * @property Sale $sale_id
  * @property array $info
@@ -27,7 +27,6 @@ class DeletedSale extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
     use softDeletes;
-    use HasUuids;
 
     /**
      * @var string

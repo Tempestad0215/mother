@@ -14,7 +14,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('products', function (Blueprint $table) {
-            $table->uuid()->primary();
+            $table->id();
             $table->string('code',30)->unique();
             $table->string('name',75);
             $table->string('description',255)->nullable();
@@ -44,8 +44,8 @@ return new class extends Migration
 
 
             //Relaciones de los productos
-            $table->foreignUuid('category_id');
-            $table->foreignUuid('supplier_id');
+            $table->foreignIdFor(Category::class, 'category_id');
+            $table->foreignIdFor(Supplier::class, 'supplier_id');
             $table->enum('type',['producto','servicio'])->default('producto');
             $table->boolean('inventoried')->default(true);
             $table->boolean('status')->default(true);

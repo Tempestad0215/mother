@@ -8,10 +8,10 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('accounts', function (Blueprint $table) {
-            $table->uuid()->primary();
+            $table->id();
             $table->string('code', 30)->unique();
-            $table->uuidMorphs('accountable');
-            $table->enum('type',['payable','receivable']);
+            $table->morphs('accountable');
+            $table->enum('type',['PAYABLE','RECEIVABLE']);
             $table->decimal('amount',15);
             $table->decimal('balance',15);
             $table->integer('due_date');

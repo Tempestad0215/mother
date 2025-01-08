@@ -22,9 +22,9 @@ class CreateAuditsTable extends Migration
 
             $table->bigIncrements('id');
             $table->string($morphPrefix . '_type')->nullable();
-            $table->uuid($morphPrefix . '_id')->nullable();
+            $table->integer($morphPrefix . '_id')->nullable();
             $table->string('event');
-            $table->uuidMorphs('auditable');
+            $table->morphs('auditable');
             $table->text('old_values')->nullable();
             $table->text('new_values')->nullable();
             $table->text('url')->nullable();

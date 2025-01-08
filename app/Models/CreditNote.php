@@ -3,8 +3,6 @@
 namespace App\Models;
 
 use App\Enums\PATYEnum;
-use App\Enums\SATYEnum;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -14,7 +12,7 @@ use Illuminate\Support\Carbon;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
- * @property string uuid
+ * @property integer id
  * @property string code
  * @property string ncf
  * @property string ncf_m
@@ -41,16 +39,8 @@ use OwenIt\Auditing\Contracts\Auditable;
 class CreditNote extends Model implements Auditable
 {
     use SoftDeletes;
-    use HasUuids;
     use \OwenIt\Auditing\Auditable;
 
-    /**
-     * Para el id
-     * @var string
-     */
-    protected $primaryKey = 'uuid';
-    protected $keyType = 'string';
-    public $incrementing = false;
 
     // La tabla que se ve a utilizar
     protected $table = 'credit_notes';

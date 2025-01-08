@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Scout\Searchable;
+use OwenIt\Auditing\Contracts\Auditable;
 
 
 /**
- * @property int $id
+ * @property int id
  * @property string $code
  * @property string $from
  * @property string $to
@@ -41,11 +42,11 @@ use Laravel\Scout\Searchable;
  * @property float $total_neto
  *
  */
-class MoneyCounter extends Model
+class MoneyCounter extends Model implements Auditable
 {
     use Searchable;
     use HasFactory;
-    use HasUuids;
+    use \OwenIt\Auditing\Auditable;
 
     //table
     protected $table = 'money_counter';

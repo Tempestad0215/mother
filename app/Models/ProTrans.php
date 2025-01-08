@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Enums\PROTRTYEnum;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,7 +13,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 
 /**
- * @property string uuid
+ * @property int id
  * @property string code
  * @property int product_id
  * @property string product_name
@@ -46,20 +45,12 @@ class ProTrans extends Model implements Auditable
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
     use softDeletes;
-    use HasUuids;
 
 
     /**
      * @var string
      */
     protected $table = 'pro_trans';
-
-    /**
-     * @var string
-     */
-    protected $primaryKey = 'uuid';
-    public $incrementing = false;
-    protected $keyType = 'string';
 
 
     /**

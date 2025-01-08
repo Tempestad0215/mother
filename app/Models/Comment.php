@@ -14,7 +14,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 
 /**
- * @property string $uuid
+ * @property integer id
  * @property string $content
  * @property int $commentable_id
  * @property string $commentable_type
@@ -27,14 +27,10 @@ class Comment extends Model implements Auditable
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
     use softDeletes;
-    use HasUuids;
 
-
-    protected $primaryKey = 'uuid';
-    protected $keyType = 'string';
-    public $incrementing = false;
-
-
+    /**
+     * @var string[]
+     */
     protected $fillable = [
         'content'
     ];

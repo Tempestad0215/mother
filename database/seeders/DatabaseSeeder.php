@@ -19,8 +19,6 @@ class DatabaseSeeder extends Seeder
     {
 
 
-        // Crear el rol
-        $role = Role::firstOrCreate(['name' => 'Super Admin', 'guard_name' => 'web']);
 
         // Crear el usuario
         $user = User::firstOrCreate(
@@ -31,8 +29,6 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // Asignar el rol al usuario
-        $user->assignRole($role);
 
 
         //Crear los datos de pruebas

@@ -277,7 +277,7 @@ Route::middleware([
   /*
    *Monedas
    */
-    Route::controller(CUController::class)
+    Route::controller(ACOController::class)
     ->prefix('currency')
     ->name('currency.')
     ->group(function (){
@@ -310,6 +310,7 @@ Route::middleware([
         ->group(function (){
             Route::get('/','index')->name('index');
             Route::post('/','store')->name('store');
+            Route::put('/{aco}','update')->name('update');
             Route::delete('/{aco}','destroy')->name('destroy');
         });
 

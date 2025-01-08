@@ -37,9 +37,9 @@ const propsW = defineProps<{
  */
 // Datos del formulario
 const form = useForm({
-    tran_id: "",
-    sale_id: "",
-    product_id: "",
+    tran_id: 0,
+    sale_id: 0,
+    product_id: 0,
     product_name:"",
     stock: 0.00,
     cost: 0.00,
@@ -85,7 +85,7 @@ onMounted(()=>{
     if(propsW.productEntrance)
     {
         showForm.value = true;
-        form.product_id = propsW.productEntrance.uuid;
+        form.product_id = propsW.productEntrance.id;
         form.product_name = propsW.productEntrance.name;
         form.stock = propsW.productEntrance.stock;
         form.cost = <number>propsW.productEntrance.cost;
@@ -103,7 +103,7 @@ onMounted(()=>{
     {
 
         showForm.value = true;
-        form.tran_id = propsW.trans.uuid;
+        form.tran_id = propsW.trans.id;
         form.product_id = propsW.trans.product_id;
         form.product_name = propsW.trans.product_name;
         form.stock = propsW.trans.stock;
@@ -176,7 +176,7 @@ const search = () => {
     });
 }
 
-const edit = (id:string)=>{
+const edit = (id:number)=>{
     router.get(route('in.entrance', {productIn: id}));
 }
 
@@ -282,7 +282,7 @@ const totalTax = () => {
                             v-model="form.cost" />
 
                         <!-- Error -->
-                        <InputError :message="form.errors.cost" />
+                        <InputError :message="form.errors?.cost" />
 
                     </div>
 
@@ -297,7 +297,7 @@ const totalTax = () => {
                             v-bind="moneyConfig"
                             v-model="form.special_price" />
                         <!-- Error -->
-                        <InputError :message="form.errors.min_price" />
+                        <InputError :message="form.errors?.special_price" />
 
                     </div>
 
@@ -503,7 +503,7 @@ const totalTax = () => {
                                     <td>{{ getMoney(item.price)}}</td>
                                     <td>
                                         <i
-                                            @click="edit(item.uuid)"
+                                            @click="edit(item.id)"
                                             title="Entrada"
                                             class=" icon-efect fa-solid fa-dolly"></i>
                                     </td>

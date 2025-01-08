@@ -12,11 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('suppliers', function (Blueprint $table) {
-            $table->uuid()->primary();
+            $table->id();
             $table->string('code',30)->unique()->comment('codigo unido para cada registro');
             $table->string('contact',75)->nullable();
             $table->string('company_name',150);
-            $table->enum('type_payment',['contado','credito','cheque','tarjeta','transferencia','anticipo','otros']);
+            $table->enum('type_payment',['CONTADO','CREDITO','CHEQUE','TARJETA','TRANSFERENCIA','ANTICIPO']);
             $table->string('phone',20)->nullable();
             $table->string('email',150)->nullable()->unique();
             $table->boolean('receive_email')->default(false);

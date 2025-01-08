@@ -7,6 +7,7 @@ use App\Models\ACO;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -15,25 +16,14 @@ class ACOController extends Controller
 {
 
     /**
-     * @param Request $request
      * @return Response
      */
-    public function index(Request $request):Response
+    public function index():Response
     {
-        //Busqueda de datos
-        $search = $request->get('search');
-        $perPage = $request->get('perPage');
-
-        $aco = ACO::where(function (Builder $query) use ($search) {
-            $query->where('code',$search)
-                ->orWhere('name','like','%'.$search.'%');
-        })->orderByDesc('created_at')
-            ->simplePaginate($perPage);
-
 
         // Vista con lso datos
-        return Inertia::render('ACO/ACOCreate',[
-            'aco' => $aco
+        return Inertia::render('Setting/ACO/ACOCreate',[
+            'aco' => ACO::all()
         ]);
     }
 
@@ -55,6 +45,29 @@ class ACOController extends Controller
         ACO::create($request->toArray());
 
         // Devuelta hacia atras
+        return back();
+    }
+
+    /**
+     * @param Request $request
+     * @param ACO $aco
+     * @return RedirectResponse
+     */
+    public function update(Request $request,ACO $aco)
+    {
+        // Validar los datos
+        $request->validate([
+            'code' => ['required','string','max:30', Rule::unique('account_cos')->ignore($aco->id)],
+            'name' => ['required','string','max:75'],
+            'type' => ['required', new Enum(ACOEnum::class)]
+        ]);
+
+
+        //Actualizar todos los datos
+        $aco->update($request->toArray());
+
+
+        // Retornar hacia atras
         return back();
     }
 

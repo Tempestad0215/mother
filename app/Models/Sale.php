@@ -2,11 +2,9 @@
 
 namespace App\Models;
 
-use App\Enums\PROTYEnum;
 use App\Enums\PATYEnum;
 use App\Enums\SATYEnum;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,7 +16,7 @@ use Illuminate\Support\Carbon;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
- * @property string uuid
+ * @property int id
  * @property string code
  * @property string invoice_type
  * @property string ncf
@@ -50,14 +48,9 @@ class Sale extends Model implements Auditable
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
     use softDeletes;
-    use HasUuids;
-
 
     // La tabla que se ve a utilizar
     protected $table = 'sales';
-    protected $primaryKey = 'uuid';
-    public $incrementing = false;
-    protected $keyType = 'string';
 
 
     /**

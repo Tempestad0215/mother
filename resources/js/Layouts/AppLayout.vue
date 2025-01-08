@@ -5,7 +5,7 @@ import LinkHeader from "@components/LinkHeader.vue";
 import Divider from "@components/Divider.vue";
 import ImageMenu from "@components/ImageMenu.vue";
 import FloatBox from "@components/FloatBox.vue";
-import Exchange from "@/Pages/Setting/Exchange.vue";
+import Exchange from "@/Pages/Setting/CU/Exchange.vue";
 
 
 /*

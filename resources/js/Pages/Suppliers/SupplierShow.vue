@@ -39,7 +39,7 @@ const form = useForm({
  * @param item
  */
 const edit = (item:supplierI) => {
-    router.get(route('supplier.edit',{supplier: item.uuid}));
+    router.get(route('supplier.edit',{supplier: item.id}));
 
 }
 
@@ -60,7 +60,7 @@ const destroy = (item:supplierI) => {
         cancelButtonText: "Cancelar"
     }).then((result) => {
         if (result.isConfirmed) {
-            form.delete(route('supplier.destroy',{supplier: item.uuid}),{
+            form.delete(route('supplier.destroy',{supplier: item.id}),{
                 onSuccess: () => {
                     successHttp('Datos eliminado Correctamente');
                 }

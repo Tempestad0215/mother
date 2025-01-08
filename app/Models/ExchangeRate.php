@@ -2,14 +2,12 @@
 
 namespace App\Models;
 
-use Date;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
- * @property string uuid
+ * @property int id
  * @property array rate_info
  * @property int month
  * @property int year
@@ -23,17 +21,6 @@ class ExchangeRate extends Model implements Auditable
 {
     use SoftDeletes;
     use \OwenIt\Auditing\Auditable;
-    use HasUuids;
-
-
-    /**
-     * Llave primaria
-     * @var string
-     */
-    protected $primaryKey = 'uuid';
-    public $incrementing = false;
-    protected $keyType = 'string';
-
 
     /**
      * Datos para almacenar
