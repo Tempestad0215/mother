@@ -99,7 +99,7 @@ const destroy = (item:acoBaseI) => {
 </script>
 
 <template>
-    <Head title="Cuentas Contables" />
+    <Head title="Almacenes" />
     <AppLayout>
         <template #header>
             <TabLink
@@ -124,7 +124,7 @@ const destroy = (item:acoBaseI) => {
                 class="grid grid-cols-2 gap-3 bg-blue-300 p-5 rounded-md">
                 <h3
                     class="title text-center col-span-full">
-                    Cuentas Contables
+                    Almacenes
                 </h3>
                 <!--                codigo-->
                 <div>
@@ -160,7 +160,7 @@ const destroy = (item:acoBaseI) => {
             <!--            Cuentas registrada -->
             <div class="mt-3 p-5 bg-blue-300 rounded-md">
                 <h3 class="title text-center">
-                    Listado de Cuentas
+                    Listado de Almacenes
                 </h3>
                 <table
                     class="styleTable table-auto w-full mt-3">

@@ -316,6 +316,7 @@ Route::middleware([
         ->name('wh.')
         ->group(function (){
             Route::get('/','index')->name('index');
+            Route::post('/','store')->name('store');
         });
 
 

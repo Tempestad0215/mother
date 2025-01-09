@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\WarehouseRequest;
 use App\Models\Warehouse;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class WHController extends Controller
@@ -20,11 +21,18 @@ class WHController extends Controller
         ]);
     }
 
-    public function store(WarehouseRequest $request)
+    public function store(Request $request)
     {
-        $this->authorize('create', Warehouse::class);
+        //Validar los datos
+        $request->validate([
+            'name' => ['required', 'string', 'max:75'],
+            'description' => ['required', 'string', 'max:200'],
+        ]);
 
-        return Warehouse::create($request->validated());
+
+        // Craer los datos
+        Warehouse::create($request->toArray());
+
     }
 
     public function show(Warehouse $warehouse)
