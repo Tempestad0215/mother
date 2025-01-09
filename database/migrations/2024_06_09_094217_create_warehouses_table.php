@@ -7,11 +7,11 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('account_cos', function (Blueprint $table) {
+        Schema::create('warehouses', function (Blueprint $table) {
             $table->id();
-            $table->string('code',30)->unique()->comment('Codigo');
-            $table->string('name')->comment('Nombre');
-            $table->enum('type',['ACTIVO','PASIVO','INGRESO','GASTO','CAPITAL'])->comment('Tipo cuenta');
+            $table->string('name',30)->comment('Nombre');
+            $table->string('description',200)->comment('Descripcion');
+            $table->string('location',30)->comment('Ubicacion');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -19,6 +19,6 @@ return new class extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists('account_cos');
+        Schema::dropIfExists('warehouses');
     }
 };

@@ -9,8 +9,8 @@ return new class extends Migration {
     {
         Schema::create('images', function (Blueprint $table) {
             $table->id();
-            $table->string('code',30)->unique();
-            $table->string('name');
+            $table->string('code',30)->unique()->comment('Codigo');
+            $table->string('name')->comment('Nombre');
             $table->morphs('imageable');
             $table->timestamps();
             $table->softDeletes();

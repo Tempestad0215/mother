@@ -12,11 +12,11 @@ return new class extends Migration {
         Schema::create('credit_notes', function (Blueprint $table) {
             DataBaseHElper::saleTable($table);
             //Datos solo de nota de credito
-            $table->string('ncf_m',30)->nullable();
-            $table->decimal('n_available');
-            $table->string('type',20)->default('DEVOLUCION');
-            $table->boolean('status')->default(true);
-            $table->foreignIdFor(Sale::class, 'sale_id');
+            $table->string('ncf_m',30)->nullable()->comment('ncf modificado');
+            $table->decimal('n_available')->comment('cantiad nota de credito disponible');
+            $table->string('type',20)->default('DEVOLUCION')->comment('Tipo Devolucion');
+            $table->boolean('status')->default(true)->comment('Estado');
+            $table->foreignIdFor(Sale::class, 'sale_id')->comment('relacion de ventas');
             //Full text
             $table->fullText('ncf');
             $table->fullText('ncf_m');

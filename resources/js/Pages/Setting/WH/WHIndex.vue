@@ -7,7 +7,7 @@ import {ref} from "vue";
 import InputError from "@components/InputError.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import {successHttp} from "@/Global/Alert";
-import {acoBaseI, acoTableI} from "@/Interfaces/ACO";
+import {acoBaseI} from "@/Interfaces/ACO";
 import Swal from "sweetalert2";
 import TabLink from "@components/TabLink.vue";
 
@@ -16,7 +16,7 @@ import TabLink from "@components/TabLink.vue";
 Propiedades
  */
 const propsW = defineProps<{
-    aco: acoTableI
+    warehouse: any
 }>()
 
 /**
@@ -29,15 +29,9 @@ const type = ref(['ACTIVO','PASIVO','INGRESO','GASTO','CAPITAL']);
  */
 const form = useForm({
     id:0,
-    code:"",
     name:"",
-    type:"",
+    description:"",
     update: false,
-});
-
-const formSearch = useForm({
-    search:"",
-    perPage: 30
 });
 
 
@@ -72,11 +66,10 @@ const submit = () => {
  *
  * @param item
  */
-const edit = (item:acoBaseI) => {
+const edit = (item:any) => {
     form.id = item.id;
-    form.code = item.code;
     form.name = item.name;
-    form.type = item.type;
+    form.description = item;
     form.update = true;
 }
 
@@ -124,26 +117,15 @@ const destroy = (item:acoBaseI) => {
             </TabLink>
         </template>
 
-<!--        Contenido de la vantana-->
+        <!--        Contenido de la vantana-->
         <div class="max-w-[70rem] mx-auto">
             <form
                 @submit.prevent="submit"
-                class="grid grid-cols-3 gap-3 bg-blue-300 p-5 rounded-md">
+                class="grid grid-cols-2 gap-3 bg-blue-300 p-5 rounded-md">
                 <h3
                     class="title text-center col-span-full">
                     Cuentas Contables
                 </h3>
-<!--                codigo-->
-                <div>
-                    <InputLabel
-                        for="code"
-                        value="Codigo"/>
-                    <TextInput
-                        class="w-full"
-                        v-model="form.code"
-                    />
-                    <InputError :message="form.errors?.code" />
-                </div>
                 <!--                codigo-->
                 <div>
                     <InputLabel
@@ -158,24 +140,16 @@ const destroy = (item:acoBaseI) => {
                 <!--                codigo-->
                 <div>
                     <InputLabel
-                        for="type"
-                        value="Nombre"/>
-                    <select
-                        class="inputGeneral py-1 w-full"
-                        v-model="form.type">
-                        <option value=""> -- Seleccione --</option>
-                        <option
-                            v-for="(item, index) in type"
-                            :key="index"
-                            :value="item">
-                            {{item}}
-                        </option>
-                    </select>
-                    <InputError :message="form.errors?.type" />
+                        for="description"
+                        value="Descripcion"/>
+                    <TextInput
+                        class="w-full"
+                        v-model="form.description"
+                    />
+                    <InputError :message="form.errors?.description" />
                 </div>
-
-<!--                Botones para enviar-->
-                <div class="col-end-4 text-right">
+                <!--                Botones para enviar-->
+                <div class="col-span-full text-right">
                     <PrimaryButton>
                         Registar
                     </PrimaryButton>
@@ -183,7 +157,7 @@ const destroy = (item:acoBaseI) => {
             </form>
 
 
-<!--            Cuentas registrada -->
+            <!--            Cuentas registrada -->
             <div class="mt-3 p-5 bg-blue-300 rounded-md">
                 <h3 class="title text-center">
                     Listado de Cuentas
@@ -191,60 +165,34 @@ const destroy = (item:acoBaseI) => {
                 <table
                     class="styleTable table-auto w-full mt-3">
                     <thead>
-                        <tr>
-                            <th>Codigo</th>
-                            <th>Nombre</th>
-                            <th>Tipo</th>
-                            <th>Act</th>
-                        </tr>
+                    <tr>
+                        <th>Codigo</th>
+                        <th>Nombre</th>
+                        <th>Tipo</th>
+                        <th>Act</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        <tr
-                            v-for="(item, index) in propsW.aco.data"
-                            :key="index">
-                            <td>{{item.code}}</td>
-                            <td>{{item.name}}</td>
-                            <td>{{item.type}}</td>
-                            <td class="space-x-3">
-                                <i
-                                    @click="edit(item)"
-                                    class=" icon-efect fa-solid fa-file-pen"></i>
-                                <i
-                                    @click="destroy(item)"
-                                    class=" icon-efect fa-solid fa-trash-can"></i>
-                            </td>
-                        </tr>
+                    <tr
+                        v-for="(item, index) in propsW.warehouse"
+                        :key="index">
+                        <td>{{item.code}}</td>
+                        <td>{{item.name}}</td>
+                        <td>{{item.type}}</td>
+                        <td class="space-x-3">
+                            <i
+                                @click="edit(item)"
+                                class=" icon-efect fa-solid fa-file-pen"></i>
+                            <i
+                                @click="destroy(item)"
+                                class=" icon-efect fa-solid fa-trash-can"></i>
+                        </td>
+                    </tr>
                     </tbody>
 
                 </table>
             </div>
 
-
-<!--            Relaciones de las cuentas contables-->
-            <div class="mt-3 bg-blue-300 p-5 rounded-md">
-                <h3 class="title text-center">
-                    Relaciones De Cuenta
-                </h3>
-                <form>
-                    <!-- Ventas-->
-                    <div>
-                        <InputLabel for="account" value="Venta" />
-                        <select></select>
-                    </div>
-
-                    <!-- Compras -->
-                    <div>
-                        <InputLabel for="account" value="Venta" />
-                        <select></select>
-                    </div>
-
-                    <!-- Devoluciones -->
-                    <div>
-                        <InputLabel for="account" value="Venta" />
-                        <select></select>
-                    </div>
-                </form>
-            </div>
         </div>
     </AppLayout>
 </template>

@@ -10,12 +10,12 @@ return new class extends Migration {
     {
         Schema::create('trans_cos', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(ACO::class,'account_co_id');
-            $table->decimal('amount', 20);
-            $table->enum('type',['CREDITO','DEBITO']);
-            $table->decimal('debit',15)->default(0);
-            $table->decimal('credit',15)->default(0);
-            $table->timestamp('date')->useCurrent();
+            $table->foreignIdFor(ACO::class,'account_co_id')->comment('Relacion de cuenta');
+            $table->decimal('amount', 20)->comment('Monto');
+            $table->enum('type',['CREDITO','DEBITO'])->comment('Tipo cuenta');
+            $table->decimal('debit',15)->default(0)->comment('Monto de debito');
+            $table->decimal('credit',15)->default(0)->comment('Monto de credito');
+            $table->timestamp('date')->useCurrent()->comment('Fecha y hora');
             $table->timestamps();
             $table->softDeletes();
         });

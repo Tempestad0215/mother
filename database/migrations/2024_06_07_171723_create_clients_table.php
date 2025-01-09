@@ -13,17 +13,17 @@ return new class extends Migration
     {
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
-            $table->string('code',30)->unique();
-            $table->string('name',75);
-            $table->enum('document',['cedula','pasaporte','rnc','otro']);
-            $table->string('phone',20)->nullable();
-            $table->string('personal_id',50)->nullable( );
-            $table->string('email',150)->nullable()->unique();
-            $table->string('address',255)->nullable();
-            $table->enum('type',['contado','credito','anticipo'])->default('contado');
-            $table->enum('type_price',[1,2,3]);
-            $table->boolean('receive_email');
-            $table->boolean('status')->default(true);
+            $table->string('code',30)->unique()->comment('Codigo');
+            $table->string('name',75)->comment('Nombre');
+            $table->enum('document',['cedula','pasaporte','rnc','otro'])->comment('Documento');
+            $table->string('phone',20)->nullable()->comment('Telefono');
+            $table->string('personal_id',50)->nullable()->comment('ID Personal');
+            $table->string('email',150)->nullable()->unique()->comment('Email');
+            $table->string('address',255)->nullable()->comment('Direccion');
+            $table->enum('type',['contado','credito','anticipo'])->default('contado')->comment('Tipo');
+            $table->enum('type_price',[1,2,3])->comment('Tipo precio');
+            $table->boolean('receive_email')->comment('Recibir email');
+            $table->boolean('status')->default(true)->comment('Estado');
             $table->softDeletes();
             $table->timestamps();
 

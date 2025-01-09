@@ -10,16 +10,16 @@ return new class extends Migration {
         Schema::create('sequences', function (Blueprint $table) {
             $table->id();
             $table->string('code',30)->unique()->comment('codigo unido para cada registro');
-            $table->enum('type', ['B01','B02','B03','B04','B11','B12','B13','B14','B15','B16','B17']);
-            $table->integer('from');
-            $table->integer('next');
-            $table->integer('to');
-            $table->integer('advise');
-            $table->string('num_request',20);
-            $table->string('num_authorization',20);
-            $table->date('date_request');
-            $table->date('date_expire')->nullable();
-            $table->boolean('status')->default(1);
+            $table->enum('type', ['B01','B02','B03','B04','B11','B12','B13','B14','B15','B16','B17'])->comment('Tipo de registro');
+            $table->integer('from')->comment('numero inicial');
+            $table->integer('next')->comment('numero siguiente');
+            $table->integer('to')->comment('numero final');
+            $table->integer('advise')->comment('mensaje de alerta segun la cantidad prestablecida');
+            $table->string('num_request',20)->comment('numero de solicitud');
+            $table->string('num_authorization',20)->comment('numero de autorizacion');
+            $table->date('date_request')->comment('Fecha de solicitud');
+            $table->date('date_expire')->nullable()->comment('Fecha de expiracion');
+            $table->boolean('status')->default(1)->comment('Estado del Item');
             $table->softDeletes();
             $table->timestamps();
         });

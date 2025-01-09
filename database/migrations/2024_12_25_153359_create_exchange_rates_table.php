@@ -9,11 +9,11 @@ return new class extends Migration {
     {
         Schema::create('exchange_rates', function (Blueprint $table) {
             $table->id();
-            $table->string('code',30)->unique();
-            $table->json('rate_info');
-            $table->integer('month');
-            $table->integer('year');
-            $table->boolean('status')->default(true);
+            $table->string('code',30)->unique()->comment('Codigo');
+            $table->json('rate_info')->comment('informacion de la tasa');
+            $table->integer('month')->comment('mes');
+            $table->integer('year')->comment('anio');
+            $table->boolean('status')->default(true)->comment('Estado del Item');
             $table->timestamps();
             $table->softDeletes();
         });

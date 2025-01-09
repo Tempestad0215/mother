@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
-            $table->string('code',30)->unique();
-            $table->text('content');
+            $table->string('code',30)->unique()->comment('Codigo');
+            $table->text('content')->comment('Contenido');
             $table->morphs('commentable');
-            $table->boolean('status')->default(true);
+            $table->boolean('status')->default(true)->comment('Estado del Item');
             $table->softDeletes();
             $table->timestamps();
         });

@@ -9,14 +9,14 @@ return new class extends Migration {
     {
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
-            $table->string('code', 30)->unique();
+            $table->string('code', 30)->unique()->comment('Codigo');
             $table->morphs('accountable');
-            $table->enum('type',['PAYABLE','RECEIVABLE']);
-            $table->decimal('amount',15);
-            $table->decimal('balance',15);
-            $table->integer('due_date');
-            $table->decimal('late_fee')->default(0);
-            $table->boolean('status')->default(true);
+            $table->enum('type',['PAYABLE','RECEIVABLE'])->comment('Tipo de cuenta');
+            $table->decimal('amount',15)->comment('Total');
+            $table->decimal('balance',15)->comment('Saldo');
+            $table->integer('due_date')->comment('Fecha vencimiento');
+            $table->decimal('late_fee')->default(0)->comment('Interes por pago vencido');
+            $table->boolean('status')->default(true)->comment('Estado del Item');
             $table->timestamps();
             $table->softDeletes();
         });

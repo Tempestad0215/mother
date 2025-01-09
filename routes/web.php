@@ -5,7 +5,6 @@ use App\Http\Controllers\ACOController;
 use App\Http\Controllers\CHRController;
 use App\Http\Controllers\CAController;
 use App\Http\Controllers\CLController;
-use App\Http\Controllers\CUController;
 use App\Http\Controllers\INController;
 use App\Http\Controllers\PRINController;
 use App\Http\Controllers\PRController;
@@ -17,6 +16,7 @@ use App\Http\Controllers\SUPController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SAController;
 use App\Http\Controllers\SETController;
+use App\Http\Controllers\WHController;
 use App\Http\Middleware\IsAdminMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -25,13 +25,6 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\CRNController;
 
 
-
-// La ruita de registro bloquerar
-
-
-//Route::get('/pass', function () {
-//    return Hash::make('password');
-//});
 
 Route::middleware([
     'auth:sanctum',
@@ -76,7 +69,7 @@ Route::middleware([
             Route::delete('/{sequence}','destroy')->name('destroy');
         });
 
-    /**
+    /*
      * Dashboard de la app
      */
     Route::get('/dashboard', function () {
@@ -96,7 +89,7 @@ Route::middleware([
         ]);
     })->name('register');
 
-    /**
+    /*
      * Usuario
      */
     Route::middleware([IsAdminMiddleware::class])->controller(UserController::class)
@@ -108,7 +101,7 @@ Route::middleware([
         Route::patch('/destroy/{user}', 'destroy')->name('destroy');
     });
 
-    /**
+    /*
      * Cliente
      */
     Route::controller(CLController::class)
@@ -125,7 +118,7 @@ Route::middleware([
 
     });
 
-    /**
+    /*
      * Categoria
      */
     Route::controller(CAController::class)
@@ -139,7 +132,7 @@ Route::middleware([
         Route::get('/get','getJson')->name('get.json');
     });
 
-    /**
+    /*
      * Suplidores
      */
     Route::controller(SUPController::class)
@@ -156,7 +149,7 @@ Route::middleware([
 
     });
 
-    /**
+    /*
      * Productos
      */
     Route::controller(PRController::class)
@@ -175,7 +168,7 @@ Route::middleware([
     });
 
 
-    /**
+    /*
      * Ventas
      */
     Route::controller(SAController::class)
@@ -192,6 +185,8 @@ Route::middleware([
        Route::patch('/item/destroy/{product}/{sale}','destroyItem')->name('destroy.item');
        Route::patch('/destroy/{sale}/{inventoried}','destroySale')->name('destroy-sale');
     });
+
+
     /*
      * Repotes de las ventas
      */
@@ -204,9 +199,8 @@ Route::middleware([
            Route::get('/print','get')->name('get');
         });
 
-    /**
+    /*
      * Notas de credito o devoluciones
-     *
      */
     Route::controller(CRNController::class)
     ->prefix('credit-note')
@@ -219,8 +213,7 @@ Route::middleware([
         Route::patch('/{sale}','store')->name('store');
     });
 
-    /**
-     *
+    /*
      * Entradas
      */
     Route::controller(PRINController::class)
@@ -236,7 +229,7 @@ Route::middleware([
         Route::patch('/destroy/{trans}','destroy')->name('destroy');
     });
 
-    /**
+    /*
      * Reportes
      */
     Route::controller(REController::class)
@@ -250,7 +243,7 @@ Route::middleware([
        Route::post('/daily','getDailyByDate')->name('getDailyByDate');
     });
 
-    /**
+    /*
      * Reporte de Ventas
      */
     Route::controller(RESAController::class)
@@ -261,7 +254,7 @@ Route::middleware([
        Route::get('/json','reportSaleRange')->name('range');
     });
 
-    /**
+    /*
      * Facturas del sistema
      */
     Route::controller(INController::class)
@@ -312,6 +305,17 @@ Route::middleware([
             Route::post('/','store')->name('store');
             Route::put('/{aco}','update')->name('update');
             Route::delete('/{aco}','destroy')->name('destroy');
+        });
+
+
+    /*
+     * Alamceneces
+     */
+    Route::controller(WHController::class)
+        ->prefix('warehouse')
+        ->name('wh.')
+        ->group(function (){
+            Route::get('/','index')->name('index');
         });
 
 
