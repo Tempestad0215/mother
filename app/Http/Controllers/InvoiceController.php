@@ -20,7 +20,7 @@ use phpDocumentor\Reflection\Types\Integer;
 use Spatie\LaravelPdf\Facades\Pdf;
 use function PHPUnit\Framework\isNull;
 
-class INController extends Controller
+class InvoiceController extends Controller
 {
 
     /**

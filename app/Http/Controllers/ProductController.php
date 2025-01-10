@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class PRController extends Controller
+class ProductController extends Controller
 {
 
     /**

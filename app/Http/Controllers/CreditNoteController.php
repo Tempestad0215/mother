@@ -18,7 +18,7 @@ use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class CRNController extends Controller
+class CreditNoteController extends Controller
 {
 
     /**
@@ -77,7 +77,7 @@ class CRNController extends Controller
 
         }else{
             //Crear la instancia
-            $productSaleController = new SAController();
+            $productSaleController = new SaleController();
 
             //Intancia de los datos
             $dataSale = $productSaleController->dataSale($request);

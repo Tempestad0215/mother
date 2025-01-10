@@ -1,0 +1,35 @@
+<?php
+
+use App\Models\Product;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('inventory_movements', function (Blueprint $table) {
+            $table->id();
+            $table->foreignIdFor(Product::class, 'product_id')->comment('Relacionde  productos');
+            $table->enum('type',['ENTRADA','SALIDA','AJUSTE','CONTEO'])->comment('Tipo de movimiento');
+            $table->decimal('quantity')->comment('Cantidad del movimiento');
+            $table->decimal('cost')->comment('costo del movimiento unitario');
+            $table->string('description')->comment('Decripcion');
+            $table->timestamp('date')->useCurrent()->comment('Fecha del movimiento');
+            $table->boolean('status')->default('true');
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('inventory_movements');
+    }
+};

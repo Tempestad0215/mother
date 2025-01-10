@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import {Head, router, useForm} from "@inertiajs/vue3";
 import AppLayout from "@layout/AppLayout.vue";
-import InputLabel from "@components/InputLabel.vue";
 import TextInput from "@components/TextInput.vue";
 import {ref} from "vue";
 import InputError from "@components/InputError.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import {successHttp} from "@/Global/Alert";
-import {acoBaseI, acoTableI} from "@/Interfaces/ACO";
+import {acoBaseI} from "@/Interfaces/ACO";
 import Swal from "sweetalert2";
 import TabLink from "@components/TabLink.vue";
 
@@ -16,7 +15,7 @@ import TabLink from "@components/TabLink.vue";
 Propiedades
  */
 const propsW = defineProps<{
-    aco: acoTableI
+    aco: acoBaseI[]
 }>()
 
 /**
@@ -131,9 +130,7 @@ const destroy = (item:acoBaseI) => {
                 </h3>
 <!--                codigo-->
                 <div>
-                    <InputLabel
-                        for="code"
-                        value="Codigo"/>
+                    <label for="code">Codigo</label>
                     <TextInput
                         class="w-full"
                         v-model="form.code"
@@ -142,9 +139,7 @@ const destroy = (item:acoBaseI) => {
                 </div>
                 <!--                codigo-->
                 <div>
-                    <InputLabel
-                        for="name"
-                        value="Nombre"/>
+                    <label for="name">Nombre</label>
                     <TextInput
                         class="w-full"
                         v-model="form.name"
@@ -153,9 +148,7 @@ const destroy = (item:acoBaseI) => {
                 </div>
                 <!--                codigo-->
                 <div>
-                    <InputLabel
-                        for="type"
-                        value="Nombre"/>
+                    <label for="type">Nombre</label>
                     <select
                         class="inputGeneral py-1 w-full"
                         v-model="form.type">
@@ -195,7 +188,7 @@ const destroy = (item:acoBaseI) => {
                     </thead>
                     <tbody>
                         <tr
-                            v-for="(item, index) in propsW.aco.data"
+                            v-for="(item, index) in propsW.aco"
                             :key="index">
                             <td>{{item.code}}</td>
                             <td>{{item.name}}</td>

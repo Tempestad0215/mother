@@ -12,7 +12,7 @@ use Illuminate\Validation\Rules\Enum;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class ACOController extends Controller
+class AccontCoController extends Controller
 {
 
     /**

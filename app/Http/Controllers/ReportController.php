@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class REController extends Controller
+class ReportController extends Controller
 {
     //
 

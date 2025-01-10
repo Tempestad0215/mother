@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class WHController extends Controller
+class WarehouseController extends Controller
 {
     use AuthorizesRequests;
 

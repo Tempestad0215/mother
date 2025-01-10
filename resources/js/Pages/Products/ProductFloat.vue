@@ -344,7 +344,7 @@ const tax = (price:number, tax:number) => {
                         <select
                             v-model="form.supplier_id"
                             class=" w-full inputGeneral py-1 ">
-                            <option selected disabled value="" >-- Suplidor --</option>
+                            <option selected disabled :value="0" >-- Suplidor --</option>
                             <option
                                 class="even:bg-blue-200"
                                 v-for="(item, index) in propsW.suppliers"

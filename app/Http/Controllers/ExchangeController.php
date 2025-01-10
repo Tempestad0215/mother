@@ -10,7 +10,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Exception;
 
-class CHRController extends Controller
+class ExchangeController extends Controller
 {
     //
 
@@ -56,7 +56,7 @@ class CHRController extends Controller
         $money = MoneyCounter::latest('id')->first();
 
         //Mostrar el PDF
-        $invoice = new INController();
+        $invoice = new InvoiceController();
 
         //Llamar el pdf
         return $invoice->getB($money);

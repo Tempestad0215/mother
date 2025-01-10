@@ -1,28 +1,28 @@
 <?php
 
 use App\Helpers\UserHelper;
-use App\Http\Controllers\ACOController;
-use App\Http\Controllers\CHRController;
-use App\Http\Controllers\CAController;
-use App\Http\Controllers\CLController;
-use App\Http\Controllers\INController;
+use App\Http\Controllers\AccontCoController;
+use App\Http\Controllers\ExchangeController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PRINController;
-use App\Http\Controllers\PRController;
-use App\Http\Controllers\PUController;
-use App\Http\Controllers\REController;
-use App\Http\Controllers\RESAController;
-use App\Http\Controllers\SEController;
-use App\Http\Controllers\SUPController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ReportSaleController;
+use App\Http\Controllers\SequenceController;
+use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\SAController;
-use App\Http\Controllers\SETController;
-use App\Http\Controllers\WHController;
+use App\Http\Controllers\SaleController;
+use App\Http\Controllers\SettingController;
+use App\Http\Controllers\WarehouseController;
 use App\Http\Middleware\IsAdminMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
-use App\Http\Controllers\CRNController;
+use App\Http\Controllers\CreditNoteController;
 
 
 
@@ -45,7 +45,7 @@ Route::middleware([
     /*
      * Configuracion de la app
      */
-    Route::controller(SETController::class)
+    Route::controller(SettingController::class)
         ->prefix('setting')
         ->name('setting.')
         ->group(function () {
@@ -57,7 +57,7 @@ Route::middleware([
     /*
      * Secuencia de RNC
      */
-    Route::middleware([IsAdminMiddleware::class])->controller(SEController::class)
+    Route::middleware([IsAdminMiddleware::class])->controller(SequenceController::class)
         ->prefix('setting/sequence')
         ->name('sequence.')
         ->group(function () {
@@ -104,7 +104,7 @@ Route::middleware([
     /*
      * Cliente
      */
-    Route::controller(CLController::class)
+    Route::controller(ClientController::class)
     ->prefix('client')
     ->name('client.')
     ->group(function () {
@@ -121,7 +121,7 @@ Route::middleware([
     /*
      * Categoria
      */
-    Route::controller(CAController::class)
+    Route::controller(CategoryController::class)
     ->prefix('category')
     ->name('category.')
     ->group(function () {
@@ -135,7 +135,7 @@ Route::middleware([
     /*
      * Suplidores
      */
-    Route::controller(SUPController::class)
+    Route::controller(SupplierController::class)
     ->prefix('supplier')
     ->name('supplier.')
     ->group(function(){
@@ -152,7 +152,7 @@ Route::middleware([
     /*
      * Productos
      */
-    Route::controller(PRController::class)
+    Route::controller(ProductController::class)
     ->prefix('product')
     ->name('product.')
     ->group(function(){
@@ -171,7 +171,7 @@ Route::middleware([
     /*
      * Ventas
      */
-    Route::controller(SAController::class)
+    Route::controller(SaleController::class)
     ->prefix('sale')
     ->name('sale.')
     ->group(function(){
@@ -190,7 +190,7 @@ Route::middleware([
     /*
      * Repotes de las ventas
      */
-    Route::controller(CHRController::class)
+    Route::controller(ExchangeController::class)
         ->prefix('sale/report')
         ->name('sale.report.')
         ->group(function(){
@@ -202,7 +202,7 @@ Route::middleware([
     /*
      * Notas de credito o devoluciones
      */
-    Route::controller(CRNController::class)
+    Route::controller(CreditNoteController::class)
     ->prefix('credit-note')
     ->name('credit-note.')
     ->group(function (){
@@ -217,7 +217,7 @@ Route::middleware([
      * Entradas
      */
     Route::controller(PRINController::class)
-    ->prefix('in')
+    ->prefix('product/in')
     ->name('in.')
     ->group(function(){
         Route::get('/','index')->name('create');
@@ -232,7 +232,7 @@ Route::middleware([
     /*
      * Reportes
      */
-    Route::controller(REController::class)
+    Route::controller(ReportController::class)
     ->prefix('report')
     ->name('report.')
     ->group(function (){
@@ -246,7 +246,7 @@ Route::middleware([
     /*
      * Reporte de Ventas
      */
-    Route::controller(RESAController::class)
+    Route::controller(ReportSaleController::class)
     ->prefix('report/sale')
     ->name('report-sale.')
     ->group(function (){
@@ -257,7 +257,7 @@ Route::middleware([
     /*
      * Facturas del sistema
      */
-    Route::controller(INController::class)
+    Route::controller(InvoiceController::class)
     ->prefix('invoice')
     ->name('invoice.')
     ->group(function (){
@@ -267,10 +267,10 @@ Route::middleware([
     });
 
 
-  /*
-   *Monedas
-   */
-    Route::controller(ACOController::class)
+    /*
+    *Monedas
+    */
+    Route::controller(AccontCoController::class)
     ->prefix('/setting/currency')
     ->name('currency.')
     ->group(function (){
@@ -281,23 +281,20 @@ Route::middleware([
         Route::put('/restore/{currency}','restore')->name('restore');
     });
 
-
     /*
      * Compra
      */
-    Route::controller(PUController::class)
+    Route::controller(PurchaseController::class)
     ->prefix('purchase')
     ->name('purchase.')
     ->group(function (){
         Route::get('/','index')->name('index');
     });
 
-
-
     /*
      * cuentas contables modificacion y demas
      */
-    Route::controller(ACOController::class)
+    Route::controller(AccontCoController::class)
         ->prefix('/setting/aco')
         ->name('aco.')
         ->group(function (){
@@ -307,11 +304,10 @@ Route::middleware([
             Route::delete('/{aco}','destroy')->name('destroy');
         });
 
-
     /*
      * Alamceneces
      */
-    Route::controller(WHController::class)
+    Route::controller(WarehouseController::class)
         ->prefix('/setting/warehouse')
         ->name('wh.')
         ->group(function (){
@@ -320,6 +316,5 @@ Route::middleware([
             Route::put('/{wh}','update')->name('update');
             Route::delete('/{wh}','destroy')->name('destroy');
         });
-
 
 });

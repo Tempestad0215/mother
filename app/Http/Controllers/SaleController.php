@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class SAController extends Controller
+class SaleController extends Controller
 {
 
     /**

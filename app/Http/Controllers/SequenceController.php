@@ -13,7 +13,7 @@ use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class SEController extends Controller
+class SequenceController extends Controller
 {
     /**
      * Vista para la secuencia de RNC

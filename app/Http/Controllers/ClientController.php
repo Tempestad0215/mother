@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class CLController extends Controller
+class ClientController extends Controller
 {
     public ClientHelper $clientHelper;
 

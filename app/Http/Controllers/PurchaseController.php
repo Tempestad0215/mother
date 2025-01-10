@@ -6,7 +6,7 @@ use App\Helpers\ProductHelper;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class PUController extends Controller
+class PurchaseController extends Controller
 {
     public function index(Request $request)
     {

@@ -11,7 +11,7 @@ use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class SETController extends Controller
+class SettingController extends Controller
 {
     /**
      * @return Response

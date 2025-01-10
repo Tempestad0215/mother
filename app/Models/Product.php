@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Date;
 use OwenIt\Auditing\Contracts\Auditable;
 
+use function PHPSTORM_META\map;
+
 /**
  * @property int id
  * @property string type
@@ -91,7 +93,11 @@ class Product extends Model implements Auditable
         'status',
         'comment',
         'type',
-        'inventoried'
+        'inventoried',
+        'has_fraction',
+        'has_special',
+        'has_promotion',
+        'has_tax'
     ];
 
 
@@ -111,6 +117,12 @@ class Product extends Model implements Auditable
      */
     protected $casts = [
         'status' => 'boolean',
+        'has_fraction' => 'boolean',
+        'inventoried' => 'boolean',
+        'has_special' => 'boolean',
+        'has_discount' => 'boolean',
+        'has_promotion' => 'boolean',
+        'has_tax' => 'boolean',
         'close_table' => 'boolean',
         'type' => PROTYEnum::class
     ];
