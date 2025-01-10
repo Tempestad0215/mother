@@ -3,6 +3,7 @@ import { moneyConfig } from '@/Global/Helpers';
 import { productBaseI } from '@/Interfaces/Product';
 import FloatBox from '@components/FloatBox.vue';
 import InputError from '@components/InputError.vue';
+import PrimaryButton from '@components/PrimaryButton.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
 import { formToJSON } from 'axios';
@@ -40,9 +41,9 @@ const form = useForm({
         </template>
         <div>
             <form
-                class="bg-blue-300 p-5 rounded-md" 
+                class="bg-blue-300 p-5 rounded-md grid grid-cols-3 gap-3" 
                 action="">
-                <h3 class="title text-center">
+                <h3 class="title text-center col-span-full">
                     Entrada
                 </h3>
 
@@ -54,7 +55,7 @@ const form = useForm({
                     <div>
                         <!-- Buscador de productos -->
                         <select 
-                            class="inputGeneral py-1"
+                            class="inputGeneral py-1 w-[80%]"
                             name="product" 
                             id="product">
                             <option value="">--- Seleccione ----</option>
@@ -67,7 +68,7 @@ const form = useForm({
                         <!-- Para buscar los datos -->
                         <i 
                             @click="showProduct = !showProduct"
-                            class="icon-efect ml-3 p-1 fa-solid fa-magnifying-glass"></i>
+                            class="bg-blue-700 text-white px-3 rounded-md icon-efect ml-3 fa-solid fa-magnifying-glass"></i>
                     </div>
                     <InputError :message="form.errors?.product_id"/>
                 </div>
@@ -79,7 +80,7 @@ const form = useForm({
                         class="block" 
                         for="quantity">Cantidad</label>
                     <Money
-                        class="inputGeneral" 
+                        class="inputGeneral w-full" 
                         v-bind="moneyConfig"  
                         v-model="form.quantity" />
                 </div>
@@ -89,9 +90,17 @@ const form = useForm({
                         class="block" 
                         for="cost">Costo Unitario</label>
                     <Money
-                        class="inputGeneral" 
+                        class="inputGeneral w-full" 
                         v-bind="moneyConfig"  
                         v-model="form.quantity" />
+                </div>
+
+
+                <!-- Boton para enviar -->
+                <div class="col-span-full text-right">
+                    <PrimaryButton>
+                        Registrar
+                    </PrimaryButton>
                 </div>
             </form>
         </div>
