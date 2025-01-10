@@ -271,7 +271,7 @@ Route::middleware([
    *Monedas
    */
     Route::controller(ACOController::class)
-    ->prefix('currency')
+    ->prefix('/setting/currency')
     ->name('currency.')
     ->group(function (){
         Route::get('/check-exchange','checkExchange')->name('check');
@@ -298,7 +298,7 @@ Route::middleware([
      * cuentas contables modificacion y demas
      */
     Route::controller(ACOController::class)
-        ->prefix('aco')
+        ->prefix('/setting/aco')
         ->name('aco.')
         ->group(function (){
             Route::get('/','index')->name('index');
@@ -312,11 +312,13 @@ Route::middleware([
      * Alamceneces
      */
     Route::controller(WHController::class)
-        ->prefix('warehouse')
+        ->prefix('/setting/warehouse')
         ->name('wh.')
         ->group(function (){
             Route::get('/','index')->name('index');
             Route::post('/','store')->name('store');
+            Route::put('/{wh}','update')->name('update');
+            Route::delete('/{wh}','destroy')->name('destroy');
         });
 
 

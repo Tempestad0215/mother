@@ -213,6 +213,10 @@ const removeUnit = (index:number) => {
                 :href="route('aco.index')">
                 Cuentas
             </TabLink>
+            <TabLink
+                :href="route('wh.index')">
+                Almacen
+            </TabLink>
         </template>
         <div
             class="max-w-[70rem] mx-auto bg-blue-300 rounded-md p-5">

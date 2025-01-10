@@ -5,9 +5,11 @@ import Float from '@/Pages/Suppliers/SupplierFloat.vue'
 import FloatBox from '@/Components/FloatBox.vue'
 import {ref} from 'vue';
 import FloatProduct from '@/Pages/Products/ProductFloat.vue';
+import {supplierI} from "@/Interfaces/Supplier";
 import {productBaseI} from "@/Interfaces/Product";
 import {categoryBaseI} from "@/Interfaces/Categories";
 import TabLink from "@components/TabLink.vue";
+import {WHbaseI} from "@/Interfaces/WH";
 
 
 
@@ -17,7 +19,8 @@ const props = defineProps<{
     productEdit? : productBaseI,
     update? : boolean,
     categories: categoryBaseI[],
-    suppliers: supplierI[]
+    suppliers: supplierI[],
+    warehouse: WHbaseI[]
 }>();
 
 
@@ -65,6 +68,7 @@ const showSupplierForm = ref(false);
                    :categories="props.categories"
                    :product-edit="props.productEdit"
                    :update="props.update"
+                   :warehouse="props.warehouse"
                    @show-supplier="showSupplierForm = true"/>
            </div>
 

@@ -3,26 +3,25 @@ import {Head, router, useForm} from "@inertiajs/vue3";
 import AppLayout from "@layout/AppLayout.vue";
 import InputLabel from "@components/InputLabel.vue";
 import TextInput from "@components/TextInput.vue";
-import {ref} from "vue";
 import InputError from "@components/InputError.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import {successHttp} from "@/Global/Alert";
-import {acoBaseI} from "@/Interfaces/ACO";
 import Swal from "sweetalert2";
 import TabLink from "@components/TabLink.vue";
+import {WHbaseI} from "@/Interfaces/WH";
 
 
 /*
 Propiedades
  */
 const propsW = defineProps<{
-    warehouse: any
-}>()
+    warehouse: WHbaseI[]
+}>();
 
 /**
  * Datos de la ventanan
  */
-const type = ref(['ACTIVO','PASIVO','INGRESO','GASTO','CAPITAL']);
+// const type = ref(['ACTIVO','PASIVO','INGRESO','GASTO','CAPITAL']);
 
 /**
  * Formularios
@@ -31,6 +30,7 @@ const form = useForm({
     id:0,
     name:"",
     description:"",
+    location:"",
     update: false,
 });
 
@@ -44,36 +44,40 @@ funciones
  */
 const submit = () => {
     if (form.update) {
-        form.put(route('aco.update',{aco: form.id}),{
+        form.put(route('wh.update',{wh: form.id}),{
             onSuccess: () => {
                 successHttp('Datos Actualizado Correctamente');
             }
         });
     }else{
-        form.post(route('aco.store'),{
+        form.post(route('wh.store'),{
             onSuccess: () => {
                 successHttp('Datos Registrado Correctamente');
                 form.reset();
             }
         });
     }
-
-
-
 }
+
 
 /**
  *
  * @param item
  */
-const edit = (item:any) => {
+const edit = (item:WHbaseI) => {
     form.id = item.id;
     form.name = item.name;
-    form.description = item;
+    form.description = item.description;
+    form.location = item.location;
     form.update = true;
 }
 
-const destroy = (item:acoBaseI) => {
+
+/**
+ *
+ * @param item
+ */
+const destroy = (item:WHbaseI) => {
     Swal.fire({
         title: "Desea Eliminar?",
         text: "Los Cambios Realizados Son Irreversible!",
@@ -85,7 +89,7 @@ const destroy = (item:acoBaseI) => {
         cancelButtonText: "Cancelar",
     }).then((result) => {
         if (result.isConfirmed) {
-            router.delete(route('aco.destroy',{aco: item.id}),{
+            router.delete(route('wh.destroy',{wh: item.id}),{
                 onSuccess: () => {
                     successHttp('Datos Eliminado Correctamente');
                 }
@@ -121,7 +125,7 @@ const destroy = (item:acoBaseI) => {
         <div class="max-w-[70rem] mx-auto">
             <form
                 @submit.prevent="submit"
-                class="grid grid-cols-2 gap-3 bg-blue-300 p-5 rounded-md">
+                class="grid grid-cols-3 gap-3 bg-blue-300 p-5 rounded-md">
                 <h3
                     class="title text-center col-span-full">
                     Almacenes
@@ -132,6 +136,7 @@ const destroy = (item:acoBaseI) => {
                         for="name"
                         value="Nombre"/>
                     <TextInput
+                        placeholder="Nombre"
                         class="w-full"
                         v-model="form.name"
                     />
@@ -143,10 +148,23 @@ const destroy = (item:acoBaseI) => {
                         for="description"
                         value="Descripcion"/>
                     <TextInput
+                        placeholder="Descripcion"
                         class="w-full"
                         v-model="form.description"
                     />
                     <InputError :message="form.errors?.description" />
+                </div>
+                <!--                codigo-->
+                <div>
+                    <InputLabel
+                        for="location"
+                        value="Ubicacion"/>
+                    <TextInput
+                        placeholder="Ubicacion"
+                        class="w-full"
+                        v-model="form.location"
+                    />
+                    <InputError :message="form.errors?.location" />
                 </div>
                 <!--                Botones para enviar-->
                 <div class="col-span-full text-right">
@@ -157,7 +175,7 @@ const destroy = (item:acoBaseI) => {
             </form>
 
 
-            <!--            Cuentas registrada -->
+            <!-- Cuentas registrada -->
             <div class="mt-3 p-5 bg-blue-300 rounded-md">
                 <h3 class="title text-center">
                     Listado de Almacenes
@@ -166,9 +184,9 @@ const destroy = (item:acoBaseI) => {
                     class="styleTable table-auto w-full mt-3">
                     <thead>
                     <tr>
-                        <th>Codigo</th>
                         <th>Nombre</th>
-                        <th>Tipo</th>
+                        <th>Description</th>
+                        <th>Location</th>
                         <th>Act</th>
                     </tr>
                     </thead>
@@ -176,9 +194,9 @@ const destroy = (item:acoBaseI) => {
                     <tr
                         v-for="(item, index) in propsW.warehouse"
                         :key="index">
-                        <td>{{item.code}}</td>
                         <td>{{item.name}}</td>
-                        <td>{{item.type}}</td>
+                        <td>{{item.description}}</td>
+                        <td>{{item.location}}</td>
                         <td class="space-x-3">
                             <i
                                 @click="edit(item)"
@@ -189,10 +207,8 @@ const destroy = (item:acoBaseI) => {
                         </td>
                     </tr>
                     </tbody>
-
                 </table>
             </div>
-
         </div>
     </AppLayout>
 </template>

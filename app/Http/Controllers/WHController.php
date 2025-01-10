@@ -5,13 +5,18 @@ namespace App\Http\Controllers;
 use App\Http\Requests\WarehouseRequest;
 use App\Models\Warehouse;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class WHController extends Controller
 {
     use AuthorizesRequests;
 
+    /**
+     * @return Response
+     */
     public function index()
     {
 
@@ -21,17 +26,25 @@ class WHController extends Controller
         ]);
     }
 
+
+    /**
+     * @param Request $request
+     * @return RedirectResponse
+     */
     public function store(Request $request)
     {
         //Validar los datos
         $request->validate([
             'name' => ['required', 'string', 'max:75'],
             'description' => ['required', 'string', 'max:200'],
+            'location' => ['required', 'string', 'max:200'],
         ]);
-
 
         // Craer los datos
         Warehouse::create($request->toArray());
+
+        // Devolver
+        return back();
 
     }
 
@@ -51,12 +64,18 @@ class WHController extends Controller
         return $warehouse;
     }
 
-    public function destroy(Warehouse $warehouse)
+
+    /**
+     * @param Warehouse $wh
+     * @return RedirectResponse
+     */
+    public function destroy(Warehouse $wh)
     {
-        $this->authorize('delete', $warehouse);
 
-        $warehouse->delete();
+        // Eliminar
+        $wh->delete();
 
-        return response()->json();
+        // DEvolver hacia atras
+        return back();
     }
 }

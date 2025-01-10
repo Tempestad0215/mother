@@ -1,18 +1,17 @@
 <script setup lang="ts">
 import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { successHttp } from '@/Global/Alert';
 import {productBaseI} from '@/Interfaces/Product';
 import { supplierI } from '@/Interfaces/Supplier';
 import {useForm, usePage} from '@inertiajs/vue3';
-import {onMounted, Ref, ref} from 'vue';
+import {computed, onMounted, Ref, ref} from 'vue';
 import {categoryBaseI} from "@/Interfaces/Categories";
 import {taxI} from "@/Interfaces/Global";
 import {Money} from "v-money3";
-import {moneyConfig} from "@/Global/Helpers";
-import ToggleButton from "@components/ToggleButton.vue";
+import {getMoney, moneyConfig} from "@/Global/Helpers";
+import {WHbaseI} from "@/Interfaces/WH";
 
 
 /**
@@ -27,7 +26,8 @@ const propsW = defineProps<{
     productEdit? : productBaseI,
     update? : boolean,
     categories: categoryBaseI[],
-    suppliers: supplierI[]
+    suppliers: supplierI[],
+    warehouse: WHbaseI[]
 }>();
 
 
@@ -46,10 +46,16 @@ const form = useForm({
     description: "",
     unit: "",
     price: 0,
+    cost: 0,
+    min_price: 0,
+    special_price: 0,
+    product_no_tax: 0,
+    benefits: 0,
+    benefits_rate: 0,
     type: "producto",
-    category_id: "",
-    supplier_id: "",
-    inventoried: true,
+    category_id: 0,
+    supplier_id: 0,
+    warehouse_id: 0,
     search:"",
     tax_rate: 0,
     tax_tex: "",
@@ -57,9 +63,13 @@ const form = useForm({
     bar_code:"",
     sku:"",
     brand:"",
-    dimensions:""
-
-
+    dimensions:"",
+    inventoried: true,
+    has_fraction: true,
+    status: true,
+    has_tax: true,
+    has_special: false,
+    has_promotion: false,
 });
 
 /**
@@ -97,7 +107,59 @@ onMounted(()=>{
         form.unit = propsW.productEdit.unit;
     }
 
+
+    //Elegir el primer si existe
+    if (propsW.warehouse.length > 0)
+    {
+        form.warehouse_id = propsW.warehouse[0].id;
+    }
+
 });
+
+
+/*
+Propiedades computada
+ */
+/**
+ * Precio sin impuesto
+ */
+const priceNoTax = computed(()=>{
+    let price:number = form.price * 100;
+    let tax:number = form.tax_rate;
+    let taxTotal:number = (price * tax) / 100;
+
+    console.log(taxTotal);
+    form.product_no_tax = price - taxTotal;
+    return getMoney((form.product_no_tax / 100));
+});
+
+
+/**
+ *Beneficios del producto
+ */
+const benefits = computed(()=>{
+    let cost:number = form.cost * 100;
+    let price:number = form.price * 100;
+
+    form.benefits = Math.round((price - cost) / 100);
+
+    return getMoney(form.benefits);
+});
+
+/**
+ * Margen de beneficios
+ */
+const benefitsMargin = computed(() =>{
+    let benefits:number = form.benefits * 100;
+    let cost:number = form.price * 100;
+
+    form.benefits_rate = (benefits / cost) * 100 || 0;
+
+    return  form.benefits_rate.toFixed(2)  + ' %'
+});
+
+
+
 
 
 /**
@@ -127,6 +189,10 @@ const submit = () => {
 }
 
 
+const tax = (price:number, tax:number) => {
+    return Math.round((price * tax) / (10000 + tax));
+}
+
 
 
 </script>
@@ -144,7 +210,73 @@ const submit = () => {
             </h3>
 
 <!--Informacion General-->
-            <div class=" clear-both">
+            <div class="">
+                <fieldset class="field p-2 w-[10rem] block float-right ml-3">
+                    <legend>Manejo</legend>
+                    <div>
+                        <input
+                            id="has_inventoried"
+                            v-model="form.inventoried"
+                            name="has_inventoried"
+                            type="checkbox">
+                        <label
+                            for="has_inventoried">
+                            Inventariar
+                        </label>
+                    </div>
+                    <div>
+                        <input
+                            id="has_fraction"
+                            name="has_fraction"
+                            v-model="form.has_fraction"
+                            type="checkbox">
+                        <label
+                            for="has_fraction">
+                            Fraccionar
+                        </label>
+                    </div>
+                    <div>
+                        <input
+                            v-model="form.status"
+                            id="status"
+                            type="checkbox">
+                        <label
+                            for="status">
+                            Estado
+                        </label>
+                    </div>
+                    <div>
+                        <input
+                            v-model="form.has_tax"
+                            id="has_tax"
+                            type="checkbox">
+                        <label
+                            for="has_tax">
+                            Itbis
+                        </label>
+                    </div>
+                    <div>
+                        <input
+                            id="has_special"
+                            v-model="form.has_special"
+                            type="checkbox">
+                        <label
+                            for="has_special">
+                            P. Especial
+                        </label>
+                    </div>
+                    <div>
+                        <input
+                            v-model="form.has_promotion"
+                            id="has_promotion"
+                            type="checkbox">
+                        <label for="promotion">
+                            Promocion
+                        </label>
+                    </div>
+                </fieldset>
+
+
                 <fieldset class="field">
                     <legend>
                         Informacion
@@ -152,9 +284,9 @@ const submit = () => {
 
                     <!-- Nombre -->
                     <div>
-                        <InputLabel
-                            for="name"
-                            value="Nombre *"/>
+                        <label for="name">
+                            Nombre
+                        </label>
                         <TextInput
                             class=" w-full"
                             name="name"
@@ -169,9 +301,9 @@ const submit = () => {
 
                     <!-- Descricion -->
                     <div class="">
-                        <InputLabel
-                            for="name"
-                            value="Descripción"/>
+                        <label for="description">
+                            Descripcion
+                        </label>
                         <TextInput
                             class=" w-full"
                             name="name"
@@ -183,14 +315,14 @@ const submit = () => {
                     </div>
 
                     <div>
-                        <InputLabel for="category" value="Categoria" />
+                        <label for="category">Categoria</label>
                         <select
                             v-model="form.category_id"
                             class=" w-full inputGeneral py-1 ">
                             <option
                                 selected
                                 disabled
-                                value="" >
+                                :value="0" >
                                 -- Categoria --
                             </option>
                             <option
@@ -208,9 +340,7 @@ const submit = () => {
 
                     <!-- Proveedor -->
                     <div class="">
-                        <InputLabel
-                            for="supplier_id"
-                            value="Proveedor *"/>
+                        <label for="supplier">Proveedor</label>
                         <select
                             v-model="form.supplier_id"
                             class=" w-full inputGeneral py-1 ">
@@ -234,9 +364,9 @@ const submit = () => {
                             Extra
                         </legend>
                         <div>
-                            <InputLabel
-                                for="sku"
-                                value="Cod. Externo"/>
+                            <label for="sku">
+                                Cod. Externo
+                            </label>
                             <TextInput
                                 name="sku"
                                 v-model="form.sku"
@@ -245,9 +375,7 @@ const submit = () => {
                             <InputError :message="form.errors.sku"/>
                         </div>
                         <div>
-                            <InputLabel
-                                for="bar_code"
-                                value="Codigo de Barra"/>
+                            <label for="bar_code">Cod. Barra</label>
                             <TextInput
                                 name="bar_code"
                                 v-model="form.bar_code"
@@ -259,9 +387,10 @@ const submit = () => {
 
 <!--Opciones de producto, si sera producto o servicio-->
                         <div class="">
-                            <InputLabel
-                                class=" mb-2"
-                                for="type" value="Tipo" />
+                            <label
+                                for="type">
+                                Tipo
+                            </label>
                             <select
                                 v-model="form.type"
                                 class=" w-full inputGeneral py-1 ">
@@ -275,14 +404,26 @@ const submit = () => {
                             </select>
                             <InputError :message="form.errors.type"/>
                         </div>
-
                         <div class="">
-                            <ToggleButton
-                                label="Inventario"
-                                v-model="form.inventoried"
-                                on-label="SI"
-                                off-label="NO"/>
+                            <label
+                                for="warehouse">
+                                Almacen
+                            </label>
+                            <select
+                                v-model="form.warehouse_id"
+                                class=" w-full inputGeneral py-1 ">
+                                <option
+                                    class="even:bg-blue-200"
+                                    v-for="(item, index) in propsW.warehouse"
+                                    :key="index"
+                                    :value="item.id">
+                                    {{item.name}}
+                                </option>
+                            </select>
+                            <InputError :message="form.errors.type"/>
                         </div>
+
+
                     </fieldset>
 
 <!--Detalle del producto-->
@@ -292,9 +433,7 @@ const submit = () => {
                         </legend>
 <!--                        Unidades-->
                         <div>
-                            <InputLabel
-                                for="tax_rate"
-                                value="Impuesto *" />
+                            <label for="tax_rate">Impuesto</label>
                             <select
                                 v-model="form.tax_rate"
                                 class=" w-full inputGeneral py-1 ">
@@ -308,22 +447,13 @@ const submit = () => {
                             </select>
                             <InputError :message="form.errors.tax_rate" />
                         </div>
-<!--                        Informacion de venta-->
-                        <div>
-                            <InputLabel for="sale_price" value="Precio de Venta"/>
-                            <Money
-                                class="inputGeneral w-full"
-                                v-bind="moneyConfig"
-                                v-model="form.price"/>
-                        </div>
+
 
                         <!-- Unidad -->
                         <div
                             v-if="form.type === 'producto'"
                             class="">
-                            <InputLabel
-                                for="unit"
-                                value="Unidadades *"/>
+                            <label for="unit">Unidad</label>
                             <select
                                 v-model="form.unit"
                                 class=" w-full inputGeneral py-1 ">
@@ -340,9 +470,7 @@ const submit = () => {
                             <InputError :message="form.errors.unit" />
                         </div>
                         <div v-if="form.type === 'producto'">
-                            <InputLabel
-                                for="weight"
-                                value="Peso"/>
+                            <label for="weight">Peso</label>
                             <Money
                                 class="inputGeneral w-full"
                                 v-bind="moneyConfig"
@@ -350,9 +478,7 @@ const submit = () => {
                             <InputError :message="form.errors.weigth"/>
                         </div>
                         <div>
-                            <InputLabel
-                                for="brand"
-                                value="Rama"/>
+                            <label for="brand">Marca</label>
                             <TextInput
                                 class="w-full"
                                 v-model="form.brand"
@@ -362,9 +488,7 @@ const submit = () => {
                         <div
                             v-if="form.type === 'producto'"
                             class="">
-                            <InputLabel
-                                for="dimension"
-                                value="Dimensiones"/>
+                            <label for="dimension">Dimensiones</label>
                             <TextInput
                                 class="w-full"
                                 v-model="form.dimensions"
@@ -372,7 +496,61 @@ const submit = () => {
                             <InputError :message="form.errors.dimensions" />
                         </div>
                     </fieldset>
+
                 </div>
+                <fieldset class="field grid grid-cols-4 gap-3">
+                    <legend>Datos de Ventas</legend>
+                    <div>
+                        <label for="sale_cost">Costo</label>
+                        <Money
+                            class="inputGeneral w-full"
+                            v-bind="moneyConfig"
+                            v-model.number="form.cost"/>
+                        <input-error :message="form.errors?.cost" />
+                    </div>
+                    <!--                        Informacion de venta-->
+                    <div>
+                        <label for="sale_price">Precio</label>
+                        <Money
+                            class="inputGeneral w-full"
+                            v-bind="moneyConfig"
+                            v-model.number="form.price"/>
+                        <input-error :message="form.errors?.price" />
+                    </div>
+                    <div>
+                        <label for="sale_cost">Pre. Minimo</label>
+                        <Money
+                            class="inputGeneral w-full"
+                            v-bind="moneyConfig"
+                            v-model.number="form.min_price"/>
+                        <input-error :message="form.errors?.min_price" />
+                    </div>
+                    <!--                        Informacion de venta-->
+                    <div>
+                        <label for="sale_price">Pre. Especial</label>
+                        <Money
+                            class="inputGeneral w-full"
+                            v-bind="moneyConfig"
+                            v-model.number="form.special_price"/>
+                        <input-error :message="form.errors?.special_price" />
+                    </div>
+                </fieldset>
+
+                <fieldset disabled class="field grid grid-cols-3 gap-3" >
+                    <legend>Info Ventas</legend>
+                    <p>
+                        <strong>Precio - Itbis</strong>
+                        <span class="inline-block px-3 bg-white rounded-md ml-3">{{priceNoTax}}</span>
+                    </p>
+                    <p>
+                        <strong>Beneficio</strong>
+                        <span class="inline-block px-3 bg-white rounded-md ml-3" >{{benefits}}</span>
+                    </p>
+                    <p>
+                        <strong>Beneficios Margen </strong>
+                        <span class="inline-block px-3 bg-white rounded-md ml-3">{{benefitsMargin}}</span>
+                    </p>
+                </fieldset>
 
 
             </div>

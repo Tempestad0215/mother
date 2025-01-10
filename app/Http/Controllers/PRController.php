@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Helpers\CategoryHelper;
 use App\Helpers\SupplierHelper;
+use App\Models\Category;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Resources\ProSupRes;
 use App\Models\Setting;
+use App\Models\Supplier;
+use App\Models\Warehouse;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Http\JsonResponse;
@@ -35,15 +38,11 @@ class PRController extends Controller
     public function create(Request $request): Response|RedirectResponse
     {
 
-        $categoryHelper = new CategoryHelper();
-        $supplierHelper = new SupplierHelper();
-
         //Obtener los datos del productos
         $data = $this->get($request);
 
         //Verificar si existe configuracion
         $setting = Setting::first();
-
 
         //si existe la configuracion
         if(isset($setting))
@@ -51,8 +50,9 @@ class PRController extends Controller
             //Devolver correctamente
             return Inertia::render('Products/ProductCreate',[
                 'products' => $data,
-                'categories' => $categoryHelper->getAllCategories(),
-                'suppliers' => $supplierHelper->getAllSuppliers(),
+                'categories' => Category::all(),
+                'suppliers' => Supplier::all(),
+                'warehouse' => Warehouse::all()
             ]);
 
         }else{
@@ -75,22 +75,7 @@ class PRController extends Controller
         DB::transaction(function () use ($request) {
 
             //Guardar los datos del productos
-            $product = Product::create($request->only([
-                'inventoried',
-                'name',
-                'description',
-                'unit',
-                'supplier_id',
-                'category_id',
-                'barcode',
-                'brand',
-                'sku',
-                'type',
-                'tax_rate',
-                'price',
-                'weight',
-                'dimensions'
-            ]));
+            $product = Product::create($request->validated());
 
 
             // Guardar los datos del productos

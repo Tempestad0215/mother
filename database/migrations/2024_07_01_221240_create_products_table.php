@@ -40,6 +40,7 @@ return new class extends Migration
             $table->decimal('tax')->default(0)->comment('Impuesto para este Item');
             $table->decimal('tax_rate')->default(0)->comment('Tasa de Impuesto');
             $table->decimal('benefits')->default(0)->comment('Beneficios del producto');
+            $table->decimal('benefits_rate')->default(0)->comment('Porcentaje de Margen');
 
             $table->decimal('discount')->default(0)->comment('Porcentaje de descuento');
             $table->decimal('discount_amount')->default(0)->comment('Descuento Total');
@@ -54,7 +55,7 @@ return new class extends Migration
             $table->enum('type',['producto','servicio'])->default('producto')->comment('Tipo de Servicio');
             $table->boolean('inventoried')->default(true)->comment('Maneja Inventario');
             $table->boolean('status')->default(true)->comment('Estado del Item');
-            $table->boolean('fraction')->default(true)->comment('Se Puede Fraccionar');
+            $table->boolean('has_fraction')->default(true)->comment('Se Puede Fraccionar');
             $table->boolean('has_special')->default(true)->comment('Precio Special Activado');
             $table->boolean('has_discount')->default(true)->comment('Aplica para descuento');
             $table->boolean('has_promotion')->default(true)->comment('Aplica para comisiones');

@@ -3,22 +3,24 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @property int id
  * @property string name
  * @property string description
+ * @property string location
  * @property Carbon deleted_at
  * @property Carbon updated_at
  * @property Carbon created_at
  */
-class Warehouse extends Model
+class Warehouse extends Model implements Auditable
 {
-    use HasUuids, HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes;
+    use \OwenIt\Auditing\Auditable;
 
     /**
      * @var array
@@ -26,5 +28,6 @@ class Warehouse extends Model
     protected $fillable = [
         'name',
         'description',
+        'location'
     ];
 }

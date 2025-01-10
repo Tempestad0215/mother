@@ -31,8 +31,8 @@ export interface productBaseI {
     stock: number;
     cost: number;
     type: string;
-    supplier_id: string;
-    category_id: string;
+    supplier_id: number;
+    category_id: number;
     tax_rate: number;
     weight: string;
     created_at: string;

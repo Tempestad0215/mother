@@ -14,8 +14,6 @@ use OwenIt\Auditing\Contracts\Auditable;
 /**
  * @property int id
  * @property string type
- * @property boolean inventoried
- * @property boolean status
  * @property string code
  * @property string name
  * @property string description
@@ -37,8 +35,14 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property float discount_amount
  * @property float product_no_tax
  * @property float benefits
+ * @property float benefits_rate
  * @property string comment
- * @property bool close_table
+ * @property boolean inventoried
+ * @property boolean status
+ * @property boolean has_fraction
+ * @property boolean has_special
+ * @property boolean has_promotion
+ * @property boolean has_tax
  * @property  int supplier_id
  * @property int category_id
  * @property string created_at
@@ -71,6 +75,7 @@ class Product extends Model implements Auditable
         'price',
         'supplier_id',
         'category_id',
+        'warehouse_id',
         'sku',
         'bar_code',
         'weight',
@@ -80,11 +85,11 @@ class Product extends Model implements Auditable
         'discount_amount',
         'product_tax',
         'benefits',
+        'benefits_rate',
         'tax',
         'tax_rate',
         'status',
         'comment',
-        'close_table',
         'type',
         'inventoried'
     ];
@@ -109,37 +114,6 @@ class Product extends Model implements Auditable
         'close_table' => 'boolean',
         'type' => PROTYEnum::class
     ];
-
-
-//    protected function price():Attribute
-//    {
-//        return Attribute::make(
-//            get: fn(float $value) => number_format($value,2)
-//        );
-//    }
-//
-//    protected function  cost():Attribute
-//    {
-//        return Attribute::make(
-//            get: fn(float $value) => number_format($value,2)
-//        );
-//    }
-//
-//    protected function  stock():Attribute
-//    {
-//        return Attribute::make(
-//            get: fn(float $value) => number_format($value,2)
-//        );
-//    }
-//
-//    protected function  weight():Attribute
-//    {
-//        return Attribute::make(
-//            get: fn(float $value) => number_format($value,2)
-//        );
-//    }
-
-
 
 
     // Relaciones

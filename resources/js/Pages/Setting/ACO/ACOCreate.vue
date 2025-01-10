@@ -35,10 +35,6 @@ const form = useForm({
     update: false,
 });
 
-const formSearch = useForm({
-    search:"",
-    perPage: 30
-});
 
 
 
@@ -114,11 +110,11 @@ const destroy = (item:acoBaseI) => {
                 Ajustes
             </TabLink>
             <TabLink
+                :active="true"
                 :href="route('aco.index')">
                 Cuentas
             </TabLink>
             <TabLink
-                :active="true"
                 :href="route('wh.index')">
                 Almacen
             </TabLink>
@@ -182,7 +178,6 @@ const destroy = (item:acoBaseI) => {
                 </div>
             </form>
 
-
 <!--            Cuentas registrada -->
             <div class="mt-3 p-5 bg-blue-300 rounded-md">
                 <h3 class="title text-center">
@@ -215,35 +210,7 @@ const destroy = (item:acoBaseI) => {
                             </td>
                         </tr>
                     </tbody>
-
                 </table>
-            </div>
-
-
-<!--            Relaciones de las cuentas contables-->
-            <div class="mt-3 bg-blue-300 p-5 rounded-md">
-                <h3 class="title text-center">
-                    Relaciones De Cuenta
-                </h3>
-                <form>
-                    <!-- Ventas-->
-                    <div>
-                        <InputLabel for="account" value="Venta" />
-                        <select></select>
-                    </div>
-
-                    <!-- Compras -->
-                    <div>
-                        <InputLabel for="account" value="Venta" />
-                        <select></select>
-                    </div>
-
-                    <!-- Devoluciones -->
-                    <div>
-                        <InputLabel for="account" value="Venta" />
-                        <select></select>
-                    </div>
-                </form>
             </div>
         </div>
     </AppLayout>
