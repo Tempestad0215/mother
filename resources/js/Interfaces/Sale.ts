@@ -9,7 +9,7 @@ export interface infoSaleI {
     min_price: number;
     special_price: number;
     price: number;
-    product_id: string;
+    product_id: number;
     product_name: string;
     sale_id?: number;
     status?: boolean;
@@ -24,7 +24,7 @@ export interface infoSaleI {
 }
 
 export interface saleI{
-    uuid: string;
+    id: number;
     code: string;
     client_name: string;
     tax: number;
@@ -34,7 +34,7 @@ export interface saleI{
 }
 
 export interface saleDataI {
-    client_id: string;
+    client_id: number;
     client_name: string;
     client_rnc: string;
     close_table: boolean;
@@ -47,7 +47,7 @@ export interface saleDataI {
     } | null;
     created_at: string;
     discount: number;
-    id: string;
+    id: number;
     info_sale: infoSaleI[];
     status: boolean;
     sub_total: number;

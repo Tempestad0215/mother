@@ -49,7 +49,8 @@ const showSupplierForm = ref(false);
                 Registrar
             </TabLink>
             <TabLink
-                :href="route('in.create')">
+    
+                :href="route('entry.index')">
                 Entrada
             </TabLink>
 

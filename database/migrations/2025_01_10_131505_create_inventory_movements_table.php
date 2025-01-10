@@ -20,7 +20,7 @@ return new class extends Migration
             $table->decimal('cost')->comment('costo del movimiento unitario');
             $table->string('description')->comment('Decripcion');
             $table->timestamp('date')->useCurrent()->comment('Fecha del movimiento');
-            $table->boolean('status')->default('true');
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

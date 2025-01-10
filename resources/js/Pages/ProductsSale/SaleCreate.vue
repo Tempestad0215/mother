@@ -59,12 +59,12 @@ const showFormReturn:Ref<boolean> = ref(false);
  * Formulario
  */
 const form = useForm({
-    id: "",
+    id: 0,
     code_value: "",
     ncf:"",
     ncf_m:"",
     client_name: "",
-    client_id: "",
+    client_id: 0,
     client_rnc:"",
     client_rnc_status:"",
     client_social:"",
@@ -273,10 +273,10 @@ const checkInvoiceType = async ()=>{
  */
 const getData = (item:productFullI) => {
     //Obtener los datos de productos
-    let info:infoSaleI | undefined = form.info_sale.find((el) => el.product_id === item.uuid);
+    let info:infoSaleI | undefined = form.info_sale.find((el) => el.product_id === item.id);
 
     // Verificar si el producto exite
-    if (info?.product_id  === item.uuid)
+    if (info?.product_id  === item.id)
     {
         info.stock += 1.00;
         showProduct.value = false;
@@ -291,7 +291,7 @@ const getData = (item:productFullI) => {
            price: item.price,
            min_price: item.min_price,
            special_price: item.special_price,
-           product_id: item.uuid,
+           product_id: item.id,
            product_name: item.name,
            stock: 1,
            reserved: 1,
@@ -305,7 +305,7 @@ const getData = (item:productFullI) => {
     }
 
     // //Conseguir el index para poder realizar el cálculo
-    let index = form.info_sale.findIndex((el) => el.product_id === item.uuid);
+    let index = form.info_sale.findIndex((el) => el.product_id === item.id);
 
     //Calcular el indice
     totalAmount(index);
@@ -346,7 +346,7 @@ const deleteItem = async (name:string , index:number) => {
         if (!propsW.refund)
         {
 
-            if(form.id !== "")
+            if(form.id !== 0)
             {
                 //Enviar los datos para actualizar
                 form.transform((data) => ({
@@ -361,8 +361,6 @@ const deleteItem = async (name:string , index:number) => {
                     },
                     onSuccess: () => {
                         successHttp(`Item : ${info.product_name} Eliminado Correctamente` );
-
-
                     }
                 }));
             }
@@ -370,7 +368,6 @@ const deleteItem = async (name:string , index:number) => {
         //REalizar el cálculo de nuevo
         totalSale();
     }
-
 }
 
 /**
@@ -419,7 +416,7 @@ const totalSale = () => {
 const selectClient = (item:clientBaseI) =>  {
     //Pasar los datos al formulario
     form.client_name = item.name;
-    form.client_id = item.uuid;
+    form.client_id = item.id;
     showClient.value = false;
 }
 
@@ -444,7 +441,7 @@ const sendData = ():void => {
         //         if (res.data.success)
         //         {
         //             //Imprimir el pdf
-        //             printPdf(route('invoice.belt.note',{creditNote: res.data.uuid}));
+        //             printPdf(route('invoice.belt.note',{creditNote: res.data.id}));
         //             //Limpiar el pdf
         //             // router.get(route('sale.create'));
         //             router.visit(route('sale.create'));

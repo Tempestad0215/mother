@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\InventoryMovement;
+use App\Models\Product;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class InventoryMovementController extends Controller
 {
@@ -12,7 +14,11 @@ class InventoryMovementController extends Controller
      */
     public function index()
     {
-        //
+        
+        // DEvolver la vista con el mensaje
+        return Inertia::render('Products/Inventory/EntryCreate',[
+            'products' => Product::take(50)->get()
+        ]);
     }
 
     /**

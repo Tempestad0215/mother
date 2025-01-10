@@ -23,8 +23,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CreditNoteController;
-
-
+use App\Http\Controllers\InventoryMovementController;
 
 Route::middleware([
     'auth:sanctum',
@@ -166,6 +165,15 @@ Route::middleware([
         Route::get('/get/code','getByCode')->name('get.code');
         Route::patch('/delete/{product}','destroy')->name('destroy');
     });
+
+
+    // Movimiento de inventario de productos
+    Route::controller(InventoryMovementController::class)
+        ->prefix('product/entry')
+        ->name('entry.')
+        ->group(function(){
+            Route::get('/','index')->name('index');
+        });
 
 
     /*
