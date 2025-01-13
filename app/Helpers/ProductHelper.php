@@ -6,7 +6,6 @@ use App\Enums\PROTYEnum;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use LaravelIdea\Helper\App\Models\_IH_Product_C;
 

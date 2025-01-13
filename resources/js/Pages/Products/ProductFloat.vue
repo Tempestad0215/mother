@@ -128,7 +128,6 @@ const priceNoTax = computed(()=>{
     let tax:number = form.tax_rate;
     let taxTotal:number = (price * tax) / 100;
 
-    console.log(taxTotal);
     form.product_no_tax = price - taxTotal;
     return getMoney((form.product_no_tax / 100));
 });
@@ -141,8 +140,10 @@ const benefits = computed(()=>{
     let cost:number = form.cost * 100;
     let price:number = form.price * 100;
 
+    // Tomar el beneficios
     form.benefits = Math.round((price - cost) / 100);
 
+    // Devolver los datos
     return getMoney(form.benefits);
 });
 
@@ -150,11 +151,13 @@ const benefits = computed(()=>{
  * Margen de beneficios
  */
 const benefitsMargin = computed(() =>{
-    let benefits:number = form.benefits * 100;
-    let cost:number = form.price * 100;
+    let cost:number = form.cost * 100;
+    let price:number = form.price * 100;
 
-    form.benefits_rate = (benefits / cost) * 100 || 0;
+    // Calcular el margen de beneficios
+    form.benefits_rate = ((price - cost) / cost) * 100 || 0;
 
+    //Devolver el valor de los datos
     return  form.benefits_rate.toFixed(2)  + ' %'
 });
 
@@ -163,7 +166,7 @@ const benefitsMargin = computed(() =>{
 
 
 /**
- * Funciones
+ * Funcion para enviar los datos
  */
 const submit = () => {
 
@@ -189,6 +192,11 @@ const submit = () => {
 }
 
 
+/**
+ * calcular el impuesta
+ * @param price
+ * @param tax
+ */
 const tax = (price:number, tax:number) => {
     return Math.round((price * tax) / (10000 + tax));
 }

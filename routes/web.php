@@ -173,6 +173,7 @@ Route::middleware([
         ->name('entry.')
         ->group(function(){
             Route::get('/','index')->name('index');
+            Route::post('/','entry')->name('store');
         });
 
 

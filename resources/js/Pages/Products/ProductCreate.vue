@@ -49,7 +49,7 @@ const showSupplierForm = ref(false);
                 Registrar
             </TabLink>
             <TabLink
-    
+
                 :href="route('entry.index')">
                 Entrada
             </TabLink>

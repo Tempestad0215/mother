@@ -29,7 +29,7 @@ const props = defineProps({
                 Registrar
             </TabLink>
             <TabLink
-                :href="route('in.create')">
+                :href="route('entry.index')">
                 Entrada
             </TabLink>
             <TabLink
@@ -46,7 +46,6 @@ const props = defineProps({
                <FloatShowPro
                    class=""
                     :products="props.products"/>
-
 
         </div>
 

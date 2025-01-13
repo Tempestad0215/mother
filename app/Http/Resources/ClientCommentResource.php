@@ -44,6 +44,9 @@ class ClientCommentResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        /**
+         * Devolver los datos
+         */
         return [
             'id' => $this->id,
             'name' => $this->name,

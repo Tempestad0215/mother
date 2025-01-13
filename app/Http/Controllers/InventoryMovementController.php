@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\INTYEnum;
+use App\Helpers\ProductHelper;
 use App\Models\InventoryMovement;
 use App\Models\Product;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
 use Inertia\Inertia;
 
 class InventoryMovementController extends Controller
@@ -12,12 +17,19 @@ class InventoryMovementController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        
+
+        //Intanciar
+        $productHelper = new ProductHelper();
+
+        //Para buscar los datos
+        $productTable = $productHelper->get($request);
+
         // DEvolver la vista con el mensaje
         return Inertia::render('Products/Inventory/EntryCreate',[
-            'products' => Product::take(50)->get()
+            'products' => Product::take(50)->get(),
+            'productTable' => $productTable,
         ]);
     }
 
@@ -30,11 +42,25 @@ class InventoryMovementController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @param Request $request
+     * @return RedirectResponse
      */
-    public function store(Request $request)
+    public function entry(Request $request): RedirectResponse
     {
-        //
+        //Validar los datos
+        $request->validate([
+            'product_id' => ['required','numeric','exists:products,id'],
+            'quantity' => ['required','numeric', Rule::notIn(0.00)],
+            'cost' => ['required','numeric', Rule::notIn(0.00)],
+            'description' => ['required','string','min:5','max:255'],
+            'type' => ['required',new Enum(INTYEnum::class)],
+        ]);
+
+        //Crear el movimiento de la entrada
+        InventoryMovement::create($request->toArray());
+
+        //Devolver hacia atras
+        return back();
     }
 
     /**
