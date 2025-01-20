@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class PRINController extends Controller
+class EntryController extends Controller
 {
 
     /**
@@ -37,7 +37,7 @@ class PRINController extends Controller
     public function index(Request $request): Response
     {
 
-        //conseguir  los datos
+        //conseguir los datos
         $data = $this->getProduct($request);
 
         //Devolver la vista con los datos
@@ -45,6 +45,8 @@ class PRINController extends Controller
             'products' => $data,
         ]);
     }
+
+
 
 
     /**

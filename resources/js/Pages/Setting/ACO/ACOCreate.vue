@@ -6,7 +6,7 @@ import {ref} from "vue";
 import InputError from "@components/InputError.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import {successHttp} from "@/Global/Alert";
-import {acoBaseI} from "@/Interfaces/ACO";
+import {acoBaseI} from "@/Interfaces/AccountCounter";
 import Swal from "sweetalert2";
 import TabLink from "@components/TabLink.vue";
 

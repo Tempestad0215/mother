@@ -6,7 +6,7 @@ use App\Http\Controllers\ExchangeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\InvoiceController;
-use App\Http\Controllers\PRINController;
+use App\Http\Controllers\EntryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\ReportController;
@@ -132,7 +132,7 @@ Route::middleware([
     });
 
     /*
-     * Suplidores
+     * Suplidore
      */
     Route::controller(SupplierController::class)
     ->prefix('supplier')
@@ -173,6 +173,7 @@ Route::middleware([
         ->name('entry.')
         ->group(function(){
             Route::get('/','index')->name('index');
+            Route::get('/{entry}','edit')->name('edit');
             Route::post('/','entry')->name('store');
         });
 
@@ -222,21 +223,9 @@ Route::middleware([
         Route::patch('/{sale}','store')->name('store');
     });
 
-    /*
-     * Entradas
-     */
-    Route::controller(PRINController::class)
-    ->prefix('product/in')
-    ->name('in.')
-    ->group(function(){
-        Route::get('/','index')->name('create');
-        Route::get('show','show')->name('show');
-        Route::patch('/{productIn}','store')->name('store');
-        Route::get('/entrance/{productIn}','entrance')->name('entrance');
-        Route::get('/entrance/edit/{trans}','edit')->name('edit');
-        Route::patch('/update/{trans}','update')->name('update');
-        Route::patch('/destroy/{trans}','destroy')->name('destroy');
-    });
+
+
+
 
     /*
      * Reportes

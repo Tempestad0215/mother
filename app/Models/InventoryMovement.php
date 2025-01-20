@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Enums\INTYEnum;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
@@ -24,6 +26,7 @@ class InventoryMovement extends Model implements  Auditable
     //
 
     use \OwenIt\Auditing\Auditable;
+    use softDeletes;
 
     //  Almacenar los datos
     protected $fillable = [
@@ -35,6 +38,27 @@ class InventoryMovement extends Model implements  Auditable
         'date',
         'status'
     ];
+
+
+    /**
+     * @return string[]
+     */
+    public function casts(): array
+    {
+        return [
+            'status' => 'boolean',
+            'deleted_at' => 'datetime:Y-m-d H:i:s',
+            'updated_at' => 'datetime:Y-m-d H:i:s',
+            'created_at' => 'datetime:Y-m-d H:i:s',
+        ];
+    }
+
+
+    //Relaciones
+    public function product():BelongsTo
+    {
+        return $this->belongsTo(Product::class);
+    }
 
 
 

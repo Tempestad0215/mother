@@ -11,7 +11,7 @@ import {categoryBaseI} from "@/Interfaces/Categories";
 import {taxI} from "@/Interfaces/Global";
 import {Money} from "v-money3";
 import {getMoney, moneyConfig} from "@/Global/Helpers";
-import {WHbaseI} from "@/Interfaces/WH";
+import {WHbaseI} from "@/Interfaces/Warehouse";
 
 
 /**

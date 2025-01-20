@@ -152,6 +152,15 @@ class Product extends Model implements Auditable
 
 
     /**
+     * @return HasMany
+     */
+    public function movement():HasMany
+    {
+        return $this->hasMany(InventoryMovement::class);
+    }
+
+
+    /**
      * @return void
      */
     protected static function boot():void

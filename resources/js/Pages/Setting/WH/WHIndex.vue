@@ -8,7 +8,7 @@ import PrimaryButton from "@components/PrimaryButton.vue";
 import {successHttp} from "@/Global/Alert";
 import Swal from "sweetalert2";
 import TabLink from "@components/TabLink.vue";
-import {WHbaseI} from "@/Interfaces/WH";
+import {WHbaseI} from "@/Interfaces/Warehouse";
 
 
 /*

@@ -73,18 +73,12 @@ const edit = (id:number) => {
     router.get(route('product.edit', {id: id}));
 }
 
+
+
 //Seleccionar
 const selectData = (item:productBaseI) => {
-    //Verificar si es la URL
-    if (url.startsWith('/product'))
-    {
-        //Enviar los datos
-        router.get(route('in.entrance',{productIn: item.id}));
-    }else{
-        //Enviar los datos
-        emit('select',item);
-    }
-
+    //Enviar los datos
+    emit('select',item);
 }
 
 //Eliminar el producto

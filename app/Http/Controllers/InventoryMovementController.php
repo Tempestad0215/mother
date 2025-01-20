@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\INTYEnum;
 use App\Helpers\ProductHelper;
+use App\Http\Resources\InventoryProductResource;
 use App\Models\InventoryMovement;
 use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
@@ -33,13 +34,6 @@ class InventoryMovementController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * @param Request $request
@@ -71,12 +65,24 @@ class InventoryMovementController extends Controller
         //
     }
 
+
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(InventoryMovement $inventoryMovement)
+    public function edit(Request $request, InventoryMovement $entry)
     {
-        //
+        //Intanciar
+        $productHelper = new ProductHelper();
+
+        //Para buscar los datos
+        $productTable = $productHelper->get($request);
+
+        // DEvolver la vista con el mensaje
+        return Inertia::render('Products/Inventory/EntryCreate',[
+            'products' => Product::take(50)->get(),
+            'productTable' => $productTable,
+            'entry_edit' => new InventoryProductResource($entry),
+        ]);
     }
 
     /**

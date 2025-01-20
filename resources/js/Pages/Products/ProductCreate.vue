@@ -9,7 +9,7 @@ import {supplierI} from "@/Interfaces/Supplier";
 import {productBaseI} from "@/Interfaces/Product";
 import {categoryBaseI} from "@/Interfaces/Categories";
 import TabLink from "@components/TabLink.vue";
-import {WHbaseI} from "@/Interfaces/WH";
+import {WHbaseI} from "@/Interfaces/Warehouse";
 
 
 

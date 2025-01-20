@@ -154,7 +154,7 @@ const showOption = ref<boolean>(false);
 
 <!--            Contendio de la ventaa-->
             <div
-                class="p-3 max-h-[90vh] overflow-x-auto">
+                class="p-3 h-[90vh] max-h-[90vh] overflow-x-auto">
                 <slot/>
             </div>
         </div>

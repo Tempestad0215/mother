@@ -235,4 +235,26 @@ class ProductController extends Controller
     }
 
 
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getJson(Request $request)
+    {
+        //Buscar los datos
+        $search = $request->get('search');
+
+        // Tomar los datos
+        $products = Product::where(function ($query) use (&$search) {
+            $query->where('name', 'LIKE', '%' . $search . '%')
+                ->orWhere('description', 'LIKE', '%' . $search . '%');
+        })->where('status', true)
+            ->take(15)
+            ->get();
+
+        //tomar los datos
+        return response()->json($products);
+    }
+
+
 }
