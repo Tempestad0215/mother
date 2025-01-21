@@ -17,6 +17,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property string description
  * @property Carbon date
  * @property boolean status
+ * @property Product product
  * @property Carbon deleted_at
  * @property Carbon created_at
  * @property Carbon updated_at

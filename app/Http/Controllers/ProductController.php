@@ -7,7 +7,7 @@ use App\Helpers\SupplierHelper;
 use App\Models\Category;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
-use App\Http\Resources\ProSupRes;
+use App\Http\Resources\ProductSupplierResource;
 use App\Models\Setting;
 use App\Models\Supplier;
 use App\Models\Warehouse;
@@ -124,7 +124,7 @@ class ProductController extends Controller
         $supplierHelper = new SupplierHelper();
 
         $dataProducts = $this->get($request);
-        $dataEdit = new ProSupRes($product);
+        $dataEdit = new ProductSupplierResource($product);
 
         return Inertia::render('Products/ProductCreate',[
             'productEdit' => $dataEdit,
@@ -243,6 +243,7 @@ class ProductController extends Controller
     {
         //Buscar los datos
         $search = $request->get('search');
+
 
         // Tomar los datos
         $products = Product::where(function ($query) use (&$search) {

@@ -27,10 +27,14 @@ class InventoryMovementController extends Controller
         //Para buscar los datos
         $productTable = $productHelper->get($request);
 
+        //Obtner la transaccion de productos
+        $productsTrans = $this->getProductsTrans($request);
+
         // DEvolver la vista con el mensaje
         return Inertia::render('Products/Inventory/EntryCreate',[
             'products' => Product::take(50)->get(),
             'productTable' => $productTable,
+            'entries' => $productsTrans
         ]);
     }
 
@@ -49,6 +53,15 @@ class InventoryMovementController extends Controller
             'description' => ['required','string','min:5','max:255'],
             'type' => ['required',new Enum(INTYEnum::class)],
         ]);
+
+
+        //Buscar el producto de la entrada
+        $product = Product::find($request->get('product_id'));
+
+        //Aumentar el stock de los productos
+        $product->increment('stock', $request->get('quantity'));
+        $product->cost = $request->get('cost');
+        $product->save();
 
         //Crear el movimiento de la entrada
         InventoryMovement::create($request->toArray());
@@ -94,10 +107,52 @@ class InventoryMovementController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * @param InventoryMovement $entry
+     * @return RedirectResponse
      */
-    public function destroy(InventoryMovement $inventoryMovement)
+    public function destroy(InventoryMovement $entry)
     {
-        //
+
+        //Verificar el stock del producto
+        if ($entry->product->stock > 0) {
+            // Decrementar el stock si hay suficiente
+            $entry->product->decrement('stock', $entry->quantity);
+        }
+
+        // Asegurar que el stock no sea negativo
+        if ($entry->product->stock < 0) {
+            $entry->product->stock = 0;
+            $entry->product->save();
+        }
+
+        //Eliminar la entrada
+        $entry->delete();
+
+        // Devolver los datos
+        return back();
+    }
+
+
+    /**
+     * @param Request $request
+     * @return mixed
+     */
+    public function getProductsTrans(Request $request):Mixed
+    {
+        //Obtner los datos de busqueda
+        $search = $request->search;
+        $perPage = $request->perPage;
+
+        //Enviar los datos
+        $data = InventoryMovement::where('status', true)
+            ->whereHas('product', function($query) use($search){
+            $query->where('products.name','LIKE','%'.$search.'%')
+            ->orWhere('products.description','LIKE','%'.$search.'%')
+            ->orWhere('products.sku','LIKE','%'.$search.'%');
+        })->simplePaginate($perPage);
+
+
+        //Devolver los datos
+        return InventoryProductResource::collection($data)->response()->getData(true);
     }
 }

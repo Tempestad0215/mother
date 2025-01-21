@@ -175,6 +175,7 @@ Route::middleware([
             Route::get('/','index')->name('index');
             Route::get('/{entry}','edit')->name('edit');
             Route::post('/','entry')->name('store');
+            Route::delete('/{entry}','destroy')->name('destroy');
         });
 
 
@@ -222,9 +223,6 @@ Route::middleware([
         Route::get('/get/{code}','creditNoteGet')->name('get');
         Route::patch('/{sale}','store')->name('store');
     });
-
-
-
 
 
     /*

@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Enums\INTYEnum;
 use App\Models\Product;
+use Carbon\Carbon;
 use Carbon\Traits\Date;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -30,7 +31,10 @@ class InventoryProductResource extends JsonResource
             'id' => $this->id,
             'quantity' => $this->quantity,
             'cost' => $this->cost,
-            'product' => $this->product
+            'product' => $this->product,
+            'description' => $this->description,
+            'created_at' => Carbon::parse($this->created_at)->format('d/m/Y'),
+
         ];
     }
 }

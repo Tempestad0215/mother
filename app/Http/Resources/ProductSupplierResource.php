@@ -38,7 +38,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *
  * @method static create(mixed $validated)
  */
-class ProSupRes extends JsonResource
+class ProductSupplierResource extends JsonResource
 {
 
 
