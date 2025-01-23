@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum PATYEnum:string
+enum SalePaymentTypeEnum:string
 {
     case CONTADO = 'CONTADO';
     case CREDITO = 'CREDITO';

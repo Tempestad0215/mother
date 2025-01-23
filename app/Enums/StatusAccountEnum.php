@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum STACEnum: string
+enum StatusAccountEnum: string
 {
     case PENDIENTE = "pending";
     case  PARCIAL = "partial";

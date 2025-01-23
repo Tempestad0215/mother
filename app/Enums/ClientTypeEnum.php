@@ -3,7 +3,7 @@
 
 namespace App\Enums;
 
-Enum CLTYEnum:string {
+Enum ClientTypeEnum:string {
     case Contado = 'contado';
     case Credito = 'credito';
     case Anticipo = 'anticipo';

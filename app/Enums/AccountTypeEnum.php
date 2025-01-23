@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum ACTYEnum: string
+enum AccountTypeEnum: string
 {
     case PAGAR = "payable";
     case COBRAR = "receivable";

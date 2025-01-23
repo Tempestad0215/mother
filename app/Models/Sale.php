@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Enums\PATYEnum;
-use App\Enums\SATYEnum;
+use App\Enums\SalePaymentTypeEnum;
+use App\Enums\SaleTypeEnum;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Models\Audit;
 
 /**
  * @property int id
@@ -29,17 +30,18 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property float sub_total
  * @property float amount
  * @property boolean status
- * @property SATYEnum type
+ * @property SaleTypeEnum type
  * @property bool close_table
  * @property Carbon created_at
  * @property Carbon updated_at
  * @property Carbon deleted_at
  * @property ProTrans[] infoSale
- * @property PATYEnum type_payment
+ * @property SalePaymentTypeEnum type_payment
  * @property float received
  * @property float returned
  * @property string[] credit_notes
  * @property float credit_notes_amount
+ * @property Audit audits
  */
 
 
@@ -82,8 +84,8 @@ class Sale extends Model implements Auditable
     protected  $casts = [
         'status' => 'boolean',
         'close_table' => 'boolean',
-        'type' => SATYEnum::class,
-        'type_payment' => PATYEnum::class,
+        'type' => SaleTypeEnum::class,
+        'type_payment' => SalePaymentTypeEnum::class,
         'credit_notes' => 'array'
     ];
 
@@ -132,7 +134,7 @@ class Sale extends Model implements Auditable
      */
     public function infoSale():HasMany
     {
-        return $this->hasMany(ProTrans::class,'sale_id','uuid');
+        return $this->hasMany(ProTrans::class);
     }
 
     /**

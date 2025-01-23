@@ -3,7 +3,7 @@
 namespace App\Invoices;
 
 
-use App\Enums\PROTRTYEnum;
+use App\Enums\TransTypeEnum;
 use App\Models\ProTrans;
 use App\Models\Sale;
 use App\Models\Setting;
@@ -32,7 +32,7 @@ class SaleInvoiceA extends TCPDF
 
         //Aumentar la linea por cada linea agregada
         $this->sale->infoSale
-            ->where('type', PROTRTYEnum::VENTAS)
+            ->where('type', TransTypeEnum::VENTAS)
             ->each(function () {
             $this->height += 7.2;
         });
@@ -175,7 +175,7 @@ class SaleInvoiceA extends TCPDF
         $this->setFont('helvetica', '', 8);
 
         //Crear la linea de los productos
-        $this->sale->infoSale->where('type', '=', PROTRTYEnum::VENTAS)
+        $this->sale->infoSale->where('type', '=', TransTypeEnum::VENTAS)
             ->each( function (ProTrans $item) use (&$width){
 
             //Cantidad vendida
@@ -213,7 +213,7 @@ class SaleInvoiceA extends TCPDF
         $this->setX($xLocation);
         //Cantidad de articulo
         $this->Cell(30,5, 'Cantidad Artículo :', 0, 0, 'L', false, '', '', false,'');
-        $this->Cell(0, 5, $this->sale->infoSale->where('type',PROTRTYEnum::VENTAS)->count(), 0, 1, 'L', 0, '', 0, false, '' );
+        $this->Cell(0, 5, $this->sale->infoSale->where('type',TransTypeEnum::VENTAS)->count(), 0, 1, 'L', 0, '', 0, false, '' );
 
         //Sub Total
         $this->setX($xLocation);

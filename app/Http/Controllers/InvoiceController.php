@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\PROTRTYEnum;
-use App\Enums\PROTYEnum;
+use App\Enums\TransTypeEnum;
+use App\Enums\ProductTypeEnum;
 use App\Invoices\InvoiceCounterB5;
 use App\Invoices\SaleInvoiceA;
 use App\Models\CreditNote;
@@ -44,7 +44,7 @@ class InvoiceController extends Controller
         //Para aumentar la altura de la pagina
         $height = 160;
 
-        $infoData = collect($sale->infoSale->where('type', PROTRTYEnum::VENTAS));
+        $infoData = collect($sale->infoSale->where('type', TransTypeEnum::VENTAS));
 
         //Para recorrer los datos
         $infoData->each(function () use (&$height) {

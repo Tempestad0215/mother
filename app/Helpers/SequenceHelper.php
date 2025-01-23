@@ -2,7 +2,7 @@
 
 namespace App\Helpers;
 
-use App\Enums\SETYEnum;
+use App\Enums\SequenceTypeEnum;
 use App\Http\Requests\SequenceRequest;
 use App\Models\Sequence;
 use App\Models\Setting;
@@ -71,10 +71,10 @@ class SequenceHelper
 
     /**
      * Conseguir el rnc
-     * @param SETYEnum $type
+     * @param SequenceTypeEnum $type
      * @return JsonResponse
      */
-    public function get(SETYEnum $type):JsonResponse
+    public function get(SequenceTypeEnum $type):JsonResponse
     {
         //retonar el primer elemento solicitado
         $sequence = Sequence::where('type', $type)
@@ -140,10 +140,10 @@ class SequenceHelper
     }
 
     /**
-     * @param SETYEnum $type
+     * @param SequenceTypeEnum $type
      * @return void
      */
-    public static function incrementSequence(SETYEnum $type):void
+    public static function incrementSequence(SequenceTypeEnum $type):void
     {
         //Obtenr la configuracion
         $setting = Setting::first();

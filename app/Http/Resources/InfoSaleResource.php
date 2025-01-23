@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Enums\SATYEnum;
+use App\Enums\SaleTypeEnum;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -22,7 +22,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property float $stock
  * @property float $tax
  * @property float $tax_rate
- * @property SATYEnum $type
+ * @property SaleTypeEnum $type
  */
 
 

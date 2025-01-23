@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum CLTYPRIEnum:int
+enum ClientTypePriceEnum:int
 {
 
     case Normal = 1;

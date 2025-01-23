@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\PROTRTYEnum;
+use App\Enums\TransTypeEnum;
 use App\Helpers\InHelper;
 use App\Helpers\TransHelper;
 use App\Http\Resources\ProductTransResource;
@@ -68,7 +68,7 @@ class EntryController extends Controller
             $inHelper->updateProduct($request, $productIn);
 
             // Crear los datos de la transaccion
-            $transHelper->store($request->toArray(), PROTRTYEnum::ENTRADA, 0, $productIn->id);
+            $transHelper->store($request->toArray(), TransTypeEnum::ENTRADA, 0, $productIn->id);
         });
 
         //Devolver hacia atras
@@ -174,7 +174,7 @@ class EntryController extends Controller
 
 
                 //Actualizar la transaciom
-                $transHelper->store($request->toArray(), PROTRTYEnum::AJUSTE, 0, $product->id);
+                $transHelper->store($request->toArray(), TransTypeEnum::AJUSTE, 0, $product->id);
                 //Actualizar los productos
                 $inHelper->adjustProduct($request, $product);
             });

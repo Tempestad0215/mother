@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Enums\PROTRTYEnum;
+use App\Enums\TransTypeEnum;
 use App\Models\Product;
 use App\Models\Sale;
 use Illuminate\Http\Request;
@@ -20,7 +20,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property float $price
  * @property float $discount
  * @property float $discount_amount
- * @property PROTRTYEnum $type
+ * @property TransTypeEnum $type
  * @property boolean $status
  * @property string $created_at
  * @property string $updated_at

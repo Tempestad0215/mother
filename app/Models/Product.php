@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\PROTYEnum;
+use App\Enums\ProductTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -124,7 +124,7 @@ class Product extends Model implements Auditable
         'has_promotion' => 'boolean',
         'has_tax' => 'boolean',
         'close_table' => 'boolean',
-        'type' => PROTYEnum::class
+        'type' => ProductTypeEnum::class
     ];
 
 

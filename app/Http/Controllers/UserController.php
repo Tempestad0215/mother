@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\USRROEnum;
+use App\Enums\UserRoleEnum;
 use App\Models\User;
 use App\Rules\CheckMaxUser;
 use Illuminate\Http\RedirectResponse;
@@ -24,7 +24,7 @@ class UserController extends Controller
             'name' => ['required','string','min:4','max:75'],
             'email' => ['required','string','email','max:150',new CheckMaxUser()],
             'password'=> ['required','string',Password::min(8),'confirmed'],
-            'role' => ['required',Rule::enum(USRROEnum::class)],
+            'role' => ['required',Rule::enum(UserRoleEnum::class)],
         ]);
 
         // Guardar los datos ya validados
@@ -45,14 +45,14 @@ class UserController extends Controller
                 'name' => ['required','string','min:4','max:75'],
                 'email' => ['required','string','email','max:150',new CheckMaxUser(), Rule::unique('users', 'email')->ignore($user)],
                 'password'=> ['required','string',Password::min(8),'confirmed'],
-                'role' => ['required',Rule::enum(USRROEnum::class)],
+                'role' => ['required',Rule::enum(UserRoleEnum::class)],
             ]);
         }else{
             // crear la validacion
             $validated = $request->validate([
                 'name' => ['required','string','min:4','max:75'],
                 'email' => ['required','string','email','max:150',new CheckMaxUser(), Rule::unique('users', 'email')->ignore($user)],
-                'role' => ['required',Rule::enum(USRROEnum::class)],
+                'role' => ['required',Rule::enum(UserRoleEnum::class)],
             ]);
         }
         //Actualziar los datos

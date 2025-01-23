@@ -2,10 +2,10 @@
 
 namespace App\Helpers;
 
-use App\Enums\PROTRTYEnum;
-use App\Enums\PROTYEnum;
-use App\Enums\SATYEnum;
-use App\Enums\SETYEnum;
+use App\Enums\TransTypeEnum;
+use App\Enums\ProductTypeEnum;
+use App\Enums\SaleTypeEnum;
+use App\Enums\SequenceTypeEnum;
 use App\Http\Requests\StoreProductSaleRequest;
 use App\Http\Resources\SaleInfoResource;
 use App\Invoices\SaleInvoiceA;
@@ -32,7 +32,7 @@ class SaleHelper
         $search = $request->get('search');
 
         //Buscar los datos
-        return Sale::where('type', [SATYEnum::VENTAS,SATYEnum::COTIZACION])
+        return Sale::where('type', [SaleTypeEnum::VENTAS,SaleTypeEnum::COTIZACION])
             ->where(function (Builder $query) use ($search) {
                 $query->where('client_name','like','%'.$search.'%')
                     ->orWhere('tax','like','%'.$search.'%')
@@ -58,7 +58,7 @@ class SaleHelper
              $setting = Setting::first();
 
             //Incrementar la secuencia enviada
-            SequenceHelper::incrementSequence(SETYEnum::from($request->get('invoice_type')));
+            SequenceHelper::incrementSequence(SequenceTypeEnum::from($request->get('invoice_type')));
 
             //obtener notas de credito
             $creditNotes = $request->get('credit_notes');
@@ -112,13 +112,13 @@ class SaleHelper
                 //Cambiar el valor dependiendo el tipo de la mesa
                 if ($closeTable)
                 {
-                    $transType = PROTRTYEnum::VENTAS;
+                    $transType = TransTypeEnum::VENTAS;
                 }else{
-                    $transType = PROTRTYEnum::RESERVA;
+                    $transType = TransTypeEnum::RESERVA;
                 }
 
                 //Crear la transaccion individual
-                TransHelper::store($value, $transType, $sale->uuid);
+                TransHelper::store($value, $transType, $sale->id);
 
             }
 
@@ -136,14 +136,14 @@ class SaleHelper
         //Tomar los datos del producto
         $product = Product::find($info['product_id']);
 
-        if ($info['type'] === PROTYEnum::PRODUCTO->value)
+        if ($info['type'] === ProductTypeEnum::PRODUCTO->value)
         {
             //reducir el stock
             $product->stock -= $info['stock'];
         }
 
         //si la cuenta es abierta
-        if (!$table && $info['type'] === PROTYEnum::PRODUCTO->value ) {
+        if (!$table && $info['type'] === ProductTypeEnum::PRODUCTO->value ) {
 
             //Redicir los productos y aumentar el contador
             $product->reserved += $info['stock'];
@@ -173,17 +173,17 @@ class SaleHelper
             ProTrans::where('uuid',$idTransProduct)->update([
                 'deleted_at' => now(),
                 'reserved' => 0,
-                'type' => PROTRTYEnum::ELIMINADO,
+                'type' => TransTypeEnum::ELIMINADO,
             ]);
 
             // si tiene reserva pues se descuenta ese monto
-            if ($product->reserved > 0 && $transType == PROTRTYEnum::RESERVA->value )
+            if ($product->reserved > 0 && $transType == TransTypeEnum::RESERVA->value )
             {
                 $product->reserved -= $productStock;
             }
 
             //Solo actualizar si es producto
-            if($product->type === PROTYEnum::PRODUCTO->value )
+            if($product->type === ProductTypeEnum::PRODUCTO->value )
             {
                 $product->stock += $productStock;
             }
@@ -328,11 +328,11 @@ class SaleHelper
             if ($closeTable)
             {
                 //Crear la transacciones
-                TransHelper::store($item, PROTRTYEnum::VENTAS, $sale->uuid);
+                TransHelper::store($item, TransTypeEnum::VENTAS, $sale->uuid);
 
             }else{
                 //Crear la transacciones
-                TransHelper::store($item, PROTRTYEnum::RESERVA, $sale->uuid);
+                TransHelper::store($item, TransTypeEnum::RESERVA, $sale->uuid);
             }
         });
 
@@ -375,7 +375,7 @@ class SaleHelper
 //    private function getHeigtPdf(Sale $sale):int
 //    {
 //        //Tonmar los datos para verificar la altura
-//        $checkHeight = $sale->infoSale->where('type',PROTRTYEnum::VENTAS);
+//        $checkHeight = $sale->infoSale->where('type',TransTypeEnum::VENTAS);
 //        //Altura total
 //        $heightTotal = 200;
 //        //Verificar si la altura correcta

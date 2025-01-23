@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\INTYEnum;
+use App\Enums\InventoryMovementTypeEnum;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +11,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @property int id
- * @property INTYEnum type
+ * @property InventoryMovementTypeEnum type
  * @property float quantity
  * @property float cost
  * @property string description

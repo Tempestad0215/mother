@@ -2,8 +2,8 @@
 
 namespace App\Http\Resources;
 
-use App\Enums\PROTRTYEnum;
-use App\Enums\SATYEnum;
+use App\Enums\TransTypeEnum;
+use App\Enums\SaleTypeEnum;
 use App\Models\Comment;
 use App\Models\CreditNote;
 use App\Models\Product;
@@ -27,7 +27,7 @@ use Illuminate\Validation\ValidationException;
  * @property float sub_total
  * @property float amount
  * @property boolean status
- * @property SATYEnum type
+ * @property SaleTypeEnum type
  * @property bool close_table
  * @property Carbon created_at,
  * @property Carbon updated_at
@@ -44,7 +44,7 @@ class SaleCreditNoteResource extends JsonResource
     {
         //Convertir al collectio
         $infoCollect = collect($this->infoSale)->filter(function ($item) {
-           return $item['type'] === PROTRTYEnum::VENTAS;
+           return $item['type'] === TransTypeEnum::VENTAS;
         });
 
         //Para pasar los datos
@@ -56,7 +56,7 @@ class SaleCreditNoteResource extends JsonResource
             //Obtener los productos que tengan devolucion pendiente
             $transProduct = ProTrans::where('product_id', $item->product_id)
                 ->where('sale_id', $item->sale_id)
-                ->where('type', PROTRTYEnum::DEVOLUCION)
+                ->where('type', TransTypeEnum::DEVOLUCION)
                 ->where('status', true)
                 ->get();
 
@@ -93,7 +93,7 @@ class SaleCreditNoteResource extends JsonResource
                     'amount' => $item['amount'],
                     'discount' => $item['discount'],
                     'discount_amount' => $item['discount_amount'],
-                    'type' => SATYEnum::VENTAS->value,
+                    'type' => SaleTypeEnum::VENTAS->value,
                     'status' => $item['status']
                 ];
             }
@@ -106,7 +106,7 @@ class SaleCreditNoteResource extends JsonResource
 //            if (!$transProduct) {
 //                $transProduct = ProTrans::where('product_id', $item->product_id)
 //                    ->where('sale_id', $item->sale_id)
-//                    ->where('type', PROTRTYEnum::RESERVA)
+//                    ->where('type', TransTypeEnum::RESERVA)
 //                    ->where('status', true)
 //                    ->first();
 //            }
@@ -116,7 +116,7 @@ class SaleCreditNoteResource extends JsonResource
 //          TODO comentado porquie credo que nosera necesario
 //            $transRet = ProTrans::where('product_id', $item->product_id)
 //                ->where('sale_id', $item->sale_id)
-//                ->where('type', [PROTRTYEnum::DEVOLUCION])
+//                ->where('type', [TransTypeEnum::DEVOLUCION])
 //                ->where('status', false)
 //                ->sum('stock');
 
@@ -132,7 +132,7 @@ class SaleCreditNoteResource extends JsonResource
 //
 //
 //            //Si el item tiene disponible
-//            if ($existsProduct && $item->type != PROTRTYEnum::DEVOLUCION && $result != 0)
+//            if ($existsProduct && $item->type != TransTypeEnum::DEVOLUCION && $result != 0)
 //            {
 //
 //
@@ -151,7 +151,7 @@ class SaleCreditNoteResource extends JsonResource
 //                    "amount" => $item['amount'],
 //                    "discount" => $item['discount'],
 //                    "discount_amount" => $item['discount_amount'],
-//                    "type" => SATYEnum::VENTAS->value,
+//                    "type" => SaleTypeEnum::VENTAS->value,
 //                    "status" => $item['status']
 //                ];
 //            }

@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Enums\STACEnum;
-use App\Enums\ACTYEnum;
+use App\Enums\StatusAccountEnum;
+use App\Enums\AccountTypeEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,12 +13,12 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property integer id;
  * @property string accountable_type;
  * @property string accountable_id;
- * @property ACTYEnum type;
+ * @property AccountTypeEnum type;
  * @property float amount;
  * @property float balance ;
  * @property int due_date;
  * @property float late_fee
- * @property STACEnum status;
+ * @property StatusAccountEnum status;
  * @property string created_at;
  * @property string updated_at;
  * @property string deleted_at;
@@ -49,7 +49,7 @@ class Account extends Model implements Auditable
      * @var string[]
      */
     protected $casts = [
-        'type' => ACTYEnum::class,
+        'type' => AccountTypeEnum::class,
         'status' => 'boolean'
     ];
 

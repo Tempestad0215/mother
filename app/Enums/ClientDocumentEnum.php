@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum CLDOCENUM:string
+enum ClientDocumentEnum:string
 {
     case CEDULA = 'cedula';
     case PASAPORTE = 'pasaporte';

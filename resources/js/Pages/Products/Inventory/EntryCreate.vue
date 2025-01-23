@@ -144,6 +144,18 @@ const destroy = (item:entryProductI) => {
     });
 }
 
+/**
+ * Buscar los datos
+ */
+const search = () =>{
+    router.get(`/product/entry?search=${formSearch.search}&perPage=${formSearch.perPage}`,
+        {},
+        {
+            preserveState:true,
+            preserveScroll:true
+        });
+}
+
 
 </script>
 
@@ -255,9 +267,13 @@ const destroy = (item:entryProductI) => {
             </form>
 
             <div class="mt-3 p-3 bg-blue-300 rounded-md">
-                <FormSearch
-                    v-model:search="formSearch.search"
-                    v-model:total="formSearch.perPage"/>
+                <form
+                    @submit.prevent="search">
+                    <FormSearch
+                        v-model:search="formSearch.search"
+                        v-model:total="formSearch.perPage"/>
+                </form>
+
                 <table class="styleTable w-full mt-2">
                     <thead>
                         <tr>

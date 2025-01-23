@@ -54,7 +54,7 @@
             </tr>
         </thead>
         <tbody class="text-xs">
-            @foreach($sale->infoSale->where('type','ventas') as $products )
+            @foreach($sale->infoSale->where('type','VENTAS') as $products )
                 <tr class="border-b border-black">
                     <td class="truncate text-xs">
 

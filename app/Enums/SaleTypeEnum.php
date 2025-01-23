@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum SATYEnum:string
+enum SaleTypeEnum:string
 {
     case VENTAS = 'ventas';
     case COTIZACION = 'cotizacion';

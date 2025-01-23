@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-Enum PROTYEnum:string
+Enum ProductTypeEnum:string
 {
     case  PRODUCTO = 'producto';
     case  SERVICIO = 'servicio';

@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Enums\SATYEnum;
+use App\Enums\SaleTypeEnum;
 use App\Models\Comment;
 use App\Models\ProTrans;
 use Illuminate\Http\Request;
@@ -23,7 +23,7 @@ use Illuminate\Support\Carbon;
  * @property float $sub_total
  * @property float $amount
  * @property boolean $status
- * @property SATYEnum $type
+ * @property SaleTypeEnum $type
  * @property bool $close_table
  * @property Carbon $created_at,
  * @property Carbon $updated_at

@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum INTYEnum:string
+enum InventoryMovementTypeEnum:string
 {
     case ENTRADA = 'ENTRADA';
     case SALIDA = 'SALIDA';

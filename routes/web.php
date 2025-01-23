@@ -18,6 +18,7 @@ use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Middleware\IsAdminMiddleware;
+use App\Models\Sale;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -189,6 +190,7 @@ Route::middleware([
        Route::get('/','create')->name('create');
        Route::get('/get','getJson')->name('get.json');
        Route::get('/show','show')->name('show');
+       Route::get('/close','close')->name('close');
        Route::get('/test/invoice', 'testInvoice')->name('test-invoice');
        Route::post('/counter','counterPost')->name('counterPost');
        Route::post('/','store')->name('store');
@@ -313,4 +315,17 @@ Route::middleware([
             Route::delete('/{wh}','destroy')->name('destroy');
         });
 
+
+
+
+    Route::get('/test',function(){
+
+        $invoice = new InvoiceController();
+
+        $sale = Sale::first();
+
+        return $invoice->beltSale($sale);
+
+
+    });
 });

@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum COTYEnum:string
+enum CompanyTypeEnum:string
 {
     case BAR = 'BAR';
     case GYM = 'GYM';

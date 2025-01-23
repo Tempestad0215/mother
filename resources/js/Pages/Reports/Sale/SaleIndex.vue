@@ -41,6 +41,8 @@ Al momento de cargar
  */
 onMounted(()=>{
 
+
+    //colocar la fecha del dia
     if (!propsW.from || !propsW.to) {
         form.from = setHour(1,0,0,0);
         form.to = setHour(23,59,0,0);
@@ -51,7 +53,6 @@ onMounted(()=>{
         form.to = route().params.to;
         form.type_payment = route().params.type_payment;
     }
-
 
     //Pasar los datos recolectado
     if (propsW.total)
@@ -68,7 +69,6 @@ onMounted(()=>{
         infoReport.gross = propsW.total.amount ?? 0;
 
     }
-
 });
 
 
@@ -87,6 +87,8 @@ const infoReport = reactive({
     amount: 0,
     gross: 0
 });
+
+// Tipo de pago
 const typeOption = ref([
     {
         name:"Todo",

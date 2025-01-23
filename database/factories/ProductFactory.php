@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Enums\PROTYEnum;
+use App\Enums\ProductTypeEnum;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Supplier;
@@ -41,7 +41,7 @@ class ProductFactory extends Factory
             'product_tax' => $cost * (1 + $tax),
             'product_no_tax' =>  $price - ($price * $tax),
             'benefits' => $price - $cost,
-            'type' => fake()->randomElement([PROTYEnum::PRODUCTO,PROTYEnum::SERVICIO]),
+            'type' => fake()->randomElement([ProductTypeEnum::PRODUCTO,ProductTypeEnum::SERVICIO]),
             'category_id' => Category::factory(),
             'supplier_id' => Supplier::factory(),
 

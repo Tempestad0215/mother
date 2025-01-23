@@ -3,7 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Enums\USRROEnum;
+use App\Enums\UserRoleEnum;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -21,7 +21,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property int id
  * @property string $name
  * @property string $email
- * @property USRROEnum $role
+ * @property UserRoleEnum $role
  * @property string $password
  * @property Date $deleted_at
  */
@@ -81,7 +81,7 @@ class User extends Authenticatable implements Auditable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'status' => 'boolean',
-            'role' => USRROEnum::class
+            'role' => UserRoleEnum::class
         ];
     }
 

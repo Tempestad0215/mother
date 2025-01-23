@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\TRCOTYEnum;
+use App\Enums\TransCountEnum;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -14,7 +14,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property ACO account_co_id
  * @property float debit
  * @property float credit
- * @property TRCOTYEnum type
+ * @property TransCountEnum type
  * @property Carbon date
  * @property Carbon deleted_at
  * @property Carbon created_at

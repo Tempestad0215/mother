@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum TRCOTYEnum:string
+enum TransCountEnum:string
 {
     case SALE = 'ventas';
     case PAYMENT = 'pagos';

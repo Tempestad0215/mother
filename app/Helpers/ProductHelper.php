@@ -2,7 +2,7 @@
 
 namespace App\Helpers;
 
-use App\Enums\PROTYEnum;
+use App\Enums\ProductTypeEnum;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -42,9 +42,9 @@ class ProductHelper
                     ->orWhere('sku', 'LIKE', '%' . $search . '%');
             })
             ->where(function (Builder $builder) {
-                $builder->where('type', PROTYEnum::SERVICIO)
+                $builder->where('type', ProductTypeEnum::SERVICIO)
                     ->orWhere(function (Builder $query) {
-                        $query->where('type', PROTYEnum::PRODUCTO)
+                        $query->where('type', ProductTypeEnum::PRODUCTO)
                             ->where('stock','>',0);
                     });
             })->simplePaginate($perPage);

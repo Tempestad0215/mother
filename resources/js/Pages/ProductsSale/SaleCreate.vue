@@ -80,7 +80,7 @@ const form = useForm({
     returned: 0,
     general: "",
     type: "ventas",
-    type_payment:"contado",
+    type_payment:"CONTADO",
     update: false,
     sequence:"",
     sequence_type: "",
@@ -357,7 +357,6 @@ const deleteItem = async (name:string , index:number) => {
                     preserveScroll: true,
                     preserveState: true,
                     onFinish: ()=>{
-                        console.log('elimiando');
                     },
                     onSuccess: () => {
                         successHttp(`Item : ${info.product_name} Eliminado Correctamente` );
@@ -431,7 +430,7 @@ const sendData = ():void => {
 
         form.patch(route('credit-note.store', {sale: form.id}),{
             onSuccess: () => {
-                console.log('enviado');
+
             }
         });
 
@@ -487,6 +486,7 @@ const sendData = ():void => {
                         // La cuenta es cerrada
                         if (form.close_table)
                         {
+
                             // Imprimir el pdf
                             printPdf(route('invoice.belt.sale', {sale: res.data.pdfUuid}));
                         }
@@ -586,8 +586,8 @@ const getSaleOpen = (item:saleDataI) => {
 }
 
 
-/*
- * Verificar la venta
+/**
+ * verificar la venta
  */
 const checkSale = () => {
     //Verificar si se puede mostrar los datos
@@ -674,6 +674,10 @@ const getRncClient = async () => {
         <TabLink
             :href="route('sale.show')">
             Mostrar
+        </TabLink>
+        <TabLink
+            :href="route('sale.close')">
+            Cierre
         </TabLink>
     </template>
 

@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum ACOEnum:string
+enum AccountCountEnum:string
 {
     case ACTIVO = 'ACTIVO';
     case PASIVO = 'PASIVO';

@@ -2,7 +2,7 @@
 
 namespace App\Helpers;
 
-use App\Enums\PROTRTYEnum;
+use App\Enums\TransTypeEnum;
 use App\Models\ProTrans;
 use Illuminate\Http\Request;
 
@@ -10,13 +10,13 @@ class TransHelper
 {
     /**
      * @param array $request
-     * @param PROTRTYEnum $type
+     * @param TransTypeEnum $type
      * @param int $sale_id
      * @param int $product_id
      * @param int $credit_note_id
      * @return void
      */
-    public static function store(Array $request, PROTRTYEnum $type, int $sale_id = 0, int $product_id = 0, int $credit_note_id = 0):void
+    public static function store(Array $request, TransTypeEnum $type, int $sale_id = 0, int $product_id = 0, int $credit_note_id = 0):void
     {
 
         //Crear el TransId
@@ -26,12 +26,12 @@ class TransHelper
         $transOld = ProTrans::find($transId);
 
         //Verificar si existe o no
-        $proTrans = $transOld && $type == PROTRTYEnum::RESERVA ? $transOld : new ProTrans();
+        $proTrans = $transOld && $type == TransTypeEnum::RESERVA ? $transOld : new ProTrans();
 
         //Crear la transacion
         $proTrans->product_id = $product_id ?: $request['product_id'];
         $proTrans->product_name = $request["product_name"];
-        $proTrans->reserved = $type === PROTRTYEnum::RESERVA ?  $request["reserved"] : 0;
+        $proTrans->reserved = $type === TransTypeEnum::RESERVA ?  $request["reserved"] : 0;
         $proTrans->stock = $request['stock'];
         $proTrans->sale_id = $sale_id ?: null;
         $proTrans->credit_note_id = $credit_note_id ?: null;
@@ -64,7 +64,7 @@ class TransHelper
         $trans->discount_amount = $request->get('discount_amount');
         $trans->tax = $request->get('tax');
         $trans->amount = $request->get('amount');
-        $trans->type = PROTRTYEnum::AJUSTE;
+        $trans->type = TransTypeEnum::AJUSTE;
         $trans->save();
     }
 

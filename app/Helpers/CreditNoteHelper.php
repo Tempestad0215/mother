@@ -2,10 +2,10 @@
 
 namespace App\Helpers;
 
-use App\Enums\PROTRTYEnum;
-use App\Enums\PROTYEnum;
-use App\Enums\SATYEnum;
-use App\Enums\SETYEnum;
+use App\Enums\TransTypeEnum;
+use App\Enums\ProductTypeEnum;
+use App\Enums\SaleTypeEnum;
+use App\Enums\SequenceTypeEnum;
 use App\Http\Requests\StoreProductSaleRequest;
 use App\Models\CreditNote;
 use App\Models\Product;
@@ -36,10 +36,10 @@ class CreditNoteHelper
             $type = $request->get('type');
 
             //Verificar si existe para aumentar el contador de la nota de credito
-            if ($type == SATYEnum::DEVOLUCION->value)
+            if ($type == SaleTypeEnum::DEVOLUCION->value)
             {
                 //Crear el aumento de los comprobante
-                SequenceHelper::incrementSequence(SETYEnum::B04);
+                SequenceHelper::incrementSequence(SequenceTypeEnum::B04);
             }
 
             //Crear la devolucion
@@ -55,7 +55,7 @@ class CreditNoteHelper
                 'tax' => $request->get('tax'),
                 'sub_total' => $request->get('sub_total'),
                 'amount' => $request->get('amount'),
-                'type' => SATYEnum::DEVOLUCION,
+                'type' => SaleTypeEnum::DEVOLUCION,
                 'n_available' => $request->get('amount'),
             ]);
 
@@ -82,7 +82,7 @@ class CreditNoteHelper
 
 
                 //Si el producto es de servicio el resultado debe ser 0
-                if ($product->type == PROTYEnum::SERVICIO && $result != 0)
+                if ($product->type == ProductTypeEnum::SERVICIO && $result != 0)
                 {
                     // Devolver error si no coincide
                     throw ValidationException::withMessages([
@@ -99,7 +99,7 @@ class CreditNoteHelper
                 else{
 
                     //Crear la transaccion individual
-                    TransHelper::store($item, PROTRTYEnum::DEVOLUCION, $sale->uuid,"", $creditNote->uuid);
+                    TransHelper::store($item, TransTypeEnum::DEVOLUCION, $sale->uuid,"", $creditNote->uuid);
 
                     // Verificar si la nota de credito y la venta es 0
                     $amount = $sale->amount - $creditNote->amount;
@@ -115,13 +115,13 @@ class CreditNoteHelper
                     $productCheck = $product->trans->where('uuid', $item['id'])->first();
 
                     // Verificar si es productos para actualizar el inventario
-                    if ($product->type === PROTYEnum::PRODUCTO)
+                    if ($product->type === ProductTypeEnum::PRODUCTO)
                     {
                         //actializar los datos del stock
                         $product->increment('stock', $item['stock']);
 
                         //Verificar si es resera o no
-                        if ($productCheck->type == PROTRTYEnum::RESERVA)
+                        if ($productCheck->type == TransTypeEnum::RESERVA)
                         {
                             //Deducir de la reserva
                             $product->decrement('reserved', $item['stock']);
@@ -131,7 +131,7 @@ class CreditNoteHelper
 
                     //Tomar el total de toda la devoluciones
                     $stockRet = $product->trans
-                        ->where('type', PROTRTYEnum::DEVOLUCION)
+                        ->where('type', TransTypeEnum::DEVOLUCION)
                         ->where('sale_id', $sale->uuid)
                         ->sum('stock');
 

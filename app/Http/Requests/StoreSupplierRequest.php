@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\PATYEnum;
+use App\Enums\SalePaymentTypeEnum;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -13,7 +13,7 @@ use Illuminate\Validation\Rule;
  * @property string|null contact
  * @property string company_name
  * @property string|null phone
- * @property PATYEnum type_payment
+ * @property SalePaymentTypeEnum type_payment
  * @property string|null email
  * @property bool receive_email
  * @property string account_bank
@@ -49,7 +49,7 @@ class StoreSupplierRequest extends FormRequest
             'contact' => ['nullable','string','max:75'],
             'company_name' => ['required','string','min:3','max:75'],
             'phone' => ['nullable','string','max:25'],
-            'type_payment' => ['required',Rule::enum(PATYEnum::class),'string'],
+            'type_payment' => ['required',Rule::enum(SalePaymentTypeEnum::class),'string'],
             'email' => ['nullable','string','max:150','unique:suppliers,email'],
             'account_bank' => ['string','nullable','max:30'],
             'receive_email' => ['required','bool'],

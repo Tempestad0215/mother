@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\ACOEnum;
+use App\Enums\AccountCountEnum;
 use App\Models\ACO;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
@@ -38,7 +38,7 @@ class AccontCoController extends Controller
         $request->validate([
             'code' => ['required','string','max:30'],
             'name' => ['required','string','max:75'],
-            'type' => ['required', new Enum(ACOEnum::class)]
+            'type' => ['required', new Enum(AccountCountEnum::class)]
         ]);
 
         //Guardar los datos
@@ -59,7 +59,7 @@ class AccontCoController extends Controller
         $request->validate([
             'code' => ['required','string','max:30', Rule::unique('account_cos')->ignore($aco->id)],
             'name' => ['required','string','max:75'],
-            'type' => ['required', new Enum(ACOEnum::class)]
+            'type' => ['required', new Enum(AccountCountEnum::class)]
         ]);
 
 

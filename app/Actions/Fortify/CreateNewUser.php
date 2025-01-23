@@ -2,7 +2,7 @@
 
 namespace App\Actions\Fortify;
 
-use App\Enums\USRROEnum;
+use App\Enums\UserRoleEnum;
 use App\Models\User;
 use App\Rules\CheckMaxUser;
 use Illuminate\Support\Facades\Hash;
@@ -27,7 +27,7 @@ class CreateNewUser implements CreatesNewUsers
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users', new CheckMaxUser()],
             'password' => $this->passwordRules(),
-            'role' => ['required', Rule::enum(USRROEnum::class)],
+            'role' => ['required', Rule::enum(UserRoleEnum::class)],
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',
         ])->validate();
 

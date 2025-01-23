@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum SETYEnum:string
+enum SequenceTypeEnum:string
 {
     case  B01 = 'B01';
     case  B02 = 'B02';

@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum PUPROEnum:int
+enum PurchaseStatusEnum:int
 {
     case EAPRO = 1;
     case ENPRG = 2;

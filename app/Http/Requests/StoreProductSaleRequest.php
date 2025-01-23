@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\PATYEnum;
-use App\Enums\SATYEnum;
+use App\Enums\SalePaymentTypeEnum;
+use App\Enums\SaleTypeEnum;
 use App\Models\Setting;
 use App\Rules\CheckStock;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -42,14 +42,14 @@ class  StoreProductSaleRequest extends FormRequest
 
         // Crear la validacion de los datos
         return [
-            'id' => ['nullable', 'string','uuid'],
+            'id' => ['nullable', 'integer'],
             'ncf' => ['nullable','string','max:30',Rule::requiredIf($sequence)],
             'invoice_type' => ['nullable','max:6','string', Rule::requiredIf($sequence)],
             'client_name' => ['nullable', 'string','min:3','max:75'],
-            'client_id' => ['nullable','string','uuid'],
+            'client_id' => ['nullable','integer'],
             'client_rnc' => ['nullable','string','max:20'],
             'info_sale' => ['required','array', new CheckStock($info_sale)],
-            'info_sale.*.product_id' => ['required','string','exists:products,uuid'],
+            'info_sale.*.product_id' => ['required','integer','exists:products,id'],
             'info_sale.*.code' => ['nullable','string','min:4','max:50'],
             'info_sale.*.product_name' => ['required','string','min:3','max:75'],
             'info_sale.*.stock' => ['required','numeric'],
@@ -63,12 +63,12 @@ class  StoreProductSaleRequest extends FormRequest
             'amount' => ['required','numeric'],
             'sub_total' => ['required','numeric'],
             'discount_amount' => ['required','numeric'],
-            'type' => ['required',Rule::enum(SATYEnum::class)],
-            'type_payment' => ['nullable',Rule::requiredIf(SATYEnum::DEVOLUCION->value !== $type) ,Rule::enum(PATYEnum::class)],
+            'type' => ['required',Rule::enum(SaleTypeEnum::class)],
+            'type_payment' => ['nullable',Rule::requiredIf(SaleTypeEnum::DEVOLUCION->value !== $type) ,Rule::enum(SalePaymentTypeEnum::class)],
             'received' => ['required','numeric'],
             'returned' => ['required','numeric'],
             'credit_notes' => ['nullable','array'],
-            'credit_notes.*.id' => ['nullable','string','uuid'],
+            'credit_notes.*.id' => ['nullable','integer'],
             'credit_notes_amount' => ['nullable','numeric'],
             'comment' => [Rule::requiredIf(Route::is('credit-note.store')),'max:255'],
             'close_table' => ['required','boolean'],

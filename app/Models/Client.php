@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use App\Enums\CLDOCENUM;
-use App\Enums\CLTYEnum;
-use App\Enums\CLTYPRIEnum;
+use App\Enums\ClientDocumentEnum;
+use App\Enums\ClientTypeEnum;
+use App\Enums\ClientTypePriceEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -22,16 +22,16 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property string $phone
  * @property string $personal_id
  * @property string $email
- * @property CLDOCENUM $document
+ * @property ClientDocumentEnum $document
  * @property string $address
  * @property boolean $status
  * @property float $limit
  * @property integer $due_date
- * @property CLTYEnum $type
+ * @property ClientTypeEnum $type
  * @property float $late_fee_interest
  * @property float $balance
  * @property float $consumed
- * @property CLTYPRIEnum $type_price
+ * @property ClientTypePriceEnum $type_price
  * @property boolean $receive_email
  * @property Date $deleted_at
  * @property Date $created_at
@@ -63,9 +63,9 @@ class Client extends Model implements Auditable
 
 
     protected $casts = [
-        'type' => CLTYEnum::class,
-        'document' => CLDOCENUM::class,
-        'type_price' => CLTYPRIEnum::class,
+        'type' => ClientTypeEnum::class,
+        'document' => ClientDocumentEnum::class,
+        'type_price' => ClientTypePriceEnum::class,
         'status'=> 'boolean',
     ];
 

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\PROTRTYEnum;
+use App\Enums\TransTypeEnum;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -31,7 +31,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property float tax_amount
  * @property float amount
  * @property boolean status
- * @property PROTRTYEnum type
+ * @property TransTypeEnum type
  * @property Carbon created_at
  * @property Carbon updated_at
  * @property Carbon deleted_at
@@ -78,7 +78,7 @@ class ProTrans extends Model implements Auditable
     //formatear los datos
     protected $casts = [
         'status' => 'boolean',
-        'type' => PROTRTYEnum::class
+        'type' => TransTypeEnum::class
     ];
 
 
@@ -102,7 +102,7 @@ class ProTrans extends Model implements Auditable
      */
     public function product():belongsTo
     {
-        return $this->belongsTo(Product::class, 'product_id','uuid');
+        return $this->belongsTo(Product::class);
     }
 
     /**
@@ -110,7 +110,7 @@ class ProTrans extends Model implements Auditable
      */
     public function creditNote():belongsTo
     {
-        return $this->belongsTo(CreditNote::class,'credit_note_id','uuid');
+        return $this->belongsTo(CreditNote::class);
     }
 
 

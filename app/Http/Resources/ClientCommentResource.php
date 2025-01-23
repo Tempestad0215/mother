@@ -2,9 +2,9 @@
 
 namespace App\Http\Resources;
 
-use App\Enums\CLDOCENUM;
-use App\Enums\CLTYEnum;
-use App\Enums\CLTYPRIEnum;
+use App\Enums\ClientDocumentEnum;
+use App\Enums\ClientTypeEnum;
+use App\Enums\ClientTypePriceEnum;
 use App\Models\Account;
 use App\Models\Comment;
 use Illuminate\Http\Request;
@@ -18,16 +18,16 @@ use Illuminate\Support\Facades\Date;
  * @property string phone
  * @property string personal_id
  * @property string email
- * @property CLDOCENUM document
+ * @property ClientDocumentEnum document
  * @property string address
  * @property boolean status
  * @property float limit
  * @property integer due_date
- * @property CLTYEnum type
+ * @property ClientTypeEnum type
  * @property float late_fee_interest
  * @property float balance
  * @property float consumed
- * @property CLTYPRIEnum type_price
+ * @property ClientTypePriceEnum type_price
  * @property boolean receive_email
  * @property Account account
  * @property Comment comment

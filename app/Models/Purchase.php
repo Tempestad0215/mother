@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\PUPROEnum;
+use App\Enums\PurchaseStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property float amount
  * @property float tax
  * @property float sub_total
- * @property PUPROEnum process
+ * @property PurchaseStatusEnum process
  * @property bool status
  * @property string created_at
  * @property string updated_at

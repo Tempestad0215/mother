@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\PROTYEnum;
+use App\Enums\ProductTypeEnum;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -36,7 +36,7 @@ class StoreProductRequest extends FormRequest
             'bar_code' => ['nullable','string','max:100'],
             'brand' => ['nullable','string','max:75'],
             'sku' => ['nullable','string','max:75'],
-            'type' => [Rule::enum(PROTYEnum::class), 'required'],
+            'type' => [Rule::enum(ProductTypeEnum::class), 'required'],
             'tax_rate' => ['required','numeric'],
             'price' => ['required', 'numeric',Rule::notIn(0.00)],
             'min_price' => ['required', 'numeric',Rule::notIn(0.00)],

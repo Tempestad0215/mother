@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\INTYEnum;
+use App\Enums\InventoryMovementTypeEnum;
 use App\Helpers\ProductHelper;
 use App\Http\Resources\InventoryProductResource;
 use App\Models\InventoryMovement;
@@ -51,7 +51,7 @@ class InventoryMovementController extends Controller
             'quantity' => ['required','numeric', Rule::notIn(0.00)],
             'cost' => ['required','numeric', Rule::notIn(0.00)],
             'description' => ['required','string','min:5','max:255'],
-            'type' => ['required',new Enum(INTYEnum::class)],
+            'type' => ['required',new Enum(InventoryMovementTypeEnum::class)],
         ]);
 
 

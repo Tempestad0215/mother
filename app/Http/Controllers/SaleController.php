@@ -9,6 +9,7 @@ use App\Http\Requests\StoreProductSaleRequest;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\Setting;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -46,7 +47,7 @@ class SaleController extends Controller
             'clients' => $dataSale['clients'],
             'saleOpen' => $dataSale['saleOpen'],
             'invoiceType' => config('appconfig.invoiceType'),
-            'lastRecord' => $lastRecord?->uuid,
+            'lastRecord' => $lastRecord?->id,
         ]);
     }
 
@@ -69,7 +70,7 @@ class SaleController extends Controller
 
         // Repuesta
         return response()->json([
-            'pdfUuid' => $data->uuid,
+            'pdfUuid' => $data->id,
         ]);
 
     }
@@ -175,5 +176,33 @@ class SaleController extends Controller
             'saleOpen' => $saleOpen
         ];
 
+    }
+
+
+
+    public function close(Request $request)
+    {
+
+        //Obtner el codigo del usuarios
+        $user = $request->get('user',1);
+
+        //Obtner la ventas de ese usuarios por el dia
+        $sale = Sale::whereDate('created_at', Carbon::today())
+            ->whereHas('audits',function($query) use ($user){
+                $query->where('user_id',$user);
+            })->with('infoSale.product')
+            ->get();
+
+        //Calcular la venta de ese dia
+//        $close_data = [
+//            "tax" => $sale->sum('tax'),
+//            "sub_total" => $sale->sum('sub_total'),
+//            "amount" => $sale->sum('amount'),
+//            "received" => $sale->sum('received'),
+//            "returned" => $sale->sum('returned'),
+//        ];
+
+        //Devolver los datos
+        dd($sale);
     }
 }

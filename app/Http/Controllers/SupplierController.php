@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\ACTYEnum;
+use App\Enums\AccountTypeEnum;
 use App\Http\Resources\SupplierResource;
 use App\Models\Supplier;
 use App\Http\Requests\StoreSupplierRequest;
@@ -60,7 +60,7 @@ class SupplierController extends Controller
             if ($request->get('type_payment') != 'contado')
             {
                 $supplier->account()->create([
-                    'type' => ACTYEnum::PAGAR,
+                    'type' => AccountTypeEnum::PAGAR,
                     'amount' => $request->get('amount'),
                     'due_date' => $request->get('due_date'),
                     'balance' => $request->get('amount'),

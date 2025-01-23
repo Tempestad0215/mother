@@ -2,7 +2,7 @@
 
 namespace App\Helpers;
 
-use App\Enums\ACTYEnum;
+use App\Enums\AccountTypeEnum;
 use App\Http\Requests\StoreClientsRequest;
 use App\Http\Requests\UpdateClientsRequest;
 use App\Models\Client;
@@ -77,7 +77,7 @@ class ClientHelper
            if ($type != 'contado')
            {
                $client->account()->create([
-                   'type' => ACTYEnum::COBRAR,
+                   'type' => AccountTypeEnum::COBRAR,
                    'amount' => $request->get('amount'),
                    'due_date' => $request->get('due_date'),
                    'balance' => $request->get('amount'),
@@ -129,7 +129,7 @@ class ClientHelper
                 $client->account()->updateOrInsert(
                     ['accountable_id' => $client->uuid],
                     [
-                    'type' => ACTYEnum::COBRAR,
+                    'type' => AccountTypeEnum::COBRAR,
                     'amount' => $request->get('amount'),
                     'due_date' => $request->get('due_date'),
                     'balance' => $request->get('amount'),
