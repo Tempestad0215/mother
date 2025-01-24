@@ -653,8 +653,6 @@ const getRncClient = async () => {
             form.client_rnc_status = info.status;
         }
     }
-
-
 }
 
 </script>
@@ -669,15 +667,19 @@ const getRncClient = async () => {
         <TabLink
             :active="true"
             :href="route('sale.create')">
-            Ventas
+            Registrar Ventas
         </TabLink>
         <TabLink
             :href="route('sale.show')">
-            Mostrar
+            Mostrar Ventas
+        </TabLink>
+        <TabLink
+            :href="route('credit-note.show')">
+            Nosta De Creditos
         </TabLink>
         <TabLink
             :href="route('sale.close')">
-            Cierre
+            Cierre De Ventas
         </TabLink>
     </template>
 

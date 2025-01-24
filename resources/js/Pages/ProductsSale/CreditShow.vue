@@ -48,7 +48,7 @@ const submit = () => {
  * @param item
  */
 const printFact =  (item:creditNotesSaleI) => {
-    printPdf(route('invoice.belt.note',{creditNote: item.uuid}));
+    printPdf(route('invoice.belt.note',{creditNote: item.id}));
 
 }
 </script>
@@ -59,16 +59,20 @@ const printFact =  (item:creditNotesSaleI) => {
         <template #header>
             <TabLink
                 :href="route('sale.create')">
-                Ventas
+                Registrar Ventas
             </TabLink>
             <TabLink
                 :href="route('sale.show')">
-                Mostrar
+                Mostrar Ventas
             </TabLink>
             <TabLink
                 :active="true"
-                :href="route('sale.show')">
-                Mostrar
+                :href="route('credit-note.show')">
+                Nosta De Creditos
+            </TabLink>
+            <TabLink
+                :href="route('sale.close')">
+                Cierre De Ventas
             </TabLink>
         </template>
 

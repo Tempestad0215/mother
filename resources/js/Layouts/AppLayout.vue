@@ -146,7 +146,7 @@ const showOption = ref<boolean>(false);
 
 <!--            Cabecera de la ventana-->
             <header
-                class=" h-[4rem] flex items-center justify-center space-x-3 w-full bg-blue-300 z-20 border-b-2">
+                class=" h-[4rem] flex items-center justify-center space-x-3 w-full bg-blue-300 z-20 border-b-2 text-sm">
 
 <!--                Para el contenido-->
                 <slot name="header"/>

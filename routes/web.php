@@ -191,6 +191,7 @@ Route::middleware([
        Route::get('/get','getJson')->name('get.json');
        Route::get('/show','show')->name('show');
        Route::get('/close','close')->name('close');
+       Route::post('/close/get','getClose')->name('get.close');
        Route::get('/test/invoice', 'testInvoice')->name('test-invoice');
        Route::post('/counter','counterPost')->name('counterPost');
        Route::post('/','store')->name('store');
@@ -216,7 +217,7 @@ Route::middleware([
      * Notas de credito o devoluciones
      */
     Route::controller(CreditNoteController::class)
-    ->prefix('credit-note')
+    ->prefix('sale/credit-note')
     ->name('credit-note.')
     ->group(function (){
         Route::get('/','index')->name('index');

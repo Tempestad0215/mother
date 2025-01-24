@@ -197,10 +197,9 @@ class SaleController extends Controller
 
     }
 
-    /**
-     * @param Request $request
-     * @return Response
-     */
+
+
+
     public function getClose(Request $request)
     {
         //Obtner el codigo del usuarios
@@ -223,8 +222,6 @@ class SaleController extends Controller
                 DB::raw('(tr.price - p.cost) as benefits')])
             ->get();
 
-
-
         //Obtner los datos sumado para el resultado de datos
         $data_final = [
             'tax' => $sale->sum('tax'),
@@ -235,10 +232,10 @@ class SaleController extends Controller
         ];
 
 
-
-        //Devolver la vista con los datos
-        return Inertia::render('Reports/Sale/Close',[
-            'report' => $data_final,
+        //Devolver los datos
+        return response()->json([
+            $data_final
         ]);
+
     }
 }

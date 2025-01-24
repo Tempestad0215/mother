@@ -35,3 +35,15 @@ export interface totalSoldAmountI {
     discount:number;
     amount: number;
 }
+
+
+/**
+ * Reporte de beneficios para crear el cierre
+ */
+export interface totalSaleAmountI {
+    tax: number;
+    sub_total: number;
+    discount_amount: number;
+    amount: number;
+    benefits: number;
+}

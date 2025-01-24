@@ -57,7 +57,7 @@ class InvoiceController extends Controller
         return Pdf::view('pdfs.belt.first',[
             'setting' => Setting::first(),
             'sale' => $sale,
-            'datePrint' => Carbon::now()->format('d/m/y H:i:s')
+            'datePrint' => Carbon::now()->format('d/m/Y H:i:s')
         ])->margins(2,2,2,2)
             ->paperSize(80, $height)
             ->name('test.pdf');
