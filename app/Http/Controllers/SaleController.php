@@ -6,9 +6,12 @@ use App\Helpers\ClientHelper;
 use App\Helpers\ProductHelper;
 use App\Helpers\SaleHelper;
 use App\Http\Requests\StoreProductSaleRequest;
+use App\Http\Resources\UserResource;
 use App\Models\Product;
+use App\Models\ProTrans;
 use App\Models\Sale;
 use App\Models\Setting;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -17,6 +20,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Inertia\Response;
+use Laravel\Octane\Exceptions\DdException;
 
 class SaleController extends Controller
 {
@@ -179,30 +183,62 @@ class SaleController extends Controller
     }
 
 
-
+    /**
+     * Mostar la ventana para crear el cierre
+     * @param Request $request
+     * @return Response
+     */
     public function close(Request $request)
     {
 
+        return Inertia::render('Reports/Sale/Close',[
+            'users' => UserResource::collection(User::all())
+        ]);
+
+    }
+
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    public function getClose(Request $request)
+    {
         //Obtner el codigo del usuarios
         $user = $request->get('user',1);
 
         //Obtner la ventas de ese usuarios por el dia
-        $sale = Sale::whereDate('created_at', Carbon::today())
-            ->whereHas('audits',function($query) use ($user){
-                $query->where('user_id',$user);
-            })->with('infoSale.product')
+        $sale = Sale::whereHas('audits', function ($query) use ($user) {
+            $query->where('user_id', $user);
+        })->whereDate('sales.created_at', Carbon::today()->format("Y-m-d"))
+            ->join('pro_trans as tr','sales.id','=','tr.sale_id')
+            ->join('products as p','tr.product_id','=','p.id')
+            ->select([
+                'tr.tax',
+                'tr.discount_amount',
+                'tr.amount',
+                'p.name',
+                'p.cost',
+                'tr.price',
+                DB::raw('(tr.amount - tr.tax) as sub_total'),
+                DB::raw('(tr.price - p.cost) as benefits')])
             ->get();
 
-        //Calcular la venta de ese dia
-//        $close_data = [
-//            "tax" => $sale->sum('tax'),
-//            "sub_total" => $sale->sum('sub_total'),
-//            "amount" => $sale->sum('amount'),
-//            "received" => $sale->sum('received'),
-//            "returned" => $sale->sum('returned'),
-//        ];
 
-        //Devolver los datos
-        dd($sale);
+
+        //Obtner los datos sumado para el resultado de datos
+        $data_final = [
+            'tax' => $sale->sum('tax'),
+            'sub_total' => $sale->sum('sub_total'),
+            'discount_amount' => $sale->sum('discount_amount'),
+            'amount' => $sale->sum('amount'),
+            'benefits' => $sale->sum('benefits'),
+        ];
+
+
+
+        //Devolver la vista con los datos
+        return Inertia::render('Reports/Sale/Close',[
+            'report' => $data_final,
+        ]);
     }
 }

@@ -137,6 +137,7 @@ class Sale extends Model implements Auditable
         return $this->hasMany(ProTrans::class);
     }
 
+
     /**
      * Formatear la fehca de creacion
      * @return Attribute

@@ -51,7 +51,7 @@ const submit = () => {
 const printFact =  (item:saleI) => {
     if (item.close_table)
     {
-        printPdf(route('invoice.belt.sale',{sale: item.uuid}));
+        printPdf(route('invoice.belt.sale',{sale: item.id}));
     }else{
         Swal.fire({
             title: "Error",
