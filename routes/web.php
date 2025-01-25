@@ -25,6 +25,7 @@ use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CreditNoteController;
 use App\Http\Controllers\InventoryMovementController;
+use Spatie\Permission\Models\Role;
 
 Route::middleware([
     'auth:sanctum',
@@ -85,14 +86,15 @@ Route::middleware([
 
         //Devolver la vista con los datos
         return Inertia::render('Auth/Register',[
-            'users' => $users
+            'users' => $users,
+            'roles' => Role::all()
         ]);
     })->name('register');
 
     /*
      * Usuario
      */
-    Route::middleware([IsAdminMiddleware::class])->controller(UserController::class)
+    Route::controller(UserController::class)
     ->prefix('user')
     ->name('user.')
     ->group(function () {
@@ -170,14 +172,14 @@ Route::middleware([
 
     // Movimiento de inventario de productos
     Route::controller(InventoryMovementController::class)
-        ->prefix('product/entry')
-        ->name('entry.')
-        ->group(function(){
-            Route::get('/','index')->name('index');
-            Route::get('/{entry}','edit')->name('edit');
-            Route::post('/','entry')->name('store');
-            Route::delete('/{entry}','destroy')->name('destroy');
-        });
+    ->prefix('product/entry')
+    ->name('entry.')
+    ->group(function(){
+        Route::get('/','index')->name('index');
+        Route::get('/{entry}','edit')->name('edit');
+        Route::post('/','entry')->name('store');
+        Route::delete('/{entry}','destroy')->name('destroy');
+    });
 
 
     /*

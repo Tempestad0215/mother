@@ -56,20 +56,20 @@ const submit = () => {
         <template #header>
             <TabLink
                 :href="route('sale.create')">
-                Registrar Ventas
+                Registrar
             </TabLink>
             <TabLink
                 :href="route('sale.show')">
-                Mostrar Ventas
+                Mostrar
             </TabLink>
             <TabLink
                 :href="route('credit-note.show')">
-                Nosta De Creditos
+                N. Credito
             </TabLink>
             <TabLink
                 :active="true"
-                :href="route('credit-note.show')">
-                Cierre De Ventas
+                :href="route('sale.close')">
+                Cierre
             </TabLink>
         </template>
         <div class="max-w-[70rem] p-5 bg-blue-300 rounded-md">

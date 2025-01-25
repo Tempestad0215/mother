@@ -72,20 +72,20 @@ const printFact =  (item:saleI) => {
         <template #header>
             <TabLink
                 :href="route('sale.create')">
-                Registrar Ventas
+                Registrar
             </TabLink>
             <TabLink
                 :active="true"
                 :href="route('sale.show')">
-                Mostrar Ventas
+                Mostrar
             </TabLink>
             <TabLink
                 :href="route('credit-note.show')">
-                Nosta De Creditos
+                N. Credito
             </TabLink>
             <TabLink
                 :href="route('sale.close')">
-                Cierre De Ventas
+                Cierre
             </TabLink>
         </template>
 

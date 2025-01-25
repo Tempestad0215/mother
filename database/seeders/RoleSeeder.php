@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Permission;
-use App\Models\Role;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
 class RoleSeeder extends Seeder
@@ -50,31 +50,27 @@ class RoleSeeder extends Seeder
         $sale = Permission::create([
             'name' => 'sale',
             ]);
+        $printSale = Permission::create([
+            'name' => 'print sale',
+        ]);
 
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         //roles existente
         $superAdminRole = Role::create([
-            'name' => 'Super Admin',
-            'guard_name' => 'api']);
+            'name' => 'Super Admin']);
         $admin = Role::create([
-            'name' => 'Admin',
-            'guard_name' => 'api']);
+            'name' => 'Admin']);
         $supervisor = Role::create([
-            'name' => 'Supervisor',
-            'guard_name' => 'api']);
+            'name' => 'Supervisor']);
         $user = Role::create([
-            'name' => 'User',
-            'guard_name' => 'api']);
+            'name' => 'User']);
         $cashier = Role::create([
-            'name' => 'Cashier',
-            'guard_name' => 'api']);
+            'name' => 'Cashier']);
         $logistic = Role::create([
-            'name' => 'Logistic',
-            'guard_name' => 'api']);
+            'name' => 'Logistic']);
         $saler = Role::create([
-            'name' => 'Saler',
-            'guard_name' => 'api']);
+            'name' => 'Saler']);
 
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
         //Asignar los permisos a diferenes roles
@@ -92,6 +88,19 @@ class RoleSeeder extends Seeder
             $clients,
             $inventoy,
             $sale);
+
+
+        //crear el rol de cajero
+        $saler->syncPermissions($sale,
+            $inventoy,
+            $clients,
+            $printSale,
+            $categories,
+            $products,
+            $cashier);
+
+
+
 
 //        user
         $user->syncPermissions($create,$update);

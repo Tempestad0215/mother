@@ -29,7 +29,7 @@ onMounted(()=>{
     //Verificar si existe datos para poner en el formulario
     if(propsW.clientEdit)
     {
-        form.uuid = propsW.clientEdit.uuid;
+        form.id = propsW.clientEdit.id;
         form.name = propsW.clientEdit.name;
         form.document = propsW.clientEdit.document
         form.personal_id = propsW.clientEdit.personal_id ? propsW.clientEdit.personal_id : "";
@@ -104,7 +104,7 @@ const selectedMask = computed(()=>{
  * DAtos del formulario
  */
 const form = useForm({
-    uuid:"",
+    id:0,
     name:"",
     personal_id:"",
     phone:"",
@@ -136,7 +136,7 @@ const submit = ():void => {
     // Si es actualziar
     if(propsW.update)
     {
-        form.patch(route('client.update', form.uuid),{
+        form.patch(route('client.update', form.id),{
             onSuccess:()=>{
                 successHttp('Datos actualizado correctamente');
             }

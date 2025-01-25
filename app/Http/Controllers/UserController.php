@@ -24,7 +24,6 @@ class UserController extends Controller
             'name' => ['required','string','min:4','max:75'],
             'email' => ['required','string','email','max:150',new CheckMaxUser()],
             'password'=> ['required','string',Password::min(8),'confirmed'],
-            'role' => ['required',Rule::enum(UserRoleEnum::class)],
         ]);
 
         // Guardar los datos ya validados

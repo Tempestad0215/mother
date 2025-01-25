@@ -26,8 +26,8 @@ class UserHelper
             ->where(function ($query) use ($search) {
                 $query->where('name','like','%'.$search.'%')
                     ->orWhere('email','like','%'.$search.'%');
-            })->where('uuid', '!=', auth()->user()->uuid)
-            ->latest('created_at')
+            })->where('id', '!=', auth()->user()->id)
+            ->latest('id')
             ->simplePaginate($perPage);
 
         //Formatear los datos

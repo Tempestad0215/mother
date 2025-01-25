@@ -7,20 +7,22 @@ import TextInput from '@/Components/TextInput.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import ActionMessage from '@/Components/ActionMessage.vue';
 import {userI, userPaginationI} from "@/Interfaces/User";
-import {computed, ref, Ref} from "vue";
+import {computed} from "vue";
 import Swal from "sweetalert2";
 import {successHttp} from "@/Global/Alert";
 import FormSearch from "@components/FormSearch.vue";
 import Pagination from "@components/Pagination.vue";
 import {paginationJoin} from "@/Global/Helpers";
 import ToggleButton from "@components/ToggleButton.vue";
+import TabLink from "@components/TabLink.vue";
 
 
 /*
 Propiedad de la ventana
  */
 defineProps<{
-    users: userPaginationI
+    users: userPaginationI,
+    roles: any
 }>();
 
 /*
@@ -32,7 +34,7 @@ const form = useForm({
     email: '',
     password: '',
     password_confirmation: '',
-    role: 'user',
+    role: 4,
     terms: false,
     update: false,
     modify_password: false
@@ -46,24 +48,6 @@ const formSearch = useForm({
     search:"",
     perPage: 15
 });
-
-/*
-Datos d la ventana
- */
-const role:Ref<any[]> = ref([
-    {
-        name: 'user',
-        label: 'USER',
-    },
-    {
-        name: 'supervisor',
-        label: 'SUPERVIOR',
-    },
-    {
-        name: 'admin',
-        label: 'ADMIN',
-    }
-]);
 
 
 
@@ -114,7 +98,6 @@ const edit = (item:userI) => {
     form.id = item.id;
     form.name = item.name;
     form.email = item.email;
-    form.role = item.role;
 
     //Poner el formulario en actualizar
     form.update = true;
@@ -155,7 +138,15 @@ const search = () => {
 
     <AppLayout>
         <template #header >
-
+            <TabLink
+                :active="true"
+                :href="route('register')">
+                Registrar
+            </TabLink>
+            <TabLink
+                :href="route('register')">
+                Role
+            </TabLink>
         </template>
 
         <form
@@ -204,25 +195,25 @@ const search = () => {
 
             </div>
 
-            <!-- Rol de usuarios -->
-            <div class="flex-1">
-                <InputLabel for="role" value="Rol *"  />
-                <select
-                    class="inputGeneral py-1 w-full"
-                    v-model="form.role"
-                    name="role"
-                    id="role">
-                    <option
-                        v-for="(item, index) in role"
-                        :key="index"
-                        :value="item.name">
-                        {{ item.label}}
-                    </option>
-                </select>
+<!--            &lt;!&ndash; Rol de usuarios &ndash;&gt;-->
+<!--            <div class="flex-1">-->
+<!--                <InputLabel for="role" value="Rol *"  />-->
+<!--                <select-->
+<!--                    class="inputGeneral py-1 w-full"-->
+<!--                    v-model="form.role"-->
+<!--                    name="role"-->
+<!--                    id="role">-->
+<!--                    <option-->
+<!--                        v-for="(item, index) in role"-->
+<!--                        :key="index"-->
+<!--                        :value="item.name">-->
+<!--                        {{ item.label}}-->
+<!--                    </option>-->
+<!--                </select>-->
 
-                <!-- Mensaje de error -->
-                <InputError class="mt-2" :message="form.errors.role" />
-            </div>
+<!--                &lt;!&ndash; Mensaje de error &ndash;&gt;-->
+<!--                <InputError class="mt-2" :message="form.errors.role" />-->
+<!--            </div>-->
 
 <!--            Contrase;a-->
             <div
@@ -253,6 +244,27 @@ const search = () => {
                 <InputError class="mt-2" :message="form.errors.password_confirmation" />
             </div>
 
+
+<!--        Para colocar el rol del usuarios-->
+            <div>
+                <label
+                    class="block"
+                    for="role">Rol</label>
+                <select
+                    v-model="form.role"
+                    class="inputGeneral py-1 w-full "
+                    name="role"
+                    id="role">
+                    <option
+                        class="even:bg-blue-200"
+                        v-for="(item, index) in roles"
+                        :key="index"
+                        :value="item.id">
+                        {{item.name}}
+                    </option>
+                </select>
+            </div>
+
 <!--            Botones-->
             <div
                 class=" col-span-full flex items-center justify-end mt-4">
@@ -264,6 +276,7 @@ const search = () => {
                     Registrar
                 </PrimaryButton>
             </div>
+
         </form>
 
         <div class=" rounded-md p-5 bg-blue-300 mt-3">
