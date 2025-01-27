@@ -4,16 +4,30 @@ namespace App\Http\Controllers;
 
 use App\Enums\AccountCountEnum;
 use App\Models\ACO;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class AccontCoController extends Controller
+class AccontCoController extends Controller implements HasMiddleware
 {
+
+    /**
+     * Para los middleware del controllador
+     * @return array
+     */
+    public static function middleware()
+    {
+        return [
+            new Middleware('auth:sanctum'),
+            new Middleware('role:Super Admin|Supervisor',),
+        ];
+    }
+
 
     /**
      * @return Response

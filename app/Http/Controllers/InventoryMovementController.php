@@ -9,12 +9,26 @@ use App\Models\InventoryMovement;
 use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
 use Inertia\Inertia;
 
-class InventoryMovementController extends Controller
+class InventoryMovementController extends Controller implements HasMiddleware
 {
+    /**
+     * Para los middleware del controllador
+     * @return array
+     */
+    public static function middleware()
+    {
+        return [
+            new Middleware('auth:sanctum'),
+            new Middleware('role:Super Admin|Supervisor',),
+        ];
+    }
+
     /**
      * Display a listing of the resource.
      */

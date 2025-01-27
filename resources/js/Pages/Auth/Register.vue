@@ -34,7 +34,7 @@ const form = useForm({
     email: '',
     password: '',
     password_confirmation: '',
-    role: 4,
+    role: "User",
     terms: false,
     update: false,
     modify_password: false
@@ -83,7 +83,6 @@ const submit = () => {
         })
     }else{
         form.post(route('user.store'), {
-            onFinish: () => form.reset('password', 'password_confirmation'),
             onSuccess: () => form.reset(),
         });
     }
@@ -143,156 +142,153 @@ const search = () => {
                 :href="route('register')">
                 Registrar
             </TabLink>
-            <TabLink
-                :href="route('register')">
-                Role
-            </TabLink>
         </template>
-
-        <form
-            class="bg-blue-300 max-w-[70rem] p-5 rounded-md grid grid-cols-2 gap-3"
-            @submit.prevent="submit">
-
-            <h3 class="text-3xl font-bold text-center col-span-full ">
-                Registro de Usuario
-            </h3>
-
-            <div>
-                <InputLabel for="name" value="Nombre *" />
-                <TextInput
-                    id="name"
-                    v-model="form.name"
-                    type="text"
-                    class="mt-1 block w-full"
-                    required
-                    autofocus
-                />
-                <InputError class="mt-2" :message="form.errors.name" />
-            </div>
-
-            <div class="">
-                <InputLabel for="email" value="Correo *" />
-                <TextInput
-                    id="email"
-                    v-model="form.email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    required
-                />
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
-
-            <!--        Preguntar si desea cambiar la password-->
-            <div
-                v-if="form.update"
-                class="flex-1">
-                <InputLabel for="modifyPassoword" value="Modificar Contraseña" />
-                <ToggleButton
-                    label="Modificar Password"
-                    on-label="SI"
-                    v-model="form.modify_password"
-                    off-label="NO"/>
-
-            </div>
-
-<!--            &lt;!&ndash; Rol de usuarios &ndash;&gt;-->
-<!--            <div class="flex-1">-->
-<!--                <InputLabel for="role" value="Rol *"  />-->
-<!--                <select-->
-<!--                    class="inputGeneral py-1 w-full"-->
-<!--                    v-model="form.role"-->
-<!--                    name="role"-->
-<!--                    id="role">-->
-<!--                    <option-->
-<!--                        v-for="(item, index) in role"-->
-<!--                        :key="index"-->
-<!--                        :value="item.name">-->
-<!--                        {{ item.label}}-->
-<!--                    </option>-->
-<!--                </select>-->
-
-<!--                &lt;!&ndash; Mensaje de error &ndash;&gt;-->
-<!--                <InputError class="mt-2" :message="form.errors.role" />-->
-<!--            </div>-->
-
-<!--            Contrase;a-->
-            <div
-                v-if="showPassword "
-                class="">
-                <InputLabel for="password" value="Contraseña *" />
-                <TextInput
-                    id="password"
-                    v-model="form.password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    required
-                />
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-<!--            confirma passwod-->
-            <div
-                v-if="showPassword "
-                class="">
-                <InputLabel for="password_confirmation" value="Confirmar contraseña *" />
-                <TextInput
-                    id="password_confirmation"
-                    v-model="form.password_confirmation"
-                    type="password"
-                    class="mt-1 block w-full"
-                    required
-                />
-                <InputError class="mt-2" :message="form.errors.password_confirmation" />
-            </div>
-
-
-<!--        Para colocar el rol del usuarios-->
-            <div>
-                <label
-                    class="block"
-                    for="role">Rol</label>
-                <select
-                    v-model="form.role"
-                    class="inputGeneral py-1 w-full "
-                    name="role"
-                    id="role">
-                    <option
-                        class="even:bg-blue-200"
-                        v-for="(item, index) in roles"
-                        :key="index"
-                        :value="item.id">
-                        {{item.name}}
-                    </option>
-                </select>
-            </div>
-
-<!--            Botones-->
-            <div
-                class=" col-span-full flex items-center justify-end mt-4">
-                <ActionMessage
-                    :on="form.recentlySuccessful">
-                    Usuario registrado correctamente
-                </ActionMessage>
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Registrar
-                </PrimaryButton>
-            </div>
-
-        </form>
-
-        <div class=" rounded-md p-5 bg-blue-300 mt-3">
+        <div class="mx-auto max-w-[70rem]">
             <form
+                class="bg-blue-300 max-w-[70rem] p-5 rounded-md grid grid-cols-2 gap-3"
+                @submit.prevent="submit">
 
-                @submit.prevent="search">
-                <FormSearch
-                    class=""
-                    holder="Buscar"
-                    v-model:select-value="formSearch.perPage"
-                    v-model="formSearch.search"/>
+                <h3 class="text-3xl font-bold text-center col-span-full ">
+                    Registro de Usuario
+                </h3>
+
+                <div>
+                    <InputLabel for="name" value="Nombre *" />
+                    <TextInput
+                        id="name"
+                        v-model="form.name"
+                        type="text"
+                        class="mt-1 block w-full"
+                        required
+                        autofocus
+                    />
+                    <InputError class="mt-2" :message="form.errors.name" />
+                </div>
+
+                <div class="">
+                    <InputLabel for="email" value="Correo *" />
+                    <TextInput
+                        id="email"
+                        v-model="form.email"
+                        type="email"
+                        class="mt-1 block w-full"
+                        required
+                    />
+                    <InputError class="mt-2" :message="form.errors.email" />
+                </div>
+
+                <!--        Preguntar si desea cambiar la password-->
+                <div
+                    v-if="form.update"
+                    class="flex-1">
+                    <InputLabel for="modifyPassoword" value="Modificar Contraseña" />
+                    <ToggleButton
+                        label="Modificar Password"
+                        on-label="SI"
+                        v-model="form.modify_password"
+                        off-label="NO"/>
+
+                </div>
+
+                <!--            &lt;!&ndash; Rol de usuarios &ndash;&gt;-->
+                <!--            <div class="flex-1">-->
+                <!--                <InputLabel for="role" value="Rol *"  />-->
+                <!--                <select-->
+                <!--                    class="inputGeneral py-1 w-full"-->
+                <!--                    v-model="form.role"-->
+                <!--                    name="role"-->
+                <!--                    id="role">-->
+                <!--                    <option-->
+                <!--                        v-for="(item, index) in role"-->
+                <!--                        :key="index"-->
+                <!--                        :value="item.name">-->
+                <!--                        {{ item.label}}-->
+                <!--                    </option>-->
+                <!--                </select>-->
+
+                <!--                &lt;!&ndash; Mensaje de error &ndash;&gt;-->
+                <!--                <InputError class="mt-2" :message="form.errors.role" />-->
+                <!--            </div>-->
+
+                <!--            Contrase;a-->
+                <div
+                    v-if="showPassword "
+                    class="">
+                    <InputLabel for="password" value="Contraseña *" />
+                    <TextInput
+                        id="password"
+                        v-model="form.password"
+                        type="password"
+                        class="mt-1 block w-full"
+                        required
+                    />
+                    <InputError class="mt-2" :message="form.errors.password" />
+                </div>
+                <!--            confirma passwod-->
+                <div
+                    v-if="showPassword "
+                    class="">
+                    <InputLabel for="password_confirmation" value="Confirmar contraseña *" />
+                    <TextInput
+                        id="password_confirmation"
+                        v-model="form.password_confirmation"
+                        type="password"
+                        class="mt-1 block w-full"
+                        required
+                    />
+                    <InputError class="mt-2" :message="form.errors.password_confirmation" />
+                </div>
+
+
+                <!--        Para colocar el rol del usuarios-->
+                <div>
+                    <label
+                        class="block"
+                        for="role">Rol</label>
+                    <select
+                        v-model="form.role"
+                        class="inputGeneral py-1 w-full "
+                        name="role"
+                        id="role">
+                        <option
+                            class="even:bg-blue-200"
+                            v-for="(item, index) in roles"
+                            :key="index"
+                            :value="item.name">
+                            {{item.name}}
+                        </option>
+                    </select>
+                    <InputError class="mt-2" :message="form.errors.role" />
+                </div>
+
+                <!--            Botones-->
+                <div
+                    class=" col-span-full flex items-center justify-end mt-4">
+                    <ActionMessage
+                        :on="form.recentlySuccessful">
+                        Usuario registrado correctamente
+                    </ActionMessage>
+                    <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                        Registrar
+                    </PrimaryButton>
+                </div>
+
             </form>
-            <table
-                class="w-full table-auto styleTable mt-3">
-                <thead
-                    class=" sticky top-0">
+
+            <div class=" rounded-md p-5 bg-blue-300 mt-3">
+                <form
+
+                    @submit.prevent="search">
+                    <FormSearch
+                        class=""
+                        holder="Buscar"
+                        v-model:select-value="formSearch.perPage"
+                        v-model="formSearch.search"/>
+                </form>
+                <table
+                    class="w-full table-auto styleTable mt-3">
+                    <thead
+                        class=" sticky top-0">
                     <tr
                         class="">
                         <th>ID</th>
@@ -301,8 +297,8 @@ const search = () => {
                         <th>Role</th>
                         <th>Atc</th>
                     </tr>
-                </thead>
-                <tbody>
+                    </thead>
+                    <tbody>
                     <tr
                         class=""
                         v-for="(item, index) in users.data" :key="index">
@@ -320,24 +316,20 @@ const search = () => {
                                 class=" icon-efect fa-solid fa-trash"></i>
                         </td>
                     </tr>
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
 
-            <Pagination
-                :total-page="users.meta.to"
-                :prev="users.links.prev
+                <Pagination
+                    :total-page="users.meta.to"
+                    :prev="users.links.prev
                     ? paginationJoin(users.links.prev, formSearch.search, formSearch.perPage)
                     : ''"
-                :next="users.links.next
+                    :next="users.links.next
                     ? paginationJoin(users.links.next, formSearch.search, formSearch.perPage)
                     : ''"
-                :current-page="users.meta.current_page "/>
+                    :current-page="users.meta.current_page "/>
+            </div>
         </div>
-
-
-
-
-
     </AppLayout>
 
 </template>

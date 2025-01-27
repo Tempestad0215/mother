@@ -498,6 +498,8 @@ const sendData = ():void => {
                     })
                     .catch((err) => {
                         form.errors = err.response?.data.errors;
+
+                        console.log(err)
                         //Mensaje de error
                         errorHttp(`Error : ${err.message}`);
                     });

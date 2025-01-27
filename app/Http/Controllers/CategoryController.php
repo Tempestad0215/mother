@@ -7,10 +7,22 @@ use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class CategoryController extends Controller{
+class CategoryController extends Controller implements HasMiddleware
+{
+
+    public static function middleware()
+    {
+        return [
+            new Middleware('auth'),
+            new Middleware('role:Super Admin|Supervisor'),
+        ];
+    }
+
     /**
      * @param Request $request
      * @return Response

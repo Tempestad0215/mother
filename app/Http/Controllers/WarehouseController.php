@@ -7,12 +7,28 @@ use App\Models\Warehouse;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class WarehouseController extends Controller
+class WarehouseController extends Controller implements HasMiddleware
 {
     use AuthorizesRequests;
+
+
+    /**
+     * Para los middleware del controllador
+     * @return array
+     */
+    public static function middleware()
+    {
+        return [
+            new Middleware('auth:sanctum'),
+            new Middleware('role:Super Admin|Supervisor',),
+        ];
+    }
+
 
     /**
      * @return Response

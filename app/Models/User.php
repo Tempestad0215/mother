@@ -42,7 +42,22 @@ class User extends Authenticatable implements Auditable
      *
      * @var array<int, string>
      */
-    protected $guarded = [];
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'email_verified_at',
+        'two_factor_recovery_codes',
+        'two_factor_secret',
+        'two_factor_confirmed_at',
+        'remember_token',
+        'status',
+        'current_team_id',
+        'profile_photo_path',
+        'deleted_at',
+        'created_at',
+        'updated_at',
+    ];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -77,7 +92,6 @@ class User extends Authenticatable implements Auditable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'status' => 'boolean',
-            'role' => UserRoleEnum::class
         ];
     }
 

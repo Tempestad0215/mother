@@ -11,15 +11,32 @@ use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class ClientController extends Controller
+class ClientController extends Controller implements HasMiddleware
 {
     public ClientHelper $clientHelper;
 
+
+    /**
+     * Para los middleware del controllador
+     * @return array
+     */
+    public static function middleware()
+    {
+        return [
+            new Middleware('auth'),
+            new Middleware('role:Super Admin|Supervisor',),
+        ];
+    }
+
+
+    /**
+     *
+     */
     public function __construct()
     {
         $this->clientHelper = new ClientHelper();

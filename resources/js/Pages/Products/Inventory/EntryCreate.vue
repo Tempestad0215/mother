@@ -16,6 +16,7 @@ import axios from "axios";
 import FormSearch from "@components/FormSearch.vue";
 import Swal from "sweetalert2";
 import Pagination from "@components/Pagination.vue";
+import InputError from "@components/InputError.vue";
 
 // Propiedades
 const propsW = defineProps<{
@@ -233,6 +234,7 @@ const search = () =>{
                         class="inputGeneral w-full"
                         v-bind="moneyConfig"
                         v-model="form.quantity" />
+                    <InputError :message="form.errors?.quantity" />
                 </div>
                 <!-- Cantidad -->
                 <div>
@@ -243,6 +245,7 @@ const search = () =>{
                         class="inputGeneral w-full"
                         v-bind="moneyConfig"
                         v-model="form.cost" />
+                    <InputError :message="form.errors?.cost" />
                 </div>
 
                 <!-- Comentario -->
@@ -255,6 +258,7 @@ const search = () =>{
                     <TextInput
                         class=" w-full"
                         v-model="form.description"/>
+                    <InputError :message="form.errors?.description" />
                 </div>
 
 

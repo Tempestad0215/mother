@@ -33,9 +33,10 @@ class ProductHelper
         //Obtuser los datos de búsqueda
         $search = $request->get('search','');
         $perPage = $request->get('perPage',15);
+        $stock = $request->get('stock',false);
 
         //Pasar los datos a la variable
-        return Product::where('status', true)
+        $query = Product::where('status', true)
             ->where(function ($query) use (&$search) {
                 $query->where('name', 'LIKE', '%' . $search . '%')
                     ->orWhere('description', 'LIKE', '%' . $search . '%')
@@ -44,10 +45,19 @@ class ProductHelper
             ->where(function (Builder $builder) {
                 $builder->where('type', ProductTypeEnum::SERVICIO)
                     ->orWhere(function (Builder $query) {
-                        $query->where('type', ProductTypeEnum::PRODUCTO)
-                            ->where('stock','>',0);
+                        $query->where('type', ProductTypeEnum::PRODUCTO);
                     });
-            })->simplePaginate($perPage);
+            });
+
+        //Verificar si existe el stock del producto
+        if ($stock)
+        {
+            $query->where('stock', '>', 0);
+        }
+
+
+        //Devolver los resultado
+        return $query->simplePaginate($perPage);
 
     }
 

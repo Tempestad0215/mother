@@ -1,27 +1,27 @@
 
 export const typePaymentData = ([
     {
-        name: "Contado",
-        value: 'contado'
+        name: "CONTADO",
+        value: "CONTADO"
     },
     {
-        name: "Credito",
-        value: 'credito'
+        name: "CREDITO",
+        value: "CREDITO"
     },
     {
-        name: "Cheque",
-        value: 'cheque'
+        name: "CHEQUE",
+        value: "CHEQUE"
     },
     {
-        name: "Tarjeta",
-        value: 'tarjeta'
+        name: "TARJETA",
+        value: "TARJETA"
     },
     {
-        name: "Transferencia",
-        value: 'transferencia'
+        name: "TRANSFERENCIA",
+        value: "TRANSFERENCIA"
     },
     {
-        name: "Anticipo",
-        value: 'anticipo'
+        name: "ANTICIPO",
+        value: "anticipo"
     },
 ]);

@@ -6,7 +6,6 @@ use App\Http\Controllers\ExchangeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\InvoiceController;
-use App\Http\Controllers\EntryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\ReportController;
@@ -89,7 +88,8 @@ Route::middleware([
             'users' => $users,
             'roles' => Role::all()
         ]);
-    })->name('register');
+    })->name('register')
+    ->middleware(['role:Super Admin|Supervisor']);
 
     /*
      * Usuario
@@ -319,16 +319,9 @@ Route::middleware([
         });
 
 
-
-
     Route::get('/test',function(){
-
         $invoice = new InvoiceController();
-
         $sale = Sale::first();
-
         return $invoice->beltSale($sale);
-
-
     });
 });

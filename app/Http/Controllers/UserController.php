@@ -7,11 +7,27 @@ use App\Models\User;
 use App\Rules\CheckMaxUser;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
-class UserController extends Controller
+class UserController extends Controller implements HasMiddleware
 {
+
+    /**
+     * Para los middleware del controllador
+     * @return array
+     */
+    public static function middleware()
+    {
+        return [
+            new Middleware('auth:sanctum'),
+            new Middleware('role:Super Admin|Supervisor',),
+        ];
+    }
+
     /**
      * @param Request $request
      * @return RedirectResponse
@@ -24,10 +40,19 @@ class UserController extends Controller
             'name' => ['required','string','min:4','max:75'],
             'email' => ['required','string','email','max:150',new CheckMaxUser()],
             'password'=> ['required','string',Password::min(8),'confirmed'],
+            'role' => ['required','string','exists:roles,name'],
         ]);
 
-        // Guardar los datos ya validados
-        User::create($validated);
+        DB::transaction(function () use ($validated) {
+            // Guardar los datos ya validados
+            $user = User::create($validated);
+
+
+            //Colocar el rol de usuarios
+            $user->assignRole($validated['role']);
+        });
+
+
 
         // Retornar hacia atras
         return back();

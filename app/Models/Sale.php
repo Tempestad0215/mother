@@ -146,7 +146,7 @@ class Sale extends Model implements Auditable
     {
         return Attribute::make(
             get: fn (string $value) => Carbon::parse($value)->format('d/m/Y H:i:s'),
-            set: fn (string $value) => Carbon::parse($value)->format('d/m/Y H:i:s'),
+            set: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i:s'),
         );
     }
 
@@ -158,7 +158,7 @@ class Sale extends Model implements Auditable
     {
         return Attribute::make(
             get: fn (string $value) => Carbon::parse($value)->format('d/m/Y H:i:s'),
-            set: fn (string $value) => Carbon::parse($value)->format('d/m/Y H:i:s'),
+            set: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i:s'),
         );
     }
 

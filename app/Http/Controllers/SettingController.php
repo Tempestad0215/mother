@@ -7,12 +7,27 @@ use App\Http\Requests\StoreSettingRequest;
 use App\Models\Sale;
 use App\Models\Setting;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class SettingController extends Controller
+class SettingController extends Controller implements HasMiddleware
 {
+    /**
+     * Para los middleware del controllador
+     * @return array
+     */
+    public static function middleware()
+    {
+        return [
+            new Middleware('auth:sanctum'),
+            new Middleware('role:Super Admin|Supervisor',),
+        ];
+    }
+
+
     /**
      * @return Response
      */
