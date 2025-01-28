@@ -35,25 +35,31 @@ class CheckStock implements ValidationRule
             //Buscar los datos del producto
             $product = Product::where('status', true)
                 ->find($info['product_id']);
+
             //Tomar los datos de la cantidad
             $quantity = $info['stock'];
 
-            //Verificar si existe en reservado
-            if($product && $product->reserved > 0)
+
+            if ($product->stock == 0.00 && $product->type == ProductTypeEnum::PRODUCTO)
             {
+                $existsError = true;
+                $errorMessage = 'El Producto "' . $info['product_name'] . '" no tiene suficiente stock.';
+
+                //Verificar si existe en reservado
+            }else if ($product && $product->reserved > 0)
+            {
+
                 //Restar la cantidad de la reserva
                 $quantity -= $product->reserved;
 
                 //Realizar la verificacion
-                if($quantity > $product->stock && $product->type == ProductTypeEnum::PRODUCTO ){
+                if($quantity > $product->stock && $product->type == ProductTypeEnum::PRODUCTO){
                     // Enviar el mensaje de que no puede ser mayor
                     $existsError = true;
                     $errorMessage = 'El Producto "' . $info['product_name'] . '" no tiene suficiente stock.';
                     break;
                 }
             }
-
-
         }
 
         //Verificar si existe un mensaje de error

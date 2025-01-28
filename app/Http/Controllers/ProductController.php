@@ -140,8 +140,9 @@ class ProductController extends Controller implements HasMiddleware
             'productEdit' => $dataEdit,
             'products' => $dataProducts,
             'update' => true,
-            'categories' => $categoryHelper->getAllCategories(),
-            'suppliers' => $supplierHelper->getAllSuppliers(),
+            'categories' => Category::all(),
+            'suppliers' => Supplier::all(),
+            'warehouse' => Warehouse::all()
         ]);
 
     }
@@ -239,7 +240,7 @@ class ProductController extends Controller implements HasMiddleware
                 ->orWhere('description', 'LIKE', '%' . $search . '%')
                 ->orWhere('sku', 'LIKE', '%' . $search . '%');
         })->where('status', true)
-            ->latest('created_at')
+            ->latest('id')
             ->simplePaginate($perPage);
 
     }

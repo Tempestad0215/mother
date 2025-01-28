@@ -2,10 +2,7 @@
 
 namespace App\Providers;
 
-use App\Models\User;
-use Illuminate\Auth\Access\Response;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider

@@ -48,17 +48,7 @@ class ClientHelper
             $type = $request->get('type');
 
             //Guardar los datos validado
-           $client = Client::create($request->only([
-               'name',
-               'email',
-               'personal_id',
-               'phone',
-               'address',
-               'type',
-               'document',
-               'receive_email',
-               'status',
-               'type_price']));
+           $client = Client::create($request->validated());
 
 
            //guardar el comentario si existe

@@ -458,6 +458,8 @@ const sendData = ():void => {
             //si es para actualizar
             if (form.update)
             {
+
+                console.log(form.id)
                 // Actualizar los datos y capturar
                 axios.patch(route('sale.update', {sale: form.id}), form)
                     .then((res) => {
@@ -476,6 +478,8 @@ const sendData = ():void => {
                             router.reload({only:['products','clients','saleOpen','invoiceType','refund']});
                         }
                     }).catch((err) => {
+
+                        console.log(err)
                         //Mensaje de error
                         errorHttp(`Error : ${err.message}`);
                 });
@@ -1081,6 +1085,7 @@ const getRncClient = async () => {
             @close="showProduct = false"
             v-if="showProduct">
             <FloatShowPro
+                :stock="true"
                 class=" bg-blue-300  rounded-md px-10 py-5"
                 @select="getData"
                 :products="propsW.products"/>

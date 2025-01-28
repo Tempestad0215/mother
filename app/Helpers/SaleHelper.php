@@ -8,7 +8,6 @@ use App\Enums\SaleTypeEnum;
 use App\Enums\SequenceTypeEnum;
 use App\Http\Requests\StoreProductSaleRequest;
 use App\Http\Resources\SaleInfoResource;
-use App\Invoices\SaleInvoiceA;
 use App\Models\DeletedSale;
 use App\Models\Product;
 use App\Models\ProTrans;

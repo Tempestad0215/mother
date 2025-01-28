@@ -45,15 +45,12 @@ class ProductHelper
             ->where(function (Builder $builder) {
                 $builder->where('type', ProductTypeEnum::SERVICIO)
                     ->orWhere(function (Builder $query) {
-                        $query->where('type', ProductTypeEnum::PRODUCTO);
+                        $query->where('type', ProductTypeEnum::PRODUCTO)
+                        ->where('stock', '>', 0);
                     });
             });
 
-        //Verificar si existe el stock del producto
-        if ($stock)
-        {
-            $query->where('stock', '>', 0);
-        }
+
 
 
         //Devolver los resultado

@@ -54,6 +54,7 @@ class Client extends Model implements Auditable
         'name',
         'document',
         'personal_id',
+        'receive_email',
         'phone',
         'email',
         'address',

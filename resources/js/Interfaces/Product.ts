@@ -30,6 +30,9 @@ export interface productBaseI {
     unit: string;
     stock: number;
     cost: number;
+    price: number;
+    min_price?: number;
+    special_price?: number;
     type: string;
     supplier_id: number;
     category_id: number;

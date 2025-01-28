@@ -26,6 +26,7 @@ class StoreProductRequest extends FormRequest
     {
         $isArticle = $this->get('type') === 'producto';
 
+
         return [
             'name' => ['required','string','min:3','max:75'],
             'description' => ['nullable','string','max:150'],
@@ -38,12 +39,14 @@ class StoreProductRequest extends FormRequest
             'sku' => ['nullable','string','max:75'],
             'type' => [Rule::enum(ProductTypeEnum::class), 'required'],
             'tax_rate' => ['required','numeric'],
+            'tax' => ['required','numeric'],
             'price' => ['required', 'numeric',Rule::notIn(0.00)],
             'min_price' => ['required', 'numeric',Rule::notIn(0.00)],
             'special_price' => ['required', 'numeric',Rule::notIn(0.00)],
             'cost' => ['required', 'numeric',Rule::notIn(0.00)],
             'benefits' => ['required', 'numeric',Rule::notIn(0.00)],
             'benefits_rate' => ['required', 'numeric',Rule::notIn(0.00)],
+            'product_no_tax' => ['required','numeric',Rule::notIn(0.00)],
             'weight' => ['nullable','numeric'],
             'dimensions' => ['nullable','string','max:255'],
             'inventoried' => ['required','boolean'],

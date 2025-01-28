@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Enums\CompanyTypeEnum;
+use Illuminate\Database\Eloquent\Casts\AsArrayObject;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -47,43 +49,44 @@ class Setting extends Model implements Auditable
     use HasFactory;
 
     /**
-     * @var array
-     */
-    protected $guarded = [];
-
-    /**
      * @var string[]
      */
-//    protected $fillable = [
-//        'name',
-//        'email',
-//        'phone',
-//        'address',
-//        'logo',
-//        'website',
-//        'company_id',
-//        'tax',
-//        'tax.name',
-//        'tax.value',
-//        'unit',
-//        'fiscal_year',
-//        'company_type',
-//        'status',
-//        'save_cost',
-//        'sequence'
-//    ];
+    protected $fillable = [
+        'name',
+        'email',
+        'phone',
+        'address',
+        'logo',
+        'website',
+        'company_id',
+        'tax',
+        'unit',
+        'fiscal_year',
+        'company_type',
+        'status',
+        'save_cost',
+        'sequence'
+    ];
 
     /**
      * @var string[]
      */
     protected $casts = [
-        'tax' => 'json',
+        'tax' => AsArrayObject::class,
         'unit' => 'array',
         'status' => 'boolean',
         'save_cost' => 'boolean',
         'sequence' => 'boolean',
         'company_type' => CompanyTypeEnum::class,
     ];
+
+
+    public function tax():Attribute
+    {
+        return Attribute::make(
+            get: fn (array $value) => "funciona"
+        );
+    }
 
 
     /**

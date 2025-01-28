@@ -10,26 +10,26 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;
 
 /**
- * @property string $uuid
- * @property string $invoice_type
- * @property string $ncf
- * @property string $ncf_m
- * @property string $code
- * @property string $client_name
- * @property int $client_id
- * @property float $discount
- * @property float $discount_amount
- * @property float $tax
- * @property float $sub_total
- * @property float $amount
- * @property boolean $status
- * @property SaleTypeEnum $type
- * @property bool $close_table
- * @property Carbon $created_at,
- * @property Carbon $updated_at
- * @property Carbon $deleted_at
- * @property ProTrans[] $infoSale
- * @property Comment $comment
+ * @property string id
+ * @property string invoice_type
+ * @property string ncf
+ * @property string ncf_m
+ * @property string code
+ * @property string client_name
+ * @property int client_id
+ * @property float discount
+ * @property float discount_amount
+ * @property float tax
+ * @property float sub_total
+ * @property float amount
+ * @property boolean status
+ * @property SaleTypeEnum type
+ * @property bool close_table
+ * @property Carbon created_at,
+ * @property Carbon updated_at
+ * @property Carbon deleted_at
+ * @property ProTrans[] infoSale
+ * @property Comment comment
  */
 class SaleInfoResource extends JsonResource
 {
@@ -72,7 +72,7 @@ class SaleInfoResource extends JsonResource
 
         //DEvolver los datos
         return [
-            'id' => $this->uuid,
+            'id' => $this->id,
             'invoice_type' => $this->invoice_type,
             'ncf' => $this->ncf,
             'ncf_m' => $this->ncf_m,

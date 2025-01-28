@@ -8,6 +8,7 @@ import Swal from "sweetalert2";
 import {successHttp} from "@/Global/Alert";
 import {getMoney} from "@/Global/Helpers";
 import {onMounted} from "vue";
+import {route} from "../../../../vendor/tightenco/ziggy";
 
 /**
  * Informacion de la ventana
@@ -19,7 +20,8 @@ const {auth} = props;
  * Propiedades de la ventana
  */
 const propsW = defineProps<{
-    products: productI
+    products: productI,
+    stock?: boolean
 }>();
 
 
@@ -59,7 +61,8 @@ const submit = () => {
     router.get(``,{
         page:1,
         perPage:form.perPage,
-        search:form.search
+        search:form.search,
+        stock:propsW.stock 
     },{
         preserveState: true,
         preserveScroll: true,
@@ -77,8 +80,14 @@ const edit = (id:number) => {
 
 //Seleccionar
 const selectData = (item:productBaseI) => {
-    //Enviar los datos
-    emit('select',item);
+    if (component === "Products/ProductShow")
+    {
+        router.get(route('product.edit', {product: item.id}));
+    }else{
+        //Enviar los datos
+        emit('select',item);
+    }
+
 }
 
 //Eliminar el producto

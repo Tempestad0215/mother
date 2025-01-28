@@ -86,6 +86,7 @@ class Product extends Model implements Auditable
         'discount',
         'discount_amount',
         'product_tax',
+        'product_no_tax',
         'benefits',
         'benefits_rate',
         'tax',

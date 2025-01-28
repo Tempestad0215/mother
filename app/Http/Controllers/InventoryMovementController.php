@@ -36,7 +36,7 @@ class InventoryMovementController extends Controller implements HasMiddleware
     {
 
         //Intanciar
-        $productHelper = new ProductHelper();
+        $productHelper = new ProductController();
 
         //Para buscar los datos
         $productTable = $productHelper->get($request);

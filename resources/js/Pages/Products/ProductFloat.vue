@@ -57,6 +57,7 @@ const form = useForm({
     supplier_id: 0,
     warehouse_id: 0,
     search:"",
+    tax: 0,
     tax_rate: 0,
     tax_tex: "",
     weigth:"",
@@ -104,7 +105,13 @@ onMounted(()=>{
         form.category_id = propsW.productEdit.category_id;
         form.supplier_id = propsW.productEdit.supplier_id;
         form.tax_rate = propsW.productEdit.tax_rate;
+        form.sku = propsW.productEdit.sku || "";
         form.unit = propsW.productEdit.unit;
+        form.brand = propsW.productEdit.brand || "";
+        form.cost = propsW.productEdit.cost;
+        form.price = propsW.productEdit.price;
+        form.min_price = propsW.productEdit.min_price || 0;
+        form.special_price = propsW.productEdit.special_price || 0;
     }
 
 
@@ -127,8 +134,8 @@ const priceNoTax = computed(()=>{
     let price:number = form.price * 100;
     let tax:number = form.tax_rate;
     let taxTotal:number = (price * tax) / 100;
-
-    form.product_no_tax = price - taxTotal;
+    form.tax = (price *  (tax / 100)) /100;
+    form.product_no_tax = (price - taxTotal) / 100;
     return getMoney((form.product_no_tax / 100));
 });
 

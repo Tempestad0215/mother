@@ -10,6 +10,8 @@ import {successHttp} from "@/Global/Alert";
 import {taxI} from "@/Interfaces/Global";
 import ToggleButton from "@components/ToggleButton.vue";
 import TabLink from "@components/TabLink.vue";
+import {Money} from "v-money3";
+import {moneyConfig} from "@/Global/Helpers";
 
 
 
@@ -83,7 +85,7 @@ const form = useForm({
     website:"",
     company_id:"",
     taxName:"",
-    taxValue:"",
+    taxValue: 0.00,
     tax: [] as taxI[],
     unitValue:"",
     unit:[] as string[],
@@ -118,13 +120,9 @@ const submit = () => {
 //Agregar lis impuesto
 const addTax = () => {
     //Verificar si existe
-    let exists = form.tax.find((el) => el.name === form.taxValue);
+    let exists = form.tax.find((el) => el.name === form.taxName);
 
-    if (form.taxValue === "")
-    {
-        form.setError('tax','EL Campo ITBIS No Puede Estar En Blanco ');
-    }
-    else if (exists)
+   if (exists)
     {
         //Poner el error
         form.setError('tax','El Campo ITBIS No Se puede Repetir');
@@ -138,9 +136,10 @@ const addTax = () => {
         //Limpiar los errores
         form.clearErrors('tax');
         // Agregar los datos de impuesto
+
         form.tax.push({
             name: form.taxName.toUpperCase(),
-            amount: parseFloat(form.taxValue)
+            amount: form.taxValue
         });
         //Limpiar el campo para agregar otro
         form.reset('taxValue','taxName');
@@ -160,7 +159,7 @@ const removeTax = (index:number) => {
 //Agregar Unidad a la lista
 const addUnit = () => {
     //Verificar si existe
-    let exists = form.tax.find((el) => el.name === form.taxValue);
+    let exists = form.tax.find((el) => el.name === form.taxName);
 
     if (form.unitValue === "")
     {
@@ -430,11 +429,11 @@ const removeUnit = (index:number) => {
                                 placeholder="ITBIS Name"
                                 name="unit"
                                 v-model="form.taxName"/>
-                            <TextInput
-                                class="pr-8 w-full "
-                                placeholder="ITBIS Valor"
-                                name="unit"
-                                v-model="form.taxValue"/>
+                            <Money
+                                class="inputGeneral w-full"
+                                v-bind="moneyConfig"
+                                v-model.number="form.taxValue"
+                                />
                             <i
                                 @click="addTax"
                                 class=" flex items-center inset-y-0 absolute right-0 p-2 bg-transparent fa-solid fa-square-plus"></i>
