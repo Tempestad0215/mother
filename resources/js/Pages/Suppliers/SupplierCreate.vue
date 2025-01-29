@@ -27,7 +27,7 @@ Al momento de cargar
 onMounted(()=>{
     if (propsW.supplierEdit)
     {
-        form.uuid = propsW.supplierEdit.uuid;
+        form.id = propsW.supplierEdit.id;
         form.contact = propsW.supplierEdit.contact ?? "";
         form.company_name = propsW.supplierEdit.company_name;
         form.phone = propsW.supplierEdit.phone ?? "";
@@ -40,12 +40,12 @@ onMounted(()=>{
 Formulario
  */
 const form = useForm({
-    uuid: "",
+    id: 0,
     contact:"",
     company_name:"",
     phone:"",
     email:"",
-    type_payment:"contado",
+    type_payment:"CONTADO",
     receive_email: false,
     is_recurring: false,
     payment_day: null,
@@ -76,7 +76,7 @@ const submit = () => {
     // Si es actualziar
     if(propsW.update)
     {
-        form.patch(route('supplier.update', {supplier: form.uuid}),{
+        form.patch(route('supplier.update', {supplier: form.id}),{
             onSuccess:()=>{
                 successHttp('Datos actualizado correctamente');
             }
@@ -143,13 +143,13 @@ const submit = () => {
                         <select
                             v-model="form.type_payment"
                             class="inputGeneral py-0 w-full">
-                            <option value="contado" >Contado</option>
-                            <option value="anticipo" >Anticipo</option>
-                            <option value="credito" >Credito</option>
-                            <option value="tarjeta" >Tarjeta</option>
-                            <option value="cheque" >Cheque</option>
-                            <option value="transferencia" >Transferencia</option>
-                            <option value="otros" >Otros</option>
+                            <option value="CONTADO" >Contado</option>
+                            <option value="ANTICIPO" >Anticipo</option>
+                            <option value="CREDITO" >Credito</option>
+                            <option value="TARJETA" >Tarjeta</option>
+                            <option value="CHEQUE" >Cheque</option>
+                            <option value="TRANSFERENCIA" >Transferencia</option>
+                            <option value="OTROS" >Otros</option>
                         </select>
                     </div>
 

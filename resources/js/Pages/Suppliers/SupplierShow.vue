@@ -83,6 +83,7 @@ const search = () => {
  * Ver
  */
 const see = (item:supplierI) => {
+
     //Pasar los datos a la variable
     supplierData.value = item;
     seeSupplier.value = true;

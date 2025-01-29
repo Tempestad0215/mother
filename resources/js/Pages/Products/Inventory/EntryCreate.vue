@@ -49,8 +49,6 @@ const formSearch = useForm({
 });
 
 
-
-
 /*
 Funciones
  */
@@ -84,7 +82,6 @@ watch(productName, (newValue) => {
     }
 });
 
-
 /**
  * Para los productos a los datos
  * @param item
@@ -94,7 +91,6 @@ const getProduct = (item:productBaseI) => {
     productName.value = item.name;
     form.cost = item.cost;
 }
-
 
 /**
  *

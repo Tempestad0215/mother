@@ -3,22 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Enums\TransTypeEnum;
-use App\Enums\ProductTypeEnum;
 use App\Invoices\InvoiceCounterB5;
 use App\Invoices\SaleInvoiceA;
 use App\Models\CreditNote;
 use App\Models\MoneyCounter;
-use App\Models\ProTrans;
 use App\Models\Sale;
 use App\Models\Setting;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
-use phpDocumentor\Reflection\Types\Integer;
+use Spatie\Browsershot\Browsershot;
 use Spatie\LaravelPdf\Facades\Pdf;
-use function PHPUnit\Framework\isNull;
 
 class InvoiceController extends Controller
 {
@@ -61,6 +57,9 @@ class InvoiceController extends Controller
         ])->margins(2,2,2,2)
             ->paperSize(80, $height)
             ->name('test.pdf');
+//            ->withBrowsershot(function (Browsershot $browsershot) {
+//                $browsershot->setChromePath('/usr/bin/chromium');
+//            });
 
     }
 

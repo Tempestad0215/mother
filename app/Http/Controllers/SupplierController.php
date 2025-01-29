@@ -7,6 +7,7 @@ use App\Http\Resources\SupplierResource;
 use App\Models\Supplier;
 use App\Http\Requests\StoreSupplierRequest;
 use App\Http\Requests\UpdateSupplierRequest;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
@@ -49,11 +50,11 @@ class SupplierController extends Controller implements HasMiddleware
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @param StoreSupplierRequest $request
+     * @return RedirectResponse
      */
     public function store(StoreSupplierRequest $request)
     {
-
         DB::transaction(function () use ($request) {
             // Guardar los datos de supplidor
             $supplier = Supplier::create($request->validated());
