@@ -54,8 +54,6 @@ class StoreCounterRequest extends FormRequest
     {
 
         return [
-            'from' => ['required', 'string'],
-            'to' => ['required', 'string'],
             'coin_first' => ['numeric'],
             'coin_second' => ['numeric'],
             'coin_third' => ['numeric'],

@@ -11,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
 use Inertia\Inertia;
@@ -115,9 +116,46 @@ class InventoryMovementController extends Controller implements HasMiddleware
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, InventoryMovement $inventoryMovement)
+    public function update(Request $request, InventoryMovement $entry)
     {
-        //
+        //Validar los datos
+        $request->validate([
+            'id' => ['required','numeric','exists:inventory_movements,id'],
+            'product_id' => ['required','numeric','exists:products,id'],
+            'quantity' => ['required','numeric', Rule::notIn(0.00)],
+            'cost' => ['required','numeric', Rule::notIn(0.00)],
+            'description' => ['required','string','min:5','max:255'],
+            'type' => ['required',new Enum(InventoryMovementTypeEnum::class)],
+        ]);
+
+
+        // Asegurar la que la trasnaccion se ejecute correctamente
+        DB::transaction(function () use ($request, $entry) {
+
+            $oldValue = $entry->getOriginal('quantity');
+
+           //Resultado de la resta para saber si hay que sumar o restar
+            $result = $request->quantity - $oldValue;
+
+
+            //Buscar el producto de la entrada
+            $product = Product::find($request->get('product_id'));
+
+            //Aumentar el stock de los productos
+            $product->increment('stock', $result);
+            $product->cost = $request->get('cost');
+            $product->save();
+
+            //Actualizar un nuevo campo para no volver a editar esa transation
+            $entry->was_updated = true;
+            $entry->save();
+
+            //Crear el movimiento de la entrada
+            InventoryMovement::create($request->toArray());
+        });
+
+        //Devolver hacia atras
+        return back();
     }
 
     /**

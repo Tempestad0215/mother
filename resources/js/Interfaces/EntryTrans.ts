@@ -6,7 +6,9 @@ export  interface entryBaseI {
     quantity: number;
     cost: number;
     description?: string;
+    type?: string;
     status?: boolean;
+    was_updated?: boolean;
     created_at?: string;
 }
 

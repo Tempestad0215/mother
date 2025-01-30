@@ -13,33 +13,33 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @property int id
- * @property string $code
- * @property string $from
- * @property string $to
- * @property float $coin_first
- * @property float $coin_second
- * @property float $coin_third
- * @property float $coin_fourth
- * @property float $coin_fifth
- * @property float $coin_sixth
- * @property float $coin_seventh
- * @property float $coin_eighth
- * @property float $coin_ninth
- * @property float $coin_tenth
- * @property float $card
- * @property float $transfer
- * @property float $check
- * @property float $other_income
- * @property float $expenses
- * @property float $cash_withdrawals
- * @property float $refund
- * @property float $other_expenses
- * @property float $opening_balance
- * @property float $total_coin
- * @property float $total_other_coin
- * @property float $total_expenses
- * @property float $diff
- * @property float $total_neto
+ * @property string code
+ * @property string from
+ * @property string to
+ * @property float coin_first
+ * @property float coin_second
+ * @property float coin_third
+ * @property float coin_fourth
+ * @property float coin_fifth
+ * @property float coin_sixth
+ * @property float coin_seventh
+ * @property float coin_eighth
+ * @property float coin_ninth
+ * @property float coin_tenth
+ * @property float card
+ * @property float transfer
+ * @property float check
+ * @property float other_income
+ * @property float expenses
+ * @property float cash_withdrawals
+ * @property float refund
+ * @property float other_expenses
+ * @property float opening_balance
+ * @property float total_coin
+ * @property float total_other_coin
+ * @property float total_expenses
+ * @property float diff
+ * @property float total_neto
  *
  */
 class MoneyCounter extends Model implements Auditable
@@ -55,8 +55,6 @@ class MoneyCounter extends Model implements Auditable
 
     //Campos para rellenar
     protected $fillable = [
-        'from',
-        'to',
         'coin_first',
         'coin_second',
         'coin_third',
@@ -85,38 +83,6 @@ class MoneyCounter extends Model implements Auditable
 
 
 
-
-
-    //Para formatear los datos
-    protected $casts = [
-        'from' => 'datetime:H:i:s',
-        'to' => 'datetime:H:i:s',
-    ];
-
-    /*
-     * Fecha desde
-     */
-    protected function from():Attribute
-    {
-        return Attribute::make(
-            get: fn(string $value) => Carbon::parse($value)->format('Y-m-d:H:I'),
-            set: fn(string $value) => Carbon::parse($value)->format('Y-m-d:H:I'),
-
-        );
-    }
-
-    /*
-     * Fecha hasta
-     */
-    protected function to():Attribute
-    {
-        return Attribute::make(
-            get: fn(string $value) => Carbon::parse($value)->format('Y-m-d:H:I'),
-            set: fn(string $value) => Carbon::parse($value)->format('Y-m-d:H:I'),
-        );
-    }
-
-
     /**
      * @return void
      */
@@ -142,8 +108,6 @@ class MoneyCounter extends Model implements Auditable
     {
         // Obtener el ultimo registros
         $total = self::count();
-
-
 
         // Generar el proximo ID
         $nextID = $total ? $total + 1 : 1;

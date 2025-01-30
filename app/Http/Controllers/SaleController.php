@@ -238,4 +238,9 @@ class SaleController extends Controller
         ]);
 
     }
+
+    public function counter()
+    {
+        return Inertia::render('ProductsSale/MoneyCounter');
+    }
 }

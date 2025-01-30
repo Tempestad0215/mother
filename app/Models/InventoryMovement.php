@@ -17,6 +17,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property string description
  * @property Carbon date
  * @property boolean status
+ * @property boolean was_updated
  * @property Product product
  * @property Carbon deleted_at
  * @property Carbon created_at
@@ -37,7 +38,8 @@ class InventoryMovement extends Model implements  Auditable
         'cost',
         'description',
         'date',
-        'status'
+        'status',
+        'was_updated'
     ];
 
 
@@ -48,6 +50,7 @@ class InventoryMovement extends Model implements  Auditable
     {
         return [
             'status' => 'boolean',
+            'was_updated' => 'boolean',
             'deleted_at' => 'datetime:Y-m-d H:i:s',
             'updated_at' => 'datetime:Y-m-d H:i:s',
             'created_at' => 'datetime:Y-m-d H:i:s',

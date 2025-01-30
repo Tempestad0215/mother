@@ -687,6 +687,10 @@ const getRncClient = async () => {
             :href="route('sale.close')">
             Cierre
         </TabLink>
+        <TabLink
+            :href="route('sale.counter')">
+            Conteo
+        </TabLink>
     </template>
 
 <!--        //contenido-->

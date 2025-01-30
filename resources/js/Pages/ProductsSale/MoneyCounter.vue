@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import AppLayout from "@layout/AppLayout.vue";
-import LinkHeader from "@components/LinkHeader.vue";
 import InputLabel from "@components/InputLabel.vue";
 import {useForm} from "@inertiajs/vue3";
 import InputError from "@components/InputError.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
-import {getMoney} from "@/Global/Helpers";
+import {getMoney, moneyConfig} from "@/Global/Helpers";
 import axios from "axios";
 import {ref, Ref} from "vue";
 import ShowPdf from "@components/ShowPdf.vue";
-import TextInput from "@components/TextInput.vue";
+import {Money} from "v-money3";
+import TabLink from "@components/TabLink.vue";
 
 
 
@@ -87,8 +87,8 @@ const getPdf = () => {
                 },1500)
 
             }
-        }).catch(()=>{
-
+        }).catch((err)=> {
+        console.log(err)
     });
 }
 
@@ -132,7 +132,7 @@ const submit = () => {
             form.reset();
         },
         onError: async (error:any) => {
-
+            console.log(error)
         }
     });
 }
@@ -152,26 +152,30 @@ const getErrorPdf = () => {
     <AppLayout
         title="Recuento de Moneda">
         <template #header >
-
-            <LinkHeader
-                :active="true"
+            <TabLink
                 :href="route('sale.create')">
-                Ventas
-            </LinkHeader>
-
-            <LinkHeader
+                Registrar
+            </TabLink>
+            <TabLink
                 :href="route('sale.show')">
                 Mostrar
-            </LinkHeader>
-
-<!--            <LinkHeader-->
-<!--                :href="route('sale.counter')">-->
-<!--                Recuento-->
-<!--            </LinkHeader>-->
-
+            </TabLink>
+            <TabLink
+                :href="route('credit-note.show')">
+                N. Credito
+            </TabLink>
+            <TabLink
+                :href="route('sale.close')">
+                Cierre
+            </TabLink>
+            <TabLink
+                :active="true"
+                :href="route('sale.counter')">
+                Conteo
+            </TabLink>
         </template>
 <!--        Contenido de la ventana-->
-        <div class="p-5 max-h-[90vh] overflow-y-auto">
+        <div class="p-5 max-h-[90vh] max-w-[70rem] bg-blue-300 rounded-md overflow-y-auto">
 
             <h3 class="title text-center">
                 Cuadre de Caja
@@ -179,281 +183,170 @@ const getErrorPdf = () => {
             <form
                 @submit.prevent="submit"
                 class=" grid grid-cols-2 gap-3 mt-5 overflow-y-auto" >
-
-                <div class="col-span-full flex gap-3 p-2">
-                    <FloatLabel
-                        variant="on">
-                        <DatePicker
-                            id="datepicker-24h"
-                            inputId="fromDate"
-                            v-model="form.from"
-                            show-icon
-                            variant="filled"
-                            showTime
-                            hourFormat="24"
-                            fluid />
-                        <label
-                            for="fromDate">
-                            Fecha Desde
-                        </label>
-
-                    </FloatLabel>
-
-                    <FloatLabel
-                        variant="on">
-                        <DatePicker
-                            id="datepicker-24h"
-                            inputId="toDate"
-                            v-model="form.to"
-                            show-icon
-                            variant="filled"
-                            showTime
-                            hourFormat="24"
-                            fluid />
-                        <label
-                            for="toDate">
-                            Fecha Hasta
-                        </label>
-                    </FloatLabel>
-
-                </div>
-<!--                Tipo de monedas-->
-                <div >
-
-                    <Fieldset legend="Conteo de Papeleta">
-                        <div>
+                <fieldset class="field block">
+                    <legend>
+                        Efectivo
+                    </legend>
+                    <!-- Tipo de monedas -->
+                    <div>
+                        <div class="">
                             <InputLabel for="coinOne" value="Moneda de 1" />
-                            <InputGroup>
-                                <TextInput
-                                    v-model="form.coin_first"
-                                    inputId="coinOne"
-                                    locale="en-US"
-                                    :allow-empty="false"
-                                    :max-fraction-digits="2"
-                                    :minFractionDigits="2"
-                                    fluid />
-                                <InputGroupAddon class="w-[5rem]" >
-                                    x 1
-                                </InputGroupAddon>
-                                <InputGroupAddon class="w-[12rem]">
-                                    = {{ getMoney(multCoin(form.coin_first, 1))}}
-                                </InputGroupAddon>
-                            </InputGroup>
-
+                            <div class="relative">
+                                <Money
+                                    @keyup="sumCoin"
+                                    class="inputGeneral"
+                                    v-model.number="form.coin_first"
+                                    v-bind="moneyConfig"/>
+                                <span>
+                                   X 1  = {{ getMoney(multCoin(form.coin_first, 1))}}
+                                </span>
+                            </div>
                             <InputError :message="form.errors.coin_first"/>
                         </div>
                         <div>
                             <InputLabel for="coin_second" value="Moneda de 5" />
-                            <InputGroup>
-                                <InputNumber
-                                    @valueChange="sumCoin"
-                                    v-model="form.coin_second"
-                                    inputId="coin_second"
-                                    locale="en-US"
-                                    :allow-empty="false"
-                                    :max-fraction-digits="2"
-                                    :minFractionDigits="2"
-                                    fluid />
-                                <InputGroupAddon class="w-[5rem]" >
-                                    x 5
-                                </InputGroupAddon>
-                                <InputGroupAddon class="w-[12rem]">
-                                    = {{getMoney(multCoin(form.coin_second, 5)) }}
-                                </InputGroupAddon>
-                            </InputGroup>
-
+                            <div class="relative">
+                                <Money
+                                    @keyup="sumCoin"
+                                    class="inputGeneral"
+                                    v-model.number="form.coin_second"
+                                    v-bind="moneyConfig"/>
+                                <span>
+                               X 1  = {{ getMoney(multCoin(form.coin_second, 5))}}
+                            </span>
+                            </div>
                             <InputError :message="form.errors.coin_second"/>
                         </div>
                         <div>
                             <InputLabel for="coin_third" value="Moneda de 10" />
-                            <InputGroup>
-                                <InputNumber
-                                    @valueChange="sumCoin"
-                                    v-model="form.coin_third"
-                                    inputId="coin_third"
-                                    locale="en-US"
-                                    :allow-empty="false"
-                                    :max-fraction-digits="2"
-                                    :minFractionDigits="2"
-                                    fluid />
-                                <InputGroupAddon class="w-[5rem]" >
-                                    x 10
-                                </InputGroupAddon>
-                                <InputGroupAddon class="w-[12rem]">
-                                    = {{getMoney(multCoin(form.coin_third, 10)) }}
-                                </InputGroupAddon>
-                            </InputGroup>
+                            <div class="relative">
+                                <Money
+                                    @keyup="sumCoin"
+                                    class="inputGeneral"
+                                    v-model.number="form.coin_third"
+                                    v-bind="moneyConfig"/>
+                                <span>
+                               X 1  = {{ getMoney(multCoin(form.coin_third, 10))}}
+                            </span>
+                            </div>
                             <InputError :message="form.errors.coin_third"/>
                         </div>
                         <div>
                             <InputLabel for="coin_fourth" value="Moneda de 25" />
-                            <InputGroup>
-                                <InputNumber
-                                    @valueChange="sumCoin"
-                                    v-model="form.coin_fourth"
-                                    inputId="coin_fourth"
-                                    locale="en-US"
-                                    :allow-empty="false"
-                                    :max-fraction-digits="2"
-                                    :minFractionDigits="2"
-                                    fluid />
-                                <InputGroupAddon class="w-[5rem]" >
-                                    x 25
-                                </InputGroupAddon>
-                                <InputGroupAddon class="w-[12rem]">
-                                    = {{getMoney(multCoin(form.coin_fourth, 25)) }}
-                                </InputGroupAddon>
-                            </InputGroup>
+                            <div class="relative">
+                                <Money
+                                    @keyup="sumCoin"
+                                    class="inputGeneral"
+                                    v-model.number="form.coin_fourth"
+                                    v-bind="moneyConfig"/>
+                                <span>
+                               X 1  = {{ getMoney(multCoin(form.coin_fourth, 25))}}
+                            </span>
+                            </div>
                             <InputError :message="form.errors.coin_fourth"/>
                         </div>
                         <div>
                             <InputLabel for="coin_fifth" value="Papeleta de 50" />
-                            <InputGroup>
-                                <InputNumber
-                                    @valueChange="sumCoin"
-                                    v-model="form.coin_fifth"
-                                    inputId="coin_fifth"
-                                    locale="en-US"
-                                    :allow-empty="false"
-                                    :max-fraction-digits="2"
-                                    :minFractionDigits="2"
-                                    fluid />
-                                <InputGroupAddon class="w-[5rem]" >
-                                    x 50
-                                </InputGroupAddon>
-                                <InputGroupAddon class="w-[12rem]">
-                                    = {{getMoney(multCoin(form.coin_fifth, 50)) }}
-                                </InputGroupAddon>
-                            </InputGroup>
+                            <div class="relative">
+                                <Money
+                                    @keyup="sumCoin"
+                                    class="inputGeneral"
+                                    v-model.number="form.coin_fifth"
+                                    v-bind="moneyConfig"/>
+                                <span>
+                               X 1  = {{ getMoney(multCoin(form.coin_fifth, 50))}}
+                            </span>
+                            </div>
                             <InputError :message="form.errors.coin_fifth"/>
                         </div>
                         <div>
                             <InputLabel for="coin_sixth" value="Papeleta de 100" />
-                            <InputGroup>
-                                <InputNumber
-                                    @valueChange="sumCoin"
-                                    v-model="form.coin_sixth"
-                                    inputId="coin_sixth"
-                                    locale="en-US"
-                                    :allow-empty="false"
-                                    :max-fraction-digits="2"
-                                    :minFractionDigits="2"
-                                    fluid />
-                                <InputGroupAddon class="w-[5rem]" >
-                                    x 100
-                                </InputGroupAddon>
-                                <InputGroupAddon class="w-[12rem]">
-                                    = {{getMoney(multCoin(form.coin_sixth, 100)) }}
-                                </InputGroupAddon>
-                            </InputGroup>
+                            <div class="relative">
+                                <Money
+                                    @keyup="sumCoin"
+                                    class="inputGeneral"
+                                    v-model.number="form.coin_sixth"
+                                    v-bind="moneyConfig"/>
+                                <span>
+                               X 1  = {{ getMoney(multCoin(form.coin_sixth, 100))}}
+                            </span>
+                            </div>
                             <InputError :message="form.errors.coin_sixth"/>
                         </div>
                         <div>
                             <InputLabel for="coin_seventh" value="Papeleta de 200" />
-                            <InputGroup>
-                                <InputNumber
-                                    @valueChange="sumCoin"
-                                    v-model="form.coin_seventh"
-                                    inputId="coin_seventh"
-                                    locale="en-US"
-                                    :allow-empty="false"
-                                    :max-fraction-digits="2"
-                                    :minFractionDigits="2"
-                                    fluid />
-                                <InputGroupAddon class="w-[5rem]" >
-                                    x 200
-                                </InputGroupAddon>
-                                <InputGroupAddon class="w-[12rem]">
-                                    = {{getMoney(multCoin(form.coin_seventh, 200)) }}
-                                </InputGroupAddon>
-                            </InputGroup>
+                            <div class="relative">
+                                <Money
+                                    @keyup="sumCoin"
+                                    class="inputGeneral"
+                                    v-model.number="form.coin_seventh"
+                                    v-bind="moneyConfig"/>
+                                <span>
+                               X 1  = {{ getMoney(multCoin(form.coin_seventh, 200))}}
+                            </span>
+                            </div>
                             <InputError :message="form.errors.coin_seventh"/>
                         </div>
                         <div>
                             <InputLabel for="coin_eighth" value="Papeleta de 500" />
-                            <InputGroup>
-                                <InputNumber
-                                    @valueChange="sumCoin"
-                                    v-model="form.coin_eighth"
-                                    inputId="coin_eighth"
-                                    locale="en-US"
-                                    :allow-empty="false"
-                                    :max-fraction-digits="2"
-                                    :minFractionDigits="2"
-                                    fluid />
-                                <InputGroupAddon class="w-[5rem]" >
-                                    x 500
-                                </InputGroupAddon>
-                                <InputGroupAddon class="w-[12rem]">
-                                    = {{getMoney(multCoin(form.coin_eighth, 500)) }}
-                                </InputGroupAddon>
-                            </InputGroup>
+                            <div class="relative">
+                                <Money
+                                    @keyup="sumCoin"
+                                    class="inputGeneral"
+                                    v-model.number="form.coin_eighth"
+                                    v-bind="moneyConfig"/>
+                                <span>
+                               X 1  = {{ getMoney(multCoin(form.coin_eighth, 500))}}
+                            </span>
+                            </div>
                             <InputError :message="form.errors.coin_eighth"/>
                         </div>
                         <div>
                             <InputLabel for="coin_ninth" value="Papeleta de 1,000" />
-                            <InputGroup>
-                                <InputNumber
-                                    @valueChange="sumCoin"
-                                    v-model="form.coin_ninth"
-                                    inputId="coin_ninth"
-                                    locale="en-US"
-                                    :allow-empty="false"
-                                    :max-fraction-digits="2"
-                                    :minFractionDigits="2"
-                                    fluid />
-                                <InputGroupAddon class="w-[5rem]" >
-                                    x 1000
-                                </InputGroupAddon>
-                                <InputGroupAddon class="w-[12rem]">
-                                    = {{getMoney(multCoin(form.coin_ninth, 1000)) }}
-                                </InputGroupAddon>
-                            </InputGroup>
+                            <div class="relative">
+                                <Money
+                                    @keyup="sumCoin"
+                                    class="inputGeneral"
+                                    v-model.number="form.coin_ninth"
+                                    v-bind="moneyConfig"/>
+                                <span>
+                               X 1  = {{ getMoney(multCoin(form.coin_ninth, 1000))}}
+                            </span>
+                            </div>
                             <InputError :message="form.errors.coin_ninth"/>
                         </div>
                         <div>
                             <InputLabel for="coin_tenth" value="Papeleta de 2,000" />
-                            <InputGroup>
-                                <InputNumber
-                                    @valueChange="sumCoin"
-                                    v-model="form.coin_tenth"
-                                    inputId="coin_tenth"
-                                    locale="en-US"
-                                    :allow-empty="false"
-                                    :max-fraction-digits="2"
-                                    :minFractionDigits="2"
-                                    fluid />
-                                <InputGroupAddon class="w-[5rem]" >
-                                    x 2000
-                                </InputGroupAddon>
-                                <InputGroupAddon class="w-[12rem]">
-                                    = {{getMoney(multCoin(form.coin_tenth, 2000)) }}
-                                </InputGroupAddon>
-                            </InputGroup>
+                            <div class="relative">
+                                <Money
+                                    class="inputGeneral"
+                                    v-model.number="form.coin_tenth"
+                                    v-bind="moneyConfig"/>
+                                <span>
+                               X 1  = {{ getMoney(multCoin(form.coin_tenth, 1000))}}
+                            </span>
+                            </div>
                             <InputError :message="form.errors.coin_tenth"/>
                         </div>
+                    </div>
+                </fieldset>
 
-                    </Fieldset>
-                </div>
 <!--                Datos variados-->
                 <div class="grid grid-cols-2 gap-2">
 
-                    <Fieldset legend="Otros Ingresos">
+                    <fieldset class="field block">
+                        <legend>Otros Ingresos</legend>
 
                         <!--                        TRansferencia-->
                         <div>
                             <InputLabel
                                 for="tarjeta"
                                 value="Tarjetas"/>
-                            <InputNumber
-                                @valueChange="sumCoin"
-                                v-model="form.card"
-                                inputId="locale-us"
-                                locale="en-US"
-                                :allow-empty="false"
-                                :max-fraction-digits="2"
-                                :minFractionDigits="2"
-                                fluid />
+                            <Money
+                                class="inputGeneral"
+                                @keyup="sumCoin"
+                                v-model.number="form.card"
+                                v-bind="moneyConfig"/>
                             <InputError :message="form.errors.card"/>
                         </div>
 
@@ -462,15 +355,11 @@ const getErrorPdf = () => {
                             <InputLabel
                                 for="Transferencia"
                                 value="Transferencia"/>
-                            <InputNumber
-                                @valueChange="sumCoin"
-                                v-model="form.transfer"
-                                inputId="locale-us"
-                                locale="en-US"
-                                :allow-empty="false"
-                                :max-fraction-digits="2"
-                                :minFractionDigits="2"
-                                fluid />
+                            <Money
+                                @keyup="sumCoin"
+                                class="inputGeneral"
+                                v-model.number="form.transfer"
+                                v-bind="moneyConfig"/>
                             <InputError :message="form.errors.transfer"/>
                         </div>
 
@@ -479,15 +368,11 @@ const getErrorPdf = () => {
                             <InputLabel
                                 for="cheque"
                                 value="Cheques"/>
-                            <InputNumber
-                                @valueChange="sumCoin"
-                                v-model="form.check"
-                                inputId="locale-us"
-                                locale="en-US"
-                                :allow-empty="false"
-                                :max-fraction-digits="2"
-                                :minFractionDigits="2"
-                                fluid />
+                            <Money
+                                @keyup="sumCoin"
+                                class="inputGeneral"
+                                v-model.number="form.check"
+                                v-bind="moneyConfig"/>
                             <InputError :message="form.errors.check"/>
                         </div>
                         <!--                        TRansferencia-->
@@ -495,38 +380,29 @@ const getErrorPdf = () => {
                             <InputLabel
                                 for="other"
                                 value="Otras Monedas"/>
-                            <InputNumber
-                                @valueChange="sumCoin"
-                                v-model="form.other_income"
-                                inputId="locale-us"
-                                locale="en-US"
-                                :allow-empty="false"
-                                :max-fraction-digits="2"
-                                :minFractionDigits="2"
-                                fluid />
+                            <Money
+                                @keyup="sumCoin"
+                                class="inputGeneral"
+                                v-model.number="form.other_income"
+                                v-bind="moneyConfig"/>
                             <InputError :message="form.errors.other_income"/>
                         </div>
-                    </Fieldset>
+                    </fieldset>
 
 <!--                    Egresos-->
-                    <Fieldset
-                        class=""
-                        legend="Egresos">
-
+                    <fieldset
+                        class="field block">
+                        <legend>Gastos</legend>
                         <!--                        TRansferencia-->
                         <div>
                             <InputLabel
                                 for="expenses"
                                 value="Gastos"/>
-                            <InputNumber
-                                @valueChange="sumCoin"
-                                v-model="form.expenses"
-                                inputId="locale-us"
-                                locale="en-US"
-                                :allow-empty="false"
-                                :max-fraction-digits="2"
-                                :minFractionDigits="2"
-                                fluid />
+                            <Money
+                                @keyup="sumCoin"
+                                class="inputGeneral"
+                                v-model.number="form.expenses"
+                                v-bind="moneyConfig"/>
                             <InputError :message="form.errors.expenses"/>
                         </div>
 
@@ -535,15 +411,11 @@ const getErrorPdf = () => {
                             <InputLabel
                                 for="cash_withdrawals"
                                 value="Retiro de Caja"/>
-                            <InputNumber
-                                @valueChange="sumCoin"
-                                v-model="form.cash_withdrawals"
-                                inputId="locale-us"
-                                locale="en-US"
-                                :allow-empty="false"
-                                :max-fraction-digits="2"
-                                :minFractionDigits="2"
-                                fluid />
+                            <Money
+                                @keyup="sumCoin"
+                                class="inputGeneral"
+                                v-model.number="form.cash_withdrawals"
+                                v-bind="moneyConfig"/>
                             <InputError :message="form.errors.cash_withdrawals"/>
                         </div>
 
@@ -552,15 +424,11 @@ const getErrorPdf = () => {
                             <InputLabel
                                 for="refund"
                                 value="Devolucione"/>
-                            <InputNumber
-                                @valueChange="sumCoin"
-                                v-model="form.refund"
-                                inputId="refund"
-                                locale="en-US"
-                                :allow-empty="false"
-                                :max-fraction-digits="2"
-                                :minFractionDigits="2"
-                                fluid />
+                            <Money
+                                @keyup="sumCoin"
+                                class="inputGeneral"
+                                v-model.number="form.refund"
+                                v-bind="moneyConfig"/>
                             <InputError :message="form.errors.refund"/>
                         </div>
                         <!--                        TRansferencia-->
@@ -568,88 +436,80 @@ const getErrorPdf = () => {
                             <InputLabel
                                 for="other_expenses"
                                 value="Otros"/>
-                            <InputNumber
-                                @valueChange="sumCoin"
-                                v-model="form.other_expenses"
-                                inputId="other_expenses"
-                                locale="en-US"
-                                :allow-empty="false"
-                                :max-fraction-digits="2"
-                                :minFractionDigits="2"
-                                fluid />
+                            <Money
+                                @keyup="sumCoin"
+                                class="inputGeneral"
+                                v-model.number="form.other_expenses"
+                                v-bind="moneyConfig"/>
                             <InputError :message="form.errors.other_expenses"/>
                         </div>
-                    </Fieldset>
+                    </fieldset>
 
 
 <!--                    Totales de la ventnaa-->
                     <div class="col-span-full row-span-12">
                         <div class="mt-3">
                             <!--                        Saldo inicial-->
-                            <Fieldset legend="Saldo Inicial" >
-                                <InputNumber
-                                    @valueChange="sumCoin"
-                                    v-model="form.opening_balance"
-                                    inputId="locale-us"
-                                    locale="en-US"
-                                    :allow-empty="false"
-                                    :max-fraction-digits="2"
-                                    :minFractionDigits="2"
-                                    fluid />
+                            <fieldset class="field" >
+                                <legend>Saldo Inicial</legend>
+                                <Money
+                                    @keyup="sumCoin"
+                                    class="inputGeneral"
+                                    v-model.number="form.opening_balance"
+                                    v-bind="moneyConfig"/>
                                 <InputError :message="form.errors.opening_balance"/>
-                            </Fieldset>
+                            </fieldset>
                         </div>
                         <div class="mt-3">
-                            <Fieldset
-                                class="pt-3"
-                                legend="Resultado" >
-                                <p>
-                                    <span class="inline-block min-w-[10rem]">
+                            <fieldset
+                                class="pt-3 field">
+                                <legend>Resultado</legend>
+                                <div>
+                                    <span class="]">
                                         Efectivo Total:
                                     </span>
-                                        <span class="">
+                                    <div class=" bg-white px-2 py-1 rounded-md">
                                         {{getMoney(form.total_coin)}}
-                                    </span>
-                                </p>
-                                <p>
+                                    </div>
+                                </div>
+                                <div>
                                     <span class="inline-block min-w-[10rem]" >
                                         Total Otros Ingresos:
                                     </span>
-                                        <span>
+                                    <div class=" bg-white px-2 py-1 rounded-md">
                                         {{getMoney(form.total_other_coin)}}
-                                    </span>
-                                </p>
-                                <p>
+                                    </div>
+                                </div>
+                                <div>
                                     <span class="inline-block min-w-[10rem]" >
                                         Total Egresos:
                                     </span>
-
-                                        <span>
+                                    <div class=" bg-white px-2 py-1 rounded-md">
                                         {{getMoney(form.total_expenses)}}
-                                    </span>
-                                </p>
-                                <p>
+                                    </div>
+                                </div>
+                                <div>
                                     <span class="inline-block min-w-[10rem]" >
                                         Total Neto:
                                     </span>
-
-                                    <span>
+                                    <div class=" bg-white px-2 py-1 rounded-md">
                                         {{getMoney(form.total_neto)}}
-                                    </span>
-                                </p>
-                                <p>
+                                    </div>
+                                </div>
+                                <div>
                                     <span class="inline-block min-w-[10rem]" >
                                         Diferencia:
                                     </span>
-
-                                        <span>
+                                    <div class=" bg-white px-2 py-1 rounded-md">
                                         {{getMoney(form.diff)}}
-                                    </span>
-                                </p>
+                                    </div>
+                                </div>
 
-                            </Fieldset>
+                            </fieldset>
 
-                            <div v-if="Object.keys(form.errors).length > 0">
+
+                            <div
+                                v-if="Object.keys(form.errors).length > 0">
                                 <ol >
                                     <li v-for="error in form.errors" :key="error"
                                         class="text-red-500">

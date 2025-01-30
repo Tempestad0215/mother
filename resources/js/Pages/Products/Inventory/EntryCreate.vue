@@ -49,18 +49,7 @@ const formSearch = useForm({
 });
 
 
-/*
-Funciones
- */
-const submit = ()=>{
-    form.post(route('entry.store'),{
-        onSuccess: () => {
-            successHttp('Datos Registrado Correctamente');
-            form.reset();
-            productName.value = '';
-        }
-    });
-}
+
 
 
 /**
@@ -81,6 +70,28 @@ watch(productName, (newValue) => {
             });
     }
 });
+
+/*
+Funciones
+ */
+const submit = ()=>{
+    if(form.update){
+        form.patch(route('entry.update',{entry: form.id}),{
+            onSuccess: () => {
+                console.log('enviado')
+            }
+        })
+    }else{
+        form.post(route('entry.store'),{
+            onSuccess: () => {
+                successHttp('Datos Registrado Correctamente');
+                form.reset();
+                productName.value = '';
+            }
+        });
+    }
+
+}
 
 /**
  * Para los productos a los datos
@@ -109,11 +120,14 @@ const getProductTable = (item:productBaseI) => {
  * @param item
  */
 const edit = (item:entryProductI) => {
+    form.id = item.id;
     productName.value = item.product.name;
     form.product_id = item.product.id;
     form.cost = item.cost;
     form.quantity = item.quantity;
     form.description = item.description ||  '';
+    form.type = 'AJUSTE';
+    form.update = true;
 }
 
 /**
@@ -280,6 +294,7 @@ const search = () =>{
                             <th>Producto</th>
                             <th>Referencia</th>
                             <th>Fecha</th>
+                            <th>Tipo</th>
                             <th>Cantidad</th>
                             <th>Act</th>
                         </tr>
@@ -291,15 +306,23 @@ const search = () =>{
                             <td>{{item.product.name}}</td>
                             <td>{{item.product.sku}}</td>
                             <td>{{item.created_at}}</td>
+                            <td>{{item.type}}</td>
                             <td>{{item.quantity}}</td>
-                            <td class="space-x-3">
+                            <td class="">
+                                <span
+                                    v-if="!item.was_updated"
+                                    class="space-x-3">
+                                    <i
+                                        @click="edit(item)"
+                                        class="icon-efect fa-solid fa-pen-to-square"></i>
+                                    <i
+                                        @click="destroy(item)"
+                                        class="icon-efect fa-solid fa-trash"></i>
+                                </span>
+                                <span v-else>
+                                    Editado
+                                </span>
 
-                                <i
-                                    @click="edit(item)"
-                                    class="icon-efect fa-solid fa-pen-to-square"></i>
-                                <i
-                                    @click="destroy(item)"
-                                    class="icon-efect fa-solid fa-trash"></i>
                             </td>
                         </tr>
                     </tbody>

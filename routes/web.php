@@ -178,6 +178,7 @@ Route::middleware([
         Route::get('/','index')->name('index');
         Route::get('/{entry}','edit')->name('edit');
         Route::post('/','entry')->name('store');
+        Route::patch('/{entry}','update')->name('update');
         Route::delete('/{entry}','destroy')->name('destroy');
     });
 
@@ -195,6 +196,7 @@ Route::middleware([
        Route::get('/close','close')->name('close');
        Route::post('/close/get','getClose')->name('get.close');
        Route::get('/test/invoice', 'testInvoice')->name('test-invoice');
+       Route::get('/counter','counter')->name('counter');
        Route::post('/counter','counterPost')->name('counterPost');
        Route::post('/','store')->name('store');
        Route::patch('/update/{sale}','update')->name('update');

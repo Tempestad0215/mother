@@ -8,7 +8,6 @@ enum SalePaymentTypeEnum:string
     case CREDITO = 'CREDITO';
     case CHEQUE = 'CHEQUE';
     case TARJETA = 'TARJETA';
-    case TRANSFERENCIA = 'TRANSFERENCAIA';
+    case TRANSFERENCIA = 'TRANSFERENCIA';
     case ANTICIPO = 'ANTICIPO';
-    case OTROS = 'OTROS';
 }

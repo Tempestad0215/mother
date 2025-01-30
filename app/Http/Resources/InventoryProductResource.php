@@ -19,6 +19,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property string description
  * @property Product product
  * @property boolean status
+ * @property boolean was_updated
  * @property Date created_at
  * @property Date updated_at
  * @property Date deleted_at
@@ -32,7 +33,9 @@ class InventoryProductResource extends JsonResource
             'quantity' => $this->quantity,
             'cost' => $this->cost,
             'product' => $this->product,
+            'type' => $this->type,
             'description' => $this->description,
+            'was_updated' => $this->was_updated,
             'created_at' => Carbon::parse($this->created_at)->format('d/m/Y'),
 
         ];

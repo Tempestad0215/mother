@@ -20,6 +20,7 @@ return new class extends Migration
             $table->decimal('cost')->comment('costo del movimiento unitario');
             $table->string('description')->comment('Decripcion');
             $table->boolean('status')->default(true);
+            $table->boolean('was_updated')->default(false);
             $table->softDeletes();
             $table->timestamps();
         });

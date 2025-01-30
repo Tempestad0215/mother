@@ -149,7 +149,6 @@ const submit = () => {
                             <option value="TARJETA" >Tarjeta</option>
                             <option value="CHEQUE" >Cheque</option>
                             <option value="TRANSFERENCIA" >Transferencia</option>
-                            <option value="OTROS" >Otros</option>
                         </select>
                     </div>
 
