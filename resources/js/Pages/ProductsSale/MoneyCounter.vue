@@ -4,7 +4,7 @@ import InputLabel from "@components/InputLabel.vue";
 import {useForm} from "@inertiajs/vue3";
 import InputError from "@components/InputError.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
-import {getMoney, moneyConfig} from "@/Global/Helpers";
+import {getMoney, moneyConfig, printPdf} from "@/Global/Helpers";
 import axios from "axios";
 import {ref, Ref} from "vue";
 import ShowPdf from "@components/ShowPdf.vue";
@@ -51,6 +51,8 @@ Datos de la ventana
  */
 const pdfUrl:Ref<string> = ref("");
 const showPdf:Ref<boolean> = ref(false);
+const processing = ref<boolean>(false);
+const errorValue = ref<Record<string, any> | null>(null);
 
 
 /*
@@ -68,29 +70,6 @@ const multCoin = (value:number, factor:number):number => {
 }
 
 
-/**
- * Obtener el PDF
- */
-const getPdf = () => {
-    axios.get(route('sale.report.get'))
-        .then((data)=>{
-            if (data.status === 200)
-            {
-                //Para mostrar el pdf
-                showPdf.value = true;
-                pdfUrl.value = data.data.url;
-
-                //Resetear las varibales
-                setTimeout(()=>{
-                    pdfUrl.value = "";
-                    showPdf.value = false;
-                },1500)
-
-            }
-        }).catch((err)=> {
-        console.log(err)
-    });
-}
 
 
 /**
@@ -121,19 +100,17 @@ const sumCoin = () => {
  * Enviar los datos
  */
 const submit = () => {
+    processing.value = true;
     //enviar los datos
-    form.post(route('sale.report.store'),{
-        onSuccess: async () => {
+    axios.post(route('sale.report.store'),form)
+        .then((res)=> {
+            printPdf(route('invoice.getB', {counter: res.data.id}))
+            processing.value = false;
+        }).catch((err)=> {
 
-            //Para mostrar el PDF
-            getPdf()
-
-            //Limpiar el formulario
-            form.reset();
-        },
-        onError: async (error:any) => {
-            console.log(error)
-        }
+            errorValue.value = err.response.data.errors;
+        // console.log(err.response.data.errors)
+            processing.value = false;
     });
 }
 
@@ -180,6 +157,13 @@ const getErrorPdf = () => {
             <h3 class="title text-center">
                 Cuadre de Caja
             </h3>
+            <div v-if="errorValue">
+                <ol
+                    v-for="(item, index) in errorValue"
+                    :key="index">
+                    <li class="text-red-800" >{{item[0]}}</li>
+                </ol>
+            </div>
             <form
                 @submit.prevent="submit"
                 class=" grid grid-cols-2 gap-3 mt-5 overflow-y-auto" >
@@ -521,7 +505,8 @@ const getErrorPdf = () => {
 
 <!--                        Boton para enviar los datos-->
                         <div class="mt-5 text-right col-span-full">
-                            <PrimaryButton>
+                            <PrimaryButton
+                                :disabled="processing">
                                 Imprimir
                             </PrimaryButton>
                         </div>

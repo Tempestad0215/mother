@@ -1,19 +1,17 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Enums\TransTypeEnum;
-use App\Invoices\InvoiceCounterB5;
 use App\Invoices\SaleInvoiceA;
 use App\Models\CreditNote;
 use App\Models\MoneyCounter;
 use App\Models\Sale;
 use App\Models\Setting;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
-use Spatie\Browsershot\Browsershot;
 use Spatie\LaravelPdf\Facades\Pdf;
 
 class InvoiceController extends Controller
@@ -86,18 +84,18 @@ class InvoiceController extends Controller
             ->margins(2,2,2,2);
     }
 
+
     /**
-     * Para obtener los reportes de conteo
      * @param MoneyCounter $counter
-     * @return JsonResponse
+     * @return Pdf
      */
-    public function getB(MoneyCounter $counter): JsonResponse
+    public function getB(MoneyCounter $counter)
     {
-        return $this->generatePDF(
-            $counter,
-            InvoiceCounterB5::class,
-            'invoice-tempb5.pdf'
-        );
+        return pdf::view('pdfs.InvoiceCounterB5', [
+            'setting' => Setting::first(),
+            'counter' => $counter,
+        ])->paperSize(80,240)
+            ->margins(2,2,2,2);
     }
 
     /**
@@ -141,7 +139,7 @@ class InvoiceController extends Controller
             ]);
 
         //Verificar si se puede generar el pdf
-        }catch (\Exception $e){
+        }catch (Exception $e){
 
 
             return response()->json([
@@ -149,7 +147,6 @@ class InvoiceController extends Controller
                 'Info' => 'Error'.$e->getMessage(),
             ]);
         }
-
 
     }
 

@@ -17,13 +17,15 @@ use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Middleware\IsAdminMiddleware;
-use App\Models\Sale;
+use App\Models\MoneyCounter;
+use App\Models\Setting;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CreditNoteController;
 use App\Http\Controllers\InventoryMovementController;
+use Spatie\LaravelPdf\Facades\Pdf;
 use Spatie\Permission\Models\Role;
 
 Route::middleware([
@@ -214,7 +216,6 @@ Route::middleware([
         ->group(function(){
            Route::get('/','index')->name('index');
            Route::post('/','store')->name('store');
-           Route::get('/print','get')->name('get');
         });
 
     /*
@@ -267,6 +268,7 @@ Route::middleware([
        Route::get('/belt/sale/{sale}','beltSale')->name('belt.sale');
        Route::get('/belt/note/{creditNote}','beltNote')->name('belt.note');
        Route::get('/getA/{sale}','getA')->name('getA');
+       Route::get('/getB/{counter}','getB')->name('getB');
     });
 
 
@@ -322,8 +324,15 @@ Route::middleware([
 
 
     Route::get('/test',function(){
-        $invoice = new InvoiceController();
-        $sale = Sale::first();
-        return $invoice->beltSale($sale);
+//
+        $counter = MoneyCounter::first();
+        $setting = Setting::first();
+
+        return Pdf::view('pdfs.InvoiceCounterB5',[
+            'counter' => $counter,
+            'setting' => $setting,
+        ])->paperSize(80,240)
+            ->margins(2,2,2,2);
+
     });
 });

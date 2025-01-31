@@ -57,7 +57,7 @@ class InvoiceCounterB5 extends TCPDF
 
 //        //Titulo de la ventana
         $this->setY('5');
-        $this->Cell(0, 5, $this->setting->name, 0, 1, 'C', 0, '', 0, false, 'M' );
+        $this->Cell(0, 5, $this->setting->name, 0, 1, 'C');
 
         //Direccions
         $this->setFont('helvetica', '', 10);

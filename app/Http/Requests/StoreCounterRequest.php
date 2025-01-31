@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 
 /**
@@ -72,12 +73,12 @@ class StoreCounterRequest extends FormRequest
             'cash_withdrawals' => ['numeric'],
             'refund' => ['numeric'],
             'other_expenses' => ['numeric'],
-            'opening_balance' => ['numeric'],
+            'opening_balance' => ['required','numeric', Rule::notIn(0.00)],
             'total_coin' => ['numeric'],
             'total_other_coin' => ['numeric'],
             'total_expenses' => ['numeric'],
-            'diff' => ['required', 'numeric'],
-            'total_neto' => ['required', 'numeric'],
+            'diff' => ['required', 'numeric',Rule::notIn(0.00)],
+            'total_neto' => ['required', 'numeric', Rule::notIn(0.00)],
         ];
     }
 }

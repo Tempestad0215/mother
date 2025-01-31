@@ -14,8 +14,6 @@ return new class extends Migration
         Schema::create('money_counter', function (Blueprint $table) {
             $table->id();
             $table->string('code',30)->unique()->comment('Codigo');
-            $table->date('from')->comment('Fecha de inicio');
-            $table->date('to')->comment('Fecha de fin');
             $table->decimal('coin_first')->default(0);
             $table->decimal('coin_second')->default(0);
             $table->decimal('coin_third')->default(0);
