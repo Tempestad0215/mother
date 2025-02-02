@@ -27,7 +27,8 @@ const propsW = defineProps<{
     update? : boolean,
     categories: categoryBaseI[],
     suppliers: supplierI[],
-    warehouse: WHbaseI[]
+    warehouse: WHbaseI[],
+    nextProduct?: number
 }>();
 
 
@@ -204,9 +205,9 @@ const submit = () => {
  * @param price
  * @param tax
  */
-const tax = (price:number, tax:number) => {
-    return Math.round((price * tax) / (10000 + tax));
-}
+// const tax = (price:number, tax:number) => {
+//     return Math.round((price * tax) / (10000 + tax));
+// }
 
 
 
@@ -223,6 +224,14 @@ const tax = (price:number, tax:number) => {
             <h3 class="text-2xl font-bold text-center">
                 Registro de producto
             </h3>
+
+            <div v-if="propsW.nextProduct">
+                <p>Seguiente ID :
+                    <span class="bg-white px-2 py-1 rounded-md">
+                        {{propsW.nextProduct}}
+                    </span>
+                </p>
+            </div>
 
 <!--Informacion General-->
             <div class="">
@@ -369,7 +378,7 @@ const tax = (price:number, tax:number) => {
                             </option>
                         </select>
                         <!-- Error -->
-                        <InputError :message="form.errors.search" />
+                        <InputError :message="form.errors.supplier_id" />
                     </div>
                 </fieldset>
 
@@ -435,7 +444,7 @@ const tax = (price:number, tax:number) => {
                                     {{item.name}}
                                 </option>
                             </select>
-                            <InputError :message="form.errors.type"/>
+                            <InputError :message="form.errors.warehouse_id"/>
                         </div>
 
 

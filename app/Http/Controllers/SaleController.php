@@ -90,7 +90,7 @@ class SaleController extends Controller
        });
 
        //DEvolver el id de la venta
-       return response()->json(['pdfUuid' => $sale->uuid]);
+       return response()->json(['pdfUuid' => $sale->id]);
 
 
     }

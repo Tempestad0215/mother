@@ -109,7 +109,7 @@ const submit = () => {
         }).catch((err)=> {
 
             errorValue.value = err.response.data.errors;
-        // console.log(err.response.data.errors)
+        console.log(err)
             processing.value = false;
     });
 }
@@ -152,7 +152,7 @@ const getErrorPdf = () => {
             </TabLink>
         </template>
 <!--        Contenido de la ventana-->
-        <div class="p-5 max-h-[90vh] max-w-[70rem] bg-blue-300 rounded-md overflow-y-auto">
+        <div class="p-5 bg-blue-300 rounded-md overflow-y-auto">
 
             <h3 class="title text-center">
                 Cuadre de Caja

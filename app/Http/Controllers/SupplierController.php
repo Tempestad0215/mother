@@ -60,7 +60,7 @@ class SupplierController extends Controller implements HasMiddleware
             $supplier = Supplier::create($request->validated());
 
             //si existe el comentario pues se guarda los datos
-            if ($request->has('comment'))
+            if ($request->get('comment') != null )
             {
                 $supplier->comment()->create([
                     'content' => $request->comment,

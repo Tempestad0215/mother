@@ -42,7 +42,7 @@ const props = defineProps({
 
 <!--        Contenido de la ventana-->
         <div
-            class="max-w-[70rem] bg-blue-300 rounded-md mx-auto p-5">
+            class=" bg-blue-300 rounded-md  p-5">
                <FloatShowPro
                    class=""
                     :products="props.products"/>

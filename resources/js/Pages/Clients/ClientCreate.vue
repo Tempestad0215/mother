@@ -179,7 +179,7 @@ const submit = ():void => {
         <!-- Formulario de registro -->
         <div>
             <form
-                class="bg-blue-300  rounded-md p-5 max-w-[1100px] mx-auto"
+                class="bg-blue-300  rounded-md p-5"
                 @submit.prevent="submit">
 
 <!--                Titulo del formulario-->

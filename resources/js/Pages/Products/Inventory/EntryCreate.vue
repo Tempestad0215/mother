@@ -189,9 +189,9 @@ const search = () =>{
                 Mostrar
             </TabLink>
         </template>
-        <div class="max-w-[70rem] mx-auto">
+        <div class="">
             <form
-                class="bg-blue-300 p-5 rounded-md grid grid-cols-2 gap-3 max-w-[70rem] "
+                class="bg-blue-300 p-5 rounded-md grid grid-cols-2 gap-3 "
                 @submit.prevent="submit">
                 <h3 class="title text-center col-span-full">
                     Entrada
@@ -330,13 +330,10 @@ const search = () =>{
                 <Pagination
                     :current-page="propsW.entries.meta?.current_page"
                     :next="propsW.entries.link?.next || ''"
-                    :prev="propsW.entries.link?.next || '' "
+                    :prev="propsW.entries.link?.prev || '' "
                     :total-page="propsW.entries.meta?.to"/>
             </div>
         </div>
-
-
-
 
     </AppLayout>
 

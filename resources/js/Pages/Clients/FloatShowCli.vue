@@ -90,7 +90,7 @@ const destroy = (id:number) => {
 </script>
 
 <template>
-    <div class=" bg-blue-300 p-5 rounded-md max-w-[70rem] overflow-y-auto mx-auto">
+    <div class=" bg-blue-300 p-5 rounded-md overflow-y-auto">
         <div class=" mb-4 flex justify-between items-center ">
             <form
                 @submit.prevent="submit"

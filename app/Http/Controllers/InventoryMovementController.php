@@ -65,7 +65,7 @@ class InventoryMovementController extends Controller implements HasMiddleware
             'product_id' => ['required','numeric','exists:products,id'],
             'quantity' => ['required','numeric', Rule::notIn(0.00)],
             'cost' => ['required','numeric', Rule::notIn(0.00)],
-            'description' => ['required','string','min:5','max:255'],
+            'description' => ['nullable','string','max:255'],
             'type' => ['required',new Enum(InventoryMovementTypeEnum::class)],
         ]);
 
@@ -124,7 +124,7 @@ class InventoryMovementController extends Controller implements HasMiddleware
             'product_id' => ['required','numeric','exists:products,id'],
             'quantity' => ['required','numeric', Rule::notIn(0.00)],
             'cost' => ['required','numeric', Rule::notIn(0.00)],
-            'description' => ['required','string','min:5','max:255'],
+            'description' => ['nullable','string','max:255'],
             'type' => ['required',new Enum(InventoryMovementTypeEnum::class)],
         ]);
 
@@ -196,12 +196,13 @@ class InventoryMovementController extends Controller implements HasMiddleware
         $perPage = $request->perPage;
 
         //Enviar los datos
-        $data = InventoryMovement::where('status', true)
-            ->whereHas('product', function($query) use($search){
-            $query->where('products.name','LIKE','%'.$search.'%')
-            ->orWhere('products.description','LIKE','%'.$search.'%')
-            ->orWhere('products.sku','LIKE','%'.$search.'%');
-        })->simplePaginate($perPage);
+        $data = InventoryMovement::whereHas("product",
+            function($query) use($search){
+            $query->where("products.name","LIKE","%$search%")
+            ->orWhere("products.description","LIKE","%".$search."%")
+            ->orWhere("products.sku","LIKE","%".$search."%");
+        })->where("status",'=',true)
+            ->simplePaginate($perPage);
 
 
         //Devolver los datos

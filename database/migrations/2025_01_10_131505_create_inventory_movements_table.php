@@ -18,7 +18,7 @@ return new class extends Migration
             $table->enum('type',['ENTRADA','SALIDA','AJUSTE','CONTEO'])->comment('Tipo de movimiento');
             $table->decimal('quantity')->comment('Cantidad del movimiento');
             $table->decimal('cost')->comment('costo del movimiento unitario');
-            $table->string('description')->comment('Decripcion');
+            $table->string('description')->nullable()->comment('Decripcion');
             $table->boolean('status')->default(true);
             $table->boolean('was_updated')->default(false);
             $table->softDeletes();

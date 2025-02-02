@@ -72,7 +72,7 @@ const submit = () => {
                 Cierre
             </TabLink>
         </template>
-        <div class="max-w-[70rem] p-5 bg-blue-300 rounded-md">
+        <div class=" p-5 bg-blue-300 rounded-md">
             <div>
                 <h3 class="title text-center">
                     Crear Cierre De Ventas

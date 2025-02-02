@@ -121,7 +121,7 @@ const submit = () => {
         </template>
 
         <!-- Formulario de registro -->
-        <div class="max-w-[1100px] mx-auto max-h-[85vh] overflow-y-auto">
+        <div class="max-h-[85vh] overflow-y-auto">
 
             <form
                 class=" bg-blue-300 rounded-md p-5"
@@ -130,10 +130,6 @@ const submit = () => {
                 <h2 class=" text-2xl font-bold text-center mb-4">
                     {{ propsW.update ? 'Actualización' :  'Registro'}} de Suplidor
                 </h2>
-
-
-
-
 
                 <fieldset
                     class="field grid grid-cols-2 gap-3 ">
@@ -240,6 +236,8 @@ const submit = () => {
                                 label="Rec. Correo"
                                 on-label="SI"
                                 off-label="NO"/>
+                            <!-- Error -->
+                            <InputError :message="form.errors.receive_email" />
                         </div>
                         <div>
                             <ToggleButton
@@ -247,6 +245,8 @@ const submit = () => {
                                 label="Pago Recurrente"
                                 on-label="SI"
                                 off-label="NO"/>
+                            <!-- Error -->
+                            <InputError :message="form.errors.is_recurring" />
                         </div>
 
                         <div>
@@ -257,6 +257,8 @@ const submit = () => {
                                 name="payment_day"
                                 type="number"
                                 v-model="form.payment_day"/>
+                            <!-- Error -->
+                            <InputError :message="form.errors.payment_day" />
                         </div>
 
                     </div>
@@ -270,6 +272,8 @@ const submit = () => {
                             name="note"
                             class=" w-full"
                             v-model="form.comment"/>
+                        <!-- Error -->
+                        <InputError :message="form.errors.comment" />
                         <!-- Error -->
                         <InputError :message="form.errors.comment" />
                     </div>

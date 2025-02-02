@@ -77,7 +77,7 @@ const printFact =  (item:creditNotesSaleI) => {
         </template>
 
         <div
-            class="bg-blue-300 max-w-[1180px] rounded-md p-5 mx-auto overflow-hidden">
+            class="bg-blue-300 rounded-md p-5 overflow-hidden">
             <!--          Mensajes  -->
             <!--            Contenido-->
             <div class="flex justify-between items-center">

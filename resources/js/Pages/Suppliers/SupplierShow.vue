@@ -106,7 +106,7 @@ const see = (item:supplierI) => {
                 Mostrar
             </TabLink>
         </template>
-        <div class="bg-blue-300 p-5 rounded-md max-w-[70rem] mx-auto">
+        <div class="bg-blue-300 p-5 rounded-md">
             <!--        Table de datos-->
             <div class="mt-3">
                 <div class="flex justify-between items-center">

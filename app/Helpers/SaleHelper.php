@@ -169,7 +169,7 @@ class SaleHelper
             $idTransProduct = $request->get('info')['transID'];
 
 
-            ProTrans::where('uuid',$idTransProduct)->update([
+            ProTrans::where('id',$idTransProduct)->update([
                 'deleted_at' => now(),
                 'reserved' => 0,
                 'type' => TransTypeEnum::ELIMINADO,
@@ -327,11 +327,11 @@ class SaleHelper
             if ($closeTable)
             {
                 //Crear la transacciones
-                TransHelper::store($item, TransTypeEnum::VENTAS, $sale->uuid);
+                TransHelper::store($item, TransTypeEnum::VENTAS, $sale->id);
 
             }else{
                 //Crear la transacciones
-                TransHelper::store($item, TransTypeEnum::RESERVA, $sale->uuid);
+                TransHelper::store($item, TransTypeEnum::RESERVA, $sale->id);
             }
         });
 
@@ -347,20 +347,18 @@ class SaleHelper
     public function getSaleOpen(Request $request):mixed
     {
         //tomar los datos para buscar
-        $search = $request->get("search", "");
+        $search = $request->get("search");
 
 
         //Ralizar la busqueda en la base de datos de Sale cuando el campo close_table sea false
         $data = Sale::where(function (Builder $query) {
             $query->where('status', true)
                 ->where('close_table', false);
-        })->where(function (Builder $query) use ($search) {
-            $query->where('client_name', 'LIKE', "%$search%");
+        })->when($search != null ,function (Builder $query) use ($search) {
+            $query->where( 'client_name', 'LIKE', "%.$search.%");
         })->with('infoSale')
-            ->latest('created_at')
+            ->latest()
             ->simplePaginate(15);
-
-
 
         return SaleInfoResource::collection($data)->response()->getData(true);
 

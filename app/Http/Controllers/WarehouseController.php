@@ -53,7 +53,7 @@ class WarehouseController extends Controller implements HasMiddleware
         $request->validate([
             'name' => ['required', 'string', 'max:75'],
             'description' => ['required', 'string', 'max:200'],
-            'location' => ['required', 'string', 'max:200'],
+            'location' => ['nullable', 'string', 'max:200']
         ]);
 
         // Craer los datos
@@ -71,13 +71,25 @@ class WarehouseController extends Controller implements HasMiddleware
         return $warehouse;
     }
 
-    public function update(WarehouseRequest $request, Warehouse $warehouse)
+
+
+    /**
+     * Actualizar los datos
+     */
+    public function update(WarehouseRequest $request, Warehouse $wh)
     {
-        $this->authorize('update', $warehouse);
+        //Validar los datos
+        $request->validate([
+            'name' => ['required', 'string', 'max:75'],
+            'description' => ['required', 'string', 'max:200'],
+            'location' => ['nullable', 'string', 'max:200'],
+        ]);
 
-        $warehouse->update($request->validated());
+        // Actualizar los datos
+        $wh->update($request->toArray());
 
-        return $warehouse;
+        //Devolver la vista
+        return back();
     }
 
 

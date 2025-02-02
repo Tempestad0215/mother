@@ -128,7 +128,7 @@ const search = () => {
         <div class="">
             <form
                 @submit.prevent="submit"
-                class="bg-blue-300 max-w-[1100px] mx-auto rounded-md p-5 grid grid-cols-2 gap-3">
+                class="bg-blue-300 rounded-md p-5 grid grid-cols-2 gap-3">
                 <h3 class=" text-2xl font-bold col-span-full text-center">
                     Registro de Categoria
                 </h3>
@@ -170,7 +170,7 @@ const search = () => {
             </form>
 
 
-            <div class="bg-blue-300 mt-3 max-w-[1100px] mx-auto rounded-md px-5 ">
+            <div class="bg-blue-300 mt-3 rounded-md px-5 ">
                 <div class="flex justify-between items-center">
                     <form
                         @submit.prevent="search">

@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\CategoryHelper;
-use App\Helpers\SupplierHelper;
 use App\Models\Category;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
@@ -57,12 +55,14 @@ class ProductController extends Controller implements HasMiddleware
         //si existe la configuracion
         if(isset($setting))
         {
+
             //Devolver correctamente
             return Inertia::render('Products/ProductCreate',[
                 'products' => $data,
-                'categories' => Category::all(),
-                'suppliers' => Supplier::all(),
-                'warehouse' => Warehouse::all()
+                'categories' => Category::orderBy('name','asc')->get(),
+                'suppliers' => Supplier::orderBy('company_name','asc')->get(),
+                'warehouse' => Warehouse::all(),
+                'nextProduct' => Product::max('id') + 1
             ]);
 
         }else{
@@ -130,9 +130,6 @@ class ProductController extends Controller implements HasMiddleware
      */
     public function edit(Product $product, Request $request)
     {
-        $categoryHelper = new CategoryHelper();
-        $supplierHelper = new SupplierHelper();
-
         $dataProducts = $this->get($request);
         $dataEdit = new ProductSupplierResource($product);
 
@@ -163,7 +160,7 @@ class ProductController extends Controller implements HasMiddleware
         {
             //Actualizar datos por fuera cuando son servicio
             $product->inventoried = false;
-            $product->price = 1;
+            $product->price = $request->get('price');
             $product->unit = "N/A";
             $product->tax = $request->get('tax_rate') / 100;
             $product->save();
@@ -202,7 +199,8 @@ class ProductController extends Controller implements HasMiddleware
         //Buscar los datos
         $data = Product::where('status', true)
             ->where(function ($query) use ($request, $search) {
-                $query->where('code', $search)
+                $query->where('id', $search)
+                    ->orWhere('code', $search)
                     ->orWhere('bar_code', $search);
             })->firstOrFail();
 
@@ -236,9 +234,10 @@ class ProductController extends Controller implements HasMiddleware
 
         // Realizar la busqueda
         return  Product::where(function ($query) use (&$search) {
-            $query->where('name', 'LIKE', '%' . $search . '%')
-                ->orWhere('description', 'LIKE', '%' . $search . '%')
-                ->orWhere('sku', 'LIKE', '%' . $search . '%');
+            $query->where('id', 'LIKE', "%$search%")
+                ->orwhere('name', 'LIKE', "%$search%")
+                ->orWhere('description', 'LIKE', "%$search%")
+                ->orWhere('sku', 'LIKE', "%$search%");
         })->where('status', true)
             ->latest('id')
             ->simplePaginate($perPage);
@@ -258,9 +257,11 @@ class ProductController extends Controller implements HasMiddleware
 
         // Tomar los datos
         $products = Product::where(function ($query) use (&$search) {
-            $query->where('name', 'LIKE', '%' . $search . '%')
-                ->orWhere('description', 'LIKE', '%' . $search . '%');
-        })->where('status', true)
+            $query->where("id", "LIKE", "%$search%")
+                ->orWhere("name", "LIKE", "%$search%")
+                ->orWhere("description", "LIKE", "%$search%");
+        })->where("status", true)
+            ->orderBy("name","asc")
             ->take(15)
             ->get();
 

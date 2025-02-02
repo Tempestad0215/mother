@@ -20,7 +20,8 @@ const props = defineProps<{
     update? : boolean,
     categories: categoryBaseI[],
     suppliers: supplierI[],
-    warehouse: WHbaseI[]
+    warehouse: WHbaseI[],
+    nextProduct?: number,
 }>();
 
 
@@ -61,10 +62,11 @@ const showSupplierForm = ref(false);
         </template>
 
         <!-- Contenido de la ventana de los productos -->
-        <div class="max-w-[1100px] mx-auto">
+        <div class="">
            <div
                class="bg-blue-300 p-5 rounded-md">
                <FloatProduct
+                    :nextProduct="props.nextProduct"
                    :suppliers="props.suppliers"
                    :categories="props.categories"
                    :product-edit="props.productEdit"

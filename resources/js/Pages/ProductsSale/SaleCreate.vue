@@ -458,8 +458,6 @@ const sendData = ():void => {
             //si es para actualizar
             if (form.update)
             {
-
-                console.log(form.id)
                 // Actualizar los datos y capturar
                 axios.patch(route('sale.update', {sale: form.id}), form)
                     .then((res) => {
@@ -468,6 +466,8 @@ const sendData = ():void => {
                             //si esta cerrada se vas a imprimir
                             if (form.close_table)
                             {
+
+                                console.log(res)
                                 //Mostrar el pdf de impresion
                                 printPdf(route('invoice.belt.sale', {sale: res.data.pdfUuid}));
                             }
@@ -520,7 +520,7 @@ const sendData = ():void => {
 const getBycode = () => {
 
     //Verificar que tenga más de 6 caracter
-    if(form.code_value.length > 6)
+    if(form.code_value.length > 0)
     {
         //realizar la busqueda en automatico
         axios.get(route('product.get.code', {search: form.code_value}))
@@ -696,7 +696,7 @@ const getRncClient = async () => {
 <!--        //contenido-->
     <div>
         <div
-            class=" bg-blue-300 p-5 max-w-[1180px] rounded-md mx-auto overflow-hidden">
+            class=" bg-blue-300 p-5 rounded-md mx-auto overflow-hidden">
             <form
                 class=" max-w-3/5">
                 <div >
@@ -1085,12 +1085,13 @@ const getRncClient = async () => {
 
         <!-- Ventana de productos-->
         <FloatBox
+
             header="Productos"
             @close="showProduct = false"
             v-if="showProduct">
             <FloatShowPro
                 :stock="true"
-                class=" bg-blue-300  rounded-md px-10 py-5"
+                class=" bg-blue-300  rounded-md px-10 py-5 w-full"
                 @select="getData"
                 :products="propsW.products"/>
         </FloatBox>

@@ -62,7 +62,7 @@ const submit = () => {
         page:1,
         perPage:form.perPage,
         search:form.search,
-        stock:propsW.stock 
+        stock:propsW.stock
     },{
         preserveState: true,
         preserveScroll: true,
@@ -150,6 +150,7 @@ const detroy = (id:number) => {
                 class=" mt-3 styleTable table-fixed  w-full">
                 <thead>
                     <tr>
+                        <th class="w-[5rem]">Id</th>
                         <th class="w-[10rem]">Cod. Barra</th>
                         <th class="w-[10rem]">Ref.</th>
                         <th class="w-[20rem]">Nombre</th>
@@ -160,6 +161,7 @@ const detroy = (id:number) => {
                 </thead>
                 <tbody>
                     <tr v-for="(item) in propsW.products.data">
+                        <td>{{item.id}}</td>
                         <td>{{item.bar_code || 'N/A'}}</td>
                         <td>{{item.sku || 'N/A'}}</td>
                         <td>{{item.name}}</td>
