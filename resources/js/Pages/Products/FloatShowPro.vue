@@ -147,16 +147,16 @@ const detroy = (id:number) => {
         <div
             class="max-h-[65vh] overflow-y-auto overflow-x-hidden">
             <table
-                class=" mt-3 styleTable table-fixed  w-full">
+                class=" mt-3 styleTable table-auto min-w-full">
                 <thead>
                     <tr>
-                        <th class="w-[5rem]">Id</th>
-                        <th class="w-[10rem]">Cod. Barra</th>
-                        <th class="w-[10rem]">Ref.</th>
-                        <th class="w-[20rem]">Nombre</th>
-                        <th class="w-[10rem]">Disp.</th>
-                        <th class="w-[10rem]">Precio</th>
-                        <th class="w-[6rem]">Act</th>
+                        <th class="">Id</th>
+                        <th class="">Cod. Barra</th>
+                        <th class="">Ref.</th>
+                        <th class="">Nombre</th>
+                        <th class="">Disp.</th>
+                        <th class="">Precio</th>
+                        <th class="">Act</th>
                     </tr>
                 </thead>
                 <tbody>

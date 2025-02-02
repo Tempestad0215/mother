@@ -122,7 +122,10 @@
     <div class="text-sm mt-3 border-t border-b border-black">
         <p>
             <span class="font-bold">Comentario:</span>
-            {{$sale->comment->content}}
+            @if($sale->comment)
+                {{$sale->comment->content}}
+            @endif
+
         </p>
     </div>
 

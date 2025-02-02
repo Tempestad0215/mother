@@ -12,6 +12,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
+use Spatie\Browsershot\Browsershot;
 use Spatie\LaravelPdf\Facades\Pdf;
 
 class InvoiceController extends Controller
@@ -54,11 +55,19 @@ class InvoiceController extends Controller
             'datePrint' => Carbon::now()->format('d/m/Y H:i:s')
         ])->margins(2,2,2,2)
             ->paperSize(80, $height)
-            ->name('test.pdf');
-//            ->withBrowsershot(function (Browsershot $browsershot) {
-//                $browsershot->setChromePath('/usr/bin/chromium');
-//            });
-
+            ->name('test.pdf')
+            ->withBrowsershot(function (Browsershot $browsershot) {
+                $browsershot->setChromePath('/usr/bin/google-chrome')
+                    ->noSandbox()
+                    ->setOption('args', [
+                        '--disable-dev-shm-usage',
+                        '--disable-setuid-sandbox',
+                        '--no-crashpad',
+                        '--disable-software-rasterizer'
+                    ])
+                    ->waitUntilNetworkIdle()
+                    ->ignoreHttpsErrors();
+            });
     }
 
 
