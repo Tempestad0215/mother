@@ -137,7 +137,8 @@ const priceNoTax = computed(()=>{
     let taxTotal:number = (price * tax) / 100;
     form.tax = (price *  (tax / 100)) /100;
     form.product_no_tax = (price - taxTotal) / 100;
-    return getMoney((form.product_no_tax / 100));
+
+    return getMoney(form.product_no_tax);
 });
 
 
