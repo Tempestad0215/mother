@@ -45,32 +45,17 @@ export interface userAuthI {
 
 
 
-/**
- * Links de navegacion
- */
-
-export interface linksI {
-    first: string;
-    last: null | string;
-    prev: string | null;
-    next: string | null;
-}
-// Meta
-export interface metaI{
-    current_page: number;
-    from: number;
-    path: string;
-    per_page: number;
-    to: number;
-}
-
-
-export interface paginationI {
-    current_page: number;
-    first_page_url: string;
-    from: number;
-    next_page_url: string | null;
-    path: string;
-    per_page: number;
-    to: number;
+// Pagination
+export interface paginationI<T> {
+    current_page: number
+    first_page_url: string
+    from: number
+    last_page: number
+    last_page_url: string
+    next_page_url: null | string
+    path: string
+    per_page: number
+    prev_page_url: null | string
+    to: number
+    data?: T[]
 }

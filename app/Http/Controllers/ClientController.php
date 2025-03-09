@@ -64,7 +64,7 @@ class ClientController extends Controller implements HasMiddleware
         $data = $this->getTable($request);
 
         /*Vista con la pagina*/
-        return Inertia::render('Clients/ClientCreate',[
+        return Inertia::render('Clients/Register',[
             'clients' => $data,
         ]);
 
@@ -101,7 +101,7 @@ class ClientController extends Controller implements HasMiddleware
 
 
         //Devolver los datos
-        return Inertia::render('Clients/ClientShow',[
+        return Inertia::render('Clients/Show',[
             'clients' => $data
         ]);
 

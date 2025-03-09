@@ -20,17 +20,43 @@
 
 
 
-/*
+
+
+
+
+
+
+/*Estilod e compoebntne*/
+@layer components{
+    /*
 Estilo general
  */
 
-body{
-    overflow: hidden;
-}
+    body{
+       @apply overflow-hidden;
+    }
+
+    .fondo{
+        @apply bg-gray-900;
+    }
+    h1, h2, h3, h4, h5, h6, p {
+        @apply text-gray-50;
+    }
+
+    .texto {
+        @apply text-gray-50;
+    }
+
+    legend{
+        @apply text-gray-50;
+    }
 
 
 
-@layer components{
+
+
+
+    /*Estilo especifico*/
     .icon-efect {
         @apply hover:scale-125 duration-300 ease-out hover:animate-pulse text-xl;
     }
@@ -76,10 +102,10 @@ body{
     Estilo para la tabla completa
      */
     .styleTable thead {
-        @apply text-left border-b-2 bg-blue-600 text-white;
+        @apply text-left border-b-2  text-white;
     }
     .styleTable tbody tr{
-        @apply hover:bg-blue-800 hover:text-white border-t border-b  duration-300 hover:cursor-pointer even:bg-blue-400;
+        @apply hover:text-white border-t border-b  duration-300 hover:cursor-pointer even:bg-gray-600 text-white;
     }
     .styleTable tbody tr td{
         @apply px-2 truncate;

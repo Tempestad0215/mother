@@ -179,7 +179,7 @@ const submit = ():void => {
         <!-- Formulario de registro -->
         <div>
             <form
-                class="bg-blue-300  rounded-md p-5"
+                class="fondo rounded-md p-5"
                 @submit.prevent="submit">
 
 <!--                Titulo del formulario-->
@@ -187,8 +187,9 @@ const submit = ():void => {
                     {{ propsW.update ? 'Actualización' :  'Registro'}} de cliente
                 </h2>
 
+                <hr>
 
-                <div class="flex justify-end items-center">
+                <div class="flex justify-end items-center mt-3">
                     <!--                Tipo de cliente-->
                     <div>
                         <InputLabel for="tye" value="Tipo"/>

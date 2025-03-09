@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
+import {paginationJoin} from "@/Global/Helpers";
 
 
 interface paginationI {
+    search: string;
+    perPage: number;
     currentPage?: number
     totalPage?: number
     next?: (string|null)
@@ -17,48 +20,58 @@ const props = defineProps<paginationI>()
 
 <template>
     <!-- PAginacion-->
-    <div class=" mt-5 flex justify-between items-center border-t border-gray-600 py-5 ">
-        <div>
-            <!-- Pagina -->
-            <span>
+    <div class="py-5 ">
+        <hr>
+        <div class="flex items-center justify-between text-white mt-5">
+            <div>
+                <!-- Pagina -->
+                <span>
                 <strong>
                     Página :
                 </strong>
                 {{ props.currentPage }}
             </span>
 
-            <!-- Total -->
-            <span>
+                <!-- Total -->
+                <span>
                 <strong>
                     Total :
                 </strong>
                 {{ props.totalPage}}
             </span>
+            </div>
+
+            <!-- Paginacion -->
+            <div class=" text-3xl space-x-5">
+                <!-- Anterior -->
+                <Link
+                    preserve-state
+                    preserve-scroll
+                    :href="props.prev ? paginationJoin(props.prev, search, perPage)  : '' ">
+                    <i
+                        class="fa-solid fa-circle-arrow-left"></i>
+
+                </Link>
+
+                <!-- Siguiente -->
+                <Link
+                    preserve-state
+                    preserve-scroll
+                    :href="props.next ? paginationJoin(props.next, search, perPage) : '' ">
+                    <i
+                        class="fa-solid fa-circle-arrow-right"></i>
+                </Link>
+
+            </div>
         </div>
 
-        <!-- Paginacion -->
-        <div class=" text-3xl space-x-5">
-            <!-- Anterior -->
-            <Link
-                preserve-state
-                preserve-scroll
-                :href="props.prev ? props.prev : '' ">
-                <i
-                    class="fa-solid fa-circle-arrow-left"></i>
-
-            </Link>
-
-            <!-- Siguiente -->
-            <Link
-                preserve-state
-                preserve-scroll
-                :href="props.next ? props.next : '' ">
-                <i
-                    class="fa-solid fa-circle-arrow-right"></i>
-            </Link>
-
-        </div>
 
     </div>
 
 </template>
+
+<style scoped>
+a{
+    @apply hover:scale-110 duration-300 transition-all;
+}
+</style>

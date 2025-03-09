@@ -12,6 +12,6 @@ export interface acoBaseI {
 
 }
 
-export interface acoTableI extends paginationI {
-    data: acoBaseI[];
-}
+// export interface acoTableI extends paginationI {
+//     data: acoBaseI[];
+// }

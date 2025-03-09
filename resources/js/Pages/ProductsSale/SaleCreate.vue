@@ -11,7 +11,7 @@ import {getMoney, getRncHelper, getSequenceType, moneyConfig, printPdf} from "@/
 import Swal from "sweetalert2";
 import InputError from "@components/InputError.vue";
 import {clientBaseI, clientDataI} from "@/Interfaces/Client";
-import FloatShowCli from "@/Pages/Clients/FloatShowCli.vue";
+import FShow from "@/Pages/Clients/FShow.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import {errorHttp, successHttp} from "@/Global/Alert";
 import axios from "axios";
@@ -1076,7 +1076,7 @@ const getRncClient = async () => {
             header="Clientes"
             @close="showClient = false"
             v-if="showClient">
-            <FloatShowCli
+            <FShow
                 class=" max-w-4/5 rounded-md py-5"
                 @get-data="selectClient"
                 :clients="propsW.clients"/>

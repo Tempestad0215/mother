@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import Pagination from "@components/Pagination.vue";
-import {clientBaseI, clientDataI} from "@/Interfaces/Client";
+import {clientBaseI} from "@/Interfaces/Client";
 import {router, useForm, usePage} from "@inertiajs/vue3";
 import Swal from "sweetalert2";
 import {successHttp} from "@/Global/Alert";
 import FormSearch from "@components/FormSearch.vue";
-import {paginationJoin} from "@/Global/Helpers";
+import {paginationI} from "@/Interfaces/Global";
 
 
 /**
@@ -17,7 +17,7 @@ const page = usePage();
  * Datos del back end
  */
 const props = defineProps<{
-    clients: clientDataI;
+    clients: paginationI<clientBaseI>;
 }>();
 
 /**
@@ -90,7 +90,7 @@ const destroy = (id:number) => {
 </script>
 
 <template>
-    <div class=" bg-blue-300 p-5 rounded-md overflow-y-auto">
+    <div class=" fondo p-5 rounded-md overflow-y-auto">
         <div class=" mb-4 flex justify-between items-center ">
             <form
                 @submit.prevent="submit"
@@ -127,17 +127,17 @@ const destroy = (id:number) => {
                         <td class="truncate">{{item.type}}</td>
                         <td class="truncate">
                             <i
-                                v-if="page.component !== 'Clients/ClientShow'"
+                                v-if="page.component !== 'Clients/Show'"
                                 title="Seleccionar"
                                 @click="emit('getData',item)"
                                 class="icon-efect fa-solid fa-circle-check"></i>
                             <i
-                                v-if="page.component === 'Clients/ClientShow'"
+                                v-if="page.component === 'Clients/Show'"
                                 title="Editar"
                                 @click="edit(item.id)"
                                 class=" ml-2 icon-efect fa-solid fa-pen-to-square"></i>
                             <i
-                                v-if="page.component === 'Clients/ClientShow'"
+                                v-if="page.component === 'Clients/Show'"
                                 title="Eliminar"
                                 @click="destroy(item.id)"
                                 class="ml-2 icon-efect fa-solid fa-trash"></i>
@@ -149,14 +149,12 @@ const destroy = (id:number) => {
 
         <!-- PAginacion -->
         <Pagination
+            :search="form.search"
+            :per-page="form.perPage"
             :current-page="props.clients.current_page"
             :total-page="props.clients.to"
-            :prev="props.clients.prev_page_url
-                ? paginationJoin(props.clients.prev_page_url, form.search, form.perPage)
-                : '' "
-            :next="props.clients.next_page_url
-                ? paginationJoin(props.clients.next_page_url, form.search, form.perPage)
-                : '' " />
+            :prev="props.clients.prev_page_url"
+            :next="props.clients.next_page_url"/>
     </div>
 </template>
 

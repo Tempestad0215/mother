@@ -3,7 +3,7 @@ import type {clientDataI } from '@/Interfaces/Client';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import type { PropType } from 'vue';
-import FloatShowCli from "@/Pages/Clients/FloatShowCli.vue";
+import FShow from "@/Pages/Clients/FShow.vue";
 import TabLink from "@components/TabLink.vue";
 
 
@@ -40,7 +40,7 @@ const props = defineProps({
 
         <!-- Contenido principal -->
         <div>
-           <FloatShowCli
+           <FShow
                :clients="props.clients"
                 />
 

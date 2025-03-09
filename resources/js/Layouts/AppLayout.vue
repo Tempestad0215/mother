@@ -86,7 +86,7 @@ const showOption = ref<boolean>(false);
 
 <!--    Contenido de la ventana-->
     <div class=" flex">
-        <aside class=" bg-blue-300 h-screen w-[10rem]">
+        <aside class=" fondo h-screen w-[10rem]">
 <!--            Mostrar la imagen del menu-->
             <ImageMenu :url="props.auth.user.profile_photo_url"/>
 <!--            Dividir la linea-->
@@ -146,7 +146,7 @@ const showOption = ref<boolean>(false);
 
 <!--            Cabecera de la ventana-->
             <header
-                class=" h-[4rem] flex items-center justify-center space-x-3 w-full bg-blue-300 z-20 border-b-2 text-sm">
+                class=" h-[4rem] flex items-center justify-center space-x-3 w-full fondo z-20 border-b-2 text-sm">
 
 <!--                Para el contenido-->
                 <slot name="header"/>
