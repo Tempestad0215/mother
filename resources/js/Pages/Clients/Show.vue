@@ -1,19 +1,16 @@
 <script setup lang="ts">
-import type {clientDataI } from '@/Interfaces/Client';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import type { PropType } from 'vue';
 import FShow from "@/Pages/Clients/FShow.vue";
 import TabLink from "@components/TabLink.vue";
+import {paginationI} from "@/Interfaces/Global";
+import {clientBaseI} from "@/Interfaces/Client";
 
 
 // Datos del backend
-const props = defineProps({
-    clients:{
-        type: Object as PropType<clientDataI>,
-        required: true
-    }
-});
+const props = defineProps<{
+    clients: paginationI<clientBaseI>
+}>();
 
 
 </script>

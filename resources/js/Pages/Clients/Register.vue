@@ -16,7 +16,9 @@ const propsW = defineProps<{
 <template>
     <AppLayout>
         <template #header>
-            <TabLink :href="route('client.create')">
+            <TabLink
+                :active="true"
+                :href="route('client.create')">
                 Registrar
             </TabLink>
             <TabLink :href="route('client.show')">
@@ -25,9 +27,7 @@ const propsW = defineProps<{
         </template>
 
         <FRegister
-            :clientEdit="clientEdit"/>
-
-
+            :clientEdit="propsW.clientEdit"/>
 
     </AppLayout>
 </template>

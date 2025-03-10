@@ -16,6 +16,7 @@
         "laravel/scout": "^10.11",
         "laravel/tinker": "^2.9",
         "laraveles/spanish": "^1.5",
+        "maatwebsite/excel": "^3.1",
         "milon/barcode": "^11.0",
         "moneyphp/money": "^4.5",
         "owen-it/laravel-auditing": "^13.6",

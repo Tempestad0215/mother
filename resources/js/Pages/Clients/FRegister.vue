@@ -374,14 +374,14 @@ const submit = ():void => {
                     <InputLabel for="" value="Balance"/>
                     <span class="flex justify-center items-center bg-white px-3 rounded-md h-[2rem] " >
                                 {{getMoney(form.balance)}}
-                            </span>
+                    </span>
                 </div>
                 <!--                        Consumido-->
                 <div>
                     <InputLabel for="" value="Consumido"/>
                     <span class="flex justify-center items-center bg-white px-3 rounded-md h-[2rem] " >
                                 {{getMoney(form.consumed)}}
-                            </span>
+                    </span>
                 </div>
             </fieldset>
 

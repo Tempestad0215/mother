@@ -23,7 +23,7 @@ const uniqueId = propsW.id ?? `toggle-${uuid()}`;
     <div class="select-none">
         <label
             v-if="label !=  ''"
-            class="block"
+            class="block text-gray-50"
             for="">
             {{label}}
         </label>
