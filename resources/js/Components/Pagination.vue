@@ -6,6 +6,7 @@ import {paginationJoin} from "@/Global/Helpers";
 interface paginationI {
     search: string;
     perPage: number;
+    field: string;
     currentPage?: number
     totalPage?: number
     next?: (string|null)
@@ -47,7 +48,7 @@ const props = defineProps<paginationI>()
                 <Link
                     preserve-state
                     preserve-scroll
-                    :href="props.prev ? paginationJoin(props.prev, search, perPage)  : '' ">
+                    :href="props.prev ? paginationJoin(props.prev,field, search, perPage)  : '' ">
                     <i
                         class="fa-solid fa-circle-arrow-left"></i>
 
@@ -57,7 +58,7 @@ const props = defineProps<paginationI>()
                 <Link
                     preserve-state
                     preserve-scroll
-                    :href="props.next ? paginationJoin(props.next, search, perPage) : '' ">
+                    :href="props.next ? paginationJoin(props.next,field,search, perPage) : '' ">
                     <i
                         class="fa-solid fa-circle-arrow-right"></i>
                 </Link>

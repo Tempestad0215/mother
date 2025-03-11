@@ -223,13 +223,14 @@ const getDateInUtc4 = (date:Date):string => {
 
 
 /**
- * Para unir la paginacion con la busqueda y otros datos
+ *
  * @param url
+ * @param field
  * @param search
  * @param perPage
  */
-export const paginationJoin = (url:string, search:string, perPage:number) => {
-    return url+'&search='+search+'&perPage='+perPage;
+export const paginationJoin = (url:string,field: string, search:string, perPage:number) => {
+    return url+'&field'+field+'&search='+search+'&perPage='+perPage;
 }
 
 
@@ -264,5 +265,29 @@ export const printPdf = (urlName: string) => {
 
         //Imprimir la ventana
         printWindow.print();
+    }
+}
+
+
+// Para la exportanciones de excel
+export const exportExcel = async (path: string, fielName: string) => {
+    try {
+        const response = await axios.get(path,{
+            responseType: 'blob', // Importante para archivos binario
+        });
+
+        //     Crear el enlace  de descarga
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", fielName);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        //     Liberar la memoria
+        window.URL.revokeObjectURL(url);
+    }catch(error) {
+        errorHttp("Error al intentar descargar el docuemento")
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ClientExport;
 use App\Helpers\ClientHelper;
 use App\Http\Resources\ClientCommentResource;
 use App\Models\Client;
@@ -15,6 +16,8 @@ use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Inertia\Inertia;
 use Inertia\Response;
+use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\Exception;
 
 class ClientController extends Controller implements HasMiddleware
 {
@@ -194,6 +197,17 @@ class ClientController extends Controller implements HasMiddleware
             ->latest('created_at')
             ->simplePaginate($perPage);
 
+    }
+
+
+    /**
+     * @throws Exception
+     * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
+     */
+    public function exportExcel()
+    {
+
+        return Excel::download(new ClientExport, 'clientes.xlsx');
     }
 
 

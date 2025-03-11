@@ -7,7 +7,6 @@ use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
-use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class ClientExport implements FromCollection, WithHeadings, WithMapping
 {
@@ -52,8 +51,6 @@ class ClientExport implements FromCollection, WithHeadings, WithMapping
             $row->address,
             $row->type->name,
             $row->status,
-            Date::dateTimeToExcel($row->created_at),
-            Date::dateTimeToExcel($row->updated_at),
         ];
     }
 }

@@ -6,6 +6,8 @@ import Swal from "sweetalert2";
 import {successHttp} from "@/Global/Alert";
 import FormSearch from "@components/FormSearch.vue";
 import {paginationI} from "@/Interfaces/Global";
+import {onMounted} from "vue";
+import {exportExcel} from "@/Global/Helpers";
 
 
 /**
@@ -20,6 +22,9 @@ const props = defineProps<{
     clients: paginationI<clientBaseI>;
 }>();
 
+
+
+
 /**
  * Para emitir los eventos
  */
@@ -33,8 +38,19 @@ const emit = defineEmits<{
  */
 const form = useForm({
     search:"",
-    perPage:30
+    perPage:30,
+    field: "name",
 });
+
+
+
+// Al momento de cargar
+onMounted(()=>{
+   //  Obtener el campo del local storage
+   form.field = localStorage.getItem('field') || 'name';
+});
+
+
 
 /**
  * funciones
@@ -44,7 +60,7 @@ const submit = () => {
     // Limpiar los errores
     form.clearErrors();
     // Enviar el formularios
-    router.get(``,{page:1, perPage:form.perPage, search:form.search},{
+    router.get(``,{page:1, field:form.field, perPage:form.perPage, search:form.search},{
         preserveState: true,
         preserveScroll: true
     });
@@ -87,35 +103,91 @@ const destroy = (id:number) => {
     });
 }
 
+/**
+ *
+ * @param field
+ */
+const field = (field: string) => {
+    form.field = field;
+
+    // Colocar en el local storage
+    localStorage.setItem('field', form.field);
+}
+
+/*
+Descargar todos los clientes a excel
+ */
+const download = async () => {
+ await exportExcel(route('client.export-excel'), "cliente.xlsx");
+}
+
 </script>
 
 <template>
     <div class=" fondo p-5 rounded-md overflow-y-auto">
         <div class=" mb-4 flex justify-between items-center ">
-            <form
-                @submit.prevent="submit"
-                class="">
-                <FormSearch
-                    v-model:search="form.search"
-                    v-model:per-page.number="form.perPage"/>
-            </form>
+                <form
+                    @submit.prevent="submit"
+                    class="">
+                    <FormSearch
+                        v-model:search="form.search"
+                        v-model:per-page.number="form.perPage"/>
+                </form>
 
-            <h3 class="text-3xl font-bold text-gray-900">
+            <i
+                @click="download"
+                title="Descargar CSV"
+                class="fa-solid fa-file-csv text-gray-50 text-[3rem]"></i>
+
+
+
+            <h3 class="text-3xl font-bold text-gray-50">
                 Clientes
             </h3>
         </div>
 
-        <div class=" max-h-[60vh] overflow-y-auto">
+        <div class="">
             <table
-                class="styleTable table-fixed w-full">
+                class="styleTable table-auto w-full">
                 <thead>
                     <tr>
-                      <th class="w-[15rem]">Nombre</th>
-                      <th class="w-[10rem]">Ced./RNC/Pas</th>
-                      <th class="w-[20rem]" >Correo</th>
-                      <th class="w-[10rem]">Teléfono</th>
-                      <th class="w-[5rem]">Tipo</th>
-                      <th class="w-[5rem]">Act</th>
+                      <th
+                          @dblclick="field('name')"
+                          class="">
+                          <i
+                              v-if="form.field === 'name'"
+                              class="fa-solid fa-arrow-down mr-2"></i>
+                          Nombre
+                      </th>
+                      <th
+                          @dblclick="field('document')"
+                          class="">
+                          <i
+                              v-if="form.field === 'document'"
+                              class="fa-solid fa-arrow-down mr-2"></i>
+                          Ced./RNC/Pas
+                      </th>
+                      <th
+                          @dblclick="field('email')"
+                          class="" >
+                          <i
+                              v-if="form.field === 'email'"
+                              class="fa-solid fa-arrow-down mr-2"></i>
+                          Correo
+                      </th>
+                      <th
+                          @dblclick="field('phone')"
+                          class="">
+                          <i
+                              v-if="form.field === 'phone'"
+                              class="fa-solid fa-arrow-down mr-2"></i>
+                          Teléfono
+                      </th>
+                      <th
+                          class=" cursor-not-allowed">
+                          Tipo
+                      </th>
+                      <th class="cursor-not-allowed">Act</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -150,6 +222,7 @@ const destroy = (id:number) => {
         <!-- PAginacion -->
         <Pagination
             :search="form.search"
+            :field="form.field"
             :per-page="form.perPage"
             :current-page="props.clients.current_page"
             :total-page="props.clients.to"

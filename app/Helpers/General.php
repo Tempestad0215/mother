@@ -56,4 +56,15 @@ class General
 
     }
 
+    /**
+     * Para Verificar si esta en los array permitido
+     * @param array $arr
+     * @param string $key
+     * @return bool
+     */
+    public function arrayAllowed(array $arr, string $key )
+    {
+        return in_array($key, $arr, true);
+    }
+
 }

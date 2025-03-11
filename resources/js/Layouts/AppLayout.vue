@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted, onUnmounted, ref} from 'vue';
+import {onMounted, onUnmounted, reactive, ref} from 'vue';
 import {Head, usePage} from '@inertiajs/vue3';
 import LinkHeader from "@components/LinkHeader.vue";
 import Divider from "@components/Divider.vue";
@@ -23,6 +23,44 @@ defineProps({
 
 const menuImageRef = ref<HTMLElement | null>(null);
 const showExchange = ref<boolean>(false);
+const urlTab = reactive([
+    {
+        label: "Cliente",
+        url: route("client.create"),
+        urlActive: "/client",
+        icon: "fa-solid fa-user"
+    },
+    {
+        label: "Categorias",
+        url: route("category.create"),
+        urlActive: "/category",
+        icon: "fa-solid fa-code-branch"
+    },
+    {
+        label: "Suplidores",
+        url: route("supplier.create"),
+        urlActive: "/supplier",
+        icon: "fa-solid fa-truck-field"
+    },
+    {
+        label: "Productos",
+        url: route("product.create"),
+        urlActive: "/product",
+        icon: "fa-solid fa-boxes-packing"
+    },
+    {
+        label: "Ventas",
+        url: route("sale.create"),
+        urlActive: "/sale",
+        icon: "fa-solid fa-cash-register"
+    },
+    {
+        label: "Reportes",
+        url: route("report-sale.index"),
+        urlActive: "/report",
+        icon: "fa-solid fa-clipboard"
+    },
+])
 /*
 Al momento de cargar
  */
@@ -94,46 +132,13 @@ const showOption = ref<boolean>(false);
 
             <div class="space-y-2">
                 <LinkHeader
-                    :class="{'link-active': isActive('/client')}"
-                    title="Clientes"
-                    :href="route('client.create')">
-                    Clientes
-                    <i class=" fa-solid fa-user"></i>
-                </LinkHeader>
-                <LinkHeader
-                    :class="{'link-active': isActive('/category')}"
-                    title="Categorias"
-                    :href="route('category.create')">
-                    Categorias
-                    <i class="fa-solid fa-code-branch"></i>
-                </LinkHeader>
-                <LinkHeader
-                    :class="{'link-active': isActive('/supplier')}"
-                    title="Suplidores"
-                    :href="route('supplier.create')">
-                    Suplidores
-                    <i class="fa-solid fa-truck-field"></i>
-                </LinkHeader>
-                <LinkHeader
-                    :class="{'link-active': isActive('/product')}"
-                    title="Productos"
-                    :href="route('product.create')">
-                    Productos
-                    <i class="fa-solid fa-boxes-packing"></i>
-                </LinkHeader>
-                <LinkHeader
-                    :class="{'link-active': isActive('/sale')}"
-                    title="Ventas"
-                    :href="route('sale.create')">
-                    Ventas
-                    <i class="fa-solid fa-cash-register"></i>
-                </LinkHeader>
-                <LinkHeader
-                    :class="{'link-active': isActive('/report')}"
-                    title="Ventas"
-                    :href="route('report-sale.index')">
-                    Reportes
-                    <i class="fa-solid fa-clipboard"></i>
+                    v-for="(item, index) in urlTab"
+                    :key="index"
+                    :title="item.label"
+                    :active="isActive(item.urlActive)"
+                    :href="item.url">
+                    {{item.label}}
+                    <i :class="item.icon"></i>
                 </LinkHeader>
             </div>
         </aside>
@@ -154,7 +159,7 @@ const showOption = ref<boolean>(false);
 
 <!--            Contendio de la ventaa-->
             <div
-                class="p-3 h-[90vh] max-h-[90vh] overflow-x-auto">
+                class="p-3 overflow-x-auto">
                 <slot/>
             </div>
         </div>

@@ -20,6 +20,7 @@ use App\Http\Middleware\IsAdminMiddleware;
 use App\Models\MoneyCounter;
 use App\Models\Setting;
 use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
@@ -119,6 +120,8 @@ Route::middleware([
         Route::post('/','store')->name('store');
         Route::patch('/{client}','update')->name('update');
         Route::delete('/destroy/{client}','destroy')->name('destroy');
+        Route::get('/download','exportExcel')->name('export-excel')
+            ->withoutMiddleware(VerifyCsrfToken::class);
 
     });
 

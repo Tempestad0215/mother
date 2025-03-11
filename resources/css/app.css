@@ -74,9 +74,6 @@ Estilo general
         @apply text-3xl font-bold italic underline ;
     }
 
-    .link-active{
-        @apply  text-white !bg-blue-700;
-    }
 
 
     /*

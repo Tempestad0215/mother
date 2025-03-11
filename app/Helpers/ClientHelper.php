@@ -23,14 +23,21 @@ class ClientHelper
 
         $search = $request->get('search');
         $perPage = $request->get('perPage',15);
+        $field = $request->get('field','name');
+
+
+        $fieldAllowed = ['name','document','phone','personal_id','email'];
 
         //conseguir los datos del cliente
         return Client::where('status', true)
-            ->where('name','LIKE','%'.$search.'%' )
+            ->where($field,'LIKE','%'.$search.'%' )
             ->latest('created_at')
             ->simplePaginate($perPage);
 
     }
+
+
+
 
     /**
      * @param StoreClientsRequest $request

@@ -404,14 +404,14 @@ const submit = ():void => {
                 <InputError :message="form.errors.comment"/>
             </div>
 
-            <div class="">
-                <InputLabel for="comment" value="Imagen" />
-                <TextInput
-                    @input=" form.image = $event.target.files[0]"
-                    class="file"
-                    type="file"
-                    name="image" />
-            </div>
+<!--            <div class="">-->
+<!--                <InputLabel for="comment" value="Imagen" />-->
+<!--                <TextInput-->
+<!--                    @input=" form.image = $event.target.files[0]"-->
+<!--                    class="file"-->
+<!--                    type="file"-->
+<!--                    name="image" />-->
+<!--            </div>-->
         </fieldset>
 
 
