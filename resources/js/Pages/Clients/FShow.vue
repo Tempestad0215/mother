@@ -118,7 +118,21 @@ const field = (field: string) => {
 Descargar todos los clientes a excel
  */
 const download = async () => {
- await exportExcel(route('client.export-excel'), "cliente.xlsx");
+    Swal.fire({
+        title: "Desea Exportar?",
+        text: "Todos los registro seran exportado en formato xlsx!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Si, Exportar!",
+        cancelButtonText: "Cancelar",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            exportExcel(route('client.export-excel'), "cliente.xlsx");
+        }
+    });
+
 }
 
 </script>

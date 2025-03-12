@@ -33,7 +33,7 @@ class CategoryController extends Controller implements HasMiddleware
         $data = $this->get($request);
 
         //Devolver la vista con los datos
-        return Inertia::render('Categories/CategoryCreate',[
+        return Inertia::render('Categories/Register',[
             'categories' => $data
             ]);
 

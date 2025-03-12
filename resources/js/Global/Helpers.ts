@@ -271,6 +271,7 @@ export const printPdf = (urlName: string) => {
 
 // Para la exportanciones de excel
 export const exportExcel = async (path: string, fielName: string) => {
+
     try {
         const response = await axios.get(path,{
             responseType: 'blob', // Importante para archivos binario
