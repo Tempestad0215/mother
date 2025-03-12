@@ -7,7 +7,7 @@ import TextInput from "@components/TextInput.vue";
 import {useForm} from "@inertiajs/vue3";
 import {successHttp} from "@/Global/Alert";
 import {categoryBaseI} from "@/Interfaces/Categories";
-import {onMounted, onUpdated} from "vue";
+import {onMounted} from "vue";
 
 
 const propsW = defineProps<{

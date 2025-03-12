@@ -531,11 +531,12 @@ const submit = () => {
                         <InputLabel
                             class="inline ml-2"
                             for="brand"
-                            value="Nombre" />
-                        <label for="brand">Marca</label>
+                            value="Marca" />
                         <TextInput
                             class="w-full"
+                            placeholder="Yamaha"
                             v-model="form.brand"
+
                             name="brand"/>
                         <InputError :message="form.errors.brand" />
                     </div>
@@ -550,6 +551,8 @@ const submit = () => {
                         <TextInput
                             class="w-full"
                             v-model="form.dimensions"
+                            placeholder="00 x 00 aa || 00 x 00 x 00 aa "
+                            v-mask="['## x ## aa', '## x ## x ## aa']"
                             name="dimension"/>
                         <InputError :message="form.errors.dimensions" />
                     </div>

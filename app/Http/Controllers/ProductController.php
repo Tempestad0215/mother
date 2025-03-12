@@ -19,7 +19,7 @@ use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
-
+use Throwable;
 
 
 class ProductController extends Controller implements HasMiddleware
@@ -57,8 +57,8 @@ class ProductController extends Controller implements HasMiddleware
             //Devolver correctamente
             return Inertia::render('Products/Register',[
                 'products' => $data,
-                'categories' => Category::orderBy('name','asc')->get(),
-                'suppliers' => Supplier::orderBy('company_name','asc')->get(),
+                'categories' => Category::orderBy('name')->get(),
+                'suppliers' => Supplier::orderBy('company_name')->get(),
                 'warehouse' => Warehouse::all(),
                 'nextProduct' => Product::max('id') + 1
             ]);
@@ -75,7 +75,7 @@ class ProductController extends Controller implements HasMiddleware
      * Summary of store
      * @param StoreProductRequest $request
      * @return RedirectResponse
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function store(StoreProductRequest $request)
     {
@@ -260,7 +260,7 @@ class ProductController extends Controller implements HasMiddleware
                 ->orWhere("name", "LIKE", "%$search%")
                 ->orWhere("description", "LIKE", "%$search%");
         })->where("status", true)
-            ->orderBy("name","asc")
+            ->orderBy("name")
             ->take(15)
             ->get();
 
