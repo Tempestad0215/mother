@@ -114,7 +114,7 @@ class Supplier extends Model implements Auditable
     private static function generateCode():string
     {
         // Obtener el ultimo registros
-        $total = self::count();
+        $total = self::withTrashed()->latest('id')->value('id');
 
         // Generar el proximo ID
         $nextID = $total ? $total + 1 : 1;

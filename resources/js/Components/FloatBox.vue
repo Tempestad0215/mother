@@ -26,7 +26,7 @@ const show = defineModel<boolean>('show',{
                 @click="$emit('close')"
                 class="absolute top-[2rem] right-[6rem] text-white text-[2rem] hover:scale-125 duration-200 fa-regular fa-rectangle-xmark"></i>
             <div class="max-w-[70rem]">
-                <h3 class="bg-blue-300 flex-1 text-2xl font-semibold text-center rounded-md mb-2">
+                <h3 class="fondo flex-1 text-2xl font-semibold text-center rounded-md mb-2">
                     {{propsW.header}}
                 </h3>
                 <slot></slot>

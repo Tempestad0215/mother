@@ -4,7 +4,7 @@ import AppLayout from "@layout/AppLayout.vue";
 import InputLabel from "@components/InputLabel.vue";
 import TextInput from "@components/TextInput.vue";
 import FloatBox from "@components/FloatBox.vue";
-import FloatShowPro from "@/Pages/Products/FloatShowPro.vue";
+import FShow from "@/Pages/Products/FShow.vue";
 import { onMounted, onUpdated, Ref, ref} from "vue";
 import {productFullI, productI} from "@/Interfaces/Product";
 import {getMoney, getRncHelper, getSequenceType, moneyConfig, printPdf} from "@/Global/Helpers";
@@ -1089,7 +1089,7 @@ const getRncClient = async () => {
             header="Productos"
             @close="showProduct = false"
             v-if="showProduct">
-            <FloatShowPro
+            <FShow
                 :stock="true"
                 class=" bg-blue-300  rounded-md px-10 py-5 w-full"
                 @select="getData"

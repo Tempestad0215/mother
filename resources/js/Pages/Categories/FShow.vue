@@ -3,9 +3,10 @@ import Pagination from "@components/Pagination.vue";
 import FormSearch from "@components/FormSearch.vue";
 import {paginationI} from "@/Interfaces/Global";
 import {categoryBaseI} from "@/Interfaces/Categories";
-import {useForm} from "@inertiajs/vue3";
+import {router, useForm} from "@inertiajs/vue3";
 import Swal from "sweetalert2";
 import {successHttp} from "@/Global/Alert";
+import {onMounted} from "vue";
 
 
 /*Datos de la ventana*/
@@ -17,8 +18,16 @@ const propsW = defineProps<{
 const form = useForm({
    search:"",
    per_page: 15,
-   field: ""
+   field: "name"
 });
+
+
+// Al momento de cargar
+onMounted(()=>{
+    //  Obtener el campo del local storage
+    form.field = localStorage.getItem('field') || 'name';
+});
+
 
 
 // Enviar los datos
@@ -28,18 +37,25 @@ const search = () => {
         preserveScroll: true
     });
 }
-
-
 /**
  * Para editar los datos
  * @param item
  */
 const edit = (item:categoryBaseI) => {
-    // form.id = item.id;
-    // form.name = item.name;
-    // form.description = item.description ? item.description : "";
-    // form.update = true;
-
+    Swal.fire({
+        title: `Desea editar la categoria: ${item.name}?`,
+        text: "Estos Datos Seran Editada!",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Si, Editar!",
+        cancelButtonText: "Cancelar"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            router.get(route('category.edit',{category: item.id}));
+        }
+    });
 }
 
 /**
@@ -71,7 +87,16 @@ const destroy = (item:categoryBaseI) => {
 }
 
 
+/**
+ *
+ * @param field
+ */
+const field = (field: string) => {
+    form.field = field;
 
+    // Colocar en el local storage
+    localStorage.setItem('field', form.field);
+}
 
 </script>
 
@@ -94,37 +119,51 @@ const destroy = (item:categoryBaseI) => {
         <!--    Tabla de las categorias-->
         <table class=" mt-3 styleTable table-fixed w-full">
             <thead>
-            <tr>
-                <th class="w-[25rem]">Nombre</th>
-                <th>Desripción</th>
-                <th class="w-[6rem]">Act</th>
-            </tr>
+                <tr>
+                    <th
+                        @dblclick="field('name')"
+                        class="w-[25rem]">
+                        <i
+                            v-if="form.field === 'name'"
+                            class="fa-solid fa-arrow-down mr-2"></i>
+                        Nombre
+                    </th>
+                    <th
+                        @dblclick="field('description')">
+                        <i
+                            v-if="form.field === 'description'"
+                            class="fa-solid fa-arrow-down mr-2"></i>
+                        Desripción
+                    </th>
+                    <th class="w-[6rem]">Act</th>
+                </tr>
             </thead>
-            <tbody>
-            <tr v-for="(item) in propsW.categories.data">
-                <td class="truncate">{{item.name}}</td>
-                <td class="truncate">{{item.description}}</td>
-                <td>
-                    <i
-                        @click="edit(item)"
-                        title="Editar"
-                        class=" icon-efect fa-solid fa-pen-to-square"></i>
-                    <i
-                        @click="destroy(item)"
-                        title="Eliminar"
-                        class=" ml-3 icon-efect fa-solid fa-trash"></i>
-                </td>
-            </tr>
+                <tbody>
+                    <tr v-for="(item) in propsW.categories.data">
+                        <td class="truncate">{{item.name}}</td>
+                        <td class="truncate">{{item.description}}</td>
+                        <td>
+                            <i
+                                @click="edit(item)"
+                                title="Editar"
+                                class=" icon-efect fa-solid fa-pen-to-square"></i>
+                            <i
+                                @click="destroy(item)"
+                                title="Eliminar"
+                                class=" ml-3 icon-efect fa-solid fa-trash"></i>
+                        </td>
+                    </tr>
             </tbody>
         </table>
+<!--        Pagination-->
         <Pagination
             :field="form.field"
             :per-page="form.per_page"
             :search="form.search"
             :next="propsW.categories.next_page_url"
-            :total-page="propsW.categories?.to"
+            :total-page="propsW.categories.to"
             :prev=" propsW.categories.prev_page_url"
-            :current-page="propsW.categories?.current_page"/>
+            :current-page="propsW.categories.current_page"/>
     </div>
 </template>
 

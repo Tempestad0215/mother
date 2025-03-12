@@ -12,7 +12,7 @@ const propsW = defineProps<{
 </script>
 
 <template>
-    <div class="bg-blue-300 max-w-[70rem] rounded-md p-5">
+    <div class="fondo max-w-[70rem] rounded-md p-5">
         <fieldset class="field">
             <legend>Info General</legend>
             <div>
@@ -29,7 +29,7 @@ const propsW = defineProps<{
             </div>
             <div>
                 <p>Correo</p>
-                <span class="span-white">{{propsW.supplier?.email}}</span>
+                <span class="span-white">{{propsW.supplier?.email || ''}}</span>
             </div>
         </fieldset>
 

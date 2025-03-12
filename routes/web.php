@@ -133,6 +133,7 @@ Route::middleware([
     ->name('category.')
     ->group(function () {
         Route::get('/','create')->name('create');
+        Route::get('/{category}','edit')->name('edit');
         Route::post('/','store')->name('store');
         Route::patch('/{category}','update')->name('update');
         Route::patch('/destroy/{category}','destroy')->name('destroy');

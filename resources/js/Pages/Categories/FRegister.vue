@@ -6,6 +6,15 @@ import InputError from "@components/InputError.vue";
 import TextInput from "@components/TextInput.vue";
 import {useForm} from "@inertiajs/vue3";
 import {successHttp} from "@/Global/Alert";
+import {categoryBaseI} from "@/Interfaces/Categories";
+import {onMounted, onUpdated} from "vue";
+
+
+const propsW = defineProps<{
+    categoryEdit?: categoryBaseI,
+    update?: boolean
+}>();
+
 
 
 /*
@@ -15,15 +24,24 @@ const form = useForm({
     id: 0,
     name:"",
     description:"",
-    update: false,
-    search: ""
+});
+
+
+// Al momento de cargar
+onMounted(()=>{
+   if (propsW.categoryEdit)
+   {
+       form.id = propsW.categoryEdit.id;
+       form.name = propsW.categoryEdit.name;
+       form.description = propsW.categoryEdit.description || '';
+   }
 });
 
 
 // Funciones
 const submit = () => {
     //si es para actualizar
-    if(form.update)
+    if(propsW.update)
     {
         form.patch(route('category.update',{category: form.id}),{
             onSuccess: ()=>{

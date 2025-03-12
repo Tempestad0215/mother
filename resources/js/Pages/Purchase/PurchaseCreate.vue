@@ -9,7 +9,7 @@ import InputLabel from "@components/InputLabel.vue";
 import TextInput from "@components/TextInput.vue";
 import TabLink from "@components/TabLink.vue";
 import FloatBox from "@components/FloatBox.vue";
-import FloatShowPro from "@/Pages/Products/FloatShowPro.vue";
+import FShow from "@/Pages/Products/FShow.vue";
 import {ref} from "vue";
 import {productFullI, productI} from "@/Interfaces/Product";
 
@@ -274,7 +274,7 @@ const getData = (item:productFullI) => {
         header="Productos"
         @close="showProduct = false"
         v-if="showProduct">
-        <FloatShowPro
+        <FShow
             class=" bg-blue-300  rounded-md px-10 py-5"
             @select="getData"
             :products="propsW.products"/>

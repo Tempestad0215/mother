@@ -14,7 +14,7 @@ const props = defineProps({
 });
 
 const isActive = computed(()=>{
-    return props.active ? 'bg-gray-600 text-white' : '';
+    return props.active ? '!bg-cyan-400' : '';
 });
 
 

@@ -64,6 +64,26 @@ class CategoryController extends Controller implements HasMiddleware
 
 
     /**
+     * Editar los datos de la categorias
+     * @param Category $category
+     * @param Request $request
+     * @return Response
+     */
+    public function edit(Category $category, Request $request)
+    {
+//        Tomar los datos para la busqueda
+        $data = $this->get($request);
+
+//        Devolver la vista con los datos
+        return Inertia::render('Categories/Register',[
+            'categories' => $data,
+            'categoryEdit' => $category,
+            'update' => true
+        ]);
+    }
+
+
+    /**
      * @param Request $request
      * @param Category $category
      * @return RedirectResponse
@@ -132,12 +152,14 @@ class CategoryController extends Controller implements HasMiddleware
 
         // Tomar los datos de busqueda
         $search = trim($request->get('search'));
-        $perPage = $request->get('perPage',15);
+        $per_page = $request->get('per_page',15);
+        $field = $request->get('field','name');
 
-        return Category::search($search)
+        return Category::query()
+            ->where($field,'like','%'.$search.'%')
             ->where('status',true)
             ->latest('created_at')
-            ->simplePaginate($perPage);
+            ->simplePaginate($per_page);
 
     }
 

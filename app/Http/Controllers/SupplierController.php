@@ -43,7 +43,7 @@ class SupplierController extends Controller implements HasMiddleware
 
 
         //Devolver la vista con los datos
-        return Inertia::render("Suppliers/SupplierCreate",[
+        return Inertia::render("Suppliers/Register",[
             'suppliers' => $data
         ]);
 
@@ -97,7 +97,7 @@ class SupplierController extends Controller implements HasMiddleware
 
 
         //devolver la vista y los datos
-        return Inertia::render("Suppliers/SupplierShow",[
+        return Inertia::render("Suppliers/Show",[
            'suppliers' =>  $data
         ]);
     }
@@ -108,7 +108,7 @@ class SupplierController extends Controller implements HasMiddleware
     public function edit(Supplier $supplier)
     {
         //Para edditar el suplidor
-        return Inertia::render("Suppliers/SupplierCreate",[
+        return Inertia::render("Suppliers/Register",[
             'supplierEdit' => $supplier,
             'update' => true
         ]);
@@ -168,13 +168,17 @@ class SupplierController extends Controller implements HasMiddleware
     {
 
         //Tomar los datos de busqueda
-        $search = $request->get('search');
+        $search = trim($request->get('search'));
+        $per_page = $request->get('per_page', 30);
+        $field = $request->get('field','company_name');
+
 
         //Devolver los datos paginado a 15
-        $suppliers = Supplier::search($search)
+        $suppliers = Supplier::query()
+            ->where($field,'LIKE','%'.$search.'%')
             ->where('status',true)
             ->latest('created_at')
-            ->simplePaginate(15);
+            ->simplePaginate($per_page);
 
 
         return SupplierResource::collection($suppliers)->response()->getData(true);

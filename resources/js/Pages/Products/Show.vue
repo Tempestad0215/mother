@@ -3,7 +3,7 @@ import AppLayout from '@layout/AppLayout.vue';
 import { Head} from '@inertiajs/vue3';
 import { productI } from '@/Interfaces/Product';
 import { PropType } from 'vue';
-import FloatShowPro from "@/Pages/Products/FloatShowPro.vue";
+import FShow from "@/Pages/Products/FShow.vue";
 import TabLink from "@components/TabLink.vue";
 
 
@@ -43,7 +43,7 @@ const props = defineProps({
 <!--        Contenido de la ventana-->
         <div
             class=" bg-blue-300 rounded-md  p-5">
-               <FloatShowPro
+               <FShow
                    class=""
                     :products="props.products"/>
 

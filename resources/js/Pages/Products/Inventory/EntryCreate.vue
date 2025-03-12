@@ -10,7 +10,7 @@ import AppLayout from '@layout/AppLayout.vue';
 import { Money } from 'v-money3';
 import {ref, watch} from 'vue';
 import {errorHttp, successHttp} from "@/Global/Alert";
-import FloatShowPro from "@/Pages/Products/FloatShowPro.vue";
+import FShow from "@/Pages/Products/FShow.vue";
 import {entryBaseI, entryProductI, entryTableI} from "@/Interfaces/EntryTrans";
 import axios from "axios";
 import FormSearch from "@components/FormSearch.vue";
@@ -342,7 +342,7 @@ const search = () =>{
             header="Productos"
             @close="showProduct = !showProduct"
             v-if="showProduct">
-            <FloatShowPro
+            <FShow
                 class="bg-blue-300 p-5"
                 @select="getProductTable"
                 :products="propsW.productTable"/>

@@ -8,7 +8,7 @@ import PrimaryButton from '@components/PrimaryButton.vue';
 import InputError from '@components/InputError.vue';
 import FloatBox from '@components/FloatBox.vue';
 import {onMounted, Ref, ref} from 'vue';
-import FloatSupplier from '@/Pages/Suppliers/SupplierFloat.vue';
+import FRegister from '@/Pages/Suppliers/FRegister.vue';
 import {successHttp} from "@/Global/Alert";
 import FormSearch from "@components/FormSearch.vue";
 import {productFullI, productI, productTransI} from "@/Interfaces/Product";
@@ -530,7 +530,7 @@ const totalTax = () => {
 <!--                <FloatBox-->
 <!--                    @close="registerProduct = false"-->
 <!--                    v-if="registerProduct">-->
-<!--                    <FloatProduct-->
+<!--                    <FRegister-->
 <!--                        :supplier="propsW.s"-->
 <!--                        @show-supplier="registerSupplier = true"-->
 <!--                        class=" bg-gray-200 p-5 w-4/5 rounded-md"/>-->
@@ -542,7 +542,7 @@ const totalTax = () => {
                 <FloatBox
                     header="Suplidores"
                     v-if="false">
-                    <FloatSupplier
+                    <FRegister
                         class="w-full"/>
                 </FloatBox>
 

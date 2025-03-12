@@ -20,9 +20,15 @@ use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
+
+
 class ProductController extends Controller implements HasMiddleware
 {
 
+    /**
+     * Para controlar
+     * @return Middleware[]
+     */
     public static function middleware()
     {
         return [
@@ -32,21 +38,13 @@ class ProductController extends Controller implements HasMiddleware
     }
 
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
      * @param Request $request
      * @return RedirectResponse|Response
      */
     public function create(Request $request): Response|RedirectResponse
     {
 
-        //Obtener los datos del productos
+        //Obtener los datos de los productos
         $data = $this->get($request);
 
         //Verificar si existe configuracion
@@ -57,7 +55,7 @@ class ProductController extends Controller implements HasMiddleware
         {
 
             //Devolver correctamente
-            return Inertia::render('Products/ProductCreate',[
+            return Inertia::render('Products/Register',[
                 'products' => $data,
                 'categories' => Category::orderBy('name','asc')->get(),
                 'suppliers' => Supplier::orderBy('company_name','asc')->get(),
@@ -77,6 +75,7 @@ class ProductController extends Controller implements HasMiddleware
      * Summary of store
      * @param StoreProductRequest $request
      * @return RedirectResponse
+     * @throws \Throwable
      */
     public function store(StoreProductRequest $request)
     {
@@ -117,7 +116,7 @@ class ProductController extends Controller implements HasMiddleware
 
         //Devolver la vista con los datos
 
-        return Inertia::render('Products/ProductShow',[
+        return Inertia::render('Products/Show',[
             'products' => $data
         ]);
 
@@ -133,7 +132,7 @@ class ProductController extends Controller implements HasMiddleware
         $dataProducts = $this->get($request);
         $dataEdit = new ProductSupplierResource($product);
 
-        return Inertia::render('Products/ProductCreate',[
+        return Inertia::render('Products/Register',[
             'productEdit' => $dataEdit,
             'products' => $dataProducts,
             'update' => true,

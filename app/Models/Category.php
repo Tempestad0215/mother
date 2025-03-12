@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -32,7 +31,6 @@ class Category extends Model implements Auditable
      * @var string[]
      */
     protected $fillable = [
-        'uuid',
         'code',
         'name',
         'description',
@@ -57,18 +55,6 @@ class Category extends Model implements Auditable
 
 
     /**
-     * Para la busqueda de los datos
-     * @return array
-     */
-    public function toSearchableArray():array
-    {
-        return [
-            'name' => $this->name,
-            'description' => $this->description,
-        ];
-    }
-
-    /**
      * @return void
      */
     protected static function boot():void
@@ -79,6 +65,7 @@ class Category extends Model implements Auditable
         //Generar el codigo los codigos
         static::creating(function ($model) {
             $model->code = self::generateCode();
+
         });
     }
 
@@ -90,7 +77,7 @@ class Category extends Model implements Auditable
     private static function generateCode():string
     {
         // Obtener el ultimo registros
-        $total = self::count();
+        $total = self::withTrashed()->latest('id')->value('id');
 
         // Generar el proximo ID
         $nextID = $total ? $total + 1 : 1;

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import Float from '@/Pages/Suppliers/SupplierFloat.vue'
+import FRegisterSupplier from '@/Pages/Suppliers/FRegister.vue'
 import FloatBox from '@/Components/FloatBox.vue'
 import {ref} from 'vue';
-import FloatProduct from '@/Pages/Products/ProductFloat.vue';
+import FRegister from '@/Pages/Products/FRegister.vue';
 import {supplierI} from "@/Interfaces/Supplier";
 import {productBaseI} from "@/Interfaces/Product";
 import {categoryBaseI} from "@/Interfaces/Categories";
@@ -64,8 +64,8 @@ const showSupplierForm = ref(false);
         <!-- Contenido de la ventana de los productos -->
         <div class="">
            <div
-               class="bg-blue-300 p-5 rounded-md">
-               <FloatProduct
+               class="fondo p-5 rounded-md">
+               <FRegister
                     :nextProduct="props.nextProduct"
                    :suppliers="props.suppliers"
                    :categories="props.categories"
@@ -80,7 +80,7 @@ const showSupplierForm = ref(false);
                 header="Registro de Proveedor"
                 @close="showSupplierForm = false"
                 v-if="showSupplierForm">
-                <Float
+                <FRegisterSupplier
                 />
             </FloatBox>
         </div>

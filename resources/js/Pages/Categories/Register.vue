@@ -7,9 +7,10 @@ import FShow from "@/Pages/Categories/FShow.vue";
 
 
 const propsW = defineProps<{
-    categories: paginationI<categoryBaseI>
-}>()
-
+    categories: paginationI<categoryBaseI>,
+    categoryEdit?: categoryBaseI,
+    update?: boolean
+}>();
 </script>
 
 <template>
@@ -18,7 +19,9 @@ const propsW = defineProps<{
         </template>
 
         <div>
-            <FRegister/>
+            <FRegister
+                :update="update"
+                :category-edit="propsW.categoryEdit"/>
             <FShow
                 :categories="propsW.categories"/>
         </div>

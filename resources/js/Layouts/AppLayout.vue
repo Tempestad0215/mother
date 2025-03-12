@@ -60,13 +60,14 @@ const urlTab = reactive([
         urlActive: "/report",
         icon: "fa-solid fa-clipboard"
     },
-])
+]);
+
+
 /*
 Al momento de cargar
  */
 onMounted(()=>{
    document.addEventListener("click", handleClick);
-
     //Ventana de cambio
     showExchangeWindow();
 });
@@ -79,7 +80,7 @@ onUnmounted(() => {
 
     //Ventana de cambio
     showExchangeWindow();
-})
+});
 
 
 /**
@@ -94,6 +95,7 @@ const isActive = (url:string):boolean => {
 /*
 Funciones
  */
+
 /**
  * Verificar si el click fue afuera
  */
@@ -159,7 +161,8 @@ const showOption = ref<boolean>(false);
 
 <!--            Contendio de la ventaa-->
             <div
-                class="p-3 overflow-x-auto">
+                id="main-window"
+                class="p-3 overflow-y-auto max-h-[calc(100vh-4rem)]">
                 <slot/>
             </div>
         </div>
