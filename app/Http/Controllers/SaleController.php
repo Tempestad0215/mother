@@ -46,7 +46,7 @@ class SaleController extends Controller
 
 
         //DEvolver la vista y los datos
-        return Inertia::render('ProductsSale/SaleCreate', [
+        return Inertia::render('Sale/SaleCreate', [
             'products' => $dataSale['products'],
             'clients' => $dataSale['clients'],
             'saleOpen' => $dataSale['saleOpen'],
@@ -109,7 +109,7 @@ class SaleController extends Controller
         //Tomar los datos
         $sales = $saleHelper->getSalePagination($request);
 
-        return Inertia::render('ProductsSale/SaleShow',[
+        return Inertia::render('Sale/SaleShow',[
             'sales' => $sales
         ]);
     }
@@ -241,6 +241,6 @@ class SaleController extends Controller
 
     public function counter()
     {
-        return Inertia::render('ProductsSale/MoneyCounter');
+        return Inertia::render('Sale/MoneyCounter');
     }
 }

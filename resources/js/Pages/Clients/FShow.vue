@@ -131,7 +131,7 @@ const download = async () => {
         cancelButtonText: "Cancelar",
     }).then((result) => {
         if (result.isConfirmed) {
-            exportExcel(route('client.export-excel'), "cliente.xlsx");
+            exportExcel(route('client.export-excel'), "clientes.xlsx");
         }
     });
 

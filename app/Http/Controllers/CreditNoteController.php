@@ -85,7 +85,7 @@ class CreditNoteController extends Controller
 
 
             //DEvolver la vista y los datos
-            return Inertia::render('ProductsSale/SaleCreate', [
+            return Inertia::render('Sale/SaleCreate', [
                 'products' => $dataSale['products'],
                 'clients' => $dataSale['clients'],
                 'saleOpen' => $dataSale['saleOpen'],
@@ -166,7 +166,7 @@ class CreditNoteController extends Controller
 
 
         // Devolver la vista con los datos
-        return Inertia::render('ProductsSale/CreditShow', [
+        return Inertia::render('Sale/CreditShow', [
             'sales' => $data
         ]);
 

@@ -10,18 +10,19 @@ import {productFullI, productI} from "@/Interfaces/Product";
 import {getMoney, getRncHelper, getSequenceType, moneyConfig, printPdf} from "@/Global/Helpers";
 import Swal from "sweetalert2";
 import InputError from "@components/InputError.vue";
-import {clientBaseI, clientDataI} from "@/Interfaces/Client";
-import FShow from "@/Pages/Clients/FShow.vue";
+import {clientBaseI} from "@/Interfaces/Client";
+import FShowClient from "@/Pages/Clients/FShow.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import {errorHttp, successHttp} from "@/Global/Alert";
 import axios from "axios";
-import SaleOpenShow from "@/Pages/ProductsSale/SaleOpenShow.vue";
+import SaleOpenShow from "@/Pages/Sale/SaleOpenShow.vue";
 import {creditNotesSaleI, infoSaleI, saleDataI, saleDataPaginationI} from "@/Interfaces/Sale";
 import {invoiceTypeI, rncUserI, sequenceDataI} from "@/Interfaces/Setting";
 import PaymentInvoice from "@components/PaymentInvoice.vue";
 import ReturnForm from "@components/ReturnForm.vue";
 import {Money} from "v-money3";
 import TabLink from "@components/TabLink.vue";
+import {paginationI} from "@/Interfaces/Global";
 
 
 
@@ -35,7 +36,7 @@ const page = usePage();
  */
 const propsW = defineProps<{
     products: productI,
-    clients: clientDataI,
+    clients: paginationI<clientBaseI>,
     saleOpen : saleDataPaginationI,
     invoiceType: invoiceTypeI[],
     saleInfo?: saleDataI,
@@ -696,7 +697,7 @@ const getRncClient = async () => {
 <!--        //contenido-->
     <div>
         <div
-            class=" bg-blue-300 p-5 rounded-md mx-auto overflow-hidden">
+            class="fondo p-5 rounded-md mx-auto overflow-hidden">
             <form
                 class=" max-w-3/5">
                 <div >
@@ -830,19 +831,19 @@ const getRncClient = async () => {
                                 <i
                                     title="Productos"
                                     @click="showProduct = !showProduct"
-                                    class="icon-efect text-3xl fa-solid fa-box-open"></i>
+                                    class="icon-efect text-cyan-400 text-3xl fa-solid fa-box-open"></i>
 
 <!--                                    Btn de Cuentas abierta-->
                                 <i
                                     title="Cuentas Abiertas"
                                     @click="showSaleOpen = !showSaleOpen"
-                                    class=" ml-3 icon-efect text-3xl  fa-solid fa-table-cells-row-unlock"></i>
+                                    class=" ml-3 icon-efect text-cyan-400 text-3xl  fa-solid fa-table-cells-row-unlock"></i>
 
 <!--                                 BTN Devolucion-->
                                 <i
                                     title="Devoluciones"
                                     @click="showFormReturn = !showFormReturn"
-                                    class=" ml-3 icon-efect text-3xl fa-solid fa-arrow-rotate-left"></i>
+                                    class=" ml-3 icon-efect text-cyan-400 text-3xl fa-solid fa-arrow-rotate-left"></i>
 
                             </div>
                         </div>
@@ -1000,7 +1001,7 @@ const getRncClient = async () => {
                                 cols="60"
                                 class="area col-span-2">
                             </textarea>
-                            <div class=" col-end-7 col-span-2">
+                            <div class=" col-end-7 col-span-2 text-white">
                                 <table>
                                     <tbody>
                                         <tr>
@@ -1076,7 +1077,7 @@ const getRncClient = async () => {
             header="Clientes"
             @close="showClient = false"
             v-if="showClient">
-            <FShow
+            <FShowClient
                 class=" max-w-4/5 rounded-md py-5"
                 @get-data="selectClient"
                 :clients="propsW.clients"/>

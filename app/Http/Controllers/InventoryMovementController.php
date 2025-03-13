@@ -46,7 +46,7 @@ class InventoryMovementController extends Controller implements HasMiddleware
         $productsTrans = $this->getProductsTrans($request);
 
         // DEvolver la vista con el mensaje
-        return Inertia::render('Products/Inventory/EntryCreate',[
+        return Inertia::render('Products/Inventory/Register',[
             'products' => Product::take(50)->get(),
             'productTable' => $productTable,
             'entries' => $productsTrans

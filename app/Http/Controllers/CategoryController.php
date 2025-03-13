@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\CategoryExport;
+use App\Exports\ClientExport;
 use App\Models\Category;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Http\JsonResponse;
@@ -11,6 +13,8 @@ use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Inertia\Inertia;
 use Inertia\Response;
+use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\Exception;
 
 class CategoryController extends Controller implements HasMiddleware
 {
@@ -161,6 +165,17 @@ class CategoryController extends Controller implements HasMiddleware
             ->latest('created_at')
             ->simplePaginate($per_page);
 
+    }
+
+
+    /**
+     * @throws Exception
+     * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
+     */
+    public function exportExcel()
+    {
+
+        return Excel::download(new CategoryExport, 'categorias.xlsx');
     }
 
 

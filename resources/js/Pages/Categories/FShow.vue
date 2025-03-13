@@ -7,6 +7,7 @@ import {router, useForm} from "@inertiajs/vue3";
 import Swal from "sweetalert2";
 import {successHttp} from "@/Global/Alert";
 import {onMounted} from "vue";
+import {exportExcel} from "@/Global/Helpers";
 
 
 /*Datos de la ventana*/
@@ -98,6 +99,27 @@ const field = (field: string) => {
     localStorage.setItem('field', form.field);
 }
 
+/*
+Descargar todos los clientes a excel
+ */
+const download = async () => {
+    Swal.fire({
+        title: "Desea Exportar?",
+        text: "Todos los registro seran exportado en formato xlsx!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Si, Exportar!",
+        cancelButtonText: "Cancelar",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            exportExcel(route('category.export-excel'), "categorias.xlsx");
+        }
+    });
+
+}
+
 </script>
 
 <template>
@@ -111,6 +133,11 @@ const field = (field: string) => {
                     v-model:per-page.number="form.per_page">
                 </FormSearch>
             </form>
+            <i
+                @click="download"
+                title="Descargar CSV"
+                class="fa-solid fa-file-csv text-gray-50 text-[3rem]"></i>
+
             <h3 class="text-3xl font-bold">
                 Categorias
             </h3>

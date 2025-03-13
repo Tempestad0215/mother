@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Enums\AccountTypeEnum;
+use App\Exports\CategoryExport;
+use App\Exports\SupplierExport;
 use App\Http\Resources\SupplierResource;
 use App\Models\Supplier;
 use App\Http\Requests\StoreSupplierRequest;
@@ -13,6 +15,8 @@ use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\Exception;
 
 class SupplierController extends Controller implements HasMiddleware
 {
@@ -183,5 +187,17 @@ class SupplierController extends Controller implements HasMiddleware
 
         return SupplierResource::collection($suppliers)->response()->getData(true);
 
+    }
+
+
+
+    /**
+     * @throws Exception
+     * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
+     */
+    public function exportExcel()
+    {
+
+        return Excel::download(new SupplierExport, 'categorias.xlsx');
     }
 }

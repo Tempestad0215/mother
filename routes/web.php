@@ -133,11 +133,14 @@ Route::middleware([
     ->name('category.')
     ->group(function () {
         Route::get('/','create')->name('create');
+        Route::get('/download','exportExcel')->name('export-excel')
+            ->withoutMiddleware(VerifyCsrfToken::class);
         Route::get('/{category}','edit')->name('edit');
         Route::post('/','store')->name('store');
         Route::patch('/{category}','update')->name('update');
         Route::patch('/destroy/{category}','destroy')->name('destroy');
         Route::get('/get','getJson')->name('get.json');
+
     });
 
     /*
@@ -149,7 +152,8 @@ Route::middleware([
     ->group(function(){
          Route::get('/','create')->name('create');
          Route::get('/show','show')->name('show');
-        Route::get('/get','getJson')->name('get.json');
+         Route::get('/get','getJson')->name('get.json');
+         Route::get('/dowmload','exportExcel')->name('export-excel');
          Route::get('/{supplier}','edit')->name('edit');
          Route::post('/','store')->name('store');
          Route::patch('/{supplier}','update')->name('update');

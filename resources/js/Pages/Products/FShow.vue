@@ -47,7 +47,8 @@ const emit = defineEmits(['select']);
  */
 const form = useForm({
     search:'',
-    perPage: 30
+    per_page: 30,
+    field: "name",
 });
 
 
@@ -60,7 +61,7 @@ const submit = () => {
 
     router.get(``,{
         page:1,
-        perPage:form.perPage,
+        perPage:form.per_page,
         search:form.search,
         stock:propsW.stock
     },{
@@ -80,7 +81,7 @@ const edit = (id:number) => {
 
 //Seleccionar
 const selectData = (item:productBaseI) => {
-    if (component === "Products/ProductShow")
+    if (component === "Products/Show")
     {
         router.get(route('product.edit', {product: item.id}));
     }else{
@@ -136,7 +137,7 @@ const detroy = (id:number) => {
                 <form @submit.prevent="submit"  >
                     <FormSearch
                         v-model:search="form.search"
-                        v-model:per-page.number="form.perPage"/>
+                        v-model:per-page.number="form.per_page"/>
                 </form>
             </div>
             <h3 class="text-3xl font-bold float-right mt-6">
@@ -197,10 +198,13 @@ const detroy = (id:number) => {
 
         <!--        PAginacion de la ventana-->
         <Pagination
+            :search="form.search"
+            :field="form.field"
+            :per-page="form.per_page"
             :current-page="propsW.products.current_page"
             :total-page="propsW.products.to"
-            :next="propsW.products.next_page_url ? propsW.products.next_page_url+'&perPage='+form.perPage : ''"
-            :prev="propsW.products.prev_page_url ? propsW.products.prev_page_url+'&perPage='+form.perPage : '' "/>
+            :next="propsW.products.next_page_url"
+            :prev="propsW.products.prev_page_url"/>
 
     </div>
 </template>

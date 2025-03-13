@@ -1,4 +1,3 @@
-import {linksI, metaI} from "@/Interfaces/Global";
 import {productBaseI} from "@/Interfaces/Product";
 
 export  interface entryBaseI {
@@ -14,10 +13,4 @@ export  interface entryBaseI {
 
 export interface entryProductI extends entryBaseI {
     product: productBaseI
-}
-
-export interface entryTableI {
-    data: entryProductI[];
-    link: linksI,
-    meta: metaI
 }

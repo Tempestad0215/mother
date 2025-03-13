@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import {router, useForm} from "@inertiajs/vue3";
 import {ref, Ref} from "vue";
 import {paginationI} from "@/Interfaces/Global";
+import {exportExcel} from "@/Global/Helpers";
 
 /*
 Propiedades
@@ -94,6 +95,27 @@ const field = (field:string) => {
     localStorage.setItem('field', field);
 }
 
+/*
+Descargar todos los clientes a excel
+ */
+const download = async () => {
+    Swal.fire({
+        title: "Desea Exportar?",
+        text: "Todos los registro seran exportado en formato xlsx!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Si, Exportar!",
+        cancelButtonText: "Cancelar",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            exportExcel(route('supplier.export-excel'), "suplidores.xlsx");
+        }
+    });
+
+}
+
 
 </script>
 
@@ -109,6 +131,12 @@ const field = (field:string) => {
                         v-model:search.number="form.search"
                     />
                 </form>
+
+                <i
+                    @click="download"
+                    title="Descargar CSV"
+                    class="fa-solid fa-file-csv text-gray-50 text-[3rem]"></i>
+
                 <h3 class="text-3xl font-bold text-center">
                     Suplidores
                 </h3>

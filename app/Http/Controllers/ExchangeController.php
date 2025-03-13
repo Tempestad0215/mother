@@ -16,7 +16,7 @@ class ExchangeController extends Controller
      */
     public function index(): Response
     {
-        return Inertia::render('ProductsSale/MoneyCounter');
+        return Inertia::render('Sale/MoneyCounter');
     }
 
 

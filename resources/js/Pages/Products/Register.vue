@@ -66,7 +66,7 @@ const showSupplierForm = ref(false);
            <div
                class="fondo p-5 rounded-md">
                <FRegister
-                    :nextProduct="props.nextProduct"
+                   :nextProduct="props.nextProduct"
                    :suppliers="props.suppliers"
                    :categories="props.categories"
                    :product-edit="props.productEdit"

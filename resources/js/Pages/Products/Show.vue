@@ -42,7 +42,7 @@ const props = defineProps({
 
 <!--        Contenido de la ventana-->
         <div
-            class=" bg-blue-300 rounded-md  p-5">
+            class=" fondo rounded-md  p-5">
                <FShow
                    class=""
                     :products="props.products"/>
