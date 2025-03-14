@@ -16,6 +16,7 @@ import InputLabel from "@components/InputLabel.vue";
 import FloatBox from "@components/FloatBox.vue";
 import FRegisterSupplier from "@/Pages/Suppliers/FRegister.vue";
 import FRegisterCategory from "@/Pages/Categories/FRegister.vue";
+import FRegisterWarehouse from "@/Pages/Setting/WH/FRegister.vue";
 
 
 /**
@@ -41,6 +42,7 @@ const propsW = defineProps<{
  */
 const showCategory = ref<boolean>(false);
 const showSupplier = ref<boolean>(false);
+const showWarehouse = ref<boolean>(false);
 
 
 /**
@@ -452,7 +454,7 @@ const submit = () => {
                             value="Almacen" />
                         <select
                             v-model="form.warehouse_id"
-                            class=" w-full inputGeneral py-1 ">
+                            class=" w-[80%] inputGeneral py-1 ">
                             <option
                                 class="even:bg-blue-200"
                                 v-for="(item, index) in propsW.warehouse"
@@ -461,6 +463,9 @@ const submit = () => {
                                 {{item.name}}
                             </option>
                         </select>
+                        <i
+                            @click="showWarehouse = true"
+                            class="ml-2 icon-efect text-[1.5rem] text-cyan-400 fa-solid fa-warehouse"></i>
                         <InputError :message="form.errors.warehouse_id"/>
                     </div>
 
@@ -655,5 +660,11 @@ const submit = () => {
         header="Manejo de Proveedores">
         <FRegisterSupplier
             />
+    </FloatBox>
+
+<!--    Mostra la ventana para agrear almacenes-->
+    <FloatBox
+        header="Manejos Almancenes">
+        <FRegisterWarehouse/>
     </FloatBox>
 </template>

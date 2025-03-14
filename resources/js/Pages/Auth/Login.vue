@@ -58,7 +58,7 @@ const submit = () => {
         </div>
         <!--        formulario de inicio-->
         <form
-            class="max-w-[600px] mx-auto bg-blue-500 p-10 rounded-md flex-col items-center shadow-md "
+            class="max-w-[600px] mx-auto fondo p-10 rounded-md flex-col items-center shadow-md "
             @submit.prevent="submit">
 
             <img
@@ -96,12 +96,15 @@ const submit = () => {
             <div class="block mt-4">
                 <label class="flex items-center">
                     <Checkbox v-model:checked="form.remember" name="remember" />
-                    <span class="ms-2 text-sm ">Recuerdame</span>
+                    <span class="ms-2 text-sm text-gray-50 ">Recuerdame</span>
                 </label>
             </div>
 
             <div class="flex items-center justify-end mt-4">
-                <Link v-if="canResetPassword" :href="route('password.request')" class="underline text-sm  rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <Link
+                    v-if="canResetPassword"
+                    :href="route('password.request')"
+                    class="underline text-sm text-gray-50  rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                     Olvidó su contraseña?
                 </Link>
 

@@ -6,6 +6,7 @@ use App\Enums\ProductTypeEnum;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Supplier;
+use App\Models\Warehouse;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -38,7 +39,8 @@ class ProductFactory extends Factory
             'price' => $price,
             'tax_rate' => $tax * 100,
             'tax' => $price - $tax,
-            'product_tax' => $cost * (1 + $tax),
+            'warehouse_id' => Warehouse::factory(),
+//            'product_tax' => $cost * (1 + $tax),
             'product_no_tax' =>  $price - ($price * $tax),
             'benefits' => $price - $cost,
             'type' => fake()->randomElement([ProductTypeEnum::PRODUCTO,ProductTypeEnum::SERVICIO]),

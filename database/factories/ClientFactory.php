@@ -26,6 +26,7 @@ class ClientFactory extends Factory
             'email' => fake()->email(),
             'address' => fake()->address(),
             'type' => fake()->randomElement(['contado']),
+            'comment' => fake()->sentence(20),
         ];
     }
 }
