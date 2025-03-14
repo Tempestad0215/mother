@@ -42,14 +42,6 @@ const form = useForm({
     update: false,
 });
 
-const formSearch = useForm({
-    search: '',
-    perPage: 30
-});
-
-
-
-
 
 /**
  * Evento watch
@@ -68,6 +60,19 @@ watch(productName, (newValue) => {
                 errorHttp('Error al Obtenr los datos');
             });
     }
+});
+
+
+watch(()=> propsW.editDataFloat, (newValue) => {
+
+    form.id = newValue?.id || 0;
+    form.product_id = newValue?.product.id || 0;
+    productName.value = newValue?.product.name || "";
+    form.quantity = newValue?.quantity || 0;
+    form.cost = newValue?.cost || 0;
+    form.description = newValue?.description || "";
+    form.type = "AJUSTE";
+    form.update = true;
 });
 
 /*

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->decimal('system_stock');
             $table->decimal('difference');
             $table->string('description')->nullable();
+
             $table->timestamps();
         });
     }

@@ -17,8 +17,6 @@ use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Middleware\IsAdminMiddleware;
-use App\Models\MoneyCounter;
-use App\Models\Setting;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
@@ -26,7 +24,6 @@ use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CreditNoteController;
 use App\Http\Controllers\InventoryMovementController;
-use Spatie\LaravelPdf\Facades\Pdf;
 use Spatie\Permission\Models\Role;
 
 Route::middleware([

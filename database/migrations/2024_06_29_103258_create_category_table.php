@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('name',75)->comment('nombre');
             $table->string('description',255)->nullable()->comment('descripcion');
             $table->boolean('status')->default(true)->comment('estado');
+            $table->text('comment')->nullable()->comment('Comentario');
             $table->softDeletes();
             $table->timestamps();
 

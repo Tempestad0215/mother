@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->string('type',20)->default('DEVOLUCION')->comment('Tipo Devolucion');
             $table->boolean('status')->default(true)->comment('Estado');
             $table->foreignIdFor(Sale::class, 'sale_id')->comment('relacion de ventas');
+            $table->text('comment')->nullable()->comment('Comentario');
             //Full text
             $table->fullText('ncf');
             $table->fullText('ncf_m');

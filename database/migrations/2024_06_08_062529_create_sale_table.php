@@ -24,7 +24,7 @@ return new class extends Migration
             $table->boolean('close_table')->default(false)->comment('Cuentas abierto o cerrada');
             $table->json('credit_notes')->nullable()->comment('Pago por nota de credito');
             $table->float('credit_notes_amount')->default(0)->comment('Monto de todas las notas de creditos');
-
+            $table->text('comment')->nullable()->comment('Comentario');
 
             //Fulltext;
             $table->fullText('ncf');

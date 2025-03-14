@@ -1,13 +1,12 @@
 <script lang="ts" setup>
 import {productBaseI, productI} from '@/Interfaces/Product';
 import TabLink from '@components/TabLink.vue';
-import {Head, router, useForm} from '@inertiajs/vue3';
+import {Head, useForm} from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
 import {ref, watch} from 'vue';
-import {errorHttp, successHttp} from "@/Global/Alert";
+import {errorHttp} from "@/Global/Alert";
 import {entryBaseI, entryProductI} from "@/Interfaces/EntryTrans";
 import axios from "axios";
-import Swal from "sweetalert2";
 import {paginationI} from "@/Interfaces/Global";
 import FRegister from "@/Pages/Products/Inventory/FRegister.vue";
 import FShowEntrie from "@/Pages/Products/Inventory/FShow.vue";
@@ -21,28 +20,9 @@ const propsW = defineProps<{
 }>();
 
 //datos de la ventana
-const showProduct = ref<boolean>(false);
 const productName = ref<string>();
 const products = ref<productBaseI[] | null>(null);
-const editData = ref<entryProductI | null>(null);
-
-
-// Formularios
-const form = useForm({
-    id:0,
-    product_id: 0,
-    quantity: 0,
-    cost: 0,
-    description:'',
-    type:'ENTRADA',
-    update: false,
-});
-
-const formSearch = useForm({
-    search: '',
-    perPage: 30
-});
-
+const editData = ref<entryProductI | undefined>(undefined);
 
 /**
  * Evento watch
@@ -63,11 +43,10 @@ watch(productName, (newValue) => {
     }
 });
 
+
+// Editar los datos
 const edit = (item:entryProductI) => {
-    editData.value = item;
-
-
-    console.log(editData.value)
+    editData.value = {...item};
 }
 
 

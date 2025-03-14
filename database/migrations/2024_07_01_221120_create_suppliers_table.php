@@ -24,6 +24,7 @@ return new class extends Migration
             $table->boolean('is_recurring')->default(false)->comment('Pago Recurrente');
             $table->integer('payment_day')->nullable()->comment('Dia de pago del mes');
             $table->boolean('status')->default(true)->comment('Estado');
+            $table->text('comment')->nullable()->comment('Comentario');
             $table->softDeletes();
             $table->timestamps();
 

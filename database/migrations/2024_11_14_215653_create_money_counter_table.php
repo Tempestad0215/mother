@@ -39,6 +39,7 @@ return new class extends Migration
             $table->decimal('diff')->default(0)->comment('Diferencia');
             $table->decimal('total_neto')->default(0)->comment('Total De Neto');
             $table->boolean('status')->default(true)->comment('Estado del Item');
+            $table->text('comment')->nullable()->comment('Comentario');
             $table->timestamps();
         });
     }

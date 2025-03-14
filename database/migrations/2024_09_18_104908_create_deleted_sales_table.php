@@ -20,6 +20,8 @@ return new class extends Migration {
             $table->decimal('amount')->comment('Total General');
             $table->boolean('status')->default(true)->comment('Estado del Item');
             $table->boolean('close_table')->default(false)->comment('Estado del Cuenta');
+
+            $table->text('comment')->nullable()->comment('Comentario');
             $table->softDeletes();
             $table->timestamps();
         });
