@@ -24,7 +24,7 @@ return new class extends Migration
             $table->enum('type_price',[1,2,3])->comment('Tipo precio');
             $table->boolean('receive_email')->comment('Recibir email');
             $table->boolean('status')->default(true)->comment('Estado');
-            $table->text('comment')->nullable()->comment('Comentario');
+            $table->string('comment')->nullable()->comment('Comentario');
             $table->softDeletes();
             $table->timestamps();
 

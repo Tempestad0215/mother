@@ -63,13 +63,6 @@ class SupplierController extends Controller implements HasMiddleware
             // Guardar los datos de supplidor
             $supplier = Supplier::create($request->validated());
 
-            //si existe el comentario pues se guarda los datos
-            if ($request->get('comment') != null )
-            {
-                $supplier->comment()->create([
-                    'content' => $request->comment,
-                ]);
-            }
 
             //si tiene otro tipo que no sea contado
             if ($request->get('type_payment') != 'contado')

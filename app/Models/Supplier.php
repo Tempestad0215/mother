@@ -25,6 +25,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property bool is_recurring
  * @property integer payment_day
  * @property boolean status
+ * @property string comment
  * @property string created_at
  * @property string updated_at
  * @property string deleted_at
@@ -49,7 +50,8 @@ class Supplier extends Model implements Auditable
         'account_bank',
         'is_recurring',
         'status',
-        'payment_day'
+        'payment_day',
+        'comment'
     ];
 
 

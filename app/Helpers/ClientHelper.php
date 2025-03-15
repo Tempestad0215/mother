@@ -58,15 +58,6 @@ class ClientHelper
            $client = Client::create($request->validated());
 
 
-           //guardar el comentario si existe
-           if ($request->get('comment') !== null)
-           {
-               //Tomar el nombre del comentario
-               $commentHelper = new CommentHelper();
-               $commentHelper->updateOrInsert(
-                   $client,
-                   $request->get('comment'));
-           }
 
            //Guardar la imagen y quedarse con el nombre
            $general->saveImage($request, $client);
@@ -99,27 +90,8 @@ class ClientHelper
             $type = $request->get('type');
 
             //Actualizar el cliente
-            $client->update($request->only([
-                'name',
-                'email',
-                'personal_id',
-                'phone',
-                'address',
-                'type',
-                'document',
-                'receive_email',
-                'status',
-                'type_price'
-            ]));
-            //Verificar si llega el comentario
-            if ($request->get('comment') !== null)
-            {
-                //Tomar el nombre del comentario
-                $commentHelper = new CommentHelper();
-                $commentHelper->updateOrInsert(
-                    $client,
-                    $request->get('comment'));
-            }
+            $client->update();
+
             //Verificar el tipo de pago
             if ($type != 'contado')
             {

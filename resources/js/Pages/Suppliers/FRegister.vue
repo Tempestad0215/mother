@@ -30,6 +30,7 @@ onMounted(()=>{
         form.company_name = propsW.supplierEdit.company_name;
         form.phone = propsW.supplierEdit.phone ?? "";
         form.email = propsW.supplierEdit.email ?? "";
+        form.comment = propsW.supplierEdit.comment ?? "";
     }
 });
 

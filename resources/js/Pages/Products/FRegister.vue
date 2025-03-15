@@ -664,6 +664,8 @@ const submit = () => {
 
 <!--    Mostra la ventana para agrear almacenes-->
     <FloatBox
+        v-if="showWarehouse"
+        @close ="showWarehouse = false"
         header="Manejos Almancenes">
         <FRegisterWarehouse/>
     </FloatBox>

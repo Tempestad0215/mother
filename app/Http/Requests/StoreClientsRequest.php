@@ -50,6 +50,7 @@ class StoreClientsRequest extends FormRequest
             'amount' => [Rule::requiredIf($isRequired),'nullable','numeric'],
             'due_date' => [Rule::requiredIf($isRequired),'nullable','numeric'],
             'late_fee' => [Rule::requiredIf($isRequired),'nullable','numeric'],
+            'comment' => ['nullable','string','max:255'],
         ];
     }
 }

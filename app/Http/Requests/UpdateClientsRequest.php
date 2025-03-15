@@ -33,6 +33,7 @@ class UpdateClientsRequest extends FormRequest
             'email'=> ['nullable','string','email','max:150',Rule::unique('clients','email')->ignore($id)],
             'address' => ['nullable','string','max:150'],
             'document' =>  ['required', Rule::enum(ClientDocumentEnum::class)],
+            'comment' => ['nullable','string','max:255'],
         ];
     }
 }

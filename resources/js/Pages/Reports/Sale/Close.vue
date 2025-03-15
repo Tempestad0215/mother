@@ -9,7 +9,7 @@ import axios from "axios";
 import {ref} from "vue";
 import {errorHttp} from "@/Global/Alert";
 import {getMoney} from "@/Global/Helpers";
-
+import InputLabel from "@components/InputLabel.vue";
 
 /**
  * Propiedades
@@ -72,7 +72,7 @@ const submit = () => {
                 Cierre
             </TabLink>
         </template>
-        <div class=" p-5 bg-blue-300 rounded-md">
+        <div class=" p-5 fondo rounded-md">
             <div>
                 <h3 class="title text-center">
                     Crear Cierre De Ventas
@@ -115,31 +115,41 @@ const submit = () => {
                         <span class="font-bold">{{new Date().toLocaleDateString()}}</span>
                     </h3>
                     <div>
-                        <label class="font-bold block" for="amount">Impuesto Total : </label>
+                        <InputLabel
+                            for="amount"
+                            value="Impuesto Total :"/>
                         <span class="inline-block bg-white px-3 py-1 rounded-md">
                             {{getMoney(reportSale?.sub_total)}}
                         </span>
                     </div>
                     <div>
-                        <label class="font-bold block" for="amount">Sub Total :</label>
+                        <InputLabel
+                            for="amount"
+                            value="Sub Total :"/>
                         <span class="inline-block bg-white px-3 py-1 rounded-md" >
                             {{getMoney(reportSale?.sub_total)}}
                         </span>
                     </div>
                     <div>
-                        <label class="font-bold block" for="amount">Total :</label>
+                        <InputLabel
+                            for="amount"
+                            value="Total :"/>
                         <span class="inline-block bg-white px-3 py-1 rounded-md">
                             {{getMoney(reportSale?.amount)}}
                         </span>
                     </div>
                     <div>
-                        <label class="font-bold block" for="amount">Beneficio :</label>
+                        <InputLabel
+                            for="amount"
+                            value="Beneficio :"/>
                         <span class="inline-block bg-white px-3 py-1 rounded-md">
                             {{getMoney(reportSale?.benefits)}}
                         </span>
                     </div>
                     <div>
-                        <label class="font-bold block" for="amount">Descuento Aplicado :</label>
+                        <InputLabel
+                            for="amount"
+                            value="Descuento aplicado :"/>
                         <span class="inline-block bg-white px-3 py-1 rounded-md">
                             {{getMoney(reportSale?.discount_amount)}}
                         </span>

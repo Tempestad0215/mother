@@ -17,7 +17,6 @@ return new class extends Migration {
             $table->integer('due_date')->comment('Fecha vencimiento');
             $table->decimal('late_fee')->default(0)->comment('Interes por pago vencido');
             $table->boolean('status')->default(true)->comment('Estado del Item');
-            $table->text('comment')->nullable()->comment('Comentario');
             $table->timestamps();
             $table->softDeletes();
         });

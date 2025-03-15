@@ -8,7 +8,6 @@ use App\Helpers\SaleHelper;
 use App\Http\Requests\StoreProductSaleRequest;
 use App\Http\Resources\UserResource;
 use App\Models\Product;
-use App\Models\ProTrans;
 use App\Models\Sale;
 use App\Models\Setting;
 use App\Models\User;
@@ -20,7 +19,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Inertia\Response;
-use Laravel\Octane\Exceptions\DdException;
 
 class SaleController extends Controller
 {
@@ -56,6 +54,11 @@ class SaleController extends Controller
     }
 
 
+    /**
+     * Crear la ventas
+     * @param StoreProductSaleRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function store(StoreProductSaleRequest $request)
     {
 

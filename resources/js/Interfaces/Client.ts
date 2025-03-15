@@ -1,7 +1,4 @@
 
-// Cliente para la tabla
-import {commentI} from "@/Interfaces/Comment";
-
 /**
  *
  */
@@ -25,7 +22,7 @@ export interface clientBaseI {
  */
 export interface clientEditI extends clientBaseI {
     document: string;
-    comment: commentI
+    comment: string;
     amount: number;
     due_date: number;
     late_fee: number;

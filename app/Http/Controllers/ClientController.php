@@ -46,14 +46,6 @@ class ClientController extends Controller implements HasMiddleware
     }
 
     /**
-     * @return void
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
      * @return Response
      */
     public function create(Request $request)
@@ -117,7 +109,7 @@ class ClientController extends Controller implements HasMiddleware
     public function edit(Client $client)
     {
         // Devolver la vista con los datos
-        return Inertia::render('Clients/ClientCreate',[
+        return Inertia::render('Clients/Register',[
             'update' => true,
             'clientEdit' => new ClientCommentResource($client) ,
         ]);

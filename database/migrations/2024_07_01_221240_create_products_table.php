@@ -61,7 +61,6 @@ return new class extends Migration
             $table->boolean('has_promotion')->default(true)->comment('Aplica para comisiones');
             $table->boolean('has_tax')->default(true)->comment('Aplica para impuestos');
 
-            $table->text('comment')->nullable()->comment('Comentario');
             $table->softDeletes();
             $table->timestamps();
 

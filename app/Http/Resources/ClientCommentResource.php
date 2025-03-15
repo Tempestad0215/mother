@@ -30,7 +30,7 @@ use Illuminate\Support\Facades\Date;
  * @property ClientTypePriceEnum type_price
  * @property boolean receive_email
  * @property Account account
- * @property Comment comment
+ * @property string comment
  * @property Date deleted_at
  * @property Date created_at
  * @property Date updated_at
@@ -58,11 +58,7 @@ class ClientCommentResource extends JsonResource
             'type' => $this->type,
             'type_price' => $this->type_price,
             'status' => $this->status,
-            'comment' => [
-                'id' => $this->comment?->id,
-                'content' => $this->comment?->content,
-                'created_at' => $this->comment?->created_at,
-            ],
+            'comment' => $this->comment,
             'amount' => $this->account?->amount,
             'due_date' => $this->account?->due_date,
             'late_fee' => $this->account?->late_fee,

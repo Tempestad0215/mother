@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->decimal('sub_total')->comment('Sub total de la compra');
             $table->enum('process',['EAPR','ENPR','APRO','CANC','CERR'])->comment('Estado de la orden de compra');
             $table->boolean('status')->default(true)->comment('Estado de la orden de compra');
-            $table->text('comment')->nullable()->comment('Comentario');
+            $table->string('comment')->nullable()->comment('Comentario');
             $table->timestamps();
             $table->softDeletes();
         });

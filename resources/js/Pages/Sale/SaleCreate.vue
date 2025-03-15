@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {Head, router, useForm, usePage} from "@inertiajs/vue3";
+import {router, useForm, usePage} from "@inertiajs/vue3";
 import AppLayout from "@layout/AppLayout.vue";
 import InputLabel from "@components/InputLabel.vue";
 import TextInput from "@components/TextInput.vue";
@@ -665,8 +665,6 @@ const getRncClient = async () => {
 </script>
 
 <template>
-<!--Titulo de la ventana-->
-    <Head title="Sale" />
 <!--    Contenido general-->
     <AppLayout>
 <!--        Cabecera de la ventana-->
@@ -757,7 +755,7 @@ const getRncClient = async () => {
 
 <!--                            Mensaje cargando-->
                         <div
-                            class=" flex-1 flex justify-end animate-pulse "
+                            class=" flex-1 flex justify-end animate-pulse text-gray-50 "
                             v-if="form.sequence_type == '' && page.props.setting.sequence">
                             Cargando....
                         </div>
@@ -767,8 +765,6 @@ const getRncClient = async () => {
                             class="flex flex-col-reverse"
                             v-if="form.sequence_type !== ''">
 <!--                                Mensaje de cargando-->
-
-
                             <!--Numero de comprobantes-->
                             <fieldset class="border-2 border-gray-400 rounded-md px-2 mx-3 w-[350px] ">
                                 <legend>
@@ -779,8 +775,6 @@ const getRncClient = async () => {
                                     v-if="form.invoice_type === 'B04'"
                                     class="truncate"><strong>NCF M. :</strong> {{form.ncf_m}}</p>
                             </fieldset>
-
-
 
                             <!--Numero de comprobantes-->
                             <fieldset
@@ -795,8 +789,6 @@ const getRncClient = async () => {
                                     {{form.client_name}}
                                 </p>
                             </fieldset>
-
-
 
                         </div>
                     </div>
@@ -1027,7 +1019,6 @@ const getRncClient = async () => {
                         </div>
                     </div>
 
-
 <!--                        Mensaje de erro-->
                     <div>
                         <InputError :message="form.errors.general"/>
@@ -1035,11 +1026,8 @@ const getRncClient = async () => {
 <!--                        Devuelta y demas detos-->
                     <div class=" mt-2 w-64 float-right">
 
+
                         <div class="">
-<!--                                <SecondaryButton-->
-<!--                                    type="button">-->
-<!--                                    Limpiar-->
-<!--                                </SecondaryButton>-->
                             <PrimaryButton
                                 :disabled="form.processing"
                                 @click="checkSale"
@@ -1054,7 +1042,7 @@ const getRncClient = async () => {
             </form>
         </div>
 
-<!-- Ventana de Devuelta-->
+        <!-- Ventana de Devuelta-->
         <FloatBox
             header="Retornos"
             @close="showReturn = false"
@@ -1092,7 +1080,7 @@ const getRncClient = async () => {
             v-if="showProduct">
             <FShow
                 :stock="true"
-                class=" bg-blue-300  rounded-md px-10 py-5 w-full"
+                class=" fondo  rounded-md px-10 py-5 w-[65rem]"
                 @select="getData"
                 :products="propsW.products"/>
         </FloatBox>
@@ -1105,7 +1093,7 @@ const getRncClient = async () => {
             v-if="showSaleOpen">
             <SaleOpenShow
                 @sen-data="getSaleOpen"
-                class=" bg-blue-300 max-w-4/5 rounded-md px-10 py-5"
+                class=" fondo w-[65rem] rounded-md px-10 py-5"
                 :sale-open="propsW.saleOpen"/>
         </FloatBox>
 
@@ -1116,6 +1104,7 @@ const getRncClient = async () => {
             @close="showFormReturn = false"
             v-if="showFormReturn">
             <ReturnForm
+                class="w-[40rem]"
                 @closeFormReturn="showFormReturn = false"
                 :error="page.props.errors.general"/>
         </FloatBox>

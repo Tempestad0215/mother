@@ -77,7 +77,7 @@ const submit = () => {
 </script>
 
 <template>
-    <div class="bg-blue-300 p-5 rounded-lg">
+    <div class="fondo p-5 rounded-lg">
         <h3
             class="title">
             Formulario Para Devolución

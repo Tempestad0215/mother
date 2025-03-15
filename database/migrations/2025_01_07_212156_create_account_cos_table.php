@@ -12,7 +12,6 @@ return new class extends Migration {
             $table->string('code',30)->unique()->comment('Codigo');
             $table->string('name')->comment('Nombre');
             $table->enum('type',['ACTIVO','PASIVO','INGRESO','GASTO','CAPITAL'])->comment('Tipo cuenta');
-            $table->text('comment')->nullable()->comment('Comentario');
             $table->timestamps();
             $table->softDeletes();
         });

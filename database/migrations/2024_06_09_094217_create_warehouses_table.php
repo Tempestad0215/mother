@@ -12,7 +12,6 @@ return new class extends Migration {
             $table->string('name',30)->unique()->comment('Nombre');
             $table->string('description',200)->comment('Descripcion');
             $table->string('location',200)->nullable()->comment('Ubicacion');
-            $table->text('comment')->nullable()->comment('Comentario');
             $table->timestamps();
             $table->softDeletes();
         });
