@@ -56,7 +56,7 @@ Formulario
 const form = useForm({
     id:0,
     code:"",
-    type:"",
+    type:"B01",
     from: 0,
     next: 0,
     to: 0,
@@ -155,17 +155,17 @@ const destroy = (id:number):void => {
         </template>
 
         <!--        Conteneido de la ventana-->
-        <div class=" bg-gray-200 p-5 rounded-md max-w-[1180px] mx-auto grid grid-cols-3 gap-3" >
+        <div class="fondo p-5 rounded-md max-w-[1180px] mx-auto grid grid-cols-3 gap-3" >
 
 
             <div class="col-span-2">
                 <!--            Tabla de las secuencias registrada-->
                 <table class="w-full styleTable" >
-                    <caption class=" text-2xl font-bold">
+                    <caption class=" text-2xl font-bold text-gray-50">
                         Secuencias
                     </caption>
 
-                    <thead class="border-b-2 border-gray-800 text-left">
+                    <thead class="border-b-2  text-left">
                     <tr>
                         <th>Código</th>
                         <th>Tipo</th>
@@ -203,22 +203,30 @@ const destroy = (id:number):void => {
 
 
 
-            <form @submit.prevent="submit"  class=" ">
+            <form
+                @submit.prevent="submit"  class=" ">
 <!--                Generales-->
                 <fieldset
-                    class="border-2 border-gray-800 rounded-md p-3">
+                    class="field rounded-md p-3">
                     <legend class="px-3">
                         Secuencias Correlativos
                     </legend>
 
 <!--                    Tipo de sequencia-->
                     <div>
-                        <InputLabel for="type"  value="Tipo"/>
-                        <Select
+                        <InputLabel
+                            for="type"
+                            value="Tipo"/>
+                        <select
                             v-model="form.type"
-                            placeholder="Tipo Comprobante"
-                            :options="propsW.sequenceType"
-                            fluid/>
+                            class="inputGeneral py-1 w-full">
+                            <option
+                                v-for="(item, index) in propsW.sequenceType"
+                                :key="index"
+                                :value="item">
+                                {{ item }}
+                            </option>
+                        </select>
 
                         <InputError :message="form.errors.type"/>
                     </div>
@@ -228,11 +236,10 @@ const destroy = (id:number):void => {
                         <InputLabel
                             for="from"
                             value="Desde"/>
-                        <InputNumber
+                        <TextInput
+                            class="w-full"
                             v-model="form.from"
-                            inputId="locale-us"
-                            locale="en-US"
-                            fluid />
+                            type="number"/>
 
                         <InputError
                             :message="form.errors.from"/>
@@ -243,11 +250,10 @@ const destroy = (id:number):void => {
                         <InputLabel
                             for="to"
                             value="Hasta"/>
-                        <InputNumber
+                        <TextInput
+                            class="w-full"
                             v-model="form.to"
-                            inputId="locale-us"
-                            locale="en-US"
-                            fluid />
+                            type="number"/>
                         <InputError
                             :message="form.errors.to"/>
                     </div>
@@ -257,11 +263,10 @@ const destroy = (id:number):void => {
                         <InputLabel
                             for="advise"
                             value="Aviso"/>
-                        <InputNumber
+                        <TextInput
+                            class="w-full"
                             v-model="form.advise"
-                            inputId="locale-us"
-                            locale="en-US"
-                            fluid />
+                            type="number"/>
                         <InputError
                             :message="form.errors.advise"/>
                     </div>
@@ -269,7 +274,7 @@ const destroy = (id:number):void => {
                 </fieldset>
 <!--                Informacion de numero-->
                 <fieldset
-                    class="border-2 border-gray-800 rounded-md p-3">
+                    class="field rounded-md p-3">
                     <legend class="px-3">
                         Números
                     </legend>
@@ -301,16 +306,17 @@ const destroy = (id:number):void => {
 
 
 <!--                Fechas-->
-                <fieldset class="border-2 border-gray-800 rounded-md p-3" >
+                <fieldset class="field rounded-md p-3" >
                     <legend class="px-3">
                         Fechas
                     </legend>
                     <!--                    Fecha de solicitud-->
                     <div>
                         <InputLabel for="date_request" value="Fecha de Solicitud"/>
-                        <DatePicker
-                            v-model="form.date_request" />
-
+                        <TextInput
+                            v-model="form.date_request"
+                            class="w-full"
+                            type="date"/>
                         <InputError :message="form.errors.date_request"/>
                     </div>
 
@@ -318,8 +324,10 @@ const destroy = (id:number):void => {
                     <!--                    Fecha Expira-->
                     <div>
                         <InputLabel for="date_expire" value="Fecha de Vencimiento"/>
-                        <DatePicker
-                            v-model="form.date_expire" />
+                        <TextInput
+                            v-model="form.date_expire"
+                            class="w-full"
+                            type="date"/>
                         <InputError :message="form.errors.date_expire"/>
                     </div>
                 </fieldset>

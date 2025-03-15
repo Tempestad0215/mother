@@ -151,8 +151,9 @@ const getErrorPdf = () => {
                 Conteo
             </TabLink>
         </template>
+
 <!--        Contenido de la ventana-->
-        <div class="p-5 bg-blue-300 rounded-md overflow-y-auto">
+        <div class="p-5 fondo rounded-md overflow-y-auto">
 
             <h3 class="title text-center">
                 Cuadre de Caja
@@ -449,7 +450,7 @@ const getErrorPdf = () => {
                                 class="pt-3 field">
                                 <legend>Resultado</legend>
                                 <div>
-                                    <span class="]">
+                                    <span class="text-gray-50">
                                         Efectivo Total:
                                     </span>
                                     <div class=" bg-white px-2 py-1 rounded-md">
@@ -457,7 +458,7 @@ const getErrorPdf = () => {
                                     </div>
                                 </div>
                                 <div>
-                                    <span class="inline-block min-w-[10rem]" >
+                                    <span class="inline-block min-w-[10rem] text-gray-50" >
                                         Total Otros Ingresos:
                                     </span>
                                     <div class=" bg-white px-2 py-1 rounded-md">
@@ -465,7 +466,7 @@ const getErrorPdf = () => {
                                     </div>
                                 </div>
                                 <div>
-                                    <span class="inline-block min-w-[10rem]" >
+                                    <span class="inline-block min-w-[10rem] text-gray-50" >
                                         Total Egresos:
                                     </span>
                                     <div class=" bg-white px-2 py-1 rounded-md">
@@ -473,7 +474,7 @@ const getErrorPdf = () => {
                                     </div>
                                 </div>
                                 <div>
-                                    <span class="inline-block min-w-[10rem]" >
+                                    <span class="inline-block min-w-[10rem] text-gray-50" >
                                         Total Neto:
                                     </span>
                                     <div class=" bg-white px-2 py-1 rounded-md">
@@ -481,7 +482,7 @@ const getErrorPdf = () => {
                                     </div>
                                 </div>
                                 <div>
-                                    <span class="inline-block min-w-[10rem]" >
+                                    <span class="inline-block min-w-[10rem] text-gray-50" >
                                         Diferencia:
                                     </span>
                                     <div class=" bg-white px-2 py-1 rounded-md">

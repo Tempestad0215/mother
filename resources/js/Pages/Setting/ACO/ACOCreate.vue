@@ -123,7 +123,7 @@ const destroy = (item:acoBaseI) => {
         <div class="max-w-[70rem] mx-auto">
             <form
                 @submit.prevent="submit"
-                class="grid grid-cols-3 gap-3 bg-blue-300 p-5 rounded-md">
+                class="grid grid-cols-3 gap-3 fondo p-5 rounded-md">
                 <h3
                     class="title text-center col-span-full">
                     Cuentas Contables
@@ -172,7 +172,7 @@ const destroy = (item:acoBaseI) => {
             </form>
 
 <!--            Cuentas registrada -->
-            <div class="mt-3 p-5 bg-blue-300 rounded-md">
+            <div class="mt-3 p-5 fondo rounded-md">
                 <h3 class="title text-center">
                     Listado de Cuentas
                 </h3>

@@ -1,5 +1,5 @@
 
-export interface WHbaseI{
+export interface warehouseBaseI{
     id: number;
     name: string;
     description: string;

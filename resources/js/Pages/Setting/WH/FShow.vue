@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {WHbaseI} from "@/Interfaces/Warehouse";
+import {warehouseBaseI, WHbaseI} from "@/Interfaces/Warehouse";
 import Swal from "sweetalert2";
 import {router} from "@inertiajs/vue3";
 import {successHttp} from "@/Global/Alert";
@@ -10,7 +10,7 @@ import {successHttp} from "@/Global/Alert";
 Propiedades
  */
 const propsW = defineProps<{
-    warehouse: WHbaseI[]
+    warehouse: warehouseBaseI[]
 }>();
 
 
@@ -20,13 +20,13 @@ const propsW = defineProps<{
  *
  * @param item
  */
-const edit = (item:WHbaseI) => {
-    // form.id = item.id;
-    // form.name = item.name;
-    // form.description = item.description;
-    // form.location = item.location;
-    // form.update = true;
-}
+// const edit = (item:WHbaseI) => {
+//     // form.id = item.id;
+//     // form.name = item.name;
+//     // form.description = item.description;
+//     // form.location = item.location;
+//     // form.update = true;
+// }
 
 
 /**
@@ -58,7 +58,7 @@ const destroy = (item:WHbaseI) => {
 
 <template>
     <!-- Cuentas registrada -->
-    <div class="mt-3 p-5 bg-blue-300 rounded-md">
+    <div class="mt-3 p-5 fondo rounded-md">
         <h3 class="title text-center">
             Listado de Almacenes
         </h3>

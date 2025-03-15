@@ -60,17 +60,6 @@ class Sequence extends Model implements Auditable
     ];
 
 
-    /*
-     * Relaciones
-     */
-
-    //Comentario
-    public function comment():MorphOne
-    {
-        //Retornar la relacion polimorfica
-        return $this->morphOne(Comment::class, 'commentable');
-    }
-
     /**
      * @return void
      */
@@ -93,13 +82,15 @@ class Sequence extends Model implements Auditable
     private static function generateCode():string
     {
         // Obtener el ultimo registros
-        $total = self::count();
+        $total = self::withTrashed()->latest('id')->value('id');
+
 
         // Generar el proximo ID
         $nextID = $total ? $total + 1 : 1;
 
         // Devolver los datos
-        $code = config('appconfig.sequence');
+        $code = config('appconfig.seqCode');
+
 
         // craer el codigp
         return $code.str_pad($nextID, 6,'0', STR_PAD_LEFT);

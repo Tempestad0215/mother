@@ -37,7 +37,7 @@ class WarehouseController extends Controller implements HasMiddleware
     {
 
         //Devolver la vista con los datos
-        return Inertia::render('Setting/WH/WHIndex',[
+        return Inertia::render('Setting/WH/Register',[
             'warehouse' => Warehouse::all()
         ]);
     }

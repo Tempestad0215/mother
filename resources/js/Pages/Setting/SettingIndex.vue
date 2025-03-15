@@ -218,7 +218,7 @@ const removeUnit = (index:number) => {
             </TabLink>
         </template>
         <div
-            class="max-w-[70rem] mx-auto bg-blue-300 rounded-md p-5">
+            class="max-w-[70rem] mx-auto fondo rounded-md p-5">
             <form
                 @submit.prevent="submit">
                 <!--Muestra del logo-->
