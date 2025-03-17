@@ -80,20 +80,13 @@ class SaleHelper
                 'type_payment' => $request->get('type_payment'),
                 'received' => $request->get('received'),
                 'returned' => $request->get('returned'),
-                'credit_notes' => $ids
+                'credit_notes' => $ids,
+                'comment' => $request->get('comment'),
             ]);
 
             //Actualizar los datos de la notas de credito
             CreditNoteHelper::updateAvailableFor($creditNotes, $request->get('amount'));
 
-            //Verificar si existe el comentario
-            if ($request->get('comment') !== null)
-            {
-                //Crear el comentario
-                $sale->comment()->create([
-                    'content' => $request->get('comment'),
-                ]);
-            }
 
             //Recorrer la ventas para descontar los productos
             foreach ($request->get('info_sale') as $value)

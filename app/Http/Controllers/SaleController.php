@@ -56,7 +56,7 @@ class SaleController extends Controller
 
 
     /**
-     * Crear la ventas
+     * Crear la venta
      * @param StoreProductSaleRequest $request
      * @return JsonResponse
      */

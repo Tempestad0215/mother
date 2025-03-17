@@ -469,62 +469,74 @@ const sendData = ():void => {
         //Verificar si no hay problema con nada
         if (!returnedBlur() && form.close_table)
         {
-
-        }else{
+            return;
+        }
             //si es para actualizar
-            if (form.update)
-            {
-                // Actualizar los datos y capturar
-                axios.patch(route('sale.update', {sale: form.id}), form)
-                    .then((res) => {
-                        if (res.status === 200)
-                        {
-                            //si esta cerrada se vas a imprimir
-                            if (form.close_table)
-                            {
-
-                                console.log(res)
-                                //Mostrar el pdf de impresion
-                                printPdf(route('invoice.belt.sale', {sale: res.data.pdfUuid}));
-                            }
-                            // Limpiar el formulario
-                            form.reset();
-                            successHttp('Datos Registrado Correctamente');
-                            // Recargar los datos
-                            router.reload({only:['products','clients','saleOpen','invoiceType','refund']});
-                        }
-                    }).catch((err) => {
-
-                        console.log(err)
-                        //Mensaje de error
-                        errorHttp(`Error : ${err.message}`);
-                });
-            }else{
-                //Guardar los datos por primera vez
-                axios.post(route('sale.create'), form)
-                    .then((res) => {
-                        // La cuenta es cerrada
+        if (form.update)
+        {
+            // Actualizar los datos y capturar
+            axios.patch(route('sale.update', {sale: form.id}), form)
+                .then((res) => {
+                    if (res.status === 200)
+                    {
+                        //si esta cerrada se vas a imprimir
                         if (form.close_table)
                         {
 
-                            // Imprimir el pdf
+                            console.log(res)
+                            //Mostrar el pdf de impresion
                             printPdf(route('invoice.belt.sale', {sale: res.data.pdfUuid}));
                         }
-                        //Limpiar el fomulario
+                        // Limpiar el formulario
                         form.reset();
-                        showReturn.value = false;
-                        //Recargar los datos
+                        successHttp('Datos Registrado Correctamente');
+                        // Recargar los datos
                         router.reload({only:['products','clients','saleOpen','invoiceType','refund']});
-                    })
-                    .catch((err) => {
-                        form.errors = err.response?.data.errors;
+                    }
+                }).catch((err) => {
 
-                        console.log(err)
-                        //Mensaje de error
-                        errorHttp(`Error : ${err.message}`);
-                    });
+                    console.log(err)
+                    //Mensaje de error
+                    errorHttp(`Error : ${err.message}`);
+            });
+        }else{
 
-            }
+            console.log("entro aqui")
+
+            form.post(route('sale.store'),{
+                preserveScroll: true,
+                onSuccess: (response) => {
+                    console.log(response);
+                },
+                onError: (err) => {
+                    console.log(err)
+                }
+            });
+
+            //Guardar los datos por primera vez
+            // axios.post(route('sale.create'), form)
+            //     .then((res) => {
+            //         // La cuenta es cerrada
+            //         if (form.close_table)
+            //         {
+            //
+            //             // Imprimir el pdf
+            //             printPdf(route('invoice.belt.sale', {sale: res.data.pdfUuid}));
+            //         }
+            //         //Limpiar el fomulario
+            //         form.reset();
+            //         showReturn.value = false;
+            //         //Recargar los datos
+            //         router.reload({only:['products','clients','saleOpen','invoiceType','refund']});
+            //     })
+            //     .catch((err) => {
+            //         form.errors = err.response?.data.errors;
+            //
+            //         console.log(err)
+            //         //Mensaje de error
+            //         errorHttp(`Error : ${err.message}`);
+            //     });
+
         }
     }
 }
@@ -992,10 +1004,10 @@ const getRncClient = async () => {
                             <InputError :message="form.errors.general"/>
                         </div>
 
-
-                        <div v-for="(item) in form.errors?.info_sale">
-                            <InputError :message="item"/>
+                        <div>
+                            <InputError :message="form.errors.info_sale"/>
                         </div>
+
 
                         <!--                            Comentario de la venta-->
                         <div class="grid grid-cols-4 items-center gap-4">
