@@ -7,7 +7,8 @@ export interface clientBaseI {
     created_at: string
     email: string | null
     personal_id: string | null
-    type_price: number
+    type_price: number;
+    type_rnc: string;
     id: number
     name: string
     type: string
@@ -27,6 +28,13 @@ export interface clientEditI extends clientBaseI {
     due_date: number;
     late_fee: number;
     balance: number;
+}
+
+export interface rncClientI {
+    rnc: string;
+    razon_social: string;
+    status: string;
+    type:string
 }
 
 

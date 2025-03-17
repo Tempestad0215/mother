@@ -61,6 +61,7 @@ class ClientController extends Controller implements HasMiddleware
         /*Vista con la pagina*/
         return Inertia::render('Clients/Register',[
             'clients' => $data,
+            'typeRNC' => config('appconfig.sequenceSale')
         ]);
 
     }

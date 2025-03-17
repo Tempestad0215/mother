@@ -12,6 +12,7 @@ use App\Models\Sale;
 use App\Models\Setting;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -57,7 +58,7 @@ class SaleController extends Controller
     /**
      * Crear la ventas
      * @param StoreProductSaleRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function store(StoreProductSaleRequest $request)
     {

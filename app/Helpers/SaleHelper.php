@@ -5,7 +5,7 @@ namespace App\Helpers;
 use App\Enums\TransTypeEnum;
 use App\Enums\ProductTypeEnum;
 use App\Enums\SaleTypeEnum;
-use App\Enums\SequenceTypeEnum;
+use App\Enums\SequenceSaleTypeEnum;
 use App\Http\Requests\StoreProductSaleRequest;
 use App\Http\Resources\SaleInfoResource;
 use App\Models\DeletedSale;
@@ -57,7 +57,7 @@ class SaleHelper
              $setting = Setting::first();
 
             //Incrementar la secuencia enviada
-            SequenceHelper::incrementSequence(SequenceTypeEnum::from($request->get('invoice_type')));
+            SequenceHelper::incrementSequence(SequenceSaleTypeEnum::from($request->get('invoice_type')));
 
             //obtener notas de credito
             $creditNotes = $request->get('credit_notes');

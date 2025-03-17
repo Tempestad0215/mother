@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Enums\ClientDocumentEnum;
+use App\Enums\SequenceSaleTypeEnum;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -33,6 +34,7 @@ class UpdateClientsRequest extends FormRequest
             'email'=> ['nullable','string','email','max:150',Rule::unique('clients','email')->ignore($id)],
             'address' => ['nullable','string','max:150'],
             'document' =>  ['required', Rule::enum(ClientDocumentEnum::class)],
+            'type_rnc' => ['required',Rule::enum(SequenceSaleTypeEnum::class)],
             'comment' => ['nullable','string','max:255'],
         ];
     }

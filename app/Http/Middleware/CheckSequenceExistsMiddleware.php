@@ -19,7 +19,12 @@ class CheckSequenceExistsMiddleware
         $sequence = Sequence::where('status', true)->exists();
 
 //        Verificar si existe alguna secuancia
-        if($setting && $setting->sequence && !$sequence && $request->isMethod('get') && !Route::is('sequence.create') ){
+        if($setting &&
+            $setting->sequence
+            && !$sequence && $request->isMethod('get')
+            && !Route::is('sequence.create')
+            && !Route::is('setting.index')
+            && !Route::is('login')){
             return redirect()->route('sequence.create');
         }
 //        Continuar con el flujo normal

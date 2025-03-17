@@ -27,7 +27,9 @@ const propsW = defineProps<{
  */
 const form = useForm({
     search: "",
-    perPage: 30,
+    per_page: 30,
+    field:"client"
+
 });
 
 
@@ -84,7 +86,7 @@ const printFact =  (item:creditNotesSaleI) => {
                 <form
                     @submit.prevent="submit">
                     <FormSearch
-                        v-model:per-page="form.perPage"
+                        v-model:per-page="form.per_page"
                         v-model:search="form.search"/>
                 </form>
                 <h3 class="text-3xl font-bold">
@@ -130,14 +132,13 @@ const printFact =  (item:creditNotesSaleI) => {
 
             <!--            PAginacion de la ventana-->
             <Pagination
+                :field="form.field"
+                :per-page="form.per_page"
+                :search="form.search"
                 :current-page="propsW.sales.current_page"
                 :total-page="propsW.sales.to"
-                :prev="propsW.sales.prev_page_url
-                    ? propsW.sales.prev_page_url+'&perPage='+form.perPage
-                    :''"
-                :next=" propsW.sales.prev_page_url
-                    ? propsW.sales.next_page_url+'&perPage='+form.perPage
-                    : ''"/>
+                :prev="propsW.sales.prev_page_url"
+                :next=" propsW.sales.prev_page_url"/>
 
             <!--           Mensajke de error-->
             <InputError :message="page.props.errors.comment"/>

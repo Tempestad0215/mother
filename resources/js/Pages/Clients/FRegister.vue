@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {configPercent, getMoney, moneyConfig} from "@/Global/Helpers";
+import {configPercent, getMoney, getRncHelper, moneyConfig} from "@/Global/Helpers";
 import ToggleButton from "@components/ToggleButton.vue";
 import TextInput from "@components/TextInput.vue";
 import {Money} from "v-money3";
@@ -10,6 +10,7 @@ import {computed, onMounted, reactive, ref, Ref} from "vue";
 import {clientEditI} from "@/Interfaces/Client";
 import {useForm} from "@inertiajs/vue3";
 import {successHttp} from "@/Global/Alert";
+import Swal from "sweetalert2";
 
 
 
@@ -19,6 +20,7 @@ import {successHttp} from "@/Global/Alert";
 const propsW = defineProps<{
     clientEdit?: clientEditI,
     update?: boolean,
+    typeRNC: string[]
 }>();
 
 /**
@@ -86,7 +88,6 @@ const typeDocument:Ref<Array<any>> = ref([
     // }
 ]);
 
-
 //Posibles máscara para documents
 const masks = reactive<Record<string, string>>({
     cedula: '###-#######-#',
@@ -104,6 +105,7 @@ const selectedMask = computed(()=>{
  */
 const form = useForm({
     id:0,
+    type_rnc:"B02",
     name:"",
     personal_id:"",
     phone:"",
@@ -151,6 +153,53 @@ const submit = ():void => {
                 form.reset();
             }
         });
+    }
+}
+
+// Buscar el RNc si el tipo es diferente a B02
+const searchRNC = async () => {
+
+    // si el rnc es diferete, debe buscar el rnc registrado para cambiar el nombre de la razon socials
+    if (form.type_rnc !== "B02" && form.personal_id.length > 7)
+    {
+
+        // Buscar el rnc
+        const data = await getRncHelper(form.personal_id);
+
+        // Si el resultado es suspendido
+        if (data == "SUSPENDIDO")
+        {
+            form.setError("type_rnc", "Comprobante suspendido");
+            return;
+        }
+
+        // Si el resultado es error
+        if (data == "ERROR")
+        {
+            form.setError("type_rnc", "Error al consultar comprobante, intente nuevamente");
+            return;
+        }
+
+
+        /*Verificar si es tipo objecto y no es nuelo*/
+        if (typeof data === "object" && data !== null)
+        {
+            Swal.fire({
+                title: "Desea Cambiar?",
+                text: "RNC Valido, ¿ Prefiere Cambiar El Nombre a la Razon Social ?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Si, Cambiar!",
+                cancelButtonText: "Cancelar",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.name = data.razon_social;
+                }
+            });
+        }
+
     }
 }
 
@@ -216,6 +265,26 @@ const submit = ():void => {
                 </select>
                 <InputError :message="form.errors.document"/>
             </div>
+
+            <!--Tipo de RNC-->
+            <div class="ml-3">
+                <InputLabel for="type_rnc" value="Comprobante"/>
+
+                <select
+                    @change="searchRNC"
+                    v-model.lazy="form.type_rnc"
+                    class="inputGeneral py-1">
+                    <option
+                        v-for="(item, index) in propsW.typeRNC"
+                        :key="index"
+                        :value="item">
+                        {{item}}
+                    </option>
+                </select>
+                <InputError :message="form.errors.type_rnc"/>
+            </div>
+
+
             <!-- Rcibir correo de esta app -->
             <div class="ml-3">
                 <ToggleButton
@@ -223,10 +292,7 @@ const submit = ():void => {
                     off-label="NO"
                     on-label="SI"
                     label="Correos"/>
-                <!--                        <ToggleButton-->
-                <!--                            v-model="form.status"-->
-                <!--                            onLabel="SI" offLabel="NO" />-->
-                <InputError :message="form.errors.status" />
+               <InputError :message="form.errors.status" />
             </div>
 
 
@@ -237,14 +303,9 @@ const submit = ():void => {
                     off-label="Inactivo"
                     on-label="Activo"
                     label="Estado"/>
-                <!--                        <ToggleButton-->
-                <!--                            v-model="form.status"-->
-                <!--                            onLabel="SI" offLabel="NO" />-->
                 <InputError :message="form.errors.status" />
             </div>
-
         </div>
-
 
         <!--                Datos personales-->
         <fieldset class="field">
@@ -277,6 +338,7 @@ const submit = ():void => {
                     class="w-full"
                     v-model="form.personal_id"
                     v-mask="selectedMask"
+                    @blur="searchRNC"
                     :placeholder="selectedMask" />
                 <!-- Error -->
                 <InputError :message="form.errors.personal_id" />
@@ -292,7 +354,7 @@ const submit = ():void => {
                     v-model="form.phone"
                     class="w-full"
                     fluid
-                    v-mask="['+# (###) ###-####', '+## (###) ###-####']"
+                    v-mask="['+# (###) ###-####', '+## (###) ###-####','+### (###) ###-####']"
                     placeholder="+1 (829) 352-6526" />
 
                 <!-- Error -->

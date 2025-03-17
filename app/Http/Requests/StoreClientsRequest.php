@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Enums\ClientDocumentEnum;
 use App\Enums\ClientTypeEnum;
 use App\Enums\ClientTypePriceEnum;
+use App\Enums\SequenceSaleTypeEnum;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -39,6 +40,7 @@ class StoreClientsRequest extends FormRequest
             'personal_id' => ['nullable','string','max:50',Rule::requiredIf($isRequired)],
             'email'=> ['nullable','string','email','max:150', Rule::unique('clients','email'),Rule::requiredIf($isRequired)],
             'address' => ['nullable','string','max:255',Rule::requiredIf($isRequired)],
+            'type_rnc' => ['required',Rule::enum(SequenceSaleTypeEnum::class)],
             'type' => ['required', Rule::enum(ClientTypeEnum::class),'string'],
             'type_price' => [Rule::enum(ClientTypePriceEnum::class),'numeric','required'],
             'receive_email' => ['required','boolean'],

@@ -1,21 +1,17 @@
 <script setup lang="ts">
-
-import {PropType} from "vue";
-import {saleDataI, saleDataPaginationI} from "@/Interfaces/Sale";
+import {saleDataI} from "@/Interfaces/Sale";
 import {getMoney} from "@/Global/Helpers";
 import Pagination from "@components/Pagination.vue";
 import FormSearch from "@components/FormSearch.vue";
 import {useForm} from "@inertiajs/vue3";
+import {paginationI} from "@/Interfaces/Global";
 
 /**
  * Propiedades de la ventana
  */
-const props = defineProps({
-    saleOpen: {
-        type: Object as PropType<saleDataPaginationI>,
-        required: true
-    }
-});
+const props = defineProps<{
+    saleOpen: paginationI<saleDataI>
+}>();
 
 /**
  * Formulario
@@ -23,7 +19,8 @@ const props = defineProps({
 
 const form = useForm({
     search: "",
-    perPage: 15
+    per_page: 15,
+    field: "name"
 })
 
 
@@ -56,7 +53,7 @@ const submit = () => {
             <form @submit.prevent="submit()">
                 <FormSearch
                     holder="Buscar"
-                    v-model:select-value="form.perPage"
+                    v-model:select-value="form.per_page"
                     v-model="form.search"
                 />
             </form>
@@ -95,6 +92,9 @@ const submit = () => {
         </table>
 
         <Pagination
+            :field="form.field"
+            :search="form.search"
+            :per-page="form.per_page"
             :current-page="props.saleOpen?.current_page"
             :total-page="props.saleOpen?.to"
             :next="props.saleOpen?.next_page_url"

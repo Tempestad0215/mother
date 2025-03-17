@@ -5,13 +5,13 @@ namespace App\Models;
 use App\Enums\ClientDocumentEnum;
 use App\Enums\ClientTypeEnum;
 use App\Enums\ClientTypePriceEnum;
+use App\Enums\SequenceSaleTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Date;
-use Laravel\Scout\Attributes\SearchUsingPrefix;
 use Laravel\Scout\Searchable;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -19,6 +19,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 /**
  * @property integer id;
  * @property string name
+ * @property SequenceSaleTypeEnum type_rnc
  * @property string phone
  * @property string personal_id
  * @property string email
@@ -53,6 +54,7 @@ class Client extends Model implements Auditable
      */
     protected $fillable = [
         'name',
+        'type_rnc',
         'document',
         'personal_id',
         'receive_email',
@@ -67,34 +69,11 @@ class Client extends Model implements Auditable
 
     protected $casts = [
         'type' => ClientTypeEnum::class,
+        'type_rnc' => SequenceSaleTypeEnum::class,
         'document' => ClientDocumentEnum::class,
         'type_price' => ClientTypePriceEnum::class,
         'status'=> 'boolean',
     ];
-
-
-    /**
-     * Para buscar los datos
-     * @return array
-     */
-    #[SearchUsingPrefix([ 'email'])]
-    public function toSearchableArray(): array
-    {
-        return [
-            'name' => $this->name,
-            'document' => $this->document,
-            'phone' => $this->phone,
-            'email' => $this->email,
-        ];
-    }
-
-    /**
-     * Relaciones
-     */
-    public function comment():MorphOne
-    {
-        return $this->morphOne(Comment::class, 'commentable');
-    }
 
 
     public function image():MorphOne
@@ -139,7 +118,7 @@ class Client extends Model implements Auditable
     private static function generateCode():string
     {
         // Obtener el ultimo registros
-        $total = self::count();
+        $total = self::withTrashed()->latest('id')->value('id');
 
 
 

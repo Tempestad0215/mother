@@ -10,6 +10,7 @@ import TabLink from "@components/TabLink.vue";
 const propsW = defineProps<{
     clientEdit?: clientEditI,
     update?: boolean,
+    typeRNC: string[]
 }>();
 </script>
 
@@ -27,7 +28,8 @@ const propsW = defineProps<{
         </template>
 
         <FRegister
-            :clientEdit="propsW.clientEdit"/>
+            :clientEdit="propsW.clientEdit"
+            :typeRNC="typeRNC"/>
 
     </AppLayout>
 </template>

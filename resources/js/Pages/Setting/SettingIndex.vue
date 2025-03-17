@@ -209,6 +209,10 @@ const removeUnit = (index:number) => {
                 Ajustes
             </TabLink>
             <TabLink
+                :href="route('sequence.create')">
+                Correlativos
+            </TabLink>
+            <TabLink
                 :href="route('aco.index')">
                 Cuentas
             </TabLink>

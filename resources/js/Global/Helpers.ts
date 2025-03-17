@@ -1,6 +1,7 @@
 import Swal from "sweetalert2";
 import axios from "axios";
 import {errorHttp} from "@/Global/Alert";
+import {rncClientI} from "@/Interfaces/Client";
 
 
 /**
@@ -94,10 +95,11 @@ export const getMoney = (value:number = 0) => {
     }).format(value);
 }
 
-/*
- * Buscar el RNC de los datos
+/**
+ * Busca el RNC y devuelve un string
+ * @param data
  */
-export const getRncHelper = async (data: string):Promise<string> => {
+export const getRncHelper = async (data: string):Promise<"SUSPENDIDO" | "ERROR" | "CANCELLED" | rncClientI> => {
 
     //Preguntar para buscar los datos
     const result = await Swal.fire({
@@ -113,14 +115,16 @@ export const getRncHelper = async (data: string):Promise<string> => {
 
     //Verificar
     if (result.isConfirmed){
+        let info:string = data.replace(/-/g, "");
+
         try {
-            const response = await axios.get(route('sequence.getRnc', { rnc: data }));
+            const response = await axios.get(route('sequence.getRnc', { rnc: info }));
             const status = response.data.status;
 
             if (status === "SUSPENDIDO") {
                 return "SUSPENDIDO";
             } else {
-                return JSON.stringify(response.data);
+                return response.data;
             }
         } catch (error) {
             return "ERROR";

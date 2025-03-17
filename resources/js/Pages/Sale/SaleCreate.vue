@@ -10,14 +10,14 @@ import {productFullI, productI} from "@/Interfaces/Product";
 import {getMoney, getRncHelper, getSequenceType, moneyConfig, printPdf} from "@/Global/Helpers";
 import Swal from "sweetalert2";
 import InputError from "@components/InputError.vue";
-import {clientBaseI} from "@/Interfaces/Client";
+import {clientBaseI, rncClientI} from "@/Interfaces/Client";
 import FShowClient from "@/Pages/Clients/FShow.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import {errorHttp, successHttp} from "@/Global/Alert";
 import axios from "axios";
 import SaleOpenShow from "@/Pages/Sale/SaleOpenShow.vue";
-import {creditNotesSaleI, infoSaleI, saleDataI, saleDataPaginationI} from "@/Interfaces/Sale";
-import {invoiceTypeI, rncUserI, sequenceDataI} from "@/Interfaces/Setting";
+import {creditNotesSaleI, infoSaleI, saleDataI} from "@/Interfaces/Sale";
+import {invoiceTypeI, sequenceDataI} from "@/Interfaces/Setting";
 import PaymentInvoice from "@components/PaymentInvoice.vue";
 import ReturnForm from "@components/ReturnForm.vue";
 import {Money} from "v-money3";
@@ -37,7 +37,7 @@ const page = usePage();
 const propsW = defineProps<{
     products: productI,
     clients: paginationI<clientBaseI>,
-    saleOpen : saleDataPaginationI,
+    saleOpen : paginationI<saleDataI>,
     invoiceType: invoiceTypeI[],
     saleInfo?: saleDataI,
     refund?: boolean,
@@ -171,7 +171,7 @@ const setDataForm = () => {
 const getSequence = async (type: string) => {
 
     //Verificar si existe la secuencia
-    if (!page.props.setting.sequence)
+    if (page.props.setting.sequence)
     {
         //Realizar la buqueda
         const result = await axios.get(route('sequence.get', {type: type}));
@@ -417,6 +417,21 @@ const selectClient = (item:clientBaseI) =>  {
     //Pasar los datos al formulario
     form.client_name = item.name;
     form.client_id = item.id;
+    form.invoice_type = item.type_rnc;
+
+
+    // Si es diferente a b02, colocar el comprobante
+    if (item.type_rnc !== "B02")
+    {
+        form.client_rnc = item.personal_id || "";
+        showClientRnc.value = true;
+    }
+
+
+    // Obtener la secuencia del comprobante
+    getSequence(item.type_rnc);
+
+    //
     showClient.value = false;
 }
 
@@ -653,11 +668,14 @@ const getRncClient = async () => {
             form.setError("client_rnc", "Este Contribuyente Esta Cancelado");
         }else{
             //Formatear el json
-            const info:rncUserI = JSON.parse(result);
+            const info:rncClientI = result;
 
             //Poner cada dato en su lugar
             form.client_name = info.razon_social;
             form.client_rnc_status = info.status;
+
+            // Limpiar el formulario
+            form.clearErrors();
         }
     }
 }
@@ -761,36 +779,30 @@ const getRncClient = async () => {
                         </div>
 
 <!--                            Datos de comprobante-->
-                        <div
-                            class="flex flex-col-reverse"
-                            v-if="form.sequence_type !== ''">
-<!--                                Mensaje de cargando-->
-                            <!--Numero de comprobantes-->
-                            <fieldset class="border-2 border-gray-400 rounded-md px-2 mx-3 w-[350px] ">
-                                <legend>
-                                    {{form.sequence_type}}
-                                </legend>
-                                <p class="truncate"><strong>NCF :</strong> {{form.ncf}}</p>
-                                <p
-                                    v-if="form.invoice_type === 'B04'"
-                                    class="truncate"><strong>NCF M. :</strong> {{form.ncf_m}}</p>
-                            </fieldset>
+                        <fieldset class="field rounded-md px-2 mx-3 w-[350px] ">
+                            <legend>
+                                {{form.sequence_type}}
+                            </legend>
+                            <p class="truncate"><strong>NCF :</strong> {{form.ncf}}</p>
+                            <p
+                                v-if="form.invoice_type === 'B04'"
+                                class="truncate"><strong>NCF M. :</strong> {{form.ncf_m}}</p>
+                        </fieldset>
 
-                            <!--Numero de comprobantes-->
-                            <fieldset
-                                v-if="showClientRnc"
-                                class=" border-2 border-gray-400 rounded-md px-2 mx-3 w-[350px] max-w-[400px]">
-                                <legend>
-                                    Datos Tributario
-                                </legend>
-                                <p><strong>RNC :</strong> {{form.client_rnc}}</p>
-                                <p class="max-w-[300px] truncate">
-                                    <strong>Razon Social :</strong>
-                                    {{form.client_name}}
-                                </p>
-                            </fieldset>
+                        <!--Numero de comprobantes-->
+                        <fieldset
+                            v-if="showClientRnc"
+                            class="field block rounded-md px-2 mx-3 w-[350px] max-w-[400px]">
+                            <legend>
+                                Datos Tributario
+                            </legend>
+                            <p><strong>RNC :</strong> {{form.client_rnc}}</p>
+                            <p class="max-w-[300px] truncate">
+                                <strong>Razon Social :</strong>
+                                {{form.client_name}}
+                            </p>
+                        </fieldset>
 
-                        </div>
                     </div>
 
 <!--                        Datos del formulario-->

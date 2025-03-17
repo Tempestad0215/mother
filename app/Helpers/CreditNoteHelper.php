@@ -5,7 +5,7 @@ namespace App\Helpers;
 use App\Enums\TransTypeEnum;
 use App\Enums\ProductTypeEnum;
 use App\Enums\SaleTypeEnum;
-use App\Enums\SequenceTypeEnum;
+use App\Enums\SequenceSaleTypeEnum;
 use App\Http\Requests\StoreProductSaleRequest;
 use App\Models\CreditNote;
 use App\Models\Product;
@@ -39,7 +39,7 @@ class CreditNoteHelper
             if ($type == SaleTypeEnum::DEVOLUCION->value)
             {
                 //Crear el aumento de los comprobante
-                SequenceHelper::incrementSequence(SequenceTypeEnum::B04);
+                SequenceHelper::incrementSequence(SequenceSaleTypeEnum::B04);
             }
 
             //Crear la devolucion

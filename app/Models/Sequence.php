@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\SequenceTypeEnum;
+use App\Enums\SequenceSaleTypeEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,7 +13,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 /**
  * @property int id
  * @property string $code
- * @property SequenceTypeEnum $type
+ * @property SequenceSaleTypeEnum $type
  * @property int $from
  * @property int $next
  * @property int $to
@@ -56,7 +56,7 @@ class Sequence extends Model implements Auditable
      * @var \class-string[]
      */
     protected $casts = [
-        'type' => SequenceTypeEnum::class,
+        'type' => SequenceSaleTypeEnum::class,
     ];
 
 

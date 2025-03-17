@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\SequenceTypeEnum;
+use App\Enums\SequenceSaleTypeEnum;
 use App\Helpers\SequenceHelper;
 use App\Http\Requests\SequenceRequest;
 use App\Models\Sequence;
@@ -100,10 +100,10 @@ class SequenceController extends Controller
     }
 
     /**
-     * @param SequenceTypeEnum $type
+     * @param SequenceSaleTypeEnum $type
      * @return JsonResponse
      */
-    public function get(SequenceTypeEnum $type)
+    public function get(SequenceSaleTypeEnum $type)
     {
         //Intancia
         $sequenceHelper = new SequenceHelper();
