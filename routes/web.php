@@ -328,20 +328,13 @@ Route::middleware([
         });
 
 
-//    Route::get('/test',function(){
-////
-//        $counter = MoneyCounter::first();
-//        $setting = Setting::first();
+    Route::get('/test',function(){
 //
-//        return Pdf::view('pdfs.InvoiceCounterB5',[
-//            'counter' => $counter,
-//            'setting' => $setting,
-//        ])->paperSize(80,240)
-//            ->margins(2,2,2,2);
-//
-//    });
+        $counter = \App\Models\MoneyCounter::first();
+        $setting = \App\Models\Setting::first();
 
-    Route::get('/test', function () {
-       return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\ClientExport,  'client.xlsx');
+        return "fjuncina";
+
+
     });
 });

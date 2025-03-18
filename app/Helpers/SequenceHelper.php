@@ -84,9 +84,10 @@ class SequenceHelper
        //Verificar si la secuancia existe
         if (!$sequence) {
             return response()->json([
-                'error' => 'El tipo de Secuancia no existe.'
+                'error' => 'El tipo de Secuancia no existe en lo registro.'
             ],404);
         }
+
 
         //Devolver el mensaje de existo
         return response()->json($sequence);

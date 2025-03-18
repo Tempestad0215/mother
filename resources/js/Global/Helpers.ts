@@ -169,7 +169,6 @@ export const getSequenceType = (type:string):string =>
     }
 }
 
-
 /**
  * Generar colores para los charts
  * @param numItems
@@ -207,7 +206,6 @@ export const setHour = (h:number, m:number, s:number, ms:number):string => {
     //colocar la hora
     date.setHours(h,m,s,ms);
 
-    //Formatear la fecha
     //Obtener el input para poner la fecha
     return  getDateInUtc4(date);
 }
@@ -233,10 +231,9 @@ const getDateInUtc4 = (date:Date):string => {
  * @param search
  * @param perPage
  */
-export const paginationJoin = (url:string,field: string, search:string, perPage:number) => {
+export const paginationJoin = (url:string,field: string, search:string, perPage:number):string => {
     return url+'&field'+field+'&search='+search+'&perPage='+perPage;
 }
-
 
 /**
  * Para imprimir los pdf

@@ -7,10 +7,10 @@ import FloatBox from "@components/FloatBox.vue";
 import FShow from "@/Pages/Products/FShow.vue";
 import { onMounted, onUpdated, Ref, ref} from "vue";
 import {productFullI, productI} from "@/Interfaces/Product";
-import {getMoney, getRncHelper, getSequenceType, moneyConfig, printPdf} from "@/Global/Helpers";
+import {getMoney, getSequenceType, moneyConfig, printPdf} from "@/Global/Helpers";
 import Swal from "sweetalert2";
 import InputError from "@components/InputError.vue";
-import {clientBaseI, rncClientI} from "@/Interfaces/Client";
+import {clientBaseI} from "@/Interfaces/Client";
 import FShowClient from "@/Pages/Clients/FShow.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import {errorHttp, successHttp} from "@/Global/Alert";
@@ -170,33 +170,43 @@ const setDataForm = () => {
  */
 const getSequence = async (type: string) => {
 
-    //Verificar si existe la secuencia
-    if (page.props.setting.sequence)
-    {
-        //Realizar la buqueda
-        const result = await axios.get(route('sequence.get', {type: type}));
-
-        //Verificar si la secuencia es correcta
-        if (result.status === 200 &&  typeof(result.data) ==='object')
+    try {
+        //Verificar si existe la secuencia
+        if (page.props.setting.sequence)
         {
-            //Pasar los datos a las variables
-            sequenceData.value  = result.data || null;
+            //Realizar la buqued
+            const result = await axios.get(route('sequence.get', {type: type}));
 
-            //Obtner el tipo de secuencia
-            form.sequence_type = getSequenceType(type);
-
-            //Asegurar de que los datos existan
-            if (sequenceData.value && sequenceData.value.type && sequenceData.value.next != undefined )
+            //Verificar si la secuencia es correcta
+            if (result.status === 200 &&  typeof(result.data) ==='object')
             {
-                form.ncf = sequenceData.value.type+sequenceData.value.next.toString().padStart(8, '0');
-            }
-            //Crear la secuencia
+                //Pasar los datos a las variables
+                sequenceData.value  = result.data || null;
 
-        }else{
-            //Mensaje de error
-            form.setError("sequence", "Este Comprobante No Puedo Ser");
+
+
+                //Obtner el tipo de secuencia
+                form.sequence_type = getSequenceType(type);
+
+                //Asegurar de que los datos existan
+                if (sequenceData.value && sequenceData.value.type && sequenceData.value.next != undefined )
+                {
+                    form.clearErrors("ncf");
+                    form.ncf = sequenceData.value.type+sequenceData.value.next.toString().padStart(8, '0');
+
+                }
+                //Crear la secuencia
+
+            }else{
+                //Mensaje de error
+                form.setError("sequence", "Este Comprobante No Puedo Ser");
+            }
         }
+    }catch (err) {
+        form.ncf = "";
+        form.setError("ncf", "No Existe NCF Disponible, Para Esta Serie");
     }
+
 }
 
 
@@ -664,31 +674,31 @@ const getRncClient = async () => {
         form.setError("client_rnc",'Por favor, La Longitud De La Cadena Es Insuficiente');
     }else{
         //Obtener el resultado de los
-        const result = await getRncHelper(form.client_rnc);
-
-        //Verificar el estado del RNC
-        if (result === "SUSPENDIDO")
-        {
-            form.setError("client_rnc", "Este Contribuyente Esta Suspendido, Por Favor Elegir Otro");
-
-        }else if (result === "ERROR")
-        {
-            form.setError("client_rnc", "Este Contribuyente No Pudo Ser Encontrado");
-
-        }else if (result === "CANCELLED")
-        {
-            form.setError("client_rnc", "Este Contribuyente Esta Cancelado");
-        }else{
-            //Formatear el json
-            const info:rncClientI = result;
-
-            //Poner cada dato en su lugar
-            form.client_name = info.razon_social;
-            form.client_rnc_status = info.status;
-
-            // Limpiar el formulario
-            form.clearErrors();
-        }
+        // const result = await getRncHelper(form.client_rnc);
+        //
+        // //Verificar el estado del RNC
+        // if (result === "SUSPENDIDO")
+        // {
+        //     form.setError("client_rnc", "Este Contribuyente Esta Suspendido, Por Favor Elegir Otro");
+        //
+        // }else if (result === "ERROR")
+        // {
+        //     form.setError("client_rnc", "Este Contribuyente No Pudo Ser Encontrado");
+        //
+        // }else if (result === "CANCELLED")
+        // {
+        //     form.setError("client_rnc", "Este Contribuyente Esta Cancelado");
+        // }else{
+        //     //Formatear el json
+        //     const info:rncClientI = result;
+        //
+        //     //Poner cada dato en su lugar
+        //     form.client_name = info.razon_social;
+        //     form.client_rnc_status = info.status;
+        //
+        //     // Limpiar el formulario
+        //     form.clearErrors();
+        // }
     }
 }
 
@@ -729,11 +739,10 @@ const getRncClient = async () => {
             <form
                 class=" max-w-3/5">
                 <div >
-                    <div class="flex">
-                        <div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div class="">
 <!--                                Botones para buscar datos-->
-                            <div class="flex space-x-5 items-center ">
-
+                            <div class="space-x-5 items-center w-full">
                                 <div class="relative">
                                     <input-label
                                         for="product"
@@ -743,7 +752,7 @@ const getRncClient = async () => {
                                         <TextInput
                                             type="search"
                                             :readonly="form.invoice_type === 'B04' "
-                                            class=" w-[400px] pr-10"
+                                            class=" w-full pr-10"
                                             v-model.trim="form.client_name"
                                             placeholder="Cliente"/>
 <!--                                            Colocar al lado esto-->
@@ -765,14 +774,14 @@ const getRncClient = async () => {
 
 
                             <!--RNC del cliente-->
-                            <div v-if="showClientRnc && page.props.setting.sequence" >
+                            <div v-if="showClientRnc && page.props.setting.sequence && !form.errors.ncf" >
                                 <InputLabel
                                     for="client_rnc"
                                     value="RNC" />
                                 <div class="relative">
                                     <TextInput
                                         v-model="form.client_rnc"
-                                        class="w-[400px] pr-[32px]"
+                                        class="w-full pr-[32px]"
                                         type="search" />
                                     <i
                                         @click="getRncClient"
@@ -785,17 +794,29 @@ const getRncClient = async () => {
 
 <!--                            Mensaje cargando-->
                         <div
-                            class=" flex-1 flex justify-end animate-pulse text-gray-50 "
-                            v-if="form.sequence_type == '' && page.props.setting.sequence">
-                            Cargando....
+                            v-if="form.sequence_type == '' && page.props.setting.sequence || form.errors.ncf"
+                            class="grid grid-cols-1 w-full justify-items-center ">
+                            <div
+                                class="animate-pulse text-gray-50 "
+                                v-if="form.sequence_type == '' && page.props.setting.sequence">
+                                Cargando....
+                            </div>
+                            <!--                        Error de los NCF si no existe-->
+                            <div
+                                class="justify-items-center"
+                                v-if="form.errors.ncf">
+                                <InputError :message="form.errors.ncf"/>
+                            </div>
                         </div>
 
-<!--                            Datos de comprobante-->
-                        <fieldset class="field rounded-md px-2 mx-3 w-[350px] ">
+
+                        <fieldset
+                            class="field block rounded-md"
+                            v-if="form.sequence_type !== '' && page.props.setting.sequence && !form.errors.ncf">
                             <legend>
                                 {{form.sequence_type}}
                             </legend>
-                            <p class="truncate"><strong>NCF :</strong> {{form.ncf}}</p>
+                            <p class=""><strong>NCF :</strong> {{form.ncf}}</p>
                             <p
                                 v-if="form.invoice_type === 'B04'"
                                 class="truncate"><strong>NCF M. :</strong> {{form.ncf_m}}</p>
@@ -803,8 +824,8 @@ const getRncClient = async () => {
 
                         <!--Numero de comprobantes-->
                         <fieldset
-                            v-if="showClientRnc"
-                            class="field block rounded-md px-2 mx-3 w-[350px] max-w-[400px]">
+                            class="field block rounded-md"
+                            v-if="showClientRnc && !form.errors.ncf">
                             <legend>
                                 Datos Tributario
                             </legend>
@@ -814,6 +835,7 @@ const getRncClient = async () => {
                                 {{form.client_name}}
                             </p>
                         </fieldset>
+
 
                     </div>
 

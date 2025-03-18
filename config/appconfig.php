@@ -16,6 +16,7 @@ return  [
      * Datos de la emprsa
      */
     'company_type' =>  ['BAR','GYM','REPUESTO','SUPERMERCADO','OTRO'],
+    'sequence' => ['B01','B02','B03','B04','B11','B12','B13','B14','B15','B16','B17'],
     'sequenceSale' => ['B01','B02','B14','B15','B16'],
     'sequencePurchase' => ['B11','B12','B13','B17'],
     'invoiceType' =>  [

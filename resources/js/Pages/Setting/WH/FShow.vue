@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {warehouseBaseI, WHbaseI} from "@/Interfaces/Warehouse";
+import {warehouseBaseI} from "@/Interfaces/Warehouse";
 import Swal from "sweetalert2";
 import {router} from "@inertiajs/vue3";
 import {successHttp} from "@/Global/Alert";
@@ -20,20 +20,20 @@ const propsW = defineProps<{
  *
  * @param item
  */
-// const edit = (item:WHbaseI) => {
-//     // form.id = item.id;
-//     // form.name = item.name;
-//     // form.description = item.description;
-//     // form.location = item.location;
-//     // form.update = true;
-// }
+const edit = (item:warehouseBaseI) => {
+    // form.id = item.id;
+    // form.name = item.name;
+    // form.description = item.description;
+    // form.location = item.location;
+    // form.update = true;
+}
 
 
 /**
  *
  * @param item
  */
-const destroy = (item:WHbaseI) => {
+const destroy = (item:warehouseBaseI) => {
     Swal.fire({
         title: "Desea Eliminar?",
         text: "Los Cambios Realizados Son Irreversible!",

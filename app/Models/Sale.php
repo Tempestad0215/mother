@@ -42,6 +42,7 @@ use OwenIt\Auditing\Models\Audit;
  * @property string[] credit_notes
  * @property float credit_notes_amount
  * @property Audit audits
+ * @property string comment
  */
 
 
@@ -77,7 +78,8 @@ class Sale extends Model implements Auditable
         'status',
         'close_table',
         'credit_notes',
-        'credit_notes_amount'
+        'credit_notes_amount',
+        'comment'
     ];
 
     //Formatear los datos
@@ -93,12 +95,6 @@ class Sale extends Model implements Auditable
     /*
      * Relaciones
      */
-
-    //Relacion de comentario
-    public function comment():MorphOne
-    {
-        return $this->morphOne(Comment::class, 'commentable');
-    }
 
     /**
      * @return BelongsTo
