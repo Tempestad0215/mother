@@ -120,12 +120,9 @@ class Ticket80 extends \TCPDF
                 'stretchtext' => 4
             );
 
-            $barcodeWidth = 60; // Ancho del código de barras en mm
-            $pageWidth = 80; // Ancho de la página
-            $xPosition = ($pageWidth - $barcodeWidth) / 2; // Centrar código de barras
 
             $this->Cell(0, 5, "Código de Factura:", 0, 1, 'C');
-            $this->write1DBarcode($this->sale->code, 'C128', $xPosition, '', $barcodeWidth, 20, 0.4, $style, 'N');
+            $this->write1DBarcode($this->sale->code, 'C128', '', '', 76, 20, 0.6, $style, 'N');
         }
 
         // Mensaje de garantía
