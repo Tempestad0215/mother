@@ -7,10 +7,10 @@ import FloatBox from "@components/FloatBox.vue";
 import FShow from "@/Pages/Products/FShow.vue";
 import { onMounted, onUpdated, Ref, ref} from "vue";
 import {productFullI, productI} from "@/Interfaces/Product";
-import {getMoney, getSequenceType, moneyConfig, printPdf} from "@/Global/Helpers";
+import {getMoney, getRncHelper, getSequenceType, moneyConfig, printPdf} from "@/Global/Helpers";
 import Swal from "sweetalert2";
 import InputError from "@components/InputError.vue";
-import {clientBaseI} from "@/Interfaces/Client";
+import {clientBaseI, rncClientI} from "@/Interfaces/Client";
 import FShowClient from "@/Pages/Clients/FShow.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import {errorHttp, successHttp} from "@/Global/Alert";
@@ -629,7 +629,6 @@ const getSaleOpen = (item:saleDataI) => {
 
 }
 
-
 /**
  * verificar la venta
  */
@@ -674,31 +673,31 @@ const getRncClient = async () => {
         form.setError("client_rnc",'Por favor, La Longitud De La Cadena Es Insuficiente');
     }else{
         //Obtener el resultado de los
-        // const result = await getRncHelper(form.client_rnc);
-        //
-        // //Verificar el estado del RNC
-        // if (result === "SUSPENDIDO")
-        // {
-        //     form.setError("client_rnc", "Este Contribuyente Esta Suspendido, Por Favor Elegir Otro");
-        //
-        // }else if (result === "ERROR")
-        // {
-        //     form.setError("client_rnc", "Este Contribuyente No Pudo Ser Encontrado");
-        //
-        // }else if (result === "CANCELLED")
-        // {
-        //     form.setError("client_rnc", "Este Contribuyente Esta Cancelado");
-        // }else{
-        //     //Formatear el json
-        //     const info:rncClientI = result;
-        //
-        //     //Poner cada dato en su lugar
-        //     form.client_name = info.razon_social;
-        //     form.client_rnc_status = info.status;
-        //
-        //     // Limpiar el formulario
-        //     form.clearErrors();
-        // }
+        const result = await getRncHelper(form.client_rnc);
+
+        //Verificar el estado del RNC
+        if (result === "SUSPENDIDO")
+        {
+            form.setError("client_rnc", "Este Contribuyente Esta Suspendido, Por Favor Elegir Otro");
+
+        }else if (result === "ERROR")
+        {
+            form.setError("client_rnc", "Este Contribuyente No Pudo Ser Encontrado");
+
+        }else if (result === "CANCELLED")
+        {
+            form.setError("client_rnc", "Este Contribuyente Esta Cancelado");
+        }else{
+            //Formatear el json
+            const info:rncClientI = result;
+
+            //Poner cada dato en su lugar
+            form.client_name = info.razon_social;
+            form.client_rnc_status = info.status;
+
+            // Limpiar el formulario
+            form.clearErrors();
+        }
     }
 }
 

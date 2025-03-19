@@ -333,7 +333,13 @@ Route::middleware([
         $counter = \App\Models\MoneyCounter::first();
         $setting = \App\Models\Setting::first();
 
-        return "fjuncina";
+        $sale = \App\Models\Sale::first();
+
+        $pdfTicket = new \App\Invoices\Ticket80($sale);
+        $pdfTicket->setData();
+
+
+        return $pdfTicket->Output();
 
 
     });
