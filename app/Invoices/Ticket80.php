@@ -4,6 +4,7 @@ namespace App\Invoices;
 
 use App\Models\Sale;
 use App\Models\Setting;
+use Carbon\Carbon;
 
 class Ticket80 extends \TCPDF
 {
@@ -11,6 +12,7 @@ class Ticket80 extends \TCPDF
     private ?Setting $setting;
     private Sale $sale;
     private int $headerEnd;
+    private $money;
 
     public function __construct(Sale $sale)
     {
@@ -20,6 +22,9 @@ class Ticket80 extends \TCPDF
 //        Colocar la info de la setting
         $this->setting = Setting::first();
         $this->sale = $sale;
+
+//        Instancia
+        $this->money = new \App\Helpers\General();
 
 //        Colocar la informacion para la factura
         $this->SetCreator("Tempestad");
@@ -83,6 +88,7 @@ class Ticket80 extends \TCPDF
         $this->Cell(0, 5, $this->sale->client_rnc, 1, 1, 'C');
 
 
+
         $this->headerEnd = $this->GetY();
 
     }
@@ -98,8 +104,8 @@ class Ticket80 extends \TCPDF
 
         // Comentario
 
-        $this->Cell(0, 5, "Comentario :", 0, 1, 'L');
-        $this->Cell(0, 5, $this->sale->comment, 0, 1, 'L');
+        $this->Cell(18, 5, "Comentario :", 0, 0, 'L');
+        $this->MultiCell(0, 5, $this->sale->comment, 0, 1, '');
 
         // Código de barras 1D (CODE 128)
         if (!empty($this->sale->code)) {
@@ -125,6 +131,12 @@ class Ticket80 extends \TCPDF
             $this->write1DBarcode($this->sale->code, 'C128', '', '', 76, 20, 0.6, $style, 'N');
         }
 
+        $printDate = Carbon::now()->format('d/m/Y H:i:s');
+
+        $this->Cell(30, 5, 'Fecha Impresion :', 0, 0, 'C');
+        $this->Cell(30, 5, $printDate, 0, 1, 'C');
+
+
         // Mensaje de garantía
         $this->SetY(-20);
         $this->SetFont('helvetica', 'B', 7);
@@ -138,15 +150,38 @@ class Ticket80 extends \TCPDF
     public function setData()
     {
         $this->SetY($this->headerEnd + 2);
-        $this->Cell(0,5, "Productos/Servicios",0,1,'C');
-
-
+        $this->Cell(0,5, 'Productos/Servicios',0,1,'C');
         /**
-         * Datos de la tabla de productos
+         * Cabcecera de la tabla
          */
         $this->SetFont('helvetica', 'B', 8);
-        $this->Cell(36,5, "Nombre",1,0,'C');
-        $this->Cell(20,5, "Cantidad",1,0,'C');
-        $this->Cell(20,5, "Importe",1,0,'C');
+        $this->Cell(8,5, '#',1,0,'C');
+        $this->Cell(50,5, 'Nombre',1,0,'C');
+        $this->Cell(18,5, 'Importe',1,1,'C');
+        /**
+         * Informacion de la tabla
+         */
+        $this->SetFont('helvetica', '', 8);
+        foreach ($this->sale->infoSale as $key => $data)
+        {
+            $this->Cell(8,8,$key + 1 ,1,0,'C');
+//            Obtener la altura del multicell
+            $this->MultiCell(50,8,
+                $data->product->name.PHP_EOL
+                .$data->stock. ' X '. $data->price ,1,0,'',0);
+
+//            $this->Cell(0,5,$data->stock ,0,'');
+            $this->Cell(0,8, $this->money->moneyFormat($data->amount) ,1,1);
+
+
+        }
+
+
+
+//        $this->Cell(8,5, '#',1,0,'C');
+//        $this->Cell(36,5, 'Nombre',1,0,'C');
+//        $this->Cell(16,5, 'Cantidad',1,0,'C');
+//        $this->Cell(16,5, 'Importe',1,0,'C');
     }
+
 }

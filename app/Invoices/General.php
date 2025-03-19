@@ -52,4 +52,5 @@ class General extends \TCPDF
         //Crear linea divisora
         $this->Line($this->GetX(),$this->GetY(),$this->GetX()+ 68,$this->GetY());
     }
+
 }

@@ -67,4 +67,14 @@ class General
         return in_array($key, $arr, true);
     }
 
+
+    public function moneyFormat(float $amount, $locale = 'es_DO')
+    {
+//       Crear un nuevo formateo
+        $formatter = new \NumberFormatter($locale, \NumberFormatter::DECIMAL);
+
+//        DEvolver los datos formateddo
+        return $formatter->format($amount);
+    }
+
 }
