@@ -336,7 +336,6 @@ Route::middleware([
         $sale = \App\Models\Sale::first();
 
         $pdfTicket = new \App\Invoices\Ticket80($sale);
-        $pdfTicket->setData();
 
 
         return $pdfTicket->Output();
