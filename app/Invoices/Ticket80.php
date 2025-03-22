@@ -14,13 +14,24 @@ class Ticket80 extends \TCPDF
     private ?Setting $setting;
     private Sale $sale;
     private int $headerEnd;
-    private $money;
+    private \App\Helpers\General $money;
     private float $dataEnd;
+
+    private float $heightPage = 180;
+    private float $headerHeight = 20;
+    private float $commentHeight = 0;
 
     public function __construct(Sale $sale)
     {
+
+
+        $sale->infoSale->each(function () {
+           $this->heightPage += $this->headerHeight;
+        });
+
+
 //        Llamar el metodo principal para la configuracion
-        parent::__construct("P", "mm", [80,195]);
+        parent::__construct("P", "mm", [80,$this->heightPage]);
 
 //        Colocar la info de la setting
         $this->setting = Setting::first();
@@ -54,7 +65,11 @@ class Ticket80 extends \TCPDF
         $this->Cell(0, 5, $this->setting->name, 0, 1, 'C');
         $this->SetFont('helvetica', '', 8);
 //        Rnc
-        $this->Cell(0,3, $this->setting->company_id, 0, 1, 'C');
+        if($this->setting->company_id)
+        {
+            $this->Cell(0,3, $this->setting->company_id, 0, 1, 'C');
+        }
+
         //        Rnc
         $this->Cell(0,3, $this->setting->email, 0, 1, 'C');
 //        Direccion
@@ -140,9 +155,17 @@ class Ticket80 extends \TCPDF
         $this->Ln(5);
 
         // Comentario
+//        Inicio del comentario
+        $startComment = $this->GetY();
+        $this->SetFont('helvetica', '', 10);
+        $this->Cell(18, 5, "Comentario :", 0, 1, 'L');
+             $this->MultiCell(0, 0,fake()->text(5));
 
-        $this->Cell(18, 5, "Comentario :", 0, 0, 'L');
-        $this->MultiCell(0, 5, $this->sale->comment, 0, 1, '');
+//             Tomar el final del comentario
+        $endComment = $this->GetY();
+
+//        Colocar la altura final del comentario
+        $this->commentHeight = $endComment - $startComment;
 
         // Código de barras 1D (CODE 128)
         if (!empty($this->sale->code)) {
@@ -163,7 +186,7 @@ class Ticket80 extends \TCPDF
                 'stretchtext' => 4
             );
 
-
+//            $this->SetY($endComment + 20);
             $this->Cell(0, 3, "Código de Factura:", 0, 1, 'C');
             $this->write1DBarcode($this->sale->code, 'C128', '', '', 76, 20, 0.6, $style, 'N');
         }
@@ -209,33 +232,27 @@ class Ticket80 extends \TCPDF
          * Informacion de la tabla
          */
         $this->SetFont('helvetica', '', 10);
-        $heightData = 15;
         foreach ($this->sale->infoSale as $key => $data)
         {
-            $this->Cell(8,$heightData,$this->money->moneyFormat($data->stock) ,0,0,'C');
-//            Obtener la altura del multicell
-//            $this->SetY($this->GetY() - 2);
-            $this->MultiCell(50,0,
+            $this->Cell(8,$this->headerHeight,$this->money->moneyFormat($data->stock) ,0,0,'C');
+
+            $this->MultiCell(50,15,
                 $data->product->code.PHP_EOL.
-                Str::limit($data->product->name, 25).PHP_EOL
-                .$data->price,0,0,'',0);
+                str::limit(fake()->sentence(15), 45, "...") .PHP_EOL
+                .$data->price,0,'L', '', 0);
 
-//            $this->Cell(0,5,$data->stock ,0,'');
-            $this->Cell(0,$heightData, $this->money->moneyFormat($data->amount) ,0,1);
-            $this->Line(2, $this->GetY(), 78, $this->GetY());
+            $this->SetX(60);
+            $this->Cell(0,$this->headerHeight, $this->money->moneyFormat($data->amount) ,0,1);
 
+
+//            Line para dividir cada producto
+            $this->Line(2,$this->GetY()-1, 78, $this->GetY()-1);
 
         }
 
 //        Tomar el final de la tada
         $this->dataEnd = $this->GetY();
 
-
-
-//        $this->Cell(8,5, '#',1,0,'C');
-//        $this->Cell(36,5, 'Nombre',1,0,'C');
-//        $this->Cell(16,5, 'Cantidad',1,0,'C');
-//        $this->Cell(16,5, 'Importe',1,0,'C');
     }
 
 }
