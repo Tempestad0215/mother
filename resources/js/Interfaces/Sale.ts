@@ -36,15 +36,13 @@ export interface saleI{
 export interface saleDataI {
     client_id: number;
     client_name: string;
+    client_document:string | null;
     client_rnc: string;
     close_table: boolean;
     invoice_type:string;
     ncf: string;
     ncf_m: string;
-    comment:  {
-        id: number,
-        content: string,
-    } | null;
+    comment: "" | null;
     created_at: string;
     discount: number;
     id: number;

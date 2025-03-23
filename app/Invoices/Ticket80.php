@@ -7,8 +7,9 @@ use App\Models\Sale;
 use App\Models\Setting;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use TCPDF;
 
-class Ticket80 extends \TCPDF
+class Ticket80 extends TCPDF
 {
 
     private ?Setting $setting;
@@ -19,7 +20,7 @@ class Ticket80 extends \TCPDF
 
     private float $heightPage = 180;
     private float $headerHeight = 20;
-    private float $commentHeight = 0;
+//    private float $commentHeight = 0;
 
     public function __construct(Sale $sale)
     {
@@ -57,7 +58,7 @@ class Ticket80 extends \TCPDF
 
 
 //    Titulo de la factura 80
-    public function Header()
+    public function Header(): void
     {
 //        Fuente de la factura
         $this->SetFont('helvetica', 'B', 10);
@@ -125,7 +126,7 @@ class Ticket80 extends \TCPDF
     /**
      * @return void
      */
-    public function Footer()
+    public function Footer(): void
     {
 
         $xValue = 20;
@@ -156,16 +157,16 @@ class Ticket80 extends \TCPDF
 
         // Comentario
 //        Inicio del comentario
-        $startComment = $this->GetY();
+//        $startComment = $this->GetY();
         $this->SetFont('helvetica', '', 10);
         $this->Cell(18, 5, "Comentario :", 0, 1, 'L');
-             $this->MultiCell(0, 0,fake()->text(5));
+             $this->MultiCell(0, 0,$this->sale->comment, 0, 'L', '');
 
 //             Tomar el final del comentario
-        $endComment = $this->GetY();
+//        $endComment = $this->GetY();
 
 //        Colocar la altura final del comentario
-        $this->commentHeight = $endComment - $startComment;
+//        $this->commentHeight = $endComment - $startComment;
 
         // Código de barras 1D (CODE 128)
         if (!empty($this->sale->code)) {
@@ -217,7 +218,7 @@ class Ticket80 extends \TCPDF
     /**
      * @return void
      */
-    public function setData()
+    public function setData(): void
     {
         $this->SetY($this->headerEnd + 2);
         $this->Cell(0,5, 'Productos/Servicios',0,1,'C');
@@ -231,14 +232,15 @@ class Ticket80 extends \TCPDF
         /**
          * Informacion de la tabla
          */
+
         $this->SetFont('helvetica', '', 10);
-        foreach ($this->sale->infoSale as $key => $data)
+        foreach ($this->sale->infoSale as $data)
         {
             $this->Cell(8,$this->headerHeight,$this->money->moneyFormat($data->stock) ,0,0,'C');
 
             $this->MultiCell(50,15,
                 $data->product->code.PHP_EOL.
-                str::limit(fake()->sentence(15), 45, "...") .PHP_EOL
+                str::limit($data->product->name, 45) .PHP_EOL
                 .$data->price,0,'L', '', 0);
 
             $this->SetX(60);

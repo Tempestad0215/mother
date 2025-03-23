@@ -49,16 +49,7 @@ class ProductHelper
                         ->where('stock', '>', 0);
                     });
             });
-
-
-
-
         //Devolver los resultado
         return $query->simplePaginate($perPage);
-
     }
-
-
-
-
 }

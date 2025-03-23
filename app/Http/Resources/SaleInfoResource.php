@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Enums\SaleTypeEnum;
+use App\Models\Client;
 use App\Models\Comment;
 use App\Models\ProTrans;
 use Illuminate\Http\Request;
@@ -15,6 +16,7 @@ use Illuminate\Support\Carbon;
  * @property string ncf
  * @property string ncf_m
  * @property string code
+ * @property Client client
  * @property string client_name
  * @property int client_id
  * @property float discount
@@ -69,6 +71,9 @@ class SaleInfoResource extends JsonResource
 
         });
 
+        $existsClient = (bool)$this->client;
+
+
 
         //DEvolver los datos
         return [
@@ -78,7 +83,8 @@ class SaleInfoResource extends JsonResource
             'ncf_m' => $this->ncf_m,
             'code' => $this->code,
             'client_name' => $this->client_name,
-            'client_id' => $this->client_id,
+            'client_id' => $this->when($existsClient, $this->client?->id, 0),
+            'client_document' => $this->when($existsClient, $this->client?->personal_id) ,
             'discount_amount' => $this->discount_amount,
             'tax' => $this->tax,
             'sub_total' => $this->sub_total,
@@ -87,10 +93,7 @@ class SaleInfoResource extends JsonResource
             'type' => $this->type,
             'close_table' => $this->close_table,
             'info_sale' => $infoFinal,
-            'comment' => $this->comment ? [
-                'id' => $this->comment->uuid,
-                'content' => $this->comment->content
-            ]: null,
+            'comment' => $this->comment,
         ];
     }
 }

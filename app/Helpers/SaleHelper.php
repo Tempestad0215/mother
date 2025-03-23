@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
 use LaravelIdea\Helper\App\Models\_IH_Sale_C;
+use Mockery\Exception;
 
 class SaleHelper
 {
@@ -47,6 +48,7 @@ class SaleHelper
     /**
      * @param StoreProductSaleRequest $request
      * @return Sale|mixed
+     * @throws \Throwable
      */
     public function store(StoreProductSaleRequest $request):Sale|null
     {
@@ -64,25 +66,15 @@ class SaleHelper
             //Sacar los IDS
             $ids = array_column($creditNotes, 'id');
 
+            $saleData = $request->validated();
+            $saleData['client_id'] = $request->get('client_id') ?: null;
+            $saleData['invoice_type'] = $setting->sequence ? $request->get('invoice_type') : null;
+            $saleData['credit_notes'] = $ids;
+
+
             // Crear la venta
-            $sale = Sale::create([
-                'client_name' => $request->get('client_name'),
-                'invoice_type' => $setting->sequence ? $request->get('invoice_type') : null,
-                'client_id' => $request->get('client_id') ?: null,
-                'client_rnc' => $request->get('client_rnc'),
-                'ncf' => $request->get('ncf'),
-                'discount_amount' => $request->get('discount_amount'),
-                'tax' => $request->get('tax'),
-                'sub_total' => $request->get('sub_total'),
-                'amount' => $request->get('amount'),
-                'type' => $request->get('type'),
-                'close_table' => $request->get('close_table'),
-                'type_payment' => $request->get('type_payment'),
-                'received' => $request->get('received'),
-                'returned' => $request->get('returned'),
-                'credit_notes' => $ids,
-                'comment' => $request->get('comment'),
-            ]);
+            $sale = Sale::create($saleData);
+
 
             //Actualizar los datos de la notas de credito
             CreditNoteHelper::updateAvailableFor($creditNotes, $request->get('amount'));
@@ -109,8 +101,16 @@ class SaleHelper
                     $transType = TransTypeEnum::RESERVA;
                 }
 
+                // Buscar el producto para crear la transaction
+                $product = Product::find($value['product_id']);
+
+                // Actualizar los datos del producto para actualizar
+                $product->stock -= $value['stock'];
+                $product->reserved += $value['stock'];
+                $product->save();
+
                 //Crear la transaccion individual
-                TransHelper::store($value, $transType, $sale->id);
+                TransHelper::store($value, $transType, $sale, $product);
 
             }
 
@@ -235,7 +235,7 @@ class SaleHelper
      * @param Sale $sale
      * @return Sale
      */
-    public function updateSale(StoreProductSaleRequest $request, Sale $sale)
+    public function updateSale(StoreProductSaleRequest $request, Sale $sale): Sale
     {
 
         //Obtener la info
@@ -252,8 +252,9 @@ class SaleHelper
             //Poner la variable en 0
             $stock = 0;
 
+
             //Verificar si el item existe
-            if ($infoSale->has('id'))
+            if (!empty($infoSale))
             {
                 //Econtrar la coincidencia y tomar el stock
                 $stock = $infoSale->firstWhere('product_id', $item['product_id'])['stock'];
@@ -264,6 +265,7 @@ class SaleHelper
 
             //Restar la cantidad que llega - la registrada
             $result = $item['stock'] - $stock;
+
 
             //Verificar el resultado
             if ($result > 0)
@@ -285,34 +287,34 @@ class SaleHelper
 
             }
 
+            // Actualizar los cambios realizados
+            $product->save();
+
+
+            // Tomar los datos de validacion
+            $data = $request->validated();
             //Conseguiir notas de creditos
             $creditNotes = $request->get('credit_notes');
             //Obtener los ids
             $ids = array_column($creditNotes, 'id');
-
+//            Agrager los ids de notas de creditos
+            $data['credit_notes'] = $ids;
             //Actualizar los datos de la ventas
-            $sale->client_id = $request->get('client_id');
-            $sale->client_rnc = $request->get('client_rnc');
-            $sale->client_name = $request->get('client_name');
-            $sale->discount_amount = $request->get('discount_amount');
-            $sale->tax = $request->get('tax');
-            $sale->sub_total = $request->get('sub_total');
-            $sale->amount = $request->get('amount');
-            $sale->credit_notes = $ids;
-            $sale->close_table = $request->get('close_table');
-            $sale->returned = $request->get('returned');
-            $sale->received = $request->get('received');
-            $sale->save();
+            $sale->update($data);
 
-            //Solo guardar el comentario si es diferente de nulo
-            if ($request->get('comment') !== null)
-            {
-                //Actualizar el comentario
-                $sale->comment()->updateOrCreate(
-                    ['commentable_id' => $sale->id],
-                    ['content' => $request->get('comment')]
-                );
-            }
+//            $sale->client_id = $request->get('client_id');
+//            $sale->client_rnc = $request->get('client_rnc');
+//            $sale->client_name = $request->get('client_name');
+//            $sale->discount_amount = $request->get('discount_amount');
+//            $sale->tax = $request->get('tax');
+//            $sale->sub_total = $request->get('sub_total');
+//            $sale->amount = $request->get('amount');
+//            $sale->credit_notes = $ids;
+//            $sale->close_table = $request->get('close_table');
+//            $sale->returned = $request->get('returned');
+//            $sale->received = $request->get('received');
+//            $sale->comment = $request->get('comment');
+//            $sale->save();
 
             //Reducir las notas de creditos seleccionada
             CreditNoteHelper::updateAvailableFor($creditNotes, $request->get('amount'));
@@ -320,11 +322,11 @@ class SaleHelper
             if ($closeTable)
             {
                 //Crear la transacciones
-                TransHelper::store($item, TransTypeEnum::VENTAS, $sale->id);
+                TransHelper::store($item, TransTypeEnum::VENTAS, $sale, $product);
 
             }else{
                 //Crear la transacciones
-                TransHelper::store($item, TransTypeEnum::RESERVA, $sale->id);
+                TransHelper::store($item, TransTypeEnum::RESERVA, $sale, $product);
             }
         });
 

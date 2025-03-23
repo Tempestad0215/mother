@@ -99,7 +99,7 @@ onMounted( () => {
     //Verificar si existe los datos para devoluicion
     setDataForm();
     //Buscar la secuencia si está en la configuration
-    if (page.props.setting.sequence)  getSequence(form.invoice_type);
+    if (page.props.setting.sequence && form.id === 0)  getSequence(form.invoice_type);
 
     //Para verificar
     let msjError = "Este Codigo No es Validos, Introduzca Uno Validado";
@@ -117,7 +117,7 @@ onMounted( () => {
  */
 onUpdated( () => {
     //Buscar la secuencia si está en la configuracion
-    if (page.props.setting.sequence) getSequence(form.invoice_type);
+    if (page.props.setting.sequence && form.id === 0) getSequence(form.invoice_type);
 
     //Para verificar
     let msjError = "Este Codigo No es Validos, Introduzca Uno Validado";
@@ -130,6 +130,7 @@ onUpdated( () => {
 
     // Enviar los datos
     setDataForm();
+
 });
 
 
@@ -169,7 +170,6 @@ const setDataForm = () => {
  * @param type
  */
 const getSequence = async (type: string) => {
-
     try {
         //Verificar si existe la secuencia
         if (page.props.setting.sequence)
@@ -273,8 +273,15 @@ const checkInvoiceType = async ()=>{
 
     }else showClientRnc.value = form.invoice_type !== 'B02';
 
-    //llamar el tipo de boleta
-    await getSequence(form.invoice_type);
+
+    // Solo buscar los datos si es igual a 0 el ID. eso quiere decir que debe generar un comprobante
+    if (form.id == 0)
+    {
+        //llamar el tipo de boleta
+        await getSequence(form.invoice_type);
+    }
+
+
 };
 
 
@@ -454,27 +461,21 @@ const sendData = ():void => {
     if (propsW.refund)
     {
 
-        form.patch(route('credit-note.store', {sale: form.id}),{
-            onSuccess: () => {
-
-            }
-        });
-
         // Enviar los datos para las devoluciones
-        // axios.patch(route('credit-note.store',{sale: form.id}),form)
-        //     .then(res => {
-        //         if (res.data.success)
-        //         {
-        //             //Imprimir el pdf
-        //             printPdf(route('invoice.belt.note',{creditNote: res.data.id}));
-        //             //Limpiar el pdf
-        //             // router.get(route('sale.create'));
-        //             router.visit(route('sale.create'));
-        //         }
-        //     })
-        //     .catch(err => {
-        //         errorHttp('Error :' + err.response.data.message);
-        //     });
+        axios.patch(route('credit-note.store',{sale: form.id}),form)
+            .then(res => {
+                if (res.data.success)
+                {
+                    //Imprimir el pdf
+                    printPdf(route('invoice.belt.note',{creditNote: res.data.id}));
+                    //Limpiar el pdf
+                    // router.get(route('sale.create'));
+                    router.visit(route('sale.create'));
+                }
+            })
+            .catch(err => {
+                errorHttp('Error :' + err.response.data.message);
+            });
     }else{
         //Verificar si no hay problema con nada
         if (!returnedBlur() && form.close_table)
@@ -487,65 +488,56 @@ const sendData = ():void => {
             // Actualizar los datos y capturar
             axios.patch(route('sale.update', {sale: form.id}), form)
                 .then((res) => {
+
                     if (res.status === 200)
                     {
                         //si esta cerrada se vas a imprimir
                         if (form.close_table)
                         {
-
-                            console.log(res)
                             //Mostrar el pdf de impresion
                             printPdf(route('invoice.belt.sale', {sale: res.data.pdfUuid}));
                         }
-                        // Limpiar el formulario
+                        successHttp('Registro Actualizado Correctamente');
+                        //Limpiar el fomulario
                         form.reset();
-                        successHttp('Datos Registrado Correctamente');
-                        // Recargar los datos
+                        showReturn.value = false;
+                        //Recargar los datos
                         router.reload({only:['products','clients','saleOpen','invoiceType','refund']});
+
                     }
                 }).catch((err) => {
+                    //Mensaje de error
+                    // errorHttp(`Error : ${err.message}`);
+
+                console.log(err)
+            });
+
+        }else{
+
+            //Guardar los datos por primera vez
+            axios.post(route('sale.create'), form)
+                .then((res) => {
+                    // La cuenta es cerrada
+                    if (form.close_table)
+                    {
+
+                        // Imprimir el pdf
+                        printPdf(route('invoice.belt.sale', {sale: res.data.pdfUuid}));
+                    }
+                    //Limpiar el fomulario
+                    successHttp('Registro Creado Correctamente');
+                    form.reset();
+                    showReturn.value = false;
+                    //Recargar los datos
+                    router.reload({only:['products','clients','saleOpen','invoiceType','refund']});
+                })
+                .catch((err) => {
+                    // form.errors = err.response?.data.errors;
 
                     console.log(err)
                     //Mensaje de error
-                    errorHttp(`Error : ${err.message}`);
-            });
-        }else{
-
-            console.log("entro aqui")
-
-            form.post(route('sale.store'),{
-                preserveScroll: true,
-                onSuccess: (response) => {
-                    console.log(response);
-                },
-                onError: (err) => {
-                    console.log(err)
-                }
-            });
-
-            //Guardar los datos por primera vez
-            // axios.post(route('sale.create'), form)
-            //     .then((res) => {
-            //         // La cuenta es cerrada
-            //         if (form.close_table)
-            //         {
-            //
-            //             // Imprimir el pdf
-            //             printPdf(route('invoice.belt.sale', {sale: res.data.pdfUuid}));
-            //         }
-            //         //Limpiar el fomulario
-            //         form.reset();
-            //         showReturn.value = false;
-            //         //Recargar los datos
-            //         router.reload({only:['products','clients','saleOpen','invoiceType','refund']});
-            //     })
-            //     .catch((err) => {
-            //         form.errors = err.response?.data.errors;
-            //
-            //         console.log(err)
-            //         //Mensaje de error
-            //         errorHttp(`Error : ${err.message}`);
-            //     });
+                    // errorHttp(`Error : ${err.message}`);
+                });
 
         }
     }
@@ -619,13 +611,18 @@ const getSaleOpen = (item:saleDataI) => {
 
     //colocar los datos en el formulario
     form.client_id = item.client_id;
+    form.client_rnc = item.client_document ?? "";
+    form.ncf = item.ncf;
+    form.invoice_type = item.invoice_type;
     form.client_name = item.client_name;
     form.close_table = item.close_table;
-    form.comment = item.comment ? item.comment.content : "";
-    form.comment_id = item.comment ? item.comment.id : 0;
+    form.comment = item.comment ?? "";
 
     //Cerra la ventana
     showSaleOpen.value = false;
+
+    // Ejecutar el metodo de invoice
+    checkInvoiceType();
 
 }
 

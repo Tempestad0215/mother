@@ -3,7 +3,10 @@
 namespace App\Helpers;
 
 use App\Enums\TransTypeEnum;
+use App\Models\CreditNote;
+use App\Models\Product;
 use App\Models\ProTrans;
+use App\Models\Sale;
 use Illuminate\Http\Request;
 
 class TransHelper
@@ -11,40 +14,67 @@ class TransHelper
     /**
      * @param array $request
      * @param TransTypeEnum $type
-     * @param int $sale_id
-     * @param int $product_id
-     * @param int $credit_note_id
+     * @param Sale $sale
+     * @param Product|null $product
+     * @param CreditNote|null $credit_note_id
      * @return void
      */
-    public static function store(Array $request, TransTypeEnum $type, int $sale_id = 0, int $product_id = 0, int $credit_note_id = 0):void
+    public static function store(Array $request, TransTypeEnum $type, Sale $sale, Product $product = null, CreditNote $credit_note_id = null):void
     {
 
-        //Crear el TransId
-        $transId = $request['transID'] ?? null;
 
-        //Verificar si existe la transcciones antiguia
-        $transOld = ProTrans::find($transId);
-
-        //Verificar si existe o no
-        $proTrans = $transOld && $type == TransTypeEnum::RESERVA ? $transOld : new ProTrans();
-
-        //Crear la transacion
-        $proTrans->product_id = $product_id ?: $request['product_id'];
-        $proTrans->product_name = $request["product_name"];
-        $proTrans->reserved = $type === TransTypeEnum::RESERVA ?  $request["reserved"] : 0;
-        $proTrans->stock = $request['stock'];
-        $proTrans->sale_id = $sale_id ?: null;
-        $proTrans->credit_note_id = $credit_note_id ?: null;
-        $proTrans->price = $request['price'];
-        $proTrans->min_price = $request['min_price'];
-        $proTrans->special_price = $request['special_price'];
-        $proTrans->discount = $request['discount'];
-        $proTrans->discount_amount = $request['discount_amount'];
-        $proTrans->tax_rate = $request['tax_rate'];
-        $proTrans->tax = $request['tax'];
-        $proTrans->amount = $request['amount'];
-        $proTrans->type = $type;
-        $proTrans->save();
+        //Crear o actualizar si no existe
+        ProTrans::updateOrCreate(
+            [
+                'product_id' => $product->id,
+                'sale_id' => $sale->id,
+            ],
+            [
+                'product_name' => $request["product_name"],
+                'reserved' => $type === TransTypeEnum::RESERVA ? $request["stock"] : 0,
+                'stock' => $request['stock'],
+                'credit_note_id' => $credit_note_id ?: null,
+                'price' => $request['price'],
+                'min_price' => $request['min_price'],
+                'special_price' => $request['special_price'],
+                'discount' => $request['discount'],
+                'discount_amount' => $request['discount_amount'],
+                'tax_rate' => $request['tax_rate'],
+                'tax' => $request['tax'],
+                'amount' => $request['amount'],
+                'type' => $type,
+            ]
+        );
+            // Esto fue refactorizadoel 23-02-25
+//        //Crear el TransId
+//        $transId = $request['transID'] ?? null;
+//
+//        //Verificar si existe la transcciones antiguia
+//        $transOld = ProTrans::find($transId);
+//
+//        //Verificar si existe o no
+//        $proTrans = $transOld && $type == TransTypeEnum::RESERVA ? $transOld : new ProTrans();
+//
+//
+//        throw new \Exception(json_encode($transOld));
+//
+//        //Crear la transacion
+//        $proTrans->product_id = $product_id ?: $request['product_id'];
+//        $proTrans->product_name = $request["product_name"];
+//        $proTrans->reserved = $type === TransTypeEnum::RESERVA ?  $request["reserved"] : 0;
+//        $proTrans->stock = $request['stock'];
+//        $proTrans->sale_id = $sale_id ?: null;
+//        $proTrans->credit_note_id = $credit_note_id ?: null;
+//        $proTrans->price = $request['price'];
+//        $proTrans->min_price = $request['min_price'];
+//        $proTrans->special_price = $request['special_price'];
+//        $proTrans->discount = $request['discount'];
+//        $proTrans->discount_amount = $request['discount_amount'];
+//        $proTrans->tax_rate = $request['tax_rate'];
+//        $proTrans->tax = $request['tax'];
+//        $proTrans->amount = $request['amount'];
+//        $proTrans->type = $type;
+//        $proTrans->save();
 
     }
 

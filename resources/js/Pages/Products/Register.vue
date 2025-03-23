@@ -9,7 +9,7 @@ import {supplierI} from "@/Interfaces/Supplier";
 import {productBaseI} from "@/Interfaces/Product";
 import {categoryBaseI} from "@/Interfaces/Categories";
 import TabLink from "@components/TabLink.vue";
-import {WHbaseI} from "@/Interfaces/Warehouse";
+import {warehouseBaseI} from "@/Interfaces/Warehouse";
 
 
 
@@ -20,7 +20,7 @@ const props = defineProps<{
     update? : boolean,
     categories: categoryBaseI[],
     suppliers: supplierI[],
-    warehouse: WHbaseI[],
+    warehouse: warehouseBaseI[],
     nextProduct?: number,
 }>();
 

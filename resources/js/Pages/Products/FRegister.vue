@@ -11,12 +11,13 @@ import {categoryBaseI} from "@/Interfaces/Categories";
 import {taxI} from "@/Interfaces/Global";
 import {Money} from "v-money3";
 import {getMoney, moneyConfig} from "@/Global/Helpers";
-import {WHbaseI} from "@/Interfaces/Warehouse";
+import {warehouseBaseI} from "@/Interfaces/Warehouse";
 import InputLabel from "@components/InputLabel.vue";
 import FloatBox from "@components/FloatBox.vue";
 import FRegisterSupplier from "@/Pages/Suppliers/FRegister.vue";
 import FRegisterCategory from "@/Pages/Categories/FRegister.vue";
 import FRegisterWarehouse from "@/Pages/Setting/WH/FRegister.vue";
+import axios from "axios";
 
 
 /**
@@ -32,7 +33,7 @@ const propsW = defineProps<{
     update? : boolean,
     categories: categoryBaseI[],
     suppliers: supplierI[],
-    warehouse: WHbaseI[],
+    warehouse: warehouseBaseI[],
     nextProduct?: number
 }>();
 
@@ -43,6 +44,7 @@ const propsW = defineProps<{
 const showCategory = ref<boolean>(false);
 const showSupplier = ref<boolean>(false);
 const showWarehouse = ref<boolean>(false);
+const checkProduct =  ref<productBaseI[] | null>(null);
 
 
 /**
@@ -213,14 +215,15 @@ const submit = () => {
 }
 
 
-/**
- * calcular el impuesta
- * @param price
- * @param tax
- */
-// const tax = (price:number, tax:number) => {
-//     return Math.round((price * tax) / (10000 + tax));
-// }
+
+const checkProductExits = () => {
+    axios.get(route('product.get.json',{search: form.name}))
+    .then(res => {
+        if (res.status === 200) {
+            checkProduct.value = res.data;
+        }
+    });
+}
 
 
 
@@ -307,14 +310,29 @@ const submit = () => {
                         class="inline ml-2"
                         for="name"
                         value="Nombre" />
-                    <TextInput
-                        class=" w-full"
-                        name="name"
-                        required
-                        autocomplete="false"
-                        v-model="form.name"
-                        placeholder="Nombre del producto"
-                    />
+                    <div class="relative">
+                        <TextInput
+                            @keyup="checkProductExits"
+                            class=" w-full peer"
+                            name="name"
+                            required
+                            autocomplete="false"
+                            v-model="form.name"
+                            placeholder="Nombre del producto"
+                        />
+                        <div
+                            class=" opacity-0  peer-focus:opacity-100 z-20 text-gray-50 absolute w-full bg-gray-800 border-2 rounded-md">
+                            <ol
+                                v-for="(item, index) in checkProduct"
+                                :key="index"
+                                class="odd:bg-cyan-400 rounded-md">
+                                <li class="rounded-md px-5" >
+                                    {{item.name}}
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+
                     <!-- Error -->
                     <InputError :message="form.errors.name" />
                 </div>

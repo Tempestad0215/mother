@@ -63,6 +63,7 @@ class ProTrans extends Model implements Auditable
         'credit_note_id',
         'stock',
         'price',
+        'reserved',
         'min_price',
         'special_price',
         'discount',
