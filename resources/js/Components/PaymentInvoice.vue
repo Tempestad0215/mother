@@ -112,7 +112,7 @@ const deleteCreditNote = (index:number) => {
 <template>
     <!--Datos de la ventana-->
     <div
-        class="bg-blue-300 p-5 rounded-md min-w-[40rem]  max-w-[60px]  h-fit mx-auto">
+        class="fondo p-5 rounded-md min-w-[40rem]  max-w-[60px]  h-fit mx-auto">
         <h3 class="text-2xl text-center">
             Datos de pagos
         </h3>
@@ -129,7 +129,7 @@ const deleteCreditNote = (index:number) => {
                     id="typePayment"
                     class="inputGeneral py-1 w-full">
                     <option
-                        class="even:bg-blue-400"
+                        class="even:bg-cyan-400 "
                         v-for="(item, index) in typePaymentData" :key="index"
                         :value="item.value">
                         {{item.name}}
@@ -158,7 +158,7 @@ const deleteCreditNote = (index:number) => {
         <div class=" mt-3">
 
             <!--                            Mostrar las notas de creditos asociada a esa venta-->
-            <table class="table-auto w-full mt-3">
+            <table class="table-auto w-full mt-3 text-white">
                 <caption class="font-bold text-3xl">
                     Notas De Credito
                 </caption>
@@ -188,14 +188,13 @@ const deleteCreditNote = (index:number) => {
             </table>
         </div>
 
-
         <!--                      Monto Recibido-->
         <div class="w-full mt-3">
             <InputLabel
                 for="received"
                 value="Recibido" />
             <Money
-                class="inputGeneral"
+                class="inputGeneral text-3xl"
                 @blur="emit('returnedBlur')"
                 v-model="form.received"
                 v-bind="moneyConfig"/>
@@ -206,14 +205,18 @@ const deleteCreditNote = (index:number) => {
             <InputError :message="form.errors.info_sale"/>
         </div>
 
-        <!--                        Datos pendiente para cobrar-->
-        <div class="mt-3 text-3xl">
-            Pendiente...: {{getMoney(form.pending)}}
+        <div class="text-gray-50">
+            <!--                        Datos pendiente para cobrar-->
+            <div class="mt-3 text-3xl text0">
+                Pendiente...: {{getMoney(form.pending)}}
+            </div>
+            <!--                        Datos Para devuelta-->
+            <div class="mt-3 text-3xl">
+                Devuelta......: {{getMoney(form.returned)}}
+            </div>
         </div>
-        <!--                        Datos Para devuelta-->
-        <div class="mt-3 text-3xl">
-            Devuelta......: {{getMoney(form.returned)}}
-        </div>
+
+
 
         <!--                        Boton para cerrar la factura-->
         <div class="mt-3 text-right">
@@ -232,7 +235,3 @@ const deleteCreditNote = (index:number) => {
 
     </div>
 </template>
-
-<style scoped>
-
-</style>

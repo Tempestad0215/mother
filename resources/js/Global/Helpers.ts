@@ -90,7 +90,7 @@ export const formatNumber = (val:string | number):number  =>
  */
 export const getMoney = (value:number = 0) => {
     return new Intl.NumberFormat('es-DO',{
-        style: 'currency',
+        style: 'decimal',
         currency: 'DOP',
     }).format(value);
 }

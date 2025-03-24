@@ -4,12 +4,13 @@ import InputLabel from "@components/InputLabel.vue";
 import {useForm} from "@inertiajs/vue3";
 import InputError from "@components/InputError.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
-import {getMoney, moneyConfig, printPdf} from "@/Global/Helpers";
+import {getMoney, moneyConfig} from "@/Global/Helpers";
 import axios from "axios";
 import {ref, Ref} from "vue";
 import ShowPdf from "@components/ShowPdf.vue";
 import {Money} from "v-money3";
 import TabLink from "@components/TabLink.vue";
+import {successHttp} from "@/Global/Alert";
 
 
 
@@ -104,8 +105,8 @@ const submit = () => {
     //enviar los datos
     axios.post(route('sale.report.store'),form)
         .then((res)=> {
-            printPdf(route('invoice.getB', {counter: res.data.id}))
             processing.value = false;
+            successHttp('Registrado Creado Correctamente');
         }).catch((err)=> {
 
             errorValue.value = err.response.data.errors;
@@ -182,7 +183,7 @@ const getErrorPdf = () => {
                                     class="inputGeneral"
                                     v-model.number="form.coin_first"
                                     v-bind="moneyConfig"/>
-                                <span>
+                                <span class="text-gray-50">
                                    X 1  = {{ getMoney(multCoin(form.coin_first, 1))}}
                                 </span>
                             </div>
@@ -196,7 +197,7 @@ const getErrorPdf = () => {
                                     class="inputGeneral"
                                     v-model.number="form.coin_second"
                                     v-bind="moneyConfig"/>
-                                <span>
+                                <span class="text-gray-50">
                                X 1  = {{ getMoney(multCoin(form.coin_second, 5))}}
                             </span>
                             </div>
@@ -210,7 +211,7 @@ const getErrorPdf = () => {
                                     class="inputGeneral"
                                     v-model.number="form.coin_third"
                                     v-bind="moneyConfig"/>
-                                <span>
+                                <span class="text-gray-50">
                                X 1  = {{ getMoney(multCoin(form.coin_third, 10))}}
                             </span>
                             </div>
@@ -224,7 +225,7 @@ const getErrorPdf = () => {
                                     class="inputGeneral"
                                     v-model.number="form.coin_fourth"
                                     v-bind="moneyConfig"/>
-                                <span>
+                                <span class="text-gray-50">
                                X 1  = {{ getMoney(multCoin(form.coin_fourth, 25))}}
                             </span>
                             </div>
@@ -238,7 +239,7 @@ const getErrorPdf = () => {
                                     class="inputGeneral"
                                     v-model.number="form.coin_fifth"
                                     v-bind="moneyConfig"/>
-                                <span>
+                                <span class="text-gray-50">
                                X 1  = {{ getMoney(multCoin(form.coin_fifth, 50))}}
                             </span>
                             </div>
@@ -252,7 +253,7 @@ const getErrorPdf = () => {
                                     class="inputGeneral"
                                     v-model.number="form.coin_sixth"
                                     v-bind="moneyConfig"/>
-                                <span>
+                                <span class="text-gray-50">
                                X 1  = {{ getMoney(multCoin(form.coin_sixth, 100))}}
                             </span>
                             </div>
@@ -266,7 +267,7 @@ const getErrorPdf = () => {
                                     class="inputGeneral"
                                     v-model.number="form.coin_seventh"
                                     v-bind="moneyConfig"/>
-                                <span>
+                                <span class="text-gray-50">
                                X 1  = {{ getMoney(multCoin(form.coin_seventh, 200))}}
                             </span>
                             </div>
@@ -280,7 +281,7 @@ const getErrorPdf = () => {
                                     class="inputGeneral"
                                     v-model.number="form.coin_eighth"
                                     v-bind="moneyConfig"/>
-                                <span>
+                                <span class="text-gray-50">
                                X 1  = {{ getMoney(multCoin(form.coin_eighth, 500))}}
                             </span>
                             </div>
@@ -294,7 +295,7 @@ const getErrorPdf = () => {
                                     class="inputGeneral"
                                     v-model.number="form.coin_ninth"
                                     v-bind="moneyConfig"/>
-                                <span>
+                                <span class="text-gray-50">
                                X 1  = {{ getMoney(multCoin(form.coin_ninth, 1000))}}
                             </span>
                             </div>
@@ -307,8 +308,8 @@ const getErrorPdf = () => {
                                     class="inputGeneral"
                                     v-model.number="form.coin_tenth"
                                     v-bind="moneyConfig"/>
-                                <span>
-                               X 1  = {{ getMoney(multCoin(form.coin_tenth, 1000))}}
+                                <span class="text-gray-50">
+                               X 1  = {{ getMoney(multCoin(form.coin_tenth, 2000))}}
                             </span>
                             </div>
                             <InputError :message="form.errors.coin_tenth"/>
