@@ -48,21 +48,21 @@ class CreditNoteController extends Controller
         $setting = Setting::first();
 
         //Buscar la secuencia de NCF
-       $sequence = Sequence::where('type', 'B04')
+        $sequence = Sequence::where('type', 'B04')
             ->where('status', true)
            ->first();
 
        //Verificar si existe la secuencia y hay datos
-       if ($setting->sequence && !$sequence)
-       {
+        if ($setting->sequence && !$sequence) {
             //Devolver el mensaje con problema
             throw ValidationException::withMessages([
                 'general' => "No Existen NCF Disponible Para NC (B04)"
             ]);
-       }
+        }
 
        //Verificar si se puede devolver los articulos
         $maxDay = config('appconfig.saleCreditNote');
+
         //Formatear la fecha para comparar
         $maxDate = Carbon::parse($sale->created_at);
 
@@ -119,7 +119,6 @@ class CreditNoteController extends Controller
         ]);
 
     }
-
     /**
      * @param string $code
      * @return JsonResponse

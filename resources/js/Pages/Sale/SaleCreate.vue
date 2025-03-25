@@ -5,7 +5,7 @@ import InputLabel from "@components/InputLabel.vue";
 import TextInput from "@components/TextInput.vue";
 import FloatBox from "@components/FloatBox.vue";
 import FShow from "@/Pages/Products/FShow.vue";
-import { onMounted, onUpdated, Ref, ref} from "vue";
+import {computed, onMounted, onUpdated, Ref, ref} from "vue";
 import {productFullI, productI} from "@/Interfaces/Product";
 import {getMoney, getRncHelper, getSequenceType, moneyConfig, printPdf} from "@/Global/Helpers";
 import Swal from "sweetalert2";
@@ -99,7 +99,7 @@ onMounted( () => {
     //Verificar si existe los datos para devoluicion
     setDataForm();
     //Buscar la secuencia si está en la configuration
-    if (page.props.setting.sequence && form.id === 0)  getSequence(form.invoice_type);
+    if (page.props.setting.sequence && (form.id === 0 || form.id === null) && propsW.refund)  getSequence(form.invoice_type);
 
     //Para verificar
     let msjError = "Este Codigo No es Validos, Introduzca Uno Validado";
@@ -117,7 +117,7 @@ onMounted( () => {
  */
 onUpdated( () => {
     //Buscar la secuencia si está en la configuracion
-    if (page.props.setting.sequence && form.id === 0) getSequence(form.invoice_type);
+    if (page.props.setting.sequence && (form.id === 0 || form.id === null) && propsW.refund) getSequence(form.invoice_type);
 
     //Para verificar
     let msjError = "Este Codigo No es Validos, Introduzca Uno Validado";
@@ -131,6 +131,14 @@ onUpdated( () => {
     // Enviar los datos
     setDataForm();
 
+});
+
+
+/**
+ * Propiedades computada
+ */
+const isCreditNote = computed(() =>{
+    return form.type === "B04" || !propsW.refund;
 });
 
 
@@ -203,6 +211,8 @@ const getSequence = async (type: string) => {
             }
         }
     }catch (err) {
+
+        console.log(err);
         form.ncf = "";
         form.setError("ncf", "No Existe NCF Disponible, Para Esta Serie");
     }
@@ -897,8 +907,9 @@ const getRncClient = async () => {
                                     name="type"
                                     id="type">
                                     <option
-                                        v-for="(item, index) in propsW.invoiceType" :key="index"
-                                        :disabled="item.type == 'B04' && page.url == '/sale' "
+                                        v-for="(item, index) in propsW.invoiceType"
+                                        :key="index"
+                                        :disabled="false"
                                         :value="item.type">
                                         {{item.type}} - {{ item.name }}
                                     </option>

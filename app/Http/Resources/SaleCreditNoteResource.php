@@ -102,59 +102,25 @@ class SaleCreditNoteResource extends JsonResource
 
 
             //Verificar si existen los datos de ventas
-        //TODO comentado para probar algo
-//            if (!$transProduct) {
-//                $transProduct = ProTrans::where('product_id', $item->product_id)
-//                    ->where('sale_id', $item->sale_id)
-//                    ->where('type', TransTypeEnum::RESERVA)
-//                    ->where('status', true)
-//                    ->first();
-//            }
+            if (!$transProduct) {
+                $transProduct = ProTrans::where('product_id', $item->product_id)
+                    ->where('sale_id', $item->sale_id)
+                    ->where('type', TransTypeEnum::RESERVA)
+                    ->where('status', true)
+                    ->first();
+            }
 
 
             //Conseguir la transacciones con devolucion existente
-//          TODO comentado porquie credo que nosera necesario
-//            $transRet = ProTrans::where('product_id', $item->product_id)
-//                ->where('sale_id', $item->sale_id)
-//                ->where('type', [TransTypeEnum::DEVOLUCION])
-//                ->where('status', false)
-//                ->sum('stock');
+            $transRet = ProTrans::where('product_id', $item->product_id)
+                ->where('sale_id', $item->sale_id)
+                ->where('type', [TransTypeEnum::DEVOLUCION])
+                ->where('status', false)
+                ->sum('stock');
 
             //Verificar si existe el productos
-//          TODO
-//            $existsProduct = isset($transProduct);
-//
-//            //Tomar los resultado de stock
-//            $productStock = $existsProduct ? $transProduct->stock : 0;
-//
-//            //Tomar el resultado
-//            $result =  $productStock - $transRet;
-//
-//
-//            //Si el item tiene disponible
-//            if ($existsProduct && $item->type != TransTypeEnum::DEVOLUCION && $result != 0)
-//            {
-//
-//
-//                //Crear la informacion
-//                $info[] = [
-//                    "id" => $item['id'],
-//                    "code" => $transProduct->product->code,
-//                    "sale_id" => $item['sale_id'],
-//                    "product_id" => $transProduct->product->id,
-//                    "credit_note_id" => null,
-//                    "product_name" => $transProduct->product->name,
-//                    "stock" => $result == 0 ? $item['stock'] : abs($result),
-//                    "price" => $item['price'],
-//                    "tax_rate" => $item['tax_rate'],
-//                    "tax" => $item['tax'],
-//                    "amount" => $item['amount'],
-//                    "discount" => $item['discount'],
-//                    "discount_amount" => $item['discount_amount'],
-//                    "type" => SaleTypeEnum::VENTAS->value,
-//                    "status" => $item['status']
-//                ];
-//            }
+            $existsProduct = isset($transProduct);
+
         });
 
 //

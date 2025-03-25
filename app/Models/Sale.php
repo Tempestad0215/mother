@@ -140,7 +140,7 @@ class Sale extends Model implements Auditable
     protected function createdAt ():Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => Carbon::parse($value)->format('d/m/Y H:i:s'),
+            get: fn (string $value) => Carbon::parse($value)->format('d-m-Y H:i:s'),
             set: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i:s'),
         );
     }

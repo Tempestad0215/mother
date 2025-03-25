@@ -60,7 +60,6 @@ const errorValue = ref<Record<string, any> | null>(null);
 Funciones
  */
 
-
 /**
  * Multiplicar el valor de cada datos
  * @param value
