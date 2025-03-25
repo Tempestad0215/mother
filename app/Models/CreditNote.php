@@ -30,7 +30,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property Carbon updated_at
  * @property Carbon deleted_at
  * @property ProTrans[] trans
- * @property Sale[] sale_id,
+ * @property Sale sale_id,
  * @property SalePaymentTypeEnum type_payment,
  * @property float received
  * @property float returned
@@ -113,7 +113,7 @@ class CreditNote extends Model implements Auditable
     private static function generateCode():string
     {
         // Obtener el ultimo registros
-        $total = self::count();
+        $total = self::latest('id')->value('id');
 
         // Generar el proximo ID
         $nextID = $total ? $total + 1 : 1;

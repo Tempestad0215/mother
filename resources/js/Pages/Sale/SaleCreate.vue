@@ -23,6 +23,7 @@ import ReturnForm from "@components/ReturnForm.vue";
 import {Money} from "v-money3";
 import TabLink from "@components/TabLink.vue";
 import {paginationI} from "@/Interfaces/Global";
+import {isNullOrUndef} from "chart.js/helpers";
 
 
 
@@ -99,7 +100,10 @@ onMounted( () => {
     //Verificar si existe los datos para devoluicion
     setDataForm();
     //Buscar la secuencia si está en la configuration
-    if (page.props.setting.sequence && (form.id === 0 || form.id === null) && propsW.refund)  getSequence(form.invoice_type);
+    if (page.props.setting.sequence)  getSequence(form.invoice_type);
+
+    console.log(form.invoice_type);
+    console.log(page.props.setting.sequence && (form.id === 0 || form.id === null))
 
     //Para verificar
     let msjError = "Este Codigo No es Validos, Introduzca Uno Validado";
@@ -117,7 +121,10 @@ onMounted( () => {
  */
 onUpdated( () => {
     //Buscar la secuencia si está en la configuracion
-    if (page.props.setting.sequence && (form.id === 0 || form.id === null) && propsW.refund) getSequence(form.invoice_type);
+    setTimeout(()=>{
+        if (page.props.setting.sequence) getSequence(form.invoice_type);
+    },200);
+
 
     //Para verificar
     let msjError = "Este Codigo No es Validos, Introduzca Uno Validado";
@@ -133,13 +140,6 @@ onUpdated( () => {
 
 });
 
-
-/**
- * Propiedades computada
- */
-const isCreditNote = computed(() =>{
-    return form.type === "B04" || !propsW.refund;
-});
 
 
 /*
@@ -283,15 +283,12 @@ const checkInvoiceType = async ()=>{
 
     }else showClientRnc.value = form.invoice_type !== 'B02';
 
-
     // Solo buscar los datos si es igual a 0 el ID. eso quiere decir que debe generar un comprobante
     if (form.id == 0)
     {
         //llamar el tipo de boleta
         await getSequence(form.invoice_type);
     }
-
-
 };
 
 
@@ -472,20 +469,22 @@ const sendData = ():void => {
     {
 
         // Enviar los datos para las devoluciones
-        axios.patch(route('credit-note.store',{sale: form.id}),form)
-            .then(res => {
-                if (res.data.success)
-                {
-                    //Imprimir el pdf
-                    printPdf(route('invoice.belt.note',{creditNote: res.data.id}));
-                    //Limpiar el pdf
-                    // router.get(route('sale.create'));
-                    router.visit(route('sale.create'));
-                }
-            })
-            .catch(err => {
-                errorHttp('Error :' + err.response.data.message);
-            });
+        form.patch(route('credit-note.store', {sale: form.id}))
+        // axios.patch(route('credit-note.store',{sale: form.id}),form)
+        //     .then(res => {
+        //         if (res.data.success)
+        //         {
+        //             //Imprimir el pdf
+        //             printPdf(route('invoice.belt.note',{creditNote: res.data.id}));
+        //             //Limpiar el pdf
+        //             // router.get(route('sale.create'));
+        //             router.visit(route('sale.create'));
+        //         }
+        //     })
+        //     .catch(err => {
+        //         console.log(err)
+        //         // errorHttp('Error :' + err.response.data.message);
+        //     });
     }else{
         //Verificar si no hay problema con nada
         if (!returnedBlur() && form.close_table)
@@ -518,8 +517,6 @@ const sendData = ():void => {
                 }).catch((err) => {
                     //Mensaje de error
                     // errorHttp(`Error : ${err.message}`);
-
-                console.log(err)
             });
 
         }else{
@@ -543,8 +540,6 @@ const sendData = ():void => {
                 })
                 .catch((err) => {
                     // form.errors = err.response?.data.errors;
-
-                    console.log(err)
                     //Mensaje de error
                     // errorHttp(`Error : ${err.message}`);
                 });

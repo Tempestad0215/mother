@@ -16,10 +16,10 @@ class TransHelper
      * @param TransTypeEnum $type
      * @param Sale $sale
      * @param Product|null $product
-     * @param CreditNote|null $credit_note_id
+     * @param CreditNote|null $credit_note
      * @return void
      */
-    public static function store(Array $request, TransTypeEnum $type, Sale $sale, Product $product = null, CreditNote $credit_note_id = null):void
+    public static function store(Array $request, TransTypeEnum $type, Sale $sale, Product $product = null, CreditNote $credit_note = null):void
     {
 
 
@@ -33,7 +33,7 @@ class TransHelper
                 'product_name' => $request["product_name"],
                 'reserved' => $type === TransTypeEnum::RESERVA ? $request["stock"] : 0,
                 'stock' => $request['stock'],
-                'credit_note_id' => $credit_note_id ?: null,
+                'credit_note_id' => $credit_note?->id ?: null,
                 'price' => $request['price'],
                 'min_price' => $request['min_price'],
                 'special_price' => $request['special_price'],

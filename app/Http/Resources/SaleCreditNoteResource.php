@@ -5,18 +5,15 @@ namespace App\Http\Resources;
 use App\Enums\TransTypeEnum;
 use App\Enums\SaleTypeEnum;
 use App\Models\Comment;
-use App\Models\CreditNote;
 use App\Models\Product;
 use App\Models\ProTrans;
-use Dflydev\DotAccessData\Data;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\ValidationException;
 
 /**
- * @property string uuid
+ * @property int id
  * @property string invoice_type
  * @property string ncf
  * @property string ncf_m
@@ -76,12 +73,11 @@ class SaleCreditNoteResource extends JsonResource
             //Verificar si el stock == 0
             if ($stockAmount > 0) {
 
-
                 //Crear la informacion
                 $info[] = [
-                    'id' => $item['uuid'],
+                    'id' => $item['id'],
                     'sale_id' => $item['sale_id'],
-                    'product_id' => $productFirst->uuid,
+                    'product_id' => $productFirst->id,
                     'credit_note_id' => null,
                     'product_name' => $productFirst->name,
                     'stock' => $stockAmount ?: $item['stock'],
@@ -97,30 +93,6 @@ class SaleCreditNoteResource extends JsonResource
                     'status' => $item['status']
                 ];
             }
-
-
-
-
-            //Verificar si existen los datos de ventas
-            if (!$transProduct) {
-                $transProduct = ProTrans::where('product_id', $item->product_id)
-                    ->where('sale_id', $item->sale_id)
-                    ->where('type', TransTypeEnum::RESERVA)
-                    ->where('status', true)
-                    ->first();
-            }
-
-
-            //Conseguir la transacciones con devolucion existente
-            $transRet = ProTrans::where('product_id', $item->product_id)
-                ->where('sale_id', $item->sale_id)
-                ->where('type', [TransTypeEnum::DEVOLUCION])
-                ->where('status', false)
-                ->sum('stock');
-
-            //Verificar si existe el productos
-            $existsProduct = isset($transProduct);
-
         });
 
 //
@@ -136,7 +108,7 @@ class SaleCreditNoteResource extends JsonResource
 
         //Devolver los datos formateado
         return [
-            "id" => $this->uuid,
+            "id" => $this->id,
             "invoice_type" => $this->invoice_type,
             "ncf" => $this->ncf,
             "ncf_m" => $this->ncf_m,

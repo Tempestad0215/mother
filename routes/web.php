@@ -327,19 +327,4 @@ Route::middleware([
             Route::delete('/{wh}','destroy')->name('destroy');
         });
 
-
-    Route::get('/test',function(){
-//
-        $counter = \App\Models\MoneyCounter::first();
-        $setting = \App\Models\Setting::first();
-
-        $sale = \App\Models\Sale::first();
-
-        $pdfTicket = new \App\Invoices\Ticket80($sale);
-
-
-        return $pdfTicket->Output();
-
-
-    });
 });

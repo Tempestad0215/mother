@@ -111,10 +111,10 @@ class CreditNoteController extends Controller
         //Llamar el metodo
         $creditNote = $creditNoteHelper->creditNoteStore($request, $sale);
 
-        //Devolver el json con el id para imprimir
+        //Devolver el json con él, id para imprimir
         return response()->json([
             'success' => true,
-            'uuid' => $creditNote->uuid,
+            'id' => $creditNote->id,
             'message' => 'Registro Creado Correctamente'
         ]);
 

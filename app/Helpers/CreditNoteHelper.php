@@ -14,6 +14,7 @@ use App\Models\Sale;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class CreditNoteHelper
 {
@@ -22,6 +23,7 @@ class CreditNoteHelper
      * @param StoreProductSaleRequest $request
      * @param Sale $sale
      * @return CreditNote
+     * @throws Throwable
      */
     public function creditNoteStore(StoreProductSaleRequest $request, Sale $sale): CreditNote
     {
@@ -44,7 +46,7 @@ class CreditNoteHelper
 
             //Crear la devolucion
             $creditNote = CreditNote::create([
-                'sale_id' => $sale->uuid,
+                'sale_id' => $sale->id,
                 'client_id' => $request->get('client_id') ?: null,
                 'client_name' => $request->get('client_name'),
                 'client_rnc' => $request->get('client_rnc'),
@@ -57,12 +59,8 @@ class CreditNoteHelper
                 'amount' => $request->get('amount'),
                 'type' => SaleTypeEnum::DEVOLUCION,
                 'n_available' => $request->get('amount'),
+                'comment' => $request->get('comment'),
             ]);
-
-            //Crear el comentario de la devolucion
-            $creditNote->comment()->create(
-                ['content' => $request->get('comment')]
-            );
 
             //sumatoria para ver si se cerro la cuenta
             $resultTotal = [];
@@ -99,7 +97,7 @@ class CreditNoteHelper
                 else{
 
                     //Crear la transaccion individual
-                    TransHelper::store($item, TransTypeEnum::DEVOLUCION, $sale->uuid,"", $creditNote->uuid);
+                    TransHelper::store($item, TransTypeEnum::DEVOLUCION, $sale,$product, $creditNote);
 
                     // Verificar si la nota de credito y la venta es 0
                     $amount = $sale->amount - $creditNote->amount;
@@ -112,7 +110,7 @@ class CreditNoteHelper
                         ]);
                     }
                     //Verificar que el producto sea el mismo que el de la transation
-                    $productCheck = $product->trans->where('uuid', $item['id'])->first();
+                    $productCheck = $product->trans->where('id', $item['id'])->first();
 
                     // Verificar si es productos para actualizar el inventario
                     if ($product->type === ProductTypeEnum::PRODUCTO)
@@ -121,7 +119,7 @@ class CreditNoteHelper
                         $product->increment('stock', $item['stock']);
 
                         //Verificar si es resera o no
-                        if ($productCheck->type == TransTypeEnum::RESERVA)
+                        if ($productCheck?->type == TransTypeEnum::RESERVA)
                         {
                             //Deducir de la reserva
                             $product->decrement('reserved', $item['stock']);
@@ -132,7 +130,7 @@ class CreditNoteHelper
                     //Tomar el total de toda la devoluciones
                     $stockRet = $product->trans
                         ->where('type', TransTypeEnum::DEVOLUCION)
-                        ->where('sale_id', $sale->uuid)
+                        ->where('sale_id', $sale->id)
                         ->sum('stock');
 
 
@@ -147,7 +145,7 @@ class CreditNoteHelper
                     {
 
                         // Actualizar el status del producto
-                        ProTrans::where('uuid', $saleInfo->uuid)
+                        ProTrans::where('id', $saleInfo->id)
                             ->update([
                                 'status' => false
                             ]);
@@ -163,7 +161,7 @@ class CreditNoteHelper
             if (array_sum($resultTotal) <= 0)
             {
 
-                Sale::where('uuid', $saleId)->update([
+                Sale::where('id', $saleId)->update([
                     'close_table' => true
                 ]);
             }
