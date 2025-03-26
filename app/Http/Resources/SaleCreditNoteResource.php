@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Enums\ProductTypeEnum;
 use App\Enums\TransTypeEnum;
 use App\Enums\SaleTypeEnum;
 use App\Models\Comment;
@@ -89,7 +90,7 @@ class SaleCreditNoteResource extends JsonResource
                     'amount' => $item['amount'],
                     'discount' => $item['discount'],
                     'discount_amount' => $item['discount_amount'],
-                    'type' => SaleTypeEnum::VENTAS->value,
+                    'type' => $productFirst->type,
                     'status' => $item['status']
                 ];
             }

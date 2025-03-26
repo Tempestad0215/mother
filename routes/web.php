@@ -17,6 +17,7 @@ use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Middleware\IsAdminMiddleware;
+use App\Models\Sale;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
@@ -326,5 +327,27 @@ Route::middleware([
             Route::put('/{wh}','update')->name('update');
             Route::delete('/{wh}','destroy')->name('destroy');
         });
+//
+//    Route::get('/sale', function (){
+//        $sale = Sale::first();
+//
+//
+//        $pdf = new \App\Invoices\Ticket80($sale);
+//
+//        return $pdf->output('ticket80.pdf');
+//
+//    });
+//
+//
+//    Route::get('/credit', function (){
+//        $sale = \App\Models\CreditNote::first();
+//
+//
+//        $pdf = new \App\Invoices\Ticket80($sale);
+//
+//        return $pdf->output('credit.pdf');
+//
+//    });
+
 
 });

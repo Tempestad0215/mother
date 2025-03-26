@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\SalePaymentTypeEnum;
+use App\Enums\SequenceSaleTypeEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -34,6 +35,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property SalePaymentTypeEnum type_payment,
  * @property float received
  * @property float returned
+ * @property string comment
  */
 
 class CreditNote extends Model implements Auditable
@@ -62,6 +64,7 @@ class CreditNote extends Model implements Auditable
         'n_used',
         'type',
         'status',
+        'comment'
     ];
 
 
@@ -81,14 +84,16 @@ class CreditNote extends Model implements Auditable
      */
     public function trans():HasMany
     {
-        return $this->hasMany(ProTrans::class,'credit_note_id','uuid');
+        return $this->hasMany(ProTrans::class,'credit_note_id');
 
     }
 
-    public function sale():belongsTo
+    public function sale():BelongsTo
     {
         return $this->belongsTo(Sale::class);
     }
+
+
 
     /**
      * @return void
@@ -113,7 +118,7 @@ class CreditNote extends Model implements Auditable
     private static function generateCode():string
     {
         // Obtener el ultimo registros
-        $total = self::latest('id')->value('id');
+        $total = self::max('id') ?? 0;
 
         // Generar el proximo ID
         $nextID = $total ? $total + 1 : 1;

@@ -5,7 +5,7 @@ import InputLabel from "@components/InputLabel.vue";
 import TextInput from "@components/TextInput.vue";
 import FloatBox from "@components/FloatBox.vue";
 import FShow from "@/Pages/Products/FShow.vue";
-import {computed, onMounted, onUpdated, Ref, ref} from "vue";
+import {onMounted, onUpdated, Ref, ref} from "vue";
 import {productFullI, productI} from "@/Interfaces/Product";
 import {getMoney, getRncHelper, getSequenceType, moneyConfig, printPdf} from "@/Global/Helpers";
 import Swal from "sweetalert2";
@@ -23,7 +23,6 @@ import ReturnForm from "@components/ReturnForm.vue";
 import {Money} from "v-money3";
 import TabLink from "@components/TabLink.vue";
 import {paginationI} from "@/Interfaces/Global";
-import {isNullOrUndef} from "chart.js/helpers";
 
 
 
@@ -102,9 +101,6 @@ onMounted( () => {
     //Buscar la secuencia si está en la configuration
     if (page.props.setting.sequence)  getSequence(form.invoice_type);
 
-    console.log(form.invoice_type);
-    console.log(page.props.setting.sequence && (form.id === 0 || form.id === null))
-
     //Para verificar
     let msjError = "Este Codigo No es Validos, Introduzca Uno Validado";
 
@@ -124,7 +120,6 @@ onUpdated( () => {
     setTimeout(()=>{
         if (page.props.setting.sequence) getSequence(form.invoice_type);
     },200);
-
 
     //Para verificar
     let msjError = "Este Codigo No es Validos, Introduzca Uno Validado";
@@ -469,22 +464,21 @@ const sendData = ():void => {
     {
 
         // Enviar los datos para las devoluciones
-        form.patch(route('credit-note.store', {sale: form.id}))
-        // axios.patch(route('credit-note.store',{sale: form.id}),form)
-        //     .then(res => {
-        //         if (res.data.success)
-        //         {
-        //             //Imprimir el pdf
-        //             printPdf(route('invoice.belt.note',{creditNote: res.data.id}));
-        //             //Limpiar el pdf
-        //             // router.get(route('sale.create'));
-        //             router.visit(route('sale.create'));
-        //         }
-        //     })
-        //     .catch(err => {
-        //         console.log(err)
-        //         // errorHttp('Error :' + err.response.data.message);
-        //     });
+        axios.patch(route('credit-note.store',{sale: form.id}),form)
+            .then(res => {
+                if (res.data.success)
+                {
+                    //Imprimir el pdf
+                    printPdf(route('invoice.belt.note',{creditNote: res.data.id}));
+                    //Limpiar el pdf
+                    // router.get(route('sale.create'));
+                    router.visit(route('sale.create'));
+                }
+            })
+            .catch(err => {
+                console.log(err)
+                // errorHttp('Error :' + err.response.data.message);
+            });
     }else{
         //Verificar si no hay problema con nada
         if (!returnedBlur() && form.close_table)
@@ -516,7 +510,7 @@ const sendData = ():void => {
                     }
                 }).catch((err) => {
                     //Mensaje de error
-                    // errorHttp(`Error : ${err.message}`);
+                    errorHttp(`Error : ${err.message}`);
             });
 
         }else{
@@ -541,7 +535,7 @@ const sendData = ():void => {
                 .catch((err) => {
                     // form.errors = err.response?.data.errors;
                     //Mensaje de error
-                    // errorHttp(`Error : ${err.message}`);
+                    errorHttp(`Error : ${err.message}`);
                 });
 
         }
@@ -988,7 +982,7 @@ const getRncClient = async () => {
 
 <!--                                        Precio solo modificar si es servicio-->
                                     <td class="max-w-[5rem]">
-                                        <span v-if="item.type === 'producto'">
+                                        <span v-if="item.type === 'producto' || item.type === 'ventas'">
                                             {{getMoney(item.price)}}
                                         </span>
                                         <Money
@@ -1065,11 +1059,6 @@ const getRncClient = async () => {
                             </div>
 
                         </div>
-                    </div>
-
-<!--                        Mensaje de erro-->
-                    <div>
-                        <InputError :message="form.errors.general"/>
                     </div>
 <!--                        Devuelta y demas detos-->
                     <div class=" mt-2 w-64 float-right">

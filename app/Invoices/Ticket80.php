@@ -3,6 +3,7 @@
 namespace App\Invoices;
 
 use App\Enums\SaleSerieEnum;
+use App\Models\CreditNote;
 use App\Models\Sale;
 use App\Models\Setting;
 use Carbon\Carbon;
@@ -13,30 +14,43 @@ class Ticket80 extends TCPDF
 {
 
     private ?Setting $setting;
-    private Sale $sale;
     private int $headerEnd;
+    private mixed $items;
     private \App\Helpers\General $money;
     private float $dataEnd;
-
+    private bool $isSale;
+    private Sale | CreditNote $model;
     private float $heightPage = 180;
     private float $headerHeight = 20;
 //    private float $commentHeight = 0;
 
-    public function __construct(Sale $sale)
+    public function __construct(Sale|CreditNote $model)
     {
 
+        /*Pasar la variable al moedlo*/
+        $this->model = $model;
 
-        $sale->infoSale->each(function () {
-           $this->heightPage += $this->headerHeight;
+
+//        Verificar a que pertenece
+        if ($model instanceof Sale) {
+            $this->items = $model->infoSale;
+            $this->isSale = true;
+        } else{
+            $this->items = $model->trans;
+            $this->isSale = false;
+        }
+
+        // Ajustar la altura de la página según los elementos
+        collect($this->items)->each(function () {
+            $this->heightPage += $this->headerHeight;
         });
-
 
 //        Llamar el metodo principal para la configuracion
         parent::__construct("P", "mm", [80,$this->heightPage]);
 
 //        Colocar la info de la setting
         $this->setting = Setting::first();
-        $this->sale = $sale;
+
 
 //        Instancia
         $this->money = new \App\Helpers\General();
@@ -61,7 +75,7 @@ class Ticket80 extends TCPDF
     public function Header(): void
     {
 //        Fuente de la factura
-        $this->SetFont('helvetica', 'B', 10);
+        $this->SetFont('helvetica', 'B', 16);
 //        Nombre de la empresa
         $this->Cell(0, 5, $this->setting->name, 0, 1, 'C');
         $this->SetFont('helvetica', '', 8);
@@ -87,13 +101,21 @@ class Ticket80 extends TCPDF
         if ($this->setting->sequence)
         {
             $this->Cell(22,6, "NCF :", 0, 0, 'L');
-            $this->Cell(30,6, $this->sale->ncf, 0, 1, 'L');
+            $this->Cell(30,6, $this->model->ncf, 0, 1, 'L');
+
+
+//            si es nota de credito pues colocar el ncf modificado
+            if (!$this->isSale)
+            {
+                $this->Cell(22,6, "NCF M.:", 0, 0, 'L');
+                $this->Cell(30,6, $this->model->ncf_m, 0, 1, 'L');
+            }
         }
 
 
 //        Fecha de la factura
         $this->Cell(22,6, "Fecha :", 0, 0, 'L');
-        $this->Cell(30,6, $this->sale->created_at, 0, 0, 'L');
+        $this->Cell(30,6, $this->model->created_at, 0, 0, 'L');
 
 
         /**
@@ -102,7 +124,7 @@ class Ticket80 extends TCPDF
         $this->Ln(8);
         $this->Line(2, $this->GetY(), 78, $this->GetY());
 
-        $this->Cell(0, 8,Str::replace("_", " ", SaleSerieEnum::from($this->sale->invoice_type)->name) , 0, 1, 'C');
+        $this->Cell(0, 8,Str::replace("_", " ", SaleSerieEnum::from($this->model->invoice_type)->name) , 0, 1, 'C');
 
         $this->Line(2, $this->GetY(), 78, $this->GetY());
 
@@ -112,9 +134,9 @@ class Ticket80 extends TCPDF
 
         $this->SetFont('helvetica', '', 11);
         $this->Cell(25, 5, "Nombre :", 1, 0, 'C');
-        $this->Cell(0, 5, $this->sale->client_name, 1, 1, 'C');
+        $this->Cell(0, 5, $this->model->client_name, 1, 1, 'C');
         $this->Cell(25, 5, "Documento :", 1, 0, 'C');
-        $this->Cell(0, 5, $this->sale->client_rnc, 1, 1, 'C');
+        $this->Cell(0, 5, $this->model->client_rnc, 1, 1, 'C');
 
 
 
@@ -137,19 +159,19 @@ class Ticket80 extends TCPDF
         $this->SetX($xValue);
 //     Itbis
         $this->Cell(30, 5, 'Itbis :', 0, 0, 'L');
-        $this->Cell(30, 5, $this->money->moneyFormat($this->sale->tax), 0, 1, 'L');
+        $this->Cell(30, 5, $this->money->moneyFormat($this->model->tax), 0, 1, 'L');
 //     Descuiento
         $this->SetX($xValue);
         $this->Cell(30, 5, 'Descuento :', 0, 0, 'L');
-        $this->Cell(30, 5, $this->money->moneyFormat($this->sale->discount_amount), 0, 1, 'L');
+        $this->Cell(30, 5, $this->money->moneyFormat($this->model->discount_amount), 0, 1, 'L');
         // Subtotak
         $this->SetX($xValue);
         $this->Cell(30, 5, 'Sub Total :', 0, 0, 'L');
-        $this->Cell(30, 5, $this->money->moneyFormat($this->sale->sub_total), 0, 1, 'L');
+        $this->Cell(30, 5, $this->money->moneyFormat($this->model->sub_total), 0, 1, 'L');
         // Total
         $this->SetX($xValue);
         $this->Cell(30, 5, 'Total :', 0, 0, 'L');
-        $this->Cell(30, 5, $this->money->moneyFormat($this->sale->amount), 0, 1, 'L');
+        $this->Cell(30, 5, $this->money->moneyFormat($this->model->amount), 0, 1, 'L');
 
         // Posición desde el final de la página
         $this->SetFont('helvetica', '', 8);
@@ -160,7 +182,7 @@ class Ticket80 extends TCPDF
 //        $startComment = $this->GetY();
         $this->SetFont('helvetica', '', 10);
         $this->Cell(18, 5, "Comentario :", 0, 1, 'L');
-             $this->MultiCell(0, 0,$this->sale->comment, 0, 'L', '');
+             $this->MultiCell(0, 0,$this->model->comment, 0, 'L', '');
 
 //             Tomar el final del comentario
 //        $endComment = $this->GetY();
@@ -189,7 +211,7 @@ class Ticket80 extends TCPDF
 
 //            $this->SetY($endComment + 20);
             $this->Cell(0, 3, "Código de Factura:", 0, 1, 'C');
-            $this->write1DBarcode($this->sale->code, 'C128', '', '', 76, 20, 0.6, $style, 'N');
+            $this->write1DBarcode($this->model->code, 'C128', '', '', 76, 20, 0.6, $style, 'N');
         }
 
         $printDate = Carbon::now()->format('d/m/Y H:i:s');
@@ -199,7 +221,7 @@ class Ticket80 extends TCPDF
 
 //        Quien realizo la orden
         $this->Cell(30, 5, 'Le atendio :', 0, 0, 'C');
-        $this->Cell(30, 5, $this->sale->audits[0]->user->name, 0, 1, 'C');
+        $this->Cell(30, 5, $this->model->audits[0]->user->name, 0, 1, 'C');
         /**
          *
          */
@@ -208,6 +230,15 @@ class Ticket80 extends TCPDF
         // Mensaje de garantía
         $this->SetFont('helvetica', 'B', 7);
         $this->MultiCell(0, 5, "Las piezas eléctricas y piezas instaladas fuera del taller no tienen garantía.", 0, 'C');
+
+        if (!$this->isSale)
+        {
+            // Agregar el comentario sobre las notas de crédito
+            $this->Ln(3); // Añadir espacio entre los comentarios
+            $this->SetFont('helvetica', 'B', 7);
+            $this->MultiCell(0, 5, "Las notas de crédito deben ser consumidas antes de 30 días.", 0, 'C');
+        }
+
 
         // Mensaje de agradecimiento
         $this->SetFont('helvetica', 'B', 8);
@@ -234,7 +265,8 @@ class Ticket80 extends TCPDF
          */
 
         $this->SetFont('helvetica', '', 10);
-        foreach ($this->sale->infoSale as $data)
+
+        foreach ($this->items as $data)
         {
             $this->Cell(8,$this->headerHeight,$this->money->moneyFormat($data->stock) ,0,0,'C');
 

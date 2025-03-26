@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use Throwable;
 
 class CreditNoteController extends Controller
 {
@@ -101,6 +102,7 @@ class CreditNoteController extends Controller
      * @param StoreProductSaleRequest $request
      * @param Sale $sale
      * @return JsonResponse
+     * @throws Throwable
      */
     public function store(StoreProductSaleRequest $request, Sale $sale):JsonResponse
     {

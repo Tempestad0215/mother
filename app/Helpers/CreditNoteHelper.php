@@ -47,6 +47,7 @@ class CreditNoteHelper
             //Crear la devolucion
             $creditNote = CreditNote::create([
                 'sale_id' => $sale->id,
+                'invoice_type' => SequenceSaleTypeEnum::B04->value,
                 'client_id' => $request->get('client_id') ?: null,
                 'client_name' => $request->get('client_name'),
                 'client_rnc' => $request->get('client_rnc'),
@@ -80,14 +81,15 @@ class CreditNoteHelper
 
 
                 //Si el producto es de servicio el resultado debe ser 0
-                if ($product->type == ProductTypeEnum::SERVICIO && $result != 0)
-                {
-                    // Devolver error si no coincide
-                    throw ValidationException::withMessages([
-                        'general' => "Por Favor, No Puede Modificar La Cantidad Del Item: $product->name"
-                    ]);
-
-                }else if ($result < 0)
+//                if ($product->type == ProductTypeEnum::SERVICIO && $result != 0)
+//                {
+//                    // Devolver error si no coincide
+//                    throw ValidationException::withMessages([
+//                        'general' => "Por Favor, No Puede Modificar La Cantidad Del Item: $product->name"
+//                    ]);
+//
+//                }else
+                if ($result < 0)
                 {
                     // Devolver error si no coincide
                     throw  ValidationException::withMessages([
