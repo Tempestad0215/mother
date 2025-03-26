@@ -898,7 +898,7 @@ const getRncClient = async () => {
                                     <option
                                         v-for="(item, index) in propsW.invoiceType"
                                         :key="index"
-                                        :disabled="false"
+                                        :disabled="item.type === 'B04' && !propsW.refund"
                                         :value="item.type">
                                         {{item.type}} - {{ item.name }}
                                     </option>
