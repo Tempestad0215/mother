@@ -24,12 +24,10 @@ class TransHelper
 
 
         //Crear o actualizar si no existe
-        ProTrans::updateOrCreate(
+        ProTrans::create(
             [
-                'product_id' => $product->id,
                 'sale_id' => $sale->id,
-            ],
-            [
+                'product_id' => $product?->id,
                 'product_name' => $request["product_name"],
                 'reserved' => $type === TransTypeEnum::RESERVA ? $request["stock"] : 0,
                 'stock' => $request['stock'],

@@ -142,7 +142,7 @@ const deleteCreditNote = (index:number) => {
                     value="Notas Creditos"/>
                 <div class="relative">
                     <TextInput
-                        class="w-full"
+                        class="w-full mr-10"
                         v-model.trim="creditNote"
                         type="search"/>
                     <i

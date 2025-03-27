@@ -134,4 +134,23 @@ class ReportHelper
             ->limit(10)
             ->get(['id','code','name','stock']);
     }
+
+    /**
+     * Comentado porque posee un pequeño reporte, leugo vas a ser reenmplazado
+     */
+
+//    public function repotDay()
+//    {
+//        $ventasDelDia = Sale::whereDate('created_at', Carbon::today())
+//            ->selectRaw('SUM(amount) as total_ventas,
+//                 SUM(CASE WHEN type_payment = "CONTADO" THEN amount ELSE 0 END) as total_efectivo,
+//                 SUM(CASE WHEN type_payment = "CREDITO" THEN amount ELSE 0 END) as total_credito,
+//                  SUM(CASE WHEN type_payment = "CHEQUE" THEN amount ELSE 0 END) as total_cheque,
+//                 SUM(CASE WHEN type_payment = "TARJETA" THEN amount ELSE 0 END) as total_tarjeta,
+//                 SUM(CASE WHEN type_payment = "TRANSFERENCIA" THEN amount ELSE 0 END) as total_transferencia,
+//                 SUM(CASE WHEN type_payment = "ANTICIPO" THEN amount ELSE 0 END) as total_anticipo')
+//            ->first();
+//
+//        return response()->json($ventasDelDia);
+//    }
 }

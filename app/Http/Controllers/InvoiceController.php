@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Invoices\SaleInvoiceA;
 use App\Invoices\Ticket80;
+use App\Models\CreditNote;
 use App\Models\Sale;
 
 class InvoiceController extends Controller
@@ -28,6 +29,14 @@ class InvoiceController extends Controller
     {
         //Para aumentar la altura de la pagina
         $pdf = new Ticket80($sale);
+
+        return $pdf->output('invoice.pdf');
+    }
+
+    public function beltNote(CreditNote $creditNote)
+    {
+        //Para aumentar la altura de la pagina
+        $pdf = new Ticket80($creditNote);
 
         return $pdf->output('invoice.pdf');
     }

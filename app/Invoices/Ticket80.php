@@ -191,7 +191,7 @@ class Ticket80 extends TCPDF
 //        $this->commentHeight = $endComment - $startComment;
 
         // Código de barras 1D (CODE 128)
-        if (!empty($this->sale->code)) {
+        if (!empty($this->model->code)) {
             $style = array(
                 'position' => '',
                 'align' => 'C',

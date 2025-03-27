@@ -52,6 +52,7 @@ class CreditNote extends Model implements Auditable
         'code',
         'ncf',
         'ncf_m',
+        'invoice_type',
         'client_name',
         'client_rnc',
         'client_id',

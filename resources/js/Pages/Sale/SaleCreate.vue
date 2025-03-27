@@ -206,8 +206,6 @@ const getSequence = async (type: string) => {
             }
         }
     }catch (err) {
-
-        console.log(err);
         form.ncf = "";
         form.setError("ncf", "No Existe NCF Disponible, Para Esta Serie");
     }
@@ -241,14 +239,16 @@ const returnedBlur = ():boolean => {
 const returned = ():void => {
 
     //Verificar el cálculo de los datos
-    let received:number = form.received ;
-    let amount:number = form.amount;
-    let creditAmount:number = form.credit_notes_amount;
+    let received:number = Number(form.received);
+    let amount:number = Number(form.amount);
+    let creditAmount:number = Number(form.credit_notes_amount);
     //Restar la cantidad
-    form.returned = creditAmount + received - amount;
+    form.returned = (creditAmount + received) - amount;
+
 
     //Datos pendiente para nota de credito o balance
-    form.pending = (creditAmount + received - amount) < 0 ? (creditAmount + received - amount) : 0 ;
+    form.pending = (creditAmount + received - amount) < 0
+        ? (creditAmount + received - amount) : 0 ;
 
 }
 
@@ -476,8 +476,7 @@ const sendData = ():void => {
                 }
             })
             .catch(err => {
-                console.log(err)
-                // errorHttp('Error :' + err.response.data.message);
+                errorHttp('Error :' + err.response.data.message);
             });
     }else{
         //Verificar si no hay problema con nada
@@ -651,10 +650,13 @@ const checkSale = () => {
  */
 const amountCreditNote = () => {
     //REalizar el cálculo de notas de credito
-    form.credit_notes_amount = form.credit_notes.reduce((acc, cur) => acc + cur.n_available, 0);
+    form.credit_notes_amount = form.credit_notes.reduce((acc, cur) => acc +
+       Number(cur.n_available), 0);
+
     //Datos pendientes por pagar
     form.returned = form.credit_notes_amount - form.amount;
-    form.pending = (form.credit_notes_amount - form.amount) < 0 ?(form.credit_notes_amount - form.amount) : 0;
+    form.pending = (form.credit_notes_amount - form.amount) < 0 ?
+        (form.credit_notes_amount - form.amount) : 0;
 
 }
 
