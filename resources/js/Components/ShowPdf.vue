@@ -27,7 +27,6 @@ onMounted(()=>{
     {
         //Elimianr el contneedor al cerrar
         iframe.contentWindow.onafterprint = () => {
-            console.log('cerrado');
             iframe.remove();
         }
 

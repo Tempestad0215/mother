@@ -103,13 +103,12 @@ const submit = () => {
     processing.value = true;
     //enviar los datos
     axios.post(route('sale.report.store'),form)
-        .then((res)=> {
+        .then(()=> {
             processing.value = false;
             successHttp('Registrado Creado Correctamente');
         }).catch((err)=> {
 
             errorValue.value = err.response.data.errors;
-        console.log(err)
             processing.value = false;
     });
 }

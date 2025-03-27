@@ -85,9 +85,6 @@ const submit = ():void => {
 
             //Limpiar el formulario
             form.reset();
-        },
-        onError:() => {
-            console.log('error');
         }
     });
 }
@@ -122,9 +119,6 @@ const destroy = (id:number):void => {
                 onSuccess:() => {
                     successHttp('Registro Eliminado Correctamente')
                 },
-                onError:() => {
-                    console.log('error');
-                }
             });
         }
     });

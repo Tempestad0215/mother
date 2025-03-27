@@ -80,11 +80,7 @@ Funciones
  */
 const submit = ()=>{
     if(form.update){
-        form.patch(route('entry.update',{entry: form.id}),{
-            onSuccess: () => {
-                console.log('enviado')
-            }
-        })
+        form.patch(route('entry.update',{entry: form.id}))
     }else{
         form.post(route('entry.store'),{
             onSuccess: () => {

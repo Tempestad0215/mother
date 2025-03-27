@@ -1,6 +1,6 @@
 
-export  const focusOut = {
-    updated(el: HTMLElement) {
-        console.log(el);
-    }
-}
+// export  const focusOut = {
+//     updated(el: HTMLElement) {
+//         console.log(el);
+//     }
+// }

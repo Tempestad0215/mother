@@ -2,12 +2,6 @@
 
 namespace Database\Seeders;
 
-
-use App\Models\Category;
-use App\Models\Client;
-use App\Models\Product;
-use App\Models\Setting;
-use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -19,10 +13,8 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
 
-
         //Crear los roles y permisos
         $this->call(RoleSeeder::class);
-
 
         // Crear el usuario
         $user = User::firstOrCreate(
@@ -34,15 +26,15 @@ class DatabaseSeeder extends Seeder
         );
 
         // Asignar el rol al usuarios para poder iniciar
-        $user->assignRole('Super Admin');
-
-
-        //Crear los datos de pruebas
-        Category::factory(100)->create();
-        Client::factory(100)->create();
-        Product::factory(150)->create();
-        Setting::factory()->create();
-        Supplier::factory(25)->create();
+//        $user->assignRole('Super Admin');
+//
+//
+//        //Crear los datos de pruebas
+//        Category::factory(100)->create();
+//        Client::factory(100)->create();
+//        Product::factory(150)->create();
+//        Setting::factory()->create();
+//        Supplier::factory(25)->create();
 
     }
 }
