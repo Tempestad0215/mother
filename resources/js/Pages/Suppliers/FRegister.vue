@@ -6,7 +6,7 @@ import TextInput from '@components/TextInput.vue';
 import InputError from '@components/InputError.vue';
 import ActionMessage from '@components/ActionMessage.vue';
 import PrimaryButton from '@components/PrimaryButton.vue';
-import {supplierI} from "@/Interfaces/Supplier";
+import {supplierI} from "@/Interfaces/SupplierInterface";
 import {computed, onMounted} from "vue";
 import {getMoney, moneyConfig} from "@/Global/Helpers";
 import {Money} from "v-money3";

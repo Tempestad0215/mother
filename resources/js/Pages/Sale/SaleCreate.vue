@@ -6,23 +6,23 @@ import TextInput from "@components/TextInput.vue";
 import FloatBox from "@components/FloatBox.vue";
 import FShow from "@/Pages/Products/FShow.vue";
 import {onMounted, onUpdated, Ref, ref} from "vue";
-import {productFullI, productI} from "@/Interfaces/Product";
+import {productFullI, productI} from "@/Interfaces/ProductInterface";
 import {getMoney, getRncHelper, getSequenceType, moneyConfig, printPdf} from "@/Global/Helpers";
 import Swal from "sweetalert2";
 import InputError from "@components/InputError.vue";
-import {clientBaseI, rncClientI} from "@/Interfaces/Client";
+import {clientBaseI, rncClientI} from "@/Interfaces/ClientInterface";
 import FShowClient from "@/Pages/Clients/FShow.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import {errorHttp, successHttp} from "@/Global/Alert";
 import axios from "axios";
 import SaleOpenShow from "@/Pages/Sale/SaleOpenShow.vue";
-import {creditNotesSaleI, infoSaleI, saleDataI} from "@/Interfaces/Sale";
-import {invoiceTypeI, sequenceDataI} from "@/Interfaces/Setting";
+import {creditNotesSaleI, infoSaleI, saleDataI} from "@/Interfaces/SaleInterface";
+import {invoiceTypeI, sequenceDataI} from "@/Interfaces/SettingInterface";
 import PaymentInvoice from "@components/PaymentInvoice.vue";
 import ReturnForm from "@components/ReturnForm.vue";
 import {Money} from "v-money3";
 import TabLink from "@components/TabLink.vue";
-import {paginationI} from "@/Interfaces/Global";
+import {paginationI} from "@/Interfaces/GlobalInterface";
 
 
 

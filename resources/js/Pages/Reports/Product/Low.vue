@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {Head, router} from "@inertiajs/vue3";
 import AppLayout from "@layout/AppLayout.vue";
-import {productDataI} from "@/Interfaces/Product";
+import {productDataI} from "@/Interfaces/ProductInterface";
 import {getMoney} from "@/Global/Helpers";
 
 

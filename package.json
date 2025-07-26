@@ -29,6 +29,7 @@
         "@fortawesome/fontawesome-svg-core": "6.6.0",
         "@fortawesome/vue-fontawesome": "3.0.8",
         "chart.js": "^4.4.5",
+        "decimal.js": "^10.6.0",
         "fast-glob": "3.3.2",
         "micromatch": "^4.0.8",
         "puppeteer": "^23.11.1",

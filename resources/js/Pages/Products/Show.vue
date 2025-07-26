@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppLayout from '@layout/AppLayout.vue';
 import { Head} from '@inertiajs/vue3';
-import { productI } from '@/Interfaces/Product';
+import { productI } from '@/Interfaces/ProductInterface';
 import { PropType } from 'vue';
 import FShow from "@/Pages/Products/FShow.vue";
 import TabLink from "@components/TabLink.vue";

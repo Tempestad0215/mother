@@ -124,7 +124,11 @@ class Ticket80 extends TCPDF
         $this->Ln(8);
         $this->Line(2, $this->GetY(), 78, $this->GetY());
 
-        $this->Cell(0, 8,Str::replace("_", " ", SaleSerieEnum::from($this->model->invoice_type)->name) , 0, 1, 'C');
+        if($this->setting->sequence)
+        {
+            $this->Cell(0, 8,Str::replace("_", " ", SaleSerieEnum::from($this->model->invoice_type)->name) , 0, 1, 'C');
+        }
+
 
         $this->Line(2, $this->GetY(), 78, $this->GetY());
 

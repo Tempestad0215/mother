@@ -23,7 +23,7 @@ class UpdateClientsRequest extends FormRequest
      *
      * @return array<string, ValidationRule|array|string>
      */
-    public function rules(): array
+    public function rules():array
     {
         // Tomar el id
         $id = $this->route('client');

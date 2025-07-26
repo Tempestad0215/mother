@@ -1,4 +1,4 @@
-import {taxI} from "@/Interfaces/Global";
+import {taxI} from "@/Interfaces/GlobalInterface";
 
 
 // export interface infoBranchesI {

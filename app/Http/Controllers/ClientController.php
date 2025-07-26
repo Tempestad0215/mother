@@ -109,10 +109,12 @@ class ClientController extends Controller implements HasMiddleware
      */
     public function edit(Client $client)
     {
+
         // Devolver la vista con los datos
         return Inertia::render('Clients/Register',[
             'update' => true,
-            'clientEdit' => new ClientCommentResource($client) ,
+            'clientEdit' => new ClientCommentResource($client),
+            'typeRNC' => config('appconfig.sequenceSale')
         ]);
 
     }

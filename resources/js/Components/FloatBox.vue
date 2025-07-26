@@ -20,7 +20,7 @@ const show = defineModel<boolean>('show',{
 <template>
     <Transition>
         <div
-            class="bg-black w-full h-screen bg-opacity-60 absolute left-0 top-0 flex justify-center pt-[5rem] pb-[5rem]">
+            class="bg-blue-300 backdrop-blur-md w-full h-screen bg-opacity-80 absolute left-0 top-0 flex justify-center pt-[5rem] pb-[5rem]">
 
             <i
                 @click="$emit('close')"
@@ -29,8 +29,9 @@ const show = defineModel<boolean>('show',{
                 <h3 class="fondo flex-1 text-2xl font-semibold text-center rounded-md mb-2">
                     {{propsW.header}}
                 </h3>
-                <slot></slot>
+                <slot/>
             </div>
         </div>
+
     </Transition>
 </template>

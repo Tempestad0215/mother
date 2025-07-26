@@ -6,7 +6,7 @@ import InputError from "@components/InputError.vue";
 import TextInput from "@components/TextInput.vue";
 import {useForm} from "@inertiajs/vue3";
 import {successHttp} from "@/Global/Alert";
-import {categoryBaseI} from "@/Interfaces/Categories";
+import {categoryBaseI} from "@/Interfaces/CategoriesInterface";
 import {onMounted} from "vue";
 
 
@@ -64,7 +64,7 @@ const submit = () => {
 <template>
     <form
         @submit.prevent="submit"
-        class="fondo rounded-md p-5 grid grid-cols-2 gap-3">
+        class="fondo max-w-5xl mx-auto rounded-md p-5 grid grid-cols-2 gap-3">
         <h3 class=" text-2xl font-bold col-span-full text-center">
             Registro de Categoria
         </h3>

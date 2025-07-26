@@ -6,7 +6,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import ActionMessage from '@/Components/ActionMessage.vue';
-import {userI, userPaginationI} from "@/Interfaces/User";
+import {userI, userPaginationI} from "@/Interfaces/UserInterface";
 import {computed} from "vue";
 import Swal from "sweetalert2";
 import {successHttp} from "@/Global/Alert";

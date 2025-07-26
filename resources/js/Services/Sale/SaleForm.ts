@@ -1,5 +1,5 @@
-import {infoSaleI} from "@/Interfaces/Sale";
-import {productDataI} from "@/Interfaces/Product";
+import {infoSaleI} from "@/Interfaces/SaleInterface";
+import {productDataI} from "@/Interfaces/ProductInterface";
 import {SaleService} from "@/Services/SaleServices";
 
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {clientEditI} from "@/Interfaces/Client";
+import {clientEditI} from "@/Interfaces/ClientInterface";
 import AppLayout from "@layout/AppLayout.vue";
 import FRegister from "@/Pages/Clients/FRegister.vue";
 import TabLink from "@components/TabLink.vue";
@@ -28,6 +28,7 @@ const propsW = defineProps<{
         </template>
 
         <FRegister
+            :update="propsW.update"
             :clientEdit="propsW.clientEdit"
             :typeRNC="typeRNC"/>
 

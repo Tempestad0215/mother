@@ -4,8 +4,8 @@ import TabLink from "@components/TabLink.vue";
 import FloatBox from "@components/FloatBox.vue";
 import {ref} from "vue";
 import FShow from "@/Pages/Suppliers/FShow.vue";
-import {paginationI} from "@/Interfaces/Global";
-import {supplierI} from "@/Interfaces/Supplier";
+import {paginationI} from "@/Interfaces/GlobalInterface";
+import {supplierI} from "@/Interfaces/SupplierInterface";
 import FSee from "@/Pages/Suppliers/FSee.vue";
 
 

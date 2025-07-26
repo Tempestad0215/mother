@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import {saleDataI} from "@/Interfaces/Sale";
+import {saleDataI} from "@/Interfaces/SaleInterface";
 import {getMoney} from "@/Global/Helpers";
 import Pagination from "@components/Pagination.vue";
 import FormSearch from "@components/FormSearch.vue";
 import {useForm} from "@inertiajs/vue3";
-import {paginationI} from "@/Interfaces/Global";
+import {paginationI} from "@/Interfaces/GlobalInterface";
 
 /**
  * Propiedades de la ventana

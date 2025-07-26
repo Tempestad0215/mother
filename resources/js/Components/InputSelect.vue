@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { supplierI } from '@/Interfaces/Supplier';
+import { supplierI } from '@/Interfaces/SupplierInterface';
 import {  PropType, ref } from 'vue';
-import {productDataI } from "@/Interfaces/Product";
-import {taxI} from "@/Interfaces/Global";
+import {productDataI } from "@/Interfaces/ProductInterface";
+import {taxI} from "@/Interfaces/GlobalInterface";
 
 
 const props = defineProps({

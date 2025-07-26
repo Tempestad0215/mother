@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {Head, router, useForm} from "@inertiajs/vue3";
 import AppLayout from "@layout/AppLayout.vue";
-import {productTransPI} from "@/Interfaces/Product";
+import {productTransPI} from "@/Interfaces/ProductInterface";
 import { getMoney} from "@/Global/Helpers";
 import FormSearch from "@components/FormSearch.vue";
 import Pagination from "@components/Pagination.vue";

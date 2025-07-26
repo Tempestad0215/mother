@@ -2,11 +2,11 @@
 import Pagination from "@components/Pagination.vue";
 import FormSearch from "@components/FormSearch.vue";
 import {successHttp} from "@/Global/Alert";
-import {supplierI} from "@/Interfaces/Supplier";
+import {supplierI} from "@/Interfaces/SupplierInterface";
 import Swal from "sweetalert2";
 import {router, useForm} from "@inertiajs/vue3";
 import {ref, Ref} from "vue";
-import {paginationI} from "@/Interfaces/Global";
+import {paginationI} from "@/Interfaces/GlobalInterface";
 import {exportExcel} from "@/Global/Helpers";
 
 /*

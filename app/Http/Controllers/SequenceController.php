@@ -25,7 +25,7 @@ class SequenceController extends Controller
         $setting = Setting::first();
 
         //Verificar si existe
-        if ($setting->sequence)
+        if ($setting && $setting->sequence)
         {
             //Intancia
             $sequenceHelper = new SequenceHelper();

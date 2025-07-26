@@ -4,14 +4,14 @@ import AppLayout from "@layout/AppLayout.vue";
 import SelectOption from "@components/SelectOption.vue";
 import {getMoney, moneyConfig} from "@/Global/Helpers";
 import {Money} from "v-money3";
-import {purchaseInfoI} from "@/Interfaces/Purchase";
+import {purchaseInfoI} from "@/Interfaces/PurchaseInterface";
 import InputLabel from "@components/InputLabel.vue";
 import TextInput from "@components/TextInput.vue";
 import TabLink from "@components/TabLink.vue";
 import FloatBox from "@components/FloatBox.vue";
 import FShow from "@/Pages/Products/FShow.vue";
 import {ref} from "vue";
-import {productFullI, productI} from "@/Interfaces/Product";
+import {productFullI, productI} from "@/Interfaces/ProductInterface";
 
 
 /*

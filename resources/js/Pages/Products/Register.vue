@@ -5,11 +5,11 @@ import FRegisterSupplier from '@/Pages/Suppliers/FRegister.vue'
 import FloatBox from '@/Components/FloatBox.vue'
 import {ref} from 'vue';
 import FRegister from '@/Pages/Products/FRegister.vue';
-import {supplierI} from "@/Interfaces/Supplier";
-import {productBaseI} from "@/Interfaces/Product";
-import {categoryBaseI} from "@/Interfaces/Categories";
+import {supplierI} from "@/Interfaces/SupplierInterface";
+import {productBaseI} from "@/Interfaces/ProductInterface";
+import {categoryBaseI} from "@/Interfaces/CategoriesInterface";
 import TabLink from "@components/TabLink.vue";
-import {warehouseBaseI} from "@/Interfaces/Warehouse";
+import {warehouseBaseI} from "@/Interfaces/WarehouseInterface";
 
 
 

@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
     {
 
         //Crear los roles y permisos
-        $this->call(RoleSeeder::class);
+//        $this->call(RoleSeeder::class);
 
         // Crear el usuario
         $user = User::firstOrCreate(
@@ -23,11 +23,15 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Marionil Guzman',
                 'password' => bcrypt('password'), // Cambia 'password' por la contraseña deseada
             ]
-        );
+        )->each(function ($user) {
+            $user->assignRole('Super Admin');
+        });
+
+        // reset cached roles and permissions
 
         // Asignar el rol al usuarios para poder iniciar
 //        $user->assignRole('Super Admin');
-//
+//p
 //
 //        //Crear los datos de pruebas
 //        Category::factory(100)->create();
@@ -37,4 +41,6 @@ class DatabaseSeeder extends Seeder
 //        Supplier::factory(25)->create();
 
     }
+
+
 }

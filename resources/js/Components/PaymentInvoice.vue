@@ -7,7 +7,7 @@ import InputError from "@components/InputError.vue";
 import InputLabel from "@components/InputLabel.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import {InertiaForm} from "@inertiajs/vue3";
-import {creditNotesSaleI} from "@/Interfaces/Sale";
+import {creditNotesSaleI} from "@/Interfaces/SaleInterface";
 import axios from "axios";
 import {onMounted} from "vue";
 import {Money} from "v-money3";

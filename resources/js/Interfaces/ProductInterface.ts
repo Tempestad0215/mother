@@ -1,4 +1,3 @@
-import {linksI, metaI} from "@/Interfaces/Global";
 
 
 export interface productI {
@@ -13,6 +12,11 @@ export interface productI {
     to: number
 }
 
+
+export interface ProductOptionsI {
+    name: string;
+    value: string;
+}
 
 /**
  *
@@ -40,6 +44,13 @@ export interface productBaseI {
     weight: string;
     created_at: string;
     updated_at: string;
+    inventoried: boolean;
+    warehouse_id: number;
+    has_fraction: boolean;
+    has_special: boolean;
+    has_discount: boolean;
+    has_tax: boolean;
+    status: boolean;
 }
 
 /**
@@ -78,8 +89,8 @@ export interface productTransI extends productBaseI {
  * Paginacion de product trans
  *
  */
-export interface productTransPI {
-    data: productTransI[],
-    links: linksI,
-    meta: metaI
-}
+// export interface productTransPI {
+//     data: productTransI[],
+//     links: linksI,
+//     meta: metaI
+// }

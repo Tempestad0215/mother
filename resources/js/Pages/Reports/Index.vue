@@ -4,7 +4,7 @@ import {Head} from "@inertiajs/vue3";
 import {onMounted} from "vue";
 import LinkHeader from "@components/LinkHeader.vue";
 import ProductMostSold from "@/Charts/ProductMostSold.vue";
-import {mostSoldI} from "@/Interfaces/Report";
+import {mostSoldI} from "@/Interfaces/ReportInterface";
 
 
 

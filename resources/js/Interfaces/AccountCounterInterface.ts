@@ -1,4 +1,4 @@
-import {paginationI} from "@/Interfaces/Global";
+import {paginationI} from "@/Interfaces/GlobalInterface";
 
 
 export interface acoBaseI {

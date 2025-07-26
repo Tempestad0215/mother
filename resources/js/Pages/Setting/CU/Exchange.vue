@@ -2,7 +2,7 @@
 import PrimaryButton from "@components/PrimaryButton.vue";
 import {onMounted, ref} from "vue";
 import axios from "axios";
-import {currencyDayI, currencyI, monthDayI} from "@/Interfaces/Currency";
+import {currencyDayI, currencyI, monthDayI} from "@/Interfaces/CurrencyInterface";
 import {getYear, moneyConfig, month} from "@/Global/Helpers";
 import {useForm} from "@inertiajs/vue3";
 import {Money} from "v-money3";

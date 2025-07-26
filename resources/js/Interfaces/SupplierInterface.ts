@@ -1,4 +1,4 @@
-import {creditI} from "@/Interfaces/Account";
+import {creditI} from "@/Interfaces/AccountInterface";
 
 
 export interface supplierI {

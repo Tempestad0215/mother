@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {warehouseBaseI} from "@/Interfaces/Warehouse";
+import {warehouseBaseI} from "@/Interfaces/WarehouseInterface";
 import Swal from "sweetalert2";
 import {router} from "@inertiajs/vue3";
 import {successHttp} from "@/Global/Alert";
@@ -14,6 +14,9 @@ const propsW = defineProps<{
 }>();
 
 
+const emit = defineEmits<{
+    (e: "editWareHouse", item: warehouseBaseI): void
+}>()
 
 
 /**
@@ -26,6 +29,7 @@ const edit = (item:warehouseBaseI) => {
     // form.description = item.description;
     // form.location = item.location;
     // form.update = true;
+   emit('editWareHouse', item);
 }
 
 

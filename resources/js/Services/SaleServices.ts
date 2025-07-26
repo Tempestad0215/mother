@@ -1,5 +1,5 @@
-import {productDataI} from "@/Interfaces/Product";
-import {infoSaleI} from "@/Interfaces/Sale";
+import {productDataI} from "@/Interfaces/ProductInterface";
+import {infoSaleI} from "@/Interfaces/SaleInterface";
 
 
 /**

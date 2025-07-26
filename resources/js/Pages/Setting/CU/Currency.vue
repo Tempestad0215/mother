@@ -8,7 +8,7 @@ import {useForm} from "@inertiajs/vue3";
 import ToggleButton from "@components/ToggleButton.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import {successHttp} from "@/Global/Alert";
-import {currencyI} from "@/Interfaces/Currency";
+import {currencyI} from "@/Interfaces/CurrencyInterface";
 import Swal from "sweetalert2";
 
 /*

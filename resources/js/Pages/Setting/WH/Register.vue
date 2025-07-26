@@ -4,7 +4,8 @@ import AppLayout from "@layout/AppLayout.vue";
 import TabLink from "@components/TabLink.vue";
 import FRegister from "@/Pages/Setting/WH/FRegister.vue";
 import FShow from "@/Pages/Setting/WH/FShow.vue";
-import {warehouseBaseI} from "@/Interfaces/Warehouse";
+import {warehouseBaseI} from "@/Interfaces/WarehouseInterface";
+import {reactive} from "vue";
 
 
 /*
@@ -14,6 +15,10 @@ const propsW = defineProps<{
     warehouse: warehouseBaseI[]
 }>();
 
+
+const state = reactive({
+    editWareHouse: null as warehouseBaseI | null,
+})
 
 
 </script>
@@ -27,11 +32,15 @@ const propsW = defineProps<{
                 Ajustes
             </TabLink>
             <TabLink
+                :href="route('sequence.create')">
+                Correlativos
+            </TabLink>
+            <TabLink
                 :href="route('aco.index')">
                 Cuentas
             </TabLink>
             <TabLink
-                :active="true"
+                active
                 :href="route('wh.index')">
                 Almacen
             </TabLink>
@@ -40,10 +49,12 @@ const propsW = defineProps<{
         <!--        Contenido de la vantana-->
         <div class="">
             <FRegister
+                :edit-ware-house="state.editWareHouse ?? undefined"
                 class="w-full"
                 />
 
             <FShow
+                @editWareHouse="(item:warehouseBaseI) => state.editWareHouse = item "
                 :warehouse="propsW.warehouse"/>
 
 

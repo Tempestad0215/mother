@@ -2,7 +2,7 @@
 
 import AppLayout from "@layout/AppLayout.vue";
 import {Head, router} from "@inertiajs/vue3";
-import {reportDayI} from "@/Interfaces/Report";
+import {reportDayI} from "@/Interfaces/ReportInterface";
 import {getMoney} from "@/Global/Helpers";
 
 

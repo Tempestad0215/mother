@@ -2,7 +2,7 @@
 
 import FormSearch from "@components/FormSearch.vue";
 import Pagination from "@components/Pagination.vue";
-import {productBaseI, productI} from "@/Interfaces/Product";
+import {productBaseI, productI} from "@/Interfaces/ProductInterface";
 import {router, useForm, usePage} from "@inertiajs/vue3";
 import Swal from "sweetalert2";
 import {successHttp} from "@/Global/Alert";

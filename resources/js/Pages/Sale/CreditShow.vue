@@ -2,7 +2,7 @@
 import {Head, useForm, usePage} from "@inertiajs/vue3";
 import AppLayout from "@layout/AppLayout.vue";
 import FormSearch from "@components/FormSearch.vue";
-import {creditNotesSaleI, creditPaginationI} from "@/Interfaces/Sale";
+import {creditNotesSaleI, creditPaginationI} from "@/Interfaces/SaleInterface";
 import {getMoney, printPdf} from "@/Global/Helpers";
 import Pagination from "@components/Pagination.vue";
 import InputError from "@components/InputError.vue";

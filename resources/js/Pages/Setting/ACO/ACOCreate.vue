@@ -6,7 +6,7 @@ import {ref} from "vue";
 import InputError from "@components/InputError.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import {successHttp} from "@/Global/Alert";
-import {acoBaseI} from "@/Interfaces/AccountCounter";
+import {acoBaseI} from "@/Interfaces/AccountCounterInterface";
 import Swal from "sweetalert2";
 import TabLink from "@components/TabLink.vue";
 
@@ -109,7 +109,11 @@ const destroy = (item:acoBaseI) => {
                 Ajustes
             </TabLink>
             <TabLink
-                :active="true"
+                :href="route('sequence.create')">
+                Correlativos
+            </TabLink>
+            <TabLink
+                active
                 :href="route('aco.index')">
                 Cuentas
             </TabLink>

@@ -1,6 +1,6 @@
 // src/inertia.d.ts
 import { Page } from '@inertiajs/core';
-import { appSettingI, userAuthI } from "@/Interfaces/Global";
+import { appSettingI, userAuthI } from "@/Interfaces/GlobalInterface";
 
 // Extender la interfaz PageProps
 declare module '@inertiajs/core' {

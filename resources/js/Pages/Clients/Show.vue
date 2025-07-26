@@ -3,8 +3,8 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import FShow from "@/Pages/Clients/FShow.vue";
 import TabLink from "@components/TabLink.vue";
-import {paginationI} from "@/Interfaces/Global";
-import {clientBaseI} from "@/Interfaces/Client";
+import {paginationI} from "@/Interfaces/GlobalInterface";
+import {clientBaseI} from "@/Interfaces/ClientInterface";
 
 
 // Datos del backend

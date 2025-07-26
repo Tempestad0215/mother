@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Pagination from "@components/Pagination.vue";
-import {paginationI} from "@/Interfaces/Global";
-import {entryProductI} from "@/Interfaces/EntryTrans";
+import {paginationI} from "@/Interfaces/GlobalInterface";
+import {entryProductI} from "@/Interfaces/EntryTransInterface";
 import FormSearch from "@components/FormSearch.vue";
 import {router, useForm} from "@inertiajs/vue3";
 import Swal from "sweetalert2";

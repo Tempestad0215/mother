@@ -5,6 +5,8 @@ import TextInput from "@components/TextInput.vue";
 import InputError from "@components/InputError.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import {successHttp} from "@/Global/Alert";
+import {warehouseBaseI} from "@/Interfaces/WarehouseInterface";
+import {watch} from "vue";
 
 
 
@@ -13,6 +15,9 @@ import {successHttp} from "@/Global/Alert";
  */
 // const type = ref(['ACTIVO','PASIVO','INGRESO','GASTO','CAPITAL']);
 
+const propsW = defineProps<{
+    editWareHouse?: warehouseBaseI;
+}>()
 /**
  * Formularios
  */
@@ -26,6 +31,20 @@ const form = useForm({
 
 
 
+
+watch(
+    () => propsW.editWareHouse,
+    (newValue) => {
+        if (newValue) {
+            form.id = newValue.id;
+            form.name = newValue.name;
+            form.description = newValue.description;
+            form.location = newValue.location;
+            form.update = true;
+        }
+    }
+)
+
 /*
 funciones
  */
@@ -36,6 +55,7 @@ const submit = () => {
     if (form.update) {
         form.put(route('wh.update',{wh: form.id}),{
             onSuccess: () => {
+                form.reset()
                 successHttp('Datos Actualizado Correctamente');
             }
         });
@@ -97,7 +117,7 @@ const submit = () => {
         <!--                Botones para enviar-->
         <div class="col-span-full text-right">
             <PrimaryButton>
-                Registar
+                {{ form.update ? "Actualizar" :  "Registar" }}
             </PrimaryButton>
         </div>
     </form>

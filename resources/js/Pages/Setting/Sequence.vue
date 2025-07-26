@@ -2,15 +2,15 @@
 import {Head, router, useForm} from "@inertiajs/vue3";
 import AppLayout from "@layout/AppLayout.vue";
 import LinkHeader from "@components/LinkHeader.vue";
-import InputLabel from "@components/InputLabel.vue";
-import InputError from "@components/InputError.vue";
 import TextInput from "@components/TextInput.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import SecondaryButton from "@components/SecondaryButton.vue";
 import {successHttp} from "@/Global/Alert";
-import {sequenceDataI} from "@/Interfaces/Setting";
-import {onMounted} from "vue";
+import {sequenceDataI} from "@/Interfaces/SettingInterface";
+import {onMounted, reactive} from "vue";
 import Swal from "sweetalert2";
+import ErrorComponent from "@components/ErrorComponent.vue";
+import TabLink from "@components/TabLink.vue";
 
 
 /*
@@ -22,6 +22,10 @@ const propsW = defineProps<{
     sequenceEdit?: sequenceDataI
 }>();
 
+
+const state = reactive({
+    first_error: ""
+})
 
 /*
 Al momentod de cargar
@@ -57,7 +61,7 @@ const form = useForm({
     id:0,
     code:"",
     type:"B01",
-    from: 0,
+    from: 1,
     next: 0,
     to: 0,
     advise:0,
@@ -83,10 +87,25 @@ const submit = ():void => {
             //Mensjae de exito
             successHttp('Registro Guiardado Correctamente');
 
+
+
             //Limpiar el formulario
             form.reset();
+            state.first_error = "";
+
+
+        },
+        onFinish: () => {
+            Object.entries(form.errors).forEach(([key, value]) => {
+                if (!state.first_error)
+                {
+                    state.first_error = `El Campo ${key}, Mensaje: ${value}`;
+                }
+            })
         }
     });
+
+
 }
 
 /**
@@ -136,16 +155,23 @@ const destroy = (id:number):void => {
 <!--  Contenido general-->
     <AppLayout>
         <template #header>
-            <LinkHeader
+            <TabLink
                 :href="route('setting.index')">
                 Ajustes
-            </LinkHeader>
-            <LinkHeader
+            </TabLink>
+            <TabLink
                 :active="true"
                 :href="route('sequence.create')">
                 Correlativos
-            </LinkHeader>
-            {{form.errors.general}}
+            </TabLink>
+            <TabLink
+                :href="route('aco.index')">
+                Cuentas
+            </TabLink>
+            <TabLink
+                :href="route('wh.index')">
+                Almacen
+            </TabLink>
         </template>
 
         <!--        Conteneido de la ventana-->
@@ -221,8 +247,6 @@ const destroy = (id:number):void => {
                                 {{ item }}
                             </option>
                         </select>
-
-                        <InputError :message="form.errors.type"/>
                     </div>
 
 <!--                    From-->
@@ -234,9 +258,6 @@ const destroy = (id:number):void => {
                             class="w-full"
                             v-model="form.from"
                             type="number"/>
-
-                        <InputError
-                            :message="form.errors.from"/>
                     </div>
 
                     <!--Hasta-->
@@ -248,8 +269,6 @@ const destroy = (id:number):void => {
                             class="w-full"
                             v-model="form.to"
                             type="number"/>
-                        <InputError
-                            :message="form.errors.to"/>
                     </div>
 
                     <!--Aviso-->
@@ -261,8 +280,6 @@ const destroy = (id:number):void => {
                             class="w-full"
                             v-model="form.advise"
                             type="number"/>
-                        <InputError
-                            :message="form.errors.advise"/>
                     </div>
 
                 </fieldset>
@@ -281,7 +298,6 @@ const destroy = (id:number):void => {
                             class="w-full"
                             name="num_request"
                             v-model="form.num_request" />
-                        <InputError :message="form.errors.num_request"/>
                     </div>
 
                     <!--                    Numero de aprobacion-->
@@ -293,8 +309,6 @@ const destroy = (id:number):void => {
                             class="w-full"
                             name="num_authorization"
                             v-model="form.num_authorization" />
-                        <InputError
-                            :message="form.errors.num_authorization"/>
                     </div>
                 </fieldset>
 
@@ -311,7 +325,6 @@ const destroy = (id:number):void => {
                             v-model="form.date_request"
                             class="w-full"
                             type="date"/>
-                        <InputError :message="form.errors.date_request"/>
                     </div>
 
 
@@ -322,7 +335,6 @@ const destroy = (id:number):void => {
                             v-model="form.date_expire"
                             class="w-full"
                             type="date"/>
-                        <InputError :message="form.errors.date_expire"/>
                     </div>
                 </fieldset>
 
@@ -338,6 +350,8 @@ const destroy = (id:number):void => {
                 </div>
             </form>
         </div>
+        <ErrorComponent
+            :message="state.first_error"/>
 
     </AppLayout>
 

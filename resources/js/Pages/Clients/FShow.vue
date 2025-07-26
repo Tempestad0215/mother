@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import Pagination from "@components/Pagination.vue";
-import {clientBaseI} from "@/Interfaces/Client";
+import {clientBaseI} from "@/Interfaces/ClientInterface";
 import {router, useForm, usePage} from "@inertiajs/vue3";
 import Swal from "sweetalert2";
 import {successHttp} from "@/Global/Alert";
 import FormSearch from "@components/FormSearch.vue";
-import {paginationI} from "@/Interfaces/Global";
+import {paginationI} from "@/Interfaces/GlobalInterface";
 import {onMounted} from "vue";
 import {exportExcel} from "@/Global/Helpers";
 

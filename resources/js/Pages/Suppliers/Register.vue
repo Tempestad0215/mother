@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppLayout from "@layout/AppLayout.vue";
 import FRegister from "@/Pages/Suppliers/FRegister.vue";
-import {supplierI} from "@/Interfaces/Supplier";
+import {supplierI} from "@/Interfaces/SupplierInterface";
 import TabLink from "@components/TabLink.vue";
 
 

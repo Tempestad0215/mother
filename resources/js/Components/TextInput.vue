@@ -1,11 +1,12 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import {onMounted, ref, useAttrs} from 'vue';
 
 defineProps({
     modelValue: String | Number,
 });
 
 defineEmits(['update:modelValue']);
+const attrs = useAttrs()
 
 const input = ref(null);
 
@@ -23,6 +24,8 @@ defineExpose({ focus: () => input.value.focus() });
         ref="input"
         class="inputGeneral"
         :value="modelValue"
+        v-bind="attrs"
+        autocomplete="off"
         @input="$emit('update:modelValue', $event.target.value)"
     >
 </template>

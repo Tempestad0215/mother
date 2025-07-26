@@ -1,7 +1,7 @@
 import Swal from "sweetalert2";
 import axios from "axios";
 import {errorHttp} from "@/Global/Alert";
-import {rncClientI} from "@/Interfaces/Client";
+import {rncClientI} from "@/Interfaces/ClientInterface";
 
 
 /**

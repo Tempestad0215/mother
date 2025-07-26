@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {Chart} from "chart.js/auto";
 import {onMounted, reactive} from "vue";
-import {mostSoldI} from "@/Interfaces/Report";
+import {mostSoldI} from "@/Interfaces/ReportInterface";
 import {generateColors} from "@/Global/Helpers"
 
 

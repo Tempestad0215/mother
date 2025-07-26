@@ -8,7 +8,6 @@ use App\Http\Requests\UpdateClientsRequest;
 use App\Models\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use function PHPUnit\Framework\isNull;
 
 class ClientHelper
 {
@@ -37,11 +36,10 @@ class ClientHelper
     }
 
 
-
-
     /**
      * @param StoreClientsRequest $request
      * @return void
+     * @throws \Throwable
      */
     public function store(StoreClientsRequest $request):void
     {
@@ -81,6 +79,7 @@ class ClientHelper
      * @param UpdateClientsRequest $request
      * @param Client $client
      * @return void
+     * @throws \Throwable
      */
     public function update(UpdateClientsRequest $request, Client $client):void
     {
@@ -90,7 +89,7 @@ class ClientHelper
             $type = $request->get('type');
 
             //Actualizar el cliente
-            $client->update();
+            $client->update($request->validated());
 
             //Verificar el tipo de pago
             if ($type != 'contado')

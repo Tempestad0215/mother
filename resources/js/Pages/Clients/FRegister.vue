@@ -7,7 +7,7 @@ import InputLabel from "@components/InputLabel.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import InputError from "@components/InputError.vue";
 import {computed, onMounted, reactive, ref, Ref} from "vue";
-import {clientEditI} from "@/Interfaces/Client";
+import {clientEditI} from "@/Interfaces/ClientInterface";
 import {useForm} from "@inertiajs/vue3";
 import {successHttp} from "@/Global/Alert";
 import Swal from "sweetalert2";
@@ -30,6 +30,9 @@ onMounted(()=>{
     //Verificar si existe datos para poner en el formulario
     if(propsW.clientEdit)
     {
+
+        console.log(propsW.clientEdit)
+
         form.id = propsW.clientEdit.id;
         form.name = propsW.clientEdit.name;
         form.document = propsW.clientEdit.document
@@ -209,7 +212,7 @@ const searchRNC = async () => {
 
 <template>
     <form
-        class="fondo rounded-md p-5"
+        class="max-w-6xl mx-auto fondo rounded-md p-5"
         @submit.prevent="submit">
 
         <!--                Titulo del formulario-->

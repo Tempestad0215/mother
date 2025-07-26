@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {supplierI} from "@/Interfaces/Supplier";
+import {supplierI} from "@/Interfaces/SupplierInterface";
 import {getMoney} from "@/Global/Helpers";
 
 /*

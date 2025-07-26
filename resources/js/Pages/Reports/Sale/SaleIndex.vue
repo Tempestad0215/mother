@@ -7,8 +7,8 @@ import InputLabel from "@components/InputLabel.vue";
 import {onMounted, reactive, ref} from "vue";
 import {getMoney, moneyConfig, setHour} from "@/Global/Helpers";
 import InputError from "@components/InputError.vue";
-import {totalSoldAmountI} from "@/Interfaces/Report";
-import { saleFullI} from "@/Interfaces/Sale";
+import {totalSoldAmountI} from "@/Interfaces/ReportInterface";
+import { saleFullI} from "@/Interfaces/SaleInterface";
 import {route} from "../../../../../vendor/tightenco/ziggy";
 import {Money} from "v-money3";
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppLayout from "@layout/AppLayout.vue";
-import {paginationI} from "@/Interfaces/Global";
-import {categoryBaseI} from "@/Interfaces/Categories";
+import {paginationI} from "@/Interfaces/GlobalInterface";
+import {categoryBaseI} from "@/Interfaces/CategoriesInterface";
 import FRegister from "@/Pages/Categories/FRegister.vue";
 import FShow from "@/Pages/Categories/FShow.vue";
 

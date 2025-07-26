@@ -87,7 +87,7 @@ class ProductController extends Controller implements HasMiddleware
             $product = Product::create($request->validated());
 
 
-            // Guardar los datos del productos
+            // Guardar los datos de los productos
             if ($request->get('type') === 'servicio')
             {
                 //Actualizar datos por fuera cuando son servicio
