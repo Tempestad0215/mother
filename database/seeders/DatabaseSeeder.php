@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
     {
 
         //Crear los roles y permisos
-//        $this->call(RoleSeeder::class);
+        $this->call(RoleSeeder::class);
 
         // Crear el usuario
         $user = User::firstOrCreate(

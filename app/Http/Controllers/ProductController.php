@@ -77,7 +77,7 @@ class ProductController extends Controller implements HasMiddleware
      * @return RedirectResponse
      * @throws Throwable
      */
-    public function store(StoreProductRequest $request)
+    public function store(StoreProductRequest $request): RedirectResponse
     {
 
         //Para asegurar que no se guarda si hay problema
@@ -108,7 +108,7 @@ class ProductController extends Controller implements HasMiddleware
      * @param Request $request
      * @return Response
      */
-    public function show(Request $request)
+    public function show(Request $request): Response
     {
 
         // Realizar la busqueda
@@ -127,7 +127,7 @@ class ProductController extends Controller implements HasMiddleware
      * @param Request $request
      * @return Response
      */
-    public function edit(Product $product, Request $request)
+    public function edit(Product $product, Request $request): Response
     {
         $dataProducts = $this->get($request);
         $dataEdit = new ProductSupplierResource($product);
@@ -148,7 +148,7 @@ class ProductController extends Controller implements HasMiddleware
      * @param Product $product
      * @return RedirectResponse
      */
-    public function update(StoreProductRequest $request, Product $product)
+    public function update(StoreProductRequest $request, Product $product): RedirectResponse
     {
 
         // Actualizar los datos validados
@@ -173,7 +173,7 @@ class ProductController extends Controller implements HasMiddleware
      * @param Product $product
      * @return RedirectResponse
      */
-    public function destroy(Product $product)
+    public function destroy(Product $product): RedirectResponse
     {
 
 
@@ -189,7 +189,7 @@ class ProductController extends Controller implements HasMiddleware
      * @param Request $request
      * @return JsonResponse
      */
-    public function getByCode(Request $request)
+    public function getByCode(Request $request): JsonResponse
     {
         //conseguir los datos a buscar
         $search = $request->get('search');
@@ -212,7 +212,7 @@ class ProductController extends Controller implements HasMiddleware
     /**
      * @return Response
      */
-    public function in()
+    public function in(): Response
     {
 
         return Inertia::render('Products/In');
@@ -225,7 +225,7 @@ class ProductController extends Controller implements HasMiddleware
      * @param Request $request
      * @return Paginator
      */
-    public function get(Request $request)
+    public function get(Request $request): Paginator
     {
         //Sacar los datos de busqueda
         $search = trim($request->get('search'));
@@ -248,7 +248,7 @@ class ProductController extends Controller implements HasMiddleware
      * @param Request $request
      * @return JsonResponse
      */
-    public function getJson(Request $request)
+    public function getJson(Request $request): JsonResponse
     {
         //Buscar los datos
         $search = $request->get('search');

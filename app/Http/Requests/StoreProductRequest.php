@@ -27,6 +27,7 @@ class StoreProductRequest extends FormRequest
         $isArticle = $this->get('type') === 'producto';
 
 
+
         return [
             'name' => ['required','string','min:3','max:75'],
             'description' => ['nullable','string','max:150'],

@@ -22,7 +22,7 @@ defineProps<{
         </p>
         <p>
             <strong>Beneficios Margen </strong>
-            <span class="inline-block px-3 rounded-md ml-3">{{ benefitsMargin }}</span>
+            <span class="inline-block px-3 rounded-md ml-3">{{ benefitsMargin }} %</span>
         </p>
     </fieldset>
 </template>

@@ -3,7 +3,7 @@
 import {moneyConfig} from "@/Global/Helpers";
 import {Money} from "v-money3";
 import InputLabel from "@components/InputLabel.vue";
-import {computed} from "vue";
+import {computed, watch} from "vue";
 import {PreciseCalculator} from "@/utils/Decimal";
 
 interface propsW {
@@ -44,27 +44,34 @@ Propiedades computada
  * Precio sin impuesto
  */
 
-const total = computed(() => {
-    const productNoTax = PreciseCalculator.subtract(
-        cost.value, propsW.taxRate
-    )
+watch(
+	() => [propsW.taxRate, cost.value, price.value],
+	()=>{
+		try {
+			const productNoTax = PreciseCalculator.subtract(
+				cost.value, propsW.taxRate
+			)
+			
+			const benefits = PreciseCalculator.subtract(
+				price.value, cost.value
+			)
+			
+			const benefitsMargin = PreciseCalculator.divide(
+				Number(benefits), price.value
+			)
+			
+			const benefitsPercent = PreciseCalculator.multiply(
+				benefitsMargin.toString(), 100
+			)
+			
+			emit('calculate', productNoTax.toFixed(2), benefits.toFixed(2), benefitsPercent.toFixed(2))
+		}catch (error) {
+			console.error(error)
+		}
+		
+	}
+)
 
-    const benefits = PreciseCalculator.subtract(
-        price.value, cost.value
-    )
-
-    const benefitsMargin = PreciseCalculator.divide(
-        Number(benefits), cost.value
-    )
-
-    emit('calculate', productNoTax.toString(), benefits.toString(), benefitsMargin.toString())
-
-    return {
-        productNoTax,
-        benefits,
-        benefitsMargin,
-    }
-})
 
 
 </script>

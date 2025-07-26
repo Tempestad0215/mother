@@ -4,7 +4,7 @@ import {successHttp} from '@/Global/Alert';
 import {productBaseI, ProductOptionsI} from '@/Interfaces/ProductInterface';
 import {supplierI} from '@/Interfaces/SupplierInterface';
 import {useForm, usePage} from '@inertiajs/vue3';
-import {computed, onMounted, reactive, Ref, ref} from 'vue';
+import {onMounted, reactive, Ref, ref} from 'vue';
 import {categoryBaseI} from "@/Interfaces/CategoriesInterface";
 import {taxI} from "@/Interfaces/GlobalInterface";
 import {warehouseBaseI} from "@/Interfaces/WarehouseInterface";
@@ -15,6 +15,7 @@ import Swal from "sweetalert2";
 import ProductSale from "@/Pages/Products/ProductSale.vue";
 import ProductSaleValue from "@/Pages/Products/ProductSaleValue.vue";
 import ProductInformation from "@/Pages/Products/ProductInformation.vue";
+import ErrorComponent from "@components/ErrorComponent.vue";
 
 
 /**
@@ -31,7 +32,7 @@ const propsW = defineProps<{
     categories: categoryBaseI[],
     suppliers: supplierI[],
     warehouse: warehouseBaseI[],
-    nextProduct?: number
+    nextProduct?: number,
 }>();
 
 
@@ -40,12 +41,6 @@ const propsW = defineProps<{
  */
 const emit = defineEmits(['showSupplier']);
 
-
-const state = reactive({
-    productNoTax: "",
-    benefits: "",
-    benefitsMargin: "",
-})
 
 /**
  * Datos del formulario
@@ -70,7 +65,7 @@ const form = useForm({
     tax: 0,
     tax_rate: 0,
     tax_tex: "",
-    weight: "",
+    weight: 0,
     bar_code: "",
     sku: "",
     brand: "",
@@ -114,14 +109,14 @@ onMounted(() => {
         form.bar_code = propsW.productEdit.bar_code ? propsW.productEdit.bar_code : "";
         form.category_id = propsW.productEdit.category_id;
         form.supplier_id = propsW.productEdit.supplier_id;
-        form.tax_rate = propsW.productEdit.tax_rate;
+        form.tax_rate = Number(propsW.productEdit.tax_rate);
         form.sku = propsW.productEdit.sku || "";
         form.unit = propsW.productEdit.unit;
         form.brand = propsW.productEdit.brand || "";
-        form.cost = propsW.productEdit.cost;
-        form.price = propsW.productEdit.price;
-        form.min_price = propsW.productEdit.min_price || 0;
-        form.special_price = propsW.productEdit.special_price || 0;
+        form.cost = Number(propsW.productEdit.cost);
+        form.price = Number(propsW.productEdit.price);
+        form.min_price = Number(propsW.productEdit.min_price) || 0;
+        form.special_price = Number(propsW.productEdit.special_price) || 0;
     }
 
     //Elegir el primer si existe
@@ -171,25 +166,23 @@ function selectProduct(item: productBaseI) {
     }).then((result) => {
         if (result.isConfirmed) {
 
-            form.id = item.id;
+            form.id = Number(item.id);
             form.name = item.name;
             form.type = item.type;
             form.description = item.name;
-            form.cost = item.cost;
-            form.price = item.price;
+            form.cost = Number(item.cost);
+            form.price = Number(item.price);
             form.category_id = item.category_id;
             form.supplier_id = item.supplier_id;
             form.sku = item.sku ?? '';
             form.unit = item.unit;
             form.bar_code = item.bar_code ?? '';
             form.type = item.type;
-            form.tax_rate = item.tax_rate ?? 0;
-            form.weight = item.weight ?? '';
+            form.tax_rate = Number(item.tax_rate) ?? 0;
+            form.weight = Number(item.weight) ?? '';
             form.brand = item.brand ?? '';
-            form.cost = item.cost ?? 0;
-            form.price = item.price ?? 0;
-            form.min_price = item.min_price ?? 0;
-            form.special_price = item.special_price ?? 0;
+            form.min_price = Number(item.min_price) ?? 0;
+            form.special_price = Number(item.special_price) ?? 0;
             form.inventoried = item.inventoried;
             form.has_fraction = item.has_fraction;
             form.status = item.status;
@@ -203,9 +196,9 @@ function selectProduct(item: productBaseI) {
 
 function setCalculateData(
     productNoTax: string, benefits: string, benefitsMargin: string) {
-    state.productNoTax = productNoTax;
-    state.benefitsMargin = benefitsMargin;
-    state.benefits = benefits;
+	form.product_no_tax = Number(productNoTax);
+	form.benefits = Number(benefits) ;
+	form.benefits_rate = Number(benefitsMargin);
 }
 
 
@@ -232,6 +225,7 @@ function setCalculateData(
         <!--Informacion General-->
         <div class="">
             <ProductInformation
+	            @select-product="selectProduct"
                 v-model:name="form.name"
                 v-model:description="form.description"
                 v-model:category-id="form.category_id"
@@ -279,12 +273,14 @@ function setCalculateData(
                 v-model:special_price="form.special_price"/>
 
             <ProductSale
-                :price-no-tax="state.productNoTax"
-                :benefits="state.benefits"
-                :benefits-margin="state.benefitsMargin"/>
+                :price-no-tax="form.product_no_tax.toString()"
+                :benefits="form.benefits.toString()"
+                :benefits-margin="form.benefits_rate.toString()"/>
 
 
         </div>
+	    <ErrorComponent
+		    v-model:errors="form.errors"/>
 
 
         <!-- Botones -->
