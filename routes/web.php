@@ -50,10 +50,10 @@ Route::middleware([
         ->prefix('setting')
         ->name('setting.')
         ->group(function () {
-       Route::get('/', 'index')
-           ->name('index');
-       Route::post('/','store')->name('store');
-    });
+            Route::get('/', 'index')
+                ->name('index');
+            Route::post('/', 'store')->name('store');
+        });
 
     /*
      * Secuencia de RNC
@@ -63,11 +63,11 @@ Route::middleware([
         ->name('sequence.')
         ->group(function () {
             Route::get('/', 'create')->name('create');
-            Route::get('/get/{type}','get')->name('get');
-            Route::get('/get/rnc/{rnc}','getRnc')->name('getRnc');
-            Route::post('/','store')->name('store');
-            Route::get('/{sequence}','edit')->name('edit');
-            Route::delete('/{sequence}','destroy')->name('destroy');
+            Route::get('/get/{type}', 'get')->name('get');
+            Route::get('/get/rnc/{rnc}', 'getRnc')->name('getRnc');
+            Route::post('/', 'store')->name('store');
+            Route::get('/{sequence}', 'edit')->name('edit');
+            Route::delete('/{sequence}', 'destroy')->name('destroy');
         });
 
     /*
@@ -76,7 +76,7 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
-    Route::get('/register',function(Request $request){
+    Route::get('/register', function (Request $request) {
 
         //Crear la instancia
         $userHelper = new UserHelper();
@@ -85,132 +85,132 @@ Route::middleware([
         $users = $userHelper->getUserPaginator($request);
 
         //Devolver la vista con los datos
-        return Inertia::render('Auth/Register',[
+        return Inertia::render('Auth/Register', [
             'users' => $users,
             'roles' => Role::all()
         ]);
     })->name('register')
-    ->middleware(['role:Super Admin|Supervisor']);
+        ->middleware(['role:Super Admin|Supervisor']);
 
     /*
      * Usuario
      */
     Route::controller(UserController::class)
-    ->prefix('user')
-    ->name('user.')
-    ->group(function () {
-        Route::post('/', 'store')->name('store');
-        Route::patch('/{user}','update')->name('update');
-        Route::patch('/destroy/{user}', 'destroy')->name('destroy');
-    });
+        ->prefix('user')
+        ->name('user.')
+        ->group(function () {
+            Route::post('/', 'store')->name('store');
+            Route::patch('/{user}', 'update')->name('update');
+            Route::patch('/destroy/{user}', 'destroy')->name('destroy');
+        });
 
     /*
      * Cliente
      */
     Route::controller(ClientController::class)
-    ->prefix('client')
-    ->name('client.')
-    ->group(function () {
-        Route::get('/','create')->name('create');
-        Route::get('/get','getJson')->name('get.json');
-        Route::get('/show','show')->name('show');
-        Route::get('/edit/{client}','edit')->name('edit');
-        Route::post('/','store')->name('store');
-        Route::patch('/{client}','update')->name('update');
-        Route::delete('/destroy/{client}','destroy')->name('destroy');
-        Route::get('/download','exportExcel')->name('export-excel')
-            ->withoutMiddleware(VerifyCsrfToken::class);
+        ->prefix('client')
+        ->name('client.')
+        ->group(function () {
+            Route::get('/', 'create')->name('create');
+            Route::get('/get', 'getJson')->name('get.json');
+            Route::get('/show', 'show')->name('show');
+            Route::get('/edit/{client}', 'edit')->name('edit');
+            Route::post('/', 'store')->name('store');
+            Route::patch('/{client}', 'update')->name('update');
+            Route::delete('/destroy/{client}', 'destroy')->name('destroy');
+            Route::get('/download', 'exportExcel')->name('export-excel')
+                ->withoutMiddleware(VerifyCsrfToken::class);
 
-    });
+        });
 
     /*
      * Categoria
      */
     Route::controller(CategoryController::class)
-    ->prefix('category')
-    ->name('category.')
-    ->group(function () {
-        Route::get('/','create')->name('create');
-        Route::get('/download','exportExcel')->name('export-excel')
-            ->withoutMiddleware(VerifyCsrfToken::class);
-        Route::get('/{category}','edit')->name('edit');
-        Route::post('/','store')->name('store');
-        Route::patch('/{category}','update')->name('update');
-        Route::patch('/destroy/{category}','destroy')->name('destroy');
-        Route::get('/get','getJson')->name('get.json');
+        ->prefix('category')
+        ->name('category.')
+        ->group(function () {
+            Route::get('/', 'create')->name('create');
+            Route::get('/download', 'exportExcel')->name('export-excel')
+                ->withoutMiddleware(VerifyCsrfToken::class);
+            Route::get('/{category}', 'edit')->name('edit');
+            Route::post('/', 'store')->name('store');
+            Route::patch('/{category}', 'update')->name('update');
+            Route::patch('/destroy/{category}', 'destroy')->name('destroy');
+            Route::get('/get', 'getJson')->name('get.json');
 
-    });
+        });
 
     /*
      * Suplidore
      */
     Route::controller(SupplierController::class)
-    ->prefix('supplier')
-    ->name('supplier.')
-    ->group(function(){
-         Route::get('/','create')->name('create');
-         Route::get('/show','show')->name('show');
-         Route::get('/get','getJson')->name('get.json');
-         Route::get('/dowmload','exportExcel')->name('export-excel');
-         Route::get('/{supplier}','edit')->name('edit');
-         Route::post('/','store')->name('store');
-         Route::patch('/{supplier}','update')->name('update');
-         Route::delete('/destroy/{supplier}','destroy')->name('destroy');
+        ->prefix('supplier')
+        ->name('supplier.')
+        ->group(function () {
+            Route::get('/', 'create')->name('create');
+            Route::get('/show', 'show')->name('show');
+            Route::get('/get', 'getJson')->name('get.json');
+            Route::get('/dowmload', 'exportExcel')->name('export-excel');
+            Route::get('/{supplier}', 'edit')->name('edit');
+            Route::post('/', 'store')->name('store');
+            Route::patch('/{supplier}', 'update')->name('update');
+            Route::delete('/destroy/{supplier}', 'destroy')->name('destroy');
 
-    });
+        });
 
     /*
      * Productos
      */
     Route::controller(ProductController::class)
-    ->prefix('product')
-    ->name('product.')
-    ->group(function(){
-        Route::get('/','create')->name('create');
-        Route::get('/show','show')->name ('show');
-        Route::post('/','store')->name('store');
-        Route::get('/edit/{product}','edit')->name('edit');
-        Route::patch('/{product}','update')->name('update');
-        Route::get('/get','get')->name('get');
-        Route::get('/get/json','getJson')->name('get.json');
-        Route::get('/get/code','getByCode')->name('get.code');
-        Route::patch('/delete/{product}','destroy')->name('destroy');
-    });
+        ->prefix('product')
+        ->name('product.')
+        ->group(function () {
+            Route::get('/', 'create')->name('create');
+            Route::get('/show', 'show')->name('show');
+            Route::post('/', 'store')->name('store');
+            Route::get('/edit/{product}', 'edit')->name('edit');
+            Route::patch('/{product}', 'update')->name('update');
+            Route::get('/get', 'get')->name('get');
+            Route::get('/get/json', 'getJson')->name('get.json');
+            Route::get('/get/code', 'getByCode')->name('get.code');
+            Route::patch('/delete/{product}', 'destroy')->name('destroy');
+        });
 
 
     // Movimiento de inventario de productos
     Route::controller(InventoryMovementController::class)
-    ->prefix('product/entry')
-    ->name('entry.')
-    ->group(function(){
-        Route::get('/','index')->name('index');
-        Route::get('/{entry}','edit')->name('edit');
-        Route::post('/','entry')->name('store');
-        Route::patch('/{entry}','update')->name('update');
-        Route::delete('/{entry}','destroy')->name('destroy');
-    });
+        ->prefix('product/entry')
+        ->name('entry.')
+        ->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/{entry}', 'edit')->name('edit');
+            Route::post('/', 'entry')->name('store');
+            Route::patch('/{entry}', 'update')->name('update');
+            Route::delete('/{entry}', 'destroy')->name('destroy');
+        });
 
 
     /*
      * Ventas
      */
     Route::controller(SaleController::class)
-    ->prefix('sale')
-    ->name('sale.')
-    ->group(function(){
-       Route::get('/','create')->name('create');
-       Route::get('/get','getJson')->name('get.json');
-       Route::get('/show','show')->name('show');
-       Route::get('/close','close')->name('close');
-       Route::post('/close/get','getClose')->name('get.close');
-       Route::get('/test/invoice', 'testInvoice')->name('test-invoice');
-       Route::get('/counter','counter')->name('counter');
-       Route::post('/counter','counterPost')->name('counterPost');
-       Route::post('/','store')->name('store');
-       Route::patch('/update/{sale}','update')->name('update');
-       Route::patch('/item/destroy/{product}/{sale}','destroyItem')->name('destroy.item');
-       Route::patch('/destroy/{sale}/{inventoried}','destroySale')->name('destroy-sale');
-    });
+        ->prefix('sale')
+        ->name('sale.')
+        ->group(function () {
+            Route::get('/', 'create')->name('create');
+            Route::get('/get', 'getJson')->name('get.json');
+            Route::get('/show', 'show')->name('show');
+            Route::get('/close', 'close')->name('close');
+            Route::post('/close/get', 'getClose')->name('get.close');
+            Route::get('/test/invoice', 'testInvoice')->name('test-invoice');
+            Route::get('/counter', 'counter')->name('counter');
+            Route::post('/counter', 'counterPost')->name('counterPost');
+            Route::post('/', 'store')->name('store');
+            Route::patch('/update/{sale}', 'update')->name('update');
+            Route::patch('/item/destroy/{product}/{sale}', 'destroyItem')->name('destroy.item');
+            Route::patch('/destroy/{sale}/{inventoried}', 'destroySale')->name('destroy-sale');
+        });
 
 
     /*
@@ -219,100 +219,101 @@ Route::middleware([
     Route::controller(ExchangeController::class)
         ->prefix('sale/report')
         ->name('sale.report.')
-        ->group(function(){
-           Route::get('/','index')->name('index');
-           Route::post('/','store')->name('store');
+        ->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
         });
 
     /*
      * Notas de credito o devoluciones
      */
     Route::controller(CreditNoteController::class)
-    ->prefix('sale/credit-note')
-    ->name('credit-note.')
-    ->group(function (){
-        Route::get('/','index')->name('index');
-        Route::get('/show', 'show')->name('show');
-        Route::get('/get/balance/{code}','getBalance')->name('balance');
-        Route::get('/get/{code}','creditNoteGet')->name('get');
-        Route::patch('/{sale}','store')->name('store');
-    });
+        ->prefix('sale/credit-note')
+        ->name('credit-note.')
+        ->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/show', 'show')->name('show');
+            Route::get('/get/balance/{code}', 'getBalance')->name('balance');
+            Route::get('/get/{code}', 'creditNoteGet')->name('get');
+            Route::patch('/{sale}', 'store')->name('store');
+        });
 
 
     /*
      * Reportes
      */
     Route::controller(ReportController::class)
-    ->prefix('report')
-    ->name('report.')
-    ->group(function (){
-       Route::get('/','index')->name('index');
-       Route::get('/day','getDay')->name('day');
-       Route::get('/day/date','getDailyByDate')->name('day.date');
-       Route::get('/product/low','stockLow')->name('product.low');
-       Route::post('/daily','getDailyByDate')->name('getDailyByDate');
-    });
+        ->prefix('report')
+        ->name('report.')
+        ->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/day', 'getDay')->name('day');
+            Route::get('/day/date', 'getDailyByDate')->name('day.date');
+            Route::get('/product/low', 'stockLow')->name('product.low');
+            Route::post('/daily', 'getDailyByDate')->name('getDailyByDate');
+        });
 
     /*
      * Reporte de Ventas
      */
     Route::controller(ReportSaleController::class)
-    ->prefix('report/sale')
-    ->name('report-sale.')
-    ->group(function (){
-       Route::get('/','index')->name('index');
-       Route::get('/json','reportSaleRange')->name('range');
-    });
+        ->prefix('report/sale')
+        ->name('report-sale.')
+        ->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/json', 'reportSaleRange')->name('range');
+        });
 
     /*
      * Facturas del sistema
      */
     Route::controller(InvoiceController::class)
-    ->prefix('invoice')
-    ->name('invoice.')
-    ->group(function (){
-       Route::get('/belt/sale/{sale}','beltSale')->name('belt.sale');
-       Route::get('/belt/note/{creditNote}','beltNote')->name('belt.note');
-       Route::get('/getA/{sale}','getA')->name('getA');
-       Route::get('/getB/{counter}','getB')->name('getB');
-    });
+        ->prefix('invoice')
+        ->name('invoice.')
+        ->group(function () {
+            Route::get('/belt/sale/{sale}', 'beltSale')->name('belt.sale');
+            Route::get('/belt/note/{creditNote}', 'beltNote')->name('belt.note');
+            Route::get('/getA/{sale}', 'getA')->name('getA');
+            Route::get('/getB/{counter}', 'getB')->name('getB');
+            Route::get('/label/{product}', 'label')->name('label');
+        });
 
 
     /*
     *Monedas
     */
     Route::controller(AccontCoController::class)
-    ->prefix('/setting/currency')
-    ->name('currency.')
-    ->group(function (){
-        Route::get('/check-exchange','checkExchange')->name('check');
-        Route::get('/getExchange/{month}/{year}','getExchange')->name('get.exchange');
-        Route::post('/exchange','exchangeStore')->name('exchange.store');
-        Route::delete('/{currency}','destroy')->name('destroy');
-        Route::put('/restore/{currency}','restore')->name('restore');
-    });
+        ->prefix('/setting/currency')
+        ->name('currency.')
+        ->group(function () {
+            Route::get('/check-exchange', 'checkExchange')->name('check');
+            Route::get('/getExchange/{month}/{year}', 'getExchange')->name('get.exchange');
+            Route::post('/exchange', 'exchangeStore')->name('exchange.store');
+            Route::delete('/{currency}', 'destroy')->name('destroy');
+            Route::put('/restore/{currency}', 'restore')->name('restore');
+        });
 
     /*
      * Compra
      */
     Route::controller(PurchaseController::class)
-    ->prefix('purchase')
-    ->name('purchase.')
-    ->group(function (){
-        Route::get('/','index')->name('index');
-    });
+        ->prefix('purchase')
+        ->name('purchase.')
+        ->group(function () {
+            Route::get('/', 'index')->name('index');
+        });
 
     /*
-     * cuentas contables modificacion y demas
+     * cuentas contables modification y demas
      */
     Route::controller(AccontCoController::class)
         ->prefix('/setting/aco')
         ->name('aco.')
-        ->group(function (){
-            Route::get('/','index')->name('index');
-            Route::post('/','store')->name('store');
-            Route::put('/{aco}','update')->name('update');
-            Route::delete('/{aco}','destroy')->name('destroy');
+        ->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::put('/{aco}', 'update')->name('update');
+            Route::delete('/{aco}', 'destroy')->name('destroy');
         });
 
     /*
@@ -321,13 +322,19 @@ Route::middleware([
     Route::controller(WarehouseController::class)
         ->prefix('/setting/warehouse')
         ->name('wh.')
-        ->group(function (){
-            Route::get('/','index')->name('index');
-            Route::post('/','store')->name('store');
-            Route::put('/{wh}','update')->name('update');
-            Route::delete('/{wh}','destroy')->name('destroy');
+        ->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::put('/{wh}', 'update')->name('update');
+            Route::delete('/{wh}', 'destroy')->name('destroy');
         });
 //
+
+    Route::get('/test', function () {
+
+
+    });
+
 //    Route::get('/sale', function (){
 //        $sale = Sale::first();
 //

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Invoices\SaleInvoiceA;
 use App\Invoices\Ticket80;
 use App\Models\CreditNote;
+use App\Models\Product;
 use App\Models\Sale;
 
 class InvoiceController extends Controller
@@ -39,6 +40,30 @@ class InvoiceController extends Controller
         $pdf = new Ticket80($creditNote);
 
         return $pdf->output('invoice.pdf');
+    }
+
+
+    /**
+     * @throws \Throwable
+     */
+    public function label(Product $product)
+    {
+
+        $html = view('pdfs.ticket.zebra',[
+            'name' => 'Repuesto Camboya',
+            'ref' => $product->sku,
+            'code_bar' => $product->bar_code ? $product->bar_code : $product->code
+        ])->render();
+
+        $pdf = \Spatie\Browsershot\Browsershot::html($html)
+            ->paperSize(10.16, 5.08, 'cm')
+            ->margins(3,3,3,3)
+            ->showBackground()
+            ->pdf();
+
+        return response($pdf)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'inline; filename="Repuesto Camboya.pdf"');
     }
 
 

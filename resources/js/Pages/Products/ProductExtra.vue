@@ -71,7 +71,7 @@ const wareHouseId = defineModel<number>('wareHouseId')
 		</div>
 		<div class="">
 			<InputLabel
-				class="inline ml-2"
+				class=" ml-2"
 				for="warehouse"
 				value="Almacen"/>
 			<select

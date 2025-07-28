@@ -1,33 +1,24 @@
 <script setup lang="ts">
-
 import {typePaymentData} from "@/Global/ShareData";
 import {getMoney, moneyConfig} from "@/Global/Helpers";
 import TextInput from "@components/TextInput.vue";
-import InputError from "@components/InputError.vue";
 import InputLabel from "@components/InputLabel.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
-import {InertiaForm} from "@inertiajs/vue3";
-import {creditNotesSaleI} from "@/Interfaces/SaleInterface";
 import axios from "axios";
-import {onMounted} from "vue";
+import {inject, onMounted} from "vue";
 import {Money} from "v-money3";
+import {saleKey} from "@/utils/keys";
+import ErrorComponent from "@components/ErrorComponent.vue";
 
 
-//Definicar el props de la ventana
-const propsW = defineProps<{
-    form: InertiaForm<any>,
-}>();
 
 
 onMounted(()=>{
 });
 
 
-//Valores para sincronizar a la vez
-const typePayment = defineModel<string>('typePayment');
-const creditNotes = defineModel<creditNotesSaleI[]>('creditNotes',{
-    default: () => []
-});
+const form = inject(saleKey)!
+
 const creditNote = defineModel<string>('creditNote',{
     default: ""
 });
@@ -50,24 +41,24 @@ const getCreditNote = async () => {
 
     //Si no hay suficiente caracateres
     if (creditNote?.value.length < 5) {
-        propsW.form.setError('credit_notes_value', 'Por Favor, Introduzca Valores Valido');
+        form.setError('credit_notes_value', 'Por Favor, Introduzca Valores Valido');
         return false;
     }
 
     //Verificar si ya esta en positivo no puede colocar nota de credito
-    if (propsW.form.returned > 0)
+    if (form.returned > 0)
     {
-        propsW.form.setError('credit_notes_value','Existe Suficiente Balance Para Cerrar La Cuenta');
+        form.setError('credit_notes_value','Existe Suficiente Balance Para Cerrar La Cuenta');
         return false;
     }
 
     //Verificar si exsite alguna igual
-    const exist:boolean = creditNotes.value.some((el) => el.code == creditNote.value || el.ncf == creditNote.value);
+    const exist:boolean = form.credit_notes.some((el) => el.code == creditNote.value || el.ncf == creditNote.value);
 
     //Verificar si existe la misma nota de credito
     if (exist)
     {
-        propsW.form.setError('credit_notes_value','Esta Nota De Credito, Esta Agregada');
+        form.setError('credit_notes_value','Esta Nota De Credito, Esta Agregada');
 
     }else{
         //Buscar la nota de credito
@@ -77,17 +68,17 @@ const getCreditNote = async () => {
         if (data.hasOwnProperty('code'))
         {
             //Pasar los datos al formulario
-            creditNotes.value.push(data);
+            form.credit_notes.push(data);
             //Calcular los datos
             emit('amountCreditNote')
             //Limpiar los errores
-            propsW.form.clearErrors('credit_notes_value');
+            form.clearErrors('credit_notes_value');
             //Limpiar el campo para agreagr otros
-            propsW.form.reset('credit_notes_value');
+            form.reset('credit_notes_value');
 
         }else{
             //Poner el mensaje de error
-            propsW.form.setError('credit_notes_value',data.error);
+            form.setError('credit_notes_value',data.error);
         }
     }
 
@@ -99,7 +90,7 @@ const getCreditNote = async () => {
  */
 const deleteCreditNote = (index:number) => {
     //Eliminar solo el dato seleccionado
-    propsW.form.credit_notes.splice(index, 1);
+    form.credit_notes.splice(index, 1);
     //Realizar el calculo
     emit('amountCreditNote');
 }
@@ -112,7 +103,7 @@ const deleteCreditNote = (index:number) => {
 <template>
     <!--Datos de la ventana-->
     <div
-        class="fondo p-5 rounded-md min-w-[40rem]  max-w-[60px]  h-fit mx-auto">
+        class="fondo p-5 rounded-md min-w-[30rem]  max-w-[50rem]  h-fit mx-auto">
         <h3 class="text-2xl text-center">
             Datos de pagos
         </h3>
@@ -125,11 +116,10 @@ const deleteCreditNote = (index:number) => {
                     value="Tipo Pago" />
                 <select
                     autofocus
-                    v-model="typePayment"
+                    v-model="form.type_payment"
                     id="typePayment"
                     class="inputGeneral py-1 w-full">
                     <option
-                        class="even:bg-cyan-400 "
                         v-for="(item, index) in typePaymentData" :key="index"
                         :value="item.value">
                         {{item.name}}
@@ -149,8 +139,6 @@ const deleteCreditNote = (index:number) => {
                         @click="getCreditNote"
                         class="icon-efect absolute right-0 p-2 flex items-center inset-y-0 fa-solid fa-magnifying-glass"></i>
                 </div>
-                <!--                            Mensaje de error-->
-                <InputError :message="form.errors.credit_notes_value"/>
             </div>
         </div>
 
@@ -172,7 +160,7 @@ const deleteCreditNote = (index:number) => {
                 <!--                                Cuerpod de los datos-->
                 <tbody>
                 <tr
-                    v-for="(item, index) in creditNotes" :key="index">
+                    v-for="(item, index) in form.credit_notes" :key="index">
                     <td>{{item.code}}</td>
                     <td>{{ getMoney(item.n_available)}}</td>
                     <td class="text-center w-1/12">
@@ -200,11 +188,6 @@ const deleteCreditNote = (index:number) => {
                 v-bind="moneyConfig"/>
         </div>
 
-<!--        Mensaje de error-->
-        <div>
-            <InputError :message="form.errors.info_sale"/>
-        </div>
-
         <div class="text-gray-50">
             <!--                        Datos pendiente para cobrar-->
             <div class="mt-3 text-3xl text0">
@@ -226,12 +209,7 @@ const deleteCreditNote = (index:number) => {
                 Cerrar Factura
             </PrimaryButton>
         </div>
-
-        <!--                        Mensaje de error-->
-        <div class="mt-3">
-            <InputError :message="form.errors.returned"/>
-        </div>
-
+	    <ErrorComponent v-model:errors="form.errors" />
 
     </div>
 </template>

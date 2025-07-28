@@ -20,6 +20,7 @@
         "milon/barcode": "^11.0",
         "moneyphp/money": "^4.5",
         "owen-it/laravel-auditing": "^13.6",
+        "spatie/browsershot": "^5.0",
         "spatie/laravel-permission": "^6.10",
         "tecnickcom/tcpdf": "^6.8",
         "tightenco/ziggy": "^2.2"

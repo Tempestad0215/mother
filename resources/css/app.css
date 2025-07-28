@@ -25,12 +25,18 @@
 
 
 
-
 /*Estilod e compoebntne*/
 @layer components{
     /*
 Estilo general
  */
+    .modal-bg{
+        @apply bg-black backdrop-blur-md bg-opacity-50 z-50  fixed w-screen h-screen;
+    }
+
+    .modal{
+        @apply bg-red-50 ;
+    }
 
     body{
        @apply overflow-hidden;

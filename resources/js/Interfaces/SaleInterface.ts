@@ -23,6 +23,40 @@ export interface infoSaleI {
     created_at?: string;
 }
 
+
+export interface CreateSaleI {
+    id: number,
+    code_value: string,
+    ncf: string,
+    ncf_m:string,
+    client_name: string,
+    client_id: number,
+    client_rnc: string,
+    client_rnc_status: string,
+    client_social: string,
+    info_sale: infoSaleI[]
+    tax: number,
+    discount_amount: number,
+    amount: number,
+    sub_total: number,
+    comment: string,
+    comment_id: number,
+    close_table: boolean,
+    received: number,
+    returned: number,
+    general: string,
+    type: string,
+    type_payment: string,
+    update: boolean,
+    sequence: string,
+    sequence_type: string,
+    invoice_type: string,
+    credit_notes_value: string,
+    credit_notes: creditNotesSaleI[],
+    credit_notes_amount: number,
+    pending: number,
+}
+
 export interface saleI{
     id: number;
     code: string;

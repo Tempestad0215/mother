@@ -51,11 +51,10 @@ class ProductController extends Controller implements HasMiddleware
         $setting = Setting::first();
 
         //si existe la configuracion
-        if(isset($setting))
-        {
+        if (isset($setting)) {
 
             //Devolver correctamente
-            return Inertia::render('Products/Register',[
+            return Inertia::render('Products/Register', [
                 'products' => $data,
                 'categories' => Category::orderBy('name')->get(),
                 'suppliers' => Supplier::orderBy('company_name')->get(),
@@ -63,7 +62,7 @@ class ProductController extends Controller implements HasMiddleware
                 'nextProduct' => Product::max('id') + 1
             ]);
 
-        }else{
+        } else {
 
             //Redirigir a la ventana de setting
             return to_route('setting.index');
@@ -88,8 +87,7 @@ class ProductController extends Controller implements HasMiddleware
 
 
             // Guardar los datos de los productos
-            if ($request->get('type') === 'servicio')
-            {
+            if ($request->get('type') === 'servicio') {
                 //Actualizar datos por fuera cuando son servicio
                 $product->inventoried = false;
                 $product->unit = "N/A";
@@ -116,7 +114,7 @@ class ProductController extends Controller implements HasMiddleware
 
         //Devolver la vista con los datos
 
-        return Inertia::render('Products/Show',[
+        return Inertia::render('Products/Show', [
             'products' => $data
         ]);
 
@@ -132,7 +130,7 @@ class ProductController extends Controller implements HasMiddleware
         $dataProducts = $this->get($request);
         $dataEdit = new ProductSupplierResource($product);
 
-        return Inertia::render('Products/Register',[
+        return Inertia::render('Products/Register', [
             'productEdit' => $dataEdit,
             'products' => $dataProducts,
             'update' => true,
@@ -155,8 +153,7 @@ class ProductController extends Controller implements HasMiddleware
         $product->update($request->validated());
 
         //Actualizar estos datos si es servicios
-        if ($request->get('type') === 'servicio')
-        {
+        if ($request->get('type') === 'servicio') {
             //Actualizar datos por fuera cuando son servicio
             $product->inventoried = false;
             $product->price = $request->get('price');
@@ -220,6 +217,7 @@ class ProductController extends Controller implements HasMiddleware
     }
 
     // Conseguir los productos
+
     /**
      * Summary of get
      * @param Request $request
@@ -227,17 +225,24 @@ class ProductController extends Controller implements HasMiddleware
      */
     public function get(Request $request): Paginator
     {
-        //Sacar los datos de busqueda
-        $search = trim($request->get('search'));
-        $perPage = $request->get('perPage',15);
+        $validated = $request->validate([
+            'search' => 'nullable|string|max:255',
+            'perPage' => 'nullable|integer|min:1|max:100',
+        ]);
 
-        // Realizar la busqueda
-        return  Product::where(function ($query) use (&$search) {
-            $query->where('id', 'LIKE', "%$search%")
-                ->orwhere('name', 'LIKE', "%$search%")
-                ->orWhere('description', 'LIKE', "%$search%")
-                ->orWhere('sku', 'LIKE', "%$search%");
-        })->where('status', true)
+        $search = $validated['search'] ?? '';
+        $perPage = $validated['perPage'] ?? 15;
+
+        return Product::query()
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('id', 'LIKE', "%$search%")
+                        ->orWhere('name', 'LIKE', "%$search%")
+                        ->orWhere('description', 'LIKE', "%$search%")
+                        ->orWhere('sku', 'LIKE', "%$search%");
+                });
+            })
+            ->where('status', true)
             ->latest('id')
             ->simplePaginate($perPage);
 

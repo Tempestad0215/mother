@@ -1,37 +1,63 @@
-<script setup lang="ts">
-
-const propsW = defineProps<{
-    header: string,
-}>();
-
-defineEmits<{
-    (e: 'close'): void;
-}>();
+<script setup>
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import {faClose} from "@fortawesome/free-solid-svg-icons";
 
 
-const show = defineModel<boolean>('show',{
-    default: false
-})
-
-
+const show = defineModel('show',{
+	default: false,
+});
 </script>
 
-
 <template>
-    <Transition>
-        <div
-            class="bg-blue-300 backdrop-blur-md w-full h-screen bg-opacity-80 absolute left-0 top-0 flex justify-center pt-[5rem] pb-[5rem]">
-
-            <i
-                @click="$emit('close')"
-                class="absolute top-[2rem] right-[6rem] text-white text-[2rem] hover:scale-125 duration-200 fa-regular fa-rectangle-xmark"></i>
-            <div class="max-w-[70rem]">
-                <h3 class="fondo flex-1 text-2xl font-semibold text-center rounded-md mb-2">
-                    {{propsW.header}}
-                </h3>
-                <slot/>
-            </div>
-        </div>
-
-    </Transition>
+	<Transition name="modal">
+		<div v-if="show" class="fixed z-[9998] top-0 left-0 w-screen h-screen bg-black backdrop-blur-md bg-opacity-50 flex duration-300">
+			<FontAwesomeIcon
+				@click="show = false"
+				class="text-3xl py-1 absolute right-5 top-5 bg-cyan-100 px-3 rounded-md text-red-500" :icon="faClose"/>
+			<div class="modal-container">
+				<div class="text-center text-3xl font-bold font-mono">
+					<slot name="header"/>
+				</div>
+				
+				<div class="modal-body">
+					<slot name="body"/>
+				</div>
+				
+				<div class="modal-footer">
+					<slot name="footer"/>
+				</div>
+			</div>
+		</div>
+	</Transition>
 </template>
+
+<style>
+
+
+.modal-container {
+	width: 90%;
+	margin: auto;
+	padding: 20px 30px;
+	background-color: #fff;
+	border-radius: 1rem;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
+	transition: all 0.3s ease;
+}
+
+.modal-header h3 {
+	margin-top: 0;
+	color: #42b983;
+}
+
+.modal-body {
+	margin: 20px 0;
+}
+
+
+
+.modal-enter-from .modal-container,
+.modal-leave-to .modal-container {
+	-webkit-transform: scale(1.1);
+	transform: scale(1.1);
+}
+</style>

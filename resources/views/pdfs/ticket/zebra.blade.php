@@ -4,30 +4,30 @@
     <meta charset="UTF-8">
     <title>Etiqueta de Impresión</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.12.1/dist/barcodes/JsBarcode.code128.min.js"></script>
 </head>
 <body class="font-mono">
-
-<div class="container mx-auto p-4">
-    <div class="border border-gray-800 p-4 w-80">
-        <div class="flex justify-center mb-2">
-            <img src="{{ asset('images/logo.png') }}" alt="Logo de la Empresa" class="h-16">
-        </div>
-
-        <div class="text-center text-xl font-bold mb-2">
-            {{ $empresa->nombre }}
-        </div>
-
-        <div class="mb-2">
-            <p class="text-lg">Producto: {{ $producto->nombre }}</p>
-            <p class="text-base">Código: {{ $producto->codigo }}</p>
-        </div>
-
-        <div class="flex justify-center">
-            {!! $codigo_de_barras !!}
-        </div>
-
-        <div class="text-xs mt-2">
-            {{ $empresa->direccion }} - {{ $empresa->telefono }}
-        </div>
+<div class="border border-gray-800 !max-w-[9.5cm] h-[4.4cm]">
+    <div class="text-center text-xl font-bold">
+        {{ $name }}
     </div>
+    <p class="text-center">
+        {{$ref}}
+    </p>
+
+    <svg class="w-full  mt-5" id="barcode"></svg>
+
 </div>
+<script>
+	document.addEventListener("DOMContentLoaded", function () {
+		JsBarcode("#barcode", "{{ $code_bar }}", {
+			format: "CODE128",
+			width: 2.4,
+			height: 75,
+			displayValue: true,
+			fontSize: 16,
+			margin: 5
+		});
+	})
+</script>
+</body>
