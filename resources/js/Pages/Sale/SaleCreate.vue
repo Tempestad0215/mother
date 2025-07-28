@@ -2,14 +2,14 @@
 import {router, useForm, usePage} from "@inertiajs/vue3";
 import AppLayout from "@layout/AppLayout.vue";
 import {onMounted, onUpdated, provide, Ref, ref} from "vue";
-import { productI} from "@/Interfaces/ProductInterface";
-import { getSequenceType, printPdf} from "@/Global/Helpers";
+import {productI} from "@/Interfaces/ProductInterface";
+import {printPdf} from "@/Global/Helpers";
 import {clientBaseI} from "@/Interfaces/ClientInterface";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import {errorHttp, successHttp} from "@/Global/Alert";
 import axios from "axios";
 import {CreateSaleI, creditNotesSaleI, infoSaleI, saleDataI} from "@/Interfaces/SaleInterface";
-import {invoiceTypeI, sequenceDataI} from "@/Interfaces/SettingInterface";
+import {invoiceTypeI} from "@/Interfaces/SettingInterface";
 import TabLink from "@components/TabLink.vue";
 import {paginationI} from "@/Interfaces/GlobalInterface";
 import SaleInfo from "@/Pages/Sale/SaleInfo.vue";
@@ -18,6 +18,8 @@ import SaleDetail from "@/Pages/Sale/SaleDetail.vue";
 import {saleKey} from "@/utils/keys";
 import SaleFooter from "@/Pages/Sale/SaleFooter.vue";
 import SaleTable from "@/Pages/Sale/SaleTable.vue";
+import PaymentInvoice from "@components/PaymentInvoice.vue";
+import FloatBox from "@components/FloatBox.vue";
 
 
 /*
@@ -41,15 +43,15 @@ const propsW = defineProps<{
 /*
  * Datos de la ventana
  */
-const sequenceData: Ref<sequenceDataI | undefined> = ref(undefined);
-const showClientRnc: Ref<boolean> = ref(false);
 const showReturn: Ref<boolean> = ref(false);
 const showFormReturn: Ref<boolean> = ref(false);
+
 
 const saleInfoRef = ref<InstanceType<typeof SaleInfo>>()!
 const saleDetailRef = ref<InstanceType<typeof SaleDetail>>()!
 const saleTableRef = ref<InstanceType<typeof SaleTable>>()!
 const saleFooterRef = ref<InstanceType<typeof SaleFooter>>()!
+const salePaymentRef = ref<InstanceType<typeof PaymentInvoice>>()!
 
 
 /*
@@ -95,7 +97,7 @@ onMounted(() => {
 	//Verificar si existe los datos para devoluicion
 	setDataForm();
 	//Buscar la secuencia si está en la configuration
-	if (page.props.setting.sequence) getSequence(form.invoice_type);
+	if (page.props.setting.sequence) saleInfoRef.value?.getSequence(form.invoice_type);
 	
 	//Para verificar
 	let msjError = "Este Codigo No es Validos, Introduzca Uno Validado";
@@ -113,7 +115,7 @@ onMounted(() => {
 onUpdated(() => {
 	//Buscar la secuencia si está en la configuracion
 	setTimeout(() => {
-		if (page.props.setting.sequence) getSequence(form.invoice_type);
+		if (page.props.setting.sequence) saleInfoRef.value?.getSequence(form.invoice_type);
 	}, 200);
 	
 	//Para verificar
@@ -136,7 +138,7 @@ Funciones
 /**
  * Poner los datos en el formuilario
  */
-function setDataForm () {
+function setDataForm() {
 	//Verificar si existe los datos para devoluicion
 	if (propsW.refund && propsW.saleInfo) {
 		form.id = propsW.saleInfo.id;
@@ -156,210 +158,91 @@ function setDataForm () {
 	}
 }
 
-/*
- * Obtener los datos de la sequencia
- */
-/**
- * Obtner los comprobantes
- * @param type
- */
-async function  getSequence (type: string) {
-	try {
-		//Verificar si existe la secuencia
-		if (page.props.setting.sequence) {
-			//Realizar la buqued
-			const result = await axios.get(route('sequence.get', {type: type}));
-			
-			//Verificar si la secuencia es correcta
-			if (result.status === 200 && typeof (result.data) === 'object') {
-				//Pasar los datos a las variables
-				sequenceData.value = result.data || null;
-				
-				
-				//Obtner el tipo de secuencia
-				form.sequence_type = getSequenceType(type);
-				
-				//Asegurar de que los datos existan
-				if (sequenceData.value && sequenceData.value.type && sequenceData.value.next != undefined) {
-					form.clearErrors("ncf");
-					form.ncf = sequenceData.value.type + sequenceData.value.next.toString().padStart(8, '0');
-					
-				}
-				//Crear la secuencia
-				
-			} else {
-				//Mensaje de error
-				form.setError("sequence", "Este Comprobante No Puedo Ser");
+
+function createCreditNotes() {
+	// Enviar los datos para las devoluciones
+	axios.patch(route('credit-note.store', {sale: form.id}), form)
+		.then(res => {
+			if (res.data.success) {
+				//Imprimir el pdf
+				printPdf(route('invoice.belt.note', {creditNote: res.data.id}));
+				//Limpiar el pdf
+				// router.get(route('sale.create'));
+				router.visit(route('sale.create'));
 			}
-		}
-	} catch (err) {
-		form.ncf = "";
-		form.setError("ncf", "No Existe NCF Disponible, Para Esta Serie");
-	}
-	
-}
-
-
-
-
-
-/**
- * Return blir
- */
-function returnedBlur () {
-	//Primero verifica la cantidad
-	// returned()
-	
-	//Verificar el cálculo
-	if (form.returned < 0) {
-		//Enviar el mensaje de error
-		form.setError('returned', 'El monto recibido no puede ser menor al Total');
-		setTimeout(() => {
-			form.clearErrors('returned');
-		}, 3500);
-		return false;
-		
-	} else return true
-}
-
-/**
- * Devuelta de cambio
- */
-function returned () {
-	
-	//Verificar el cálculo de los datos
-	let received: number = Number(form.received);
-	let amount: number = Number(form.amount);
-	let creditAmount: number = Number(form.credit_notes_amount);
-	//Restar la cantidad
-	form.returned = (creditAmount + received) - amount;
-	
-	
-	//Datos pendiente para nota de credito o balance
-	form.pending = (creditAmount + received - amount) < 0
-		? (creditAmount + received - amount) : 0;
-	
-}
-
-
-
-/**
- * verificar la venta
- */
-function checkSale () {
-	//Verificar si se puede mostrar los datos
-	if (form.close_table && form.info_sale.length > 0) {
-		//REalizar calculo si existe
-		amountCreditNote();
-		//Mostar la ventana
-		if(saleDetailRef.value?.showReturn)
-		{
-			saleDetailRef.value.showReturn = true;
-		}
-		
-	} else {
-		sendData();
-	}
-	
-	// Llamar el metodo para el cálculo
-	 returned();
-
-}
-
-/*
- * Calcular la nota de credito
- */
-function amountCreditNote () {
-	//REalizar el cálculo de notas de credito
-	form.credit_notes_amount = form.credit_notes.reduce((acc, cur) => acc +
-		Number(cur.n_available), 0);
-	
-	//Datos pendientes por pagar
-	form.returned = form.credit_notes_amount - form.amount;
-	form.pending = (form.credit_notes_amount - form.amount) < 0 ?
-		(form.credit_notes_amount - form.amount) : 0;
-	
+		})
+		.catch(err => {
+			errorHttp('Error :' + err.response.data.message);
+		});
 }
 
 /**
  * Enviar los datos para guardar
  */
-function sendData () {
+async function sendData() {
 	// Verificar si esta el retorno
 	if (propsW.refund) {
-		
-		// Enviar los datos para las devoluciones
-		axios.patch(route('credit-note.store', {sale: form.id}), form)
-			.then(res => {
-				if (res.data.success) {
-					//Imprimir el pdf
-					printPdf(route('invoice.belt.note', {creditNote: res.data.id}));
-					//Limpiar el pdf
-					// router.get(route('sale.create'));
-					router.visit(route('sale.create'));
-				}
-			})
-			.catch(err => {
-				errorHttp('Error :' + err.response.data.message);
-			});
+		createCreditNotes()
 	} else {
 		//Verificar si no hay problema con nada
-		// if (!returnedBlur() && form.close_table) {
-		// 	return;
-		// }
+		if (!salePaymentRef.value?.returnedBlur() && form.close_table) {
+			return;
+		}
 		//si es para actualizar
 		if (form.update) {
-			// Actualizar los datos y capturar
-			axios.patch(route('sale.update', {sale: form.id}), form)
-				.then((res) => {
-					
-					if (res.status === 200) {
-						//si esta cerrada se vas a imprimir
-						if (form.close_table) {
-							//Mostrar el pdf de impresion
-							printPdf(route('invoice.belt.sale', {sale: res.data.pdfUuid}));
-						}
-						successHttp('Registro Actualizado Correctamente');
-						//Limpiar el fomulario
-						form.reset();
-						showReturn.value = false;
-						//Recargar los datos
-						router.reload({only: ['products', 'clients', 'saleOpen', 'invoiceType', 'refund']});
-						
-					}
-				}).catch((err) => {
-				//Mensaje de error
-				errorHttp(`Error : ${err.message}`);
-			});
+			await updateSale()
 			
 		} else {
-			
-			//Guardar los datos por primera vez
-			axios.post(route('sale.create'), form)
-				.then((res) => {
-					// La cuenta es cerrada
-					if (form.close_table) {
-						
-						// Imprimir el pdf
-						printPdf(route('invoice.belt.sale', {sale: res.data.pdfUuid}));
-					}
-					//Limpiar el fomulario
-					successHttp('Registro Creado Correctamente');
-					form.reset();
-					showReturn.value = false;
-					//Recargar los datos
-					router.reload({only: ['products', 'clients', 'saleOpen', 'invoiceType', 'refund']});
-				})
-				.catch((err) => {
-					// form.errors = err.response?.data.errors;
-					//Mensaje de error
-					errorHttp(`Error : ${err.message}`);
-				});
-			
+			await createSale()
+		
 		}
 	}
 }
 
+
+async function createSale() {
+	try {
+		const res = await axios.patch(route('sale.update', {sale: form.id}), form)
+		
+		//si esta cerrada se vas a imprimir
+		if (form.close_table) {
+			//Mostrar el pdf de impresion
+			printPdf(route('invoice.belt.sale', {sale: res.data.pdfUuid}));
+		}
+		successHttp('Registro Actualizado Correctamente');
+		//Limpiar el fomulario
+		form.reset();
+		showReturn.value = false;
+		//Recargar los datos
+		router.reload({only: ['products', 'clients', 'saleOpen', 'invoiceType', 'refund']});
+		
+	} catch (err) {
+		form.setError("general", "Problema con esta Peticion")
+	}
+}
+
+async function updateSale() {
+	
+	try {
+		const res = await axios.post(route('sale.create'), form)
+		
+		// La cuenta es cerrada
+		if (form.close_table) {
+			
+			// Imprimir el pdf
+			printPdf(route('invoice.belt.sale', {sale: res.data.pdfUuid}));
+		}
+		//Limpiar el fomulario
+		successHttp('Registro Creado Correctamente');
+		form.reset();
+		showReturn.value = false;
+		//Recargar los datos
+		router.reload({only: ['products', 'clients', 'saleOpen', 'invoiceType', 'refund']});
+		
+	}catch (error) {
+		form.setError("general", "Problema con esta Peticion")
+	}
+}
 
 provide(saleKey, form)
 
@@ -403,6 +286,7 @@ provide(saleKey, form)
 						<SaleInfo
 							ref="saleInfoRef"
 							:clients="propsW.clients"
+							@getSequenceType="(type:string) => saleDetailRef?.getSequenceType(type)"
 							:invoice-type="form.invoice_type"/>
 						
 						<SaleDetail
@@ -411,11 +295,10 @@ provide(saleKey, form)
 							:sale-open="propsW.saleOpen"
 							:invoice-type="propsW.invoiceType"
 							:refund="propsW.refund"
-							@retuned="returned"
 							@total-sale=""
 							@totalSale="saleTableRef?.totalSale()"
 							@total-amount="(index:number) => saleTableRef?.totalAmount(index)"
-							/>
+						/>
 						
 						<SaleTable
 							ref="saleTableRef"/>
@@ -424,24 +307,35 @@ provide(saleKey, form)
 						<!--                        Devuelta y demas detos-->
 						<div class=" mt-2 w-64 float-right">
 							
-							
 							<div class="">
 								<PrimaryButton
 									:disabled="form.processing"
-									@click="checkSale"
+									@click="salePaymentRef?.checkSale()"
 									type="button">
 									{{ form.close_table ? 'Cerrar Venta' : 'Registrar' }}
 								</PrimaryButton>
 							</div>
-						
 						</div>
-					
 					</div>
 				</form>
 			</div>
-			
+		
 		</div>
 		<ErrorComponent v-model:errors="form.errors"/>
+		
+		<!-- Ventana de Devuelta-->
+		<FloatBox
+			v-model:show="showReturn">
+			<template #header>
+				Ventana de Pago
+			</template>
+			<template #body>
+				<PaymentInvoice
+					@senData="sendData"
+					v-model:show-return="showReturn"
+					ref="salePaymentRef"/>
+			</template>
+		</FloatBox>
 	</AppLayout>
 </template>
 

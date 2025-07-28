@@ -6,6 +6,10 @@ use App\Invoices\Ticket80;
 use App\Models\CreditNote;
 use App\Models\Product;
 use App\Models\Sale;
+use Illuminate\Support\Facades\Log;
+use PDF;
+use Picqer\Barcode\BarcodeGeneratorPNG;
+use Picqer\Barcode\BarcodeGeneratorSVG;
 
 class InvoiceController extends Controller
 {
@@ -48,22 +52,30 @@ class InvoiceController extends Controller
      */
     public function label(Product $product)
     {
+        $start = microtime(true);
 
-        $html = view('pdfs.ticket.zebra',[
+        $code = $product->bar_code ?: $product->code;
+        $generator = new BarcodeGeneratorPNG();
+        $barCode = base64_encode($generator->getBarcode($code, $generator::TYPE_CODE_128,2,55));
+        $barcodeUrl = "data:image/png;base64," . $barCode;
+
+        $pdf = PDF::loadView('pdfs.ticket.zebra',[
             'name' => 'Repuesto Camboya',
             'ref' => $product->sku,
-            'code_bar' => $product->bar_code ? $product->bar_code : $product->code
-        ])->render();
+            'code_bar' => $barcodeUrl
+        ]);
+        $pdf->setOption('enable-local-file-access', true);
+        $pdf->setOption('page-width', '60mm');
+        $pdf->setOption('page-height', '30mm');
+        $pdf->setOption('margin-top', '0.2mm');
+        $pdf->setOption('margin-left', '0.2mm');
+        $pdf->setOption('margin-right', '0.2mm');
 
-        $pdf = \Spatie\Browsershot\Browsershot::html($html)
-            ->paperSize(10.16, 5.08, 'cm')
-            ->margins(3,3,3,3)
-            ->showBackground()
-            ->pdf();
+        $end = microtime(true);
+        $report = $end - $start;
+        Log::info('el timpo transcurrido es '. $report);
 
-        return response($pdf)
-            ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'inline; filename="Repuesto Camboya.pdf"');
+        return $pdf->inline('ticket.pdf');
     }
 
 

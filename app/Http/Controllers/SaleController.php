@@ -83,6 +83,9 @@ class SaleController extends Controller
 
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function update(StoreProductSaleRequest $request, Sale $sale)
     {
 

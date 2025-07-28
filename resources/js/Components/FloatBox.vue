@@ -10,11 +10,11 @@ const show = defineModel('show',{
 
 <template>
 	<Transition name="modal">
-		<div v-if="show" class="fixed z-[9998] top-0 left-0 w-screen h-screen bg-black backdrop-blur-md bg-opacity-50 flex duration-300">
+		<div v-show="show" class="fixed z-[9998] top-0 left-0 w-screen h-screen bg-black backdrop-blur-md bg-opacity-50 duration-300">
 			<FontAwesomeIcon
 				@click="show = false"
 				class="text-3xl py-1 absolute right-5 top-5 bg-cyan-100 px-3 rounded-md text-red-500" :icon="faClose"/>
-			<div class="modal-container">
+			<div class="modal-container mx-auto mt-5">
 				<div class="text-center text-3xl font-bold font-mono">
 					<slot name="header"/>
 				</div>
@@ -36,7 +36,6 @@ const show = defineModel('show',{
 
 .modal-container {
 	width: 90%;
-	margin: auto;
 	padding: 20px 30px;
 	background-color: #fff;
 	border-radius: 1rem;

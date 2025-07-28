@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import PrimaryButton from '@/Components/PrimaryButton.vue';
-import {loadingAlert, successHttp} from '@/Global/Alert';
+import {loadingAlert, showPDf, successHttp} from '@/Global/Alert';
 import {productBaseI, ProductOptionsI} from '@/Interfaces/ProductInterface';
 import {supplierI} from '@/Interfaces/SupplierInterface';
 import {useForm, usePage} from '@inertiajs/vue3';
@@ -206,43 +206,10 @@ function setCalculateData(
 
 
 async function printLabel() {
-	loadingAlert('Cargando...', 'Creando el PDF para la etiqueta')
-	
 	
 	try {
 		
-		const response = await axios.get(`invoice/label/${form.id}`, {
-			responseType: 'blob' // ¡Importante para manejar PDF!
-		});
-		
-		// Crear URL temporal para el blob del PDF
-		const pdfBlob = new Blob([response.data], {type: 'application/pdf'});
-		const pdfUrl = URL.createObjectURL(pdfBlob);
-		
-		// Mostrar SweetAlert con iframe
-		await Swal.fire({
-			title: 'Vista previa de la etiqueta',
-			html: `
-        <iframe
-          src="${pdfUrl}"
-          width="100%"
-          height="500px"
-          style="border: none;"
-        ></iframe>
-      `,
-			allowOutsideClick: false,
-			showCancelButton: true,
-			showConfirmButton: false,
-			cancelButtonText: 'Cerrar',
-			width: '80%',
-			padding: '2em',
-			didOpen: () => {
-				// Limpiar la URL cuando se cierre el modal
-				Swal.getPopup()?.addEventListener('hidden.bs.modal', () => {
-					URL.revokeObjectURL(pdfUrl);
-				});
-			}
-		})
+		await showPDf('Etiqueta', route('invoice.label', {id: form.id}))
 		
 	} catch (error) {
 		

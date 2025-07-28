@@ -16,7 +16,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import {productFullI, productI} from "@/Interfaces/ProductInterface";
-import {inject, ref} from "vue";
+import {inject, ref, watch} from "vue";
 import {infoSaleI, saleDataI} from "@/Interfaces/SaleInterface";
 import {saleKey} from "@/utils/keys";
 import {paginationI} from "@/Interfaces/GlobalInterface";
@@ -34,7 +34,7 @@ const propsW = defineProps<{
 
 
 const emit = defineEmits<{
-	(e: 'retuned'): void,
+	(e: 'retunedBlur'): void,
 	(e: 'totalAmount', index: number): void,
 	(e: 'totalSale'):void
 }>()
@@ -43,7 +43,7 @@ const form = inject(saleKey)!
 
 const showProduct = ref(false)
 const showSaleOpen = ref(false)
-const showReturn = ref(true)
+const showReturn = ref(false)
 const showFormReturn = ref(false)
 
 /**
@@ -97,7 +97,7 @@ async function checkInvoiceType() {
 	
 	// Verificar si es nota de credito
 	if (form.invoice_type === 'B04') {
-		//REsultaod de la pregunta
+		//Resultado de la pregunta
 		const result = await Swal.fire({
 			title: "Desea Colocar Comprobante?",
 			text: "Registre El Comprobante Del Cliente!",
@@ -186,8 +186,14 @@ function getSaleOpen(item: saleDataI) {
 }
 
 
+function openReturn(){
+	showReturn.value = !showReturn.value;
+}
+
 defineExpose({
-	showReturn
+	showReturn,
+	getSequenceType,
+	openReturn
 })
 
 </script>
@@ -298,22 +304,6 @@ defineExpose({
 		</div>
 	
 	</div>
-	
-	
-	<!-- Ventana de Devuelta-->
-	<FloatBox
-		v-model:show="showReturn">
-		<template #header>
-			Ventana de Pago
-		</template>
-		<template #body>
-			<PaymentInvoice
-				/>
-		</template>
-		
-		/>
-	</FloatBox>
-	
 	
 	<!-- Ventana de productos-->
 	<FloatBox

@@ -10,12 +10,20 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {faMagnifyingGlass, faSpinner} from "@fortawesome/free-solid-svg-icons";
 import {getRncHelper} from "@/Global/Helpers";
 import {saleKey} from "@/utils/keys";
+import {usePage} from "@inertiajs/vue3";
+import axios from "axios";
+import {sequenceDataI} from "@/Interfaces/SettingInterface";
+
+const page = usePage()
 
 const propsW = defineProps<{
 	invoiceType: string;
 	clients: paginationI<clientBaseI>,
 }>()
 
+const emit = defineEmits<{
+	(e:'getSequenceType', type:string):void
+}>()
 
 const state = reactive({
 	error: {
@@ -30,11 +38,15 @@ const form = inject(saleKey)!
 const showClient = ref<boolean>(false)
 const showClientRnc = ref<boolean>(false)
 
+const sequenceData = defineModel<sequenceDataI | null>('sequenceData',{
+	default: null,
+});
 
 
 const hasRnc = computed(()=>{
 	return form.invoice_type.trim().toUpperCase() !== "B02"
 })
+
 
 function getClient(item:clientBaseI){
 	//Pasar los datos al formulario
@@ -50,12 +62,55 @@ function getClient(item:clientBaseI){
 		showClientRnc.value = true;
 	}
 	// Obtener la secuencia del comprobante
-	// getSequence(item.type_rnc);
+	getSequence(item.type_rnc);
 	
 	//
 	showClient.value = false;
 	
 }
+
+/*
+ * Obtener los datos de la sequencia
+ */
+/**
+ * Obtner los comprobantes
+ * @param type
+ */
+async function getSequence(type: string) {
+	try {
+		//Verificar si existe la secuencia
+		if (page.props.setting.sequence) {
+			//Realizar la buqued
+			const result = await axios.get(route('sequence.get', {type: type}));
+			
+			//Verificar si la secuencia es correcta
+			if (result.status === 200 && typeof (result.data) === 'object') {
+				//Pasar los datos a las variables
+				sequenceData.value = result.data || null;
+				
+				emit('getSequenceType',type)
+				//Obtner el tipo de secuencia
+				
+				//Asegurar de que los datos existan
+				if (sequenceData.value && sequenceData.value.type && sequenceData.value.next != null) {
+					form.clearErrors("ncf");
+					form.ncf = sequenceData.value.type + sequenceData.value.next.toString().padStart(8, '0');
+					
+				}
+				//Crear la secuencia
+				
+			} else {
+				//Mensaje de error
+				form.setError("sequence", "Este Comprobante No Puedo Ser");
+			}
+		}
+	} catch (err) {
+		form.ncf = "";
+		form.setError("ncf", "No Existe NCF Disponible, Para Esta Serie");
+	}
+	
+}
+
 
 /*
  * Conseguirel RNC del cliente
@@ -95,6 +150,10 @@ async function getRncClient ()  {
 		}
 	}
 }
+
+defineExpose({
+	getSequence
+})
 
 </script>
 

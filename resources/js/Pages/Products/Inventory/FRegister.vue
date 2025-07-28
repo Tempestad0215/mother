@@ -14,6 +14,8 @@ import {paginationI} from "@/Interfaces/GlobalInterface";
 import InputLabel from "@components/InputLabel.vue";
 import FloatBox from "@components/FloatBox.vue";
 import FShow from "@/Pages/Products/FShow.vue";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import {faMagnifyingGlass} from "@fortawesome/free-solid-svg-icons";
 
 
 // Propiedades
@@ -134,18 +136,22 @@ const getProductTable = (item:productBaseI) => {
             <div
                 class="relative">
                 <!-- Buscador de productos -->
-                <input
-                    placeholder="Busca Cliente"
-                    class="peer inputGeneral group w-[90%]"
-                    v-model="productName"
-                    autocomplete="off"
-                    type="search"
-                    name="product"
-                    id="product">
-                <!-- Para buscar los datos -->
-                <i
-                    @click="showProduct = !showProduct"
-                    class="bg-cyan-400 ml-2  px-3 py-auto rounded-md icon-efect fa-solid fa-magnifying-glass"></i>
+	            <div class="flex">
+		            <input
+			            placeholder="Busca Cliente"
+			            class="peer inputGeneral group w-[90%]"
+			            v-model="productName"
+			            autocomplete="off"
+			            type="search"
+			            name="product"
+			            id="product">
+		            <!-- Para buscar los datos -->
+		            <FontAwesomeIcon
+			            @click="showProduct = !showProduct"
+			            class="bg-cyan-400 ml-2  px-3 py-1.5 py-auto rounded-md icon-efect" :icon="faMagnifyingGlass"/>
+	            </div>
+	            
+                
 
                 <!--                        Mostrar los datos de la base de datos-->
                 <div
@@ -210,14 +216,17 @@ const getProductTable = (item:productBaseI) => {
 
     <!-- Para  Buscar mas productos -->
     <FloatBox
-        class="z-30"
-        header="Productos"
-        @close="showProduct = !showProduct"
-        v-if="showProduct">
-        <FShow
-            class="fondo p-5 w-[70rem]"
-            @select="getProductTable"
-            :products="propsW.productTable"/>
+	    v-model:show="showProduct">
+	    <template #header>
+		    Productos`
+	    </template>
+	    <template #body>
+		    <FShow
+			    class="fondo p-5 w-[70rem]"
+			    @select="getProductTable"
+			    :products="propsW.productTable"/>
+	    </template>
+     
     </FloatBox>
 </template>
 

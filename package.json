@@ -34,6 +34,7 @@
         "chart.js": "^4.4.5",
         "decimal.js": "^10.6.0",
         "fast-glob": "3.3.2",
+        "jsbarcode": "^3.12.1",
         "micromatch": "^4.0.8",
         "puppeteer": "^23.11.1",
         "uuid": "^11.0.3",
