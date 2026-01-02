@@ -1,24 +1,23 @@
 // src/directives/moneyFormat.js
-import { ref } from 'vue';
 
 export default {
-  beforeMount(el:HTMLInputElement) {
+  beforeMount(el) {
     el.value = formatMoney(el.value);
     el.addEventListener('input', onInput);
   },
-  updated(el:HTMLInputElement) {
+  updated(el) {
     el.value = formatMoney(el.value);
   },
-  unmounted(el:HTMLInputElement) {
+  unmounted(el) {
     el.removeEventListener('input', onInput);
   }
 }
 
-function onInput(event:Event) {
-  (event.target as HTMLInputElement ).value = formatMoney((event.target as HTMLInputElement).value);
+function onInput(event) {
+  (event.target).value = formatMoney((event.target).value);
 }
 
-function formatMoney(value:string) {
+function formatMoney(value) {
   if (!value) return '';
 
   // Remove any non-digit characters

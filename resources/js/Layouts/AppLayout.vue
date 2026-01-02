@@ -1,20 +1,21 @@
 <script setup lang="ts">
 import {onMounted, onUnmounted, reactive, ref} from 'vue';
 import {Head, usePage} from '@inertiajs/vue3';
-import LinkHeader from "@components/LinkHeader.vue";
-import Divider from "@components/Divider.vue";
-import ImageMenu from "@components/ImageMenu.vue";
-import FloatBox from "@components/FloatBox.vue";
 import Exchange from "@/Pages/Setting/CU/Exchange.vue";
+import {route} from "ziggy-js";
+import ImageMenu from "@/Components/ImageMenu.vue";
+import Divider from "@/Components/Divider.vue";
+import LinkHeader from "@/Components/LinkHeader.vue";
+import FloatBox from "@/Components/FloatBox.vue";
 
 
 /*
-Destructurar las variables
+Destructure las variables
  */
 const {props} = usePage();
 
 /*
-Propiedads de la ventana
+Propiedades de la ventana
  */
 defineProps({
     title: String,
@@ -159,7 +160,7 @@ const showOption = ref<boolean>(false);
                 <slot name="header"/>
             </header>
 
-<!--            Contendio de la ventaa-->
+<!--            Contenido de la ventana principal-->
             <div
                 id="main-window"
                 class="p-3 overflow-y-auto max-h-[calc(100vh-4rem)]">

@@ -1,7 +1,6 @@
 import Swal from "sweetalert2";
 import axios from "axios";
 import {errorHttp} from "@/Global/Alert";
-import {rncClientI} from "@/Interfaces/ClientInterface";
 
 
 /**
@@ -52,9 +51,9 @@ export const month = [
 /**
  *
  */
-export const getYear = ():number[] => {
+export const getYear = ()=> {
     //Para guartdar los datos
-    const years:number[] = [];
+    const years = [];
 
     //Crear el listado de a;os
     for (let i = 2015; i <= new Date().getFullYear(); i++) {
@@ -68,13 +67,13 @@ export const getYear = ():number[] => {
  * Limpiar y convertir a float
  * @param val
  */
-export const formatNumber = (val:string | number):number  =>
+export const formatNumber = (val)  =>
 {
-    // let value:number = 0;
+    // let value = 0;
     if(typeof val === 'string')
     {
         // Convertir el valor a flotante
-        let limpio:string = val.replace(/[^\d.]/g,'');
+        let limpio = val.replace(/[^\d.]/g,'');
         val = parseFloat(limpio);
 
     }
@@ -88,7 +87,7 @@ export const formatNumber = (val:string | number):number  =>
  * Convertir a dinero
  * @param value
  */
-export const getMoney = (value:number = 0) => {
+export const getMoney = (value = 0) => {
     return new Intl.NumberFormat('es-DO',{
         style: 'decimal',
         currency: 'DOP',
@@ -99,7 +98,7 @@ export const getMoney = (value:number = 0) => {
  * Busca el RNC y devuelve un string
  * @param data
  */
-export const getRncHelper = async (data: string):Promise<"SUSPENDIDO" | "ERROR" | "CANCELLED" | rncClientI> => {
+export const getRncHelper = async (data) => {
 
     //Preguntar para buscar los datos
     const result = await Swal.fire({
@@ -115,7 +114,7 @@ export const getRncHelper = async (data: string):Promise<"SUSPENDIDO" | "ERROR" 
 
     //Verificar
     if (result.isConfirmed){
-        let info:string = data.replace(/-/g, "");
+        let info = data.replace(/-/g, "");
 
         try {
             const response = await axios.get(route('sequence.getRnc', { rnc: info }));
@@ -139,7 +138,7 @@ export const getRncHelper = async (data: string):Promise<"SUSPENDIDO" | "ERROR" 
 /**
  * Tipos de secuencia ncf
  */
-export const getSequenceType = (type:string):string =>
+export const getSequenceType = (type) =>
 {
     switch (type){
         case "B01":
@@ -173,7 +172,7 @@ export const getSequenceType = (type:string):string =>
  * Generar colores para los charts
  * @param numItems
  */
-export const generateColors = (numItems:number) => {
+export const generateColors = (numItems) => {
     const colors = [];
 
     // Hue (tono) variará entre 0 y 360 para cubrir el espectro de colores.
@@ -197,7 +196,7 @@ export const generateColors = (numItems:number) => {
  * @param s
  * @param ms
  */
-export const setHour = (h:number, m:number, s:number, ms:number):string => {
+export const setHour = (h, m, s, ms) => {
     //Tomar la fecha del dia
     const now = new Date();
 
@@ -214,7 +213,7 @@ export const setHour = (h:number, m:number, s:number, ms:number):string => {
  * Convertir los datos
  * @param date
  */
-const getDateInUtc4 = (date:Date):string => {
+const getDateInUtc4 = (date) => {
     date.setHours(date.getHours() - 4);
 
     //Convertir
@@ -231,7 +230,7 @@ const getDateInUtc4 = (date:Date):string => {
  * @param search
  * @param perPage
  */
-export const paginationJoin = (url:string,field: string, search:string, perPage:number):string => {
+export const paginationJoin = (url,field, search, perPage) => {
     return url+'&field'+field+'&search='+search+'&perPage='+perPage;
 }
 
@@ -239,23 +238,23 @@ export const paginationJoin = (url:string,field: string, search:string, perPage:
  * Para imprimir los pdf
  * @param urlName
  */
-export const printPdf = (urlName: string) => {
-    const width:number = 800; // Ancho predeterminado
-    const height:number = 600; // Altura predeterminada
+export const printPdf = (urlName) => {
+    const width = 800; // Ancho predeterminado
+    const height = 600; // Altura predeterminada
 
     // Calcular la posición para centrar la ventana
-    const screenWidth:number = window.screen.width;
-    const screenHeight:number = window.screen.height;
-    const left:number = (screenWidth - width) / 2;
-    const top:number = (screenHeight - height) / 2;
+    const screenWidth = window.screen.width;
+    const screenHeight = window.screen.height;
+    const left = (screenWidth - width) / 2;
+    const top = (screenHeight - height) / 2;
 
     // Crear características de la ventana emergente
     const popupFeatures = `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,resizable=yes`;
 
-    //crea la ventana de impresion
+    //crea la ventana de impresión
     const printWindow = window.open(urlName,'_blank', popupFeatures);
 
-    //Error de la cosas
+    //Error de la cosa
     if (!printWindow) {
         errorHttp('No se Puede Abrir La Ventana');
         return;
@@ -270,8 +269,8 @@ export const printPdf = (urlName: string) => {
 }
 
 
-// Para la exportanciones de excel
-export const exportExcel = async (path: string, fielName: string) => {
+// Para la exportaciones de excel
+export const exportExcel = async (path, fielName) => {
 
     try {
         const response = await axios.get(path,{

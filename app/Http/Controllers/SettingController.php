@@ -61,10 +61,10 @@ class SettingController extends Controller implements HasMiddleware
         //Crear la instancia de los datos
         $settingHelper = new SettingHelper();
 
-        //Llmar los datos
+        //Llamar los datos
         $settingHelper->store($request);
 
-        //Devolver hacia atras
+        //Devolver hacia atrás
         return back();
 
     }

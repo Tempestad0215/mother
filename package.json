@@ -3,8 +3,7 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vite build",
-        "ts-check": "vue-tsc --noEmit"
+        "build": "vite build"
     },
     "devDependencies": {
         "@inertiajs/vue3": "^1.0.14",
@@ -14,13 +13,13 @@
         "@vitejs/plugin-vue": "^5.0.0",
         "@vue/tsconfig": "^0.5.1",
         "autoprefixer": "^10.4.16",
-        "axios": "^1.6.4",
+        "axios": "1.12.0",
         "laravel-vite-plugin": "^1.0",
         "postcss": "^8.4.32",
         "tailwindcss": "^3.4.10",
         "typescript": "^5.5.2",
         "unplugin-vue-components": "^0.27.4",
-        "vite": "^6.2.1",
+        "vite": "7.1.11",
         "vue": "^3.3.13",
         "vue-tsc": "^2.0.26"
     },
@@ -37,6 +36,7 @@
         "jsbarcode": "^3.12.1",
         "micromatch": "^4.0.8",
         "puppeteer": "^23.11.1",
+        "sweetalert2": "^11.26.17",
         "uuid": "^11.0.3",
         "v-money": "^0.8.1",
         "v-money3": "3.24.1",

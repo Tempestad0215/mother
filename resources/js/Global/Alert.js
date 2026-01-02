@@ -2,7 +2,7 @@ import Swal from "sweetalert2";
 import axios from "axios";
 
 
-export const successHttp = (msj: string) => {
+export const successHttp = (msj) => {
 	void Swal.fire({
 		position: "center",
 		icon: "success",
@@ -13,7 +13,7 @@ export const successHttp = (msj: string) => {
 	});
 }
 
-export const errorHttp = (msj: string) => {
+export const errorHttp = (msj) => {
 	void Swal.fire({
 		position: "center",
 		icon: "error",
@@ -22,9 +22,9 @@ export const errorHttp = (msj: string) => {
 	});
 }
 
-export const loadingAlert = (title: string, text: string): HTMLElement | null => {
-	let popupEle: HTMLElement | null = null;
-	
+export const loadingAlert = (title, text) => {
+	let popupEle = null;
+
 	void Swal.fire({
 		title,
 		text,
@@ -35,28 +35,28 @@ export const loadingAlert = (title: string, text: string): HTMLElement | null =>
 		didOpen: () => {
 			Swal.showLoading();
 		},
-		willOpen(popup: HTMLElement) {
+		willOpen(popup) {
 			popupEle = popup;
 		}
 	});
-	
+
 	// Retorna el popup inmediatamente (Swal.fire sigue abierto)
 	return popupEle;
 };
 
 
-export const showPDf = async (title:string,path:string) => {
-	
+export const showPDf = async (title,path) => {
+
 	loadingAlert('Cargando...', 'Creando el PDF para la etiqueta')
-	
+
 	const response = await axios.get(path, {
 		responseType: 'blob' // ¡Importante para manejar PDF!
 	});
-	
+
 	// Crear URL temporal para el blob del PDF
 	const pdfBlob = new Blob([response.data], {type: 'application/pdf'});
 	const pdfUrl = URL.createObjectURL(pdfBlob);
-	
+
 	// Mostrar SweetAlert con iframe
 	await Swal.fire({
 		title: 'Vista previa de la etiqueta',
