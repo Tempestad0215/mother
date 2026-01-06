@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, reactive, ref } from 'vue';
+import {computed, onMounted, onUnmounted, reactive, ref} from 'vue';
 import { Head, usePage } from '@inertiajs/vue3';
 import LinkHeader from "@components/LinkHeader.vue";
 import Divider from "@components/Divider.vue";
@@ -21,6 +21,8 @@ defineProps({
 const menuImageRef = ref<HTMLElement | null>(null);
 const showExchange = ref<boolean>(false);
 const showOption = ref<boolean>(false);
+const isHiddenMenu = ref<boolean>(false);
+const widthMenu = ref<number>(50)
 
 // ✅ Menú optimizado para POS
 const menuItems = reactive([
@@ -70,6 +72,11 @@ const menuItems = reactive([
     },
 ]);
 
+
+const hiddenMenu = computed(() => {
+    return isHiddenMenu.value ? `max-w-[${widthMenu.value}px]` : "";
+});
+
 const isActive = (activePath: string): boolean => {
     return window.location.pathname.startsWith(activePath);
 };
@@ -79,6 +86,8 @@ const handleClick = (event: MouseEvent) => {
         showOption.value = false;
     }
 };
+
+
 
 const showExchangeWindow = () => {
     if (props.isExchange) {
@@ -98,17 +107,26 @@ onUnmounted(() => {
 
 <template>
     <div class="flex min-h-screen bg-gray-50">
-
         <FontAwesomeIcon
-            @click="console.log('funiona bien')"
-            class="absolute left-[240px] top-3 text-3xl text-white"  :icon="faArrowCircleLeft"/>
+            @click="isHiddenMenu = !isHiddenMenu"
+            class="absolute top-3 text-3xl cursor-pointer text-red-500 z-50 ease-in-out  duration-200 transition-[left, transform] "
+            :icon="faArrowCircleLeft"
+            :class="{
+                'left-[240px]': !isHiddenMenu,
+                'left-[35px] rotate-180': isHiddenMenu
+              }"
+
+        />
 
         <!-- Sidebar Profesional -->
         <aside
-            class="bg-gray-900 text-white w-64 flex flex-col shadow-xl transition-all duration-300"
+            class="bg-gray-900 text-white w-64 flex  flex-col shadow-xl transition-all duration-300"
+            :style="{ width: isHiddenMenu ? '50px' : '16rem' }"
         >
             <!-- Logo / User -->
-            <div class="p-5 border-b border-gray-700">
+            <div
+                v-show="!isHiddenMenu"
+                class="p-5 border-b border-gray-700">
                 <ImageMenu :url="props.auth.user.profile_photo_url" />
             </div>
 
@@ -141,20 +159,20 @@ onUnmounted(() => {
         </aside>
 
         <!-- Contenido principal -->
-        <div class="flex-1 flex flex-col overflow-hidden">
-            <!-- Header -->
-            <header class="bg-white shadow-sm h-16 flex items-center px-6 justify-between">
-                <h1 class="text-lg font-semibold text-gray-800">
-                    <slot name="header">{{ title }}</slot>
-                </h1>
-                <!-- Puedes agregar notificaciones, perfil, etc. -->
-            </header>
+<!--        <div class="flex-1 flex flex-col overflow-auto">-->
+<!--            &lt;!&ndash; Header &ndash;&gt;-->
+<!--            <header class="bg-white shadow-sm h-16 flex items-center px-6 justify-between">-->
+<!--                <h1 class="text-lg font-semibold text-gray-800">-->
+<!--                    <slot name="header">{{ title }}</slot>-->
+<!--                </h1>-->
+<!--                &lt;!&ndash; Puedes agregar notificaciones, perfil, etc. &ndash;&gt;-->
+<!--            </header>-->
 
-            <!-- Contenido -->
-            <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
-                <slot />
-            </main>
-        </div>
+<!--            &lt;!&ndash; Contenido &ndash;&gt;-->
+<!--            <main class="flex-1 overflow-y-auto p-6 bg-gray-50">-->
+<!--                <slot />-->
+<!--            </main>-->
+<!--        </div>-->
     </div>
 
 </template>
