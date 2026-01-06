@@ -16,13 +16,13 @@ const propsW = defineProps<{
 
 
 onMounted(() => {
-    if (propsW.mostSold)
-    {
-        propsW.mostSold.map((item:mostSoldI) => {
-           dataFormat.productName.push(item.name);
-           dataFormat.productSold.push(item.totalSaled);
-        });
-    }
+    // if (propsW.mostSold)
+    // {
+    //     propsW.mostSold.map((item:mostSoldI) => {
+    //        dataFormat.productName.push(item.name);
+    //        dataFormat.productSold.push(item.totalSaled);
+    //     });
+    // }
 
     //Para craer los datos
     createChart();
@@ -45,26 +45,26 @@ const createChart = () => {
     const ctx = document.getElementById('mostSold');
 
     //Crea los datos
-    new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: dataFormat.productName,
-            datasets: [{
-                label: '10 Productos Mas Vendido',
-                data: dataFormat.productSold,
-                borderColor: dataFormat.productColor,
-                backgroundColor: generateColors(dataFormat.productName.length),
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
+    // new Chart(ctx, {
+    //     type: 'doughnut',
+    //     data: {
+    //         labels: dataFormat.productName,
+    //         datasets: [{
+    //             label: '10 Productos Mas Vendido',
+    //             data: dataFormat.productSold,
+    //             borderColor: dataFormat.productColor,
+    //             backgroundColor: generateColors(dataFormat.productName.length),
+    //             borderWidth: 1
+    //         }]
+    //     },
+    //     options: {
+    //         scales: {
+    //             y: {
+    //                 beginAtZero: true
+    //             }
+    //         }
+    //     }
+    // });
 }
 
 </script>

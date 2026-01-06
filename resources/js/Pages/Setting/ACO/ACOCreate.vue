@@ -9,8 +9,9 @@ import {successHttp} from "@/Global/Alert";
 import {acoBaseI} from "@/Interfaces/AccountCounterInterface";
 import Swal from "sweetalert2";
 import TabLink from "@components/TabLink.vue";
+import {useRoute} from "ziggy-js";
 
-
+const route = useRoute()
 /*
 Propiedades
  */

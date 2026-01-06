@@ -7,7 +7,10 @@ import {infoSaleI} from "@/Interfaces/SaleInterface";
 import Swal from "sweetalert2";
 import {successHttp} from "@/Global/Alert";
 import {PreciseCalculator} from "@/utils/Decimal";
+import {useRoute} from "ziggy-js";
 
+
+const route = useRoute();
 const propsW = defineProps<{
 	refund?: boolean;
 }>()
@@ -20,21 +23,21 @@ const form = inject(saleKey)!;
  * @param index
  */
 function totalAmount (index: number) {
-	
+
 	// Sacar los datos del produtos
 	let info: infoSaleI = form.info_sale[index];
 	let discountRate = PreciseCalculator.divide(info.discount, 100)
-	
+
 	//Para calcular los datos
 	info.amount = parseFloat((info.price * info.stock).toFixed(2));
 	//Descuento datos
 	info.discount_amount = parseFloat((PreciseCalculator.multiply(info.amount, discountRate.toString())).toFixed(2));
 	//Pasar los datos al formulario
 	info.tax = parseFloat((PreciseCalculator.multiply(info.amount, info.tax_rate)).toFixed(2));
-	
+
 	//Calcular los totales
 	totalSale();
-	
+
 }
 
 /**
@@ -43,7 +46,7 @@ function totalAmount (index: number) {
  * @param index
  */
 async function deleteItem  (name: string, index: number){
-	
+
 	//Tomar el resultado si vas a eliminar
 	const result = await Swal.fire({
 		title: `Desea eliminar registro : ${name}?`,
@@ -55,34 +58,34 @@ async function deleteItem  (name: string, index: number){
 		confirmButtonText: "Si, Eliminar!",
 		cancelButtonText: "Cancelar"
 	});
-	
+
 	//Verificar si se ha confirmado
 	if (result.isConfirmed) {
 		//Tomar datos la venta
 		let info: infoSaleI = form.info_sale[index];
-		
-		
+
+
 		//Eliminar el producto seleccionado
 		form.info_sale.splice(index, 1);
-		
+
 		//Verificar si es diferente a devuelta
 		if (!propsW.refund) {
-			
+
 			if (form.id !== 0) {
 				//Enviar los datos para actualizar
-				form.transform((data) => ({
-					...data,
-					info: info,
-					info_new: data.info_sale,
-				})).patch(route('sale.destroy.item', {product: info.product_id, sale: form.id}, {
-					preserveScroll: true,
-					preserveState: true,
-					onFinish: () => {
-					},
-					onSuccess: () => {
-						successHttp(`Item : ${info.product_name} Eliminado Correctamente`);
-					}
-				}));
+				// form.transform((data) => ({
+				// 	...data,
+				// 	info: info,
+				// 	info_new: data.info_sale,
+				// })).patch(route('sale.destroy.item', {product: info.product_id, sale: form.id}, {
+				// 	preserveScroll: true,
+				// 	preserveState: true,
+				// 	onFinish: () => {
+				// 	},
+				// 	onSuccess: () => {
+				// 		successHttp(`Item : ${info.product_name} Eliminado Correctamente`);
+				// 	}
+				// }));
 			}
 		}
 		//REalizar el cálculo de nuevo
@@ -98,7 +101,7 @@ async function deleteItem  (name: string, index: number){
  */
 // Calculo de los datos finales
 function totalSale() {
-	
+
 	//Calcular el total
 	form.tax = form.info_sale.reduce((tax: number, item: infoSaleI) => {
 		return Number(PreciseCalculator.add(tax, item.tax).toFixed(2))
@@ -110,15 +113,15 @@ function totalSale() {
 		return Number(PreciseCalculator.add(discount, item.discount_amount).toString())
 	}, 0);
 	form.amount = Number(PreciseCalculator.subtract(form.sub_total, form.discount_amount).toFixed(2))
-	
-	
-	
+
+
+
 }
 
 defineExpose({
 	totalAmount,
 	totalSale
-	
+
 })
 
 </script>
@@ -159,7 +162,7 @@ defineExpose({
 				<td>
 					{{ getMoney(item.tax) }}
 				</td>
-				
+
 				<!--                                        Precio solo modificar si es servicio-->
 				<td class="max-w-[5rem]">
 					<span v-if="item.type === 'producto' || item.type === 'ventas'">{{ getMoney(item.price) }}
@@ -183,7 +186,7 @@ defineExpose({
 				<td>
 					{{ getMoney(item.amount) }}
 				</td>
-				
+
 				<td>
 					<i
 						@click="deleteItem(item.product_name, index)"
@@ -192,7 +195,7 @@ defineExpose({
 			</tr>
 			</tbody>
 		</table>
-	
+
 	</div>
 </template>
 

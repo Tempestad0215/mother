@@ -10,7 +10,9 @@ import {ref} from "vue";
 import {errorHttp} from "@/Global/Alert";
 import {getMoney} from "@/Global/Helpers";
 import InputLabel from "@components/InputLabel.vue";
+import {useRoute} from "ziggy-js";
 
+const route = useRoute()
 /**
  * Propiedades
  */

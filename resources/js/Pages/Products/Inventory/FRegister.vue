@@ -16,8 +16,9 @@ import FloatBox from "@components/FloatBox.vue";
 import FShow from "@/Pages/Products/FShow.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {faMagnifyingGlass} from "@fortawesome/free-solid-svg-icons";
+import {useRoute} from "ziggy-js";
 
-
+const route = useRoute()
 // Propiedades
 const propsW = defineProps<{
     products: productBaseI[],
@@ -150,8 +151,8 @@ const getProductTable = (item:productBaseI) => {
 			            @click="showProduct = !showProduct"
 			            class="bg-cyan-400 ml-2  px-3 py-1.5 py-auto rounded-md icon-efect" :icon="faMagnifyingGlass"/>
 	            </div>
-	            
-                
+
+
 
                 <!--                        Mostrar los datos de la base de datos-->
                 <div
@@ -226,7 +227,7 @@ const getProductTable = (item:productBaseI) => {
 			    @select="getProductTable"
 			    :products="propsW.productTable"/>
 	    </template>
-     
+
     </FloatBox>
 </template>
 

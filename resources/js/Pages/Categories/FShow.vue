@@ -8,8 +8,10 @@ import Swal from "sweetalert2";
 import {successHttp} from "@/Global/Alert";
 import {onMounted} from "vue";
 import {exportExcel} from "@/Global/Helpers";
+import {useRoute} from "ziggy-js";
 
 
+const route = useRoute();
 /*Datos de la ventana*/
 const propsW = defineProps<{
     categories: paginationI<categoryBaseI>

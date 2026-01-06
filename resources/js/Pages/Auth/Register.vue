@@ -15,8 +15,10 @@ import Pagination from "@components/Pagination.vue";
 import {paginationJoin} from "@/Global/Helpers";
 import ToggleButton from "@components/ToggleButton.vue";
 import TabLink from "@components/TabLink.vue";
+import {useRoute} from "ziggy-js";
 
 
+const route = useRoute();
 /*
 Propiedad de la ventana
  */
@@ -319,15 +321,15 @@ const search = () => {
                     </tbody>
                 </table>
 
-                <Pagination
-                    :total-page="users.meta.to"
-                    :prev="users.links.prev
-                    ? paginationJoin(users.links.prev, formSearch.search, formSearch.perPage)
-                    : ''"
-                    :next="users.links.next
-                    ? paginationJoin(users.links.next, formSearch.search, formSearch.perPage)
-                    : ''"
-                    :current-page="users.meta.current_page "/>
+<!--                <Pagination-->
+<!--                    :total-page="users.meta.to"-->
+<!--                    :prev="users.links.prev-->
+<!--                    ? paginationJoin(users.links.prev, formSearch.search, formSearch.perPage)-->
+<!--                    : ''"-->
+<!--                    :next="users.links.next-->
+<!--                    ? paginationJoin(users.links.next, formSearch.search, formSearch.perPage)-->
+<!--                    : ''"-->
+<!--                    :current-page="users.meta.current_page "/>-->
             </div>
         </div>
     </AppLayout>

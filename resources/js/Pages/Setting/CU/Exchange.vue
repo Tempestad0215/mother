@@ -7,8 +7,11 @@ import {getYear, moneyConfig, month} from "@/Global/Helpers";
 import {useForm} from "@inertiajs/vue3";
 import {Money} from "v-money3";
 import { errorHttp, successHttp } from "@/Global/Alert";
+import {useRoute} from "ziggy-js";
 
 
+
+const route = useRoute()
 /**
  * datos de la ventana
  */
@@ -28,7 +31,7 @@ const form = useForm({
 Evento para emitir
  */
 const emit = defineEmits<{
-    (e:'closeWindow')
+    (e:'closeWindow'):void
 }>();
 
 

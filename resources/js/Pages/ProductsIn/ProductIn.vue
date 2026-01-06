@@ -15,7 +15,10 @@ import {productFullI, productI, productTransI} from "@/Interfaces/ProductInterfa
 import Pagination from "@components/Pagination.vue";
 import {Money} from "v-money3";
 import TabLink from "@components/TabLink.vue";
+import {useRoute} from "ziggy-js";
 
+
+const route = useRoute();
 /**
  * Datos de la pagina
  */
@@ -511,15 +514,15 @@ const totalTax = () => {
                             </tbody>
                         </table>
                     </div>
-                    <Pagination
-                        :next="propsW.products?.next_page_url
-                                ? propsW.products?.next_page_url+'&perPage='+formSearch.perPage
-                                : ''"
-                        :total-page="propsW.products?.to"
-                        :prev="propsW.products?.prev_page_url
-                                ? propsW.products?.prev_page_url+'&perPage='+formSearch.perPage
-                                : ''"
-                        :current-page="propsW.products?.current_page"/>
+<!--                    <Pagination-->
+<!--                        :next="propsW.products?.next_page_url-->
+<!--                                ? propsW.products?.next_page_url+'&perPage='+formSearch.perPage-->
+<!--                                : ''"-->
+<!--                        :total-page="propsW.products?.to"-->
+<!--                        :prev="propsW.products?.prev_page_url-->
+<!--                                ? propsW.products?.prev_page_url+'&perPage='+formSearch.perPage-->
+<!--                                : ''"-->
+<!--                        :current-page="propsW.products?.current_page"/>-->
 
                 </div>
 

@@ -7,8 +7,10 @@ import PrimaryButton from "@components/PrimaryButton.vue";
 import {successHttp} from "@/Global/Alert";
 import {warehouseBaseI} from "@/Interfaces/WarehouseInterface";
 import {watch} from "vue";
+import {useRoute} from "ziggy-js";
 
 
+const route = useRoute();
 
 /**
  * Datos de la ventanan

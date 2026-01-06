@@ -7,9 +7,10 @@ import FShow from "@/Pages/Suppliers/FShow.vue";
 import {paginationI} from "@/Interfaces/GlobalInterface";
 import {supplierI} from "@/Interfaces/SupplierInterface";
 import FSee from "@/Pages/Suppliers/FSee.vue";
+import {useRoute} from "ziggy-js";
 
 
-
+const route = useRoute();
 // Propiedades
 const propsW = defineProps<{
     suppliers: paginationI<supplierI>

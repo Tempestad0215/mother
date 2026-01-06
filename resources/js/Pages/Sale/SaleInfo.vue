@@ -13,7 +13,10 @@ import {saleKey} from "@/utils/keys";
 import {usePage} from "@inertiajs/vue3";
 import axios from "axios";
 import {sequenceDataI} from "@/Interfaces/SettingInterface";
+import {useRoute} from "ziggy-js";
 
+
+const route = useRoute();
 const page = usePage()
 
 const propsW = defineProps<{
@@ -53,8 +56,8 @@ function getClient(item:clientBaseI){
 	form.client_name = item.name;
 	form.client_id = item.id;
 	form.client_rnc = item.type_rnc;
-	
-	
+
+
 	// Si es diferente a b02, colocar el comprobante
 	if (form.invoice_type !== "B02")
 	{
@@ -63,10 +66,10 @@ function getClient(item:clientBaseI){
 	}
 	// Obtener la secuencia del comprobante
 	getSequence(item.type_rnc);
-	
+
 	//
 	showClient.value = false;
-	
+
 }
 
 /*
@@ -82,23 +85,23 @@ async function getSequence(type: string) {
 		if (page.props.setting.sequence) {
 			//Realizar la buqued
 			const result = await axios.get(route('sequence.get', {type: type}));
-			
+
 			//Verificar si la secuencia es correcta
 			if (result.status === 200 && typeof (result.data) === 'object') {
 				//Pasar los datos a las variables
 				sequenceData.value = result.data || null;
-				
+
 				emit('getSequenceType',type)
 				//Obtner el tipo de secuencia
-				
+
 				//Asegurar de que los datos existan
 				if (sequenceData.value && sequenceData.value.type && sequenceData.value.next != null) {
 					form.clearErrors("ncf");
 					form.ncf = sequenceData.value.type + sequenceData.value.next.toString().padStart(8, '0');
-					
+
 				}
 				//Crear la secuencia
-				
+
 			} else {
 				//Mensaje de error
 				form.setError("sequence", "Este Comprobante No Puedo Ser");
@@ -108,7 +111,7 @@ async function getSequence(type: string) {
 		form.ncf = "";
 		form.setError("ncf", "No Existe NCF Disponible, Para Esta Serie");
 	}
-	
+
 }
 
 
@@ -124,27 +127,27 @@ async function getRncClient ()  {
 	}else{
 		//Obtener el resultado de los
 		const result = await getRncHelper(form.client_rnc);
-		
+
 		//Verificar el estado del RNC
 		if (result === "SUSPENDIDO")
 		{
 			form.setError("client_rnc", "Este Contribuyente Esta Suspendido, Por Favor Elegir Otro");
-			
+
 		}else if (result === "ERROR")
 		{
 			form.setError("client_rnc", "Este Contribuyente No Pudo Ser Encontrado")
-			
+
 		}else if (result === "CANCELLED")
 		{
 			form.setError("client_rnc", "Este Contribuyente Esta Cancelado");
 		}else{
 			//Formatear el json
 			const info:rncClientI = result;
-			
+
 			//Poner cada dato en su lugar
 			form.client_name = info.razon_social;
 			form.client_rnc_status = info.status;
-			
+
 			// Limpiar el formulario
 			form.clearErrors()
 		}
@@ -166,7 +169,7 @@ defineExpose({
 					<input-label
 						for="product"
 						value="Cliente"/>
-					
+
 					<div class="relative">
 						<TextInput
 							type="search"
@@ -186,7 +189,7 @@ defineExpose({
 					</div>
 				</div>
 			</div>
-			
+
 			<!--RNC del cliente-->
 			<div v-if="hasRnc" >
 				<InputLabel
@@ -203,7 +206,7 @@ defineExpose({
 				</div>
 			</div>
 		</div>
-		
+
 		<!--                            Mensaje cargando-->
 		<div
 			v-if="!form.invoice_type"
@@ -213,8 +216,8 @@ defineExpose({
 				Cargando <FontAwesomeIcon class="animate-spin" :icon="faSpinner"/>
 			</div>
 		</div>
-		
-		
+
+
 		<fieldset
 			v-else
 			class="field block rounded-md">
@@ -226,7 +229,7 @@ defineExpose({
 				v-if="invoiceType === 'B04'"
 				class="truncate"><strong>NCF M. :</strong> {{ form.ncf_m }}</p>
 		</fieldset>
-		
+
 		<!--Numero de comprobantes-->
 		<fieldset
 			v-if="hasRnc"
@@ -251,7 +254,7 @@ defineExpose({
 				@getData="getClient"
 				:clients="propsW.clients"/>
 		</template>
-		
+
 	</FloatBox>
-	
+
 </template>

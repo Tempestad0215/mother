@@ -9,7 +9,10 @@ import axios from "axios";
 import {productBaseI} from "@/Interfaces/ProductInterface";
 import {categoryBaseI} from "@/Interfaces/CategoriesInterface";
 import {supplierI} from "@/Interfaces/SupplierInterface";
+import {useRoute} from "ziggy-js";
 
+
+const route = useRoute();
 defineProps<{
 	categories: categoryBaseI[],
 	suppliers: supplierI[],
@@ -49,7 +52,7 @@ async function checkProductExits() {
 		<legend>
 			Informacion
 		</legend>
-		
+
 		<!-- Nombre -->
 		<div>
 			<InputLabel
@@ -80,9 +83,9 @@ async function checkProductExits() {
 					</ol>
 				</div>
 			</div>
-		
+
 		</div>
-		
+
 		<!-- Descricion -->
 		<div class="">
 			<InputLabel
@@ -96,7 +99,7 @@ async function checkProductExits() {
 				placeholder="Descripcion"
 			/>
 		</div>
-		
+
 		<div>
 			<InputLabel
 				class="inline ml-2"
@@ -124,9 +127,9 @@ async function checkProductExits() {
 					@click="showCategory = true"
 					class="icon-efect text-cyan-400 text-[1.5rem] ml-3 fa-solid fa-code-branch"></i>
 			</div>
-		
+
 		</div>
-		
+
 		<!-- Proveedor -->
 		<div class="">
 			<InputLabel
@@ -152,7 +155,7 @@ async function checkProductExits() {
 			</div>
 		</div>
 	</fieldset>
-	
+
 	<!--    Mostrar la categorias-->
 	<FloatBox
 		v-if="showCategory"
@@ -162,7 +165,7 @@ async function checkProductExits() {
 			class="w-[50rem]"
 		/>
 	</FloatBox>
-	
+
 	<!--    Mostar la ventana de suplidores-->
 	<FloatBox
 		v-if="showSupplier"

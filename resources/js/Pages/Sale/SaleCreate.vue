@@ -20,8 +20,9 @@ import SaleFooter from "@/Pages/Sale/SaleFooter.vue";
 import SaleTable from "@/Pages/Sale/SaleTable.vue";
 import PaymentInvoice from "@components/PaymentInvoice.vue";
 import FloatBox from "@components/FloatBox.vue";
+import {useRoute} from "ziggy-js";
 
-
+const route = useRoute();
 /*
 Utilizar el page para los datos de la página
  */
@@ -98,15 +99,15 @@ onMounted(() => {
 	setDataForm();
 	//Buscar la secuencia si está en la configuration
 	if (page.props.setting.sequence) saleInfoRef.value?.getSequence(form.invoice_type);
-	
+
 	//Para verificar
 	let msjError = "Este Codigo No es Validos, Introduzca Uno Validado";
-	
+
 	//Valizar si es igual
 	if (page.props.errors.general === msjError) {
 		showFormReturn.value = true;
 	}
-	
+
 });
 
 /*
@@ -117,18 +118,18 @@ onUpdated(() => {
 	setTimeout(() => {
 		if (page.props.setting.sequence) saleInfoRef.value?.getSequence(form.invoice_type);
 	}, 200);
-	
+
 	//Para verificar
 	let msjError = "Este Codigo No es Validos, Introduzca Uno Validado";
-	
+
 	//Valizar si es igual
 	if (page.props.errors.general === msjError) {
 		showFormReturn.value = true;
 	}
-	
+
 	// Enviar los datos
 	setDataForm();
-	
+
 });
 
 
@@ -149,10 +150,10 @@ function setDataForm() {
 		form.info_sale = propsW.saleInfo.info_sale;
 		form.invoice_type = page.props.setting.sequence ? "B04" : "";
 		form.type = "devolucion";
-		
+
 		//Recorrer los datos
 		// form.info_sale.forEach((_, index) => totalAmount(index));
-		
+
 		//calcular totales
 		// totalSale();
 	}
@@ -191,10 +192,10 @@ async function sendData() {
 		//si es para actualizar
 		if (form.update) {
 			await updateSale()
-			
+
 		} else {
 			await createSale()
-		
+
 		}
 	}
 }
@@ -203,7 +204,7 @@ async function sendData() {
 async function createSale() {
 	try {
 		const res = await axios.patch(route('sale.update', {sale: form.id}), form)
-		
+
 		//si esta cerrada se vas a imprimir
 		if (form.close_table) {
 			//Mostrar el pdf de impresion
@@ -215,20 +216,20 @@ async function createSale() {
 		showReturn.value = false;
 		//Recargar los datos
 		router.reload({only: ['products', 'clients', 'saleOpen', 'invoiceType', 'refund']});
-		
+
 	} catch (err) {
 		form.setError("general", "Problema con esta Peticion")
 	}
 }
 
 async function updateSale() {
-	
+
 	try {
 		const res = await axios.post(route('sale.create'), form)
-		
+
 		// La cuenta es cerrada
 		if (form.close_table) {
-			
+
 			// Imprimir el pdf
 			printPdf(route('invoice.belt.sale', {sale: res.data.pdfUuid}));
 		}
@@ -238,7 +239,7 @@ async function updateSale() {
 		showReturn.value = false;
 		//Recargar los datos
 		router.reload({only: ['products', 'clients', 'saleOpen', 'invoiceType', 'refund']});
-		
+
 	}catch (error) {
 		form.setError("general", "Problema con esta Peticion")
 	}
@@ -275,7 +276,7 @@ provide(saleKey, form)
 				Conteo
 			</TabLink>
 		</template>
-		
+
 		<!--        //contenido-->
 		<div>
 			<div
@@ -288,7 +289,7 @@ provide(saleKey, form)
 							:clients="propsW.clients"
 							@getSequenceType="(type:string) => saleDetailRef?.getSequenceType(type)"
 							:invoice-type="form.invoice_type"/>
-						
+
 						<SaleDetail
 							ref="saleDetailRef"
 							:products="propsW.products"
@@ -299,14 +300,14 @@ provide(saleKey, form)
 							@totalSale="saleTableRef?.totalSale()"
 							@total-amount="(index:number) => saleTableRef?.totalAmount(index)"
 						/>
-						
+
 						<SaleTable
 							ref="saleTableRef"/>
 						<SaleFooter
 							ref="saleFooterRef"/>
 						<!--                        Devuelta y demas detos-->
 						<div class=" mt-2 w-64 float-right">
-							
+
 							<div class="">
 								<PrimaryButton
 									:disabled="form.processing"
@@ -319,10 +320,10 @@ provide(saleKey, form)
 					</div>
 				</form>
 			</div>
-		
+
 		</div>
 		<ErrorComponent v-model:errors="form.errors"/>
-		
+
 		<!-- Ventana de Devuelta-->
 		<FloatBox
 			v-model:show="showReturn">

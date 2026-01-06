@@ -7,8 +7,9 @@ import {getMoney, printPdf} from "@/Global/Helpers";
 import Pagination from "@components/Pagination.vue";
 import InputError from "@components/InputError.vue";
 import TabLink from "@components/TabLink.vue";
+import {useRoute} from "ziggy-js";
 
-
+const route = useRoute()
 /*
 Datos de la pagina
  */

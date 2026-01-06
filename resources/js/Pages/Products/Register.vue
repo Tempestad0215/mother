@@ -10,9 +10,10 @@ import {productBaseI} from "@/Interfaces/ProductInterface";
 import {categoryBaseI} from "@/Interfaces/CategoriesInterface";
 import TabLink from "@components/TabLink.vue";
 import {warehouseBaseI} from "@/Interfaces/WarehouseInterface";
+import {useRoute} from "ziggy-js";
 
 
-
+const route = useRoute()
 
 //Propiedades de la ventana
 const props = defineProps<{

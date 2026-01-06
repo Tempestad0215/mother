@@ -10,7 +10,10 @@ import axios from "axios";
 import {paginationI} from "@/Interfaces/GlobalInterface";
 import FRegister from "@/Pages/Products/Inventory/FRegister.vue";
 import FShowEntrie from "@/Pages/Products/Inventory/FShow.vue";
+import {useRoute} from "ziggy-js";
 
+
+const route = useRoute();
 // Propiedades
 const propsW = defineProps<{
     products: productBaseI[],

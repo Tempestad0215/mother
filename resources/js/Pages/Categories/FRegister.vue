@@ -8,7 +8,10 @@ import {useForm} from "@inertiajs/vue3";
 import {successHttp} from "@/Global/Alert";
 import {categoryBaseI} from "@/Interfaces/CategoriesInterface";
 import {onMounted} from "vue";
+import {useRoute} from "ziggy-js";
 
+
+const route = useRoute()
 
 const propsW = defineProps<{
     categoryEdit?: categoryBaseI,

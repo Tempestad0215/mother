@@ -4,8 +4,10 @@ import AppLayout from "@layout/AppLayout.vue";
 import {Head, router} from "@inertiajs/vue3";
 import {reportDayI} from "@/Interfaces/ReportInterface";
 import {getMoney} from "@/Global/Helpers";
+import {useRoute} from "ziggy-js";
 
 
+const route = useRoute();
 /*
 Propiedades de la ventana
  */

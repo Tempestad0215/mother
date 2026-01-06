@@ -8,7 +8,10 @@ import {router, useForm} from "@inertiajs/vue3";
 import {ref, Ref} from "vue";
 import {paginationI} from "@/Interfaces/GlobalInterface";
 import {exportExcel} from "@/Global/Helpers";
+import {useRoute} from "ziggy-js";
 
+
+const route = useRoute();
 /*
 Propiedades
  */

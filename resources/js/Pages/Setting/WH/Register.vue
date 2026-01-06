@@ -6,8 +6,10 @@ import FRegister from "@/Pages/Setting/WH/FRegister.vue";
 import FShow from "@/Pages/Setting/WH/FShow.vue";
 import {warehouseBaseI} from "@/Interfaces/WarehouseInterface";
 import {reactive} from "vue";
+import {useRoute} from "ziggy-js";
 
 
+const route = useRoute();
 /*
 Propiedades
  */

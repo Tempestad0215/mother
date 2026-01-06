@@ -19,8 +19,10 @@ import ErrorComponent from "@components/ErrorComponent.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {faPrint} from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
+import {useRoute} from "ziggy-js";
 
 
+const route = useRoute();
 /**
  * Info general
  */
@@ -102,7 +104,7 @@ const typeOptions: Ref<ProductOptionsI[]> = ref([
  * Al momento de cargar
  */
 onMounted(() => {
-	
+
 	// Pasar los datos a editar
 	if (propsW.productEdit) {
 		form.id = propsW.productEdit.id;
@@ -121,12 +123,12 @@ onMounted(() => {
 		form.min_price = Number(propsW.productEdit.min_price) || 0;
 		form.special_price = Number(propsW.productEdit.special_price) || 0;
 	}
-	
+
 	//Elegir el primer si existe
 	if (propsW.warehouse.length > 0) {
 		form.warehouse_id = propsW.warehouse[0].id;
 	}
-	
+
 });
 
 
@@ -134,12 +136,12 @@ onMounted(() => {
  * Funcion para enviar los datos
  */
 const submit = () => {
-	
+
 	if (propsW.update || form.update) {
 		form.patch(route('product.update', form.id), {
 			onSuccess: () => {
 				successHttp('Datos actualizado correctamente')
-				
+
 			}
 		})
 	} else {
@@ -152,7 +154,7 @@ const submit = () => {
 			}
 		});
 	}
-	
+
 }
 
 
@@ -168,7 +170,7 @@ function selectProduct(item: productBaseI) {
 		cancelButtonText: "Cancelar!",
 	}).then((result) => {
 		if (result.isConfirmed) {
-			
+
 			form.id = Number(item.id);
 			form.name = item.name;
 			form.type = item.type;
@@ -191,7 +193,7 @@ function selectProduct(item: productBaseI) {
 			form.status = item.status;
 			form.has_tax = item.has_tax;
 			form.update = true
-			
+
 		}
 	});
 }
@@ -206,13 +208,13 @@ function setCalculateData(
 
 
 async function printLabel() {
-	
+
 	try {
-		
+
 		await showPDf('Etiqueta', route('invoice.label', {id: form.id}))
-		
+
 	} catch (error) {
-		
+
 		console.error('Error:', error);
 		await Swal.fire('Error', 'No se pudo generar la etiqueta', 'error');
 	}
@@ -230,7 +232,7 @@ async function printLabel() {
 		<h3 class="text-2xl font-bold text-center">
 			Registro de producto
 		</h3>
-		
+
 		<div class="flex items-center">
 			<div v-if="propsW.nextProduct">
 				<p>Seguiente ID :
@@ -247,8 +249,8 @@ async function printLabel() {
 					title="Imprimir Etiqueta" class=" ml-3 text-cyan-300 text-3xl" :icon="faPrint"/>
 			</div>
 		</div>
-		
-		
+
+
 		<!--Informacion General-->
 		<div class="">
 			<ProductInformation
@@ -259,7 +261,7 @@ async function printLabel() {
 				v-model:supplier-id="form.supplier_id"
 				:categories="propsW.categories"
 				:suppliers="propsW.suppliers"/>
-			
+
 			<ProductGeneral
 				v-model:inventoried="form.inventoried"
 				v-model:has-fraction="form.has_fraction"
@@ -268,8 +270,8 @@ async function printLabel() {
 				v-model:has_special="form.has_special"
 				v-model:has_promotion="form.has_promotion"
 			/>
-			
-			
+
+
 			<div class=" grid grid-cols-2 gap-4 mt-3">
 				<ProductExtra
 					v-model:sku="form.sku"
@@ -278,7 +280,7 @@ async function printLabel() {
 					v-model:ware-house-id="form.warehouse_id"
 					:type-options="typeOptions"
 					:ware-houses="propsW.warehouse"/>
-				
+
 				<!--Detalle del producto-->
 				<ProductDetail
 					v-model:tax-rate="form.tax_rate"
@@ -289,7 +291,7 @@ async function printLabel() {
 					:data-unit="dataUnit"
 					:is-product="form.type == 'producto'"
 					:taxes="taxes"/>
-			
+
 			</div>
 			<ProductSaleValue
 				@calculate="setCalculateData"
@@ -298,18 +300,18 @@ async function printLabel() {
 				v-model:price="form.price"
 				v-model:min_price="form.min_price"
 				v-model:special_price="form.special_price"/>
-			
+
 			<ProductSale
 				:price-no-tax="form.product_no_tax.toString()"
 				:benefits="form.benefits.toString()"
 				:benefits-margin="form.benefits_rate.toString()"/>
-		
-		
+
+
 		</div>
 		<ErrorComponent
 			v-model:errors="form.errors"/>
-		
-		
+
+
 		<!-- Botones -->
 		<div class="mt-4 text-right">
 			<PrimaryButton

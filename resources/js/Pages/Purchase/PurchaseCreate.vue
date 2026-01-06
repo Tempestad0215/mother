@@ -12,8 +12,10 @@ import FloatBox from "@components/FloatBox.vue";
 import FShow from "@/Pages/Products/FShow.vue";
 import {ref} from "vue";
 import {productFullI, productI} from "@/Interfaces/ProductInterface";
+import {useRoute} from "ziggy-js";
 
 
+const route = useRoute();
 /*
 Propiedades
  */
@@ -55,32 +57,32 @@ funciones
  */
 const getData = (item:productFullI) => {
     //Obtener los datos de productos
-    let info:purchaseInfoI | undefined = form.info.find((el) => el.name === item.uuid);
-
+    // let info:purchaseInfoI | undefined = form.info.find((el) => el.name === item.uuid);
+    //
     // Verificar si el producto exite
-    if (info?.uuid  === item.uuid)
-    {
-        info.quantity += 1.00;
-        showProduct.value = false;
-
-    }else{
-
-        //Pasar los datos al formulario
-        form.info.push({
-            uuid:"",
-            amount: 0,
-            discount: item.discount,
-            quantity: 1,
-            price: item.price,
-            name: item.name,
-            tax: item.tax,
-            tax_rate: item.tax_rate / 100,
-            status: 1
-        });
-
-        //Cerrar la ventana
-        showProduct.value = false;
-    }
+    // if (info?.uuid === item.id)
+    // {
+    //     info.quantity += 1.00;
+    //     showProduct.value = false;
+    //
+    // }else{
+    //
+    //     //Pasar los datos al formulario
+    //     form.info.push({
+    //         uuid:"",
+    //         amount: 0,
+    //         discount: item.discount,
+    //         quantity: 1,
+    //         price: item.price,
+    //         name: item.name,
+    //         tax: item.tax,
+    //         tax_rate: item.tax_rate / 100,
+    //         status: 1
+    //     });
+    //
+    //     //Cerrar la ventana
+    //     showProduct.value = false;
+    // }
 
     // //Conseguir el index para poder realizar el cálculo
     // let index = form.info.findIndex((el) => el.uuid === item.uuid);

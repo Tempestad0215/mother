@@ -3,8 +3,10 @@ import AppLayout from "@layout/AppLayout.vue";
 import FRegister from "@/Pages/Suppliers/FRegister.vue";
 import {supplierI} from "@/Interfaces/SupplierInterface";
 import TabLink from "@components/TabLink.vue";
+import {useRoute} from "ziggy-js";
 
 
+const route = useRoute();
 // Propiedades
 const propsW = defineProps<{
     supplierEdit?: supplierI,

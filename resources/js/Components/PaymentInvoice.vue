@@ -10,10 +10,11 @@ import {Money} from "v-money3";
 import {saleKey} from "@/utils/keys";
 import ErrorComponent from "@components/ErrorComponent.vue";
 import {PreciseCalculator} from "@/utils/Decimal";
+import {useRoute} from "ziggy-js";
 
 
 
-
+const route = useRoute();
 const emit = defineEmits<{
 	(e:'senData'):void
 }>()
@@ -35,30 +36,30 @@ onMounted(() => {
  * Buscar la notas de credito para pagar la factura
  */
 async function getCreditNote() {
-	
+
 	//Si no hay suficiente caracateres
 	if (creditNote?.value.length < 5) {
 		form.setError('credit_notes_value', 'Por Favor, Introduzca Valores Valido');
 		return false;
 	}
-	
+
 	//Verificar si ya esta en positivo no puede colocar nota de credito
 	if (form.returned > 0) {
 		form.setError('credit_notes_value', 'Existe Suficiente Balance Para Cerrar La Cuenta');
 		return false;
 	}
-	
+
 	//Verificar si exsite alguna igual
 	const exist: boolean = form.credit_notes.some((el) => el.code == creditNote.value || el.ncf == creditNote.value);
-	
+
 	//Verificar si existe la misma nota de credito
 	if (exist) {
 		form.setError('credit_notes_value', 'Esta Nota De Credito, Esta Agregada');
-		
+
 	} else {
 		//Buscar la nota de credito
 		const {data} = await axios.get(route('credit-note.get', {code: creditNote.value}));
-		
+
 		//Verifciar los datos
 		if (data.hasOwnProperty('code')) {
 			//Pasar los datos al formulario
@@ -69,13 +70,13 @@ async function getCreditNote() {
 			form.clearErrors('credit_notes_value');
 			//Limpiar el campo para agreagr otros
 			form.reset('credit_notes_value');
-			
+
 		} else {
 			//Poner el mensaje de error
 			form.setError('credit_notes_value', data.error);
 		}
 	}
-	
+
 }
 
 
@@ -97,12 +98,12 @@ function amountCreditNote() {
 	//REalizar el cálculo de notas de credito
 	form.credit_notes_amount = form.credit_notes.reduce((acc, cur) => acc +
 		Number(cur.n_available), 0);
-	
+
 	//Datos pendientes por pagar
 	form.returned = form.credit_notes_amount - form.amount;
 	form.pending = (form.credit_notes_amount - form.amount) < 0 ?
 		(form.credit_notes_amount - form.amount) : 0;
-	
+
 }
 
 
@@ -117,27 +118,27 @@ function checkSale() {
 		amountCreditNote();
 		//Mostar la ventana
 		// saleDetailRef.value?.openReturn()
-		
+
 	} else {
 		// sendData();
 	}
-	
+
 	// Llamar el metodo para el cálculo
 	returned();
-	
+
 }
 
 /**
  * Devuelta de cambio
  */
 function returned() {
-	
+
 	let totalForPay: number = Number(PreciseCalculator.add(form.credit_notes_amount, form.received))
 	//Restar la cantidad
 	let returned = Number(PreciseCalculator.subtract(totalForPay, form.amount))
 	form.returned = returned > 0 ? returned : 0;
 	form.pending = returned> 0 ? 0 : Math.abs(returned)
-	
+
 }
 
 
@@ -147,16 +148,16 @@ function returned() {
 function returnedBlur() {
 	//Primero verifica la cantidad
 	returned()
-	
+
 	console.log("returned", form.returned)
-	
+
 	//Verificar el cálculo
 	if (form.returned < 0) {
 		//Enviar el mensaje de error
 		form.setError('returned', 'El monto recibido no puede ser menor al Total');
 
 		return false;
-		
+
 	} else {
 		emit('senData')
 		return true;
@@ -178,7 +179,7 @@ defineExpose({
 		<h3 class="text-2xl text-center">
 			Datos de pagos
 		</h3>
-		
+
 		<div class="flex items-center gap-3">
 			<!--Tipo de apgo-->
 			<div class="flex-1">
@@ -212,10 +213,10 @@ defineExpose({
 				</div>
 			</div>
 		</div>
-		
+
 		<!--                        Aplicar nota de credito-->
 		<div class=" mt-3">
-			
+
 			<!--                            Mostrar las notas de creditos asociada a esa venta-->
 			<table class="table-auto w-full mt-3 text-white">
 				<caption class="font-bold text-3xl">
@@ -246,7 +247,7 @@ defineExpose({
 				</tbody>
 			</table>
 		</div>
-		
+
 		<!--                      Monto Recibido-->
 		<div class="w-full mt-3">
 			<InputLabel
@@ -258,7 +259,7 @@ defineExpose({
 				v-model="form.received"
 				v-bind="moneyConfig"/>
 		</div>
-		
+
 		<div class="text-gray-50">
 			<!--                        Datos pendiente para cobrar-->
 			<div class="mt-3 text-3xl text0">
@@ -269,8 +270,8 @@ defineExpose({
 				Devuelta......: {{ getMoney(form.returned) }}
 			</div>
 		</div>
-		
-		
+
+
 		<!--                        Boton para cerrar la factura-->
 		<div class="mt-3 text-right">
 			<PrimaryButton
@@ -280,6 +281,6 @@ defineExpose({
 			</PrimaryButton>
 		</div>
 		<ErrorComponent v-model:errors="form.errors"/>
-	
+
 	</div>
 </template>

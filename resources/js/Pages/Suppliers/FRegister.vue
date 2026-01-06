@@ -11,8 +11,11 @@ import {computed, onMounted} from "vue";
 import {getMoney, moneyConfig} from "@/Global/Helpers";
 import {Money} from "v-money3";
 import ToggleButton from "@components/ToggleButton.vue";
+import {useRoute} from "ziggy-js";
 
 
+
+const route = useRoute()
 
 const propsW = defineProps<{
     supplierEdit?: supplierI,

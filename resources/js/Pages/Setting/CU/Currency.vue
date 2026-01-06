@@ -10,7 +10,10 @@ import PrimaryButton from "@components/PrimaryButton.vue";
 import {successHttp} from "@/Global/Alert";
 import {currencyI} from "@/Interfaces/CurrencyInterface";
 import Swal from "sweetalert2";
+import {useRoute} from "ziggy-js";
 
+
+const route = useRoute()
 /*
 Propiedades de la ventana
  */

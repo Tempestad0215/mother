@@ -12,10 +12,11 @@ import ToggleButton from "@components/ToggleButton.vue";
 import TabLink from "@components/TabLink.vue";
 import {Money} from "v-money3";
 import {moneyConfig} from "@/Global/Helpers";
+import {useRoute} from "ziggy-js";
 
 
 
-
+const route = useRoute();
 /*
 Datos de ajuste
  */

@@ -6,7 +6,10 @@ import FormSearch from "@components/FormSearch.vue";
 import {router, useForm} from "@inertiajs/vue3";
 import Swal from "sweetalert2";
 import {successHttp} from "@/Global/Alert";
+import {useRoute} from "ziggy-js";
 
+
+const route = useRoute();
 // PRopiedades de la ventana
 const propsW = defineProps<{
     entries: paginationI<entryProductI>

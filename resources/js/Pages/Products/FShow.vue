@@ -8,7 +8,11 @@ import Swal from "sweetalert2";
 import {successHttp} from "@/Global/Alert";
 import {getMoney} from "@/Global/Helpers";
 import {onMounted} from "vue";
+import {useRoute} from "ziggy-js";
 
+
+
+const route = useRoute();
 /**
  * Informacion de la ventana
  */
@@ -27,7 +31,7 @@ const propsW = defineProps<{
 onMounted(() => {
 	//Tomar el parametros de buscar
 	const search: string = route().params.search;
-	
+
 	//si existe el search
 	if (search) {
 		form.search = search;
@@ -56,7 +60,7 @@ const form = useForm({
  */
 // Funciones
 const submit = () => {
-	
+
 	router.get(``, {
 		page: 1,
 		perPage: form.per_page,
@@ -66,7 +70,7 @@ const submit = () => {
 		preserveState: true,
 		preserveScroll: true,
 	});
-	
+
 }
 
 
@@ -84,7 +88,7 @@ const selectData = (item: productBaseI) => {
 		//Enviar los datos
 		emit('select', item);
 	}
-	
+
 }
 
 //Eliminar el producto
@@ -128,7 +132,7 @@ const detroy = (id: number) => {
 				Productos
 			</h3>
 		</div>
-		
+
 		<div
 			class="max-h-[65vh] overflow-y-auto overflow-x-hidden">
 			<table
@@ -153,21 +157,21 @@ const detroy = (id: number) => {
 					<td>{{ item.stock }}</td>
 					<td>{{ getMoney(item.price) }}</td>
 					<td>
-						
+
 						<!-- Entrada de producto -->
 						<i
 							v-if="url !== 'Products/Show'"
 							title="Crear Entrada"
 							@click="selectData(item)"
 							class=" icon-efect fa-solid fa-circle-check"></i>
-						
+
 						<!-- Editar -->
 <!--						<i-->
 <!--							v-if="component === 'Products/Show' "-->
 <!--							title="Editar"-->
 <!--							@click="edit(item.id)"-->
 <!--							class="ml-2 icon-efect fa-solid fa-pen-to-square"></i>-->
-						
+
 						<!-- Eliminar -->
 						<i
 							v-if="component === 'Products/Show' && auth.user.role === 'admin' "
@@ -179,7 +183,7 @@ const detroy = (id: number) => {
 				</tbody>
 			</table>
 		</div>
-		
+
 		<!--        PAginacion de la ventana-->
 		<Pagination
 			:search="form.search"
@@ -189,7 +193,7 @@ const detroy = (id: number) => {
 			:total-page="propsW.products.to"
 			:next="propsW.products.next_page_url"
 			:prev="propsW.products.prev_page_url"/>
-	
+
 	</div>
 </template>
 

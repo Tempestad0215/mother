@@ -22,7 +22,10 @@ import {saleKey} from "@/utils/keys";
 import {paginationI} from "@/Interfaces/GlobalInterface";
 import Swal from "sweetalert2";
 import {getSequenceType} from "@/Global/Helpers";
+import {useRoute} from "ziggy-js";
 
+
+const route = useRoute();
 const page = usePage()
 
 const propsW = defineProps<{
@@ -53,14 +56,14 @@ const showFormReturn = ref(false)
 function getData(item: productFullI) {
 	//Obtener los datos de productos
 	let info: infoSaleI | undefined = form.info_sale.find((el) => el.product_id === item.id);
-	
+
 	// Verificar si el producto exite
 	if (info?.product_id === item.id) {
 		info.stock += 1.00;
 		showProduct.value = false;
-		
+
 	} else {
-		
+
 		//Pasar los datos al formulario
 		form.info_sale.push({
 			amount: 0,
@@ -77,24 +80,24 @@ function getData(item: productFullI) {
 			tax_rate: item.tax_rate / 100,
 			type: item.type
 		});
-		
+
 		//Cerrar la ventana
 		showProduct.value = false;
 	}
-	
+
 	// //Conseguir el index para poder realizar el cálculo
 	let index = form.info_sale.findIndex((el) => el.product_id === item.id);
-	
+
 	//Calcular el indice
 	emit('totalAmount', index)
-	
+
 }
 
 /**
  * Verificar el tipo de factura
  */
 async function checkInvoiceType() {
-	
+
 	// Verificar si es nota de credito
 	if (form.invoice_type === 'B04') {
 		//Resultado de la pregunta
@@ -108,13 +111,13 @@ async function checkInvoiceType() {
 			confirmButtonText: "Si",
 			cancelButtonText: "No"
 		});
-		
+
 		//Verificar la accion
 		// showClientRnc.value = result.isConfirmed;
-		
+
 	}
 	// else showClientRnc.value = form.invoice_type !== 'B02';
-	
+
 	// Solo buscar los datos si es igual a 0 el ID. eso quiere decir que debe generar un comprobante
 	if (form.id == 0) {
 		//llamar el tipo de boleta
@@ -127,7 +130,7 @@ async function checkInvoiceType() {
  * Obtener el producto por codigo
  */
 function getProductCode() {
-	
+
 	//Verificar que tenga más de 6 caracter
 	if (form.code_value.length > 0) {
 		//realizar la busqueda en automatico
@@ -148,26 +151,26 @@ function getProductCode() {
 
 //Obtener los datos de las cuentas abiertas
 function getSaleOpen(item: saleDataI) {
-	
+
 	//Colocar la variable en nada al principio
 	form.info_sale = [];
 	form.id = item.id;
 	form.update = true;
-	
+
 	setTimeout(() => {
 		//Verificar Pasar los datos a la variable
 		item.info_sale.map((el, index) => {
-			
+
 			form.info_sale.push({...el})
 
 			//Calcular el total
 			emit('totalAmount', index);
 		})
 	}, 2);
-	
+
 	//calcular el total de las ventas
 	emit('totalSale')
-	
+
 	//colocar los datos en el formulario
 	form.client_id = item.client_id;
 	form.client_rnc = item.client_document ?? "";
@@ -176,13 +179,13 @@ function getSaleOpen(item: saleDataI) {
 	form.client_name = item.client_name;
 	form.close_table = item.close_table;
 	form.comment = item.comment ?? "";
-	
+
 	//Cerra la ventana
 	showSaleOpen.value = false;
-	
+
 	// Ejecutar el metodo de invoice
 	checkInvoiceType();
-	
+
 }
 
 
@@ -208,7 +211,7 @@ defineExpose({
 				<InputLabel
 					for="Product"
 					value="Codigo"/>
-				
+
 				<TextInput
 					placeholder="Producto"
 					maxLength="15"
@@ -216,19 +219,19 @@ defineExpose({
 					@blur="getProductCode"
 					v-model="form.code_value"
 				/>
-			
+
 			</form>
 			<!-- Buscar los datos necesario -->
 			<div
 				v-if="!propsW.refund"
 				class="ml-3">
 				<InputLabel value="Datos"/>
-				
+
 				<FontAwesomeIcon
 					title="Productos"
 					@click="showProduct = !showProduct"
 					class="icon-efect text-cyan-400 text-3xl" :icon="faBoxOpen"/>
-				
+
 				<FontAwesomeIcon
 					title="Cuentas Abiertas"
 					@click="showSaleOpen = !showSaleOpen"
@@ -238,10 +241,10 @@ defineExpose({
 					title="Devolucion"
 					class="ml-3 icon-efect text-cyan-400 text-3xl"
 					:icon="faArrowRotateBack"/>
-			
+
 			</div>
 		</div>
-		
+
 		<div class="flex">
 			<!--Tipo de factura-->
 			<div
@@ -265,8 +268,8 @@ defineExpose({
 					<!--                                        <option value="">Credito</option>-->
 				</select>
 			</div>
-			
-			
+
+
 			<!--Tipo de factura-->
 			<div class="ml-2">
 				<InputLabel for="type" value="Tipo de Venta"/>
@@ -302,9 +305,9 @@ defineExpose({
 				</select>
 			</div>
 		</div>
-	
+
 	</div>
-	
+
 	<!-- Ventana de productos-->
 	<FloatBox
 		v-model:show="showProduct">
@@ -318,10 +321,10 @@ defineExpose({
 				class=" fondo  rounded-md px-10 py-5"
 				:products="propsW.products"/>
 		</template>
-	
+
 	</FloatBox>
-	
-	
+
+
 	<!-- Vetana de las ordenes abierta -->
 	<FloatBox
 		v-model:show="showSaleOpen">
@@ -334,10 +337,10 @@ defineExpose({
 				class=" fondo rounded-md px-10 py-5"
 				:sale-open="propsW.saleOpen"/>
 		</template>
-	
+
 	</FloatBox>
-	
-	
+
+
 	<!-- Formulario para la nota de credito-->
 	<FloatBox
 		v-model:show="showFormReturn">
@@ -350,6 +353,6 @@ defineExpose({
 				@closeFormReturn="showFormReturn = false"
 				:error="page.props.errors.general"/>
 		</template>
-	
+
 	</FloatBox>
 </template>

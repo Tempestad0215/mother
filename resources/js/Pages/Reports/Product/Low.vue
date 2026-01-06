@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import {Head, router} from "@inertiajs/vue3";
 import AppLayout from "@layout/AppLayout.vue";
-import {productDataI} from "@/Interfaces/ProductInterface";
+import {productFullI} from "@/Interfaces/ProductInterface";
 import {getMoney} from "@/Global/Helpers";
+import {useRoute} from "ziggy-js";
 
 
+const route = useRoute();
 
 /*
 Propiedades
  */
 const propsW = defineProps<{
-    products: productDataI[],
+    products: productFullI[],
     amount: number
 }>();
 

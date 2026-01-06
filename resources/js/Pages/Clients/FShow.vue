@@ -8,8 +8,10 @@ import FormSearch from "@components/FormSearch.vue";
 import {paginationI} from "@/Interfaces/GlobalInterface";
 import {onMounted} from "vue";
 import {exportExcel} from "@/Global/Helpers";
+import {useRoute} from "ziggy-js";
 
 
+const route = useRoute();
 /**
  * Datos de la ventana
  */

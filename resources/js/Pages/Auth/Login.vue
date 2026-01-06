@@ -6,8 +6,10 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import {ref, Ref} from "vue";
+import {useRoute} from "ziggy-js";
 
 
+const route = useRoute();
 /**
  * Propiedades de la ventna
  */

@@ -3,7 +3,9 @@ import {clientEditI} from "@/Interfaces/ClientInterface";
 import AppLayout from "@layout/AppLayout.vue";
 import FRegister from "@/Pages/Clients/FRegister.vue";
 import TabLink from "@components/TabLink.vue";
+import {useRoute} from "ziggy-js";
 
+const route = useRoute();
 /**
  * propsW de la vantana
  */

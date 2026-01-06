@@ -11,8 +11,10 @@ import {clientEditI} from "@/Interfaces/ClientInterface";
 import {useForm} from "@inertiajs/vue3";
 import {successHttp} from "@/Global/Alert";
 import Swal from "sweetalert2";
+import {useRoute} from "ziggy-js";
 
 
+const route = useRoute()
 
 /**
  * propsW de la vantana

@@ -6,6 +6,10 @@ import {useForm} from "@inertiajs/vue3";
 import InputError from "@components/InputError.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import {ref} from "vue";
+import {useRoute} from "ziggy-js";
+
+
+const route = useRoute();
 /*
 Propiedades de la ventana
  */

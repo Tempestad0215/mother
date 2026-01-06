@@ -8,8 +8,10 @@ import Pagination from "@components/Pagination.vue";
 import InputError from "@components/InputError.vue";
 import TabLink from "@components/TabLink.vue";
 import Swal from "sweetalert2";
+import {useRoute} from "ziggy-js";
 
 
+const route = useRoute();
 /*
 Datos de la pagina
  */

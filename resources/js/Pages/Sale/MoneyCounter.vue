@@ -11,9 +11,10 @@ import ShowPdf from "@components/ShowPdf.vue";
 import {Money} from "v-money3";
 import TabLink from "@components/TabLink.vue";
 import {successHttp} from "@/Global/Alert";
+import {useRoute} from "ziggy-js";
 
 
-
+const route = useRoute();
 /*
 Datos del formulario
  */

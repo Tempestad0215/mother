@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import {Link, router} from "@inertiajs/vue3";
 import { Ref, ref} from "vue";
+import {useRoute} from "ziggy-js";
 
+
+
+const route = useRoute();
 defineProps<{
     url: string;
 }>();

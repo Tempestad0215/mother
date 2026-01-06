@@ -12,6 +12,7 @@ import {ZiggyVue} from '../../vendor/tightenco/ziggy';
 import VueTheMask from 'vue-the-mask';
 import VueSweetalert2 from 'vue-sweetalert2';
 import money from 'v-money';
+import PrimeVue from 'primevue/config';
 import {createVfm} from "vue-final-modal";
 
 
@@ -26,6 +27,7 @@ createInertiaApp({
 			.use(plugin)
 			.use(VueTheMask)
 			.use(vfm)
+            .use(PrimeVue)
 			.use(money as any)
 			.use(ZiggyVue, Ziggy)
 			.use(VueSweetalert2)

@@ -11,8 +11,9 @@ import {onMounted, reactive} from "vue";
 import Swal from "sweetalert2";
 import ErrorComponent from "@components/ErrorComponent.vue";
 import TabLink from "@components/TabLink.vue";
+import {useRoute} from "ziggy-js";
 
-
+const route = useRoute();
 /*
 Propiedades
  */

@@ -1,19 +1,22 @@
 <script setup lang="ts">
 import {Head, router, useForm} from "@inertiajs/vue3";
 import AppLayout from "@layout/AppLayout.vue";
-import {productTransPI} from "@/Interfaces/ProductInterface";
+import {productTransI} from "@/Interfaces/ProductInterface";
 import { getMoney} from "@/Global/Helpers";
 import FormSearch from "@components/FormSearch.vue";
 import Pagination from "@components/Pagination.vue";
 import InputError from "@components/InputError.vue";
 import {successHttp} from "@/Global/Alert";
 import Swal from "sweetalert2";
+import {useRoute} from "ziggy-js";
 
+
+const route = useRoute();
 /**
  * Propiedades
  */
 const props = defineProps<{
-    trans: productTransPI
+    trans: productTransI
 }>();
 
 /**
@@ -125,31 +128,31 @@ const destroy = (uuid:string) => {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(item) in props.trans.data">
-                        <td>{{item.product_name}}</td>
-                        <td>{{ item.stock}}</td>
-                        <td>{{ getMoney(item.tax)}}</td>
-                        <td>{{ getMoney(item.price)}}</td>
-                        <td>{{ item.type}}</td>
-                        <td>
-                            <span
-                                v-if="item.type != 'entrada'">
-                                N/A
-                            </span>
-                            <i
-                                v-if="item.type == 'entrada'"
-                                @click="destroy(item.uuid)"
-                                class=" icon-efect ml-3 fa-solid fa-trash"></i>
-                        </td>
-                    </tr>
+<!--                    <tr v-for="(item) in props.trans">-->
+<!--                        <td>{{item.product_name}}</td>-->
+<!--                        <td>{{ item.stock}}</td>-->
+<!--                        <td>{{ getMoney(item.tax)}}</td>-->
+<!--                        <td>{{ getMoney(item.price)}}</td>-->
+<!--                        <td>{{ item.type}}</td>-->
+<!--                        <td>-->
+<!--                            <span-->
+<!--                                v-if="item.type != 'entrada'">-->
+<!--                                N/A-->
+<!--                            </span>-->
+<!--                            <i-->
+<!--                                v-if="item.type == 'entrada'"-->
+<!--                                @click="destroy(item.uuid)"-->
+<!--                                class=" icon-efect ml-3 fa-solid fa-trash"></i>-->
+<!--                        </td>-->
+<!--                    </tr>-->
                 </tbody>
             </table>
             <!-- Paginacion-->
-            <Pagination
-                :next="props.trans.links.next"
-                :prev="props.trans.links.prev"
-                :total-page="props.trans.meta.to"
-                :current-page="props.trans.meta.current_page"/>
+<!--            <Pagination-->
+<!--                :next="props.trans.links.next"-->
+<!--                :prev="props.trans.links.prev"-->
+<!--                :total-page="props.trans.meta.to"-->
+<!--                :current-page="props.trans.meta.current_page"/>-->
         </div>
     </AppLayout>
 

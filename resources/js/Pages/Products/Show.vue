@@ -5,8 +5,10 @@ import { productI } from '@/Interfaces/ProductInterface';
 import { PropType } from 'vue';
 import FShow from "@/Pages/Products/FShow.vue";
 import TabLink from "@components/TabLink.vue";
+import {useRoute} from "ziggy-js";
 
 
+const route = useRoute();
 const props = defineProps({
     products: {
         type: Object as PropType<productI>,

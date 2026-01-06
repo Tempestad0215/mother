@@ -3,9 +3,10 @@ import {warehouseBaseI} from "@/Interfaces/WarehouseInterface";
 import Swal from "sweetalert2";
 import {router} from "@inertiajs/vue3";
 import {successHttp} from "@/Global/Alert";
+import {useRoute} from "ziggy-js";
 
 
-
+const route = useRoute();
 /*
 Propiedades
  */

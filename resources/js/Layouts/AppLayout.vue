@@ -1,178 +1,160 @@
 <script setup lang="ts">
-import {onMounted, onUnmounted, reactive, ref} from 'vue';
-import {Head, usePage} from '@inertiajs/vue3';
+import { onMounted, onUnmounted, reactive, ref } from 'vue';
+import { Head, usePage } from '@inertiajs/vue3';
 import LinkHeader from "@components/LinkHeader.vue";
 import Divider from "@components/Divider.vue";
 import ImageMenu from "@components/ImageMenu.vue";
-import FloatBox from "@components/FloatBox.vue";
-import Exchange from "@/Pages/Setting/CU/Exchange.vue";
+// ✅ Importa SOLO la función route de Ziggy
+import { useRoute } from 'ziggy-js';
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import {faArrowCircleLeft, faBuildingUser} from "@fortawesome/free-solid-svg-icons";
 
+// ✅ Elimina: const route = useRoute();
 
-/*
-Destructurar las variables
- */
-const {props} = usePage();
+const route = useRoute();
+const { props } = usePage();
 
-/*
-Propiedads de la ventana
- */
 defineProps({
     title: String,
 });
 
-
 const menuImageRef = ref<HTMLElement | null>(null);
 const showExchange = ref<boolean>(false);
-const urlTab = reactive([
+const showOption = ref<boolean>(false);
+
+// ✅ Menú optimizado para POS
+const menuItems = reactive([
     {
-        label: "Cliente",
-        url: route("client.create"),
-        urlActive: "/client",
-        icon: "fa-solid fa-user"
+        label: "Clientes",
+        url: route("client.create"), // o .create si prefieres
+        activePath: "/client",
+        icon: "pi pi-user",
     },
     {
-        label: "Categorias",
+        label: "Categorías",
         url: route("category.create"),
-        urlActive: "/category",
-        icon: "fa-solid fa-code-branch"
+        activePath: "/category",
+        icon: "pi pi-sitemap",
     },
     {
-        label: "Suplidores",
+        label: "Proveedores",
         url: route("supplier.create"),
-        urlActive: "/supplier",
-        icon: "fa-solid fa-truck-field"
+        activePath: "/supplier",
+        icon: "pi pi-truck",
     },
     {
         label: "Productos",
         url: route("product.create"),
-        urlActive: "/product",
-        icon: "fa-solid fa-boxes-packing"
+        activePath: "/product",
+        icon: "pi pi-box",
+    },
+    {
+        label: "Nueva Venta",
+        url: route("sale.create"),
+        activePath: "/sale/create",
+        icon: "pi pi-shopping-cart",
+        // Resaltado especial para POS
+        isPrimary: true,
     },
     {
         label: "Ventas",
         url: route("sale.create"),
-        urlActive: "/sale",
-        icon: "fa-solid fa-cash-register"
+        activePath: "/sale",
+        icon: "pi pi-receipt",
     },
     {
         label: "Reportes",
         url: route("report-sale.index"),
-        urlActive: "/report",
-        icon: "fa-solid fa-clipboard"
+        activePath: "/report",
+        icon: "pi pi-chart-bar",
     },
 ]);
 
+const isActive = (activePath: string): boolean => {
+    return window.location.pathname.startsWith(activePath);
+};
 
-/*
-Al momento de cargar
- */
-onMounted(()=>{
-   document.addEventListener("click", handleClick);
-    //Ventana de cambio
-    showExchangeWindow();
-});
-
-/*
-Cuando se cancela el evento
- */
-onUnmounted(() => {
-    document.removeEventListener("click", handleClick);
-
-    //Ventana de cambio
-    showExchangeWindow();
-});
-
-
-/**
- * funciones computada
- */
-
-const isActive = (url:string):boolean => {
-    return  window.location.pathname.startsWith(url);
-}
-
-
-/*
-Funciones
- */
-
-/**
- * Verificar si el click fue afuera
- */
 const handleClick = (event: MouseEvent) => {
-    if (menuImageRef.value && !menuImageRef.value.contains(event.target as Node)){
+    if (menuImageRef.value && !menuImageRef.value.contains(event.target as Node)) {
         showOption.value = false;
     }
-}
+};
 
 const showExchangeWindow = () => {
-    //Esto es para monstrar la ventana de cambio
     if (props.isExchange) {
         showExchange.value = true;
     }
+};
 
-}
+onMounted(() => {
+    document.addEventListener("click", handleClick);
+    showExchangeWindow();
+});
 
-
-/*
-Datos de la ventana
- */
-const showOption = ref<boolean>(false);
-
+onUnmounted(() => {
+    document.removeEventListener("click", handleClick);
+});
 </script>
 
 <template>
-    <Head :title="title"/>
+    <div class="flex min-h-screen bg-gray-50">
 
-<!--    Contenido de la ventana-->
-    <div class=" flex">
-        <aside class=" fondo h-screen w-[10rem]">
-<!--            Mostrar la imagen del menu-->
-            <ImageMenu :url="props.auth.user.profile_photo_url"/>
-<!--            Dividir la linea-->
-            <Divider/>
+        <FontAwesomeIcon
+            @click="console.log('funiona bien')"
+            class="absolute left-[240px] top-3 text-3xl text-white"  :icon="faArrowCircleLeft"/>
 
-            <div class="space-y-2">
-                <LinkHeader
-                    v-for="(item, index) in urlTab"
-                    :key="index"
-                    :title="item.label"
-                    :active="isActive(item.urlActive)"
-                    :href="item.url">
-                    {{item.label}}
-                    <i :class="item.icon"></i>
-                </LinkHeader>
+        <!-- Sidebar Profesional -->
+        <aside
+            class="bg-gray-900 text-white w-64 flex flex-col shadow-xl transition-all duration-300"
+        >
+            <!-- Logo / User -->
+            <div class="p-5 border-b border-gray-700">
+                <ImageMenu :url="props.auth.user.profile_photo_url" />
             </div>
+
+            <Divider />
+
+            <!-- Menú de navegación -->
+            <nav class="flex-1 px-3 py-4 space-y-2 overflow-y-auto">
+                <LinkHeader
+                    v-for="(item, index) in menuItems"
+                    :key="index"
+                    :href="item.url"
+                    :class="[
+            'flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200',
+            isActive(item.activePath)
+              ? (item.isPrimary
+                  ? 'bg-emerald-600 text-white shadow-md'
+                  : 'bg-blue-600 text-white')
+              : 'text-gray-300 hover:bg-gray-800 hover:text-white',
+          ]"
+                >
+                    <i :class="item.icon" class="text-lg"></i>
+                    <span class="font-medium">{{ item.label }}</span>
+                    <!-- Indicador visual para POS -->
+                    <span v-if="item.isPrimary" class="ml-auto bg-emerald-500 text-xs px-2 py-0.5 rounded-full">
+            POS
+          </span>
+                </LinkHeader>
+            </nav>
+
         </aside>
 
-
-
-<!-- Contenido de la ventana-->
-        <div
-            class="flex-col flex-1">
-
-<!--            Cabecera de la ventana-->
-            <header
-                class=" h-[4rem] flex items-center justify-center space-x-3 w-full fondo z-20 border-b-2 text-sm">
-
-<!--                Para el contenido-->
-                <slot name="header"/>
+        <!-- Contenido principal -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header class="bg-white shadow-sm h-16 flex items-center px-6 justify-between">
+                <h1 class="text-lg font-semibold text-gray-800">
+                    <slot name="header">{{ title }}</slot>
+                </h1>
+                <!-- Puedes agregar notificaciones, perfil, etc. -->
             </header>
 
-<!--            Contendio de la ventaa-->
-            <div
-                id="main-window"
-                class="p-3 overflow-y-auto max-h-[calc(100vh-4rem)]">
-                <slot/>
-            </div>
+            <!-- Contenido -->
+            <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+                <slot />
+            </main>
         </div>
-
-        <FloatBox
-            v-if="showExchange"
-            header="Tasa de Cambio">
-            <Exchange
-                @closeWindow="showExchange = false"/>
-        </FloatBox>
     </div>
 
 </template>
