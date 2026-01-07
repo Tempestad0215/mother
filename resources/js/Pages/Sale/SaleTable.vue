@@ -61,7 +61,7 @@ async function deleteItem  (name: string, index: number){
 	//Verificar si se ha confirmado
 	if (result.isConfirmed) {
 		//Tomar datos la venta
-		let info: infoSaleI = form.info_sale[index];
+		// let info: infoSaleI = form.info_sale[index];
 
 
 		//Eliminar el producto seleccionado

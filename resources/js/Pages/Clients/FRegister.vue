@@ -336,13 +336,13 @@ const searchRNC = async () => {
                     for="personal_id"
                     value="Cédula / Pasaporte /RNC"/>
 
-                <TextInput
-                    id="basic"
-                    class="w-full"
-                    v-model="form.personal_id"
-                    v-mask="selectedMask"
-                    @blur="searchRNC"
-                    :placeholder="selectedMask" />
+<!--                <TextInput-->
+<!--                    id="basic"-->
+<!--                    class="w-full"-->
+<!--                    v-model="form.personal_id"-->
+<!--                    v-mask="selectedMask"-->
+<!--                    @blur="searchRNC"-->
+<!--                    :placeholder="selectedMask" />-->
                 <!-- Error -->
                 <InputError :message="form.errors.personal_id" />
             </div>
@@ -352,13 +352,13 @@ const searchRNC = async () => {
                 <InputLabel
                     for="phone"
                     value="Teléfono"/>
-                <TextInput
-                    id="basic"
-                    v-model="form.phone"
-                    class="w-full"
-                    fluid
-                    v-mask="['+# (###) ###-####', '+## (###) ###-####','+### (###) ###-####']"
-                    placeholder="+1 (829) 352-6526" />
+<!--                <TextInput-->
+<!--                    id="basic"-->
+<!--                    v-model="form.phone"-->
+<!--                    class="w-full"-->
+<!--                    fluid-->
+<!--                    v-mask="['+# (###) ###-####', '+## (###) ###-####','+### (###) ###-####']"-->
+<!--                    placeholder="+1 (829) 352-6526" />-->
 
                 <!-- Error -->
                 <InputError :message="form.errors.phone" />

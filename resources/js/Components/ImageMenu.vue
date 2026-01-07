@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {Link, router} from "@inertiajs/vue3";
+import {router} from "@inertiajs/vue3";
 import { Ref, ref} from "vue";
 import {useRoute} from "ziggy-js";
 import {Avatar, Popover, Menu} from "primevue";

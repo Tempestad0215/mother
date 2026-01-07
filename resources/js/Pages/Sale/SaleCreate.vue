@@ -171,7 +171,7 @@ function createCreditNotes() {
 				router.visit(route('sale.create'));
 			}
 		})
-		.catch(err => {
+		.catch(() => {
 
 		});
 }

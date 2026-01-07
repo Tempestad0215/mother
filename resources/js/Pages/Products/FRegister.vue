@@ -10,14 +10,12 @@ import {warehouseBaseI} from "@/Interfaces/WarehouseInterface";
 import ProductExtra from "@/Pages/Products/ProductExtra.vue";
 import ProductDetail from "@/Pages/Products/ProductDetail.vue";
 import ProductGeneral from "@/Pages/Products/ProductGeneral.vue";
-import Swal from "sweetalert2";
 import ProductSale from "@/Pages/Products/ProductSale.vue";
 import ProductSaleValue from "@/Pages/Products/ProductSaleValue.vue";
 import ProductInformation from "@/Pages/Products/ProductInformation.vue";
 import ErrorComponent from "@components/ErrorComponent.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {faPrint} from "@fortawesome/free-solid-svg-icons";
-import axios from "axios";
 import {useRoute} from "ziggy-js";
 
 

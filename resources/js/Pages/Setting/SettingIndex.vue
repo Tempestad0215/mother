@@ -271,15 +271,15 @@ const removeUnit = (index:number) => {
                         <InputLabel
                             for="phone"
                             value="Teléfono *"/>
-                        <TextInput
-                            name="phone"
-                            v-model="form.phone"
-                            required
-                            placeholder="+1 (425) 456-6456"
-                            v-mask="['+# (###) ###-####','+## (###) ###-####']"
-                            maxLength="30"
-                            class="w-full"
-                            type="text" />
+<!--                        <TextInput-->
+<!--                            name="phone"-->
+<!--                            v-model="form.phone"-->
+<!--                            required-->
+<!--                            placeholder="+1 (425) 456-6456"-->
+<!--                            v-mask="['+# (###) ###-####','+## (###) ###-####']"-->
+<!--                            maxLength="30"-->
+<!--                            class="w-full"-->
+<!--                            type="text" />-->
                         <InputError :message="form.errors.phone"/>
                     </div>
                     <!--Direccion-->
@@ -315,14 +315,14 @@ const removeUnit = (index:number) => {
                         <InputLabel
                             for="id"
                             value="RNC"/>
-                        <TextInput
-                            v-model="form.company_id"
-                            name="id"
-                            placeholder="123-456891"
-                            v-mask="['###-######']"
-                            maxLength="30"
-                            class="w-full"
-                            type="text" />
+<!--                        <TextInput-->
+<!--                            v-model="form.company_id"-->
+<!--                            name="id"-->
+<!--                            placeholder="123-456891"-->
+<!--                            v-mask="['###-######']"-->
+<!--                            maxLength="30"-->
+<!--                            class="w-full"-->
+<!--                            type="text" />-->
                         <InputError :message="form.errors.company_id"/>
                     </div>
                     <div>

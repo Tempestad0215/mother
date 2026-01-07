@@ -99,7 +99,7 @@ const days = ()=>{
             }
         }
     })
-    .catch(err => {
+    .catch(() => {
 
     });
 }
@@ -119,7 +119,7 @@ const submit = () => {
             emit('closeWindow');
         }
     })
-    .catch((err)=>{
+    .catch(()=>{
         // Mensaje de error
 
     });

@@ -11,7 +11,6 @@ import {onMounted, Ref, ref} from 'vue';
 import FRegister from '@/Pages/Suppliers/FRegister.vue';
 import FormSearch from "@components/FormSearch.vue";
 import {productFullI, productI, productTransI} from "@/Interfaces/ProductInterface";
-import Pagination from "@components/Pagination.vue";
 import {Money} from "v-money3";
 import TabLink from "@components/TabLink.vue";
 import {useRoute} from "ziggy-js";

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import {productBaseI, productI} from '@/Interfaces/ProductInterface';
 import TabLink from '@components/TabLink.vue';
-import {Head, useForm} from '@inertiajs/vue3';
+import {Head} from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
 import {ref, watch} from 'vue';
 import {entryBaseI, entryProductI} from "@/Interfaces/EntryTransInterface";

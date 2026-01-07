@@ -158,12 +158,12 @@ const submit = () => {
             <InputLabel
                 for="phone"
                 value="Teléfono"/>
-            <TextInput
-                class="w-full"
-                v-mask="['+# (###) ###-####','+## (###) ###-####']"
-                v-model="form.phone"
-                placeholder="+1 (###) ###-####"
-                name="phone"/>
+<!--            <TextInput-->
+<!--                class="w-full"-->
+<!--                v-mask="['+# (###) ###-####','+## (###) ###-####']"-->
+<!--                v-model="form.phone"-->
+<!--                placeholder="+1 (###) ###-####"-->
+<!--                name="phone"/>-->
             <!-- Error -->
             <InputError :message="form.errors.phone" />
         </div>

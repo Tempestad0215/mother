@@ -44,7 +44,7 @@ const submit = () => {
     }).then((res) => {
         reportSale.value = res.data[0];
         processing.value = false;
-    }).catch((err) => {
+    }).catch(() => {
         // errorHttp(`Error Al Obtener los datos :${err.message}`);
     });
 }

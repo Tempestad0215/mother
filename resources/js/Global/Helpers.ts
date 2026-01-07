@@ -1,11 +1,6 @@
 import axios from "axios";
-// import {errorHttp} from "@/Global/Alert";
-import {rncClientI} from "@/Interfaces/ClientInterface";
 import {useRoute} from "ziggy-js";
 
-
-
-const route = useRoute()
 /**
  *
  * Configuracionde dinero
