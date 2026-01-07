@@ -8,7 +8,6 @@ import {paginationI} from "@/Interfaces/GlobalInterface";
 import {clientBaseI, rncClientI} from "@/Interfaces/ClientInterface";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {faMagnifyingGlass, faSpinner} from "@fortawesome/free-solid-svg-icons";
-import {getRncHelper} from "@/Global/Helpers";
 import {saleKey} from "@/utils/keys";
 import {usePage} from "@inertiajs/vue3";
 import axios from "axios";
@@ -126,31 +125,31 @@ async function getRncClient ()  {
 		form.setError("client_rnc", "El RNC debes contener al menos 8 caracter")
 	}else{
 		//Obtener el resultado de los
-		const result = await getRncHelper(form.client_rnc);
-
-		//Verificar el estado del RNC
-		if (result === "SUSPENDIDO")
-		{
-			form.setError("client_rnc", "Este Contribuyente Esta Suspendido, Por Favor Elegir Otro");
-
-		}else if (result === "ERROR")
-		{
-			form.setError("client_rnc", "Este Contribuyente No Pudo Ser Encontrado")
-
-		}else if (result === "CANCELLED")
-		{
-			form.setError("client_rnc", "Este Contribuyente Esta Cancelado");
-		}else{
-			//Formatear el json
-			const info:rncClientI = result;
-
-			//Poner cada dato en su lugar
-			form.client_name = info.razon_social;
-			form.client_rnc_status = info.status;
-
-			// Limpiar el formulario
-			form.clearErrors()
-		}
+		// const result = await getRncHelper(form.client_rnc);
+        //
+		// //Verificar el estado del RNC
+		// if (result === "SUSPENDIDO")
+		// {
+		// 	form.setError("client_rnc", "Este Contribuyente Esta Suspendido, Por Favor Elegir Otro");
+        //
+		// }else if (result === "ERROR")
+		// {
+		// 	form.setError("client_rnc", "Este Contribuyente No Pudo Ser Encontrado")
+        //
+		// }else if (result === "CANCELLED")
+		// {
+		// 	form.setError("client_rnc", "Este Contribuyente Esta Cancelado");
+		// }else{
+		// 	//Formatear el json
+		// 	const info:rncClientI = result;
+        //
+		// 	//Poner cada dato en su lugar
+		// 	form.client_name = info.razon_social;
+		// 	form.client_rnc_status = info.status;
+        //
+		// 	// Limpiar el formulario
+		// 	form.clearErrors()
+		// }
 	}
 }
 

@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ClientDocumentEnum;
+use App\Enums\ClientTypeEnum;
+use App\Enums\ClientTypePriceEnum;
 use App\Exports\ClientExport;
 use App\Helpers\ClientHelper;
 use App\Http\Resources\ClientCommentResource;
@@ -18,6 +21,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\Exception;
+use Throwable;
 
 class ClientController extends Controller implements HasMiddleware
 {
@@ -58,11 +62,18 @@ class ClientController extends Controller implements HasMiddleware
         // Tomar los datos
         $data = $this->getTable($request);
 
+        $clientType = collect(ClientTypeEnum::cases())->mapWithKeys(fn(ClientTypeEnum $item) => [$item->name => $item->value]);
+        $clientPrice = collect(ClientTypePriceEnum::cases())->mapWithKeys(fn(ClientTypePriceEnum $item) => [$item->name => $item->value]);
+        $clientDocument = collect(ClientDocumentEnum::cases())->mapWithKeys(fn(ClientDocumentEnum $item) => [$item->name => $item->value]);
+
         /*Vista con la pagina*/
         return Inertia::render('Clients/Register',[
             'clients' => $data,
             'typeRNC' => config('appconfig.sequenceSale'),
-            'clientData' => Client::query()->paginate()
+            'clientData' => Client::query()->paginate(),
+            'clientType' => $clientType,
+            'clientPrice' => $clientPrice,
+            'clientDocument' => $clientDocument,
         ]);
 
     }
@@ -70,14 +81,15 @@ class ClientController extends Controller implements HasMiddleware
     /**
      * @param StoreClientsRequest $request
      * @return RedirectResponse
+     * @throws Throwable
      */
     public function store(StoreClientsRequest $request)
     {
-
         //Guardar los datos
         $this->clientHelper->store($request);
 
-        // Devolver hacia atras
+        Inertia::flash("message", "Datos Registrado conExisto");
+        // Devolver hacia atrás
         return back();
 
     }

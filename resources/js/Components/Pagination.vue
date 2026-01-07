@@ -70,9 +70,3 @@ const props = defineProps<paginationI>()
     </div>
 
 </template>
-
-<style scoped>
-a{
-    @apply hover:scale-110 duration-300 transition-all;
-}
-</style>

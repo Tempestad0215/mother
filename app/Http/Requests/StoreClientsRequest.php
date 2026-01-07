@@ -48,7 +48,7 @@ class StoreClientsRequest extends FormRequest
             'document' =>  ['required', Rule::enum(ClientDocumentEnum::class)],
             'file' => ['nullable','file','mimes:png,jpg,jpeg','max:2048'],
 
-            //Validacion de los avance
+            //Validación de los avance
             'amount' => [Rule::requiredIf($isRequired),'nullable','numeric'],
             'due_date' => [Rule::requiredIf($isRequired),'nullable','numeric'],
             'late_fee' => [Rule::requiredIf($isRequired),'nullable','numeric'],

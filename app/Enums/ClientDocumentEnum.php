@@ -4,8 +4,8 @@ namespace App\Enums;
 
 enum ClientDocumentEnum:string
 {
-    case CEDULA = 'cedula';
-    case PASAPORTE = 'pasaporte';
+    case Cedula = 'cedula';
+    case Pasaporte = 'pasaporte';
     case  RNC = 'rnc';
-    case OTRO = 'otro';
+    case Otro = 'otro';
 }

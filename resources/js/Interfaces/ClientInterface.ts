@@ -1,4 +1,24 @@
 
+
+export interface clientTypeI {
+    contado: string;
+    credito: string;
+    anticipo: string;
+}
+
+export interface clientPriceI{
+    normal: number
+    minimo: number
+    especial: number
+}
+
+
+export interface clientDocumentI {
+    cedula: string
+    pasaporte: string
+    rnc: string
+    otro: string
+}
 /**
  *
  */

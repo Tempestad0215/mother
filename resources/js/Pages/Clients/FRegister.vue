@@ -1,15 +1,11 @@
 <script setup lang="ts">
-import {configPercent, getMoney, moneyConfig} from "@/Global/Helpers";
-import ToggleButton from "@components/ToggleButton.vue";
-import TextInput from "@components/TextInput.vue";
-import {Money} from "v-money3";
-import InputLabel from "@components/InputLabel.vue";
-import PrimaryButton from "@components/PrimaryButton.vue";
-import InputError from "@components/InputError.vue";
 import {computed, onMounted, reactive, ref, Ref} from "vue";
-import {clientEditI} from "@/Interfaces/ClientInterface";
+import {clientDocumentI, clientEditI, clientPriceI, clientTypeI} from "@/Interfaces/ClientInterface";
 import {useForm} from "@inertiajs/vue3";
 import {useRoute} from "ziggy-js";
+import {Card, Select, ToggleSwitch, FloatLabel, InputText, Divider, Button, InputMask} from "primevue"
+
+
 
 
 const route = useRoute()
@@ -20,7 +16,10 @@ const route = useRoute()
 const propsW = defineProps<{
     clientEdit?: clientEditI,
     update?: boolean,
-    typeRNC: string[]
+    typeRNC: string[],
+    clientType: clientTypeI,
+    clientPrice: clientPriceI,
+    clientDocument: clientDocumentI
 }>();
 
 /**
@@ -30,9 +29,6 @@ onMounted(()=>{
     //Verificar si existe datos para poner en el formulario
     if(propsW.clientEdit)
     {
-
-        console.log(propsW.clientEdit)
-
         form.id = propsW.clientEdit.id;
         form.name = propsW.clientEdit.name;
         form.document = propsW.clientEdit.document
@@ -56,48 +52,32 @@ onMounted(()=>{
 });
 
 
-/*
-Datos de la ventana
- */
-// const classRnc:Ref<string> = ref("");
-const typeClient:Ref<Array<any>> = ref([
-    {
-        name: "Contado",
-        code: 'contado'
-    },
-    {
-        name: "Credito",
-        code: 'credito'
-    },
-    {
-        name: "Anticipo",
-        code: 'anticipo'
-    }
-])
-const typeDocument:Ref<Array<any>> = ref([
-    {
-        name: "Cédula",
-        code: 'cedula'
-    },{
-        name: "RNC",
-        code: 'rnc'
-    },{
-        name: "Pasaporte",
-        code: 'pasaporte'
-    },
-    // {
-    //     name: "Credito",
-    //     code: 'credito'
-    // }
-]);
-
 //Posibles máscara para documents
 const masks = reactive<Record<string, string>>({
-    cedula: '###-#######-#',
-    pasaporte: 'A########',
-    rnc: '###-######'
+    cedula: '999-9999999-9',
+    pasaporte: 'A99999999',
+    rnc: '999-999999'
 });
 
+
+const getClientType = computed(()=>{
+    return Object.entries(propsW.clientType).map(([key, value])=>({
+        label: key,
+        value: value
+    }))
+})
+const getClientPrice = computed(()=>{
+    return Object.entries(propsW.clientPrice).map(([key, value])=>({
+        label: key,
+        value: value
+    }))
+})
+const getClientDocument = computed(()=>{
+    return Object.entries(propsW.clientDocument).map(([key, value])=>({
+        label: key,
+        value: value
+    }))
+})
 
 const selectedMask = computed(()=>{
     return masks[form.document] || '';
@@ -211,300 +191,71 @@ const searchRNC = async () => {
 </script>
 
 <template>
-    <form
-        class="max-w-6xl mx-auto fondo rounded-md p-5"
-        @submit.prevent="submit">
-
-        <!--                Titulo del formulario-->
-        <h2 class="col-span-full text-2xl font-bold text-center mb-4">
-            {{ propsW.update ? 'Actualización' :  'Registro'}} de cliente
-        </h2>
-
-        <hr>
-
-        <div class="flex justify-end items-center mt-3">
-            <!--                Tipo de cliente-->
-            <div>
-                <InputLabel for="tye" value="Tipo"/>
-                <select
-                    v-model="form.type"
-                    class="inputGeneral py-1">
-                    <option
-                        v-for="(item, index) in typeClient" :key="index"
-                        :value="item.code">
-                        {{item.name}}
-                    </option>
-                </select>
-                <InputError :message="form.errors.type"/>
-            </div>
-            <!--        Tipo de precio del cliente-->
-            <div class="ml-3">
-                <InputLabel
-                    for="type_price"
-                    value="Tipo Precio"/>
-                <select
-                    v-model="form.type_price"
-                    class="inputGeneral py-1"
-                    name="type_price"
-                    id="type_price">
-                    <option :value="1">Normal</option>
-                    <option :value="2">Especial</option>
-                    <option :value="1">Minimo</option>
-                </select>
-                <InputError :message="form.errors.comment"/>
-            </div>
-
-            <!--Tipo de documento-->
-            <div class="ml-3">
-                <InputLabel for="document" value="Documento"/>
-                <select
-                    v-model="form.document"
-                    class="inputGeneral py-1">
-                    <option
-                        v-for="(item, index) in typeDocument" :key="index"
-                        :value="item.code">
-                        {{item.name}}
-                    </option>
-                </select>
-                <InputError :message="form.errors.document"/>
-            </div>
-
-            <!--Tipo de RNC-->
-            <div class="ml-3">
-                <InputLabel for="type_rnc" value="Comprobante"/>
-
-                <select
-                    @change="searchRNC"
-                    v-model.lazy="form.type_rnc"
-                    class="inputGeneral py-1">
-                    <option
-                        v-for="(item, index) in propsW.typeRNC"
-                        :key="index"
-                        :value="item">
-                        {{item}}
-                    </option>
-                </select>
-                <InputError :message="form.errors.type_rnc"/>
-            </div>
+    <Card class="max-w-250">
+        <template #header>
+            <h3>Crear Cliente</h3>
+        </template>
+        <template #content>
+            <form @submit.prevent="submit">
+                <div class="flex flex-wrap gap-4 justify-center">
+                    <FloatLabel variant="on">
+                        <Select class="w-40" placeholder="Tipo de Cliente" v-model="form.type" :options="getClientType" option-label="label" option-value="value" />
+                        <label for="type">Tipo Cliente</label>
+                    </FloatLabel>
+                    <FloatLabel variant="on">
+                        <Select class="w-40" placeholder="Precio de Ventas" v-model="form.type_price" :options="getClientPrice" option-label="label" option-value="value" />
+                        <label for="">Precio</label>
+                    </FloatLabel>
+                    <FloatLabel variant="on">
+                        <Select class="w-50" placeholder="Documento" v-model="form.document" :options="getClientDocument" option-label="label" option-value="value" />
+                        <label for="">Documento</label>
+                    </FloatLabel>
+                    <div class="flex items-center gap-2">
+                        <ToggleSwitch v-model="form.receive_email" />
+                        <label for="">Recibir Email</label>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <ToggleSwitch v-model="form.status"/>
+                        <label for="">Estado</label>
+                    </div>
+                </div>
+                <Divider/>
+                <div class="grid grid-cols-2 gap-4 items-center justify-center">
+                    <FloatLabel variant="on">
+                        <InputText id="name" class="w-full" v-model="form.name" />
+                        <label for="name">Nombre Completo <span class="text-red-500">*</span></label>
+                    </FloatLabel>
+                    <FloatLabel variant="on">
+                        <InputMask class="w-full" id="personal_id" v-model="form.personal_id" :mask="selectedMask" />
+                        <label for="personal_id">Identificación</label>
+                    </FloatLabel>
+                    <FloatLabel variant="on">
+                        <InputText id="phone" class="w-full" v-model="form.phone" />
+                        <label for="phone">Teléfono </label>
+                    </FloatLabel>
+                    <FloatLabel variant="on">
+                        <InputText type="email" id="email" class="w-full" v-model="form.email" />
+                        <label for="email">Correo Electrónico </label>
+                    </FloatLabel>
+                    <FloatLabel variant="on">
+                        <InputText id="address" class="w-full" v-model="form.address" />
+                        <label for="address">Dirección</label>
+                    </FloatLabel>
+                    <FloatLabel variant="on">
+                        <InputText id="comment" class="w-full" v-model="form.comment" />
+                        <label for="comment">Comentario </label>
+                    </FloatLabel>
 
 
-            <!-- Rcibir correo de esta app -->
-            <div class="ml-3">
-                <ToggleButton
-                    v-model="form.receive_email"
-                    off-label="NO"
-                    on-label="SI"
-                    label="Correos"/>
-               <InputError :message="form.errors.status" />
-            </div>
-
-
-            <!-- Estatus del cliente -->
-            <div class="ml-3">
-                <ToggleButton
-                    v-model="form.status"
-                    off-label="Inactivo"
-                    on-label="Activo"
-                    label="Estado"/>
-                <InputError :message="form.errors.status" />
-            </div>
-        </div>
-
-        <!--                Datos personales-->
-        <fieldset class="field">
-            <legend>
-                Datos Personales
-            </legend>
-            <div>
-                <InputLabel
-                    for="name"
-                    value="Nombre Completo *"/>
-                <TextInput
-                    placeholder="Nombre Completo"
-                    fluid
-                    class="w-full"
-                    v-model="form.name"
-                    maxlength="75"
-                />
-
-                <!-- Error -->
-                <InputError :message="form.errors.name" />
-            </div>
-
-            <div class="relative">
-                <InputLabel
-                    for="personal_id"
-                    value="Cédula / Pasaporte /RNC"/>
-
-<!--                <TextInput-->
-<!--                    id="basic"-->
-<!--                    class="w-full"-->
-<!--                    v-model="form.personal_id"-->
-<!--                    v-mask="selectedMask"-->
-<!--                    @blur="searchRNC"-->
-<!--                    :placeholder="selectedMask" />-->
-                <!-- Error -->
-                <InputError :message="form.errors.personal_id" />
-            </div>
-
-            <!-- Telefono -->
-            <div class="">
-                <InputLabel
-                    for="phone"
-                    value="Teléfono"/>
-<!--                <TextInput-->
-<!--                    id="basic"-->
-<!--                    v-model="form.phone"-->
-<!--                    class="w-full"-->
-<!--                    fluid-->
-<!--                    v-mask="['+# (###) ###-####', '+## (###) ###-####','+### (###) ###-####']"-->
-<!--                    placeholder="+1 (829) 352-6526" />-->
-
-                <!-- Error -->
-                <InputError :message="form.errors.phone" />
-            </div>
-
-            <!-- correo -->
-            <div class="">
-                <InputLabel
-                    for="phone"
-                    value="Correo"/>
-                <TextInput
-                    placeholder="example@example.com"
-                    fluid
-                    class="w-full"
-                    v-model="form.email"
-                    type="email"
-                    maxlength="150"/>
-
-                <!-- Error -->
-                <InputError :message="form.errors.email" />
-            </div>
-
-            <!-- direccion -->
-            <div class=" col-span-full">
-                <InputLabel
-                    for="phone"
-                    value="Dirección"/>
-
-                <TextInput
-                    placeholder="Puerto Plata, Padres Las Casas #12"
-                    fluid
-                    class="w-full"
-                    v-model="form.address"
-                    type="text"
-                    maxlength="150"/>
-
-                <!-- Error -->
-                <InputError :message="form.errors.address" />
-            </div>
-        </fieldset>
-        <!-- Nombre -->
-
-        <!--             Datos de credito-->
-        <div class="">
-            <fieldset
-                v-if="form.type !== 'contado'"
-                class="field grid grid-cols-5 gap-3">
-                <legend>
-                    Informacion de Pagos
-                </legend>
-                <div>
-                    <InputLabel for="credit_limit" value="Limite de credito"/>
-                    <Money
-                        class="inputGeneral"
-                        v-bind="moneyConfig"
-                        v-model="form.amount" />
-                    <InputError :message="form.errors.amount"/>
                 </div>
 
-                <div>
-                    <InputLabel for="credit_day" value="Dias para pagar"/>
-                    <Money
-                        class="inputGeneral"
-                        v-bind="moneyConfig"
-                        v-model="form.due_date" />
-                    <InputError :message="form.errors.due_date" />
+                <div class="mt-5 text-right space-x-3">
+                    <Button severity="warn" icon="pi pi-eraser" type="reset"  label="limpiar" />
+                    <Button icon="pi pi-send" label="Registrar" type="submit" />
                 </div>
-                <div>
-                    <InputLabel for="credit_day" value="Interes por Mora"/>
-                    <Money
-                        class="inputGeneral w-full"
-                        v-bind="configPercent"
-                        v-model="form.late_fee" />
-                    <InputError :message="form.errors.due_date" />
-                </div>
-                <!--                        Balance-->
-                <div>
-                    <InputLabel for="" value="Balance"/>
-                    <span class="flex justify-center items-center bg-white px-3 rounded-md h-[2rem] " >
-                                {{getMoney(form.balance)}}
-                    </span>
-                </div>
-                <!--                        Consumido-->
-                <div>
-                    <InputLabel for="" value="Consumido"/>
-                    <span class="flex justify-center items-center bg-white px-3 rounded-md h-[2rem] " >
-                                {{getMoney(form.consumed)}}
-                    </span>
-                </div>
-            </fieldset>
-
-        </div>
+            </form>
 
 
-        <!--                Informacion extra-->
-        <fieldset class="field flex">
-            <legend>
-                Info Extra
-            </legend>
-            <div>
-                <InputLabel for="comment" value="Comentario"/>
-                <textarea
-                    name="comment"
-                    class="area"
-                    v-model="form.comment"
-                    rows="2"
-                    cols="60" />
-                <InputError :message="form.errors.comment"/>
-            </div>
-
-<!--            <div class="">-->
-<!--                <InputLabel for="comment" value="Imagen" />-->
-<!--                <TextInput-->
-<!--                    @input=" form.image = $event.target.files[0]"-->
-<!--                    class="file"-->
-<!--                    type="file"-->
-<!--                    name="image" />-->
-<!--            </div>-->
-        </fieldset>
-
-
-
-        <!-- Datos de comentario y  -->
-        <div class="flex mt-5 gap-3">
-
-
-
-
-
-
-
-            <!-- Botones para enviar -->
-            <div class="flex flex-1 justify-end items-center space-x-5">
-                <PrimaryButton
-                    :disabled="form.processing">
-                    {{ propsW.update ? 'Actualizar' :  'Registrar'}}
-                </PrimaryButton>
-
-            </div>
-        </div>
-
-
-
-    </form>
+        </template>
+    </Card>
 </template>
-
-<style scoped>
-
-</style>

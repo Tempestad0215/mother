@@ -30,8 +30,3 @@ const isActive = computed(()=>{
 
 </template>
 
-<style scoped>
-a{
-    @apply inline-block bg-gray-400 font-bold px-3 py-1 rounded-md hover:bg-gray-300 ease-in-out duration-300;
-}
-</style>

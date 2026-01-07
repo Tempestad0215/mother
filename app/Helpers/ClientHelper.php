@@ -44,18 +44,16 @@ class ClientHelper
     public function store(StoreClientsRequest $request):void
     {
 
-        //Asegurar la transaccion de la introducion de datos
+        //Asegurar la transacción de la introducción de datos
         DB::transaction(function () use ($request) {
 
-            //Inmtancia
+            //Instancia
             $general = new General();
             //Obtener el tipo
             $type = $request->get('type');
 
-            //Guardar los datos validado
+            //Guardar los datos validados
            $client = Client::create($request->validated());
-
-
 
            //Guardar la imagen y quedarse con el nombre
            $general->saveImage($request, $client);
