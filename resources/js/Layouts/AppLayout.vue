@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import {computed, onMounted, onUnmounted, reactive, ref} from 'vue';
-import { Head, usePage } from '@inertiajs/vue3';
-import LinkHeader from "@components/LinkHeader.vue";
+import { onMounted, onUnmounted, reactive, ref} from 'vue';
+import { usePage } from '@inertiajs/vue3';
 import Divider from "@components/Divider.vue";
 import ImageMenu from "@components/ImageMenu.vue";
 // ✅ Importa SOLO la función route de Ziggy
 import { useRoute } from 'ziggy-js';
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import {faArrowCircleLeft, faBuildingUser} from "@fortawesome/free-solid-svg-icons";
+import {faArrowCircleLeft} from "@fortawesome/free-solid-svg-icons";
+import {PanelMenu, ScrollPanel} from "primevue";
 
 // ✅ Elimina: const route = useRoute();
 
@@ -21,8 +21,8 @@ defineProps({
 const menuImageRef = ref<HTMLElement | null>(null);
 const showExchange = ref<boolean>(false);
 const showOption = ref<boolean>(false);
-const isHiddenMenu = ref<boolean>(false);
-const widthMenu = ref<number>(50)
+const isHiddenMenu = ref<boolean>(true);
+
 
 // ✅ Menú optimizado para POS
 const menuItems = reactive([
@@ -73,9 +73,6 @@ const menuItems = reactive([
 ]);
 
 
-const hiddenMenu = computed(() => {
-    return isHiddenMenu.value ? `max-w-[${widthMenu.value}px]` : "";
-});
 
 const isActive = (activePath: string): boolean => {
     return window.location.pathname.startsWith(activePath);
@@ -112,8 +109,8 @@ onUnmounted(() => {
             class="absolute top-3 text-3xl cursor-pointer text-red-500 z-50 ease-in-out  duration-200 transition-[left, transform] "
             :icon="faArrowCircleLeft"
             :class="{
-                'left-[240px]': !isHiddenMenu,
-                'left-[35px] rotate-180': isHiddenMenu
+                'left-[10rem]': !isHiddenMenu,
+                'left-[2rem] rotate-180': isHiddenMenu
               }"
 
         />
@@ -121,7 +118,7 @@ onUnmounted(() => {
         <!-- Sidebar Profesional -->
         <aside
             class="bg-gray-900 text-white w-64 flex  flex-col shadow-xl transition-all duration-300"
-            :style="{ width: isHiddenMenu ? '50px' : '16rem' }"
+            :style="{ width: isHiddenMenu ? '3rem' : '11rem' }"
         >
             <!-- Logo / User -->
             <div
@@ -132,35 +129,29 @@ onUnmounted(() => {
 
             <Divider />
 
-            <!-- Menú de navegación -->
-            <nav class="flex-1 px-3 py-4 space-y-2 overflow-y-auto">
-                <LinkHeader
-                    v-for="(item, index) in menuItems"
-                    :key="index"
-                    :href="item.url"
-                    :class="[
-            'flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200',
-            isActive(item.activePath)
-              ? (item.isPrimary
-                  ? 'bg-emerald-600 text-white shadow-md'
-                  : 'bg-blue-600 text-white')
-              : 'text-gray-300 hover:bg-gray-800 hover:text-white',
-          ]"
-                >
-                    <i :class="item.icon" class="text-lg"></i>
-                    <span class="font-medium">{{ item.label }}</span>
-                    <!-- Indicador visual para POS -->
-                    <span v-if="item.isPrimary" class="ml-auto bg-emerald-500 text-xs px-2 py-0.5 rounded-full">
-            POS
-          </span>
-                </LinkHeader>
-            </nav>
+
+            <PanelMenu :model="menuItems">
+                <template #item="{ item }">
+                    <a
+                        class="block text-xl mx-2"
+                        :class="[{'text-center': isHiddenMenu}]"
+                        :title="item.label"
+                        :href="item.url">
+                        <i
+                            class="mr-3 text-center"
+                            :class="[item.icon,{'text-center': isHiddenMenu} ]" ></i>
+                        <span
+                            class="ease-in-out transition-[hidden] duration-200"
+                            :class="{'hidden': isHiddenMenu }">{{item.label}}</span>
+                    </a>
+                </template>
+            </PanelMenu>
 
         </aside>
 
         <!-- Contenido principal -->
-<!--        <div class="flex-1 flex flex-col overflow-auto">-->
-<!--            &lt;!&ndash; Header &ndash;&gt;-->
+        <div class="flex-1 flex flex-col overflow-auto">
+            <!-- Header -->
 <!--            <header class="bg-white shadow-sm h-16 flex items-center px-6 justify-between">-->
 <!--                <h1 class="text-lg font-semibold text-gray-800">-->
 <!--                    <slot name="header">{{ title }}</slot>-->
@@ -168,11 +159,10 @@ onUnmounted(() => {
 <!--                &lt;!&ndash; Puedes agregar notificaciones, perfil, etc. &ndash;&gt;-->
 <!--            </header>-->
 
-<!--            &lt;!&ndash; Contenido &ndash;&gt;-->
-<!--            <main class="flex-1 overflow-y-auto p-6 bg-gray-50">-->
-<!--                <slot />-->
-<!--            </main>-->
-<!--        </div>-->
+            <ScrollPanel class="flex-1 p-6 bg-gray-50 h-screen" >
+                <slot/>
+            </ScrollPanel>
+        </div>
     </div>
 
 </template>
