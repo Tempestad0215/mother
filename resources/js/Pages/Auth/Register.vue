@@ -8,7 +8,6 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import ActionMessage from '@/Components/ActionMessage.vue';
 import {userI, userPaginationI} from "@/Interfaces/UserInterface";
 import {computed} from "vue";
-import Swal from "sweetalert2";
 import FormSearch from "@components/FormSearch.vue";
 import ToggleButton from "@components/ToggleButton.vue";
 import TabLink from "@components/TabLink.vue";
@@ -104,21 +103,21 @@ const edit = (item:userI) => {
 
 // Eliminar los datos
 const destroy = (item:userI) => {
-    Swal.fire({
-        title: "Desea eliminar este registro?",
-        text: "Los cambios realizados son irreversible!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Si, Eliminar!"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            router.patch(route('user.destroy',{user: item.id}),{},{
-                onSuccess: () => {
-
-                }
-            });
-        }
-    });
+    // Swal.fire({
+    //     title: "Desea eliminar este registro?",
+    //     text: "Los cambios realizados son irreversible!",
+    //     icon: "warning",
+    //     showCancelButton: true,
+    //     confirmButtonText: "Si, Eliminar!"
+    // }).then((result) => {
+    //     if (result.isConfirmed) {
+    //         router.patch(route('user.destroy',{user: item.id}),{},{
+    //             onSuccess: () => {
+    //
+    //             }
+    //         });
+    //     }
+    // });
 }
 
 //Buscar los datos

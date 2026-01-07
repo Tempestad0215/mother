@@ -74,9 +74,6 @@ importers:
       vue-final-modal:
         specifier: ^4.5.5
         version: 4.5.5(@vueuse/core@14.1.0(vue@3.5.26(typescript@5.9.3)))(@vueuse/integrations@14.1.0(axios@1.13.2)(focus-trap@7.7.1)(vue@3.5.26(typescript@5.9.3)))(focus-trap@7.7.1)(vue@3.5.26(typescript@5.9.3))
-      vue-sweetalert2:
-        specifier: ^5.0.11
-        version: 5.0.11(vue@3.5.26(typescript@5.9.3))
       vue-the-mask:
         specifier: ^0.11.1
         version: 0.11.1
@@ -1608,9 +1605,6 @@ packages:
     resolution: {integrity: sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==}
     engines: {node: '>=8'}
 
-  sweetalert2@11.4.4:
-    resolution: {integrity: sha512-9yYWQuRT1v9JNI/paPTSYV+68MHwe9C+HQ/I2jtfaFzoJgYRftWXOs4JqmDSjT7m2m4r8ebMMn8LcxD1Wq9B/w==}
-
   tabbable@6.4.0:
     resolution: {integrity: sha512-05PUHKSNE8ou2dwIxTngl4EzcnsCDZGJ/iCLtDflR/SHB/ny14rXc+qU5P4mG9JkusiV7EivzY9Mhm55AzAvCg==}
 
@@ -1763,11 +1757,6 @@ packages:
       '@vueuse/integrations': '>=10.0.0'
       focus-trap: '>=7.2.0'
       vue: '>=3.2.0'
-
-  vue-sweetalert2@5.0.11:
-    resolution: {integrity: sha512-agujdlcNeLb4Fj0/V3qgR7bEVBN8IzWFoDBP/vrSgbEGl9pjMmxnv32V3lxB0SZtQh6tL6R/UZ+C3q8tzsJbNg==}
-    peerDependencies:
-      vue: '*'
 
   vue-the-mask@0.11.1:
     resolution: {integrity: sha512-UquSfnSWejD0zAfcD+3jJ1chUAkOAyoxya9Lxh9acCRtrlmGcAIvd0cQYraWqKenbuZJUdum+S174atv2AuEHQ==}
@@ -3213,8 +3202,6 @@ snapshots:
     dependencies:
       ansi-regex: 5.0.1
 
-  sweetalert2@11.4.4: {}
-
   tabbable@6.4.0: {}
 
   tailwindcss-primeui@0.6.1(tailwindcss@4.1.18):
@@ -3350,11 +3337,6 @@ snapshots:
       '@vueuse/core': 14.1.0(vue@3.5.26(typescript@5.9.3))
       '@vueuse/integrations': 14.1.0(axios@1.13.2)(focus-trap@7.7.1)(vue@3.5.26(typescript@5.9.3))
       focus-trap: 7.7.1
-      vue: 3.5.26(typescript@5.9.3)
-
-  vue-sweetalert2@5.0.11(vue@3.5.26(typescript@5.9.3)):
-    dependencies:
-      sweetalert2: 11.4.4
       vue: 3.5.26(typescript@5.9.3)
 
   vue-the-mask@0.11.1: {}

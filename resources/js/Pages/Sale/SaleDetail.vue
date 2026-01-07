@@ -20,7 +20,6 @@ import {inject, ref, watch} from "vue";
 import {infoSaleI, saleDataI} from "@/Interfaces/SaleInterface";
 import {saleKey} from "@/utils/keys";
 import {paginationI} from "@/Interfaces/GlobalInterface";
-import Swal from "sweetalert2";
 import {getSequenceType} from "@/Global/Helpers";
 import {useRoute} from "ziggy-js";
 
@@ -101,16 +100,16 @@ async function checkInvoiceType() {
 	// Verificar si es nota de credito
 	if (form.invoice_type === 'B04') {
 		//Resultado de la pregunta
-		const result = await Swal.fire({
-			title: "Desea Colocar Comprobante?",
-			text: "Registre El Comprobante Del Cliente!",
-			icon: "question",
-			showCancelButton: true,
-			confirmButtonColor: "#3085d6",
-			cancelButtonColor: "#d33",
-			confirmButtonText: "Si",
-			cancelButtonText: "No"
-		});
+		// const result = await Swal.fire({
+		// 	title: "Desea Colocar Comprobante?",
+		// 	text: "Registre El Comprobante Del Cliente!",
+		// 	icon: "question",
+		// 	showCancelButton: true,
+		// 	confirmButtonColor: "#3085d6",
+		// 	cancelButtonColor: "#d33",
+		// 	confirmButtonText: "Si",
+		// 	cancelButtonText: "No"
+		// });
 
 		//Verificar la accion
 		// showClientRnc.value = result.isConfirmed;

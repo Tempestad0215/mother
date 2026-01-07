@@ -4,7 +4,6 @@ import FormSearch from "@components/FormSearch.vue";
 import Pagination from "@components/Pagination.vue";
 import {productBaseI, productI} from "@/Interfaces/ProductInterface";
 import {router, useForm, usePage} from "@inertiajs/vue3";
-import Swal from "sweetalert2";
 import {getMoney} from "@/Global/Helpers";
 import {onMounted} from "vue";
 import {useRoute} from "ziggy-js";
@@ -92,23 +91,23 @@ const selectData = (item: productBaseI) => {
 
 //Eliminar el producto
 const detroy = (id: number) => {
-	Swal.fire({
-		title: "Esta seguro?",
-		text: "Los cambios realizados son irreversible!",
-		icon: "warning",
-		showCancelButton: true,
-		confirmButtonColor: "#3085d6",
-		cancelButtonColor: "#d33",
-		confirmButtonText: "Si, Eliminar!",
-		cancelButtonText: "Cancelar"
-	}).then((result) => {
-		if (result.isConfirmed) {
-			router.patch(route('product.destroy', {product: id}), {}, {
-				onSuccess: () => {
-				}
-			})
-		}
-	});
+	// Swal.fire({
+	// 	title: "Esta seguro?",
+	// 	text: "Los cambios realizados son irreversible!",
+	// 	icon: "warning",
+	// 	showCancelButton: true,
+	// 	confirmButtonColor: "#3085d6",
+	// 	cancelButtonColor: "#d33",
+	// 	confirmButtonText: "Si, Eliminar!",
+	// 	cancelButtonText: "Cancelar"
+	// }).then((result) => {
+	// 	if (result.isConfirmed) {
+	// 		router.patch(route('product.destroy', {product: id}), {}, {
+	// 			onSuccess: () => {
+	// 			}
+	// 		})
+	// 	}
+	// });
 }
 
 

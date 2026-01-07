@@ -8,7 +8,6 @@ import {useForm} from "@inertiajs/vue3";
 import ToggleButton from "@components/ToggleButton.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import {currencyI} from "@/Interfaces/CurrencyInterface";
-import Swal from "sweetalert2";
 import {useRoute} from "ziggy-js";
 
 
@@ -53,48 +52,48 @@ const submit = ()=>{
  * Eliminar la moneda
  */
 const destroy = (item: currencyI) => {
-    Swal.fire({
-        title: "Desea Eliminar?",
-        text: "Los Cambios Realizados Son Irreversible!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Si, Eliminar!",
-        cancelButtonText: "Cancelar",
-    }).then((result) => {
-        if (result.isConfirmed) {
-            router.delete(route('currency.destroy',{currency: item.uuid}),{
-                onSuccess: () => {
-
-                }
-            });
-        }
-    });
+    // Swal.fire({
+    //     title: "Desea Eliminar?",
+    //     text: "Los Cambios Realizados Son Irreversible!",
+    //     icon: "warning",
+    //     showCancelButton: true,
+    //     confirmButtonColor: "#3085d6",
+    //     cancelButtonColor: "#d33",
+    //     confirmButtonText: "Si, Eliminar!",
+    //     cancelButtonText: "Cancelar",
+    // }).then((result) => {
+    //     if (result.isConfirmed) {
+    //         router.delete(route('currency.destroy',{currency: item.uuid}),{
+    //             onSuccess: () => {
+    //
+    //             }
+    //         });
+    //     }
+    // });
 }
 
 /**
  *
  */
 const restore = (item: currencyI) => {
-    Swal.fire({
-        title: "Desea Activar?",
-        text: "Los Cambios Realizados Son Irreversible!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Si, Activar!",
-        cancelButtonText: "Cancelar",
-    }).then((result) => {
-        if (result.isConfirmed) {
-            router.put(route('currency.restore',{currency: item.uuid}),{},{
-                onSuccess: () => {
-
-                }
-            });
-        }
-    });
+    // Swal.fire({
+    //     title: "Desea Activar?",
+    //     text: "Los Cambios Realizados Son Irreversible!",
+    //     icon: "warning",
+    //     showCancelButton: true,
+    //     confirmButtonColor: "#3085d6",
+    //     cancelButtonColor: "#d33",
+    //     confirmButtonText: "Si, Activar!",
+    //     cancelButtonText: "Cancelar",
+    // }).then((result) => {
+    //     if (result.isConfirmed) {
+    //         router.put(route('currency.restore',{currency: item.uuid}),{},{
+    //             onSuccess: () => {
+    //
+    //             }
+    //         });
+    //     }
+    // });
 }
 </script>
 

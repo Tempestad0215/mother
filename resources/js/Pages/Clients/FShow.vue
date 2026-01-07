@@ -2,7 +2,6 @@
 import Pagination from "@components/Pagination.vue";
 import {clientBaseI} from "@/Interfaces/ClientInterface";
 import {router, useForm, usePage} from "@inertiajs/vue3";
-import Swal from "sweetalert2";
 import FormSearch from "@components/FormSearch.vue";
 import {paginationI} from "@/Interfaces/GlobalInterface";
 import {onMounted} from "vue";
@@ -82,25 +81,25 @@ const edit = (id:number) => {
 // Eliminar el resistros
 const destroy = (id:number) => {
 
-    // Enviar los datos
-    Swal.fire({
-        title: "Desea eliminar este registro?",
-        text: "Los cambios realizados son irreversible!",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Si, eliminar!",
-        cancelButtonText: "Cancelar",
-    }).then((result) => {
-        if (result.isConfirmed) {
-            router.delete(route('client.destroy', id), {
-                onSuccess: () => {
-                    // Mensaje de exito
-                }
-            })
-        }
-    });
+    // // Enviar los datos
+    // Swal.fire({
+    //     title: "Desea eliminar este registro?",
+    //     text: "Los cambios realizados son irreversible!",
+    //     icon: "question",
+    //     showCancelButton: true,
+    //     confirmButtonColor: "#3085d6",
+    //     cancelButtonColor: "#d33",
+    //     confirmButtonText: "Si, eliminar!",
+    //     cancelButtonText: "Cancelar",
+    // }).then((result) => {
+    //     if (result.isConfirmed) {
+    //         router.delete(route('client.destroy', id), {
+    //             onSuccess: () => {
+    //                 // Mensaje de exito
+    //             }
+    //         })
+    //     }
+    // });
 }
 
 /**
@@ -120,20 +119,20 @@ const field = (field: string) => {
 Descargar todos los clientes a excel
  */
 const download = async () => {
-    Swal.fire({
-        title: "Desea Exportar?",
-        text: "Todos los registro seran exportado en formato xlsx!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Si, Exportar!",
-        cancelButtonText: "Cancelar",
-    }).then((result) => {
-        if (result.isConfirmed) {
-            exportExcel(route('client.export-excel'), "clientes.xlsx");
-        }
-    });
+    // Swal.fire({
+    //     title: "Desea Exportar?",
+    //     text: "Todos los registro seran exportado en formato xlsx!",
+    //     icon: "warning",
+    //     showCancelButton: true,
+    //     confirmButtonColor: "#3085d6",
+    //     cancelButtonColor: "#d33",
+    //     confirmButtonText: "Si, Exportar!",
+    //     cancelButtonText: "Cancelar",
+    // }).then((result) => {
+    //     if (result.isConfirmed) {
+    //         exportExcel(route('client.export-excel'), "clientes.xlsx");
+    //     }
+    // });
 
 }
 

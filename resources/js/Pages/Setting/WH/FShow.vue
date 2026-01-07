@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import {warehouseBaseI} from "@/Interfaces/WarehouseInterface";
-import Swal from "sweetalert2";
 import {router} from "@inertiajs/vue3";
 import {useRoute} from "ziggy-js";
 
@@ -38,23 +37,23 @@ const edit = (item:warehouseBaseI) => {
  * @param item
  */
 const destroy = (item:warehouseBaseI) => {
-    Swal.fire({
-        title: "Desea Eliminar?",
-        text: "Los Cambios Realizados Son Irreversible!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Si, Eliminar!",
-        cancelButtonText: "Cancelar",
-    }).then((result) => {
-        if (result.isConfirmed) {
-            router.delete(route('wh.destroy',{wh: item.id}),{
-                onSuccess: () => {
-                }
-            });
-        }
-    });
+    // Swal.fire({
+    //     title: "Desea Eliminar?",
+    //     text: "Los Cambios Realizados Son Irreversible!",
+    //     icon: "warning",
+    //     showCancelButton: true,
+    //     confirmButtonColor: "#3085d6",
+    //     cancelButtonColor: "#d33",
+    //     confirmButtonText: "Si, Eliminar!",
+    //     cancelButtonText: "Cancelar",
+    // }).then((result) => {
+    //     if (result.isConfirmed) {
+    //         router.delete(route('wh.destroy',{wh: item.id}),{
+    //             onSuccess: () => {
+    //             }
+    //         });
+    //     }
+    // });
 }
 
 </script>

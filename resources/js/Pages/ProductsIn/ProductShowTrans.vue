@@ -4,7 +4,6 @@ import AppLayout from "@layout/AppLayout.vue";
 import {productTransI} from "@/Interfaces/ProductInterface";
 import FormSearch from "@components/FormSearch.vue";
 import InputError from "@components/InputError.vue";
-import Swal from "sweetalert2";
 import {useRoute} from "ziggy-js";
 
 
@@ -49,32 +48,32 @@ const submit = () => {
 
 //Eliminar la transaccion
 const destroy = (uuid:string) => {
-    Swal.fire({
-        title: "Desea Eliminar?",
-        text: "Los Cambios Realizados Son Irreversible!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Si, Eliminar!",
-        cancelButtonText: "Cancelar"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            router.patch(route('in.destroy',{trans: uuid}),{},{
-                preserveScroll: true,
-                preserveState: true,
-                onSuccess: () => {
-
-                },
-                onError: () => {
-                    //Limpiar el error luego de 5 Segundo
-                    setTimeout(() => {
-                        form.clearErrors('general');
-                    },5000)
-                }
-            });
-        }
-    });
+    // Swal.fire({
+    //     title: "Desea Eliminar?",
+    //     text: "Los Cambios Realizados Son Irreversible!",
+    //     icon: "warning",
+    //     showCancelButton: true,
+    //     confirmButtonColor: "#3085d6",
+    //     cancelButtonColor: "#d33",
+    //     confirmButtonText: "Si, Eliminar!",
+    //     cancelButtonText: "Cancelar"
+    // }).then((result) => {
+    //     if (result.isConfirmed) {
+    //         router.patch(route('in.destroy',{trans: uuid}),{},{
+    //             preserveScroll: true,
+    //             preserveState: true,
+    //             onSuccess: () => {
+    //
+    //             },
+    //             onError: () => {
+    //                 //Limpiar el error luego de 5 Segundo
+    //                 setTimeout(() => {
+    //                     form.clearErrors('general');
+    //                 },5000)
+    //             }
+    //         });
+    //     }
+    // });
 
 
 }

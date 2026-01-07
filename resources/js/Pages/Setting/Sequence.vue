@@ -5,10 +5,8 @@ import LinkHeader from "@components/LinkHeader.vue";
 import TextInput from "@components/TextInput.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import SecondaryButton from "@components/SecondaryButton.vue";
-import {successHttp} from "@/Global/Alert";
 import {sequenceDataI} from "@/Interfaces/SettingInterface";
 import {onMounted, reactive} from "vue";
-import Swal from "sweetalert2";
 import ErrorComponent from "@components/ErrorComponent.vue";
 import TabLink from "@components/TabLink.vue";
 import {useRoute} from "ziggy-js";
@@ -86,7 +84,7 @@ const submit = ():void => {
     form.post(route('sequence.store'),{
         onSuccess:() => {
             //Mensjae de exito
-            successHttp('Registro Guiardado Correctamente');
+            // successHttp('Registro Guiardado Correctamente');
 
 
 
@@ -122,26 +120,26 @@ const edit = (id:number):void => {
  * Eliminar la secuencia
  */
 const destroy = (id:number):void => {
-    Swal.fire({
-        title: "Desea Eliminar?",
-        text: "Los Cambios Realizados Son Irreversible!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Si, Eliminar!",
-        cancelButtonText: "Cancelar"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            router.delete(route('sequence.destroy',{sequence: id}),{
-                preserveState: true,
-                preserveScroll: true,
-                onSuccess:() => {
-                    successHttp('Registro Eliminado Correctamente')
-                },
-            });
-        }
-    });
+    // Swal.fire({
+    //     title: "Desea Eliminar?",
+    //     text: "Los Cambios Realizados Son Irreversible!",
+    //     icon: "warning",
+    //     showCancelButton: true,
+    //     confirmButtonColor: "#3085d6",
+    //     cancelButtonColor: "#d33",
+    //     confirmButtonText: "Si, Eliminar!",
+    //     cancelButtonText: "Cancelar"
+    // }).then((result) => {
+    //     if (result.isConfirmed) {
+    //         router.delete(route('sequence.destroy',{sequence: id}),{
+    //             preserveState: true,
+    //             preserveScroll: true,
+    //             onSuccess:() => {
+    //                 successHttp('Registro Eliminado Correctamente')
+    //             },
+    //         });
+    //     }
+    // });
 
 
 }

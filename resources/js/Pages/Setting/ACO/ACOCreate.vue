@@ -6,7 +6,6 @@ import {ref} from "vue";
 import InputError from "@components/InputError.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import {acoBaseI} from "@/Interfaces/AccountCounterInterface";
-import Swal from "sweetalert2";
 import TabLink from "@components/TabLink.vue";
 import {useRoute} from "ziggy-js";
 
@@ -76,24 +75,24 @@ const edit = (item:acoBaseI) => {
 }
 
 const destroy = (item:acoBaseI) => {
-    Swal.fire({
-        title: "Desea Eliminar?",
-        text: "Los Cambios Realizados Son Irreversible!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Si, Eliminar!",
-        cancelButtonText: "Cancelar",
-    }).then((result) => {
-        if (result.isConfirmed) {
-            router.delete(route('aco.destroy',{aco: item.id}),{
-                onSuccess: () => {
-                    // successHttp('Datos Eliminado Correctamente');
-                }
-            });
-        }
-    });
+    // Swal.fire({
+    //     title: "Desea Eliminar?",
+    //     text: "Los Cambios Realizados Son Irreversible!",
+    //     icon: "warning",
+    //     showCancelButton: true,
+    //     confirmButtonColor: "#3085d6",
+    //     cancelButtonColor: "#d33",
+    //     confirmButtonText: "Si, Eliminar!",
+    //     cancelButtonText: "Cancelar",
+    // }).then((result) => {
+    //     if (result.isConfirmed) {
+    //         router.delete(route('aco.destroy',{aco: item.id}),{
+    //             onSuccess: () => {
+    //                 // successHttp('Datos Eliminado Correctamente');
+    //             }
+    //         });
+    //     }
+    // });
 }
 
 

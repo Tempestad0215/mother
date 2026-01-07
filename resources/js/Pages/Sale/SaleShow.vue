@@ -7,7 +7,6 @@ import {getMoney, printPdf} from "@/Global/Helpers";
 import Pagination from "@components/Pagination.vue";
 import InputError from "@components/InputError.vue";
 import TabLink from "@components/TabLink.vue";
-import Swal from "sweetalert2";
 import {useRoute} from "ziggy-js";
 
 
@@ -56,13 +55,13 @@ const printFact =  (item:saleI) => {
     {
         printPdf(route('invoice.belt.sale',{sale: item.id}));
     }else{
-        Swal.fire({
-            title: "Error",
-            text: "Esta orden no esta cerrada",
-            icon: "info",
-            timer: 3000,
-            position: "center"
-        });
+        // Swal.fire({
+        //     title: "Error",
+        //     text: "Esta orden no esta cerrada",
+        //     icon: "info",
+        //     timer: 3000,
+        //     position: "center"
+        // });
     }
 }
 

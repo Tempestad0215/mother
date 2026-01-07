@@ -4,7 +4,6 @@ import {paginationI} from "@/Interfaces/GlobalInterface";
 import {entryProductI} from "@/Interfaces/EntryTransInterface";
 import FormSearch from "@components/FormSearch.vue";
 import {router, useForm} from "@inertiajs/vue3";
-import Swal from "sweetalert2";
 import {useRoute} from "ziggy-js";
 
 
@@ -48,23 +47,23 @@ const edit = (item:entryProductI) => {
  * @param item
  */
 const destroy = (item:entryProductI) => {
-    Swal.fire({
-        title: "Desea Eliminar?",
-        text: "Los Cambios Realizados Son Irreversible!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Si, Eliminar!",
-        cancelButtonText: "Cancelar",
-    }).then((result) => {
-        if (result.isConfirmed) {
-            router.delete(route('entry.destroy',{entry: item.id}),{
-                onSuccess: () => {
-                }
-            });
-        }
-    });
+    // Swal.fire({
+    //     title: "Desea Eliminar?",
+    //     text: "Los Cambios Realizados Son Irreversible!",
+    //     icon: "warning",
+    //     showCancelButton: true,
+    //     confirmButtonColor: "#3085d6",
+    //     cancelButtonColor: "#d33",
+    //     confirmButtonText: "Si, Eliminar!",
+    //     cancelButtonText: "Cancelar",
+    // }).then((result) => {
+    //     if (result.isConfirmed) {
+    //         router.delete(route('entry.destroy',{entry: item.id}),{
+    //             onSuccess: () => {
+    //             }
+    //         });
+    //     }
+    // });
 }
 
 /**

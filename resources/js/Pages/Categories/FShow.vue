@@ -4,7 +4,6 @@ import FormSearch from "@components/FormSearch.vue";
 import {paginationI} from "@/Interfaces/GlobalInterface";
 import {categoryBaseI} from "@/Interfaces/CategoriesInterface";
 import {router, useForm} from "@inertiajs/vue3";
-import Swal from "sweetalert2";
 import {onMounted} from "vue";
 import {exportExcel} from "@/Global/Helpers";
 import {useRoute} from "ziggy-js";
@@ -44,20 +43,20 @@ const search = () => {
  * @param item
  */
 const edit = (item:categoryBaseI) => {
-    Swal.fire({
-        title: `Desea editar la categoria: ${item.name}?`,
-        text: "Estos Datos Seran Editada!",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Si, Editar!",
-        cancelButtonText: "Cancelar"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            router.get(route('category.edit',{category: item.id}));
-        }
-    });
+    // Swal.fire({
+    //     title: `Desea editar la categoria: ${item.name}?`,
+    //     text: "Estos Datos Seran Editada!",
+    //     icon: "question",
+    //     showCancelButton: true,
+    //     confirmButtonColor: "#3085d6",
+    //     cancelButtonColor: "#d33",
+    //     confirmButtonText: "Si, Editar!",
+    //     cancelButtonText: "Cancelar"
+    // }).then((result) => {
+    //     if (result.isConfirmed) {
+    //         router.get(route('category.edit',{category: item.id}));
+    //     }
+    // });
 }
 
 /**
@@ -66,25 +65,25 @@ const edit = (item:categoryBaseI) => {
  */
 const destroy = (item:categoryBaseI) => {
     // Preguntar antes de eliminar
-    Swal.fire({
-        title: `Desea eliminar la categoria: ${item.name}?`,
-        text: "Los cambios realizados son irreversible!",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Si, eliminar!",
-        cancelButtonText: "Cancelar"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            form.patch(route('category.destroy',{category: item.id}),{
-                onSuccess: () => {
-                    form.reset();
-                }
-
-            })
-        }
-    });
+    // Swal.fire({
+    //     title: `Desea eliminar la categoria: ${item.name}?`,
+    //     text: "Los cambios realizados son irreversible!",
+    //     icon: "question",
+    //     showCancelButton: true,
+    //     confirmButtonColor: "#3085d6",
+    //     cancelButtonColor: "#d33",
+    //     confirmButtonText: "Si, eliminar!",
+    //     cancelButtonText: "Cancelar"
+    // }).then((result) => {
+    //     if (result.isConfirmed) {
+    //         form.patch(route('category.destroy',{category: item.id}),{
+    //             onSuccess: () => {
+    //                 form.reset();
+    //             }
+    //
+    //         })
+    //     }
+    // });
 }
 
 
@@ -103,20 +102,20 @@ const field = (field: string) => {
 Descargar todos los clientes a excel
  */
 const download = async () => {
-    Swal.fire({
-        title: "Desea Exportar?",
-        text: "Todos los registro seran exportado en formato xlsx!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Si, Exportar!",
-        cancelButtonText: "Cancelar",
-    }).then((result) => {
-        if (result.isConfirmed) {
-            exportExcel(route('category.export-excel'), "categorias.xlsx");
-        }
-    });
+    // Swal.fire({
+    //     title: "Desea Exportar?",
+    //     text: "Todos los registro seran exportado en formato xlsx!",
+    //     icon: "warning",
+    //     showCancelButton: true,
+    //     confirmButtonColor: "#3085d6",
+    //     cancelButtonColor: "#d33",
+    //     confirmButtonText: "Si, Exportar!",
+    //     cancelButtonText: "Cancelar",
+    // }).then((result) => {
+    //     if (result.isConfirmed) {
+    //         exportExcel(route('category.export-excel'), "categorias.xlsx");
+    //     }
+    // });
 
 }
 

@@ -2,7 +2,6 @@
 import Pagination from "@components/Pagination.vue";
 import FormSearch from "@components/FormSearch.vue";
 import {supplierI} from "@/Interfaces/SupplierInterface";
-import Swal from "sweetalert2";
 import {router, useForm} from "@inertiajs/vue3";
 import {ref, Ref} from "vue";
 import {paginationI} from "@/Interfaces/GlobalInterface";
@@ -52,23 +51,23 @@ const edit = (item:supplierI) => {
  */
 const destroy = (item:supplierI) => {
 
-    Swal.fire({
-        title: `Desea Eliminar el suplidor : ${item.company_name}?`,
-        text: "Los cambios realizados son irreversible!",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Si, eliminar!",
-        cancelButtonText: "Cancelar"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            form.delete(route('supplier.destroy',{supplier: item.id}),{
-                onSuccess: () => {
-                }
-            });
-        }
-    });
+    // Swal.fire({
+    //     title: `Desea Eliminar el suplidor : ${item.company_name}?`,
+    //     text: "Los cambios realizados son irreversible!",
+    //     icon: "question",
+    //     showCancelButton: true,
+    //     confirmButtonColor: "#3085d6",
+    //     cancelButtonColor: "#d33",
+    //     confirmButtonText: "Si, eliminar!",
+    //     cancelButtonText: "Cancelar"
+    // }).then((result) => {
+    //     if (result.isConfirmed) {
+    //         form.delete(route('supplier.destroy',{supplier: item.id}),{
+    //             onSuccess: () => {
+    //             }
+    //         });
+    //     }
+    // });
 }
 
 /**
@@ -100,20 +99,20 @@ const field = (field:string) => {
 Descargar todos los clientes a excel
  */
 const download = async () => {
-    Swal.fire({
-        title: "Desea Exportar?",
-        text: "Todos los registro seran exportado en formato xlsx!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Si, Exportar!",
-        cancelButtonText: "Cancelar",
-    }).then((result) => {
-        if (result.isConfirmed) {
-            exportExcel(route('supplier.export-excel'), "suplidores.xlsx");
-        }
-    });
+    // Swal.fire({
+    //     title: "Desea Exportar?",
+    //     text: "Todos los registro seran exportado en formato xlsx!",
+    //     icon: "warning",
+    //     showCancelButton: true,
+    //     confirmButtonColor: "#3085d6",
+    //     cancelButtonColor: "#d33",
+    //     confirmButtonText: "Si, Exportar!",
+    //     cancelButtonText: "Cancelar",
+    // }).then((result) => {
+    //     if (result.isConfirmed) {
+    //         exportExcel(route('supplier.export-excel'), "suplidores.xlsx");
+    //     }
+    // });
 
 }
 
