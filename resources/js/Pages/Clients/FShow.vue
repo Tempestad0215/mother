@@ -3,7 +3,6 @@ import Pagination from "@components/Pagination.vue";
 import {clientBaseI} from "@/Interfaces/ClientInterface";
 import {router, useForm, usePage} from "@inertiajs/vue3";
 import Swal from "sweetalert2";
-import {successHttp} from "@/Global/Alert";
 import FormSearch from "@components/FormSearch.vue";
 import {paginationI} from "@/Interfaces/GlobalInterface";
 import {onMounted} from "vue";
@@ -98,7 +97,6 @@ const destroy = (id:number) => {
             router.delete(route('client.destroy', id), {
                 onSuccess: () => {
                     // Mensaje de exito
-                    successHttp('Datos eliminado correctamente');
                 }
             })
         }

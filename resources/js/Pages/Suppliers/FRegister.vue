@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3';
 import InputLabel from '@/Components/InputLabel.vue';
-import { successHttp } from '@/Global/Alert';
 import TextInput from '@components/TextInput.vue';
 import InputError from '@components/InputError.vue';
 import ActionMessage from '@components/ActionMessage.vue';
@@ -80,14 +79,14 @@ const submit = () => {
     {
         form.patch(route('supplier.update', {supplier: form.id}),{
             onSuccess:()=>{
-                successHttp('Datos actualizado correctamente');
+
             }
         });
     }else{
         // Enviar los datos
         form.post(route('supplier.store'),{
             onSuccess:()=>{
-                successHttp('Datos registrado correctamente');
+
                 form.reset();
             }
         });

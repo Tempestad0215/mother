@@ -5,7 +5,6 @@ import Pagination from "@components/Pagination.vue";
 import {productBaseI, productI} from "@/Interfaces/ProductInterface";
 import {router, useForm, usePage} from "@inertiajs/vue3";
 import Swal from "sweetalert2";
-import {successHttp} from "@/Global/Alert";
 import {getMoney} from "@/Global/Helpers";
 import {onMounted} from "vue";
 import {useRoute} from "ziggy-js";
@@ -106,7 +105,6 @@ const detroy = (id: number) => {
 		if (result.isConfirmed) {
 			router.patch(route('product.destroy', {product: id}), {}, {
 				onSuccess: () => {
-					successHttp('Datos eliminado correctamente');
 				}
 			})
 		}

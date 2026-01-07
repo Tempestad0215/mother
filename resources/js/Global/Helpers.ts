@@ -1,6 +1,5 @@
-import Swal from "sweetalert2";
 import axios from "axios";
-import {errorHttp} from "@/Global/Alert";
+// import {errorHttp} from "@/Global/Alert";
 import {rncClientI} from "@/Interfaces/ClientInterface";
 import {useRoute} from "ziggy-js";
 
@@ -102,41 +101,41 @@ export const getMoney = (value:number = 0) => {
  * Busca el RNC y devuelve un string
  * @param data
  */
-export const getRncHelper = async (data: string):Promise<"SUSPENDIDO" | "ERROR" | "CANCELLED" | rncClientI> => {
-
-    //Preguntar para buscar los datos
-    const result = await Swal.fire({
-        title: "Desea Buscar Contribuyente?",
-        text: "Por favor, elija la Opcion!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Si, Buscar!",
-        cancelButtonText: "Cancelar"
-    });
-
-    //Verificar
-    if (result.isConfirmed){
-        let info:string = data.replace(/-/g, "");
-
-        try {
-            const response = await axios.get(route('sequence.getRnc', { rnc: info }));
-            const status = response.data.status;
-
-            if (status === "SUSPENDIDO") {
-                return "SUSPENDIDO";
-            } else {
-                return response.data;
-            }
-        } catch (error) {
-            return "ERROR";
-        }
-    } else {
-        return "CANCELLED";
-    }
-
-}
+// export const getRncHelper = async (data: string):Promise<"SUSPENDIDO" | "ERROR" | "CANCELLED" | rncClientI> => {
+//
+//     //Preguntar para buscar los datos
+//     const result = await Swal.fire({
+//         title: "Desea Buscar Contribuyente?",
+//         text: "Por favor, elija la Opcion!",
+//         icon: "warning",
+//         showCancelButton: true,
+//         confirmButtonColor: "#3085d6",
+//         cancelButtonColor: "#d33",
+//         confirmButtonText: "Si, Buscar!",
+//         cancelButtonText: "Cancelar"
+//     });
+//
+//     //Verificar
+//     if (result.isConfirmed){
+//         let info:string = data.replace(/-/g, "");
+//
+//         try {
+//             const response = await axios.get(route('sequence.getRnc', { rnc: info }));
+//             const status = response.data.status;
+//
+//             if (status === "SUSPENDIDO") {
+//                 return "SUSPENDIDO";
+//             } else {
+//                 return response.data;
+//             }
+//         } catch (error) {
+//             return "ERROR";
+//         }
+//     } else {
+//         return "CANCELLED";
+//     }
+//
+// }
 
 
 /**
@@ -260,7 +259,7 @@ export const printPdf = (urlName: string) => {
 
     //Error de la cosas
     if (!printWindow) {
-        errorHttp('No se Puede Abrir La Ventana');
+        // errorHttp('No se Puede Abrir La Ventana');
         return;
     }
 
@@ -293,6 +292,6 @@ export const exportExcel = async (path: string, fielName: string) => {
         //     Liberar la memoria
         window.URL.revokeObjectURL(url);
     }catch(error) {
-        errorHttp("Error al intentar descargar el docuemento")
+        // errorHttp("Error al intentar descargar el docuemento")
     }
 }

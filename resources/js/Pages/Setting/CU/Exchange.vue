@@ -6,7 +6,6 @@ import {currencyDayI, currencyI, monthDayI} from "@/Interfaces/CurrencyInterface
 import {getYear, moneyConfig, month} from "@/Global/Helpers";
 import {useForm} from "@inertiajs/vue3";
 import {Money} from "v-money3";
-import { errorHttp, successHttp } from "@/Global/Alert";
 import {useRoute} from "ziggy-js";
 
 
@@ -101,7 +100,7 @@ const days = ()=>{
         }
     })
     .catch(err => {
-        errorHttp(err.message);
+
     });
 }
 
@@ -116,13 +115,13 @@ const submit = () => {
         if(res.status === 200)
         {
             //Mensaje de exito
-            successHttp('Datos Actualizado Correctamente');
+
             emit('closeWindow');
         }
     })
     .catch((err)=>{
         // Mensaje de error
-        errorHttp(err.message);
+
     });
 }
 

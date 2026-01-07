@@ -4,7 +4,6 @@ import InputLabel from "@components/InputLabel.vue";
 import TextInput from "@components/TextInput.vue";
 import InputError from "@components/InputError.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
-import {successHttp} from "@/Global/Alert";
 import {warehouseBaseI} from "@/Interfaces/WarehouseInterface";
 import {watch} from "vue";
 import {useRoute} from "ziggy-js";
@@ -58,13 +57,11 @@ const submit = () => {
         form.put(route('wh.update',{wh: form.id}),{
             onSuccess: () => {
                 form.reset()
-                successHttp('Datos Actualizado Correctamente');
             }
         });
     }else{
         form.post(route('wh.store'),{
             onSuccess: () => {
-                successHttp('Datos Registrado Correctamente');
                 form.reset();
             }
         });

@@ -5,7 +5,6 @@ import {saleKey} from "@/utils/keys";
 import {inject} from "vue";
 import {infoSaleI} from "@/Interfaces/SaleInterface";
 import Swal from "sweetalert2";
-import {successHttp} from "@/Global/Alert";
 import {PreciseCalculator} from "@/utils/Decimal";
 import {useRoute} from "ziggy-js";
 

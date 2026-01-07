@@ -1,7 +1,6 @@
 import './bootstrap';
 import '../css/app.css';
 // If you don't need the styles, do not connect
-import 'sweetalert2/dist/sweetalert2.min.css';
 // import 'vue-final-modal/style.css'
 import 'primeicons/primeicons.css'// THEME (elige uno)
 
@@ -34,7 +33,6 @@ createInertiaApp({
 			.use(vfm)
 			.use(money as any)
 			.use(ZiggyVue, Ziggy)
-			.use(VueSweetalert2)
             .use(PrimeVue,{
                 theme:{
                     preset: Aura

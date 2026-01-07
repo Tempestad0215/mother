@@ -4,7 +4,6 @@ import TextInput from "@components/TextInput.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import InputError from "@components/InputError.vue";
 import {Money} from "v-money3";
-import {errorHttp, successHttp} from "@/Global/Alert";
 import {productBaseI, productI} from "@/Interfaces/ProductInterface";
 import {ref, watch} from "vue";
 import axios from "axios";
@@ -60,7 +59,7 @@ watch(productName, (newValue) => {
                 products.value = res.data;
             })
             .catch(() => {
-                errorHttp('Error al Obtenr los datos');
+
             });
     }
 });
@@ -87,7 +86,6 @@ const submit = ()=>{
     }else{
         form.post(route('entry.store'),{
             onSuccess: () => {
-                successHttp('Datos Registrado Correctamente');
                 form.reset();
                 productName.value = '';
             }

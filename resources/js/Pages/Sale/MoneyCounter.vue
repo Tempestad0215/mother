@@ -10,7 +10,6 @@ import {ref, Ref} from "vue";
 import ShowPdf from "@components/ShowPdf.vue";
 import {Money} from "v-money3";
 import TabLink from "@components/TabLink.vue";
-import {successHttp} from "@/Global/Alert";
 import {useRoute} from "ziggy-js";
 
 
@@ -106,7 +105,6 @@ const submit = () => {
     axios.post(route('sale.report.store'),form)
         .then(()=> {
             processing.value = false;
-            successHttp('Registrado Creado Correctamente');
         }).catch((err)=> {
 
             errorValue.value = err.response.data.errors;

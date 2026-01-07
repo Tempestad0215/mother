@@ -2,7 +2,7 @@
 import {Link, router} from "@inertiajs/vue3";
 import { Ref, ref} from "vue";
 import {useRoute} from "ziggy-js";
-
+import {Avatar, Popover, Menu} from "primevue";
 
 
 const route = useRoute();
@@ -10,8 +10,14 @@ defineProps<{
     url: string;
 }>();
 
+const op = ref()
 //Par mostar la ventana
 const show:Ref<boolean> = ref(false);
+const items = ref([
+    {label: 'Perfil', icon: 'pi pi-user-edit'},
+    {label: 'Ajustes', icon: 'pi pi-cog'},
+    {label: 'salir', icon: 'pi pi-sign-out'},
+])
 
 
 /**
@@ -21,49 +27,23 @@ const logOut = () => {
     router.post(route('logout'));
 }
 
+const toggle = (event:Event) => {
+    op.value.toggle(event)
+}
+
 
 </script>
 
 <template>
-    <div class="mt-3 relative ">
-        <img
-            @click="show = !show"
-            class="rounded-full w-[5rem] mx-auto cursor-pointer"
-            :src="url ? url : ''"
-            alt="Imagen de nombre">
+    <div class="mt-3 relative text-center ">
+        <Avatar
+            @click="toggle"
+            size="large"
+            :image="url" shape="circle" />
 
-
-        <Transition>
-            <div
-                v-if="show"
-                ref="menuImageRef"
-                class=" absolute top-[2rem] left-[7.5rem] w-52 rounded-md bg-gray-100 z-40 border border-orange-500">
-                <ol
-                    class=" text-xl text-center select-none rounded-md ">
-                    <Link
-                        class="image-link"
-                        :href="route('profile.show')">
-                        Perfil
-                    </Link>
-                    <Link
-                        class="image-link"
-                        :href="route('register')">
-                        Usuario
-                    </Link>
-                    <Link
-                        class="image-link"
-                        :href="route('setting.index')">
-                        Ajuste
-                    </Link>
-                    <button
-                        class="image-link w-full"
-                        @click="logOut">
-                        Salir
-                    </button>
-
-                </ol>
-            </div>
-        </Transition>
+        <Popover ref="op" class="p-0!"  >
+            <Menu :model="items" />
+        </Popover>
     </div>
 
 

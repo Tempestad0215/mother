@@ -5,7 +5,6 @@ import {paginationI} from "@/Interfaces/GlobalInterface";
 import {categoryBaseI} from "@/Interfaces/CategoriesInterface";
 import {router, useForm} from "@inertiajs/vue3";
 import Swal from "sweetalert2";
-import {successHttp} from "@/Global/Alert";
 import {onMounted} from "vue";
 import {exportExcel} from "@/Global/Helpers";
 import {useRoute} from "ziggy-js";
@@ -80,7 +79,6 @@ const destroy = (item:categoryBaseI) => {
         if (result.isConfirmed) {
             form.patch(route('category.destroy',{category: item.id}),{
                 onSuccess: () => {
-                    successHttp('Datos eliminado correctamente');
                     form.reset();
                 }
 

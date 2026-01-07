@@ -7,7 +7,6 @@ import TextInput from "@components/TextInput.vue";
 import {useForm} from "@inertiajs/vue3";
 import ToggleButton from "@components/ToggleButton.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
-import {successHttp} from "@/Global/Alert";
 import {currencyI} from "@/Interfaces/CurrencyInterface";
 import Swal from "sweetalert2";
 import {useRoute} from "ziggy-js";
@@ -45,7 +44,6 @@ Funcions
 const submit = ()=>{
     form.post(route('currency.store'),{
         onSuccess: ()=>{
-            successHttp('Datos Registrado Correctamente');
             form.reset();
         }
     });
@@ -68,7 +66,7 @@ const destroy = (item: currencyI) => {
         if (result.isConfirmed) {
             router.delete(route('currency.destroy',{currency: item.uuid}),{
                 onSuccess: () => {
-                    successHttp('Datos Eliminado Correctamente');
+
                 }
             });
         }
@@ -92,7 +90,7 @@ const restore = (item: currencyI) => {
         if (result.isConfirmed) {
             router.put(route('currency.restore',{currency: item.uuid}),{},{
                 onSuccess: () => {
-                    successHttp('Registro Activado Correctamente');
+
                 }
             });
         }

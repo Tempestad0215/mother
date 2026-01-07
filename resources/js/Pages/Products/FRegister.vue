@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import PrimaryButton from '@/Components/PrimaryButton.vue';
-import {loadingAlert, showPDf, successHttp} from '@/Global/Alert';
 import {productBaseI, ProductOptionsI} from '@/Interfaces/ProductInterface';
 import {supplierI} from '@/Interfaces/SupplierInterface';
 import {useForm, usePage} from '@inertiajs/vue3';
@@ -140,16 +139,12 @@ const submit = () => {
 	if (propsW.update || form.update) {
 		form.patch(route('product.update', form.id), {
 			onSuccess: () => {
-				successHttp('Datos actualizado correctamente')
-
 			}
 		})
 	} else {
 		// Formulario para guardar los productos
 		form.post(route('product.store'), {
 			onSuccess: () => {
-				// Datos de la alerta
-				successHttp('Datos registrado correctamente')
 				form.reset()
 			}
 		});
@@ -211,7 +206,7 @@ async function printLabel() {
 
 	try {
 
-		await showPDf('Etiqueta', route('invoice.label', {id: form.id}))
+        //await showPDf('Etiqueta', route('invoice.label', {id: form.id}))
 
 	} catch (error) {
 

@@ -11,6 +11,7 @@
         "forceConsistentCasingInFileNames":true,
         "noEmit":true,
         "isolatedModules":true,
+        "lib": ["Es2020", "DOM"],
         "types": ["vite/client","vue-sweetalert2"],
         "baseUrl": ".",
         "paths": {
@@ -23,5 +24,8 @@
         "resources/js/**/*.ts",
         "resources/js/**/*.d.ts",
         "resources/js/**/*.vue",
+        "env.d.ts",          // ← añade tu archivo de shims aquí
+        "global.d.ts"
+
     ]
 }

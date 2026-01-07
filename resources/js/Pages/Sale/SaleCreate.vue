@@ -6,7 +6,6 @@ import {productI} from "@/Interfaces/ProductInterface";
 import {printPdf} from "@/Global/Helpers";
 import {clientBaseI} from "@/Interfaces/ClientInterface";
 import PrimaryButton from "@components/PrimaryButton.vue";
-import {errorHttp, successHttp} from "@/Global/Alert";
 import axios from "axios";
 import {CreateSaleI, creditNotesSaleI, infoSaleI, saleDataI} from "@/Interfaces/SaleInterface";
 import {invoiceTypeI} from "@/Interfaces/SettingInterface";
@@ -173,7 +172,7 @@ function createCreditNotes() {
 			}
 		})
 		.catch(err => {
-			errorHttp('Error :' + err.response.data.message);
+
 		});
 }
 
@@ -210,7 +209,6 @@ async function createSale() {
 			//Mostrar el pdf de impresion
 			printPdf(route('invoice.belt.sale', {sale: res.data.pdfUuid}));
 		}
-		successHttp('Registro Actualizado Correctamente');
 		//Limpiar el fomulario
 		form.reset();
 		showReturn.value = false;
@@ -234,7 +232,6 @@ async function updateSale() {
 			printPdf(route('invoice.belt.sale', {sale: res.data.pdfUuid}));
 		}
 		//Limpiar el fomulario
-		successHttp('Registro Creado Correctamente');
 		form.reset();
 		showReturn.value = false;
 		//Recargar los datos

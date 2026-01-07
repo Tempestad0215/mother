@@ -12,7 +12,7 @@ import {PanelMenu, ScrollPanel} from "primevue";
 // ✅ Elimina: const route = useRoute();
 
 const route = useRoute();
-const { props } = usePage();
+const {props} = usePage();
 
 defineProps({
     title: String,
@@ -21,7 +21,7 @@ defineProps({
 const menuImageRef = ref<HTMLElement | null>(null);
 const showExchange = ref<boolean>(false);
 const showOption = ref<boolean>(false);
-const isHiddenMenu = ref<boolean>(true);
+const isHiddenMenu = ref<boolean>(false);
 
 
 // ✅ Menú optimizado para POS
@@ -109,8 +109,8 @@ onUnmounted(() => {
             class="absolute top-3 text-3xl cursor-pointer text-red-500 z-50 ease-in-out  duration-200 transition-[left, transform] "
             :icon="faArrowCircleLeft"
             :class="{
-                'left-[10rem]': !isHiddenMenu,
-                'left-[2rem] rotate-180': isHiddenMenu
+                'left-40': !isHiddenMenu,
+                'left-8 rotate-180': isHiddenMenu
               }"
 
         />

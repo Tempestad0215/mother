@@ -9,10 +9,7 @@ import ActionMessage from '@/Components/ActionMessage.vue';
 import {userI, userPaginationI} from "@/Interfaces/UserInterface";
 import {computed} from "vue";
 import Swal from "sweetalert2";
-import {successHttp} from "@/Global/Alert";
 import FormSearch from "@components/FormSearch.vue";
-import Pagination from "@components/Pagination.vue";
-import {paginationJoin} from "@/Global/Helpers";
 import ToggleButton from "@components/ToggleButton.vue";
 import TabLink from "@components/TabLink.vue";
 import {useRoute} from "ziggy-js";
@@ -80,7 +77,7 @@ const submit = () => {
     {
         form.patch(route('user.update',{user: form.id}),{
             onSuccess: () => {
-                successHttp('Datos Actualizado Correctamente');
+
             }
         })
     }else{
@@ -117,7 +114,7 @@ const destroy = (item:userI) => {
         if (result.isConfirmed) {
             router.patch(route('user.destroy',{user: item.id}),{},{
                 onSuccess: () => {
-                    successHttp('Datos eliminado correctamente');
+
                 }
             });
         }

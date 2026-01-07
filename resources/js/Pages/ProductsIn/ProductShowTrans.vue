@@ -2,11 +2,8 @@
 import {Head, router, useForm} from "@inertiajs/vue3";
 import AppLayout from "@layout/AppLayout.vue";
 import {productTransI} from "@/Interfaces/ProductInterface";
-import { getMoney} from "@/Global/Helpers";
 import FormSearch from "@components/FormSearch.vue";
-import Pagination from "@components/Pagination.vue";
 import InputError from "@components/InputError.vue";
-import {successHttp} from "@/Global/Alert";
 import Swal from "sweetalert2";
 import {useRoute} from "ziggy-js";
 
@@ -67,7 +64,7 @@ const destroy = (uuid:string) => {
                 preserveScroll: true,
                 preserveState: true,
                 onSuccess: () => {
-                    successHttp('Documento Eliminado Correctamente');
+
                 },
                 onError: () => {
                     //Limpiar el error luego de 5 Segundo

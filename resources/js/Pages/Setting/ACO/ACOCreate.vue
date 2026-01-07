@@ -5,7 +5,6 @@ import TextInput from "@components/TextInput.vue";
 import {ref} from "vue";
 import InputError from "@components/InputError.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
-import {successHttp} from "@/Global/Alert";
 import {acoBaseI} from "@/Interfaces/AccountCounterInterface";
 import Swal from "sweetalert2";
 import TabLink from "@components/TabLink.vue";
@@ -48,13 +47,13 @@ const submit = () => {
     if (form.update) {
         form.put(route('aco.update',{aco: form.id}),{
             onSuccess: () => {
-                successHttp('Datos Actualizado Correctamente');
+                // successHttp('Datos Actualizado Correctamente');
             }
         });
     }else{
         form.post(route('aco.store'),{
             onSuccess: () => {
-                successHttp('Datos Registrado Correctamente');
+                // successHttp('Datos Registrado Correctamente');
                 form.reset();
             }
         });
@@ -90,7 +89,7 @@ const destroy = (item:acoBaseI) => {
         if (result.isConfirmed) {
             router.delete(route('aco.destroy',{aco: item.id}),{
                 onSuccess: () => {
-                    successHttp('Datos Eliminado Correctamente');
+                    // successHttp('Datos Eliminado Correctamente');
                 }
             });
         }

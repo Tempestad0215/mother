@@ -5,7 +5,6 @@ import PrimaryButton from "@components/PrimaryButton.vue";
 import InputError from "@components/InputError.vue";
 import TextInput from "@components/TextInput.vue";
 import {useForm} from "@inertiajs/vue3";
-import {successHttp} from "@/Global/Alert";
 import {categoryBaseI} from "@/Interfaces/CategoriesInterface";
 import {onMounted} from "vue";
 import {useRoute} from "ziggy-js";
@@ -48,13 +47,13 @@ const submit = () => {
     {
         form.patch(route('category.update',{category: form.id}),{
             onSuccess: ()=>{
-                successHttp('Datos actualizado correctamente');
+
             }
         })
     }else {
         form.post(route('category.store'),{
             onSuccess:()=>{
-                successHttp('Datos registrado correctamente');
+
                 form.reset();
             }
         });

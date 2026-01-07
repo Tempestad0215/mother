@@ -9,7 +9,6 @@ import InputError from '@components/InputError.vue';
 import FloatBox from '@components/FloatBox.vue';
 import {onMounted, Ref, ref} from 'vue';
 import FRegister from '@/Pages/Suppliers/FRegister.vue';
-import {successHttp} from "@/Global/Alert";
 import FormSearch from "@components/FormSearch.vue";
 import {productFullI, productI, productTransI} from "@/Interfaces/ProductInterface";
 import Pagination from "@components/Pagination.vue";
@@ -142,7 +141,7 @@ const submit = () => {
             tax_rate: formatNumber(data.tax_rate)
         })).patch(route('in.update',{trans: form.tran_id}),{
             onSuccess:()=>{
-              successHttp('Datos actualizado correctamente');
+
             },
             onError:()=>{
                 setTimeout(()=>{
@@ -165,7 +164,6 @@ const submit = () => {
             tax_rate: formatNumber(data.tax_rate)
         })).patch(route('in.store',form.product_id),{
             onSuccess:()=>{
-                successHttp('Datos registrado correctamente');
                 form.reset();
             }
         });

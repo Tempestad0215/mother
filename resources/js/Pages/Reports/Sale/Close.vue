@@ -7,7 +7,6 @@ import {userI} from "@/Interfaces/UserInterface";
 import {totalSaleAmountI} from "@/Interfaces/ReportInterface";
 import axios from "axios";
 import {ref} from "vue";
-import {errorHttp} from "@/Global/Alert";
 import {getMoney} from "@/Global/Helpers";
 import InputLabel from "@components/InputLabel.vue";
 import {useRoute} from "ziggy-js";
@@ -46,7 +45,7 @@ const submit = () => {
         reportSale.value = res.data[0];
         processing.value = false;
     }).catch((err) => {
-        errorHttp(`Error Al Obtener los datos :${err.message}`);
+        // errorHttp(`Error Al Obtener los datos :${err.message}`);
     });
 }
 

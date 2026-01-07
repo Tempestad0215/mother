@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import {clientEditI} from "@/Interfaces/ClientInterface";
+import {clientBaseI, clientEditI} from "@/Interfaces/ClientInterface";
 import AppLayout from "@layout/AppLayout.vue";
 import {useRoute} from "ziggy-js";
-import {Tabs, TabList, Tab, TabPanel, InputText} from "primevue";
+import {DataTable, Column, Button, Dialog} from "primevue";
 import {ref} from "vue";
+import {paginationI} from "@/Interfaces/GlobalInterface";
+import FRegister from "@/Pages/Clients/FRegister.vue";
 
 const route = useRoute();
 /**
@@ -13,26 +15,26 @@ const test = ref("")
 const propsW = defineProps<{
     clientEdit?: clientEditI,
     update?: boolean,
-    typeRNC: string[]
+    typeRNC: string[],
+    clientData: paginationI<clientBaseI>
 }>();
 </script>
 
 <template>
     <AppLayout>
-        <Tabs value="0">
-            <TabList>
-                <Tab value="0">Mostrar</Tab>
-                <Tab value="1">Registrar</Tab>
-            </TabList>
-            <TabPanel value="0" >
-                <InputText v-model="test" />
-            </TabPanel>
-            <TabPanel value="1">
-                Funcionad esde el numero 1
-            </TabPanel>
-
-        </Tabs>
-
+        <DataTable :value="clientData" >
+            <template #header>
+                <Button>
+                    Crear Cliente
+                </Button>
+            </template>
+            <Column field="name" label="Nombre"  />
+        </DataTable>
+        <Dialog>
+            <FRegister
+                :typeRNC="typeRNC"
+                :client-edit="clientEdit"/>
+        </Dialog>
     </AppLayout>
 </template>
 

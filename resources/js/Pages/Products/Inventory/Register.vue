@@ -4,7 +4,6 @@ import TabLink from '@components/TabLink.vue';
 import {Head, useForm} from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
 import {ref, watch} from 'vue';
-import {errorHttp} from "@/Global/Alert";
 import {entryBaseI, entryProductI} from "@/Interfaces/EntryTransInterface";
 import axios from "axios";
 import {paginationI} from "@/Interfaces/GlobalInterface";
@@ -41,7 +40,7 @@ watch(productName, (newValue) => {
                 products.value = res.data;
             })
             .catch(() => {
-                errorHttp('Error al Obtenr los datos');
+
             });
     }
 });

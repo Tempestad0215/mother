@@ -2,7 +2,6 @@
 import {warehouseBaseI} from "@/Interfaces/WarehouseInterface";
 import Swal from "sweetalert2";
 import {router} from "@inertiajs/vue3";
-import {successHttp} from "@/Global/Alert";
 import {useRoute} from "ziggy-js";
 
 
@@ -52,7 +51,6 @@ const destroy = (item:warehouseBaseI) => {
         if (result.isConfirmed) {
             router.delete(route('wh.destroy',{wh: item.id}),{
                 onSuccess: () => {
-                    successHttp('Datos Eliminado Correctamente');
                 }
             });
         }

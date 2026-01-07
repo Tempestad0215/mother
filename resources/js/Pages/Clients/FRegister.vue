@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {configPercent, getMoney, getRncHelper, moneyConfig} from "@/Global/Helpers";
+import {configPercent, getMoney, moneyConfig} from "@/Global/Helpers";
 import ToggleButton from "@components/ToggleButton.vue";
 import TextInput from "@components/TextInput.vue";
 import {Money} from "v-money3";
@@ -9,8 +9,6 @@ import InputError from "@components/InputError.vue";
 import {computed, onMounted, reactive, ref, Ref} from "vue";
 import {clientEditI} from "@/Interfaces/ClientInterface";
 import {useForm} from "@inertiajs/vue3";
-import {successHttp} from "@/Global/Alert";
-import Swal from "sweetalert2";
 import {useRoute} from "ziggy-js";
 
 
@@ -144,7 +142,7 @@ const submit = ():void => {
     {
         form.patch(route('client.update', form.id),{
             onSuccess:()=>{
-                successHttp('Datos actualizado correctamente');
+
             }
         });
 
@@ -154,7 +152,7 @@ const submit = ():void => {
         // Enviar los datos
         form.post(route('client.store'),{
             onSuccess:()=>{
-                successHttp('Datos registrado correctamente');
+
                 form.reset();
             }
         });
@@ -165,47 +163,47 @@ const submit = ():void => {
 const searchRNC = async () => {
 
     // si el rnc es diferete, debe buscar el rnc registrado para cambiar el nombre de la razon socials
-    if (form.type_rnc !== "B02" && form.personal_id.length > 7)
-    {
+    // if (form.type_rnc !== "B02" && form.personal_id.length > 7)
+    // {
+    //
+    //     // Buscar el rnc
+    //     // const data = await getRncHelper(form.personal_id);
+    //
+    //     // Si el resultado es suspendido
+    //     if (data == "SUSPENDIDO")
+    //     {
+    //         form.setError("type_rnc", "Comprobante suspendido");
+    //         return;
+    //     }
+    //
+    //     // Si el resultado es error
+    //     if (data == "ERROR")
+    //     {
+    //         form.setError("type_rnc", "Error al consultar comprobante, intente nuevamente");
+    //         return;
+    //     }
+    //
+    //
+    //     /*Verificar si es tipo objecto y no es nuelo*/
+    //     if (typeof data === "object" && data !== null)
+    //     {
+    //         Swal.fire({
+    //             title: "Desea Cambiar?",
+    //             text: "RNC Valido, ¿ Prefiere Cambiar El Nombre a la Razon Social ?",
+    //             icon: "question",
+    //             showCancelButton: true,
+    //             confirmButtonColor: "#3085d6",
+    //             cancelButtonColor: "#d33",
+    //             confirmButtonText: "Si, Cambiar!",
+    //             cancelButtonText: "Cancelar",
+    //         }).then((result) => {
+    //             if (result.isConfirmed) {
+    //                 form.name = data.razon_social;
+    //             }
+    //         });
+    //     }
 
-        // Buscar el rnc
-        const data = await getRncHelper(form.personal_id);
-
-        // Si el resultado es suspendido
-        if (data == "SUSPENDIDO")
-        {
-            form.setError("type_rnc", "Comprobante suspendido");
-            return;
-        }
-
-        // Si el resultado es error
-        if (data == "ERROR")
-        {
-            form.setError("type_rnc", "Error al consultar comprobante, intente nuevamente");
-            return;
-        }
-
-
-        /*Verificar si es tipo objecto y no es nuelo*/
-        if (typeof data === "object" && data !== null)
-        {
-            Swal.fire({
-                title: "Desea Cambiar?",
-                text: "RNC Valido, ¿ Prefiere Cambiar El Nombre a la Razon Social ?",
-                icon: "question",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Si, Cambiar!",
-                cancelButtonText: "Cancelar",
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.name = data.razon_social;
-                }
-            });
-        }
-
-    }
+    // }
 }
 
 
