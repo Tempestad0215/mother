@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1869d33e7c48d06766e44bb95243c6e6",
+    "content-hash": "93395ad9aa2ecfc7a4eb2f8170e1744a",
     "packages": [
         {
             "name": "ageekdev/laravel-barcode",

@@ -3,11 +3,10 @@ import { onMounted, onUnmounted, reactive, ref} from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import Divider from "@components/Divider.vue";
 import ImageMenu from "@components/ImageMenu.vue";
-// ✅ Importa SOLO la función route de Ziggy
 import { useRoute } from 'ziggy-js';
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {faArrowCircleLeft} from "@fortawesome/free-solid-svg-icons";
-import {PanelMenu, ScrollPanel} from "primevue";
+import {PanelMenu, ScrollPanel, ConfirmPopup, Toast} from "primevue";
 
 // ✅ Elimina: const route = useRoute();
 
@@ -122,8 +121,7 @@ onUnmounted(() => {
         >
             <!-- Logo / User -->
             <div
-                v-show="!isHiddenMenu"
-                class="p-5 border-b border-gray-700">
+                v-show="!isHiddenMenu">
                 <ImageMenu :url="props.auth.user.profile_photo_url" />
             </div>
 
@@ -164,5 +162,6 @@ onUnmounted(() => {
             </ScrollPanel>
         </div>
     </div>
-
+    <Toast/>
+    <ConfirmPopup></ConfirmPopup>
 </template>

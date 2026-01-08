@@ -59,6 +59,9 @@ class ClientController extends Controller implements HasMiddleware
             'search' => ['nullable','string'],
         ]);
 
+        $search = $request->input(['search']);
+
+
         // Tomar los datos
         $data = $this->getTable($request);
 
@@ -66,11 +69,18 @@ class ClientController extends Controller implements HasMiddleware
         $clientPrice = collect(ClientTypePriceEnum::cases())->mapWithKeys(fn(ClientTypePriceEnum $item) => [$item->name => $item->value]);
         $clientDocument = collect(ClientDocumentEnum::cases())->mapWithKeys(fn(ClientDocumentEnum $item) => [$item->name => $item->value]);
 
+        $query = Client::query();
+
+        if ($search)
+            $query->where('name','like','%'.$search.'%')
+                ->orWhere('email','like','%'.$search.'%');
+
         /*Vista con la pagina*/
         return Inertia::render('Clients/Register',[
             'clients' => $data,
+            'search' => $search,
             'typeRNC' => config('appconfig.sequenceSale'),
-            'clientData' => Client::query()->paginate(),
+            'clientData' => $query->paginate(),
             'clientType' => $clientType,
             'clientPrice' => $clientPrice,
             'clientDocument' => $clientDocument,
@@ -136,10 +146,11 @@ class ClientController extends Controller implements HasMiddleware
      * @param UpdateClientsRequest $request
      * @param Client $client
      * @return RedirectResponse
+     * @throws Throwable
      */
     public function update(UpdateClientsRequest $request, Client $client)
     {
-        //Actualizar los datos
+        //Actualizer los datos
         $this->clientHelper->update($request, $client);
         // Devolver hacia atras
         return back();

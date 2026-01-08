@@ -6,6 +6,7 @@ use App\Enums\ClientDocumentEnum;
 use App\Enums\ClientTypeEnum;
 use App\Enums\ClientTypePriceEnum;
 use App\Enums\SequenceSaleTypeEnum;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -75,6 +76,14 @@ class Client extends Model implements Auditable
         'status'=> 'boolean',
     ];
 
+
+    public function email():Attribute
+    {
+        return Attribute::make(
+            get: fn(string $value) => strtolower($value),
+            set: fn(string $value) => strtolower($value)
+        );
+    }
 
     public function image():MorphOne
     {

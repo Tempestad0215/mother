@@ -13,6 +13,7 @@ import VueTheMask from 'vue-the-mask';
 import money from 'v-money';
 
 import {createVfm} from "vue-final-modal";
+import {ConfirmationService, ToastService} from "primevue";
 
 const vfm = createVfm()
 
@@ -34,6 +35,8 @@ createInertiaApp({
                     preset: Aura
                 }
             })
+            .use(ConfirmationService)
+            .use(ToastService)
             .mount(el)
     },
 }).then(() =>{

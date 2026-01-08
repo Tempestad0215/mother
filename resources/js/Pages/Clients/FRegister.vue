@@ -1,21 +1,20 @@
 <script setup lang="ts">
-import {computed, onMounted, reactive, ref, Ref} from "vue";
-import {clientDocumentI, clientEditI, clientPriceI, clientTypeI} from "@/Interfaces/ClientInterface";
+import {computed, onMounted, reactive} from "vue";
+import {clientBaseI, clientDocumentI, clientPriceI, clientTypeI} from "@/Interfaces/ClientInterface";
 import {useForm} from "@inertiajs/vue3";
 import {useRoute} from "ziggy-js";
-import {Card, Select, ToggleSwitch, FloatLabel, InputText, Divider, Button, InputMask} from "primevue"
-
-
+import {Card, Select, ToggleSwitch, FloatLabel, InputText, Divider, Button, InputMask, useToast} from "primevue"
 
 
 const route = useRoute()
+const toast = useToast()
 
 /**
  * propsW de la vantana
  */
 const propsW = defineProps<{
-    clientEdit?: clientEditI,
-    update?: boolean,
+    clientEdit: clientBaseI | null,
+    update: boolean,
     typeRNC: string[],
     clientType: clientTypeI,
     clientPrice: clientPriceI,
@@ -42,10 +41,10 @@ onMounted(()=>{
         form.type_price = propsW.clientEdit.type_price
 
         //     Informacion de datos de credito
-        form.amount = propsW.clientEdit.amount ?? 0;
-        form.due_date = propsW.clientEdit.due_date ?? 0;
-        form.late_fee = propsW.clientEdit.late_fee ?? 0;
-        form.balance = propsW.clientEdit.balance ?? 0;
+        // form.amount = propsW.clientEdit.amount ?? 0;
+        // form.due_date = propsW.clientEdit.due_date ?? 0;
+        // form.late_fee = propsW.clientEdit.late_fee ?? 0;
+        // form.balance = propsW.clientEdit.balance ?? 0;
 
 
     }
@@ -120,9 +119,23 @@ const submit = ():void => {
     // Si es actualziar
     if(propsW.update)
     {
+
         form.patch(route('client.update', form.id),{
             onSuccess:()=>{
-
+                toast.add({
+                    severity: "success",
+                    summary: "Actualizado",
+                    detail: "Registro Actualizado Correctamente",
+                    life: 3000
+                })
+            },
+            onError:(er)=>{
+                toast.add({
+                    severity: "error",
+                    summary: "Error",
+                    detail: `Error Al Intentar Actualizar Los Datos, Detalle ${Object.values(er)[0]}`,
+                    life: 5000
+                })
             }
         });
 
@@ -193,7 +206,8 @@ const searchRNC = async () => {
 <template>
     <Card class="max-w-250">
         <template #header>
-            <h3>Crear Cliente</h3>
+            <h3 class="text-2xl font-bold text-center" >{{propsW.update ? "Actualizar" : "Crear"}} Cliente</h3>
+            <Divider/>
         </template>
         <template #content>
             <form @submit.prevent="submit">
@@ -251,7 +265,7 @@ const searchRNC = async () => {
 
                 <div class="mt-5 text-right space-x-3">
                     <Button severity="warn" icon="pi pi-eraser" type="reset"  label="limpiar" />
-                    <Button icon="pi pi-send" label="Registrar" type="submit" />
+                    <Button icon="pi pi-send" :label="propsW.update ? 'Actualizar' : 'Registrar'" type="submit" />
                 </div>
             </form>
 

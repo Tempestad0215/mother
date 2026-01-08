@@ -27,6 +27,7 @@ export interface clientBaseI {
     created_at: string
     email: string | null
     personal_id: string | null
+    document: string
     type_price: number;
     type_rnc: string;
     id: number
@@ -35,6 +36,7 @@ export interface clientBaseI {
     phone: string | null
     status: boolean
     updated_at: string
+    comment: string | null
 }
 
 
