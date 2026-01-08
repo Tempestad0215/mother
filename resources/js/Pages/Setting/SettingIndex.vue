@@ -113,7 +113,7 @@ Funciones
 const submit = () => {
     form.post(route('setting.store'),{
         onSuccess:() => {
-            successHttp('Datos registrado correctamente');
+
         }
     })
 }

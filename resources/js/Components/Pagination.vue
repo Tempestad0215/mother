@@ -1,72 +1,43 @@
-<script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
-import {paginationJoin} from "@/Global/Helpers";
+<script setup lang="ts" generic="T" >
+import {paginationI} from "@/Interfaces/GlobalInterface";
+import {PageState, Paginator} from "primevue";
+import {router} from "@inertiajs/vue3";
+import {computed} from "vue";
 
 
-interface paginationI {
+interface paginationActualI {
     search: string;
-    perPage: number;
-    field: string;
-    currentPage?: number
-    totalPage?: number
-    next?: (string|null)
-    prev?: (string|null)
+    pag: paginationI<T>
 }
 
+const propsW = defineProps<paginationActualI>()
 
-const props = defineProps<paginationI>()
+const first = computed(() => (propsW.pag.current_page - 1) * propsW.pag.per_page);
 
+const onPageChange =(value: number) => {
+    const nextRoute = value + 1
+    const perPage = propsW.pag.per_page
+
+    router.get(`${propsW.pag.path}?search=${propsW.search}&page=${nextRoute}&per_page=${perPage}`)
+}
+
+const testFunction = (value: number) => {
+    router.get(`${propsW.pag.path}?search=${propsW.search}&page=${propsW.pag.current_page}&per_page=${value}`)
+}
 </script>
 
 
 <template>
-    <!-- PAginacion-->
-    <div class="py-5 ">
-        <hr>
-        <div class="flex items-center justify-between text-white mt-5">
-            <div>
-                <!-- Pagina -->
-                <span>
-                <strong>
-                    Página :
-                </strong>
-                {{ props.currentPage }}
-            </span>
+    <Paginator
+        :first="first"
+        @update:first="onPageChange"
+        @update:rows="testFunction"
+        :rowsPerPageOptions="[15, 30, 45,60,85,100]"
+        :rows="propsW.pag.per_page ?? 0"
+        :totalRecords="propsW.pag.total"
+    >
 
-                <!-- Total -->
-                <span>
-                <strong>
-                    Total :
-                </strong>
-                {{ props.totalPage}}
-            </span>
-            </div>
+    </Paginator>
 
-            <!-- Paginacion -->
-            <div class=" text-3xl space-x-5">
-                <!-- Anterior -->
-                <Link
-                    preserve-state
-                    preserve-scroll
-                    :href="props.prev ? paginationJoin(props.prev,field, search, perPage)  : '' ">
-                    <i
-                        class="fa-solid fa-circle-arrow-left"></i>
-
-                </Link>
-
-                <!-- Siguiente -->
-                <Link
-                    preserve-state
-                    preserve-scroll
-                    :href="props.next ? paginationJoin(props.next,field,search, perPage) : '' ">
-                    <i
-                        class="fa-solid fa-circle-arrow-right"></i>
-                </Link>
-
-            </div>
-        </div>
-
-
-    </div>
 
 </template>

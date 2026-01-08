@@ -80,8 +80,8 @@ class Client extends Model implements Auditable
     public function email():Attribute
     {
         return Attribute::make(
-            get: fn(string $value) => strtolower($value),
-            set: fn(string $value) => strtolower($value)
+            get: fn(?string $value):?string => strtolower($value),
+            set: fn(?string $value):?string => strtolower($value)
         );
     }
 

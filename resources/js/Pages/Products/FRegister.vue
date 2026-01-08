@@ -152,43 +152,43 @@ const submit = () => {
 
 
 function selectProduct(item: productBaseI) {
-	Swal.fire({
-		title: "Desea Actualizar?",
-		text: `Desea actualizar el producto : ${item.name} !`,
-		icon: "warning",
-		showCancelButton: true,
-		confirmButtonColor: "#3085d6",
-		cancelButtonColor: "#d33",
-		confirmButtonText: "Si Actualizar!",
-		cancelButtonText: "Cancelar!",
-	}).then((result) => {
-		if (result.isConfirmed) {
-
-			form.id = Number(item.id);
-			form.name = item.name;
-			form.type = item.type;
-			form.description = item.name;
-			form.cost = Number(item.cost);
-			form.price = Number(item.price);
-			form.category_id = item.category_id;
-			form.supplier_id = item.supplier_id;
-			form.sku = item.sku ?? '';
-			form.unit = item.unit;
-			form.bar_code = item.bar_code ?? '';
-			form.type = item.type;
-			form.tax_rate = Number(item.tax_rate) ?? 0;
-			form.weight = Number(item.weight) ?? '';
-			form.brand = item.brand ?? '';
-			form.min_price = Number(item.min_price) ?? 0;
-			form.special_price = Number(item.special_price) ?? 0;
-			form.inventoried = item.inventoried;
-			form.has_fraction = item.has_fraction;
-			form.status = item.status;
-			form.has_tax = item.has_tax;
-			form.update = true
-
-		}
-	});
+	// Swal.fire({
+	// 	title: "Desea Actualizar?",
+	// 	text: `Desea actualizar el producto : ${item.name} !`,
+	// 	icon: "warning",
+	// 	showCancelButton: true,
+	// 	confirmButtonColor: "#3085d6",
+	// 	cancelButtonColor: "#d33",
+	// 	confirmButtonText: "Si Actualizar!",
+	// 	cancelButtonText: "Cancelar!",
+	// }).then((result) => {
+	// 	if (result.isConfirmed) {
+    //
+	// 		form.id = Number(item.id);
+	// 		form.name = item.name;
+	// 		form.type = item.type;
+	// 		form.description = item.name;
+	// 		form.cost = Number(item.cost);
+	// 		form.price = Number(item.price);
+	// 		form.category_id = item.category_id;
+	// 		form.supplier_id = item.supplier_id;
+	// 		form.sku = item.sku ?? '';
+	// 		form.unit = item.unit;
+	// 		form.bar_code = item.bar_code ?? '';
+	// 		form.type = item.type;
+	// 		form.tax_rate = Number(item.tax_rate) ?? 0;
+	// 		form.weight = Number(item.weight) ?? '';
+	// 		form.brand = item.brand ?? '';
+	// 		form.min_price = Number(item.min_price) ?? 0;
+	// 		form.special_price = Number(item.special_price) ?? 0;
+	// 		form.inventoried = item.inventoried;
+	// 		form.has_fraction = item.has_fraction;
+	// 		form.status = item.status;
+	// 		form.has_tax = item.has_tax;
+	// 		form.update = true
+    //
+	// 	}
+	// });
 }
 
 
@@ -208,8 +208,7 @@ async function printLabel() {
 
 	} catch (error) {
 
-		console.error('Error:', error);
-		await Swal.fire('Error', 'No se pudo generar la etiqueta', 'error');
+		// await Swal.fire('Error', 'No se pudo generar la etiqueta', 'error');
 	}
 }
 

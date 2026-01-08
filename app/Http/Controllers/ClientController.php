@@ -60,6 +60,7 @@ class ClientController extends Controller implements HasMiddleware
         ]);
 
         $search = $request->input(['search']);
+        $perPage = $request->input(['per_page']);
 
 
         // Tomar los datos
@@ -75,12 +76,13 @@ class ClientController extends Controller implements HasMiddleware
             $query->where('name','like','%'.$search.'%')
                 ->orWhere('email','like','%'.$search.'%');
 
+        $clients = $query->paginate($perPage)->withQueryString();
         /*Vista con la pagina*/
         return Inertia::render('Clients/Register',[
             'clients' => $data,
             'search' => $search,
             'typeRNC' => config('appconfig.sequenceSale'),
-            'clientData' => $query->paginate(),
+            'clientData' => $clients,
             'clientType' => $clientType,
             'clientPrice' => $clientPrice,
             'clientDocument' => $clientDocument,

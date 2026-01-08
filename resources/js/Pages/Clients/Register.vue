@@ -7,6 +7,8 @@ import {paginationI} from "@/Interfaces/GlobalInterface";
 import FRegister from "@/Pages/Clients/FRegister.vue";
 import {router} from "@inertiajs/vue3";
 import {useRoute} from "ziggy-js";
+import Pagination from "@components/Pagination.vue";
+import {getSearchTable} from "@/Global/SearchTable";
 
 /**
  * propsW de la vantana
@@ -76,17 +78,18 @@ const deleteData = (data:clientBaseI, event: Event) => {
 }
 
 const searchData = ()=> {
-    router.get(route('client.create', {search: searchValue.value}),{},{
-        preserveState: true
-    })
+    getSearchTable(route("client.create", {search: searchValue.value, per_page: propsW.clientData.per_page, page: propsW.clientData.current_page}))
 }
+
 </script>
 
 <template>
     <AppLayout>
         <DataTable
+            paginator
+            :rows="propsW.clientData.per_page ?? 0"
             :loading="!propsW.clientData.data"
-            :value="propsW.clientData.data as clientBaseI[]" >
+            :value="propsW.clientData.data" >
             <template #header>
                 <div class="flex justify-between items-center">
                     <form @submit.prevent="searchData">
@@ -106,6 +109,7 @@ const searchData = ()=> {
                 </div>
 
             </template>
+            <Column field="code" header="Codigo"  />
             <Column field="name" header="Nombre"  />
             <Column field="rnc" header="RNC"  />
             <Column field="phone" header="Telefono"  />
@@ -119,6 +123,12 @@ const searchData = ()=> {
                     </div>
                 </template>
             </Column>
+            <template #paginatorcontainer>
+                <Pagination
+                    :search="searchValue"
+                    :pag="propsW.clientData"
+                    />
+            </template>
         </DataTable>
         <Dialog
             modal

@@ -1,7 +1,3 @@
-
-
-
-
 export interface taxI{
     amount: number
     name: string
@@ -45,13 +41,19 @@ export interface userAuthI {
     two_factor_enabled: boolean
 }
 
-
+interface linksI {
+    active: boolean
+    label: string
+    page: number | null;
+    url: string | null;
+}
 
 // Pagination
 export interface paginationI<T> {
     current_page: number
     first_page_url: string
     from: number
+    links: linksI[]
     last_page: number
     last_page_url: string
     next_page_url: null | string
@@ -59,5 +61,6 @@ export interface paginationI<T> {
     per_page: number
     prev_page_url: null | string
     to: number
+    total: number
     data?: T[]
 }

@@ -33,12 +33,29 @@ class CategoryController extends Controller implements HasMiddleware
      */
     public function create(Request $request){
 
+        $request->validate([
+            'search' => 'nullable|string',
+            'per_page'=> 'required|numeric|min:1|max:50',
+            'page'=> 'required|numeric|min:1',
+        ]);
+
+        $search = $request->search;
+        $query = Category::query();
+
+        if ($search)
+        {
+            $query->where('name', 'like', "%{$search}%")
+                ->orWhere('description', 'like', "%{$search}%");
+        }
+
+        $categories = $query->paginate($request->per_page)->withQueryString();
+
         //Tomar los datos de busqueda
         $data = $this->get($request);
 
         //Devolver la vista con los datos
         return Inertia::render('Categories/Register',[
-            'categories' => $data
+            'categories' => $categories,
             ]);
 
     }
