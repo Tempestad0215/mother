@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\SalePaymentTypeEnum;
+use App\Enums\PaymentTypeEnum;
 use App\Enums\SaleTypeEnum;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -35,7 +35,7 @@ use OwenIt\Auditing\Models\Audit;
  * @property Carbon updated_at
  * @property Carbon deleted_at
  * @property ProTrans[] infoSale
- * @property SalePaymentTypeEnum type_payment
+ * @property PaymentTypeEnum type_payment
  * @property float received
  * @property float returned
  * @property string[] credit_notes
@@ -86,7 +86,7 @@ class Sale extends Model implements Auditable
         'status' => 'boolean',
         'close_table' => 'boolean',
         'type' => SaleTypeEnum::class,
-        'type_payment' => SalePaymentTypeEnum::class,
+        'type_payment' => PaymentTypeEnum::class,
         'credit_notes' => 'array'
     ];
 

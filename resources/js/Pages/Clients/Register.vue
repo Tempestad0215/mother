@@ -144,7 +144,3 @@ const searchData = ()=> {
         </Dialog>
     </AppLayout>
 </template>
-
-<style scoped>
-
-</style>

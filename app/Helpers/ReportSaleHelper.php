@@ -2,7 +2,7 @@
 
 namespace App\Helpers;
 
-use App\Enums\SalePaymentTypeEnum;
+use App\Enums\PaymentTypeEnum;
 use App\Models\ProTrans;
 use App\Models\Sale;
 
@@ -46,17 +46,17 @@ class ReportSaleHelper
 
             //Para almacenar los datos
             $dataTotal = [
-                'cash' => $data->where('type_payment', SalePaymentTypeEnum::CONTADO)->sum('amount'),
+                'cash' => $data->where('type_payment', PaymentTypeEnum::Contado)->sum('amount'),
 
-                'credit' => $data->where('type_payment', SalePaymentTypeEnum::CREDITO)->sum('amount') ?? 0,
+                'credit' => $data->where('type_payment', PaymentTypeEnum::Credito)->sum('amount') ?? 0,
 
-                'check' => $data->where('type_payment', SalePaymentTypeEnum::CHEQUE)->sum('amount'),
+                'check' => $data->where('type_payment', PaymentTypeEnum::Cheque)->sum('amount'),
 
-                'card' => $data->where('type_payment', SalePaymentTypeEnum::TARJETA)->sum('amount'),
+                'card' => $data->where('type_payment', PaymentTypeEnum::Tarjeta)->sum('amount'),
 
-                'advance' => $data->where('type_payment', SalePaymentTypeEnum::ANTICIPO)->sum('amount'),
+                'advance' => $data->where('type_payment', PaymentTypeEnum::Anticipo)->sum('amount'),
 
-                'transfer' => $data->where('type_payment', SalePaymentTypeEnum::TRANSFERENCIA)->sum('amount'),
+                'transfer' => $data->where('type_payment', PaymentTypeEnum::Transferencia)->sum('amount'),
 
                 'tax' => $data->sum('tax'),
 

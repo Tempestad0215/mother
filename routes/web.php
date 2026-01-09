@@ -136,7 +136,7 @@ Route::middleware([
             Route::get('/{category}', 'edit')->name('edit');
             Route::post('/', 'store')->name('store');
             Route::patch('/{category}', 'update')->name('update');
-            Route::patch('/destroy/{category}', 'destroy')->name('destroy');
+            Route::delete('/destroy/{category}', 'destroy')->name('destroy');
             Route::get('/get', 'getJson')->name('get.json');
 
         });

@@ -16,7 +16,7 @@ use Inertia\Response;
 class SettingController extends Controller implements HasMiddleware
 {
     /**
-     * Para los middleware del controllador
+     * Para los middleware del controller
      * @return array
      */
     public static function middleware()
@@ -52,7 +52,7 @@ class SettingController extends Controller implements HasMiddleware
         //Verificar si existe para devolver el mensaje
         if ($sale && $request->get('sequence'))
         {
-            //Enviar mensaje de error, hasta cerrar las cuentas no se puede cambiar la sequencia
+            //Enviar mensaje de error, hasta cerrar las cuentas no se puede cambiar la sequence
             throw ValidationException::withMessages([
                 'general' => 'Por Favor, Antes De Cambiar El Modo (Manejar Comprobante) Debes Cerrar Todas Las Cuentas.'
             ]);
@@ -61,10 +61,10 @@ class SettingController extends Controller implements HasMiddleware
         //Crear la instancia de los datos
         $settingHelper = new SettingHelper();
 
-        //Llmar los datos
+        //Llamar los datos
         $settingHelper->store($request);
 
-        //Devolver hacia atras
+        //Devolver hacia atrás
         return back();
 
     }

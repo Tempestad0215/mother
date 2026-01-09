@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\SalePaymentTypeEnum;
+use App\Enums\PaymentTypeEnum;
 use App\Enums\SaleTypeEnum;
 use App\Models\Setting;
 use App\Rules\CheckStock;
@@ -64,7 +64,7 @@ class  StoreProductSaleRequest extends FormRequest
             'sub_total' => ['required','numeric'],
             'discount_amount' => ['required','numeric'],
             'type' => ['required',Rule::enum(SaleTypeEnum::class)],
-            'type_payment' => ['nullable',Rule::requiredIf(SaleTypeEnum::DEVOLUCION->value !== $type) ,Rule::enum(SalePaymentTypeEnum::class)],
+            'type_payment' => ['nullable',Rule::requiredIf(SaleTypeEnum::DEVOLUCION->value !== $type) ,Rule::enum(PaymentTypeEnum::class)],
             'received' => ['required','numeric'],
             'returned' => ['required','numeric'],
             'credit_notes' => ['nullable','array'],

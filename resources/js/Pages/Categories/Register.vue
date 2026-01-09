@@ -2,9 +2,19 @@
 import AppLayout from "@layout/AppLayout.vue";
 import {paginationI} from "@/Interfaces/GlobalInterface";
 import {categoryBaseI} from "@/Interfaces/CategoriesInterface";
-import {DataTable, Column, Button, InputGroup, InputGroupAddon, InputText, Dialog} from "primevue";
+import {
+    DataTable,
+    Column,
+    Button,
+    InputGroup,
+    InputGroupAddon,
+    InputText,
+    Dialog,
+    useConfirm,
+    useToast
+} from "primevue";
 import {ref} from "vue";
-import { useForm} from "@inertiajs/vue3";
+import {router, useForm} from "@inertiajs/vue3";
 import {useRoute} from "ziggy-js";
 import FRegister from "@/Pages/Categories/FRegister.vue";
 import Pagination from "@components/Pagination.vue";
@@ -13,6 +23,8 @@ import {getSearchTable} from "@/Global/SearchTable";
 
 
 const route = useRoute();
+const confirm = useConfirm();
+const toast = useToast();
 const propsW = defineProps<{
     categories: paginationI<categoryBaseI>,
     categoryEdit?: categoryBaseI,
@@ -44,12 +56,45 @@ const editData = (data:categoryBaseI) =>  {
 }
 
 const deleteData = (data:categoryBaseI, event:Event) =>  {
+    confirm.require({
+        target: event.currentTarget as HTMLElement,
+        message: "Desea Eliminar Este Registro",
+        rejectProps:{
+            icon: 'pi pi-cancel',
+            label: 'Cancelar',
+            outlined: true,
+        },
+        acceptProps: {
+            icon: "pi pi-check",
+            severity: "danger",
+            label: "Eliminar"
+        },
+        accept: () => {
+            router.delete(route('category.destroy', {category: data.id}),{
+                onSuccess: () => {
+                    toast.add({
+                        severity: "success",
+                        summary: "Registro Eliminado",
+                        life: 3000
+                    })
+                },
+                onError: (err) => {
+                    toast.add({
+                        severity: "error",
+                        summary: "Error",
+                        detail: `Error al intentar eliminar los datos. Detalle : ${Object.values(err)[0]}`,
+                        life: 500
+                    })
+                }
+            })
+        }
 
+    })
 }
 
 const resetForm = () => {
     categorySelected.value = null;
-    isUpdate.value = false;
+    isUpdate.value = true;
 }
 </script>
 

@@ -59,10 +59,7 @@ class Setting extends Model implements Auditable
         'logo',
         'website',
         'company_id',
-        'tax',
-        'unit',
         'fiscal_year',
-        'company_type',
         'status',
         'save_cost',
         'sequence'
@@ -73,11 +70,9 @@ class Setting extends Model implements Auditable
      */
     protected $casts = [
         'tax' => AsArrayObject::class,
-        'unit' => 'array',
         'status' => 'boolean',
         'save_cost' => 'boolean',
         'sequence' => 'boolean',
-        'company_type' => CompanyTypeEnum::class,
     ];
 
 

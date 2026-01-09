@@ -29,7 +29,7 @@ const {props} = usePage();
  * Propiedades de la ventana
  */
 const propsW = defineProps<{
-	productEdit?: productBaseI,
+	productEdit: productBaseI | null,
 	update?: boolean,
 	categories: categoryBaseI[],
 	suppliers: supplierI[],

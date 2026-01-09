@@ -10,7 +10,9 @@ import {paginationI} from "@/Interfaces/GlobalInterface";
 import FRegister from "@/Pages/Products/Inventory/FRegister.vue";
 import FShowEntrie from "@/Pages/Products/Inventory/FShow.vue";
 import {useRoute} from "ziggy-js";
-
+import {DataTable, Column, InputText, Button, Dialog, InputGroupAddon, InputGroup} from "primevue";
+import {clientBaseI} from "@/Interfaces/ClientInterface";
+import Pagination from "@components/Pagination.vue";
 
 const route = useRoute();
 // Propiedades
@@ -20,7 +22,6 @@ const propsW = defineProps<{
     entry_edit?: entryBaseI,
     entries: paginationI<entryProductI>
 }>();
-
 //datos de la ventana
 const productName = ref<string>();
 const products = ref<productBaseI[] | null>(null);
@@ -56,36 +57,63 @@ const edit = (item:entryProductI) => {
 </script>
 
 <template>
-    <Head title="Entrada"/>
     <AppLayout>
-        <template #header>
-            <TabLink
-                :href="route('product.create')">
-                Registrar
-            </TabLink>
-            <TabLink
-                :active="true"
-                :href="route('entry.index')">
-                Entrada
-            </TabLink>
+        <DataTable
+            paginator
+            :rows="propsW.clientData.per_page ?? 0"
+            :loading="!propsW.clientData.data"
+            :value="propsW.clientData.data" >
+            <template #header>
+                <div class="flex justify-between items-center">
+                    <form @submit.prevent="searchData">
+                        <InputGroup class="max-w-60">
+                            <InputText v-model="searchValue" placeholder="Buscar" type="search" />
+                            <InputGroupAddon
+                                @click="searchData">
+                                <i  class="pi pi-search" ></i>
+                            </InputGroupAddon>
+                        </InputGroup>
+                    </form>
+                    <Button
+                        class="h-8"
+                        @click="createClient = true">
+                        Crear Cliente
+                    </Button>
+                </div>
 
-            <TabLink
-                :href="route('product.show')">
-                Mostrar
-            </TabLink>
-        </template>
-        <div class="">
-<!--            Mostrar el formulario de registro-->
+            </template>
+            <Column field="code" header="Codigo"  />
+            <Column field="name" header="Nombre"  />
+            <Column field="rnc" header="RNC"  />
+            <Column field="phone" header="Telefono"  />
+            <Column field="email" header="Correo"  />
+            <Column header="Act">
+                <template #body="{data}:{data:clientBaseI}">
+                    <div class="space-x-2">
+                        <Button @click="editData(data)" class="pt-1 h-8"  title="Editar" icon="pi pi-file-edit" />
+                        <Button @click="deleteData(data, $event)" class="pt-1 h-8"  title="Eliminar" severity="danger" icon="pi pi-trash" />
+
+                    </div>
+                </template>
+            </Column>
+            <template #paginatorcontainer>
+                <Pagination
+                    :search="searchValue"
+                    :pag="propsW.clientData"
+                />
+            </template>
+        </DataTable>
+        <Dialog
+            modal
+            @hide="selectedClient = null"
+            v-model:visible="createClient" >
             <FRegister
-                :edit-data-float="editData"
-                :products="propsW.products"
-                :product-table="propsW.productTable"
-                :entries="propsW.entries"/>
-
-<!--            Mostrar el formulario de taka-->
-            <FShowEntrie
-                @edit="edit"
-                :entries="propsW.entries"/>
-        </div>
+                :clientDocument="clientDocument"
+                :clientPrice="clientPrice"
+                :clientType="clientType"
+                :typeRNC="typeRNC"
+                :update="isUpdate"
+                :client-edit="selectedClient"/>
+        </Dialog>
     </AppLayout>
 </template>

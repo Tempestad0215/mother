@@ -1,21 +1,22 @@
 <script setup lang="ts">
 import {Head, useForm, usePage} from "@inertiajs/vue3";
 import AppLayout from "@layout/AppLayout.vue";
-import InputLabel from "@components/InputLabel.vue";
-import TextInput from "@components/TextInput.vue";
-import InputError from "@components/InputError.vue";
-import PrimaryButton from "@components/PrimaryButton.vue";
 import {onMounted, onUpdated, Ref, ref} from "vue";
 import {taxI} from "@/Interfaces/GlobalInterface";
-import ToggleButton from "@components/ToggleButton.vue";
-import TabLink from "@components/TabLink.vue";
-import {Money} from "v-money3";
-import {moneyConfig} from "@/Global/Helpers";
 import {useRoute} from "ziggy-js";
-
+import {
+    Card,
+    FloatLabel,
+    InputText,
+    ToggleSwitch,
+    FileUpload,
+    Button,
+    FileUploadSelectEvent, useToast
+} from "primevue";
 
 
 const route = useRoute();
+const toast = useToast();
 /*
 Datos de ajuste
  */
@@ -34,8 +35,25 @@ Datos de la ventana
  */
 
 const isSequence:Ref<boolean> = ref(false);
+const imagePath = ref()
 
-
+/*
+Datos del formulario
+ */
+const form = useForm({
+    name:"",
+    email:"",
+    phone:"",
+    address:"",
+    website:"",
+    company_id:"",
+    is_branch: false,
+    fiscal_year: "",
+    image_path:"",
+    cost: true,
+    sequence: true,
+    general: ""
+});
 /*
 Al momento de cargar
  */
@@ -50,9 +68,6 @@ onMounted(() =>{
         form.address = page.props.setting.address ?? "" ;
         form.website = page.props.setting.website ?? "";
         form.company_id = page.props.setting.company_id ?? "";
-        form.company_type = page.props.setting.company_type ?? "";
-        form.tax = page.props.setting.tax;
-        form.unit = page.props.setting.unit;
         form.cost = page.props.setting.save_cost;
         form.sequence = page.props.setting.sequence;
         imgName.value = page.props.setting.logo ? page.props.setting.logo: "logoexample.png";
@@ -74,29 +89,7 @@ onUpdated(() =>{
 });
 
 
-/*
-Datos del formulario
- */
-const form = useForm({
-    name:"",
-    email:"",
-    phone:"",
-    address:"",
-    website:"",
-    company_id:"",
-    taxName:"",
-    taxValue: 0.00,
-    tax: [] as taxI[],
-    unitValue:"",
-    unit:[] as string[],
-    is_branch: false,
-    fiscal_year: "",
-    company_type: "BAR",
-    logo:"",
-    cost: true,
-    sequence: true,
-    general: ""
-});
+
 
 
 /*
@@ -113,86 +106,26 @@ Funciones
 const submit = () => {
     form.post(route('setting.store'),{
         onSuccess:() => {
-
+            toast.add({
+                severity: "success",
+                summary: "Exito en Registro",
+                detail: "Registrado Correctamente",
+                life: 3000
+            })
+        },
+        onError: (err) => {
+            toast.add({
+                severity: "error",
+                summary: "Error En Esta Peticion",
+                detail: `Hubo un Error. Detalle : ${Object.values(err)[0]}`,
+                life: 5000
+            })
         }
+
     })
 }
-//Agregar lis impuesto
-const addTax = () => {
-    //Verificar si existe
-    let exists = form.tax.find((el) => el.name === form.taxName);
-
-   if (exists)
-    {
-        //Poner el error
-        form.setError('tax','El Campo ITBIS No Se puede Repetir');
-        return false;
-
-    }else if(form.tax.length > 5)
-    {
-        form.setError('tax','Ha Alcanzado la Cantidad Maxima de Impuesto');
-    }
-    else{
-        //Limpiar los errores
-        form.clearErrors('tax');
-        // Agregar los datos de impuesto
-
-        form.tax.push({
-            name: form.taxName.toUpperCase(),
-            amount: form.taxValue
-        });
-        //Limpiar el campo para agregar otro
-        form.reset('taxValue','taxName');
-    }
-
-}
-
-//Eliminar los Itbis
-const removeTax = (index:number) => {
-
-    //Eliminar los datos
-    form.tax.splice(index, 1);
-
-
-}
-
-//Agregar Unidad a la lista
-const addUnit = () => {
-    //Verificar si existe
-    let exists = form.tax.find((el) => el.name === form.taxName);
-
-    if (form.unitValue === "")
-    {
-        form.setError('unit','EL Campo Unidad No Puede Estar En Blanco ');
-    }
-    else if (exists)
-    {
-        //Poner el error
-        form.setError('unit','El Campo Unidad No Se puede Repetir');
-        return false;
-
-    }else if(form.unit.length > 10)
-    {
-        form.setError('unit','Ha Alcanzado la Cantidad Maxima de Impuesto');
-    }
-    else{
-        //Limpiar los errores
-        form.clearErrors('unit');
-        // Agregar los datos de impuesto
-        form.unit.push(form.unitValue.toUpperCase());
-        //Limpiar el campo para agregar otro
-        form.reset('unitValue');
-    }
-
-}
-
-
-//Eliminar los Itbis
-const removeUnit = (index:number) => {
-    //Eliminar los datos
-    form.unit.splice(index, 1);
-
-
+const getFileInfo = (event: FileUploadSelectEvent) =>{
+    form.image_path = event.files[0]
 }
 
 
@@ -201,280 +134,58 @@ const removeUnit = (index:number) => {
 <template>
     <Head title="Ajustes" />
     <AppLayout>
-<!--Cabecera de la pagina-->
-        <template #header>
-            <TabLink
-                :active="true"
-                :href="route('setting.index')">
-                Ajustes
-            </TabLink>
-            <TabLink
-                :href="route('sequence.create')">
-                Correlativos
-            </TabLink>
-            <TabLink
-                :href="route('aco.index')">
-                Cuentas
-            </TabLink>
-            <TabLink
-                :href="route('wh.index')">
-                Almacen
-            </TabLink>
-        </template>
-        <div
-            class="max-w-[70rem] mx-auto fondo rounded-md p-5">
-            <form
-                @submit.prevent="submit">
-                <!--Muestra del logo-->
-                <div class="">
-                    <img
-                        class="rounded-2xl mx-auto"
-                        :src="`${url}/storage/images/${imgName}`"
-                        alt="logo"
-                        width="150">
-                </div>
-                <!-- Informaicon de la emprea-->
-                <fieldset class="field">
-                    <legend class="">
-                        Datos de la Empresa
-                    </legend>
-                    <!-- Nombre-->
-                    <div>
-                        <InputLabel
-                            for="company"
-                            value="Nombre *"/>
-                        <TextInput
-                            name="name"
-                            v-model="form.name"
-                            placeholder="Jose Manuel"
-                            required
-                            maxLength="75"
-                            class="w-full"/>
-                        <InputError :message="form.errors.name"/>
-                    </div>
-                    <!--Correo-->
-                    <div>
-                        <InputLabel
-                            for="email"
-                            value="Correo *"/>
-                        <TextInput
-                            v-model="form.email"
-                            placeholder="jose@example.com"
-                            required
-                            class="w-full"
-                            maxLength="75"
-                            type="email" />
-                        <InputError :message="form.errors.email"/>
-                    </div>
-                    <!--Telefono-->
-                    <div>
-                        <InputLabel
-                            for="phone"
-                            value="Teléfono *"/>
-<!--                        <TextInput-->
-<!--                            name="phone"-->
-<!--                            v-model="form.phone"-->
-<!--                            required-->
-<!--                            placeholder="+1 (425) 456-6456"-->
-<!--                            v-mask="['+# (###) ###-####','+## (###) ###-####']"-->
-<!--                            maxLength="30"-->
-<!--                            class="w-full"-->
-<!--                            type="text" />-->
-                        <InputError :message="form.errors.phone"/>
-                    </div>
-                    <!--Direccion-->
-                    <div>
-                        <InputLabel
-                            for="address"
-                            value="Direccion"/>
-                        <TextInput
-                            name="address"
-                            v-model="form.address"
-                            placeholder="Camino Real #12"
-                            maxLength="255"
-                            class="w-full"
-                            type="text" />
-                        <InputError :message="form.errors.address"/>
-                    </div>
-                    <!--Pagina Web-->
-                    <div>
-                        <InputLabel
-                            for="website"
-                            value="Pagina Web"/>
-                        <TextInput
-                            name="website"
-                            placeholder="www.paginaweb.com"
-                            v-model="form.website"
-                            maxLength="255"
-                            class="w-full"
-                            type="text" />
-                        <InputError :message="form.errors.website"/>
-                    </div>
-                    <!--Rnc-->
-                    <div>
-                        <InputLabel
-                            for="id"
-                            value="RNC"/>
-<!--                        <TextInput-->
-<!--                            v-model="form.company_id"-->
-<!--                            name="id"-->
-<!--                            placeholder="123-456891"-->
-<!--                            v-mask="['###-######']"-->
-<!--                            maxLength="30"-->
-<!--                            class="w-full"-->
-<!--                            type="text" />-->
-                        <InputError :message="form.errors.company_id"/>
-                    </div>
-                    <div>
-                        <InputLabel for="company_type" value="Tipo de Negocio" />
-                        <select
-                            class="inputGeneral py-1 w-full"
-                            v-model="form.company_type">
-                            <option
-                                v-for="(item, index) in propsW.company_type"
-                                :key="index"
-                                :value="item">
-                                {{item}}
-                            </option>
-                        </select>
-                    </div>
-                    <!--Tiempo fiscal-->
-                    <div>
-                        <InputLabel
-                            for="fiscal_year"
-                            value="Año Fiscal"/>
-                        <TextInput
-                            v-model="form.fiscal_year"
-                            name="fiscal_year"
-                            class="w-full"
-                            type="date" />
-                        <InputError :message="form.errors.fiscal_year"/>
-                    </div>
-                    <!--Logo-->
-                    <div>
-                        <InputLabel for="logo" value="Logo"/>
-                        <TextInput
-                            @input="form.logo = $event.target.files[0]"
-                            multiple="false"
-                            class="file"
-                            type="file"/>
-                        <InputError/>
-                    </div>
-                </fieldset>
-                <!--            Datos de inventario-->
-                <fieldset class="field">
-                    <legend class="px-3">
-                        Inventario
-                    </legend>
-
-                    <!--               Proteger costo -->
-                    <div class="col-span-full grid grid-cols-2 gap-3 ">
-                        <div>
-                            <ToggleButton
-                                label="Proteger costo"
-                                v-model="form.cost"
-                                on-label="SI"
-                                off-label="NO"/>
-
-                            <InputError :message="form.errors.cost"/>
+        <Card>
+            <template #header>
+                <h3 class="text-2xl font-bold text-center" >Configuración</h3>
+            </template>
+            <template #content>
+                <form @submit.prevent="submit" class="grid grid-cols-2 gap-3" >
+                    <FloatLabel variant="on">
+                        <InputText class="w-full" id="name" v-model="form.name" />
+                        <label for="name">Nombre</label>
+                    </FloatLabel>
+                    <FloatLabel variant="on">
+                        <InputText class="w-full" id="company_id" v-model="form.company_id" />
+                        <label for="company_id">Identificación/RNC</label>
+                    </FloatLabel>
+                    <FloatLabel variant="on">
+                        <InputText class="w-full" id="email" v-model="form.email" />
+                        <label for="email">Correo</label>
+                    </FloatLabel>
+                    <FloatLabel variant="on">
+                        <InputText class="w-full" id="phone" v-model="form.phone" />
+                        <label for="phone">Teléfono</label>
+                    </FloatLabel>
+                    <FloatLabel variant="on">
+                        <InputText class="w-full" id="address" v-model="form.address" />
+                        <label for="address">Dirección</label>
+                    </FloatLabel>
+                    <FloatLabel variant="on">
+                        <InputText class="w-full" id="website" v-model="form.website" />
+                        <label for="website">Pagina Web</label>
+                    </FloatLabel>
+                    <FloatLabel variant="on">
+                        <InputText class="w-full" id="fiscal_year" v-model="form.fiscal_year" />
+                        <label for="fiscal_year">Año Fiscal</label>
+                    </FloatLabel>
+                    <FileUpload  @select="getFileInfo($event)"  ref="imagePath" name="image_path[]"  mode="basic" accept="image/*"  />
+                    <div class="flex items-center">
+                        <div class="flex items-center space-x-3 mr-5">
+                            <ToggleSwitch v-model="form.cost" />
+                            <label for="protect_cost">Proteger Costo</label>
                         </div>
-                        <div>
-                            <ToggleButton
-                                label="Manejar Comprobante"
-                                v-model="form.sequence"
-                                on-label="SI"
-                                off-label="NO"/>
-                            <InputError :message="form.errors.sequence"/>
-                        </div>
-                    </div>
-
-                    <!--Unidades de medida-->
-                    <div>
-                        <InputLabel
-                            for="unit"
-                            value="Unidades"/>
-                        <div class="relative">
-                            <TextInput
-                                class="pr-8 w-full "
-                                name="unit"
-                                placeholder="Unidad"
-                                v-model="form.unitValue"/>
-                            <i
-                                @click="addUnit"
-                                class=" flex items-center inset-y-0 absolute right-0 p-2 bg-transparent fa-solid fa-square-plus"></i>
-
+                        <div class="flex items-center space-x-3">
+                            <ToggleSwitch v-model="form.sequence" />
+                            <label for="protect_cost">NCF</label>
                         </div>
 
-
-                        <InputError :message="form.errors.unit"/>
-                        <div
-                            class=" text-sm"
-                            v-if="form.unit.length > 0"
-                            v-for="(item, index) in form.unit" :key="index">
-                            <span
-                                @click="removeUnit(index)"
-                                class=" px-3 py-1 mt-1 bg-blue-400 rounded-md flex items-center justify-between">
-                                {{item}}
-                                <i class="p-1 cursor-pointer text-[1.2rem] fa-regular fa-rectangle-xmark"></i>
-                            </span>
-
-                        </div>
                     </div>
-
-
-                    <!--Itbis-->
-                    <div>
-                        <InputLabel
-                            for="unit"
-                            value="Unidades"/>
-                        <div class="relative flex gap-3">
-                            <TextInput
-                                class="pr-8"
-                                placeholder="ITBIS Name"
-                                name="unit"
-                                v-model="form.taxName"/>
-                            <Money
-                                class="inputGeneral w-full"
-                                v-bind="moneyConfig"
-                                v-model.number="form.taxValue"
-                                />
-                            <i
-                                @click="addTax"
-                                class=" flex items-center inset-y-0 absolute right-0 p-2 bg-transparent fa-solid fa-square-plus"></i>
-
-                        </div>
-                        <InputError :message="form.errors.tax"/>
-                        <div
-                            class="text-sm flex flex-wrap"
-                            v-if="form.tax.length > 0"
-                            v-for="(item, index) in form.tax" :key="index">
-                            <span
-                                @click="removeTax(index)"
-                                class=" px-3 py-1 mt-1 bg-blue-400 rounded-md flex flex-1 items-center justify-between">
-                                {{item.name}} = {{item.amount}}
-                                <i class="p-1 cursor-pointer text-[1.2rem] fa-regular fa-rectangle-xmark"></i>
-                            </span>
-
-                        </div>
+                    <div class="mt-5 text-right col-span-full">
+                        <Button type="submit" icon="pi pi-send" label="Registrar" />
                     </div>
-
-                </fieldset>
-                <div >
-                    <InputError :message="form.errors.general"/>
-                </div>
-
-
-                <!--Botones-->
-                <div class="text-right mt-5">
-                    <PrimaryButton>
-                        Registrar
-                    </PrimaryButton>
-                </div>
-
-            </form>
-        </div>
-
-
+                </form>
+            </template>
+        </Card>
     </AppLayout>
 
 </template>

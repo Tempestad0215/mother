@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\SalePaymentTypeEnum;
+use App\Enums\PaymentTypeEnum;
 use App\Enums\SequenceSaleTypeEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -32,7 +32,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property Carbon deleted_at
  * @property ProTrans[] trans
  * @property Sale sale_id,
- * @property SalePaymentTypeEnum type_payment,
+ * @property PaymentTypeEnum type_payment,
  * @property float received
  * @property float returned
  * @property string comment

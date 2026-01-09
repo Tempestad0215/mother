@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Exports\CategoryExport;
-use App\Exports\ClientExport;
 use App\Models\Category;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Http\JsonResponse;
@@ -35,23 +34,21 @@ class CategoryController extends Controller implements HasMiddleware
 
         $request->validate([
             'search' => 'nullable|string',
-            'per_page'=> 'required|numeric|min:1|max:50',
-            'page'=> 'required|numeric|min:1',
+            'per_page'=> 'nullable|numeric|min:1|max:50',
+            'page'=> 'nullable|numeric|min:1',
         ]);
+
 
         $search = $request->search;
         $query = Category::query();
 
         if ($search)
         {
-            $query->where('name', 'like', "%{$search}%")
-                ->orWhere('description', 'like', "%{$search}%");
+            $query->where('name', 'like', "%$search%")
+                ->orWhere('description', 'like', "%$search%");
         }
 
         $categories = $query->paginate($request->per_page)->withQueryString();
-
-        //Tomar los datos de busqueda
-        $data = $this->get($request);
 
         //Devolver la vista con los datos
         return Inertia::render('Categories/Register',[
@@ -133,9 +130,7 @@ class CategoryController extends Controller implements HasMiddleware
 
 
         // Actualizar los datos
-        $category->update([
-            'deleted_at' => now()
-        ]);
+        $category->delete();
         //Devolver hacia atras
         return back();
 

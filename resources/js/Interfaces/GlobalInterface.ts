@@ -64,3 +64,12 @@ export interface paginationI<T> {
     total: number
     data?: T[]
 }
+
+export interface paymentTypeEnumI {
+    contado: string
+    tarjeta: string
+    credito: string
+    transferencia: string
+    anticipo: string
+    cheque: string
+}

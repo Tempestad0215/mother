@@ -46,14 +46,10 @@ class StoreSettingRequest extends FormRequest
             'address' => ['required', 'string', 'max:255'],
             'image' => ['nullable', 'image', 'mimes:jpg,png,jpeg', 'max:2048'],
             'company_id' => ['nullable', 'string', 'max:30'],
-            'tax' => ['required','array'],
-            'tax.*.name' => ['required','string','min:2','max:20'],
-            'tax.*.amount' => ['required','numeric'],
-            'unit' => ['required','array'],
-            'unit.*' => ['nullable','string','min:2', 'max:30'],
             'fiscal_year' => ['nullable','date'],
             'cost' => ['required','boolean'],
             'sequence' => ['required','boolean'],
+            'image_path' => ['nullable', 'file', 'mimes:jpg,png,jpeg', 'max:2048'],
         ];
     }
 }

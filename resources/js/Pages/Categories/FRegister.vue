@@ -45,7 +45,7 @@ const submit = () => {
             onSuccess: ()=>{
                 toast.add({
                     severity: "success",
-                    summary: "Registro Completado",
+                    summary: "Registro Actualizado",
                     life: 3000,
                 })
             },
@@ -63,7 +63,7 @@ const submit = () => {
             onSuccess:()=>{
                 toast.add({
                     severity: "success",
-                    summary: "Registro Completado",
+                    summary: "Registro Creado Correctamente",
                     life: 3000,
                 })
                 form.reset();
@@ -94,7 +94,7 @@ const submit = () => {
                 @submit.prevent="submit" >
                 <FloatLabel variant="on" >
                     <InputText class="w-full" name="name" v-model="form.name" />
-                    <label for="name">Nombre</label>
+                    <label for="name">Nombre <span class="text-red-500" >*</span> </label>
                 </FloatLabel>
                 <FloatLabel class="mt-5" variant="on" >
                     <InputText class="w-full" name="description" v-model="form.description" />
@@ -102,7 +102,7 @@ const submit = () => {
                 </FloatLabel>
                 <div class="mt-5 text-right space-x-3 ">
                     <Button type="reset" class="h-8" severity="warn" icon="pi pi-eraser"  label="Limpiar" />
-                    <Button type="submit" class="h-8" icon="pi pi-send" label="Registrar" />
+                    <Button type="submit" class="h-8" icon="pi pi-send" :label=" propsW.update ? 'Actualizar' : 'Registrar'" />
                 </div>
             </form>
         </template>

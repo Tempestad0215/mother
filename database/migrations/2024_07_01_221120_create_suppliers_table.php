@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('code',30)->unique()->comment('codigo unido para cada registro');
             $table->string('contact',75)->nullable()->comment('Nombre del representante');
-            $table->string('company_name',150)->comment('nombre completo');
+            $table->string('company_name',150)->unique()->comment('nombre completo');
             $table->enum('type_payment',['CONTADO','CREDITO','CHEQUE','TARJETA','TRANSFERENCIA','ANTICIPO']);
             $table->string('phone',20)->nullable()->comment('Telefono');
             $table->string('email',150)->nullable()->unique()->comment('Correo electronico');

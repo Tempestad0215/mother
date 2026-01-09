@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PaginationRequest;
 use App\Models\Category;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
@@ -38,24 +39,26 @@ class ProductController extends Controller implements HasMiddleware
     }
 
     /**
-     * @param Request $request
+     * @param PaginationRequest $request
      * @return RedirectResponse|Response
      */
-    public function create(Request $request): Response|RedirectResponse
+    public function create(PaginationRequest $request): Response|RedirectResponse
     {
 
         //Obtener los datos de los productos
         $data = $this->get($request);
 
-        //Verificar si existe configuracion
+        $products = Product::query()->paginate();
+
+        //Verificar si existe configuración
         $setting = Setting::first();
 
-        //si existe la configuracion
+        //si existe la configuración
         if (isset($setting)) {
 
             //Devolver correctamente
             return Inertia::render('Products/Register', [
-                'products' => $data,
+                'products' => $products,
                 'categories' => Category::orderBy('name')->get(),
                 'suppliers' => Supplier::orderBy('company_name')->get(),
                 'warehouse' => Warehouse::all(),
@@ -64,6 +67,7 @@ class ProductController extends Controller implements HasMiddleware
 
         } else {
 
+            Inertia::flash('message', 'Por favor, debe crear la setting primero');
             //Redirigir a la ventana de setting
             return to_route('setting.index');
         }

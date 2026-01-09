@@ -1,6 +1,8 @@
 import {creditI} from "@/Interfaces/AccountInterface";
 
 
+
+
 export interface supplierI {
     company_name: string;
     contact: string | null;

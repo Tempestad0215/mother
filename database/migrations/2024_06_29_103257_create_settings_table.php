@@ -21,11 +21,9 @@ return new class extends Migration
             $table->string('address',255)->nullable()->comment('Direccion');
             $table->string('website',255)->nullable()->comment('Sitio web');
             $table->string('company_id',30)->nullable()->comment('ID de empresa');
-            $table->json('tax')->nullable()->comment('Impuesto A registrar');
-            $table->json('unit')->comment('Unidades de medida');
-            $table->enum('company_type', ['BAR','GYM','REPUESTO','SUPERMERCADO','OTRO'])->comment('Tipo de empresa');
             $table->boolean('save_cost')->default(true)->comment('Proteger el costo');
             $table->boolean('sequence')->default(true)->comment('Manejar comprobante');
+            $table->string('image_path')->nullable();
             //Datos fiscales de las empresa
             $table->date('fiscal_year')->nullable()->comment('Año Fiscal');
 

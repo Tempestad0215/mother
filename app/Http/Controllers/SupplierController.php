@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Enums\AccountTypeEnum;
+use App\Enums\PaymentTypeEnum;
 use App\Exports\CategoryExport;
 use App\Exports\SupplierExport;
+use App\Http\Requests\PaginationRequest;
 use App\Http\Resources\SupplierResource;
 use App\Models\Supplier;
 use App\Http\Requests\StoreSupplierRequest;
@@ -39,16 +41,32 @@ class SupplierController extends Controller implements HasMiddleware
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request)
+    public function create(PaginationRequest $request)
     {
 
-        //Tomaar los datos de busqueda
-        $data = $this->get($request);
+        //Tomar los datos de búsqueda
+        $search = $request->search;
+        $per_page = $request->per_page;
+        $page = $request->page;
 
+        $query = Supplier::query();
+
+        if ($search) {
+            $query->where(function ($query) use ($search) {
+                $query->where('company_name', 'like', '%' . $search . '%')
+                    ->orWhere('contact', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%');
+            });
+        }
+
+        $suppliers = $query->paginate($per_page)->withQueryString();
+
+        $paymentType = collect(PaymentTypeEnum::cases())->mapWithKeys(fn(paymentTypeEnum $value) => [$value->name => $value->value]);
 
         //Devolver la vista con los datos
         return Inertia::render("Suppliers/Register",[
-            'suppliers' => $data
+            'suppliers' => $suppliers,
+            'paymentTypes' => $paymentType,
         ]);
 
     }
@@ -56,13 +74,14 @@ class SupplierController extends Controller implements HasMiddleware
     /**
      * @param StoreSupplierRequest $request
      * @return RedirectResponse
+     * @throws \Throwable
      */
     public function store(StoreSupplierRequest $request)
     {
-        DB::transaction(function () use ($request) {
-            // Guardar los datos de supplidor
-            $supplier = Supplier::create($request->validated());
 
+        DB::transaction(function () use ($request) {
+            // Guardar los datos de supplier
+            $supplier = Supplier::create($request->validated());
 
             //si tiene otro tipo que no sea contado
             if ($request->get('type_payment') != 'contado')
@@ -78,7 +97,7 @@ class SupplierController extends Controller implements HasMiddleware
 
         });
 
-        //Devolver hacia atras
+        //Devolver hacia atrás
         return back();
 
     }
