@@ -245,15 +245,10 @@ async function printLabel() {
 			</div>
 		</div>
 
-
 		<!--Informacion General-->
 		<div class="">
 			<ProductInformation
 				@select-product="selectProduct"
-				v-model:name="form.name"
-				v-model:description="form.description"
-				v-model:category-id="form.category_id"
-				v-model:supplier-id="form.supplier_id"
 				:categories="propsW.categories"
 				:suppliers="propsW.suppliers"/>
 

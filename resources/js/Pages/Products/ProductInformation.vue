@@ -4,13 +4,14 @@ import InputLabel from "@components/InputLabel.vue";
 import FRegisterCategory from "@/Pages/Categories/FRegister.vue";
 import FRegisterSupplier from "@/Pages/Suppliers/FRegister.vue";
 import FloatBox from "@components/FloatBox.vue";
-import {reactive, ref} from "vue";
+import {inject, reactive, ref} from "vue";
 import axios from "axios";
 import {productBaseI} from "@/Interfaces/ProductInterface";
 import {categoryBaseI} from "@/Interfaces/CategoriesInterface";
 import {supplierI} from "@/Interfaces/SupplierInterface";
 import {useRoute} from "ziggy-js";
-
+import {formProductKey} from "@/Injections/InjectionKeys";
+import {Card, InputText, FloatLabel, Select} from "primevue";
 
 const route = useRoute();
 defineProps<{
@@ -22,17 +23,14 @@ defineEmits<{
 	(e: 'selectProduct', item: productBaseI): void
 }>()
 
+const form = inject(formProductKey)!!
 const state = reactive({
 	productCheck: null as productBaseI[] | null,
 })
 
-const showCategory = ref(false);
-const showSupplier = ref(false);
+const createCategory = ref(false);
+const createSupplier = ref(false);
 
-const name = defineModel<string>('name')
-const description = defineModel<string>('description')
-const categoryId = defineModel<number>('categoryId')
-const supplierId = defineModel<number>('supplierId')
 
 
 async function checkProductExits() {
@@ -48,135 +46,30 @@ async function checkProductExits() {
 </script>
 
 <template>
-	<fieldset class="field">
-		<legend>
-			Informacion
-		</legend>
+    <Card>
+        <template #header>
 
-		<!-- Nombre -->
-		<div>
-			<InputLabel
-				class="inline ml-2"
-				for="name"
-				value="Nombre"/>
-			<div class="relative">
-				<TextInput
-					@keyup="checkProductExits"
-					class=" w-full peer"
-					name="name"
-					required
-					autocomplete="off"
-					v-model="name"
-					placeholder="Nombre del producto"
-				/>
-				<div
-					class=" opacity-0  peer-focus:opacity-100 z-20 text-gray-50 absolute w-full bg-gray-800 border-2 rounded-md">
-					<ol
-						v-for="(item, index) in state.productCheck"
-						:key="index"
-						class="odd:bg-cyan-400 rounded-md">
-						<li
-							@click="$emit('selectProduct', item)"
-							class="rounded-md px-5">
-							{{ item.name }}
-						</li>
-					</ol>
-				</div>
-			</div>
-
-		</div>
-
-		<!-- Descricion -->
-		<div class="">
-			<InputLabel
-				class="inline ml-2"
-				for="description"
-				value="Descripcion"/>
-			<TextInput
-				class=" w-full"
-				name="name"
-				v-model="description"
-				placeholder="Descripcion"
-			/>
-		</div>
-
-		<div>
-			<InputLabel
-				class="inline ml-2"
-				for="category"
-				value="Categoria"/>
-			<div>
-				<select
-					v-model="categoryId"
-					class=" w-[90%] inputGeneral py-1 ">
-					<option
-						selected
-						disabled
-						:value="0">
-						-- Categoria --
-					</option>
-					<option
-						class="even:bg-blue-200"
-						v-for="(item, index) in categories"
-						:key="index"
-						:value="item.id">
-						{{ item.name }}
-					</option>
-				</select>
-				<i
-					@click="showCategory = true"
-					class="icon-efect text-cyan-400 text-[1.5rem] ml-3 fa-solid fa-code-branch"></i>
-			</div>
-
-		</div>
-
-		<!-- Proveedor -->
-		<div class="">
-			<InputLabel
-				class="inline ml-2"
-				for="supplier"
-				value="Proveedor"/>
-			<div>
-				<select
-					v-model="supplierId"
-					class=" w-[90%] inputGeneral py-1 ">
-					<option selected disabled :value="0">-- Suplidor --</option>
-					<option
-						class="even:bg-blue-200"
-						v-for="(item, index) in suppliers"
-						:key="index"
-						:value="item.id">
-						{{ item.company_name }}
-					</option>
-				</select>
-				<i
-					@click="showSupplier = true"
-					class="icon-efect text-cyan-400 text-[1.5rem] ml-3 fa-solid fa-truck"></i>
-			</div>
-		</div>
-	</fieldset>
-
-	<!--    Mostrar la categorias-->
-	<FloatBox
-		v-if="showCategory"
-		@close="showCategory = false"
-		header="MAnejo de categorias">
-		<FRegisterCategory
-			class="w-[50rem]"
-		/>
-	</FloatBox>
-
-	<!--    Mostar la ventana de suplidores-->
-	<FloatBox
-		v-if="showSupplier"
-		@close="showSupplier = false"
-		header="Manejo de Proveedores">
-		<FRegisterSupplier
-		/>
-	</FloatBox>
+        </template>
+        <template #content>
+            <div>
+                <FloatLabel variant="on">
+                    <InputText id="name"  v-model="form.name" />
+                    <label for="name">Nombre</label>
+                </FloatLabel>
+                <FloatLabel variant="on">
+                    <InputText id="description"  v-model="form.description" />
+                    <label for="description">Descripcion</label>
+                </FloatLabel>
+                <FloatLabel variant="on">
+                    <Select placeholder="Seleccione"  v-model="form.category_id" option-value="id" id="category" option-label="name" :options="categories" />
+                    <label for="category">Categoria</label>
+                </FloatLabel>
+                <FloatLabel variant="on">
+                    <Select placeholder="Seleccione"  v-model="form.supplier_id" option-value="id" id="supplier" option-label="name" :options="suppliers" />
+                    <label for="supplier">Suplidor</label>
+                </FloatLabel>
+            </div>
+        </template>
+    </Card>
 
 </template>
-
-<style scoped>
-
-</style>
