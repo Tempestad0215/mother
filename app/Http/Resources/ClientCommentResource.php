@@ -2,24 +2,38 @@
 
 namespace App\Http\Resources;
 
+use App\Enums\ClientDocumentEnum;
 use App\Enums\ClientTypeEnum;
+use App\Enums\ClientTypePriceEnum;
+use App\Models\Account;
 use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Date;
+
 
 /**
- * @property int $id
- * @property string $code
- * @property string $name
- * @property string $phone
- * @property string $personal_id
- * @property string $email
- * @property string $address
- * @property boolean $status
- * @property ClientTypeEnum $type
- * @property string $created_at
- * @property string $updated_at
- * @property Comment $comment
+ * @property int id;
+ * @property string name
+ * @property string phone
+ * @property string personal_id
+ * @property string email
+ * @property ClientDocumentEnum document
+ * @property string address
+ * @property boolean status
+ * @property float limit
+ * @property integer due_date
+ * @property ClientTypeEnum type
+ * @property float late_fee_interest
+ * @property float balance
+ * @property float consumed
+ * @property ClientTypePriceEnum type_price
+ * @property boolean receive_email
+ * @property Account account
+ * @property string comment
+ * @property Date deleted_at
+ * @property Date created_at
+ * @property Date updated_at
  */
 class ClientCommentResource extends JsonResource
 {
@@ -30,22 +44,27 @@ class ClientCommentResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        /**
+         * Devolver los datos
+         */
         return [
             'id' => $this->id,
-            'code' => $this->code,
             'name' => $this->name,
             'personal_id' => $this->personal_id,
             'phone' => $this->phone,
             'email' => $this->email,
             'address' => $this->address,
+            'document' => $this->document,
             'type' => $this->type,
+            'type_price' => $this->type_price,
             'status' => $this->status,
-            'comment' => [
-                'id' => $this->comment->id,
-                'content' => $this->comment->content,
-                'created_at' => $this->comment->created_at,
-            ],
-            'created_at' => $this->created_at
+            'comment' => $this->comment,
+            'amount' => $this->account?->amount,
+            'due_date' => $this->account?->due_date,
+            'late_fee' => $this->account?->late_fee,
+            'balance' => $this->account?->balance,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
 
         ];
     }

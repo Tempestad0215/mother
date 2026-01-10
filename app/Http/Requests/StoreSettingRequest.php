@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
@@ -16,7 +17,8 @@ use Illuminate\Foundation\Http\FormRequest;
  * @property array $unit
  * @property string $fiscal_year
  * @property boolean $status
- * @property boolean $save_cost
+ * @property boolean $cost
+ * @property boolean $sequence
  */
 class StoreSettingRequest extends FormRequest
 {
@@ -32,7 +34,7 @@ class StoreSettingRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
@@ -44,12 +46,10 @@ class StoreSettingRequest extends FormRequest
             'address' => ['required', 'string', 'max:255'],
             'image' => ['nullable', 'image', 'mimes:jpg,png,jpeg', 'max:2048'],
             'company_id' => ['nullable', 'string', 'max:30'],
-            'tax' => ['required','array'],
-            'tax.*.name' => ['required','string','min:2','max:20'],
-            'tax.*.amount' => ['required','numeric'],
-            'unit' => ['required','array'],
-            'unit.*' => ['nullable','string','min:2', 'max:30'],
             'fiscal_year' => ['nullable','date'],
+            'cost' => ['required','boolean'],
+            'sequence' => ['required','boolean'],
+            'image_path' => ['nullable', 'file', 'mimes:jpg,png,jpeg', 'max:2048'],
         ];
     }
 }

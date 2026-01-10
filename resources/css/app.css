@@ -1,6 +1,13 @@
-@tailwind base;
-@tailwind components;
+@import "tailwindcss";
+@import "tailwindcss-primeui";
+
 @tailwind utilities;
+
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
 
 [x-cloak] {
     display: none;
@@ -20,25 +27,120 @@
 
 
 
-@layer components{
-    .icon-efect {
-        @apply hover:scale-125 duration-300 ease-out hover:animate-pulse text-xl;
-    }
-    .icon-rotate{
-        @apply absolute inset-y-0 right-3 flex items-center
-        ease-in-out duration-300;
-    }
-    .field-box{
-        @apply border-2 border-gray-500 rounded-md p-5;
-    }
-    .list-data{
-        @apply odd:bg-gray-300 rounded-md px-5 hover:bg-gray-500 duration-300;
-    }
 
-    /**
-    Link de la imagen
-     */
-    .image-link{
-        @apply block border-b-2 border-gray-400 rounded-md  hover:bg-gray-600 hover:text-white duration-300;
-    }
-}
+
+
+
+
+/*Estilod e compoebntne*/
+/*@layer components{*/
+/*    !**/
+/*Estilo general*/
+/* *!*/
+/*    .modal-bg{*/
+/*        @apply bg-black backdrop-blur-md bg-opacity-50 z-50  fixed w-screen h-screen;*/
+/*    }*/
+
+/*    .modal{*/
+/*        @apply bg-red-50 ;*/
+/*    }*/
+
+/*    body{*/
+/*       @apply overflow-hidden;*/
+/*    }*/
+
+/*    .fondo{*/
+/*        @apply bg-gray-900;*/
+/*    }*/
+/*    h1, h2, h3, h4, h5, h6, p {*/
+/*        @apply text-gray-50;*/
+/*    }*/
+
+/*    .texto {*/
+/*        @apply text-gray-50;*/
+/*    }*/
+
+/*    legend{*/
+/*        @apply text-gray-50;*/
+/*    }*/
+
+
+
+
+
+
+/*    !*Estilo especifico*!*/
+/*    .icon-efect {*/
+/*        @apply hover:scale-125 duration-300 ease-out hover:animate-pulse text-xl;*/
+/*    }*/
+/*    .icon-rotate{*/
+/*        @apply absolute inset-y-0 right-3 flex items-center*/
+/*        ease-in-out duration-300;*/
+/*    }*/
+/*    .field-box{*/
+/*        @apply border-2 border-gray-500 rounded-md p-5;*/
+/*    }*/
+/*    .list-data{*/
+/*        @apply odd:bg-gray-300 rounded-md px-5 hover:bg-gray-500 duration-300;*/
+/*    }*/
+/*    .title{*/
+/*        @apply text-3xl font-bold italic underline ;*/
+/*    }*/
+
+
+
+/*    !**/
+/*    Input general*/
+/*     *!*/
+/*    .inputGeneral {*/
+/*        @apply border-orange-500 h-[2rem] focus:border-blue-400 focus:ring-blue-800 rounded-md shadow-sm focus:ring-0;*/
+/*    }*/
+
+/*    .area{*/
+/*        @apply border-orange-500 rounded-md min-h-[3rem] max-h-[6rem] focus:ring-0 focus:border-blue-800;*/
+/*    }*/
+
+/*    .field {*/
+/*        @apply border-2 py-2 px-5 rounded-md grid grid-cols-2 gap-3;*/
+/*    }*/
+
+/*    .file{*/
+/*        @apply block file:bg-blue-600 file:text-white file:border file:border-orange-500 file:rounded-md file:font-bold rounded-md;*/
+/*    }*/
+
+/*    !**/
+/*    Estilo para la tabla completa*/
+/*     *!*/
+/*    .styleTable thead {*/
+/*        @apply text-left border-b-2  text-white;*/
+/*    }*/
+/*    .styleTable tbody tr{*/
+/*        @apply hover:text-white border-t border-b  duration-300 hover:cursor-pointer even:bg-gray-600 text-white;*/
+/*    }*/
+/*    .styleTable tbody tr td{*/
+/*        @apply px-2 truncate;*/
+/*    }*/
+
+/*    .styleTable thead i{*/
+/*        @apply text-cyan-400;*/
+/*    }*/
+/*    .span-white{*/
+/*        @apply bg-yellow-50 px-3 py-1 rounded-md block;*/
+/*    }*/
+/*    !*th{*!*/
+/*    !*    @apply border-[1px] border-gray-800 px-2;*!*/
+/*    !*}*!*/
+/*    !*tr{*!*/
+/*    !*    @apply odd:bg-gray-300 rounded-md px-5 hover:bg-gray-500 hover:text-amber-50 duration-300;*!*/
+/*    !*}*!*/
+/*    !*td{*!*/
+/*    !*    @apply border-[1px] border-gray-800 px-2*!*/
+/*    !*}*!*/
+
+/*    !***/
+/*    Link de la imagen*/
+/*     *!*/
+/*    .image-link{*/
+/*        @apply block border-b rounded-md even:bg-blue-500 bg-blue-300 border-blue-800  hover:bg-blue-800 hover:text-white duration-300;*/
+/*    }*/
+/*}*/

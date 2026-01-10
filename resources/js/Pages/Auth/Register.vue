@@ -6,19 +6,24 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import ActionMessage from '@/Components/ActionMessage.vue';
-import {userI, userPaginationI} from "@/Interfaces/User";
-import {computed, ref} from "vue";
-import Swal from "sweetalert2";
-import {successHttp} from "@/Global/Alert";
+import {userI, userPaginationI} from "@/Interfaces/UserInterface";
+import {computed} from "vue";
 import FormSearch from "@components/FormSearch.vue";
-import Pagination from "@components/Pagination.vue";
+import ToggleButton from "@components/ToggleButton.vue";
+import TabLink from "@components/TabLink.vue";
+import {useRoute} from "ziggy-js";
 
+
+const route = useRoute();
+/*
+Propiedad de la ventana
+ */
 defineProps<{
-    users: userPaginationI
-}>()
+    users: userPaginationI,
+    roles: any
+}>();
 
-
-/**
+/*
  * Datos del formulario
  */
 const form = useForm({
@@ -27,24 +32,25 @@ const form = useForm({
     email: '',
     password: '',
     password_confirmation: '',
-    role: 1,
+    role: "User",
     terms: false,
     update: false,
     modify_password: false
 });
-//Datos de busqueda
-const formSearch = useForm({
-    search:""
-})
 
 
-/**
- * Datos de la ventana
+/*
+Formulario de busqueda
  */
-const showConfirm = ref<boolean>(true);
+const formSearch = useForm({
+    search:"",
+    perPage: 15
+});
 
 
-/**
+
+
+/*
  * Propiedades computada
  */
 const showPassword = computed(()=>{
@@ -58,16 +64,11 @@ const showPassword = computed(()=>{
    {
        return  true;
    }
-   else if(!form.update)
-   {
-       return true
-   }else{
-       return false;
-   }
+   else return !form.update;
 });
 
 
-/**
+/*
  * Enviar los datos
  */
 const submit = () => {
@@ -75,12 +76,11 @@ const submit = () => {
     {
         form.patch(route('user.update',{user: form.id}),{
             onSuccess: () => {
-                successHttp('Datos Actualizado Correctamente');
+
             }
         })
     }else{
         form.post(route('user.store'), {
-            onFinish: () => form.reset('password', 'password_confirmation'),
             onSuccess: () => form.reset(),
         });
     }
@@ -91,27 +91,10 @@ const submit = () => {
 // editar los datos
 const edit = (item:userI) => {
 
-    //Para cambiar la version
-    let role:number = 1;
-
-    //Formatear los datos
-    switch (item.role) {
-        case 'USER':
-            role = 1;
-            break;
-        case 'SUPERVISOR':
-            role = 2;
-            break;
-        case 'ADMINFULL':
-            role = 3;
-            break;
-    }
-
     //Pasar los datos al formulario
     form.id = item.id;
     form.name = item.name;
     form.email = item.email;
-    form.role = role;
 
     //Poner el formulario en actualizar
     form.update = true;
@@ -120,21 +103,21 @@ const edit = (item:userI) => {
 
 // Eliminar los datos
 const destroy = (item:userI) => {
-    Swal.fire({
-        title: "Desea eliminar este registro?",
-        text: "Los cambios realizados son irreversible!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Si, Eliminar!"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            router.patch(route('user.destroy',{user: item.id}),{},{
-                onSuccess: () => {
-                    successHttp('Datos eliminado correctamente');
-                }
-            });
-        }
-    });
+    // Swal.fire({
+    //     title: "Desea eliminar este registro?",
+    //     text: "Los cambios realizados son irreversible!",
+    //     icon: "warning",
+    //     showCancelButton: true,
+    //     confirmButtonText: "Si, Eliminar!"
+    // }).then((result) => {
+    //     if (result.isConfirmed) {
+    //         router.patch(route('user.destroy',{user: item.id}),{},{
+    //             onSuccess: () => {
+    //
+    //             }
+    //         });
+    //     }
+    // });
 }
 
 //Buscar los datos
@@ -152,216 +135,199 @@ const search = () => {
 
     <AppLayout>
         <template #header >
-
+            <TabLink
+                :active="true"
+                :href="route('register')">
+                Registrar
+            </TabLink>
         </template>
-
-        <form
-            class="bg-gray-200 p-5 rounded-md grid grid-cols-2 gap-3"
-            @submit.prevent="submit">
-
-            <h3 class="text-3xl font-bold text-center col-span-full ">
-                Registro de Usuario
-            </h3>
-
-            <div>
-                <InputLabel for="name" value="Nombre *" />
-                <TextInput
-                    id="name"
-                    v-model="form.name"
-                    type="text"
-                    class="mt-1 block w-full"
-                    required
-                    autofocus
-                />
-                <InputError class="mt-2" :message="form.errors.name" />
-            </div>
-
-            <div class="">
-                <InputLabel for="email" value="Correo *" />
-                <TextInput
-                    id="email"
-                    v-model="form.email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    required
-                />
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
-
-
-            <fieldset
-                v-if="form.update"
-                class="col-span-full flex">
-                <legend>
-                    Modificar Contraseña
-                </legend>
-                <div>
-                    <input
-                        v-model="form.modify_password"
-                        class=""
-                        type="radio"
-                        :value="false"
-                        name="no"
-                        id="no">
-                    <InputLabel
-                         class="inline" for="no" value="No"/>
-                </div>
-                <div class="ml-10">
-                    <input
-                        v-model="form.modify_password"
-                        type="radio"
-                        :value="true"
-                        name="si"
-                        id="si">
-                    <InputLabel class="inline" for="si" value="Si"/>
-                </div>
-            </fieldset>
-
-
-            <div
-                v-if="showPassword "
-                class="">
-                <InputLabel for="password" value="Contraseña *" />
-                <TextInput
-                    id="password"
-                    v-model="form.password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    required
-                />
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div
-                v-if="showPassword "
-                class="">
-                <InputLabel for="password_confirmation" value="Confirmar contraseña *" />
-                <TextInput
-                    id="password_confirmation"
-                    v-model="form.password_confirmation"
-                    type="password"
-                    class="mt-1 block w-full"
-                    required
-                />
-                <InputError class="mt-2" :message="form.errors.password_confirmation" />
-            </div>
-
-
-
-            <!-- Rol de usuarios -->
-            <div class=" col-span-full text-center ">
-                <InputLabel for="role" value="Rol *"  />
-
-                <div class="  space-x-5">
-                    <!-- Usuarios -->
-                    <div class="inline">
-                        <input
-                            id="user"
-                            name="user"
-                            :value="1"
-                            v-model="form.role"
-                            type="radio">
-                        <label for="user">
-                            Usuario
-                        </label>
-                    </div>
-
-
-                    <!-- Admin -->
-                    <div class="inline">
-                        <input
-                            id="supervisor"
-                            name="supervisor"
-                            :value="2"
-                            v-model="form.role"
-                            type="radio">
-                        <label for="supervisor">
-                            Supervisor
-                        </label>
-                    </div>
-
-
-                    <!-- Adminfill -->
-                    <div class="inline">
-                        <input
-                            id="admin"
-                            name="admin"
-                            :value="3"
-                            v-model="form.role"
-                            type="radio">
-                        <label for="admin">
-                            Administrador
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Mensaje de error -->
-                <InputError class="mt-2" :message="form.errors.role" />
-            </div>
-
-
-            <div
-                class=" col-span-full flex items-center justify-end mt-4">
-                <ActionMessage
-                    :on="form.recentlySuccessful">
-                    Usuario registrado correctamente
-                </ActionMessage>
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Registrar
-                </PrimaryButton>
-            </div>
-        </form>
-
-
-        <div class="mt-5 bg-gray-200 p-5 rounded-md">
+        <div class="mx-auto max-w-[70rem]">
             <form
-                @submit.prevent="search">
-                <FormSearch
-                    v-model="formSearch.search"/>
+                class="bg-blue-300 max-w-[70rem] p-5 rounded-md grid grid-cols-2 gap-3"
+                @submit.prevent="submit">
+
+                <h3 class="text-3xl font-bold text-center col-span-full ">
+                    Registro de Usuario
+                </h3>
+
+                <div>
+                    <InputLabel for="name" value="Nombre *" />
+                    <TextInput
+                        id="name"
+                        v-model="form.name"
+                        type="text"
+                        class="mt-1 block w-full"
+                        required
+                        autofocus
+                    />
+                    <InputError class="mt-2" :message="form.errors.name" />
+                </div>
+
+                <div class="">
+                    <InputLabel for="email" value="Correo *" />
+                    <TextInput
+                        id="email"
+                        v-model="form.email"
+                        type="email"
+                        class="mt-1 block w-full"
+                        required
+                    />
+                    <InputError class="mt-2" :message="form.errors.email" />
+                </div>
+
+                <!--        Preguntar si desea cambiar la password-->
+                <div
+                    v-if="form.update"
+                    class="flex-1">
+                    <InputLabel for="modifyPassoword" value="Modificar Contraseña" />
+                    <ToggleButton
+                        label="Modificar Password"
+                        on-label="SI"
+                        v-model="form.modify_password"
+                        off-label="NO"/>
+
+                </div>
+
+                <!--            &lt;!&ndash; Rol de usuarios &ndash;&gt;-->
+                <!--            <div class="flex-1">-->
+                <!--                <InputLabel for="role" value="Rol *"  />-->
+                <!--                <select-->
+                <!--                    class="inputGeneral py-1 w-full"-->
+                <!--                    v-model="form.role"-->
+                <!--                    name="role"-->
+                <!--                    id="role">-->
+                <!--                    <option-->
+                <!--                        v-for="(item, index) in role"-->
+                <!--                        :key="index"-->
+                <!--                        :value="item.name">-->
+                <!--                        {{ item.label}}-->
+                <!--                    </option>-->
+                <!--                </select>-->
+
+                <!--                &lt;!&ndash; Mensaje de error &ndash;&gt;-->
+                <!--                <InputError class="mt-2" :message="form.errors.role" />-->
+                <!--            </div>-->
+
+                <!--            Contrase;a-->
+                <div
+                    v-if="showPassword "
+                    class="">
+                    <InputLabel for="password" value="Contraseña *" />
+                    <TextInput
+                        id="password"
+                        v-model="form.password"
+                        type="password"
+                        class="mt-1 block w-full"
+                        required
+                    />
+                    <InputError class="mt-2" :message="form.errors.password" />
+                </div>
+                <!--            confirma passwod-->
+                <div
+                    v-if="showPassword "
+                    class="">
+                    <InputLabel for="password_confirmation" value="Confirmar contraseña *" />
+                    <TextInput
+                        id="password_confirmation"
+                        v-model="form.password_confirmation"
+                        type="password"
+                        class="mt-1 block w-full"
+                        required
+                    />
+                    <InputError class="mt-2" :message="form.errors.password_confirmation" />
+                </div>
+
+
+                <!--        Para colocar el rol del usuarios-->
+                <div>
+                    <label
+                        class="block"
+                        for="role">Rol</label>
+                    <select
+                        v-model="form.role"
+                        class="inputGeneral py-1 w-full "
+                        name="role"
+                        id="role">
+                        <option
+                            class="even:bg-blue-200"
+                            v-for="(item, index) in roles"
+                            :key="index"
+                            :value="item.name">
+                            {{item.name}}
+                        </option>
+                    </select>
+                    <InputError class="mt-2" :message="form.errors.role" />
+                </div>
+
+                <!--            Botones-->
+                <div
+                    class=" col-span-full flex items-center justify-end mt-4">
+                    <ActionMessage
+                        :on="form.recentlySuccessful">
+                        Usuario registrado correctamente
+                    </ActionMessage>
+                    <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                        Registrar
+                    </PrimaryButton>
+                </div>
+
             </form>
-            <table
-                class="w-full table-auto  rounded-md">
-                <thead class="border-b-2 border-gray-400">
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Atc</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr
-                    class="odd:bg-gray-400"
-                    v-for="(item, index) in users.data" :key="index">
-                    <td>{{item.id}}</td>
-                    <td>{{item.name}}</td>
-                    <td>{{item.email}}</td>
-                    <td>{{item.role}}</td>
-                    <td class="space-x-4">
-                        <i
-                            @click="edit(item)"
-                            class="icon-efect fa-solid fa-pen-to-square"></i>
 
-                        <i
-                            @click="destroy(item)"
-                            class=" icon-efect fa-solid fa-trash"></i>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+            <div class=" rounded-md p-5 bg-blue-300 mt-3">
+                <form
 
-            <Pagination
-                :total-page="users.meta.to"
-                :prev="users.links.prev"
-                :next="users.links.next"
-                :current-page="users.meta.current_page "/>
+                    @submit.prevent="search">
+                    <FormSearch
+                        class=""
+                        holder="Buscar"
+                        v-model:select-value="formSearch.perPage"
+                        v-model="formSearch.search"/>
+                </form>
+                <table
+                    class="w-full table-auto styleTable mt-3">
+                    <thead
+                        class=" sticky top-0">
+                    <tr
+                        class="">
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Atc</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr
+                        class=""
+                        v-for="(item, index) in users.data" :key="index">
+                        <td>{{item.id}}</td>
+                        <td>{{item.name}}</td>
+                        <td>{{item.email}}</td>
+                        <td class="uppercase">{{item.role}}</td>
+                        <td class="space-x-4">
+                            <i
+                                @click="edit(item)"
+                                class="icon-efect fa-solid fa-pen-to-square"></i>
+
+                            <i
+                                @click="destroy(item)"
+                                class=" icon-efect fa-solid fa-trash"></i>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+<!--                <Pagination-->
+<!--                    :total-page="users.meta.to"-->
+<!--                    :prev="users.links.prev-->
+<!--                    ? paginationJoin(users.links.prev, formSearch.search, formSearch.perPage)-->
+<!--                    : ''"-->
+<!--                    :next="users.links.next-->
+<!--                    ? paginationJoin(users.links.next, formSearch.search, formSearch.perPage)-->
+<!--                    : ''"-->
+<!--                    :current-page="users.meta.current_page "/>-->
+            </div>
         </div>
-
-
-
-
-
     </AppLayout>
 
 </template>

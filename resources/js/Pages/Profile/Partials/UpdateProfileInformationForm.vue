@@ -76,7 +76,8 @@ const clearPhotoFileInput = () => {
 </script>
 
 <template>
-    <FormSection @submitted="updateProfileInformation">
+    <FormSection
+        @submitted="updateProfileInformation">
         <template #title>
             Información de Perfil
         </template>

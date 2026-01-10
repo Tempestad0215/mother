@@ -13,15 +13,15 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
-            $table->boolean('status')->default(true);
-            $table->enum('role',['user','supervisor','admin'])->default('user');
-            $table->foreignId('current_team_id')->nullable();
-            $table->string('profile_photo_path', 2048)->nullable();
+            $table->string('name',75)->comment('Nombre');
+            $table->string('email',150)->unique()->comment('Correo electronico');
+            $table->timestamp('email_verified_at')->nullable()->comment('Verifiacion de email');
+            $table->string('password',60)->comment('Clave');
+            $table->rememberToken()->comment('Token');
+            $table->boolean('status')->default(true)->comment('Estado');
+            $table->foreignId('current_team_id')->nullable()->comment('ID de Equipo');
+            $table->string('profile_photo_path', 2048)->nullable()->comment('Imagen de perfil');
+            $table->softDeletes();
             $table->timestamps();
         });
 
@@ -33,7 +33,7 @@ return new class extends Migration
 
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
-            $table->foreignId('user_id')->nullable()->index();
+            $table->foreignIdFor(\App\Models\User::class)->nullable()->index();
             $table->string('ip_address', 45)->nullable();
             $table->text('user_agent')->nullable();
             $table->longText('payload');

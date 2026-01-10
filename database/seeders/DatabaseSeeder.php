@@ -2,13 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Category;
-use App\Models\Client;
-use App\Models\Product;
-use App\Models\Setting;
-use App\Models\Supplier;
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -18,19 +12,35 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Marionil Guzman',
-            'email' => 'marioguzman140@gmail.com',
-            'role' => 'admin',
-        ]);
+        //Crear los roles y permisos
+        $this->call(RoleSeeder::class);
 
-        Category::factory(15)->create();
-        Client::factory(20)->create();
+        // Crear el usuario
+        $user = User::firstOrCreate(
+            ['email' => 'marioguzman140@gmail.com'], // Condición para evitar duplicados
+            [
+                'name' => 'Marionil Guzman',
+                'password' => bcrypt('password'), // Cambia 'password' por la contraseña deseada
+            ]
+        )->each(function ($user) {
+            $user->assignRole('Super Admin');
+        });
+
+        // reset cached roles and permissions
+
+        // Asignar el rol al usuarios para poder iniciar
+//        $user->assignRole('Super Admin');
+//p
+//
+//        //Crear los datos de pruebas
+//        Category::factory(100)->create();
+//        Client::factory(100)->create();
 //        Product::factory(150)->create();
-        Setting::factory()->create();
-        Supplier::factory(25)->create();
+//        Setting::factory()->create();
+//        Supplier::factory(25)->create();
 
     }
+
+
 }

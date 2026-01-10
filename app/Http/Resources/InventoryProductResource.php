@@ -1,0 +1,43 @@
+<?php
+
+namespace App\Http\Resources;
+
+use App\Enums\InventoryMovementTypeEnum;
+use App\Models\Product;
+use Carbon\Carbon;
+use Carbon\Traits\Date;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+
+/**
+ * @property int id
+ * @property  int product_id
+ * @property InventoryMovementTypeEnum type
+ * @property float quantity
+ * @property float cost
+ * @property string description
+ * @property Product product
+ * @property boolean status
+ * @property boolean was_updated
+ * @property Date created_at
+ * @property Date updated_at
+ * @property Date deleted_at
+ */
+class InventoryProductResource extends JsonResource
+{
+    public function toArray(Request $request): array
+    {
+        return [
+            'id' => $this->id,
+            'quantity' => $this->quantity,
+            'cost' => $this->cost,
+            'product' => $this->product,
+            'type' => $this->type,
+            'description' => $this->description,
+            'was_updated' => $this->was_updated,
+            'created_at' => Carbon::parse($this->created_at)->format('d/m/Y'),
+
+        ];
+    }
+}

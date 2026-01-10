@@ -2,11 +2,31 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\ProductTypeEnum;
+use App\Models\Product;
+use App\Rules\SaveCostProductRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
+
+/**
+ * @property Product $product_id
+ * @property float $stock
+ * @property float $cost
+ * @property float $price
+ * @property float $tax_rate
+ * @property float $tax
+ * @property float $amount
+ * @property float $discount
+ * @property float $discount_amount
+ * @property  float $product_no_tax
+ * @property  float $product_tax
+ * @property float $benefits
+ */
 class StoreProductInRequest extends FormRequest
 {
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -23,11 +43,20 @@ class StoreProductInRequest extends FormRequest
     public function rules(): array
     {
 
+        //Para verificar si es servicio o no
+        $product = Product::find($this->product_id);
+
+
+        //Validar los datos
+
         return [
-            'product_id' => ['required','exists:products,id'],
-            'stock' => ['required', 'numeric'],
+            'product_id' => ['required','exists:products,id','integer'],
+            'stock' => [Rule::requiredIf($product->type == ProductTypeEnum::PRODUCTO), 'required', 'numeric'],
             'cost' => ['required', 'numeric'],
+            'special_price' => ['required','numeric', new SaveCostProductRule($this->cost)],
+            'min_price' => ['required', 'numeric'],
             'price' => ['required', 'numeric'],
+            'tax_rate' => ['required', 'numeric'],
             'tax' =>['required', 'numeric'],
             'amount' => ['required', 'numeric'],
             'discount' => ['nullable','numeric'],

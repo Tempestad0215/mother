@@ -1,24 +1,41 @@
-<script setup>
+<script setup lang="ts">
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import AuthenticationCard from '@/Components/AuthenticationCard.vue';
-import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
 import Checkbox from '@/Components/Checkbox.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import {ref, Ref} from "vue";
+import {useRoute} from "ziggy-js";
 
-defineProps({
+
+const route = useRoute();
+/**
+ * Propiedades de la ventna
+ */
+defineProps<{
     canResetPassword: Boolean,
-    status: String,
-});
+    status: String
+}>();
 
+/**
+ * Datos de la ventana
+ */
+const urlImage:Ref<string> = ref(window.location.origin);
+
+
+/**
+ * Datos del formulario
+ */
 const form = useForm({
     email: '',
     password: '',
     remember: false,
 });
 
+/**
+ * Enviar los datos
+ */
 const submit = () => {
     form.transform(data => ({
         ...data,
@@ -27,23 +44,32 @@ const submit = () => {
         onFinish: () => form.reset('password'),
     });
 };
+
 </script>
 
+
+
+
+
 <template>
-    <Head title="Log in" />
-
-    <AuthenticationCard>
-        <template #logo>
-            <AuthenticationCardLogo />
-        </template>
-
-        <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
+<!--    Titulo de la pagina-->
+    <Head title="Inicio" />
+    <div class=" h-screen ">
+        <div v-if="status" class="mb-4 font-medium text-sm ">
             {{ status }}
         </div>
+        <!--        formulario de inicio-->
+        <form
+            class="max-w-[600px] mx-auto fondo p-10 rounded-md flex-col items-center shadow-md "
+            @submit.prevent="submit">
 
-        <form @submit.prevent="submit">
+            <img
+                class="rounded-2xl mb-5"
+                :src="`${urlImage}/logo.jpeg`" alt="Logo de la empresa" >
+
+
             <div>
-                <InputLabel for="email" value="Email" />
+                <InputLabel for="email" value="Correo" />
                 <TextInput
                     id="email"
                     v-model="form.email"
@@ -57,7 +83,7 @@ const submit = () => {
             </div>
 
             <div class="mt-4">
-                <InputLabel for="password" value="Password" />
+                <InputLabel for="password" value="Contraseña" />
                 <TextInput
                     id="password"
                     v-model="form.password"
@@ -72,19 +98,25 @@ const submit = () => {
             <div class="block mt-4">
                 <label class="flex items-center">
                     <Checkbox v-model:checked="form.remember" name="remember" />
-                    <span class="ms-2 text-sm text-gray-600">Remember me</span>
+                    <span class="ms-2 text-sm text-gray-50 ">Recuerdame</span>
                 </label>
             </div>
 
             <div class="flex items-center justify-end mt-4">
-                <Link v-if="canResetPassword" :href="route('password.request')" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Forgot your password?
+                <Link
+                    v-if="canResetPassword"
+                    :href="route('password.request')"
+                    class="underline text-sm text-gray-50  rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Olvidó su contraseña?
                 </Link>
 
                 <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Log in
+                    Iniciar
                 </PrimaryButton>
             </div>
         </form>
-    </AuthenticationCard>
+    </div>
+
+
+
 </template>

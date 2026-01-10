@@ -30,6 +30,7 @@ class UpdateSupplierRequest extends FormRequest
             'company_name' => ['required','string','min:3','max:75'],
             'phone' => ['nullable','string','max:25'],
             'email' => ['nullable','string','max:150',Rule::unique('suppliers')->ignore($this->route('supplier'))],
+            'comment' => ['nullable','string','min:3','max:255'],
         ];
     }
 }

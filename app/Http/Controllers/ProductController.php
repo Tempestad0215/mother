@@ -2,72 +2,75 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\CategoryHelper;
-use App\Helpers\SupplierHelper;
+use App\Http\Requests\PaginationRequest;
+use App\Models\Category;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
-use App\Http\Resources\ProSupRes;
+use App\Http\Resources\ProductSupplierResource;
 use App\Models\Setting;
-use App\Services\configService;
+use App\Models\Supplier;
+use App\Models\Warehouse;
+use Carbon\Carbon;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
+use Throwable;
 
-class ProductController extends Controller
+
+class ProductController extends Controller implements HasMiddleware
 {
 
-    private CategoryHelper $categoryHelper;
-    private SupplierHelper $supplierHelper;
-    protected configService $configService;
-
-    public function __construct()
-    {
-        $this->categoryHelper = new CategoryHelper();
-        $this->supplierHelper = new SupplierHelper();
-        $this->configService = new configService();
-    }
-
     /**
-     * Display a listing of the resource.
+     * Para controlar
+     * @return Middleware[]
      */
-    public function index()
+    public static function middleware()
     {
-        //
+        return [
+            new Middleware('auth'),
+            new Middleware('role:Super Admin|Supervisor'),
+        ];
     }
 
     /**
-     * @param Request $request
+     * @param PaginationRequest $request
      * @return RedirectResponse|Response
      */
-    public function create(Request $request): Response|RedirectResponse
+    public function create(PaginationRequest $request): Response|RedirectResponse
     {
 
-        //Obtener los datos del productos
+        //Obtener los datos de los productos
         $data = $this->get($request);
 
-        //Verificar si existe configuracion
-        $setting = Setting::firstOrFail();
+        $products = Product::query()->paginate();
 
-        //si existe la configuracion
-        if(isset($setting))
-        {
+        //Verificar si existe configuración
+        $setting = Setting::first();
+
+        //si existe la configuración
+        if (isset($setting)) {
+
             //Devolver correctamente
-            return Inertia::render('Products/Create',[
-                'products' => $data,
-                'categories' => $this->categoryHelper->getAllCategories(),
-                'suppliers' => $this->supplierHelper->getAllSuppliers(),
+            return Inertia::render('Products/Register', [
+                'products' => $products,
+                'categories' => Category::orderBy('name')->get(),
+                'suppliers' => Supplier::orderBy('company_name')->get(),
+                'warehouse' => Warehouse::all(),
+                'nextProduct' => Product::max('id') + 1
             ]);
 
-        }else{
+        } else {
 
+            Inertia::flash('message', 'Por favor, debe crear la setting primero');
             //Redirigir a la ventana de setting
             return to_route('setting.index');
         }
-
-
-
 
     }
 
@@ -75,20 +78,27 @@ class ProductController extends Controller
      * Summary of store
      * @param StoreProductRequest $request
      * @return RedirectResponse
+     * @throws Throwable
      */
-    public function store(StoreProductRequest $request)
+    public function store(StoreProductRequest $request): RedirectResponse
     {
 
-        $product = Product::create($request->validated());
-        // Guardar los datos del productos
-        if ($request->get('type') === 'servicio')
-        {
-            //Actualizar datos por fuera cuando son servicio
-            $product->inventoried = false;
-            $product->price = 1;
-            $product->save();
-        }
+        //Para asegurar que no se guarda si hay problema
+        DB::transaction(function () use ($request) {
 
+            //Guardar los datos del productos
+            $product = Product::create($request->validated());
+
+
+            // Guardar los datos de los productos
+            if ($request->get('type') === 'servicio') {
+                //Actualizar datos por fuera cuando son servicio
+                $product->inventoried = false;
+                $product->unit = "N/A";
+                $product->tax = $request->get('tax_rate') / 100;
+                $product->save();
+            }
+        });
 
         // Devolver hacia atras
         return back();
@@ -100,23 +110,15 @@ class ProductController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function show(Request $request)
+    public function show(Request $request): Response
     {
-        //validar los datos de busqueda
-        $request->validate([
-            'search' => ['nullable','max:50','string']
-        ]);
-
-        //Sacar los datos de busqueda
-        $search = $request->get('search');
 
         // Realizar la busqueda
-        $data = Product::where('status', true)
-            ->where('name','LIKE', '%'. $search.'%')
-            ->latest()
-            ->simplePaginate();
+        $data = $this->get($request);
 
-        return Inertia::render('Products/Show',[
+        //Devolver la vista con los datos
+
+        return Inertia::render('Products/Show', [
             'products' => $data
         ]);
 
@@ -127,18 +129,18 @@ class ProductController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function edit(Product $product, Request $request)
+    public function edit(Product $product, Request $request): Response
     {
-
         $dataProducts = $this->get($request);
-        $dataEdit = new ProSupRes($product);
+        $dataEdit = new ProductSupplierResource($product);
 
-        return Inertia::render('Products/Create',[
+        return Inertia::render('Products/Register', [
             'productEdit' => $dataEdit,
             'products' => $dataProducts,
             'update' => true,
-            'categories' => $this->categoryHelper->getAllCategories(),
-            'suppliers' => $this->supplierHelper->getAllSuppliers(),
+            'categories' => Category::all(),
+            'suppliers' => Supplier::all(),
+            'warehouse' => Warehouse::all()
         ]);
 
     }
@@ -148,18 +150,19 @@ class ProductController extends Controller
      * @param Product $product
      * @return RedirectResponse
      */
-    public function update(StoreProductRequest $request, Product $product)
+    public function update(StoreProductRequest $request, Product $product): RedirectResponse
     {
 
         // Actualizar los datos validados
         $product->update($request->validated());
 
         //Actualizar estos datos si es servicios
-        if ($request->get('type') === 'servicio')
-        {
+        if ($request->get('type') === 'servicio') {
             //Actualizar datos por fuera cuando son servicio
             $product->inventoried = false;
-            $product->price = 1;
+            $product->price = $request->get('price');
+            $product->unit = "N/A";
+            $product->tax = $request->get('tax_rate') / 100;
             $product->save();
         }
 
@@ -171,11 +174,12 @@ class ProductController extends Controller
      * @param Product $product
      * @return RedirectResponse
      */
-    public function destroy(Product $product)
+    public function destroy(Product $product): RedirectResponse
     {
 
+
         //Actulizar los datos
-        $product->status = false;
+        $product->deleted_at = Carbon::now();
         $product->save();
 
         //Devolver atras
@@ -186,7 +190,7 @@ class ProductController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function getByCode(Request $request)
+    public function getByCode(Request $request): JsonResponse
     {
         //conseguir los datos a buscar
         $search = $request->get('search');
@@ -195,7 +199,8 @@ class ProductController extends Controller
         //Buscar los datos
         $data = Product::where('status', true)
             ->where(function ($query) use ($request, $search) {
-                $query->where('code', $search)
+                $query->where('id', $search)
+                    ->orWhere('code', $search)
                     ->orWhere('bar_code', $search);
             })->firstOrFail();
 
@@ -205,31 +210,71 @@ class ProductController extends Controller
     }
 
 
-    // Para crear la entrada de producto
-    public function in()
+    /**
+     * @return Response
+     */
+    public function in(): Response
     {
 
         return Inertia::render('Products/In');
 
     }
 
-    // Conseguir todo los productos
+    // Conseguir los productos
+
     /**
      * Summary of get
      * @param Request $request
-     * @return \Illuminate\Contracts\Pagination\Paginator
+     * @return Paginator
      */
-    public function get(Request $request)
+    public function get(Request $request): Paginator
     {
-        // Obntener los datos de busqueda
+        $validated = $request->validate([
+            'search' => 'nullable|string|max:255',
+            'perPage' => 'nullable|integer|min:1|max:100',
+        ]);
+
+        $search = $validated['search'] ?? '';
+        $perPage = $validated['perPage'] ?? 15;
+
+        return Product::query()
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('id', 'LIKE', "%$search%")
+                        ->orWhere('name', 'LIKE', "%$search%")
+                        ->orWhere('description', 'LIKE', "%$search%")
+                        ->orWhere('sku', 'LIKE', "%$search%");
+                });
+            })
+            ->where('status', true)
+            ->latest('id')
+            ->simplePaginate($perPage);
+
+    }
+
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getJson(Request $request): JsonResponse
+    {
+        //Buscar los datos
         $search = $request->get('search');
 
-        // Realizar la busqueda
-        return  Product::where('status', true)
-            ->where('name','LIKE','%'.$search.'%')
-            ->latest()
-            ->simplePaginate(15);
 
+        // Tomar los datos
+        $products = Product::where(function ($query) use (&$search) {
+            $query->where("id", "LIKE", "%$search%")
+                ->orWhere("name", "LIKE", "%$search%")
+                ->orWhere("description", "LIKE", "%$search%");
+        })->where("status", true)
+            ->orderBy("name")
+            ->take(15)
+            ->get();
+
+        //tomar los datos
+        return response()->json($products);
     }
 
 

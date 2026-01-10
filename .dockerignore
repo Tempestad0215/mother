@@ -1,0 +1,10 @@
+
+
+# Archivos de caché de Composer
+/vendor/
+
+# Archivos de caché de Laravel
+/node_modules/
+
+docker-compose.yml
+Dockerfile

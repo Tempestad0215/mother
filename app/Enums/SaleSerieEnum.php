@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Enums;
+
+enum SaleSerieEnum: String
+{
+    case FACTURA_CREDITO_FISCAL = "B01";
+    case FACTURA_CONSUMIDOR_FINAL = "B02";
+    case NOTA_DE_DEBITO = "B03";
+    case NOTA_DE_CREDITO = "B04";
+    case COMPROBANTE_COMPRA = "B11";
+    case COMPROBANTE_REGISTRO_UNICO_INGRESO = "B12";
+    case COMPROBANTE_GASTO_MENOR = "B13";
+    case COMPROBANTE_REGIMEN_ESPECIAL = "B14";
+    case COMPROBANTE_GUBERNAMENTAL = "B15";
+    case COMPROBANTE_EXPORTACION = "B16";
+    case COMPROBANTE_PAGO_EXTERIOR = "B17";
+}

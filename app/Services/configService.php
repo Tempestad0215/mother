@@ -6,25 +6,35 @@ use App\Models\Setting;
 
 class configService
 {
-    protected Setting $configuractions;
+    protected static ?Setting $configuractions = null;
 
     /**
-     * llamar el metodo principal
+     * Para verificar si existe algo diferente
+     * @return void
      */
-    public function __construct()
+    public static function init(): void
     {
-        $this->configuractions = Setting::firstOrFail();
+        //Verificar si la configuracion es igual a nulo
+        if (self::$configuractions == null)
+        {
+            self::$configuractions = Setting::firstOrFail();
+        }
+
     }
 
 
     /**
-     * @param $key
+     * llamar los datos solictiado
+     * @param string $key
      * @param $default
-     * @return mixed|null
+     * @return mixed
      */
-    public function get($key, $default = null):mixed
+    public static function get(string $key, $default = null):mixed
     {
-        return $this->configuractions->{$key} ?? $default;
+        //llamar el metodo de init
+        self::init();
+        //Devolver los datos solicitado por el servicios
+        return self::$configuractions->{$key} ?? $default;
     }
 
 }

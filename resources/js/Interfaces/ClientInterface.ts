@@ -1,45 +1,62 @@
 
-// Cliente para la tabla
-import {commentI} from "@/Interfaces/Comment";
 
-export interface clientI {
-    current_page: number
-    data: clientDataI[]
-    first_page_url: (string | null)
-    from: number
-    next_page_url: (string|null)
-    path: string
-    per_page: number
-    prev_page_url: (string|null)
-    to: number
+export interface clientTypeI {
+    contado: string;
+    credito: string;
+    anticipo: string;
 }
 
-// Editar
-export interface clienteEditI
-{
-    id: number;
-    code: string;
-    name: string;
-    personal_id: string | null;
-    phone: string | null;
-    email:null | string;
-    address:null | string;
-    type: boolean,
-    comment: commentI
-    status: Boolean;
-    created_at:string;
+export interface clientPriceI{
+    normal: number
+    minimo: number
+    especial: number
 }
 
 
-export interface clientDataI {
+export interface clientDocumentI {
+    cedula: string
+    pasaporte: string
+    rnc: string
+    otro: string
+}
+/**
+ *
+ */
+export interface clientBaseI {
     address: string | null
-    code: string
     created_at: string
     email: string | null
     personal_id: string | null
+    document: string
+    type_price: number;
+    type_rnc: string;
     id: number
     name: string
+    type: string
     phone: string | null
     status: boolean
     updated_at: string
+    comment: string | null
 }
+
+
+/**
+ *
+ */
+export interface clientEditI extends clientBaseI {
+    document: string;
+    comment: string;
+    amount: number;
+    due_date: number;
+    late_fee: number;
+    balance: number;
+}
+
+export interface rncClientI {
+    rnc: string;
+    razon_social: string;
+    status: string;
+    type:string
+}
+
+

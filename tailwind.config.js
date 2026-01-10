@@ -2,6 +2,7 @@ import defaultTheme from 'tailwindcss/defaultTheme';
 import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
 
+
 /** @type {import('tailwindcss').Config} */
 export default {
     content: [
@@ -11,7 +12,6 @@ export default {
         './resources/views/**/*.blade.php',
         './resources/js/**/*.vue',
     ],
-
     theme: {
         extend: {
             fontFamily: {
@@ -19,6 +19,8 @@ export default {
             },
         },
     },
-
+    corePlugins: {
+        preflight: false
+    },
     plugins: [forms, typography],
 };

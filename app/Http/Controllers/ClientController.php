@@ -2,37 +2,55 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ClientDocumentEnum;
+use App\Enums\ClientTypeEnum;
+use App\Enums\ClientTypePriceEnum;
+use App\Exports\ClientExport;
 use App\Helpers\ClientHelper;
 use App\Http\Resources\ClientCommentResource;
 use App\Models\Client;
 use App\Http\Requests\StoreClientsRequest;
 use App\Http\Requests\UpdateClientsRequest;
+use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Inertia\Inertia;
+use Inertia\Response;
+use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\Exception;
+use Throwable;
 
-class ClientController extends Controller
+class ClientController extends Controller implements HasMiddleware
 {
-    public $clientHelper;
+    public ClientHelper $clientHelper;
 
+
+    /**
+     * Para los middleware del controllador
+     * @return array
+     */
+    public static function middleware()
+    {
+        return [
+            new Middleware('auth'),
+            new Middleware('role:Super Admin|Supervisor',),
+        ];
+    }
+
+
+    /**
+     *
+     */
     public function __construct()
     {
         $this->clientHelper = new ClientHelper();
     }
 
-
-
     /**
-     * @return void
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * @return \Inertia\Response
+     * @return Response
      */
     public function create(Request $request)
     {
@@ -41,34 +59,56 @@ class ClientController extends Controller
             'search' => ['nullable','string'],
         ]);
 
+        $search = $request->input(['search']);
+        $perPage = $request->input(['per_page']);
+
+
         // Tomar los datos
         $data = $this->getTable($request);
 
-        return Inertia::render('Clients/Create',[
+        $clientType = collect(ClientTypeEnum::cases())->mapWithKeys(fn(ClientTypeEnum $item) => [$item->name => $item->value]);
+        $clientPrice = collect(ClientTypePriceEnum::cases())->mapWithKeys(fn(ClientTypePriceEnum $item) => [$item->name => $item->value]);
+        $clientDocument = collect(ClientDocumentEnum::cases())->mapWithKeys(fn(ClientDocumentEnum $item) => [$item->name => $item->value]);
+
+        $query = Client::query();
+
+        if ($search)
+            $query->where('name','like','%'.$search.'%')
+                ->orWhere('email','like','%'.$search.'%');
+
+        $clients = $query->paginate($perPage)->withQueryString();
+        /*Vista con la pagina*/
+        return Inertia::render('Clients/Register',[
             'clients' => $data,
-            'test' => config('Setting.cliCode')
+            'search' => $search,
+            'typeRNC' => config('appconfig.sequenceSale'),
+            'clientData' => $clients,
+            'clientType' => $clientType,
+            'clientPrice' => $clientPrice,
+            'clientDocument' => $clientDocument,
         ]);
 
     }
 
     /**
      * @param StoreClientsRequest $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
+     * @throws Throwable
      */
     public function store(StoreClientsRequest $request)
     {
-
         //Guardar los datos
         $this->clientHelper->store($request);
 
-        // Devolver hacia atras
+        Inertia::flash("message", "Datos Registrado conExisto");
+        // Devolver hacia atrás
         return back();
 
     }
 
     /**
      * @param Request $request
-     * @return \Inertia\Response
+     * @return Response
      */
     public function show(Request $request)
     {
@@ -90,14 +130,16 @@ class ClientController extends Controller
 
     /**
      * @param Client $client
-     * @return \Inertia\Response
+     * @return Response
      */
     public function edit(Client $client)
     {
+
         // Devolver la vista con los datos
-        return Inertia::render('Clients/Create',[
+        return Inertia::render('Clients/Register',[
             'update' => true,
-            'clientEdit' => new ClientCommentResource($client) ,
+            'clientEdit' => new ClientCommentResource($client),
+            'typeRNC' => config('appconfig.sequenceSale')
         ]);
 
     }
@@ -105,14 +147,13 @@ class ClientController extends Controller
     /**
      * @param UpdateClientsRequest $request
      * @param Client $client
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
+     * @throws Throwable
      */
     public function update(UpdateClientsRequest $request, Client $client)
     {
-
-        // Actualizar todos los datos
-        $client->update($request->validated());
-
+        //Actualizer los datos
+        $this->clientHelper->update($request, $client);
         // Devolver hacia atras
         return back();
 
@@ -120,21 +161,16 @@ class ClientController extends Controller
 
     /***
      * @param Client $client
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function destroy(Client $client)
     {
 
         //Verificar si el usuario tiene permiso
-        Gate::authorize('destroy', Auth::user());
-
+//        Gate::authorize('destroy', Auth::user());
 
         // Actualizar los datos
-        $client->status = true;
-        $client->save();
-
-
-
+        $client->delete();
 
         // Retornar hacia atras
         return back();
@@ -143,20 +179,20 @@ class ClientController extends Controller
 
     /**
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function getJson(Request $request)
     {
         //Obtener los datos para buscar
         $search = $request->get('search');
 
-        //Buscar los datos de todo
+        //Buscar los datos
         $data = Client::where('status',false)
             ->where(function ($query) use ($search) {
                 $query->where('name','like','%'. $search .'%')
                     ->orWhere('phone','like','%'. $search .'%');
             })
-            ->latest()
+            ->latest('created_at')
             ->limit(5)
             ->get();
 
@@ -167,23 +203,32 @@ class ClientController extends Controller
 
     /**
      * @param Request $request
-     * @return mixed
+     * @return Paginator
      */
-    private function getTable(REquest $request)
+    private function getTable(Request $request)
     {
         // Tomar los datos
-        $search = $request->get('search');
+        $search = trim($request->get('search'));
+        $perPage = $request->get('perPage',30);
+
 
         // Buscar en la base de datos
-        return Client::where('status',true)
-            ->where(function ($query) use ($search) {
-                $query->where('name','like','%'. $search .'%')
-                    ->orWhere('email','like','%'. $search .'%')
-                    ->orWhere('phone','like','%'. $search .'%');
-            })
-            ->latest()
-            ->simplePaginate();
+        return Client::search($search)
+            ->where('status',true)
+            ->latest('created_at')
+            ->simplePaginate($perPage);
 
+    }
+
+
+    /**
+     * @throws Exception
+     * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
+     */
+    public function exportExcel()
+    {
+
+        return Excel::download(new ClientExport, 'clientes.xlsx');
     }
 
 

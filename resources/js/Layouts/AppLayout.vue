@@ -1,171 +1,167 @@
 <script setup lang="ts">
-import {computed, ref} from 'vue';
-import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import NavLink from '@/Components/NavLink.vue';
-import {pageI} from "@/Interfaces/Global";
+import { onMounted, onUnmounted, reactive, ref} from 'vue';
+import { usePage } from '@inertiajs/vue3';
+import Divider from "@components/Divider.vue";
+import ImageMenu from "@components/ImageMenu.vue";
+import { useRoute } from 'ziggy-js';
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import {faArrowCircleLeft} from "@fortawesome/free-solid-svg-icons";
+import {PanelMenu, ScrollPanel, ConfirmPopup, Toast} from "primevue";
 
+// ✅ Elimina: const route = useRoute();
 
-
-
-const page:pageI = <pageI>usePage();
+const route = useRoute();
+const {props} = usePage();
 
 defineProps({
     title: String,
 });
 
+const menuImageRef = ref<HTMLElement | null>(null);
+const showExchange = ref<boolean>(false);
 const showOption = ref<boolean>(false);
-/**
- * Propiedades computad
- */
-
-const checkRole = computed(()=>{
-   let role:number = page.props.auth.user.role;
-
-   if(role !== 'user')
-   {
-       return true
-   }
-
-});
+const isHiddenMenu = ref<boolean>(false);
 
 
+// ✅ Menú optimizado para POS
+const menuItems = reactive([
+    {
+        label: "Clientes",
+        url: route("client.create"), // o .create si prefieres
+        activePath: "/client",
+        icon: "pi pi-user",
+    },
+    {
+        label: "Categorías",
+        url: route("category.create"),
+        activePath: "/category",
+        icon: "pi pi-sitemap",
+    },
+    {
+        label: "Proveedores",
+        url: route("supplier.create"),
+        activePath: "/supplier",
+        icon: "pi pi-truck",
+    },
+    {
+        label: "Productos",
+        url: route("product.create"),
+        activePath: "/product",
+        icon: "pi pi-box",
+    },
+    {
+        label: "Nueva Venta",
+        url: route("sale.create"),
+        activePath: "/sale/create",
+        icon: "pi pi-shopping-cart",
+        // Resaltado especial para POS
+        isPrimary: true,
+    },
+    {
+        label: "Ventas",
+        url: route("sale.create"),
+        activePath: "/sale",
+        icon: "pi pi-receipt",
+    },
+    {
+        label: "Reportes",
+        url: route("report-sale.index"),
+        activePath: "/report",
+        icon: "pi pi-chart-bar",
+    },
+]);
 
-/**
- * Funciones
- */
-const logout = () => {
-    router.post(route('logout'));
+
+
+const isActive = (activePath: string): boolean => {
+    return window.location.pathname.startsWith(activePath);
 };
 
-const isUrl = (params:string) => {
-
-    return page.url.startsWith(params);
-}
-
-const profile = () => {
-    router.get(route('profile.show'));
-}
+const handleClick = (event: MouseEvent) => {
+    if (menuImageRef.value && !menuImageRef.value.contains(event.target as Node)) {
+        showOption.value = false;
+    }
+};
 
 
+
+const showExchangeWindow = () => {
+    if (props.isExchange) {
+        showExchange.value = true;
+    }
+};
+
+onMounted(() => {
+    document.addEventListener("click", handleClick);
+    showExchangeWindow();
+});
+
+onUnmounted(() => {
+    document.removeEventListener("click", handleClick);
+});
 </script>
 
 <template>
-    <Head :title="title"/>
-    <div class="">
-        <aside class=" fixed bg-gray-200 w-20 h-screen z-30">
+    <div class="flex min-h-screen bg-gray-50">
+        <FontAwesomeIcon
+            @click="isHiddenMenu = !isHiddenMenu"
+            class="absolute top-3 text-3xl cursor-pointer text-red-500 z-50 ease-in-out  duration-200 transition-[left, transform] "
+            :icon="faArrowCircleLeft"
+            :class="{
+                'left-40': !isHiddenMenu,
+                'left-8 rotate-180': isHiddenMenu
+              }"
 
-            <img
-                @click="showOption = !showOption"
-                class="rounded-full mx-auto mt-5"
-                :src="page.props.auth.user ? page.props.auth.user.profile_photo_url : ''"
-                alt="Imagen de nombre">
+        />
 
-            <ol
-                class=" text-2xl space-y-2 text-center mt-5 border-t-2 border-black pt-5">
-                <li
-                    v-if="checkRole">
-                    <NavLink
-                        title="Clientes"
-                        :active="isUrl('/client')"
-                        :href="route('client.create')">
-                        <i class="fa-solid fa-users"></i>
-                    </NavLink>
-                </li>
-                <li v-if="checkRole">
-                    <Link
-                        title="Categorias"
-                        :active="isUrl('/category')"
-                        :href="route('category.create')">
-                        <i class="fa-solid fa-code-branch"></i>
-                    </Link>
-                </li>
-                <li v-if="checkRole">
-                    <Link
-                        title="Suplidores"
-                        :href="route('supplier.create')">
-                        <i class="fa-solid fa-truck-field"></i>
-                    </Link>
-                </li>
-                <li v-if="checkRole">
-                    <Link
-                        title="Producto"
-                        :href="route('product.create')">
-                        <i class="fa-solid fa-box-open"></i>
-                    </Link>
-                </li>
-                <li v-if="checkRole">
-                    <Link
-                        title="Entrada"
-                        :href="route('product-in.create')">
-                        <i class="fa-solid fa-dolly"></i>
-                    </Link>
-                </li>
-                <li>
-                    <Link
-                        title="Ventas"
-                        :href="route('product-sale.create')">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                    </Link>
-                </li>
-                <li v-if="checkRole">
-                    <Link
-                        title="Reportes"
-                        :href="route('report.index')">
-                        <i class="fa-solid fa-chart-pie"></i>
-                    </Link>
-                </li>
+        <!-- Sidebar Profesional -->
+        <aside
+            class="bg-gray-900 text-white w-64 flex  flex-col shadow-xl transition-all duration-300"
+            :style="{ width: isHiddenMenu ? '3rem' : '11rem' }"
+        >
+            <!-- Logo / User -->
+            <div
+                v-show="!isHiddenMenu">
+                <ImageMenu :url="props.auth.user.profile_photo_url" />
+            </div>
+
+            <Divider />
 
 
-
-                <li
-                    class="absolute bottom-0 right-8 hover:scale-125 duration-300"
-                    v-if="checkRole">
-                    <Link
-                        title="Reportes"
-                        :href="route('setting.index')">
-                        <i class="fa-solid fa-sliders"></i>
-                    </Link>
-                </li>
-
-
-            </ol>
+            <PanelMenu :model="menuItems">
+                <template #item="{ item }">
+                    <a
+                        class="block text-xl mx-2"
+                        :class="[{'text-center': isHiddenMenu}]"
+                        :title="item.label"
+                        :href="item.url">
+                        <i
+                            class="mr-3 text-center"
+                            :class="[item.icon,{'text-center': isHiddenMenu} ]" ></i>
+                        <span
+                            class="ease-in-out transition-[hidden] duration-200"
+                            :class="{'hidden': isHiddenMenu }">{{item.label}}</span>
+                    </a>
+                </template>
+            </PanelMenu>
 
         </aside>
-        <Transition>
-            <div
-                v-if="showOption"
-                class=" absolute top-14 left-12 w-52 rounded-md bg-gray-200 z-40 border-2 border-gray-500">
-                <ol class=" text-xl text-center select-none">
-                    <Link
-                        class="image-link"
-                        :href="route('profile.show')">
-                        Perfil
-                    </Link>
-                    <Link
-                        class="image-link"
-                        :href="route('register')">
-                        Usuario
-                    </Link>
-                    <Link
-                        class="image-link"
-                        method="post"
-                        :href="route('logout')">
-                        Salir
-                    </Link>
 
-                </ol>
-            </div>
-        </Transition>
+        <!-- Contenido principal -->
+        <div class="flex-1 flex flex-col overflow-auto">
+            <!-- Header -->
+<!--            <header class="bg-white shadow-sm h-16 flex items-center px-6 justify-between">-->
+<!--                <h1 class="text-lg font-semibold text-gray-800">-->
+<!--                    <slot name="header">{{ title }}</slot>-->
+<!--                </h1>-->
+<!--                &lt;!&ndash; Puedes agregar notificaciones, perfil, etc. &ndash;&gt;-->
+<!--            </header>-->
 
-
-        <div class="flex-col flex-1 overflow-hidden">
-            <header class=" flex items-center justify-center space-x-3 fixed top-0 left-20 h-20 max-h-16 flex-1 w-full bg-gray-200 z-20 px-5">
-                <slot name="header"/>
-            </header>
-            <div class="mt-20 ml-24 mr-4">
+            <ScrollPanel class="flex-1 p-6 bg-gray-50 h-screen" >
                 <slot/>
-            </div>
+            </ScrollPanel>
         </div>
     </div>
-
+    <Toast/>
+    <ConfirmPopup></ConfirmPopup>
 </template>

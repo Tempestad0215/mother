@@ -28,6 +28,7 @@ class InHelper
             ->latest()
             ->simplePaginate(15);
 
+
         //Devolver los datos formateado
         return ProductTransResource::collection($data)->response()->getData(true);
 
@@ -69,12 +70,14 @@ class InHelper
      */
     public function updateGeneral(Request $request, Product $product): void
     {
-        $product->cost = $request->get('cost');
+
+        $product->min_price = $request->get('min_price');
+        $product->special_price = $request->get('special_price');
         $product->price = $request->get('price');
+        $product->cost = $request->get('cost');
         $product->discount = $request->get('discount');
         $product->discount_amount = $request->get('discount_amount');
         $product->tax = $request->get('tax');
-        $product->product_tax = $request->get('product_tax');
         $product->product_no_tax = $request->get('product_no_tax');
         $product->benefits = $request->get('benefits');
         $product->save();

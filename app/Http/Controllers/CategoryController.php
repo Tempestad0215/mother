@@ -2,25 +2,57 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\CategoryExport;
 use App\Models\Category;
+use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Inertia\Inertia;
+use Inertia\Response;
+use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\Exception;
 
-class CategoryController extends Controller{
+class CategoryController extends Controller implements HasMiddleware
+{
+
+    public static function middleware()
+    {
+        return [
+            new Middleware('auth'),
+            new Middleware('role:Super Admin|Supervisor'),
+        ];
+    }
+
     /**
      * @param Request $request
-     * @return \Inertia\Response
+     * @return Response
      */
     public function create(Request $request){
 
-        //Tomar los datos de busqueda
-        $data = $this->get($request);
+        $request->validate([
+            'search' => 'nullable|string',
+            'per_page'=> 'nullable|numeric|min:1|max:50',
+            'page'=> 'nullable|numeric|min:1',
+        ]);
+
+
+        $search = $request->search;
+        $query = Category::query();
+
+        if ($search)
+        {
+            $query->where('name', 'like', "%$search%")
+                ->orWhere('description', 'like', "%$search%");
+        }
+
+        $categories = $query->paginate($request->per_page)->withQueryString();
 
         //Devolver la vista con los datos
-        return Inertia::render('Categories/Create',[
-            'categories' => $data
+        return Inertia::render('Categories/Register',[
+            'categories' => $categories,
             ]);
 
     }
@@ -28,9 +60,10 @@ class CategoryController extends Controller{
 
     /**
      * @param Request $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
-    public  function store(Request $request){
+    public  function store(Request $request)
+    {
 
         //Validar los datos
         $request->validate([
@@ -49,9 +82,29 @@ class CategoryController extends Controller{
 
 
     /**
+     * Editar los datos de la categorias
+     * @param Category $category
+     * @param Request $request
+     * @return Response
+     */
+    public function edit(Category $category, Request $request)
+    {
+//        Tomar los datos para la busqueda
+        $data = $this->get($request);
+
+//        Devolver la vista con los datos
+        return Inertia::render('Categories/Register',[
+            'categories' => $data,
+            'categoryEdit' => $category,
+            'update' => true
+        ]);
+    }
+
+
+    /**
      * @param Request $request
      * @param Category $category
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function update(Request $request, Category $category){
         // Valiar los datos antes de actualizar
@@ -71,16 +124,13 @@ class CategoryController extends Controller{
 
     /**
      * @param Category $category
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function destroy(Category $category){
 
-        //Poner la restricciones de usuario
-        Gate::authorize('delete', Auth::user());
+
         // Actualizar los datos
-        $category->update([
-            'status' => true
-        ]);
+        $category->delete();
         //Devolver hacia atras
         return back();
 
@@ -89,7 +139,7 @@ class CategoryController extends Controller{
 
     /**
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function getJson(Request $request){
 
@@ -111,22 +161,33 @@ class CategoryController extends Controller{
 
     /**
      * @param Request $request
-     * @return mixed
+     * @return Paginator
      */
-    private function get(Request $request)
+    private function get(Request $request):Paginator
     {
 
         // Tomar los datos de busqueda
-        $search = $request->get('search');
+        $search = trim($request->get('search'));
+        $per_page = $request->get('per_page',15);
+        $field = $request->get('field','name');
+
+        return Category::query()
+            ->where($field,'like','%'.$search.'%')
+            ->where('status',true)
+            ->latest('created_at')
+            ->simplePaginate($per_page);
+
+    }
 
 
+    /**
+     * @throws Exception
+     * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
+     */
+    public function exportExcel()
+    {
 
-        $data = Category::where('status',true)
-            ->where('name', 'like', '%'.$search.'%')
-            ->latest()
-            ->simplePaginate(15);
-
-        return $data;
+        return Excel::download(new CategoryExport, 'categorias.xlsx');
     }
 
 

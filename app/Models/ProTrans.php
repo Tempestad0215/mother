@@ -2,32 +2,39 @@
 
 namespace App\Models;
 
-use App\Enums\ProductTransType;
-use Carbon\Carbon;
+use App\Enums\TransTypeEnum;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 use OwenIt\Auditing\Contracts\Auditable;
 
 
 /**
- * @property int $id
- * @property string $code
- * @property int $product_id
- * @property int $sale_id
- * @property float $stock
- * @property float $price
- * @property float $cost
- * @property float $discount
- * @property float $discount_amount
- * @property float $tax
- * @property float $tax_amount
- * @property float $amount
- * @property boolean $status
- * @property ProductTransType $type
- * @property string $created_at
- * @property string $updated_at
+ * @property int id
+ * @property string code
+ * @property int product_id
+ * @property string product_name
+ * @property int sale_id
+ * @property int credit_note_id
+ * @property float stock
+ * @property float reserved
+ * @property float price
+ * @property float min_price
+ * @property float special_price
+ * @property float discount
+ * @property float discount_amount
+ * @property float tax_rate
+ * @property float tax
+ * @property float tax_amount
+ * @property float amount
+ * @property boolean status
+ * @property TransTypeEnum type
+ * @property Carbon created_at
+ * @property Carbon updated_at
+ * @property Carbon deleted_at
  */
 
 class ProTrans extends Model implements Auditable
@@ -37,6 +44,13 @@ class ProTrans extends Model implements Auditable
      */
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
+    use softDeletes;
+
+
+    /**
+     * @var string
+     */
+    protected $table = 'pro_trans';
 
 
     /**
@@ -44,12 +58,17 @@ class ProTrans extends Model implements Auditable
      */
     protected $fillable = [
         'product_id',
+        'product_name',
         'sale_id',
+        'credit_note_id',
         'stock',
         'price',
-        'cost',
+        'reserved',
+        'min_price',
+        'special_price',
         'discount',
         'discount_amount',
+        'tax_rate',
         'tax',
         'tax_amount',
         'amount',
@@ -57,11 +76,43 @@ class ProTrans extends Model implements Auditable
         'status'
     ];
 
+    //formatear los datos
     protected $casts = [
         'status' => 'boolean',
-        'type' => ProductTransType::class
+        'type' => TransTypeEnum::class
     ];
 
+
+    //Campo Oculto
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+    ];
+
+    /*
+     * Relacionar los datos
+     */
+
+    public function sale():BelongsTo
+    {
+        return $this->belongsTo(Sale::class);
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function product():belongsTo
+    {
+        return $this->belongsTo(Product::class);
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function creditNote():belongsTo
+    {
+        return $this->belongsTo(CreditNote::class);
+    }
 
 
     /*
@@ -79,33 +130,6 @@ class ProTrans extends Model implements Auditable
         );
     }
 
-    /**
-     * Formataer la fecha de actualizacion
-     * @return Attribute
-     */
-    protected function updatedAt ():Attribute
-    {
-        return Attribute::make(
-            get: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i:s'),
-            set: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i:s'),
-        );
-    }
-
-
-
-    /**
-     * Relaciones
-     */
-    public function product():belongsTo
-    {
-        return $this->belongsTo(Product::class);
-    }
-
-
-
-
-
-
 
     /**
      * @return void
@@ -115,11 +139,14 @@ class ProTrans extends Model implements Auditable
         // Llamar el metodo principal
         parent::boot();
 
-        //Generar el codigo en todo
-        static::creating(function ($sale) {
-            $sale->code = self::generateCode();
+        //Generar el codigo los codigos
+        static::creating(function ($model) {
+            $model->code = self::generateCode();
         });
+
+
     }
+
 
 
 
@@ -131,15 +158,17 @@ class ProTrans extends Model implements Auditable
     private static function generateCode():string
     {
         // Obtener el ultimo registros
-        $last = self::orderBy('id','desc')->first();
+        $total = self::withTrashed()->count();
 
         // Generar el proximo ID
-        $nextID = $last ? $last->id + 1 : 1;
+        $nextID = $total ? $total + 1 : 1;
 
         // Devolver los datos
-        $code = config('appconfig.transCode');
+        $code = config('appconfig.proTrans');
 
         // craer el codigp
         return $code.str_pad($nextID, 6,'0', STR_PAD_LEFT);
     }
+
+
 }

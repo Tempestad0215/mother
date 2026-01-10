@@ -2,7 +2,9 @@
 
 namespace App\Helpers;
 
+use App\Enums\AccountTypeEnum;
 use App\Http\Requests\StoreClientsRequest;
+use App\Http\Requests\UpdateClientsRequest;
 use App\Models\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -18,54 +20,90 @@ class ClientHelper
     public  function  get(Request $request):mixed
     {
 
+        $search = $request->get('search');
+        $perPage = $request->get('perPage',15);
+        $field = $request->get('field','name');
+
+
+        $fieldAllowed = ['name','document','phone','personal_id','email'];
+
         //conseguir los datos del cliente
         return Client::where('status', true)
-            ->where('name','LIKE','%'.$request->get('search').'%' )
-            ->latest()
-            ->simplePaginate(15);
+            ->where($field,'LIKE','%'.$search.'%' )
+            ->latest('created_at')
+            ->simplePaginate($perPage);
 
     }
+
 
     /**
      * @param StoreClientsRequest $request
      * @return void
+     * @throws \Throwable
      */
     public function store(StoreClientsRequest $request):void
     {
 
-        //Asegurar la transaccion de la introducion de datos
+        //Asegurar la transacción de la introducción de datos
         DB::transaction(function () use ($request) {
 
+            //Instancia
+            $general = new General();
             //Obtener el tipo
-            $type = (int) $request->get('type');
+            $type = $request->get('type');
 
-
-            //Guardar los datos validado
+            //Guardar los datos validados
            $client = Client::create($request->validated());
 
-           //Tomar el nombre del comentario
-           $commentHelper = new CommentHelper();
-           $commentHelper->updateOrInsert($client, $request->get('comment'));
+           //Guardar la imagen y quedarse con el nombre
+           $general->saveImage($request, $client);
 
-           //si es avance
-           if($type === 3)
+           if ($type != 'contado')
            {
-               //Crear la instancia
-               $advanceHelper = new AdvanceHelper();
+               $client->account()->create([
+                   'type' => AccountTypeEnum::COBRAR,
+                   'amount' => $request->get('amount'),
+                   'due_date' => $request->get('due_date'),
+                   'balance' => $request->get('amount'),
+                   'late_fee' => $request->get('late_fee'),
+               ]);
 
-               //Guardar los datos
-               $advanceHelper->store($request, $client->id);
-
-               //Si es credito
-           }else if($type === 2){
-
-               //Crear la instancia
-               $creditHelper = new CreditHelper();
-               //Enviar los datos
-               $creditHelper->store($request, $client->id);
            }
 
-
         });
+    }
+
+    /**
+     * @param UpdateClientsRequest $request
+     * @param Client $client
+     * @return void
+     * @throws \Throwable
+     */
+    public function update(UpdateClientsRequest $request, Client $client):void
+    {
+        //Asegurar que se cumpla la transaccion
+        DB::transaction(function () use ($request, $client) {
+            //Obtener el tipo
+            $type = $request->get('type');
+
+            //Actualizar el cliente
+            $client->update($request->validated());
+
+            //Verificar el tipo de pago
+            if ($type != 'contado')
+            {
+                $client->account()->updateOrInsert(
+                    ['accountable_id' => $client->uuid],
+                    [
+                    'type' => AccountTypeEnum::COBRAR,
+                    'amount' => $request->get('amount'),
+                    'due_date' => $request->get('due_date'),
+                    'balance' => $request->get('amount'),
+                    'late_fee' => $request->get('late_fee'),
+                ]);
+
+            }
+        });
+
     }
 }

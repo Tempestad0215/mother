@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import AppLayout from '@layout/AppLayout.vue';
 import { Head} from '@inertiajs/vue3';
-import { productI } from '@/Interfaces/Product';
-import ContentBox from '@components/ContentBox.vue';
+import { productI } from '@/Interfaces/ProductInterface';
 import { PropType } from 'vue';
-import FloatShow from "@/Pages/Products/FloatShowPro.vue";
-import LinkHeader from "@components/LinkHeader.vue";
+import FShow from "@/Pages/Products/FShow.vue";
+import TabLink from "@components/TabLink.vue";
+import {useRoute} from "ziggy-js";
 
 
+const route = useRoute();
 const props = defineProps({
     products: {
         type: Object as PropType<productI>,
@@ -19,27 +20,34 @@ const props = defineProps({
 
 
 <template>
+<!--    Titulo de la ventana-->
     <Head title="Mostrar" />
     <AppLayout>
+
+<!--        Titulo de la ventana-->
         <template #header >
-            <LinkHeader
+            <TabLink
                 :href="route('product.create')">
                 Registrar
-            </LinkHeader>
-            <LinkHeader
+            </TabLink>
+            <TabLink
+                :href="route('entry.index')">
+                Entrada
+            </TabLink>
+            <TabLink
                 :active="true"
                 :href="route('product.show')">
                 Mostrar
-            </LinkHeader>
+            </TabLink>
         </template>
 
-        <div>
-            <ContentBox class="md:max-w-full !bg-gray-200">
-               <FloatShow
+
+<!--        Contenido de la ventana-->
+        <div
+            class=" fondo rounded-md  p-5">
+               <FShow
                    class=""
                     :products="props.products"/>
-
-            </ContentBox>
 
         </div>
 

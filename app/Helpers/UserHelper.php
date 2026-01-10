@@ -19,18 +19,19 @@ class UserHelper
 
         //Sacar los datos de busqueda
         $search = $request->get('search');
+        $perPage = $request->get('perPage');
 
         // Devolver los datos paginado
-        $data = User::where('status', 0)
+        $data = User::where('status', true)
             ->where(function ($query) use ($search) {
                 $query->where('name','like','%'.$search.'%')
                     ->orWhere('email','like','%'.$search.'%');
-            })
-            ->latest()
-            ->simplePaginate(15);
+            })->where('id', '!=', auth()->user()->id)
+            ->latest('id')
+            ->simplePaginate($perPage);
 
         //Formatear los datos
-        return USerresource::collection($data)->response()->getData(true);
+        return UserResource::collection($data)->response()->getData(true);
     }
 
 }

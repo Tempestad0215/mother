@@ -1,19 +1,17 @@
 <script setup lang="ts">
-import type { clientI } from '@/Interfaces/ClientInterface';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import type { PropType } from 'vue';
-import LinkHeader from "@components/LinkHeader.vue";
-import FloatShowCli from "@/Pages/Clients/FloatShowCli.vue";
+import FShow from "@/Pages/Clients/FShow.vue";
+import TabLink from "@components/TabLink.vue";
+import {paginationI} from "@/Interfaces/GlobalInterface";
+import {clientBaseI} from "@/Interfaces/ClientInterface";
+import {useRoute} from "ziggy-js";
 
-
+const route = useRoute();
 // Datos del backend
-const props = defineProps({
-    clients:{
-        type: Object as PropType<clientI>,
-        required: true
-    }
-});
+const props = defineProps<{
+    clients: paginationI<clientBaseI>
+}>();
 
 
 </script>
@@ -23,24 +21,24 @@ const props = defineProps({
     <!-- Titulo -->
     <Head title="Cliente"/>
 
-    <!-- Contenido de todo -->
+    <!-- Contenido -->
     <AppLayout>
         <!-- Cabecera de la ventana -->
         <template #header>
-            <LinkHeader
+            <TabLink
                 :href="route('client.create')">
                 Registrar
-            </LinkHeader>
-            <LinkHeader
+            </TabLink>
+            <TabLink
                 :active="true"
-                :href="route('client.create')">
+                :href="route('client.show')">
                 Mostrar
-            </LinkHeader>
+            </TabLink>
         </template>
 
         <!-- Contenido principal -->
         <div>
-           <FloatShowCli
+           <FShow
                :clients="props.clients"
                 />
 

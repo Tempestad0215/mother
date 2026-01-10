@@ -2,7 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\ClientDocumentEnum;
 use App\Enums\ClientTypeEnum;
+use App\Enums\ClientTypePriceEnum;
+use App\Enums\SequenceSaleTypeEnum;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -19,35 +23,36 @@ class StoreClientsRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
 
         //Tomar el tipo
-        $type = (int) $this->request->get('type');
+        $type = $this->request->get('type');
         //Convertir a true
-        $isRequired = $type === 2 || $type === 3;
-        $isAdvanced = $type === 3;
-        $isCredit = $type === 2;
+        $isRequired = $type != 'contado';
+
 
         return [
             'name' => ['required','string','min:4','max:75'],
-            'phone' => ['string','max:20',Rule::requiredIf($isRequired)],
+            'phone' => ['nullable','max:20',Rule::requiredIf($isRequired)],
             'personal_id' => ['nullable','string','max:50',Rule::requiredIf($isRequired)],
             'email'=> ['nullable','string','email','max:150', Rule::unique('clients','email'),Rule::requiredIf($isRequired)],
             'address' => ['nullable','string','max:255',Rule::requiredIf($isRequired)],
-            'type' => ['required', Rule::enum(ClientTypeEnum::class)],
+            'type_rnc' => ['required',Rule::enum(SequenceSaleTypeEnum::class)],
+            'type' => ['required', Rule::enum(ClientTypeEnum::class),'string'],
+            'type_price' => [Rule::enum(ClientTypePriceEnum::class),'numeric','required'],
+            'receive_email' => ['required','boolean'],
             'status' => ['required','boolean'],
+            'document' =>  ['required', Rule::enum(ClientDocumentEnum::class)],
+            'file' => ['nullable','file','mimes:png,jpg,jpeg','max:2048'],
 
-            //Validacion de los avance
-            'advance_amount' => [Rule::requiredIf($isAdvanced),'nullable','numeric'],
-            'advance_date' => [Rule::requiredIf($isAdvanced),'nullable','date'],
-            'advance_expire' => ['nullable','date'],
-
-            //Validacin de credito
-            'credit_limit' => [Rule::requiredIf($isCredit),'nullable','numeric'],
-            'credit_day' => [Rule::requiredIf($isCredit),'nullable','numeric','max:160'],
+            //Validación de los avance
+            'amount' => [Rule::requiredIf($isRequired),'nullable','numeric'],
+            'due_date' => [Rule::requiredIf($isRequired),'nullable','numeric'],
+            'late_fee' => [Rule::requiredIf($isRequired),'nullable','numeric'],
+            'comment' => ['nullable','string','max:255'],
         ];
     }
 }

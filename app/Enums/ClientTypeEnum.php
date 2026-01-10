@@ -4,7 +4,7 @@
 namespace App\Enums;
 
 Enum ClientTypeEnum:string {
-    CASE CONTADO = 'contado';
-    CASE CREDITO = 'credito';
-    CASE ANTICIPO = 'anticipo';
+    case Contado = 'contado';
+    case Credito = 'credito';
+    case Anticipo = 'anticipo';
 }

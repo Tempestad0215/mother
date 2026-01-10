@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 
-use App\Models\Sale;
+use App\Helpers\ReportHelper;
 use Carbon\Carbon;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -20,44 +19,72 @@ class ReportController extends Controller
      */
     public function index(): Response
     {
-        return Inertia::render('Reports/Index');
+
+
+        //DEvolver la vista con los datos
+        return Inertia::render('Reports/Index',[
+            'mostSold' => ReportHelper::productMostSold()
+        ]);
     }
 
     /**
      * @param Request $request
-     * @return JsonResponse
+     * @return Response
      */
     public function getDailyByDate(Request $request)
     {
-        //Validar los datos
-       $request->validate([
-           'from' => ['required', 'date'],
-           'to' => ['required', 'date'],
-       ]);
 
-       $from = Carbon::parse($request->from)->format('Y-m-d H:i:s');
-       $to = Carbon::parse($request->to)->format('Y-m-d H:i:s');
+        //Instancia
+        $reportHelper = new ReportHelper();
+        //Devolver la vista con los datos
+        $data = $reportHelper->getDaily($request);
 
-
-
-
-       //Relizar la busqueda
-        $sale = Sale::where('status', false)
-            ->where('close_table', true)
-            ->whereBetween('created_at', [$from, $to])
-            ->get();
-
-        //Sumar todas las cantidades
-        $data = [
-            'tax' => $sale->sum('tax'),
-            'sub_total' => $sale->sum('sub_total'),
-            'amount' => $sale->sum('amount')
-        ];
-
-        //Devolvere los datos en json
-        return response()->json($data);
+        //Devolver la vista con los datos
+        return Inertia::render('Reports/Daily/Index', [
+            'report' => $data,
+            'to' => Carbon::parse($request->get('to'))->format('Y-m-d H:i:s'),
+            'from' => Carbon::parse($request->get('from'))->format('Y-m-d H:i:s'),
+            'title' => 'Reporte Por Fecha'
+        ]);
 
     }
+
+    /**
+     * Ventas del dia
+     * @return Response
+     */
+    public function getDay()
+    {
+        //Intancia
+        $reportHelper = new ReportHelper();
+
+        //Obtener los datos
+        $data = $reportHelper->getDay();
+
+        return Inertia::render('Reports/Daily/Index', [
+            'report' => $data,
+            'title' => 'Reporte Del Día'
+        ]);
+    }
+
+
+    public function stockLow()
+    {
+        //Instancia
+        $reportHelper = new ReportHelper();
+
+        //Obtener los datos de producto bajo en estock
+        $data = $reportHelper->stockLow();
+
+        //Devolver la vista con los datos
+        return Inertia::render('Reports/Product/Low',[
+            'products' => $data['products'],
+            'amount' => $data['amount'],
+
+        ]);
+    }
+
+
 
 //    public function getAllDaySale(Request $request)
 //    {
