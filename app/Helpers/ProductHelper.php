@@ -17,7 +17,7 @@ class ProductHelper
      * @param Product $product
      * @return void
      */
-    public function update(Request $request, PRoduct $product):void
+    public function update(Request $request, Product $product):void
     {
         $product->stock = $request->get('stock');
         $product->save();

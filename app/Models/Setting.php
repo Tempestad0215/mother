@@ -69,7 +69,6 @@ class Setting extends Model implements Auditable
      * @var string[]
      */
     protected $casts = [
-        'tax' => AsArrayObject::class,
         'status' => 'boolean',
         'save_cost' => 'boolean',
         'sequence' => 'boolean',

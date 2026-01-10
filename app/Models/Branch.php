@@ -16,7 +16,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property string $created_at
  */
 
-class branch extends Model implements Auditable
+class Branch extends Model implements Auditable
 {
     use HasFactory;
     use \OwenIt\Auditing\Auditable;

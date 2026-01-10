@@ -4,7 +4,7 @@ import {ref} from 'vue';
 import {supplierI} from "@/Interfaces/SupplierInterface";
 import {productBaseI} from "@/Interfaces/ProductInterface";
 import {categoryBaseI} from "@/Interfaces/CategoriesInterface";
-import {warehouseBaseI} from "@/Interfaces/WarehouseInterface";
+import {WarehouseBaseI} from "@/Interfaces/WarehouseInterface";
 import {useRoute} from "ziggy-js";
 import {Button, Column, DataTable, Dialog, InputGroup, InputGroupAddon, InputText} from "primevue";
 import Pagination from "@components/Pagination.vue";
@@ -21,7 +21,7 @@ const propsW = defineProps<{
     update? : boolean,
     categories: categoryBaseI[],
     suppliers: supplierI[],
-    warehouse: warehouseBaseI[],
+    warehouse: WarehouseBaseI[],
     nextProduct?: number,
 }>();
 

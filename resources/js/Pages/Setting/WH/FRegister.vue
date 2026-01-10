@@ -1,24 +1,21 @@
 <script setup lang="ts">
 import {useForm} from "@inertiajs/vue3";
-import InputLabel from "@components/InputLabel.vue";
-import TextInput from "@components/TextInput.vue";
-import InputError from "@components/InputError.vue";
-import PrimaryButton from "@components/PrimaryButton.vue";
-import {warehouseBaseI} from "@/Interfaces/WarehouseInterface";
-import {watch} from "vue";
+import {WarehouseBaseI} from "@/Interfaces/WarehouseInterface";
+import {onMounted} from "vue";
 import {useRoute} from "ziggy-js";
+import {FloatLabel, InputText, Button, Card, useToast} from "primevue";
 
 
 const route = useRoute();
+const toast = useToast();
 
-/**
- * Datos de la ventanan
- */
-// const type = ref(['ACTIVO','PASIVO','INGRESO','GASTO','CAPITAL']);
 
 const propsW = defineProps<{
-    editWareHouse?: warehouseBaseI;
+    editWareHouses: WarehouseBaseI | null;
+    update: boolean
 }>()
+
+
 /**
  * Formularios
  */
@@ -27,24 +24,18 @@ const form = useForm({
     name:"",
     description:"",
     location:"",
-    update: false,
 });
 
 
-
-
-watch(
-    () => propsW.editWareHouse,
-    (newValue) => {
-        if (newValue) {
-            form.id = newValue.id;
-            form.name = newValue.name;
-            form.description = newValue.description;
-            form.location = newValue.location;
-            form.update = true;
-        }
+onMounted(()=>{
+    if(propsW.editWareHouses)
+    {
+        form.id = propsW.editWareHouses.id;
+        form.name = propsW.editWareHouses.name;
+        form.description = propsW.editWareHouses.description;
+        form.location = propsW.editWareHouses.location;
     }
-)
+})
 
 /*
 funciones
@@ -53,16 +44,42 @@ funciones
  * Enviar los datos
  */
 const submit = () => {
-    if (form.update) {
+    if (propsW.update) {
         form.put(route('wh.update',{wh: form.id}),{
             onSuccess: () => {
+                toast.add({
+                    severity: "success",
+                    summary: "Registro Actualizado",
+                    life: 3000,
+                })
                 form.reset()
+            },
+            onError: (err) => {
+                toast.add({
+                    severity: "success",
+                    summary: "Error",
+                    detail: `Error en esta solicitud. Detalle : ${Object.values(err)[0]}`,
+                    life: 3000,
+                })
             }
         });
     }else{
         form.post(route('wh.store'),{
             onSuccess: () => {
                 form.reset();
+                toast.add({
+                    severity: "success",
+                    summary: "Registro Creado",
+                    life: 3000,
+                })
+            },
+            onError: (err) => {
+                toast.add({
+                    severity: "success",
+                    summary: "Error",
+                    detail: `Error en esta solicitud. Detalle : ${Object.values(err)[0]}`,
+                    life: 3000,
+                })
             }
         });
     }
@@ -70,55 +87,27 @@ const submit = () => {
 </script>
 
 <template>
-    <form
-        @submit.prevent="submit"
-        class="grid grid-cols-3 gap-3 fondo p-5 rounded-md w-[50rem]">
-        <h3
-            class="title text-center col-span-full">
-            Almacenes
-        </h3>
-        <!--                codigo-->
-        <div>
-            <InputLabel
-                for="name"
-                value="Nombre"/>
-            <TextInput
-                placeholder="Nombre"
-                class="w-full"
-                v-model="form.name"
-            />
-            <InputError :message="form.errors?.name" />
-        </div>
-        <!--                codigo-->
-        <div>
-            <InputLabel
-                for="description"
-                value="Descripcion"/>
-            <TextInput
-                placeholder="Descripcion"
-                class="w-full"
-                v-model="form.description"
-            />
-            <InputError :message="form.errors?.description" />
-        </div>
-        <!--                codigo-->
-        <div>
-            <InputLabel
-                for="location"
-                value="Ubicacion"/>
-            <TextInput
-                placeholder="Ubicacion"
-                class="w-full"
-                v-model="form.location"
-            />
-            <InputError :message="form.errors?.location" />
-        </div>
-        <!--                Botones para enviar-->
-        <div class="col-span-full text-right">
-            <PrimaryButton>
-                {{ form.update ? "Actualizar" :  "Registar" }}
-            </PrimaryButton>
-        </div>
-    </form>
+    <Card>
+        <template #content>
+            <form class="w-80" @submit.prevent="submit">
+                <FloatLabel variant="on" class="mt-5">
+                    <InputText class="w-full" id="name" v-model="form.name" />
+                    <label for="name">Nombre</label>
+                </FloatLabel>
+                <FloatLabel variant="on" class="mt-5">
+                    <InputText class="w-full" id="description" v-model="form.description" />
+                    <label for="description">Descripcion</label>
+                </FloatLabel>
+                <FloatLabel variant="on" class="mt-5">
+                    <InputText class="w-full" id="location" v-model="form.location" />
+                    <label for="location">Ubicacion</label>
+                </FloatLabel>
+                <div class="mt-5 text-right">
+                    <Button type="submit" :label=" propsW.update ? 'Actualizar' : 'Registrar'" />
+                </div>
+            </form>
+        </template>
+    </Card>
+
 </template>
 

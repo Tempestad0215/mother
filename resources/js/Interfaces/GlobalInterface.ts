@@ -3,6 +3,11 @@ export interface taxI{
     name: string
 }
 
+export interface MenuItemI{
+    label: string
+    icon?: string
+    route?: string
+}
 
 export interface appSettingI {
     id: number;

@@ -85,6 +85,41 @@ export interface productTransI extends productBaseI {
     tax: number;
 }
 
+export interface ProductFormI {
+    id: number
+    name: string
+    description: string
+    unit: string
+    price: number
+    cost: number
+    min_price: number
+    special_price: number
+    product_no_tax: number
+    benefits: number
+    benefits_rate: number
+    type: string
+    category_id: number
+    supplier_id: number
+    warehouse_id: number
+    search: string
+    tax: number
+    tax_rate: number
+    tax_tex: string
+    weight: number
+    bar_code: string
+    sku: string
+    brand: string
+    dimensions: string
+    inventoried: boolean
+    has_fraction: boolean
+    status: boolean
+    has_tax: boolean
+    has_special: boolean
+    has_promotion: boolean
+    update: boolean
+}
+
+
 /**
  * Paginacion de product trans
  *

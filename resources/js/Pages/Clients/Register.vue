@@ -62,7 +62,7 @@ const deleteData = (data:clientBaseI, event: Event) => {
 
         },
         accept: () => {
-            router.delete(route('client.destroy', {client: data.id}),{
+            router.delete(route('un.destroy', {client: data.id}),{
                 onSuccess: () => {
                     toast.add({
                         severity: "success",

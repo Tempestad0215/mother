@@ -2,7 +2,7 @@
 import InputLabel from "@components/InputLabel.vue";
 import TextInput from "@components/TextInput.vue";
 import {ProductOptionsI} from "@/Interfaces/ProductInterface";
-import {warehouseBaseI} from "@/Interfaces/WarehouseInterface";
+import {WarehouseBaseI} from "@/Interfaces/WarehouseInterface";
 import FloatBox from "@components/FloatBox.vue";
 import FRegisterWarehouse from "@/Pages/Setting/WH/FRegister.vue";
 import {ref} from "vue";
@@ -10,7 +10,7 @@ import {ref} from "vue";
 
 const propsW = defineProps<{
 	typeOptions: ProductOptionsI[],
-	wareHouses: warehouseBaseI[],
+	wareHouses: WarehouseBaseI[],
 }>()
 
 const showWareHouse = ref<boolean>(false);
@@ -49,8 +49,8 @@ const wareHouseId = defineModel<number>('wareHouseId')
 				class="w-full"
 			/>
 		</div>
-		
-		
+
+
 		<!--Opciones de producto, si sera producto o servicio-->
 		<div class="">
 			<InputLabel
@@ -89,10 +89,10 @@ const wareHouseId = defineModel<number>('wareHouseId')
 				@click="showWareHouse = true"
 				class="ml-2 icon-efect text-[1.5rem] text-cyan-400 fa-solid fa-warehouse"></i>
 		</div>
-	
-	
+
+
 	</fieldset>
-	
+
 	<!--    Mostra la ventana para agrear almacenes-->
 	<FloatBox
 		v-if="showWareHouse"

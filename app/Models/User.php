@@ -35,7 +35,7 @@ class User extends Authenticatable implements Auditable
     use softDeletes;
     use HasRoles;
 
-
+    protected $table = "users";
 
     /**
      * The attributes that are mass assignable.

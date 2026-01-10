@@ -30,7 +30,7 @@ class UpdateProductRequest extends FormRequest
             'bar_code' => ['nullable','string','max:100'],
             'sku' => ['nullable','string','max:75'],
             'tax_rate' => ['required','numeric'],
-            'branch' => ['nullable','string','max:75'],
+            'branchModel' => ['nullable','string','max:75'],
             'weight' => ['nullable','numeric'],
             'dimensions' => ['nullable','string','max:255'],
         ];

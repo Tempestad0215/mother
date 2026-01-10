@@ -191,7 +191,7 @@ class SaleHelper
      * @param bool $inventoried
      * @return void
      */
-    public function deleteSale(Request $request,Sale $sale, bool $inventoried):void
+    public function deleteSale(Request $request, Sale $sale, bool $inventoried):void
     {
         DB::transaction(function () use ($request, $sale, $inventoried) {
             //Poner los datos en deshabilitado

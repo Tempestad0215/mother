@@ -12,6 +12,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReportSaleController;
 use App\Http\Controllers\SequenceController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\TaxController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SettingController;
@@ -327,6 +328,28 @@ Route::middleware([
             Route::post('/', 'store')->name('store');
             Route::put('/{wh}', 'update')->name('update');
             Route::delete('/{wh}', 'destroy')->name('destroy');
+        });
+
+
+    Route::controller(\App\Http\Controllers\UnitController::class)
+        ->prefix('/setting/unit')
+        ->name('unit.')
+        ->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::put('/{unit}', 'update')->name('update');
+            Route::delete('/{unit}', 'destroy')->name('destroy');
+        });
+
+
+    Route::controller(TaxController::class)
+        ->prefix('/setting/tax')
+        ->name('tax.')
+        ->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::put('/{tax}', 'update')->name('update');
+            Route::delete('/{tax}', 'destroy')->name('destroy');
         });
 //
 

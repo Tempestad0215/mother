@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import PrimaryButton from '@/Components/PrimaryButton.vue';
-import {productBaseI, ProductOptionsI} from '@/Interfaces/ProductInterface';
+import {productBaseI, ProductFormI, ProductOptionsI} from '@/Interfaces/ProductInterface';
 import {supplierI} from '@/Interfaces/SupplierInterface';
 import {useForm, usePage} from '@inertiajs/vue3';
-import {onMounted, Ref, ref} from 'vue';
+import {onMounted, provide, Ref, ref} from 'vue';
 import {categoryBaseI} from "@/Interfaces/CategoriesInterface";
 import {taxI} from "@/Interfaces/GlobalInterface";
-import {warehouseBaseI} from "@/Interfaces/WarehouseInterface";
+import {WarehouseBaseI} from "@/Interfaces/WarehouseInterface";
 import ProductExtra from "@/Pages/Products/ProductExtra.vue";
 import ProductDetail from "@/Pages/Products/ProductDetail.vue";
 import ProductGeneral from "@/Pages/Products/ProductGeneral.vue";
@@ -17,7 +17,7 @@ import ErrorComponent from "@components/ErrorComponent.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {faPrint} from "@fortawesome/free-solid-svg-icons";
 import {useRoute} from "ziggy-js";
-
+import {formProductKey} from "@/Injections/InjectionKeys";
 
 const route = useRoute();
 /**
@@ -33,7 +33,7 @@ const propsW = defineProps<{
 	update?: boolean,
 	categories: categoryBaseI[],
 	suppliers: supplierI[],
-	warehouse: warehouseBaseI[],
+	warehouse: WarehouseBaseI[],
 	nextProduct?: number,
 }>();
 
@@ -47,7 +47,7 @@ const emit = defineEmits(['showSupplier']);
 /**
  * Datos del formulario
  */
-const form = useForm({
+const form = useForm<ProductFormI>({
 	id: 0,
 	name: "",
 	description: "",
@@ -80,6 +80,9 @@ const form = useForm({
 	has_promotion: false,
 	update: false,
 });
+
+
+provide(formProductKey, form)
 
 /**
  *Datos de la ventana

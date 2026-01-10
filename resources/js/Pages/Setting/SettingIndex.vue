@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import {Head, useForm, usePage} from "@inertiajs/vue3";
 import AppLayout from "@layout/AppLayout.vue";
-import {onMounted, onUpdated, Ref, ref} from "vue";
-import {taxI} from "@/Interfaces/GlobalInterface";
 import {useRoute} from "ziggy-js";
 import {
     Card,
@@ -11,15 +9,15 @@ import {
     ToggleSwitch,
     FileUpload,
     Button,
-    FileUploadSelectEvent, useToast
+    FileUploadSelectEvent, useToast, Breadcrumb
 } from "primevue";
+import {onMounted, onUpdated, ref} from "vue";
+import type {MenuItem} from "primevue/menuitem";
+import {itemsSettings} from "@/Helpers/SettingHelpers";
 
 
 const route = useRoute();
 const toast = useToast();
-/*
-Datos de ajuste
- */
 const page = usePage();
 
 /*
@@ -36,6 +34,7 @@ Datos de la ventana
 
 const isSequence:Ref<boolean> = ref(false);
 const imagePath = ref()
+
 
 /*
 Datos del formulario
@@ -134,9 +133,16 @@ const getFileInfo = (event: FileUploadSelectEvent) =>{
 <template>
     <Head title="Ajustes" />
     <AppLayout>
+
         <Card>
             <template #header>
-                <h3 class="text-2xl font-bold text-center" >Configuración</h3>
+                <div>
+                    <Breadcrumb :model="itemsSettings"/>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-bold text-center" >Configuración</h3>
+
+                </div>
             </template>
             <template #content>
                 <form @submit.prevent="submit" class="grid grid-cols-2 gap-3" >

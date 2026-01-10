@@ -67,7 +67,7 @@ class AccontCoController extends Controller implements HasMiddleware
      * @param ACO $aco
      * @return RedirectResponse
      */
-    public function update(Request $request,ACO $aco)
+    public function update(Request $request, ACO $aco)
     {
         // Validar los datos
         $request->validate([

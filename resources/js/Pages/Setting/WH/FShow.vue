@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {warehouseBaseI} from "@/Interfaces/WarehouseInterface";
+import {WarehouseBaseI} from "@/Interfaces/WarehouseInterface";
 import {router} from "@inertiajs/vue3";
 import {useRoute} from "ziggy-js";
 
@@ -9,12 +9,12 @@ const route = useRoute();
 Propiedades
  */
 const propsW = defineProps<{
-    warehouse: warehouseBaseI[]
+    warehouse: WarehouseBaseI[]
 }>();
 
 
 const emit = defineEmits<{
-    (e: "editWareHouse", item: warehouseBaseI): void
+    (e: "editWareHouse", item: WarehouseBaseI): void
 }>()
 
 
@@ -22,7 +22,7 @@ const emit = defineEmits<{
  *
  * @param item
  */
-const edit = (item:warehouseBaseI) => {
+const edit = (item:WarehouseBaseI) => {
     // form.id = item.id;
     // form.name = item.name;
     // form.description = item.description;
@@ -36,7 +36,7 @@ const edit = (item:warehouseBaseI) => {
  *
  * @param item
  */
-const destroy = (item:warehouseBaseI) => {
+const destroy = (item:WarehouseBaseI) => {
     // Swal.fire({
     //     title: "Desea Eliminar?",
     //     text: "Los Cambios Realizados Son Irreversible!",

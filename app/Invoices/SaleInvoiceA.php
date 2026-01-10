@@ -27,7 +27,7 @@ class SaleInvoiceA extends TCPDF
 
     public function __construct(
         public Sale $sale,
-        public $height = 172)
+        public      $height = 172)
     {
 
         //Aumentar la linea por cada linea agregada
