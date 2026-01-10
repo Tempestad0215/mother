@@ -4,7 +4,7 @@ import {supplierI} from "@/Interfaces/SupplierInterface";
 import {computed, onMounted} from "vue";
 import {getMoney} from "@/Global/Helpers";
 import {useRoute} from "ziggy-js";
-import {paymentTypeEnumI} from "@/Interfaces/GlobalInterface";
+import {PaymentTypeEnumI} from "@/Interfaces/GlobalInterface";
 import {Select, Card, FloatLabel, InputText, ToggleSwitch, Button, useToast} from "primevue";
 
 
@@ -15,7 +15,7 @@ const toast = useToast()
 const propsW = defineProps<{
     supplierEdit: supplierI | null,
     update: boolean,
-    paymentTypes: paymentTypeEnumI
+    paymentTypes: PaymentTypeEnumI
 }>();
 
 /*

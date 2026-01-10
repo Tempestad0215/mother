@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import PrimaryButton from '@/Components/PrimaryButton.vue';
-import {productBaseI, ProductFormI, ProductOptionsI} from '@/Interfaces/ProductInterface';
+import {ProductBaseI, ProductFormI, ProductOptionsI} from '@/Interfaces/ProductInterface';
 import {supplierI} from '@/Interfaces/SupplierInterface';
 import {useForm, usePage} from '@inertiajs/vue3';
 import {onMounted, provide, Ref, ref} from 'vue';
 import {categoryBaseI} from "@/Interfaces/CategoriesInterface";
-import {taxI} from "@/Interfaces/GlobalInterface";
+import {PaymentTypeEnumI, TaxI} from "@/Interfaces/GlobalInterface";
 import {WarehouseBaseI} from "@/Interfaces/WarehouseInterface";
 import ProductExtra from "@/Pages/Products/ProductExtra.vue";
 import ProductDetail from "@/Pages/Products/ProductDetail.vue";
@@ -20,29 +20,27 @@ import {useRoute} from "ziggy-js";
 import {formProductKey} from "@/Injections/InjectionKeys";
 
 const route = useRoute();
-/**
- * Info general
- */
 const {props} = usePage();
 
 /**
  * Propiedades de la ventana
  */
 const propsW = defineProps<{
-	productEdit: productBaseI | null,
+	productEdit: ProductBaseI | null,
 	update?: boolean,
 	categories: categoryBaseI[],
 	suppliers: supplierI[],
 	warehouse: WarehouseBaseI[],
 	nextProduct?: number,
+    paymentTypes: PaymentTypeEnumI,
 }>();
+
 
 
 /**
  * Emitir eventos
  */
 const emit = defineEmits(['showSupplier']);
-
 
 /**
  * Datos del formulario
@@ -87,7 +85,7 @@ provide(formProductKey, form)
 /**
  *Datos de la ventana
  */
-const taxes: Ref<taxI[]> = ref(props.setting.tax);
+const taxes: Ref<TaxI[]> = ref(props.setting.tax);
 const dataUnit: Ref<string[]> = ref(props.setting.unit);
 const typeOptions: Ref<ProductOptionsI[]> = ref([
 	{
@@ -154,7 +152,7 @@ const submit = () => {
 }
 
 
-function selectProduct(item: productBaseI) {
+function selectProduct(item: ProductBaseI) {
 	// Swal.fire({
 	// 	title: "Desea Actualizar?",
 	// 	text: `Desea actualizar el producto : ${item.name} !`,
@@ -223,11 +221,6 @@ async function printLabel() {
 	<!--Formulario-->
 	<form
 		@submit.prevent="submit">
-		<!--Titulo-->
-		<h3 class="text-2xl font-bold text-center">
-			Registro de producto
-		</h3>
-
 		<div class="flex items-center">
 			<div v-if="propsW.nextProduct">
 				<p>Seguiente ID :
@@ -248,6 +241,7 @@ async function printLabel() {
 		<!--Informacion General-->
 		<div class="">
 			<ProductInformation
+                :paymentTypes="propsW.paymentTypes"
 				@select-product="selectProduct"
 				:categories="propsW.categories"
 				:suppliers="propsW.suppliers"/>

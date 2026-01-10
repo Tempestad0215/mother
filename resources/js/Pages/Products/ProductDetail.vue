@@ -3,13 +3,13 @@ import {moneyConfig} from "@/Global/Helpers";
 import {Money} from "v-money3";
 import InputLabel from "@components/InputLabel.vue";
 import TextInput from "@components/TextInput.vue";
-import {taxI} from "@/Interfaces/GlobalInterface";
+import {TaxI} from "@/Interfaces/GlobalInterface";
 
 
 const propsW = defineProps<{
     dataUnit: string[],
     isProduct: boolean,
-    taxes: taxI[],
+    taxes: TaxI[],
 }>()
 
 const taxRate = defineModel<number>('taxRate', {

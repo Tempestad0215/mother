@@ -2,7 +2,7 @@ import type { PageProps as InertiaPageProps } from '@inertiajs/core'
 import { AxiosInstance } from 'axios';
 import ziggyRoute, { Config as ZiggyConfig } from 'ziggy-js';
 import { PageProps as AppPageProps } from './';
-import {appSettingI, userAuthI} from "@/Interfaces/GlobalInterface";
+import {AppSettingI, UserAuthI} from "@/Interfaces/GlobalInterface";
 
 declare global {
     interface Window {
@@ -61,8 +61,8 @@ export interface appSettingI {
 }
 
 export interface AppPageProps {
-    auth?: { user?: userAuthI }
-    setting?: appSettingI
+    auth?: { user?: UserAuthI }
+    setting?: AppSettingI
 }
 
 // 🔹 Extiende la PageProps de Inertia con tus props.

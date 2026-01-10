@@ -4,7 +4,7 @@ import InputLabel from "@components/InputLabel.vue";
 import FShowClient from "@/Pages/Clients/FShow.vue";
 import FloatBox from "@components/FloatBox.vue";
 import {computed, inject, reactive, ref} from "vue";
-import {paginationI} from "@/Interfaces/GlobalInterface";
+import {PaginationI} from "@/Interfaces/GlobalInterface";
 import {clientBaseI, rncClientI} from "@/Interfaces/ClientInterface";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {faMagnifyingGlass, faSpinner} from "@fortawesome/free-solid-svg-icons";
@@ -20,7 +20,7 @@ const page = usePage()
 
 const propsW = defineProps<{
 	invoiceType: string;
-	clients: paginationI<clientBaseI>,
+	clients: PaginationI<clientBaseI>,
 }>()
 
 const emit = defineEmits<{

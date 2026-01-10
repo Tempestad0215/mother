@@ -2,11 +2,17 @@
 
 namespace App\Helpers;
 
+use App\Enums\PaymentTypeEnum;
 use App\Models\ExchangeRate;
 use Carbon\Carbon;
 
 class GeneralHelper
 {
+
+    public static function getPaymentTypes(): array
+    {
+        return collect(PaymentTypeEnum::cases())->mapWithKeys(fn (PaymentTypeEnum $item) => [$item->name => $item->value])->toArray();
+    }
     /**
      * Verificar si la tasa del dia fue colocada
      * @return bool

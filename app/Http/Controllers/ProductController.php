@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\GeneralHelper;
 use App\Http\Requests\PaginationRequest;
 use App\Models\Category;
 use App\Models\Product;
@@ -44,11 +45,18 @@ class ProductController extends Controller implements HasMiddleware
      */
     public function create(PaginationRequest $request): Response|RedirectResponse
     {
-
         //Obtener los datos de los productos
         $data = $this->get($request);
 
-        $products = Product::query()->paginate();
+        $search = $request->get('search');
+        $perPage = $request->get('per_page');
+        $queryProduct = Product::query();
+        if (!empty($search)) {
+            $queryProduct->where('name', 'like', '%' . $search . '%')
+                ->orWhere('description', 'like', '%' . $search . '%');
+
+        }
+        $products = $queryProduct->paginate($perPage)->withQueryString();
 
         //Verificar si existe configuración
         $setting = Setting::first();
@@ -62,7 +70,8 @@ class ProductController extends Controller implements HasMiddleware
                 'categories' => Category::orderBy('name')->get(),
                 'suppliers' => Supplier::orderBy('company_name')->get(),
                 'warehouse' => Warehouse::all(),
-                'nextProduct' => Product::max('id') + 1
+                'nextProduct' => Product::max('id') + 1,
+                'paymentTypes' => GeneralHelper::getPaymentTypes()
             ]);
 
         } else {
@@ -259,14 +268,17 @@ class ProductController extends Controller implements HasMiddleware
      */
     public function getJson(Request $request): JsonResponse
     {
+
+        $request->validate([
+            'search' => 'nullable|string|max:255',
+        ]);
         //Buscar los datos
         $search = $request->get('search');
 
 
         // Tomar los datos
         $products = Product::where(function ($query) use (&$search) {
-            $query->where("id", "LIKE", "%$search%")
-                ->orWhere("name", "LIKE", "%$search%")
+            $query->orWhere("name", "LIKE", "%$search%")
                 ->orWhere("description", "LIKE", "%$search%");
         })->where("status", true)
             ->orderBy("name")

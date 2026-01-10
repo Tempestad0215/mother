@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T" >
-import {paginationI} from "@/Interfaces/GlobalInterface";
+import {PaginationI} from "@/Interfaces/GlobalInterface";
 import {PageState, Paginator} from "primevue";
 import {router} from "@inertiajs/vue3";
 import {computed} from "vue";
@@ -7,7 +7,7 @@ import {computed} from "vue";
 
 interface paginationActualI {
     search: string;
-    pag: paginationI<T>
+    pag: PaginationI<T>
 }
 
 const propsW = defineProps<paginationActualI>()

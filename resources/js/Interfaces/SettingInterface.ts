@@ -1,4 +1,4 @@
-import {taxI} from "@/Interfaces/GlobalInterface";
+import {TaxI} from "@/Interfaces/GlobalInterface";
 
 
 // export interface infoBranchesI {
@@ -17,7 +17,7 @@ export  interface settingsDataI {
     logo: string;
     website: string;
     company_id: string | null;
-    tax: taxI[];
+    tax: TaxI[];
     unit: string[];
     fiscal_year: string | null;
     status: boolean;

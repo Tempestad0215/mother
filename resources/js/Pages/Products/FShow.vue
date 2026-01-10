@@ -2,7 +2,7 @@
 
 import FormSearch from "@components/FormSearch.vue";
 import Pagination from "@components/Pagination.vue";
-import {productBaseI, productI} from "@/Interfaces/ProductInterface";
+import {ProductBaseI, productI} from "@/Interfaces/ProductInterface";
 import {router, useForm, usePage} from "@inertiajs/vue3";
 import {getMoney} from "@/Global/Helpers";
 import {onMounted} from "vue";
@@ -79,7 +79,7 @@ const edit = (id: number) => {
 
 
 //Seleccionar
-const selectData = (item: productBaseI) => {
+const selectData = (item: ProductBaseI) => {
 	if (component === "Products/Show") {
 		router.get(route('product.edit', {product: item.id}));
 	} else {

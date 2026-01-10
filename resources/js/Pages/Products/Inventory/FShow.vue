@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Pagination from "@components/Pagination.vue";
-import {paginationI} from "@/Interfaces/GlobalInterface";
+import {PaginationI} from "@/Interfaces/GlobalInterface";
 import {entryProductI} from "@/Interfaces/EntryTransInterface";
 import FormSearch from "@components/FormSearch.vue";
 import {router, useForm} from "@inertiajs/vue3";
@@ -10,7 +10,7 @@ import {useRoute} from "ziggy-js";
 const route = useRoute();
 // PRopiedades de la ventana
 const propsW = defineProps<{
-    entries: paginationI<entryProductI>
+    entries: PaginationI<entryProductI>
 }>();
 
 const emit = defineEmits<{

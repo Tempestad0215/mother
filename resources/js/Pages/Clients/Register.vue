@@ -3,7 +3,7 @@ import {clientBaseI, clientDocumentI, clientPriceI, clientTypeI} from "@/Interfa
 import AppLayout from "@layout/AppLayout.vue";
 import {DataTable, Column, Button, Dialog, useConfirm, useToast, InputText, InputGroup, InputGroupAddon} from "primevue";
 import {onMounted, ref} from "vue";
-import {paginationI} from "@/Interfaces/GlobalInterface";
+import {PaginationI} from "@/Interfaces/GlobalInterface";
 import FRegister from "@/Pages/Clients/FRegister.vue";
 import {router} from "@inertiajs/vue3";
 import {useRoute} from "ziggy-js";
@@ -23,7 +23,7 @@ const isUpdate = ref(false);
 const searchValue = ref<string>("");
 const propsW = defineProps<{
     typeRNC: string[]
-    clientData: paginationI<clientBaseI>
+    clientData: PaginationI<clientBaseI>
     clientType: clientTypeI
     clientPrice: clientPriceI
     clientDocument: clientDocumentI

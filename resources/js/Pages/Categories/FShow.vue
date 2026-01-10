@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Pagination from "@components/Pagination.vue";
 import FormSearch from "@components/FormSearch.vue";
-import {paginationI} from "@/Interfaces/GlobalInterface";
+import {PaginationI} from "@/Interfaces/GlobalInterface";
 import {categoryBaseI} from "@/Interfaces/CategoriesInterface";
 import {router, useForm} from "@inertiajs/vue3";
 import {onMounted} from "vue";
@@ -12,7 +12,7 @@ import {useRoute} from "ziggy-js";
 const route = useRoute();
 /*Datos de la ventana*/
 const propsW = defineProps<{
-    categories: paginationI<categoryBaseI>
+    categories: PaginationI<categoryBaseI>
 }>();
 
 // Formulario

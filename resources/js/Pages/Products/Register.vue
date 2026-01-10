@@ -1,34 +1,36 @@
 <script setup lang="ts">
 import AppLayout from '@/Layouts/AppLayout.vue';
-import {ref} from 'vue';
+import {provide, ref} from 'vue';
 import {supplierI} from "@/Interfaces/SupplierInterface";
-import {productBaseI} from "@/Interfaces/ProductInterface";
+import {ProductBaseI} from "@/Interfaces/ProductInterface";
 import {categoryBaseI} from "@/Interfaces/CategoriesInterface";
 import {WarehouseBaseI} from "@/Interfaces/WarehouseInterface";
 import {useRoute} from "ziggy-js";
 import {Button, Column, DataTable, Dialog, InputGroup, InputGroupAddon, InputText} from "primevue";
 import Pagination from "@components/Pagination.vue";
-import {paginationI} from "@/Interfaces/GlobalInterface";
+import {PaginationI, PaymentTypeEnumI} from "@/Interfaces/GlobalInterface";
 import FRegister from "@/Pages/Products/FRegister.vue";
+import {productDataKey} from "@/Injections/InjectionKeys";
 
 
 const route = useRoute()
 
 //Propiedades de la ventana
 const propsW = defineProps<{
-    products: paginationI<productBaseI>
-    productEdit? : productBaseI,
+    products: PaginationI<ProductBaseI>
+    productEdit? : ProductBaseI,
     update? : boolean,
     categories: categoryBaseI[],
     suppliers: supplierI[],
     warehouse: WarehouseBaseI[],
     nextProduct?: number,
+    paymentTypes: PaymentTypeEnumI
 }>();
 
-
+provide(productDataKey, propsW.products.data ?? [])
 
 //Mostrar la ventana de suplidores
-const selectedProduct = ref<productBaseI | null>(null);
+const selectedProduct = ref<ProductBaseI | null>(null);
 const searchValue = ref("")
 const createProduct = ref(false)
 const isUpdate = ref(false)
@@ -39,12 +41,12 @@ const searchData = () => {
 }
 
 
-const editData = (data:productBaseI) => {
+const editData = (data:ProductBaseI) => {
     selectedProduct.value = data;
     isUpdate.value = true
 }
 
-const deleteData = (data:productBaseI, event:Event) => {
+const deleteData = (data:ProductBaseI, event:Event) => {
 
 }
 
@@ -84,7 +86,7 @@ const deleteData = (data:productBaseI, event:Event) => {
             <Column field="phone" header="Telefono"  />
             <Column field="email" header="Correo"  />
             <Column header="Act">
-                <template #body="{data}:{data:productBaseI}">
+                <template #body="{data}:{data:ProductBaseI}">
                     <div class="space-x-2">
                         <Button @click="editData(data)" class="pt-1 h-8"  title="Editar" icon="pi pi-file-edit" />
                         <Button @click="deleteData(data, $event)" class="pt-1 h-8"  title="Eliminar" severity="danger" icon="pi pi-trash" />
@@ -105,6 +107,7 @@ const deleteData = (data:productBaseI, event:Event) => {
             v-model:visible="createProduct"
             header="Registro de Producto">
             <FRegister
+                :paymentTypes="paymentTypes"
                 :categories="propsW.categories"
                 :suppliers="propsW.suppliers"
                 :warehouse="propsW.warehouse"

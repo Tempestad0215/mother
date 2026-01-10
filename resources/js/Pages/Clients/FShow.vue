@@ -3,7 +3,7 @@ import Pagination from "@components/Pagination.vue";
 import {clientBaseI} from "@/Interfaces/ClientInterface";
 import {router, useForm, usePage} from "@inertiajs/vue3";
 import FormSearch from "@components/FormSearch.vue";
-import {paginationI} from "@/Interfaces/GlobalInterface";
+import {PaginationI} from "@/Interfaces/GlobalInterface";
 import {onMounted} from "vue";
 import {exportExcel} from "@/Global/Helpers";
 import {useRoute} from "ziggy-js";
@@ -19,7 +19,7 @@ const page = usePage();
  * Datos del back end
  */
 const props = defineProps<{
-    clients: paginationI<clientBaseI>;
+    clients: PaginationI<clientBaseI>;
 }>();
 
 

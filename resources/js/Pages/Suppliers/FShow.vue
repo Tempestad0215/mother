@@ -4,7 +4,7 @@ import FormSearch from "@components/FormSearch.vue";
 import {supplierI} from "@/Interfaces/SupplierInterface";
 import {router, useForm} from "@inertiajs/vue3";
 import {ref, Ref} from "vue";
-import {paginationI} from "@/Interfaces/GlobalInterface";
+import {PaginationI} from "@/Interfaces/GlobalInterface";
 import {exportExcel} from "@/Global/Helpers";
 import {useRoute} from "ziggy-js";
 
@@ -14,7 +14,7 @@ const route = useRoute();
 Propiedades
  */
 const propsW = defineProps<{
-    suppliers: paginationI<supplierI>
+    suppliers: PaginationI<supplierI>
 }>();
 
 

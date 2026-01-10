@@ -3,14 +3,14 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import FShow from "@/Pages/Clients/FShow.vue";
 import TabLink from "@components/TabLink.vue";
-import {paginationI} from "@/Interfaces/GlobalInterface";
+import {PaginationI} from "@/Interfaces/GlobalInterface";
 import {clientBaseI} from "@/Interfaces/ClientInterface";
 import {useRoute} from "ziggy-js";
 
 const route = useRoute();
 // Datos del backend
 const props = defineProps<{
-    clients: paginationI<clientBaseI>
+    clients: PaginationI<clientBaseI>
 }>();
 
 

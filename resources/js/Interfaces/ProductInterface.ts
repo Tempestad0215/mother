@@ -21,7 +21,7 @@ export interface ProductOptionsI {
 /**
  *
  */
-export interface productBaseI {
+export interface ProductBaseI {
     id: number;
     code: string;
     name: string;
@@ -56,7 +56,7 @@ export interface productBaseI {
 /**
  *
  */
-export interface productFullI extends productBaseI {
+export interface productFullI extends ProductBaseI {
     reserved: number;
     min_price: number;
     special_price: number;
@@ -70,7 +70,7 @@ export interface productFullI extends productBaseI {
 /**
  * Producto y trans
  */
-export interface productTransI extends productBaseI {
+export interface productTransI extends ProductBaseI {
     amount: number;
     discount: number;
     discount_amount: number;

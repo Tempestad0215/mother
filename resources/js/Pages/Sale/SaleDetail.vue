@@ -19,7 +19,7 @@ import {productFullI, productI} from "@/Interfaces/ProductInterface";
 import {inject, ref, watch} from "vue";
 import {infoSaleI, saleDataI} from "@/Interfaces/SaleInterface";
 import {saleKey} from "@/utils/keys";
-import {paginationI} from "@/Interfaces/GlobalInterface";
+import {PaginationI} from "@/Interfaces/GlobalInterface";
 import {getSequenceType} from "@/Global/Helpers";
 import {useRoute} from "ziggy-js";
 
@@ -30,7 +30,7 @@ const page = usePage()
 const propsW = defineProps<{
 	invoiceType: invoiceTypeI[],
 	refund?: boolean,
-	saleOpen: paginationI<saleDataI>,
+	saleOpen: PaginationI<saleDataI>,
 	products: productI,
 }>()
 

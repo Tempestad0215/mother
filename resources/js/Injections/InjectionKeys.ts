@@ -1,5 +1,6 @@
 import {InjectionKey} from "vue";
-import {ProductFormI} from "@/Interfaces/ProductInterface";
+import {ProductBaseI, ProductFormI} from "@/Interfaces/ProductInterface";
 
 
 export const formProductKey = Symbol() as InjectionKey<ProductFormI>
+export const productDataKey = Symbol() as InjectionKey<ProductBaseI[]>

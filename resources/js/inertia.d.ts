@@ -1,13 +1,13 @@
 // src/inertia.d.ts
 import { Page } from '@inertiajs/core';
-import { appSettingI, userAuthI } from "@/Interfaces/GlobalInterface";
+import { AppSettingI, UserAuthI } from "@/Interfaces/GlobalInterface";
 
 // Extender la interfaz PageProps
 declare module '@inertiajs/core' {
     interface PageProps {
-        setting: appSettingI;
+        setting: AppSettingI;
         auth: {
-            user: userAuthI;
+            user: UserAuthI;
             canLogin: boolean;
         };
     }

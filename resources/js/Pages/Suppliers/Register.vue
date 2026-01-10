@@ -15,7 +15,7 @@ import {
 } from "primevue";
 import {ref} from "vue";
 import FRegister from "@/Pages/Suppliers/FRegister.vue";
-import {paginationI, paymentTypeEnumI} from "@/Interfaces/GlobalInterface";
+import {PaginationI, PaymentTypeEnumI} from "@/Interfaces/GlobalInterface";
 import Pagination from "@components/Pagination.vue";
 import {getSearchTable} from "@/Global/SearchTable";
 import {router} from "@inertiajs/vue3";
@@ -26,9 +26,9 @@ const confirm = useConfirm();
 const toast = useToast();
 // Propiedades
 const propsW = defineProps<{
-    suppliers: paginationI<supplierI>
+    suppliers: PaginationI<supplierI>
     update?: boolean
-    paymentTypes: paymentTypeEnumI
+    paymentTypes: PaymentTypeEnumI
 }>();
 
 const searchValue = ref("")

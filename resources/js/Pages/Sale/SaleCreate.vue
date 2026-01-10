@@ -10,7 +10,7 @@ import axios from "axios";
 import {CreateSaleI, creditNotesSaleI, infoSaleI, saleDataI} from "@/Interfaces/SaleInterface";
 import {invoiceTypeI} from "@/Interfaces/SettingInterface";
 import TabLink from "@components/TabLink.vue";
-import {paginationI} from "@/Interfaces/GlobalInterface";
+import {PaginationI} from "@/Interfaces/GlobalInterface";
 import SaleInfo from "@/Pages/Sale/SaleInfo.vue";
 import ErrorComponent from "@components/ErrorComponent.vue";
 import SaleDetail from "@/Pages/Sale/SaleDetail.vue";
@@ -32,8 +32,8 @@ const page = usePage();
  */
 const propsW = defineProps<{
 	products: productI,
-	clients: paginationI<clientBaseI>,
-	saleOpen: paginationI<saleDataI>,
+	clients: PaginationI<clientBaseI>,
+	saleOpen: PaginationI<saleDataI>,
 	invoiceType: invoiceTypeI[],
 	saleInfo?: saleDataI,
 	refund?: boolean,

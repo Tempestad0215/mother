@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AppLayout from "@layout/AppLayout.vue";
-import {paginationI} from "@/Interfaces/GlobalInterface";
+import {PaginationI} from "@/Interfaces/GlobalInterface";
 import {categoryBaseI} from "@/Interfaces/CategoriesInterface";
 import {
     DataTable,
@@ -26,7 +26,7 @@ const route = useRoute();
 const confirm = useConfirm();
 const toast = useToast();
 const propsW = defineProps<{
-    categories: paginationI<categoryBaseI>,
+    categories: PaginationI<categoryBaseI>,
     categoryEdit?: categoryBaseI,
 }>();
 

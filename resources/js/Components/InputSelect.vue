@@ -2,7 +2,7 @@
 import { supplierI } from '@/Interfaces/SupplierInterface';
 import {  PropType, ref } from 'vue';
 import {productFullI } from "@/Interfaces/ProductInterface";
-import {taxI} from "@/Interfaces/GlobalInterface";
+import {TaxI} from "@/Interfaces/GlobalInterface";
 
 
 const props = defineProps({
@@ -10,16 +10,16 @@ const props = defineProps({
         type:[ String , Number]
     },
     info: {
-        type: Array as PropType<Array< supplierI | productFullI | taxI>>,
+        type: Array as PropType<Array< supplierI | productFullI | TaxI>>,
         required: false,
     },
     field:{
-        type: String as PropType<keyof supplierI | keyof productFullI | keyof taxI>,
-        default: 'name' as keyof supplierI | keyof productFullI | keyof taxI,
+        type: String as PropType<keyof supplierI | keyof productFullI | keyof TaxI>,
+        default: 'name' as keyof supplierI | keyof productFullI | keyof TaxI,
     },
     fieldValue:{
-        type: String as PropType<keyof supplierI | keyof productFullI | keyof taxI>,
-        default: 'id' as keyof supplierI | keyof productFullI | keyof taxI,
+        type: String as PropType<keyof supplierI | keyof productFullI | keyof TaxI>,
+        default: 'id' as keyof supplierI | keyof productFullI | keyof TaxI,
     },
     read:{
         type: Boolean,
@@ -38,16 +38,16 @@ const showData = ref(false);
 
 
 // Funciones
-const isSupplier = (item:supplierI | productFullI | taxI): item is supplierI => {
+const isSupplier = (item:supplierI | productFullI | TaxI): item is supplierI => {
     return isDefined((item as supplierI).company_name)
 }
 
-const isProduct = (item:supplierI | productFullI | taxI): item is productFullI => {
+const isProduct = (item:supplierI | productFullI | TaxI): item is productFullI => {
     return isDefined((item as productFullI).name)
 }
 
-const isTaxe = (item:supplierI | productFullI | taxI):item is taxI => {
-    return  isDefined((item as taxI).name)
+const isTaxe = (item:supplierI | productFullI | TaxI):item is TaxI => {
+    return  isDefined((item as TaxI).name)
 }
 
 // Para guardar el tipo de datos
@@ -67,7 +67,7 @@ const sendData = (e:Event) => {
 }
 
 //
-const selectData = (item:supplierI | productFullI | taxI) => {
+const selectData = (item:supplierI | productFullI | TaxI) => {
 
     // Tomar el input
     const input:HTMLInputElement = document.getElementById('input-select') as HTMLInputElement;
@@ -81,13 +81,13 @@ const selectData = (item:supplierI | productFullI | taxI) => {
         emit('sendValue', item[props.fieldValue as keyof productFullI]);
     }else if(isTaxe(item))
     {
-        input.value = item[props.field as keyof taxI] as string;
-        emit('sendValue', item[props.fieldValue as keyof taxI]);
+        input.value = item[props.field as keyof TaxI] as string;
+        emit('sendValue', item[props.fieldValue as keyof TaxI]);
     }
 
 }
 
-const showValue = (item: supplierI | productFullI | taxI) =>{
+const showValue = (item: supplierI | productFullI | TaxI) =>{
     if(isProduct(item)){
         return item[props.field as keyof productFullI] as string;
     }else if(isSupplier(item))
@@ -95,7 +95,7 @@ const showValue = (item: supplierI | productFullI | taxI) =>{
         return  item[props.field as keyof supplierI] as string;
     }else if(isTaxe(item))
     {
-        return item[props.field as keyof taxI] as string;
+        return item[props.field as keyof TaxI] as string;
     }
 
 

@@ -4,12 +4,12 @@ import TextInput from "@components/TextInput.vue";
 import PrimaryButton from "@components/PrimaryButton.vue";
 import InputError from "@components/InputError.vue";
 import {Money} from "v-money3";
-import {productBaseI, productI} from "@/Interfaces/ProductInterface";
+import {ProductBaseI, productI} from "@/Interfaces/ProductInterface";
 import {ref, watch} from "vue";
 import axios from "axios";
 import {useForm} from "@inertiajs/vue3";
 import {entryBaseI, entryProductI} from "@/Interfaces/EntryTransInterface";
-import {paginationI} from "@/Interfaces/GlobalInterface";
+import {PaginationI} from "@/Interfaces/GlobalInterface";
 import InputLabel from "@components/InputLabel.vue";
 import FloatBox from "@components/FloatBox.vue";
 import FShow from "@/Pages/Products/FShow.vue";
@@ -20,17 +20,17 @@ import {useRoute} from "ziggy-js";
 const route = useRoute()
 // Propiedades
 const propsW = defineProps<{
-    products: productBaseI[],
+    products: ProductBaseI[],
     productTable: productI,
     entryEdit?: entryBaseI ,
-    entries: paginationI<entryBaseI>
+    entries: PaginationI<entryBaseI>
     editDataFloat?: entryProductI
 }>();
 
 //datos de la ventana
 const showProduct = ref<boolean>(false);
 const productName = ref<string>();
-const products = ref<productBaseI[] | null>(null);
+const products = ref<ProductBaseI[] | null>(null);
 
 
 // Formularios
@@ -97,7 +97,7 @@ const submit = ()=>{
  * Para los productos a los datos
  * @param item
  */
-const getProduct = (item:productBaseI) => {
+const getProduct = (item:ProductBaseI) => {
     form.product_id = item.id;
     productName.value = item.name;
     form.cost = item.cost;
@@ -107,7 +107,7 @@ const getProduct = (item:productBaseI) => {
  *
  * @param item
  */
-const getProductTable = (item:productBaseI) => {
+const getProductTable = (item:ProductBaseI) => {
     form.product_id = item.id;
     productName.value = item.name;
     form.cost = item.cost;

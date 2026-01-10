@@ -1,4 +1,4 @@
-export interface taxI{
+export interface TaxI {
     amount: number
     name: string
 }
@@ -9,7 +9,7 @@ export interface MenuItemI{
     route?: string
 }
 
-export interface appSettingI {
+export interface AppSettingI {
     id: number;
     name: string;
     email: string;
@@ -18,7 +18,7 @@ export interface appSettingI {
     logo: string | null;
     website: string | null;
     company_id: string | null;
-    tax: taxI[] | [];
+    tax: TaxI[] | [];
     unit: string[] | [];
     fiscal_year: string | null;
     company_type: string | null;
@@ -30,7 +30,7 @@ export interface appSettingI {
 
 }
 
-export interface userAuthI {
+export interface UserAuthI {
     id: number
     name: string
     email: string
@@ -46,7 +46,7 @@ export interface userAuthI {
     two_factor_enabled: boolean
 }
 
-interface linksI {
+interface LinksI {
     active: boolean
     label: string
     page: number | null;
@@ -54,11 +54,11 @@ interface linksI {
 }
 
 // Pagination
-export interface paginationI<T> {
+export interface PaginationI<T> {
     current_page: number
     first_page_url: string
     from: number
-    links: linksI[]
+    links: LinksI[]
     last_page: number
     last_page_url: string
     next_page_url: null | string
@@ -70,7 +70,7 @@ export interface paginationI<T> {
     data?: T[]
 }
 
-export interface paymentTypeEnumI {
+export interface PaymentTypeEnumI {
     contado: string
     tarjeta: string
     credito: string

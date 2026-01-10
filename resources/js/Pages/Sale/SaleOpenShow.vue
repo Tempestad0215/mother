@@ -4,13 +4,13 @@ import {getMoney} from "@/Global/Helpers";
 import Pagination from "@components/Pagination.vue";
 import FormSearch from "@components/FormSearch.vue";
 import {useForm} from "@inertiajs/vue3";
-import {paginationI} from "@/Interfaces/GlobalInterface";
+import {PaginationI} from "@/Interfaces/GlobalInterface";
 
 /**
  * Propiedades de la ventana
  */
 const props = defineProps<{
-    saleOpen: paginationI<saleDataI>
+    saleOpen: PaginationI<saleDataI>
 }>();
 
 /**

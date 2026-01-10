@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import {productBaseI, productI} from '@/Interfaces/ProductInterface';
+import {ProductBaseI, productI} from '@/Interfaces/ProductInterface';
 import TabLink from '@components/TabLink.vue';
 import {Head} from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
 import {ref, watch} from 'vue';
 import {entryBaseI, entryProductI} from "@/Interfaces/EntryTransInterface";
 import axios from "axios";
-import {paginationI} from "@/Interfaces/GlobalInterface";
+import {PaginationI} from "@/Interfaces/GlobalInterface";
 import FRegister from "@/Pages/Products/Inventory/FRegister.vue";
 import FShowEntrie from "@/Pages/Products/Inventory/FShow.vue";
 import {useRoute} from "ziggy-js";
@@ -17,14 +17,14 @@ import Pagination from "@components/Pagination.vue";
 const route = useRoute();
 // Propiedades
 const propsW = defineProps<{
-    products: productBaseI[],
+    products: ProductBaseI[],
     productTable: productI,
     entry_edit?: entryBaseI,
-    entries: paginationI<entryProductI>
+    entries: PaginationI<entryProductI>
 }>();
 //datos de la ventana
 const productName = ref<string>();
-const products = ref<productBaseI[] | null>(null);
+const products = ref<ProductBaseI[] | null>(null);
 const editData = ref<entryProductI | undefined>(undefined);
 
 /**
