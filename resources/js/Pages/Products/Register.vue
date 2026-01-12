@@ -5,7 +5,17 @@ import {supplierI} from "@/Interfaces/SupplierInterface";
 import {ProductBaseI, ProductTypeEnumI} from "@/Interfaces/ProductInterface";
 import {categoryBaseI} from "@/Interfaces/CategoriesInterface";
 import {WarehouseBaseI} from "@/Interfaces/WarehouseInterface";
-import {Button, Column, DataTable, Dialog, InputGroup, InputGroupAddon, InputText, Breadcrumb} from "primevue";
+import {
+    Button,
+    Column,
+    DataTable,
+    Dialog,
+    InputGroup,
+    InputGroupAddon,
+    InputText,
+    Breadcrumb,
+    useToast, useConfirm
+} from "primevue";
 import Pagination from "@components/Pagination.vue";
 import {PaginationI, PaymentTypeEnumI} from "@/Interfaces/GlobalInterface";
 import FRegister from "@/Pages/Products/FRegister.vue";
@@ -18,6 +28,9 @@ import {router} from "@inertiajs/vue3";
 import {productBreadCrumb} from "@/Helpers/ProductHelper";
 
 
+
+const toast = useToast()
+const confirm = useConfirm()
 
 //Propiedades de la ventana
 const propsW = defineProps<{
@@ -153,7 +166,6 @@ const deleteData = (data:ProductBaseI, event:Event) => {
                 :paymentTypes="paymentTypes"
                 :categories="propsW.categories"
                 :suppliers="propsW.suppliers"
-                :warehouse="propsW.warehouse"
                 :productEdit="selectedProduct"
                 :update="isUpdate"
                 />

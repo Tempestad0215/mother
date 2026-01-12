@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import {Fieldset, FloatLabel, Select, InputNumber, InputText, SelectChangeEvent} from "primevue";
 import {inject} from "vue";
-import {formProductKey, taxCurrentValueKey} from "@/Injections/InjectionKeys";
+import {formProductKey} from "@/Injections/InjectionKeys";
 import {BranchInterfaceI} from "@/Interfaces/BranchInterface";
 import {UnitInterfaceI} from "@/Interfaces/UnitInterface";
 import {usePage} from "@inertiajs/vue3";
 import {AppPageProps} from "@/global";
 import {TaxInterfaceI} from "@/Interfaces/TaxInterface";
-import {PreciseCalculator} from "@/utils/Decimal";
+import {useProductStore} from "@/stores/ProductStore";
+import {TaxI} from "@/Interfaces/GlobalInterface";
 
 const page = usePage<AppPageProps>();
 
@@ -17,11 +18,18 @@ const propsW = defineProps<{
 }>()
 const form = inject(formProductKey)!!
 const taxes = page.props.taxes;
-const taxCurrentValue = inject(taxCurrentValueKey)!!;
+const productStore = useProductStore()
 
-const selectTax = (event: SelectChangeEvent) => {
-    const infoTax:TaxInterfaceI = event.value
-    taxCurrentValue.value = Number(PreciseCalculator.divide(infoTax.rate, "100"))
+const selectTax = (data:SelectChangeEvent) => {
+    const id:number = data.value;
+    // const taxInfo:TaxI | undefined = taxes.find((el)=> el. === data.value)
+
+    productStore.setTaxRateFromPercent(Number(data.value.rate))
+    form.tax_id = data.value.id;
+
+    console.log(data.value.rate)
+
+
 }
 
 
@@ -31,7 +39,15 @@ const selectTax = (event: SelectChangeEvent) => {
     <Fieldset legend="Caracteristicas" >
         <div class="grid grid-cols-2 gap-4">
             <FloatLabel  variant="on" >
-                <Select @change="selectTax" fluid id="tax" optionValue="id" :optionLabel="(item:TaxInterfaceI) => `${item.name } | ${item.rate}`" :options="taxes"  v-model="form.tax_id" />
+                <Select
+                    fluid
+                    id="tax"
+                    option-value="id"
+                    @change="selectTax"
+                    :optionLabel="(item:TaxInterfaceI) => `${item.name } | ${item.rate}`"
+                    :options="taxes"
+                    v-model="form.tax_id">
+                </Select>
                 <label for="tax">Impuesto</label>
             </FloatLabel>
             <FloatLabel   variant="on" >
@@ -43,7 +59,7 @@ const selectTax = (event: SelectChangeEvent) => {
                 <label for="weight">Peso</label>
             </FloatLabel>
             <FloatLabel   variant="on" >
-                <Select optionLabel="name" optionValue="id" fluid :options="propsW.branches"  id="branch" v-model="form.branch_id" />
+                <Select optionLabel="name" optionValue="id" fluid :options="propsW.branches"  id="branch" v-model="form.brand_id" />
                 <label for="branch">Ramas</label>
             </FloatLabel>
             <FloatLabel   variant="on" >

@@ -22,7 +22,7 @@ return new class extends Migration
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('restrict');
-            $table->foreignIdFor(\App\Models\Brand::class, 'branch_id')
+            $table->foreignIdFor(\App\Models\Brand::class, 'brand_id')
                 ->nullable()
                 ->constrained()
                 ->onUpdate('cascade')

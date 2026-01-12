@@ -214,7 +214,6 @@ class ClientController extends Controller implements HasMiddleware
 
         // Buscar en la base de datos
         return Client::search($search)
-            ->where('status',true)
             ->latest('created_at')
             ->simplePaginate($perPage);
 

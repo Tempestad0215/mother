@@ -1,6 +1,7 @@
 export interface TaxI {
     amount: number
     name: string
+    rate: string
 }
 
 export interface MenuItemI{

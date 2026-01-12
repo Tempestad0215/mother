@@ -94,7 +94,7 @@ const deleteData = (data:categoryBaseI, event:Event) =>  {
 
 const resetForm = () => {
     categorySelected.value = null;
-    isUpdate.value = true;
+    isUpdate.value = false;
 }
 </script>
 

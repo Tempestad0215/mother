@@ -34,7 +34,7 @@ export interface ProductBaseI {
     description: string | null;
     bar_code: string | null;
     sku: string | null;
-    branch_id: number;
+    brand_id: number | null;
     dimensions: string | null;
     process: number;
     unit_id: number;
@@ -95,7 +95,7 @@ export interface ProductFormI {
     id: number
     name: string
     description: string
-    unit_id: number
+    unit_id: number | null
     price: number
     cost: number
     min_price: number
@@ -112,7 +112,7 @@ export interface ProductFormI {
     weight: number
     bar_code: string
     sku: string
-    branch_id: number
+    brand_id: number | null
     dimensions: string
     inventoried: boolean
     has_fraction: boolean

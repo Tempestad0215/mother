@@ -22,6 +22,7 @@ class Brand extends Model implements Auditable
     use \OwenIt\Auditing\Auditable;
     use softDeletes;
 
+    protected $table = 'brands';
 
     protected $fillable = [
         'name',

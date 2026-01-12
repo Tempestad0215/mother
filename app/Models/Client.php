@@ -62,7 +62,6 @@ class Client extends Model implements Auditable
         'phone',
         'email',
         'address',
-        'status',
         'type',
         'comment'
     ];
@@ -73,7 +72,6 @@ class Client extends Model implements Auditable
         'type_rnc' => SequenceSaleTypeEnum::class,
         'document' => ClientDocumentEnum::class,
         'type_price' => ClientTypePriceEnum::class,
-        'status'=> 'boolean',
     ];
 
 

@@ -14,8 +14,10 @@ import money from 'v-money';
 
 import {createVfm} from "vue-final-modal";
 import {ConfirmationService, ToastService} from "primevue";
+import {createPinia} from "pinia";
 
 const vfm = createVfm()
+const pinia  = createPinia()
 
 
 createInertiaApp({
@@ -28,6 +30,7 @@ createInertiaApp({
             .use(plugin)
             .use(VueTheMask)
             .use(vfm)
+            .use(pinia)
             .use(money as any)
             .use(ZiggyVue, Ziggy)
             .use(PrimeVue, {

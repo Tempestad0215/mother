@@ -9,7 +9,6 @@ import {FloatLabel, InputText, Select, Dialog, InputGroup, InputGroupAddon, Fiel
 
 const propsW = defineProps<{
     productType: ProductTypeEnumI
-	wareHouses: WarehouseBaseI[],
 }>()
 
 const form = inject(formProductKey)!!
@@ -31,16 +30,6 @@ const createWarehouse = ref<boolean>(false);
                 <InputText fluid id="bar_code"  v-model="form.bar_code" />
                 <label for="bar_code">Codigo de Barra</label>
             </FloatLabel>
-            <InputGroup class="h-10">
-                <InputGroupAddon>
-                    <i @click="createWarehouse = true" class="pi pi-warehouse"></i>
-                </InputGroupAddon>
-                <FloatLabel variant="on" >
-                    <Select :options="propsW.wareHouses" optionLabel="name" optionValue="id" class="" fluid id="warehouse"  v-model="form.warehouse_id" />
-                    <label for="warehouse">Almacen</label>
-                </FloatLabel>
-
-            </InputGroup>
         </div>
 
         <Dialog

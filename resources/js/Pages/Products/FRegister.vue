@@ -33,7 +33,6 @@ const propsW = defineProps<{
 	update?: boolean,
 	categories: categoryBaseI[],
 	suppliers: supplierI[],
-	warehouse: WarehouseBaseI[],
 	nextProduct?: number,
     paymentTypes: PaymentTypeEnumI,
     productType: ProductTypeEnumI,
@@ -72,7 +71,7 @@ const form = useForm<ProductFormI>({
 	weight: 0,
 	bar_code: "",
 	sku: "",
-	branch_id: null,
+	brand_id: null,
 	dimensions: "",
 	inventoried: true,
 	has_fraction: true,
@@ -105,17 +104,13 @@ onMounted(() => {
 		form.tax_id = Number(propsW.productEdit.tax_id);
 		form.sku = propsW.productEdit.sku || "";
 		form.unit_id = propsW.productEdit.unit_id;
-		form.branch_id = propsW.productEdit.branch_id || 0;
+		form.brand_id = propsW.productEdit.brand_id || 0;
 		form.cost = Number(propsW.productEdit.cost);
 		form.price = Number(propsW.productEdit.price);
 		form.min_price = Number(propsW.productEdit.min_price) || 0;
 		form.special_price = Number(propsW.productEdit.special_price) || 0;
 	}
 
-	//Elegir el primer si existe
-	if (propsW.warehouse.length > 0) {
-		form.warehouse_id = propsW.warehouse[0].id;
-	}
 
 });
 
@@ -263,8 +258,7 @@ async function printLabel() {
 
                 <ProductExtra
                     class="flex-1"
-                    :productType="propsW.productType"
-                    :ware-houses="propsW.warehouse"/>
+                    :productType="propsW.productType"/>
 
                 <ProductGeneral
                     class=""

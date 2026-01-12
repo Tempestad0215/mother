@@ -25,7 +25,7 @@ class StoreProductRequest extends FormRequest
     public function rules(): array
     {
         $isArticle = $this->get('type') === 'producto';
-        
+
 
         return [
             'name' => ['required','string','min:3','max:75'],
@@ -33,7 +33,6 @@ class StoreProductRequest extends FormRequest
             'unit_id' => ['nullable','integer','exists:units,id'],
             'supplier_id' => ['required','integer','exists:suppliers,id'],
             'category_id' => ['required','integer','exists:categories,id'],
-            'warehouse_id' => ['required','integer','exists:warehouses,id'],
             'bar_code' => ['nullable','string','max:100'],
             'branch' => ['nullable','string','max:75','exists:branches,id'],
             'sku' => ['nullable','string','max:75'],

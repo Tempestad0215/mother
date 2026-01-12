@@ -5,7 +5,7 @@ import {ref} from "vue";
 import {router} from "@inertiajs/vue3";
 import {itemsSettings} from "@/Helpers/SettingHelpers";
 import {BranchInterfaceI} from "@/Interfaces/BranchInterface";
-import FRegisterBranch from "@/Pages/Setting/Branch/FRegisterBranch.vue";
+import FRegisterBranch from "@/Pages/Setting/Brand/FRegisterBranch.vue";
 
 
 const confirm = useConfirm()

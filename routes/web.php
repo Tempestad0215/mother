@@ -2,7 +2,7 @@
 
 use App\Helpers\UserHelper;
 use App\Http\Controllers\AccontCoController;
-use App\Http\Controllers\BranchController;
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\ExchangeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClientController;
@@ -353,7 +353,7 @@ Route::middleware([
             Route::delete('/{tax}', 'destroy')->name('destroy');
         });
 
-    Route::controller(BranchController::class)
+    Route::controller(BrandController::class)
         ->prefix('/setting/branch')
         ->name('branch.')
         ->group(function () {

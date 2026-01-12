@@ -2,12 +2,13 @@
 import {inject, watch} from "vue";
 import {PreciseCalculator} from "@/utils/Decimal";
 import {Fieldset, InputNumber, FloatLabel} from "primevue";
-import {formProductKey, taxCurrentValueKey} from "@/Injections/InjectionKeys";
+import {formProductKey} from "@/Injections/InjectionKeys";
+import {useProductStore} from "@/stores/ProductStore";
+import {storeToRefs} from "pinia";
 
 
 const form = inject(formProductKey)!!
-const taxCurrentValue = inject(taxCurrentValueKey)!!
-
+const productStore = storeToRefs(useProductStore())
 
 /*
 Propiedades computada
@@ -17,13 +18,22 @@ Propiedades computada
  */
 
 watch(
-	() => [form.tax_id, form.cost, form.price],
+	() => [form.tax_id, form.cost, form.price, form.tax_id],
 	()=>{
-        const tax = taxCurrentValue.value * form.price
 
-        form.product_no_tax = Number(PreciseCalculator.subtract(
-            form.price, tax
-        ))
+        const tax = PreciseCalculator.multiply(
+            form.price,
+            productStore.taxRate.value
+        )
+
+        if(Number(tax) === 0)
+        {
+            form.product_no_tax = form.price
+        }else {
+            form.product_no_tax = Number(PreciseCalculator.subtract(
+                form.price, tax.toString()
+            ))
+        }
 
         form.benefits = Number(PreciseCalculator.subtract(
             form.price, form.cost
@@ -32,11 +42,14 @@ watch(
         const benefitsRate = PreciseCalculator.divide(
             Number(form.benefits), form.price || 1
         )
+
         form.benefits_rate = Number(
             Number(PreciseCalculator.multiply(
             String(benefitsRate), 100
             )).toFixed(2)
         )
+
+
 
 	}
 )

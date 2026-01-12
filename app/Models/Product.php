@@ -77,7 +77,6 @@ class Product extends Model implements Auditable
         'price',
         'supplier_id',
         'category_id',
-        'warehouse_id',
         'sku',
         'bar_code',
         'weight',

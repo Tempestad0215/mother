@@ -1,12 +1,8 @@
 <script setup lang="ts">
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import Checkbox from '@/Components/Checkbox.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+import { Link, useForm } from '@inertiajs/vue3';
 import {ref, Ref} from "vue";
 import {useRoute} from "ziggy-js";
+import {FloatLabel, InputText, Password, ToggleSwitch, Button, Image} from "primevue";
 
 
 const route = useRoute();
@@ -52,8 +48,6 @@ const submit = () => {
 
 
 <template>
-<!--    Titulo de la pagina-->
-    <Head title="Inicio" />
     <div class=" h-screen ">
         <div v-if="status" class="mb-4 font-medium text-sm ">
             {{ status }}
@@ -62,57 +56,29 @@ const submit = () => {
         <form
             class="max-w-[600px] mx-auto fondo p-10 rounded-md flex-col items-center shadow-md "
             @submit.prevent="submit">
+            <Image :src="`${urlImage}/logo.jpeg`" />
 
-            <img
-                class="rounded-2xl mb-5"
-                :src="`${urlImage}/logo.jpeg`" alt="Logo de la empresa" >
+            <FloatLabel variant="on">
+                <InputText fluid v-model="form.email" />
+            </FloatLabel>
+            <FloatLabel class="mt-3" variant="on">
+                <Password fluid toggleMask v-model="form.password" />
+            </FloatLabel>
 
-
-            <div>
-                <InputLabel for="email" value="Correo" />
-                <TextInput
-                    id="email"
-                    v-model="form.email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    required
-                    autofocus
-                    autocomplete="username"
-                />
-                <InputError class="mt-2" :message="form.errors.email" />
+            <div class="flex items-center mt-5 space-x-3">
+                <ToggleSwitch id="remember" v-model="form.remember" />
+                <label for="remember">Recuerdame</label>
             </div>
 
-            <div class="mt-4">
-                <InputLabel for="password" value="Contraseña" />
-                <TextInput
-                    id="password"
-                    v-model="form.password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    required
-                    autocomplete="current-password"
-                />
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
 
-            <div class="block mt-4">
-                <label class="flex items-center">
-                    <Checkbox v-model:checked="form.remember" name="remember" />
-                    <span class="ms-2 text-sm text-gray-50 ">Recuerdame</span>
-                </label>
-            </div>
-
-            <div class="flex items-center justify-end mt-4">
+            <div class="flex items-center justify-end mt-4 space-x-3">
                 <Link
                     v-if="canResetPassword"
                     :href="route('password.request')"
                     class="underline text-sm text-gray-50  rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                     Olvidó su contraseña?
                 </Link>
-
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Iniciar
-                </PrimaryButton>
+                <Button :disabled="form.processing" label="Iniciar" icon="pi pi-send" type="submit"/>
             </div>
         </form>
     </div>
