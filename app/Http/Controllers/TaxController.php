@@ -12,7 +12,7 @@ class TaxController extends Controller
     public function index()
     {
 
-        return Inertia::render('Tax/Register', [
+        return Inertia::render('Setting/Tax/Register', [
             'taxes' => Tax::orderBy('name')->get()
         ]);
     }

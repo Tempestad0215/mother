@@ -56,7 +56,7 @@ const submit = () => {
             },
             onError: (err) => {
                 toast.add({
-                    severity: "success",
+                    severity: "error",
                     summary: "Error",
                     detail: `Error en esta solicitud. Detalle : ${Object.values(err)[0]}`,
                     life: 3000,
@@ -75,7 +75,7 @@ const submit = () => {
             },
             onError: (err) => {
                 toast.add({
-                    severity: "success",
+                    severity: "error",
                     summary: "Error",
                     detail: `Error en esta solicitud. Detalle : ${Object.values(err)[0]}`,
                     life: 3000,

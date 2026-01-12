@@ -5,8 +5,7 @@ import {supplierI} from "@/Interfaces/SupplierInterface";
 import {ProductBaseI, ProductTypeEnumI} from "@/Interfaces/ProductInterface";
 import {categoryBaseI} from "@/Interfaces/CategoriesInterface";
 import {WarehouseBaseI} from "@/Interfaces/WarehouseInterface";
-import {useRoute} from "ziggy-js";
-import {Button, Column, DataTable, Dialog, InputGroup, InputGroupAddon, InputText} from "primevue";
+import {Button, Column, DataTable, Dialog, InputGroup, InputGroupAddon, InputText, Breadcrumb} from "primevue";
 import Pagination from "@components/Pagination.vue";
 import {PaginationI, PaymentTypeEnumI} from "@/Interfaces/GlobalInterface";
 import FRegister from "@/Pages/Products/FRegister.vue";
@@ -14,9 +13,11 @@ import {productDataKey, taxCurrentValueKey} from "@/Injections/InjectionKeys";
 import {BranchInterfaceI} from "@/Interfaces/BranchInterface";
 import {UnitInterfaceI} from "@/Interfaces/UnitInterface";
 import {TaxInterfaceI} from "@/Interfaces/TaxInterface";
+import {PreciseCalculator} from "@/utils/Decimal";
+import {router} from "@inertiajs/vue3";
+import {productBreadCrumb} from "@/Helpers/ProductHelper";
 
 
-const route = useRoute()
 
 //Propiedades de la ventana
 const propsW = defineProps<{
@@ -44,11 +45,6 @@ const isUpdate = ref(false)
 provide(productDataKey, propsW.products.data ?? [])
 provide(taxCurrentValueKey, taxCurrentValue)
 
-
-
-
-
-
 const searchData = () => {
 
 }
@@ -57,10 +53,37 @@ const searchData = () => {
 const editData = (data:ProductBaseI) => {
     selectedProduct.value = data;
     isUpdate.value = true
+    createProduct.value = true
 }
 
 const deleteData = (data:ProductBaseI, event:Event) => {
+    confirm.require({
+        target: event.currentTarget as HTMLElement,
+        message: "Desea eliminar este registro, los cambios son irreversible",
+        rejectProps:{
+            label: "Cancelar",
+            severity: "secondary",
+            outlined: true
 
+        },
+        acceptProps:{
+            label: "Eliminar",
+
+        },
+        accept: () => {
+            router.delete(route('un.destroy', {client: data.id}),{
+                onSuccess: () => {
+                    toast.add({
+                        severity: "success",
+                        summary: "Eliminado ",
+                        detail: "El Registro Fue Eliminado Correctamente.",
+                        life: 3000
+                    })
+                }
+            })
+        }
+
+    })
 }
 
 </script>
@@ -76,6 +99,9 @@ const deleteData = (data:ProductBaseI, event:Event) => {
             :loading="!propsW.products.data"
             :value="propsW.products.data" >
             <template #header>
+                <div>
+                    <Breadcrumb :model="productBreadCrumb" />
+                </div>
                 <div class="flex justify-between items-center">
                     <form @submit.prevent="searchData">
                         <InputGroup class="max-w-60">
@@ -95,8 +121,9 @@ const deleteData = (data:ProductBaseI, event:Event) => {
             </template>
             <Column field="code" header="Codigo"  />
             <Column field="name" header="Nombre"  />
-            <Column field="rnc" header="RNC"  />
-            <Column field="phone" header="Telefono"  />
+            <Column :field="(data:ProductBaseI) => `${PreciseCalculator.formatCurrency(data.cost)}`" header="Costo"  />
+            <Column :field="(data:ProductBaseI) => `${PreciseCalculator.formatCurrency(data.price)}`" header="Precio"  />
+            <Column :field="(data:ProductBaseI) => `${data.is_service ? 'Servicio' : 'Producto'}`" header="Tipo"  />
             <Column field="email" header="Correo"  />
             <Column header="Act">
                 <template #body="{data}:{data:ProductBaseI}">

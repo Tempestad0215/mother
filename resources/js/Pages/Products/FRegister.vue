@@ -55,7 +55,7 @@ const form = useForm<ProductFormI>({
 	id: 0,
 	name: "",
 	description: "",
-	unit_id: 0,
+	unit_id: null,
 	price: 0,
 	cost: 0,
 	min_price: 0,
@@ -72,7 +72,7 @@ const form = useForm<ProductFormI>({
 	weight: 0,
 	bar_code: "",
 	sku: "",
-	branch_id: 0,
+	branch_id: null,
 	dimensions: "",
 	inventoried: true,
 	has_fraction: true,
@@ -124,7 +124,6 @@ onMounted(() => {
  * Funcion para enviar los datos
  */
 const submit = () => {
-    console.log('enviado')
 	if (propsW.update || form.update) {
 		form.patch(route('product.update', form.id), {
 			onSuccess: () => {

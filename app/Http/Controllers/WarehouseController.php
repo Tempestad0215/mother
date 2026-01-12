@@ -51,7 +51,7 @@ class WarehouseController extends Controller implements HasMiddleware
     {
         //Validar los datos
         $request->validate([
-            'name' => ['required', 'string', 'max:75'],
+            'name' => ['required', 'string', 'max:75','unique:warehouses,name'],
             'description' => ['required', 'string', 'max:200'],
             'location' => ['nullable', 'string', 'max:200']
         ]);

@@ -6,7 +6,7 @@ import {reactive, ref} from "vue";
 import {useRoute} from "ziggy-js";
 import {Button, Column, DataTable, Dialog, Breadcrumb, useConfirm, useToast} from "primevue";
 import {itemsSettings} from "@/Helpers/SettingHelpers";
-import {Head, router} from "@inertiajs/vue3";
+import {router} from "@inertiajs/vue3";
 
 
 const route = useRoute();
@@ -65,6 +65,11 @@ const deleteData = (data: WarehouseBaseI, event: Event) => {
 }
 
 
+const hideCreate = () => {
+    selectedWarehouses.value = null
+    isUpdate.value = false
+}
+
 </script>
 
 <template>
@@ -100,7 +105,7 @@ const deleteData = (data: WarehouseBaseI, event: Event) => {
         </DataTable>
         <Dialog
             modal
-            @hide="selectedWarehouses = null"
+            @hide="hideCreate"
             v-model:visible="createWarehouse"
             header="Registro Almacen">
             <FRegister

@@ -83,6 +83,7 @@ class Product extends Model implements Auditable
         'weight',
         'dimensions',
         'branch_id',
+        'is_service',
         'discount',
         'discount_amount',
         'product_tax',
@@ -92,7 +93,6 @@ class Product extends Model implements Auditable
         'tax_id',
         'status',
         'comment',
-        'type',
         'inventoried',
         'has_fraction',
         'has_special',
@@ -124,7 +124,7 @@ class Product extends Model implements Auditable
         'has_promotion' => 'boolean',
         'has_tax' => 'boolean',
         'close_table' => 'boolean',
-        'type' => ProductTypeEnum::class
+        'is_service' => 'boolean'
     ];
 
 

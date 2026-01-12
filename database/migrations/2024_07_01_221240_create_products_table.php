@@ -24,24 +24,24 @@ return new class extends Migration
             $table->string('bar_code',100)->nullable()->comment('codigo de barra');
             $table->float('weight')->default(0)->comment('peso');
             $table->string('dimensions',255)->nullable()->comment('dimensiones');
-            $table->decimal('stock')->default(0)->comment('Almacen');
-            $table->decimal('reserved',4)->default(0)->comment('En Reserva');
+            $table->decimal('stock', 19,4)->default(0)->comment('Almacen');
+            $table->decimal('reserved',19,4)->default(0)->comment('En Reserva');
 
             //Precio y costo
-            $table->decimal('cost')->comment('costo');
-            $table->decimal('special_price')->default(0)->comment('Precio Especial');
-            $table->decimal('min_price')->default(0)->comment('Precio Minimo');
-            $table->decimal('price')->comment('precio');
+            $table->decimal('cost', 19,6)->comment('costo');
+            $table->decimal('special_price', 19,6)->default(0)->comment('Precio Especial');
+            $table->decimal('min_price', 19,6)->default(0)->comment('Precio Minimo');
+            $table->decimal('price', 19,6)->comment('precio');
 
             //Informacion del producto
-            $table->decimal('product_no_tax')->default(0)->comment('Precio sin Impuesto');
-            $table->decimal('tax')->default(0)->comment('Impuesto para este Item');
-            $table->decimal('tax_rate')->default(0)->comment('Tasa de Impuesto');
-            $table->decimal('benefits')->default(0)->comment('Beneficios del producto');
-            $table->decimal('benefits_rate')->default(0)->comment('Porcentaje de Margen');
+            $table->decimal('product_no_tax', 19,6)->default(0)->comment('Precio sin Impuesto');
+            $table->decimal('tax', 19,6)->default(0)->comment('Impuesto para este Item');
+            $table->decimal('tax_rate', 19,6)->default(0)->comment('Tasa de Impuesto');
+            $table->decimal('benefits', 19,6)->default(0)->comment('Beneficios del producto');
+            $table->decimal('benefits_rate', 19,6)->default(0)->comment('Porcentaje de Margen');
 
-            $table->decimal('discount')->default(0)->comment('Porcentaje de descuento');
-            $table->decimal('discount_amount')->default(0)->comment('Descuento Total');
+            $table->decimal('discount', 19,6)->default(0)->comment('Porcentaje de descuento');
+            $table->decimal('discount_amount', 19,6)->default(0)->comment('Descuento Total');
 
 
             //Relaciones de los productos

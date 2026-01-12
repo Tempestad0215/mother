@@ -4,8 +4,10 @@ namespace App\Enums;
 
 enum InventoryMovementTypeEnum:string
 {
-    case ENTRADA = 'ENTRADA';
-    case SALIDA = 'SALIDA';
-    case AJUSTE = 'AJUSTE';
-    case CONTEO = 'CONTEO';
+    case Entrada = 'Entrada';
+    case Salida = 'Salida';
+    case Ajuste = 'Ajuste';
+    case Transferencia = 'Transferencia';
+    case Venta = 'Venta';
+    case Devolucion = 'Devolucion';
 }

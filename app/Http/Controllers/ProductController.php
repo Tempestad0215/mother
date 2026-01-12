@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\ProductTypeEnum;
 use App\Helpers\GeneralHelper;
 use App\Http\Requests\PaginationRequest;
-use App\Models\Branch;
+use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
@@ -80,7 +80,7 @@ class ProductController extends Controller implements HasMiddleware
                 'nextProduct' => Product::max('id') + 1,
                 'paymentTypes' => GeneralHelper::getPaymentTypes(),
                 'productType' => $productType,
-                'branches' => Branch::all(),
+                'branches' => Brand::all(),
                 'units' => Unit::all(),
                 'taxes' => Tax::all(),
             ]);

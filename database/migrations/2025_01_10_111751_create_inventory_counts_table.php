@@ -12,13 +12,26 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('inventory_counts', function (Blueprint $table) {
+        Schema::create('inventories', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Product::class, 'product_id');
-            $table->decimal('current_stock');
+            $table->foreignIdFor(\App\Models\Warehouse::class, 'warehouse_id');
+            $table->decimal('qty_on_hand',19,4)->default(0);
+            $table->decimal('committed', 19,4)->default(0);
+            $table->decimal('avg_cost', 19,6)->nullable();
+            $table->decimal('min_stock', 19,4);
+            $table->decimal('max_stock', 19,4);
+
+            //Ubicaciones
+            $table->string('rack')->nullable();
+            $table->string('bin')->nullable();
+            $table->string('zone')->nullable();
+
+            $table->date('expire_date')->nullable();
             $table->decimal('system_stock');
             $table->decimal('difference');
             $table->string('description')->nullable();
+            $table->dateTime('last_recalc_at')->nullable();
 
             $table->timestamps();
         });

@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\NcfTypeEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -10,7 +11,7 @@ return new class extends Migration {
         Schema::create('sequences', function (Blueprint $table) {
             $table->id();
             $table->string('code',30)->unique()->comment('codigo unido para cada registro');
-            $table->enum('type', ['B01','B02','B03','B04','B11','B12','B13','B14','B15','B16','B17'])->comment('Tipo de registro');
+            $table->enum('type', NcfTypeEnum::cases())->comment('Tipo de registro');
             $table->integer('from')->comment('numero inicial');
             $table->integer('next')->comment('numero siguiente');
             $table->integer('to')->comment('numero final');

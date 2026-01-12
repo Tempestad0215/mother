@@ -18,11 +18,11 @@ const onPageChange =(value: number) => {
     const nextRoute = value + 1
     const perPage = propsW.pag.per_page
 
-    router.get(`${propsW.pag.path}?search=${propsW.search}&page=${nextRoute}&per_page=${perPage}`)
+    router.get(`${propsW.pag.path}?search=${propsW.search}&per_page=${perPage}`)
 }
 
-const testFunction = (value: number) => {
-    router.get(`${propsW.pag.path}?search=${propsW.search}&page=${propsW.pag.current_page}&per_page=${value}`)
+const changePerPage = (value: number) => {
+    router.get(`${propsW.pag.path}?search=${propsW.search}&per_page=${value}`)
 }
 </script>
 
@@ -31,7 +31,7 @@ const testFunction = (value: number) => {
     <Paginator
         :first="first"
         @update:first="onPageChange"
-        @update:rows="testFunction"
+        @update:rows="changePerPage"
         :rowsPerPageOptions="[15, 30, 45,60,85,100]"
         :rows="propsW.pag.per_page ?? 0"
         :totalRecords="propsW.pag.total"

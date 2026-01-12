@@ -2,11 +2,11 @@
 
 namespace App\Enums;
 
-enum PurchaseStatusEnum:int
+enum PurchaseStatusEnum: string
 {
-    case EAPRO = 1;
-    case ENPRG = 2;
-    case APROB = 3;
-    case CANCE = 4;
-    case CERRA = 5;
+    case Borrador = 'Borrador';
+    case Pendiente = 'Pendiente';
+    case Parcial = 'Parcial';
+    case Completada = 'Completada';
+    case Cancelada = 'Cancelada';
 }

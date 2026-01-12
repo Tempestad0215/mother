@@ -14,7 +14,7 @@ class UnitController extends Controller
 
         $units = Unit::all();
 
-        return Inertia::render("Unit/Register",[
+        return Inertia::render("Setting/Unit/Register",[
             'units' => $units,
         ]);
     }

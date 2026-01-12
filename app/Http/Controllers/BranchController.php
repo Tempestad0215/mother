@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Branch;
+use App\Models\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -12,9 +12,9 @@ class BranchController extends Controller
     public function index()
     {
 
-        $branches = Branch::all();
+        $branches = Brand::all();
 
-        return Inertia::render('Branch/Register',[
+        return Inertia::render('Setting/Brand/Register',[
             'branches' => $branches,
         ]);
     }
@@ -26,13 +26,13 @@ class BranchController extends Controller
             'description' => ['nullable','string','max:150'],
         ]);
 
-        Branch::create($validated);
+        Brand::create($validated);
 
         return back();
     }
 
 
-    public function update(Request $request, Branch $branch)
+    public function update(Request $request, Brand $branch)
     {
         $validated = $request->validate([
             'name' => ['required','string','min:2','max:50', Rule::unique('branches','name')->ignore($branch)],
@@ -45,7 +45,7 @@ class BranchController extends Controller
     }
 
 
-    public function destroy(Branch $branch)
+    public function destroy(Brand $branch)
     {
         $branch->delete();
 

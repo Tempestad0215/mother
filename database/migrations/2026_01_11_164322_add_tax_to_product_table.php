@@ -18,10 +18,12 @@ return new class extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('restrict');
             $table->foreignIdFor(\App\Models\Unit::class, 'unit_id')
+                ->nullable()
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('restrict');
-            $table->foreignIdFor(\App\Models\Branch::class, 'branch_id')
+            $table->foreignIdFor(\App\Models\Brand::class, 'branch_id')
+                ->nullable()
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('restrict');
