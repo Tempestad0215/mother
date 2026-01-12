@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ProductTypeEnum;
 use App\Helpers\GeneralHelper;
 use App\Http\Requests\PaginationRequest;
+use App\Models\Branch;
 use App\Models\Category;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Resources\ProductSupplierResource;
 use App\Models\Setting;
 use App\Models\Supplier;
+use App\Models\Tax;
+use App\Models\Unit;
 use App\Models\Warehouse;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -58,6 +62,9 @@ class ProductController extends Controller implements HasMiddleware
         }
         $products = $queryProduct->paginate($perPage)->withQueryString();
 
+
+        $productType = collect(ProductTypeEnum::cases())->mapWithKeys(fn (ProductTypeEnum $item) => [$item->name => $item->value])->toArray();
+
         //Verificar si existe configuración
         $setting = Setting::first();
 
@@ -71,7 +78,11 @@ class ProductController extends Controller implements HasMiddleware
                 'suppliers' => Supplier::orderBy('company_name')->get(),
                 'warehouse' => Warehouse::all(),
                 'nextProduct' => Product::max('id') + 1,
-                'paymentTypes' => GeneralHelper::getPaymentTypes()
+                'paymentTypes' => GeneralHelper::getPaymentTypes(),
+                'productType' => $productType,
+                'branches' => Branch::all(),
+                'units' => Unit::all(),
+                'taxes' => Tax::all(),
             ]);
 
         } else {

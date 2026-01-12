@@ -2,9 +2,9 @@
 
 namespace App\Enums;
 
-Enum ProductTypeEnum:string
+Enum ProductTypeEnum:int
 {
-    case  PRODUCTO = 'producto';
-    case  SERVICIO = 'servicio';
+    case  Producto = 0;
+    case  Servicio = 1;
 }
 

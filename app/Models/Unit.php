@@ -17,6 +17,11 @@ class Unit extends Model
         'description',
     ];
 
+    protected $hidden = [
+        'created_at',
+        'deleted_at',
+        'updated_at',
+    ];
 
     public function name():Attribute
     {

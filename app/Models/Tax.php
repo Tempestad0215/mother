@@ -18,6 +18,12 @@ class Tax extends Model
         'model_status',
     ];
 
+    protected $hidden = [
+        'deleted_at',
+        'created_at',
+        'updated_at',
+    ];
+
 
     public function name():Attribute
     {

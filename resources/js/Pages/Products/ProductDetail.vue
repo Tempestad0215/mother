@@ -1,111 +1,55 @@
 <script setup lang="ts">
-import {moneyConfig} from "@/Global/Helpers";
-import {Money} from "v-money3";
-import InputLabel from "@components/InputLabel.vue";
-import TextInput from "@components/TextInput.vue";
-import {TaxI} from "@/Interfaces/GlobalInterface";
+import {Fieldset, FloatLabel, Select, InputNumber, InputText, SelectChangeEvent} from "primevue";
+import {inject} from "vue";
+import {formProductKey, taxCurrentValueKey} from "@/Injections/InjectionKeys";
+import {BranchInterfaceI} from "@/Interfaces/BranchInterface";
+import {UnitInterfaceI} from "@/Interfaces/UnitInterface";
+import {usePage} from "@inertiajs/vue3";
+import {AppPageProps} from "@/global";
+import {TaxInterfaceI} from "@/Interfaces/TaxInterface";
+import {PreciseCalculator} from "@/utils/Decimal";
 
+const page = usePage<AppPageProps>();
 
 const propsW = defineProps<{
-    dataUnit: string[],
-    isProduct: boolean,
-    taxes: TaxI[],
+    units: UnitInterfaceI[],
+    branches: BranchInterfaceI[]
 }>()
+const form = inject(formProductKey)!!
+const taxes = page.props.taxes;
+const taxCurrentValue = inject(taxCurrentValueKey)!!;
 
-const taxRate = defineModel<number>('taxRate', {
-    default: 0,
-})
-const unit = defineModel<string>('unit')
-const weigh = defineModel<string | number>('weigh', {
-    default: 0
-})
-const brand = defineModel<string>('brand')
-const dimension = defineModel<string>('dimension')
+const selectTax = (event: SelectChangeEvent) => {
+    const infoTax:TaxInterfaceI = event.value
+    taxCurrentValue.value = Number(PreciseCalculator.divide(infoTax.rate, "100"))
+}
 
 
 </script>
 
 <template>
-    <fieldset class="field">
-        <legend>
-            Datalles
-        </legend>
-        <!--                        Unidades-->
-        <div>
-            <InputLabel
-                class="inline ml-2"
-                for="tax_rate"
-                value="Impuesto" />
-            <select
-                v-model="taxRate"
-                class=" w-full inputGeneral py-1 ">
-                <option
-                    class="even:bg-blue-200"
-                    v-for="(item, index) in taxes"
-                    :key="index"
-                    :value="item.amount">
-                    {{item.name}}
-                </option>
-            </select>
+    <Fieldset legend="Caracteristicas" >
+        <div class="grid grid-cols-2 gap-4">
+            <FloatLabel  variant="on" >
+                <Select @change="selectTax" fluid id="tax" optionValue="id" :optionLabel="(item:TaxInterfaceI) => `${item.name } | ${item.rate}`" :options="taxes"  v-model="form.tax_id" />
+                <label for="tax">Impuesto</label>
+            </FloatLabel>
+            <FloatLabel   variant="on" >
+                <Select fluid id="unit" optionValue="id" optionLabel="name"  :options="propsW.units"  v-model="form.unit_id" />
+                <label for="tax">Unidad</label>
+            </FloatLabel>
+            <FloatLabel   variant="on" >
+                <InputNumber fluid id="weight" v-model="form.weight" />
+                <label for="weight">Peso</label>
+            </FloatLabel>
+            <FloatLabel   variant="on" >
+                <Select optionLabel="name" optionValue="id" fluid :options="propsW.branches"  id="branch" v-model="form.branch_id" />
+                <label for="branch">Ramas</label>
+            </FloatLabel>
+            <FloatLabel   variant="on" >
+                <InputText fluid  id="dimension" v-model="form.dimensions" />
+                <label for="dimension">Dimensiones</label>
+            </FloatLabel>
         </div>
-
-
-        <!-- Unidad -->
-        <div
-            v-if="propsW.isProduct"
-            class="">
-            <InputLabel
-                class="inline ml-2"
-                for="unit"
-                value="Unidad" />
-            <select
-                v-model="unit"
-                class=" w-full inputGeneral py-1 ">
-                <option selected disabled value="" >-- UNIDAD --</option>
-                <option
-                    class="even:bg-blue-200"
-                    v-for="(item, index) in propsW.dataUnit"
-                    :key="index"
-                    :value="item">
-                    {{item}}
-                </option>
-            </select>
-        </div>
-        <div v-if="propsW.isProduct">
-            <InputLabel
-                class="inline ml-2"
-                for="weight"
-                value="Peso" />
-            <Money
-                class="inputGeneral w-full"
-                v-bind="moneyConfig"
-                v-model="weigh" />
-        </div>
-        <div>
-            <InputLabel
-                class="inline ml-2"
-                for="brand"
-                value="Marca" />
-            <TextInput
-                class="w-full"
-                placeholder="Yamaha"
-                v-model="brand"
-                name="brand"/>
-        </div>
-        <div
-            v-if="isProduct"
-            class="">
-            <InputLabel
-                class="inline ml-2"
-                for="dimension"
-                value="Dimensiones" />
-            <label for="dimension">Dimensiones</label>
-            <TextInput
-                class="w-full"
-                v-model="dimension"
-                placeholder="00 x 00 aa || 00 x 00 x 00 aa "
-                v-mask="['## x ## aa', '## x ## x ## aa']"
-                name="dimension"/>
-        </div>
-    </fieldset>
+    </Fieldset>
 </template>

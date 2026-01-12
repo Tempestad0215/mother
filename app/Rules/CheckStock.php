@@ -40,7 +40,7 @@ class CheckStock implements ValidationRule
             $quantity = $info['stock'];
 
 
-            if ($product->stock == 0.00 && $product->type == ProductTypeEnum::PRODUCTO)
+            if ($product->stock == 0.00 && $product->type == ProductTypeEnum::Producto)
             {
                 $existsError = true;
                 $errorMessage = 'El Producto "' . $info['product_name'] . '" no tiene suficiente stock.';
@@ -53,7 +53,7 @@ class CheckStock implements ValidationRule
                 $quantity -= $product->reserved;
 
                 //Realizar la verificacion
-                if($quantity > $product->stock && $product->type == ProductTypeEnum::PRODUCTO){
+                if($quantity > $product->stock && $product->type == ProductTypeEnum::Producto){
                     // Enviar el mensaje de que no puede ser mayor
                     $existsError = true;
                     $errorMessage = 'El Producto "' . $info['product_name'] . '" no tiene suficiente stock.';

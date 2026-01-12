@@ -24,8 +24,6 @@ return new class extends Migration
             $table->string('bar_code',100)->nullable()->comment('codigo de barra');
             $table->float('weight')->default(0)->comment('peso');
             $table->string('dimensions',255)->nullable()->comment('dimensiones');
-            $table->string('brand',75)->nullable()->comment('Marca');
-            $table->string('unit',20)->nullable()->comment('Unidad');
             $table->decimal('stock')->default(0)->comment('Almacen');
             $table->decimal('reserved',4)->default(0)->comment('En Reserva');
 
@@ -55,6 +53,7 @@ return new class extends Migration
             $table->enum('type',['producto','servicio'])->default('producto')->comment('Tipo de Servicio');
             $table->boolean('inventoried')->default(true)->comment('Maneja Inventario');
             $table->boolean('status')->default(true)->comment('Estado del Item');
+            $table->enum('is_service', \App\Enums\ProductTypeEnum::cases())->default(\App\Enums\ProductTypeEnum::Producto);
             $table->boolean('has_fraction')->default(true)->comment('Se Puede Fraccionar');
             $table->boolean('has_special')->default(true)->comment('Precio Special Activado');
             $table->boolean('has_discount')->default(true)->comment('Aplica para descuento');

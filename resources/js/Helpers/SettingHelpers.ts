@@ -11,11 +11,11 @@ export const itemsSettings:MenuItem[] = [
         url: route('wh.index'),
         icon: "pi pi-warehouse",
     },
-    // {
-    //     label: "Monedas",
-    //     url: route('currency.check'),
-    //     icon: "pi pi-dollar",
-    // },
+    {
+        label: "Ramas",
+        url: route('branch.index'),
+        icon: "pi pi-bookmark",
+    },
     {
         label: "Unidades",
         url: route('unit.index'),

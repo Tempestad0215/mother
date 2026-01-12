@@ -2,7 +2,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import {provide, ref} from 'vue';
 import {supplierI} from "@/Interfaces/SupplierInterface";
-import {ProductBaseI} from "@/Interfaces/ProductInterface";
+import {ProductBaseI, ProductTypeEnumI} from "@/Interfaces/ProductInterface";
 import {categoryBaseI} from "@/Interfaces/CategoriesInterface";
 import {WarehouseBaseI} from "@/Interfaces/WarehouseInterface";
 import {useRoute} from "ziggy-js";
@@ -10,7 +10,10 @@ import {Button, Column, DataTable, Dialog, InputGroup, InputGroupAddon, InputTex
 import Pagination from "@components/Pagination.vue";
 import {PaginationI, PaymentTypeEnumI} from "@/Interfaces/GlobalInterface";
 import FRegister from "@/Pages/Products/FRegister.vue";
-import {productDataKey} from "@/Injections/InjectionKeys";
+import {productDataKey, taxCurrentValueKey} from "@/Injections/InjectionKeys";
+import {BranchInterfaceI} from "@/Interfaces/BranchInterface";
+import {UnitInterfaceI} from "@/Interfaces/UnitInterface";
+import {TaxInterfaceI} from "@/Interfaces/TaxInterface";
 
 
 const route = useRoute()
@@ -24,16 +27,26 @@ const propsW = defineProps<{
     suppliers: supplierI[],
     warehouse: WarehouseBaseI[],
     nextProduct?: number,
-    paymentTypes: PaymentTypeEnumI
+    paymentTypes: PaymentTypeEnumI,
+    productType: ProductTypeEnumI,
+    branches: BranchInterfaceI[]
+    units: UnitInterfaceI[]
+    taxes: TaxInterfaceI[]
 }>();
 
-provide(productDataKey, propsW.products.data ?? [])
-
+const taxCurrentValue = ref(0)
 //Mostrar la ventana de suplidores
 const selectedProduct = ref<ProductBaseI | null>(null);
 const searchValue = ref("")
 const createProduct = ref(false)
 const isUpdate = ref(false)
+
+provide(productDataKey, propsW.products.data ?? [])
+provide(taxCurrentValueKey, taxCurrentValue)
+
+
+
+
 
 
 const searchData = () => {
@@ -107,6 +120,9 @@ const deleteData = (data:ProductBaseI, event:Event) => {
             v-model:visible="createProduct"
             header="Registro de Producto">
             <FRegister
+                :units="propsW.units"
+                :branches="propsW.branches"
+                :productType="propsW.productType"
                 :paymentTypes="paymentTypes"
                 :categories="propsW.categories"
                 :suppliers="propsW.suppliers"

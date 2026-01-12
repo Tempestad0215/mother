@@ -2,6 +2,7 @@
 
 use App\Helpers\UserHelper;
 use App\Http\Controllers\AccontCoController;
+use App\Http\Controllers\BranchController;
 use App\Http\Controllers\ExchangeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClientController;
@@ -350,6 +351,16 @@ Route::middleware([
             Route::post('/', 'store')->name('store');
             Route::put('/{tax}', 'update')->name('update');
             Route::delete('/{tax}', 'destroy')->name('destroy');
+        });
+
+    Route::controller(BranchController::class)
+        ->prefix('/setting/branch')
+        ->name('branch.')
+        ->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::put('/{branch}', 'update')->name('update');
+            Route::delete('/{branch}', 'destroy')->name('destroy');
         });
 //
 

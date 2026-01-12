@@ -1,65 +1,46 @@
 <script setup lang="ts">
-import InputLabel from "@components/InputLabel.vue";
+import { ToggleSwitch, Fieldset} from "primevue";
+import {inject} from "vue";
+import {formProductKey} from "@/Injections/InjectionKeys";
 
-const inventoried = defineModel<boolean>('inventoried');
-const hasFraction = defineModel<boolean>('hasFraction');
-const status = defineModel<boolean>('status');
-const has_tax = defineModel<boolean>('has_tax');
-const has_special = defineModel<boolean>('has_special');
-const has_promotion = defineModel<boolean>('has_promotion');
+
+const form = inject(formProductKey)!!
 
 </script>
 
 <template>
-    <fieldset class="field p-2 w-[10rem] block float-right ml-3 text-gray-50">
-        <legend>Manejo</legend>
-        <div>
-            <input
-                id="has_inventoried"
-                v-model="inventoried"
-                name="has_inventoried"
-                type="checkbox">
-            <InputLabel class="inline ml-2" for="has_inventoried" value="Inventariar"/>
+    <Fieldset legend="Detalle">
+        <div class="grid grid-cols-2 gap-3">
+            <div class="flex items-center space-x-3">
+                <ToggleSwitch id="has_inventoried" v-model="form.inventoried" />
+                <label for="has_inventoried">Inventariar</label>
+            </div>
+            <div class="flex items-center space-x-3">
+                <ToggleSwitch id="has_fraction" v-model="form.has_fraction" />
+                <label for="has_fraction">Fraccionar</label>
+            </div>
+            <div class="flex items-center space-x-3">
+                <ToggleSwitch id="has_status" v-model="form.status" />
+                <label for="has_status">Estado</label>
+            </div>
+            <div class="flex items-center space-x-3">
+                <ToggleSwitch id="has_itbis" v-model="form.has_tax" />
+                <label for="has_itbis">Itbis</label>
+            </div>
+            <div class="flex items-center space-x-3">
+                <ToggleSwitch id="has_special" v-model="form.has_special" />
+                <label for="has_special">P. Especial</label>
+            </div>
+            <div class="flex items-center space-x-3">
+                <ToggleSwitch id="has_promotion" v-model="form.has_promotion" />
+                <label for="has_promotion">Promocion</label>
+            </div>
+            <div class="flex items-center space-x-3">
+                <ToggleSwitch id="is_service" v-model="form.is_service" />
+                <label for="is_service">Servicio</label>
+            </div>
         </div>
-        <div>
-            <input
-                id="has_fraction"
-                name="has_fraction"
-                v-model="hasFraction"
-                type="checkbox">
-            <InputLabel class="inline ml-2" for="has_fraction" value="Fraccionar"/>
-        </div>
-        <div>
-            <input
-                v-model="status"
-                id="status"
-                type="checkbox">
-            <InputLabel class="inline ml-2" for="status" value="Estado"/>
-        </div>
-        <div>
-            <input
-                v-model="has_tax"
-                id="has_tax"
-                type="checkbox">
-            <InputLabel class="inline ml-2" for="has_tax" value="Itbis"/>
-        </div>
-        <div>
-            <input
-                id="has_special"
-                v-model="has_special"
-                type="checkbox">
-            <InputLabel class="inline ml-2" for="has_special" value="P. Especial"/>
-        </div>
-        <div>
-            <input
-                v-model="has_promotion"
-                id="has_promotion"
-                type="checkbox">
-            <InputLabel class="inline ml-2" for="promotion" value="Promocion"/>
-        </div>
-    </fieldset>
+
+    </Fieldset>
 </template>
 
-<style scoped>
-
-</style>

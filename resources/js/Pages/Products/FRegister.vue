@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import {ProductBaseI, ProductFormI, ProductOptionsI} from '@/Interfaces/ProductInterface';
+import {ProductBaseI, ProductFormI, ProductTypeEnumI} from '@/Interfaces/ProductInterface';
 import {supplierI} from '@/Interfaces/SupplierInterface';
 import {useForm, usePage} from '@inertiajs/vue3';
-import {onMounted, provide, Ref, ref} from 'vue';
+import {onMounted, provide} from 'vue';
 import {categoryBaseI} from "@/Interfaces/CategoriesInterface";
-import {PaymentTypeEnumI, TaxI} from "@/Interfaces/GlobalInterface";
+import {PaymentTypeEnumI} from "@/Interfaces/GlobalInterface";
 import {WarehouseBaseI} from "@/Interfaces/WarehouseInterface";
 import ProductExtra from "@/Pages/Products/ProductExtra.vue";
 import ProductDetail from "@/Pages/Products/ProductDetail.vue";
@@ -13,14 +12,18 @@ import ProductGeneral from "@/Pages/Products/ProductGeneral.vue";
 import ProductSale from "@/Pages/Products/ProductSale.vue";
 import ProductSaleValue from "@/Pages/Products/ProductSaleValue.vue";
 import ProductInformation from "@/Pages/Products/ProductInformation.vue";
-import ErrorComponent from "@components/ErrorComponent.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {faPrint} from "@fortawesome/free-solid-svg-icons";
 import {useRoute} from "ziggy-js";
 import {formProductKey} from "@/Injections/InjectionKeys";
+import {BranchInterfaceI} from "@/Interfaces/BranchInterface";
+import {UnitInterfaceI} from "@/Interfaces/UnitInterface";
+import {AppPageProps} from "@/global";
+import {Button, useToast} from "primevue";
 
 const route = useRoute();
-const {props} = usePage();
+const {props} = usePage<AppPageProps>();
+const toast = useToast();
 
 /**
  * Propiedades de la ventana
@@ -33,6 +36,9 @@ const propsW = defineProps<{
 	warehouse: WarehouseBaseI[],
 	nextProduct?: number,
     paymentTypes: PaymentTypeEnumI,
+    productType: ProductTypeEnumI,
+    branches: BranchInterfaceI[]
+    units: UnitInterfaceI[]
 }>();
 
 
@@ -49,7 +55,7 @@ const form = useForm<ProductFormI>({
 	id: 0,
 	name: "",
 	description: "",
-	unit: "",
+	unit_id: 0,
 	price: 0,
 	cost: 0,
 	min_price: 0,
@@ -57,18 +63,16 @@ const form = useForm<ProductFormI>({
 	product_no_tax: 0,
 	benefits: 0,
 	benefits_rate: 0,
-	type: "producto",
+	is_service: false,
 	category_id: 0,
 	supplier_id: 0,
 	warehouse_id: 0,
 	search: "",
-	tax: 0,
-	tax_rate: 0,
-	tax_tex: "",
+	tax_id: 0,
 	weight: 0,
 	bar_code: "",
 	sku: "",
-	brand: "",
+	branch_id: 0,
 	dimensions: "",
 	inventoried: true,
 	has_fraction: true,
@@ -82,20 +86,6 @@ const form = useForm<ProductFormI>({
 
 provide(formProductKey, form)
 
-/**
- *Datos de la ventana
- */
-const taxes: Ref<TaxI[]> = ref(props.setting.tax);
-const dataUnit: Ref<string[]> = ref(props.setting.unit);
-const typeOptions: Ref<ProductOptionsI[]> = ref([
-	{
-		name: 'Producto',
-		value: 'producto',
-	},
-	{
-		name: 'Servicio',
-		value: 'servicio'
-	}]);
 
 
 /**
@@ -107,15 +97,15 @@ onMounted(() => {
 	if (propsW.productEdit) {
 		form.id = propsW.productEdit.id;
 		form.name = propsW.productEdit.name;
-		form.type = propsW.productEdit.type;
+		form.is_service = propsW.productEdit.is_service === 1;
 		form.description = propsW.productEdit.description ? propsW.productEdit.description : "";
 		form.bar_code = propsW.productEdit.bar_code ? propsW.productEdit.bar_code : "";
 		form.category_id = propsW.productEdit.category_id;
 		form.supplier_id = propsW.productEdit.supplier_id;
-		form.tax_rate = Number(propsW.productEdit.tax_rate);
+		form.tax_id = Number(propsW.productEdit.tax_id);
 		form.sku = propsW.productEdit.sku || "";
-		form.unit = propsW.productEdit.unit;
-		form.brand = propsW.productEdit.brand || "";
+		form.unit_id = propsW.productEdit.unit_id;
+		form.branch_id = propsW.productEdit.branch_id || 0;
 		form.cost = Number(propsW.productEdit.cost);
 		form.price = Number(propsW.productEdit.price);
 		form.min_price = Number(propsW.productEdit.min_price) || 0;
@@ -134,18 +124,44 @@ onMounted(() => {
  * Funcion para enviar los datos
  */
 const submit = () => {
-
+    console.log('enviado')
 	if (propsW.update || form.update) {
 		form.patch(route('product.update', form.id), {
 			onSuccess: () => {
-			}
+                toast.add({
+                    severity: "success",
+                    summary: "Registro Actualizado",
+                    life: 3000
+                })
+			},
+            onError: (err) => {
+                toast.add({
+                    severity: "error",
+                    summary: "Error",
+                    detail: `Error en esta peticion. Detalle : ${Object.values(err)[0]}`,
+                    life: 3000
+                })
+            }
 		})
 	} else {
 		// Formulario para guardar los productos
 		form.post(route('product.store'), {
 			onSuccess: () => {
 				form.reset()
-			}
+                toast.add({
+                    severity: "success",
+                    summary: "Registro Actualizado",
+                    life: 3000
+                })
+			},
+            onError: (err) => {
+                toast.add({
+                    severity: "error",
+                    summary: "Error",
+                    detail: `Error en esta peticion. Detalle : ${Object.values(err)[0]}`,
+                    life: 3000
+                })
+            }
 		});
 	}
 
@@ -242,66 +258,35 @@ async function printLabel() {
 		<div class="">
 			<ProductInformation
                 :paymentTypes="propsW.paymentTypes"
-				@select-product="selectProduct"
 				:categories="propsW.categories"
 				:suppliers="propsW.suppliers"/>
+            <div class="flex flex-col md:flex-row flex-wrap gap-3">
 
-			<ProductGeneral
-				v-model:inventoried="form.inventoried"
-				v-model:has-fraction="form.has_fraction"
-				v-model:status="form.status"
-				v-model:has_tax="form.has_tax"
-				v-model:has_special="form.has_special"
-				v-model:has_promotion="form.has_promotion"
-			/>
+                <ProductExtra
+                    class="flex-1"
+                    :productType="propsW.productType"
+                    :ware-houses="propsW.warehouse"/>
 
-
-			<div class=" grid grid-cols-2 gap-4 mt-3">
-				<ProductExtra
-					v-model:sku="form.sku"
-					v-model:bar-code="form.bar_code"
-					v-model:type="form.type"
-					v-model:ware-house-id="form.warehouse_id"
-					:type-options="typeOptions"
-					:ware-houses="propsW.warehouse"/>
+                <ProductGeneral
+                    class=""
+                />
+            </div>
 
 				<!--Detalle del producto-->
-				<ProductDetail
-					v-model:tax-rate="form.tax_rate"
-					v-model:unit="form.unit"
-					v-model:weigh="form.weight"
-					v-model:brand="form.brand"
-					v-model:dimension="form.dimensions"
-					:data-unit="dataUnit"
-					:is-product="form.type == 'producto'"
-					:taxes="taxes"/>
+            <ProductDetail
+                :units="propsW.units"
+                :branches="propsW.branches"/>
 
-			</div>
 			<ProductSaleValue
-				@calculate="setCalculateData"
-				v-model:tax-rate="form.tax_rate"
-				v-model:cost="form.cost"
-				v-model:price="form.price"
-				v-model:min_price="form.min_price"
-				v-model:special_price="form.special_price"/>
+				@calculate="setCalculateData"/>
 
-			<ProductSale
-				:price-no-tax="form.product_no_tax.toString()"
-				:benefits="form.benefits.toString()"
-				:benefits-margin="form.benefits_rate.toString()"/>
-
+			<ProductSale/>
 
 		</div>
-		<ErrorComponent
-			v-model:errors="form.errors"/>
-
 
 		<!-- Botones -->
 		<div class="mt-4 text-right">
-			<PrimaryButton
-				:disabled="form.processing">
-				{{ propsW.update ? 'Actualizar' : 'Registrar' }}
-			</PrimaryButton>
+            <Button type="submit" icon="pi pi-send" :label="propsW.update ? 'Actualizar' : 'Registrar'" />
 		</div>
 	</form>
 

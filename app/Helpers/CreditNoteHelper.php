@@ -115,7 +115,7 @@ class CreditNoteHelper
                     $productCheck = $product->trans->where('id', $item['id'])->first();
 
                     // Verificar si es productos para actualizar el inventario
-                    if ($product->type === ProductTypeEnum::PRODUCTO)
+                    if ($product->type === ProductTypeEnum::Producto)
                     {
                         //actializar los datos del stock
                         $product->increment('stock', $item['stock']);

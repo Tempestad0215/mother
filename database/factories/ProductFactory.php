@@ -43,7 +43,7 @@ class ProductFactory extends Factory
 //            'product_tax' => $cost * (1 + $tax),
             'product_no_tax' =>  $price - ($price * $tax),
             'benefits' => $price - $cost,
-            'type' => fake()->randomElement([ProductTypeEnum::PRODUCTO,ProductTypeEnum::SERVICIO]),
+            'type' => fake()->randomElement([ProductTypeEnum::Producto,ProductTypeEnum::Servicio]),
             'category_id' => Category::factory(),
             'supplier_id' => Supplier::factory(),
 

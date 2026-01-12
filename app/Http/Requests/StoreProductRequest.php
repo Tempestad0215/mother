@@ -25,22 +25,20 @@ class StoreProductRequest extends FormRequest
     public function rules(): array
     {
         $isArticle = $this->get('type') === 'producto';
-
-
+        
 
         return [
             'name' => ['required','string','min:3','max:75'],
             'description' => ['nullable','string','max:150'],
-            'unit' => [Rule::requiredIf($isArticle),'string','nullable'],
+            'unit_id' => ['nullable','integer','exists:units,id'],
             'supplier_id' => ['required','integer','exists:suppliers,id'],
             'category_id' => ['required','integer','exists:categories,id'],
             'warehouse_id' => ['required','integer','exists:warehouses,id'],
             'bar_code' => ['nullable','string','max:100'],
-            'brand' => ['nullable','string','max:75'],
+            'branch' => ['nullable','string','max:75','exists:branches,id'],
             'sku' => ['nullable','string','max:75'],
-            'type' => [Rule::enum(ProductTypeEnum::class), 'required'],
-            'tax_rate' => ['required','numeric'],
-            'tax' => ['required','numeric'],
+            'is_service' => [Rule::enum(ProductTypeEnum::class), 'required'],
+            'tax_id' => ['required','numeric','exists:taxes,id'],
             'price' => ['required', 'numeric',Rule::notIn(0.00)],
             'min_price' => ['required', 'numeric',Rule::notIn(0.00)],
             'special_price' => ['required', 'numeric',Rule::notIn(0.00)],

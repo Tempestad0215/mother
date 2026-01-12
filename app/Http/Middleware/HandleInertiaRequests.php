@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Helpers\GeneralHelper;
 use App\Models\Setting;
+use App\Models\Tax;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -43,6 +44,7 @@ class HandleInertiaRequests extends Middleware
         //Compartir los datos globales
         return array_merge(parent::share($request), [
             'setting' => fn() => Setting::first(),
+            'taxes' => fn() => \Cache::rememberForever('taxes', fn() => Tax::all()),
             'isExchange' => fn() => $generalHelper->checkExchange()
         ]);
     }

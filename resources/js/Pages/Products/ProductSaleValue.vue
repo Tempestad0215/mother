@@ -1,40 +1,12 @@
 <script setup lang="ts">
-
-import {moneyConfig} from "@/Global/Helpers";
-import {Money} from "v-money3";
-import InputLabel from "@components/InputLabel.vue";
-import {computed, watch} from "vue";
+import {inject, watch} from "vue";
 import {PreciseCalculator} from "@/utils/Decimal";
-
-interface propsW {
-    taxRate: number
-}
+import {Fieldset, InputNumber, FloatLabel} from "primevue";
+import {formProductKey, taxCurrentValueKey} from "@/Injections/InjectionKeys";
 
 
-const propsW = withDefaults(defineProps<propsW>(), {
-    taxRate: 0
-})
-
-const emit = defineEmits<{
-    (e: 'calculate',
-     productNoTax: string,
-     benefits: string,
-     benefitsMargin: string): void
-}>()
-
-
-const cost = defineModel<number>('cost', {
-    default: 0
-})
-const price = defineModel<number>('price', {
-    default: 0
-})
-const min_price = defineModel<number>('min_price', {
-    default: 0
-})
-const special_price = defineModel<number>('special_price', {
-    default: 0
-})
+const form = inject(formProductKey)!!
+const taxCurrentValue = inject(taxCurrentValueKey)!!
 
 
 /*
@@ -45,30 +17,27 @@ Propiedades computada
  */
 
 watch(
-	() => [propsW.taxRate, cost.value, price.value],
+	() => [form.tax_id, form.cost, form.price],
 	()=>{
-		try {
-			const productNoTax = PreciseCalculator.subtract(
-				cost.value, propsW.taxRate
-			)
-			
-			const benefits = PreciseCalculator.subtract(
-				price.value, cost.value
-			)
-			
-			const benefitsMargin = PreciseCalculator.divide(
-				Number(benefits), price.value
-			)
-			
-			const benefitsPercent = PreciseCalculator.multiply(
-				benefitsMargin.toString(), 100
-			)
-			
-			emit('calculate', productNoTax.toFixed(2), benefits.toFixed(2), benefitsPercent.toFixed(2))
-		}catch (error) {
-			console.error(error)
-		}
-		
+        const tax = taxCurrentValue.value * form.price
+
+        form.product_no_tax = Number(PreciseCalculator.subtract(
+            form.price, tax
+        ))
+
+        form.benefits = Number(PreciseCalculator.subtract(
+            form.price, form.cost
+        ))
+
+        const benefitsRate = PreciseCalculator.divide(
+            Number(form.benefits), form.price || 1
+        )
+        form.benefits_rate = Number(
+            Number(PreciseCalculator.multiply(
+            String(benefitsRate), 100
+            )).toFixed(2)
+        )
+
 	}
 )
 
@@ -77,53 +46,24 @@ watch(
 </script>
 
 <template>
-    <fieldset class="field grid grid-cols-4 gap-3">
-        <legend>Datos de Ventas</legend>
-        <div>
-            <InputLabel
-                class="inline ml-2"
-                for="sale_cost"
-                value="Costo"/>
-            <Money
-                class="inputGeneral w-full"
-                v-bind="moneyConfig"
-                v-model.number="cost"/>
+    <Fieldset legend="Datos de Ventas">
+        <div class="flex flex-col md:flex-row  gap-3">
+            <FloatLabel variant="on" >
+                <InputNumber currency="DOP" locale="en-US" :max-fraction-digits="2" fluid id="sale_cost"  v-model="form.cost" />
+                <label for="sale_cost">Costo</label>
+            </FloatLabel>
+            <FloatLabel variant="on" >
+                <InputNumber currency="DOP" locale="en-US" :max-fraction-digits="2" fluid id="sale_price" v-model="form.price" />
+                <label for="sale_price">Precio</label>
+            </FloatLabel>
+            <FloatLabel variant="on" >
+                <InputNumber :min="form.cost" currency="DOP" locale="en-US" :max-fraction-digits="2" fluid id="sale_min_price" v-model="form.min_price" />
+                <label for="sale_min_price">Precio Minimo</label>
+            </FloatLabel>
+            <FloatLabel variant="on" >
+                <InputNumber :min="form.min_price" currency="DOP" locale="en-US" :max-fraction-digits="2" fluid id="sale_special_price" v-model="form.special_price" />
+                <label for="sale_special_price">Precio Especial</label>
+            </FloatLabel>
         </div>
-        <!--                        Informacion de venta-->
-        <div>
-            <InputLabel
-                class="inline ml-2"
-                for="sale_price"
-                value="Precio"/>
-            <Money
-                class="inputGeneral w-full"
-                v-bind="moneyConfig"
-                v-model.number="price"/>
-        </div>
-        <div>
-            <InputLabel
-                class="inline ml-2"
-                for="sale_cost"
-                value="Pre. Minimo"/>
-            <Money
-                class="inputGeneral w-full"
-                v-bind="moneyConfig"
-                v-model.number="min_price"/>
-        </div>
-        <!--                        Informacion de venta-->
-        <div>
-            <InputLabel
-                class="inline ml-2"
-                for="sale_price"
-                value="Pre. Especial"/>
-            <Money
-                class="inputGeneral w-full"
-                v-bind="moneyConfig"
-                v-model.number="special_price"/>
-        </div>
-    </fieldset>
+    </Fieldset>
 </template>
-
-<style scoped>
-
-</style>

@@ -18,6 +18,12 @@ export interface ProductOptionsI {
     value: string;
 }
 
+
+export interface ProductTypeEnumI {
+    producto: string;
+    servicio: string;
+}
+
 /**
  *
  */
@@ -28,19 +34,19 @@ export interface ProductBaseI {
     description: string | null;
     bar_code: string | null;
     sku: string | null;
-    brand: string | null;
+    branch_id: number;
     dimensions: string | null;
     process: number;
-    unit: string;
+    unit_id: number;
     stock: number;
     cost: number;
     price: number;
     min_price?: number;
     special_price?: number;
-    type: string;
+    is_service: 1 | 0;
     supplier_id: number;
     category_id: number;
-    tax_rate: number;
+    tax_id: number;
     weight: string;
     created_at: string;
     updated_at: string;
@@ -89,7 +95,7 @@ export interface ProductFormI {
     id: number
     name: string
     description: string
-    unit: string
+    unit_id: number
     price: number
     cost: number
     min_price: number
@@ -97,18 +103,16 @@ export interface ProductFormI {
     product_no_tax: number
     benefits: number
     benefits_rate: number
-    type: string
+    is_service: boolean
     category_id: number
     supplier_id: number
     warehouse_id: number
     search: string
-    tax: number
-    tax_rate: number
-    tax_tex: string
+    tax_id: number
     weight: number
     bar_code: string
     sku: string
-    brand: string
+    branch_id: number
     dimensions: string
     inventoried: boolean
     has_fraction: boolean

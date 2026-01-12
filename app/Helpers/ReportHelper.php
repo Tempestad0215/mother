@@ -129,7 +129,7 @@ class ReportHelper
     {
         //Tomar los productos con stock bajo
         return Product::where('stock','<',11)
-            ->where('type','=',ProductTypeEnum::PRODUCTO)
+            ->where('type','=',ProductTypeEnum::Producto)
             ->orderBy('stock')
             ->limit(10)
             ->get(['id','code','name','stock']);

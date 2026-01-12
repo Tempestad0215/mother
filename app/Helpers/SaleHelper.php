@@ -128,14 +128,14 @@ class SaleHelper
         //Tomar los datos del producto
         $product = Product::find($info['product_id']);
 
-        if ($info['type'] === ProductTypeEnum::PRODUCTO->value)
+        if ($info['type'] === ProductTypeEnum::Producto->value)
         {
             //reducir el stock
             $product->stock -= $info['stock'];
         }
 
         //si la cuenta es abierta
-        if (!$table && $info['type'] === ProductTypeEnum::PRODUCTO->value ) {
+        if (!$table && $info['type'] === ProductTypeEnum::Producto->value ) {
 
             //Redicir los productos y aumentar el contador
             $product->reserved += $info['stock'];
@@ -175,7 +175,7 @@ class SaleHelper
             }
 
             //Solo actualizar si es producto
-            if($product->type === ProductTypeEnum::PRODUCTO->value )
+            if($product->type === ProductTypeEnum::Producto->value )
             {
                 $product->stock += $productStock;
             }

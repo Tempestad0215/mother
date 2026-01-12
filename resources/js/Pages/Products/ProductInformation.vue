@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import {inject, reactive, ref} from "vue";
-import {ProductBaseI} from "@/Interfaces/ProductInterface";
+import {inject, ref} from "vue";
 import {categoryBaseI} from "@/Interfaces/CategoriesInterface";
 import {supplierI} from "@/Interfaces/SupplierInterface";
 import {useRoute} from "ziggy-js";
@@ -19,16 +18,8 @@ defineProps<{
     paymentTypes: PaymentTypeEnumI,
 }>()
 
-defineEmits<{
-	(e: 'selectProduct', item: ProductBaseI): void
-}>()
-
 const form = inject(formProductKey)!!
 const productDataOption = inject(productDataKey)
-const state = reactive({
-	productCheck: null as ProductBaseI[] | null,
-})
-
 const createCategory = ref(false);
 const createSupplier = ref(false);
 
@@ -53,7 +44,7 @@ const searchProduct = debounce(()=>{
             </div>
         </template>
         <template #content>
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1  md:grid-cols-2 gap-3">
                 <FloatLabel variant="on">
                     <AutoComplete fluid :suggestions="productDataOption" option-label="name" @valueChange="searchProduct" id="name"  v-model="form.name" />
                     <label for="name">Nombre</label>
@@ -67,7 +58,7 @@ const searchProduct = debounce(()=>{
                     <label for="category">Categoria</label>
                 </FloatLabel>
                 <FloatLabel variant="on">
-                    <Select fluid placeholder="Seleccione"  v-model="form.supplier_id" option-value="id" id="supplier" option-label="name" :options="suppliers" />
+                    <Select fluid placeholder="Seleccione"  v-model="form.supplier_id" option-value="id" id="supplier" option-label="company_name" :options="suppliers" />
                     <label for="supplier">Suplidor</label>
                 </FloatLabel>
             </div>

@@ -43,9 +43,9 @@ class ProductHelper
                     ->orWhere('sku', 'LIKE', '%' . $search . '%');
             })
             ->where(function (Builder $builder) {
-                $builder->where('type', ProductTypeEnum::SERVICIO)
+                $builder->where('type', ProductTypeEnum::Servicio)
                     ->orWhere(function (Builder $query) {
-                        $query->where('type', ProductTypeEnum::PRODUCTO)
+                        $query->where('type', ProductTypeEnum::Producto)
                         ->where('stock', '>', 0);
                     });
             });
