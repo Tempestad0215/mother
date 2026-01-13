@@ -9,12 +9,15 @@ class PurchaseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'proccess' => ['required'],
-            'supplier_id' => ['required'],
-            'info' => ['required'],
-            'amount' => ['required', 'numeric'],
-            'tax' => ['required', 'numeric'],
-            'sub_total' => ['required', 'numeric'],
+            'supplier_id' => ['required','exists::suppliers.id', 'numeric'],
+            'product_id' => ['required','exists::products.id', 'numeric'],
+            'quantity' => ['required','numeric','min:0'],
+            'price' => ['required','numeric','min:0'],
+            'cost' => ['required','numeric','min:0'],
+            'discount' => ['nullable','numeric','min:0'],
+            'total_amount' => ['required','numeric','min:0'],
+            'sub_total' => ['required','numeric','min:0'],
+            'discount_global' => ['nullable','numeric','min:0'],
         ];
     }
 

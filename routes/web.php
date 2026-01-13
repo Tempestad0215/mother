@@ -14,12 +14,12 @@ use App\Http\Controllers\ReportSaleController;
 use App\Http\Controllers\SequenceController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TaxController;
+use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Middleware\IsAdminMiddleware;
-use App\Models\Sale;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
@@ -303,6 +303,7 @@ Route::middleware([
         ->name('purchase.')
         ->group(function () {
             Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
         });
 
     /*
@@ -332,7 +333,7 @@ Route::middleware([
         });
 
 
-    Route::controller(\App\Http\Controllers\UnitController::class)
+    Route::controller(UnitController::class)
         ->prefix('/setting/unit')
         ->name('unit.')
         ->group(function () {

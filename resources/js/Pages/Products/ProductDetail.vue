@@ -8,20 +8,27 @@ import {usePage} from "@inertiajs/vue3";
 import {AppPageProps} from "@/global";
 import {TaxInterfaceI} from "@/Interfaces/TaxInterface";
 import {useProductStore} from "@/stores/ProductStore";
-import {TaxI} from "@/Interfaces/GlobalInterface";
+
+
 
 const page = usePage<AppPageProps>();
+
+
 
 const propsW = defineProps<{
     units: UnitInterfaceI[],
     branches: BranchInterfaceI[]
 }>()
+
+
+
 const form = inject(formProductKey)!!
 const taxes = page.props.taxes;
 const productStore = useProductStore()
 
+
+
 const selectTax = (data:SelectChangeEvent) => {
-    const id:number = data.value;
     const taxInfo:TaxInterfaceI | undefined = taxes.find((el)=> el.id === data.value)
 
     productStore.setTaxRateFromPercent(Number(taxInfo?.rate))

@@ -1,13 +1,14 @@
 
 
 export interface purchaseInfoI {
-    uuid:"",
+    id:0,
+    code: string
     name: string;
     quantity: number;
-    tax: number;
-    price: number;
-    discount: number;
+    cost: number;
+    tax_id: number;
+    discount_rate: number;
+    discount_amount: number;
     amount: number;
-    tax_rate: number;
-    status: number;
+    tax: number;
 }

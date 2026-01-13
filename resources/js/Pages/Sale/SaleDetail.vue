@@ -66,7 +66,7 @@ function getData(item: productFullI) {
 		//Pasar los datos al formulario
 		form.info_sale.push({
 			amount: 0,
-			discount: item.discount,
+			discount_rate: item.discount,
 			discount_amount: 0,
 			price: item.price,
 			min_price: item.min_price,
