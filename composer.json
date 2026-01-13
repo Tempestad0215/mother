@@ -5,7 +5,7 @@
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
+        "php": "^8.4",
         "ext-intl": "*",
         "ageekdev/laravel-barcode": "^1.2",
         "barryvdh/laravel-snappy": "^1.0",

@@ -5,7 +5,7 @@ import {PreciseCalculator} from "@/utils/Decimal";
 
 export const useProductStore = defineStore('products', ()=>{
     const taxRate = ref(0)
-
+    const nextCode = ref<string | null>("")
 
     function setTaxRateFromPercent(percent: number){
 
@@ -14,5 +14,5 @@ export const useProductStore = defineStore('products', ()=>{
         ))
     }
 
-    return {taxRate, setTaxRateFromPercent}
+    return {taxRate, setTaxRateFromPercent, nextCode}
 })

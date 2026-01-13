@@ -178,7 +178,7 @@ class Product extends Model implements Auditable
      * @return string
      */
     // funcion para generar el codigo
-    private static function generateCode():string
+    public static function generateCode():string
     {
         // Obtener el ultimo registros
         $total = self::count();

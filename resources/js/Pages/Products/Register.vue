@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AppLayout from '@/Layouts/AppLayout.vue';
-import {provide, ref} from 'vue';
+import {onMounted, provide, ref} from 'vue';
 import {supplierI} from "@/Interfaces/SupplierInterface";
 import {ProductBaseI, ProductTypeEnumI} from "@/Interfaces/ProductInterface";
 import {categoryBaseI} from "@/Interfaces/CategoriesInterface";
@@ -26,6 +26,7 @@ import {TaxInterfaceI} from "@/Interfaces/TaxInterface";
 import {PreciseCalculator} from "@/utils/Decimal";
 import {router} from "@inertiajs/vue3";
 import {productBreadCrumb} from "@/Helpers/ProductHelper";
+import {useProductStore} from "@/stores/ProductStore";
 
 
 
@@ -40,13 +41,14 @@ const propsW = defineProps<{
     categories: categoryBaseI[],
     suppliers: supplierI[],
     warehouse: WarehouseBaseI[],
-    nextProduct?: number,
+    nextProduct: string | null,
     paymentTypes: PaymentTypeEnumI,
     productType: ProductTypeEnumI,
     branches: BranchInterfaceI[]
     units: UnitInterfaceI[]
     taxes: TaxInterfaceI[]
 }>();
+
 
 const taxCurrentValue = ref(0)
 //Mostrar la ventana de suplidores
@@ -58,6 +60,16 @@ const isUpdate = ref(false)
 provide(productDataKey, propsW.products.data ?? [])
 provide(taxCurrentValueKey, taxCurrentValue)
 
+//store
+const productStore = useProductStore()
+
+onMounted(()=>{
+    if(propsW.nextProduct)
+    {
+        productStore.nextCode = propsW.nextProduct
+    }
+})
+
 const searchData = () => {
 
 }
@@ -67,6 +79,7 @@ const editData = (data:ProductBaseI) => {
     selectedProduct.value = data;
     isUpdate.value = true
     createProduct.value = true
+    productStore.nextCode = data.code;
 }
 
 const deleteData = (data:ProductBaseI, event:Event) => {
@@ -97,6 +110,12 @@ const deleteData = (data:ProductBaseI, event:Event) => {
         }
 
     })
+}
+
+const clearCreate = ()=>{
+    selectedProduct.value = null
+    isUpdate.value = false
+    productStore.nextCode = propsW.nextProduct || null
 }
 
 </script>
@@ -156,7 +175,7 @@ const deleteData = (data:ProductBaseI, event:Event) => {
         </DataTable>
         <Dialog
             modal
-            @hide="selectedProduct = null"
+            @hide="clearCreate"
             v-model:visible="createProduct"
             header="Registro de Producto">
             <FRegister

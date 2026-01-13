@@ -10,6 +10,7 @@ import debounce from "lodash/debounce";
 import FRegisterCategory from "@/Pages/Categories/FRegister.vue";
 import FRegisterSupplier from "@/Pages/Suppliers/FRegister.vue";
 import {PaymentTypeEnumI} from "@/Interfaces/GlobalInterface";
+import {useProductStore} from "@/stores/ProductStore";
 
 const route = useRoute();
 defineProps<{
@@ -22,6 +23,7 @@ const form = inject(formProductKey)!!
 const productDataOption = inject(productDataKey)
 const createCategory = ref(false);
 const createSupplier = ref(false);
+const productStore = useProductStore()
 
 
 const searchProduct = debounce(()=>{
@@ -38,9 +40,15 @@ const searchProduct = debounce(()=>{
 <template>
     <Card>
         <template #header>
-            <div class="text-right space-x-3">
-                <Button @click="createCategory = true"  icon="" label="Crear Categoria" />
-                <Button @click="createSupplier = true" icon="" label="Crear Suplidor" />
+            <div class="flex justify-between items-center">
+
+                <div>
+                    <p>ID Siguiente : {{productStore.nextCode}}</p>
+                </div>
+                <div class="text-right space-x-3">
+                    <Button @click="createCategory = true"  icon="" label="Crear Categoria" />
+                    <Button @click="createSupplier = true" icon="" label="Crear Suplidor" />
+                </div>
             </div>
         </template>
         <template #content>

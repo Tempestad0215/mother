@@ -7,6 +7,7 @@ import { useRoute } from 'ziggy-js';
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {faArrowCircleLeft} from "@fortawesome/free-solid-svg-icons";
 import {PanelMenu, ScrollPanel, ConfirmPopup, Toast} from "primevue";
+import {MenuItemI} from "@/Interfaces/GlobalInterface";
 
 // ✅ Elimina: const route = useRoute();
 
@@ -24,7 +25,7 @@ const isHiddenMenu = ref<boolean>(false);
 
 
 // ✅ Menú optimizado para POS
-const menuItems = reactive([
+const menuItems = reactive<MenuItemI[]>([
     {
         label: "Clientes",
         url: route("client.create"), // o .create si prefieres
@@ -42,6 +43,12 @@ const menuItems = reactive([
         url: route("supplier.create"),
         activePath: "/supplier",
         icon: "pi pi-truck",
+    },
+    {
+        label: "Compra",
+        url: route("purchase.index"),
+        activePath: "/product",
+        icon: "pi pi-shopping-cart",
     },
     {
         label: "Productos",
@@ -73,9 +80,9 @@ const menuItems = reactive([
 
 
 
-const isActive = (activePath: string): boolean => {
-    return window.location.pathname.startsWith(activePath);
-};
+// const isActive = (activePath: string): boolean => {
+//     return window.location.pathname.startsWith(activePath);
+// };
 
 const handleClick = (event: MouseEvent) => {
     if (menuImageRef.value && !menuImageRef.value.contains(event.target as Node)) {
@@ -128,12 +135,11 @@ onUnmounted(() => {
             <Divider />
 
 
-            <PanelMenu :model="menuItems">
+            <PanelMenu orientation="vertical" :model="menuItems">
                 <template #item="{ item }">
                     <a
                         class="block text-xl mx-2"
                         :class="[{'text-center': isHiddenMenu}]"
-                        :title="item.label"
                         :href="item.url">
                         <i
                             class="mr-3 text-center"

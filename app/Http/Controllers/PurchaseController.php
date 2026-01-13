@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ProductHelper;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -14,8 +15,10 @@ class PurchaseController extends Controller
         $productHelper = new ProductHelper();
 
 
+
         //Repuesta con datos
-        return Inertia::render('Purchase/PurchaseCreate',[
+        return Inertia::render('Purchase/FRegisterPurchase',[
+            'suppliers' => Supplier::all(),
             'products' => $productHelper->get($request)
         ]);
     }

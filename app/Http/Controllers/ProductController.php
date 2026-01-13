@@ -77,7 +77,7 @@ class ProductController extends Controller implements HasMiddleware
                 'categories' => Category::orderBy('name')->get(),
                 'suppliers' => Supplier::orderBy('company_name')->get(),
                 'warehouse' => Warehouse::all(),
-                'nextProduct' => Product::max('id') + 1,
+                'nextProduct' => Product::generateCode() ?? null,
                 'paymentTypes' => GeneralHelper::getPaymentTypes(),
                 'productType' => $productType,
                 'branches' => Brand::all(),

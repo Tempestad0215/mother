@@ -1,13 +1,13 @@
+import {MenuItem} from "primevue/menuitem";
+
 export interface TaxI {
     amount: number
     name: string
     rate: string
 }
 
-export interface MenuItemI{
-    label: string
-    icon?: string
-    route?: string
+export interface MenuItemI extends MenuItem{
+    activePath?: string
 }
 
 export interface AppSettingI {

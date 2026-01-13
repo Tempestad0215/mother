@@ -3,6 +3,7 @@ import { AxiosInstance } from 'axios';
 import ziggyRoute, { Config as ZiggyConfig } from 'ziggy-js';
 import { PageProps as AppPageProps } from './';
 import {AppSettingI, TaxI, UserAuthI} from "@/Interfaces/GlobalInterface";
+import {TaxInterfaceI} from "@/Interfaces/TaxInterface";
 
 declare global {
     interface Window {
@@ -35,10 +36,6 @@ export interface userAuthI {
     two_factor_enabled: boolean
 }
 
-export interface taxI {
-    amount: number
-    name: string
-}
 
 export interface appSettingI {
     id: number
@@ -49,7 +46,6 @@ export interface appSettingI {
     logo: string | null
     website: string | null
     company_id: string | null
-    tax: taxI[]
     unit: string[]
     fiscal_year: string | null
     company_type: string | null
@@ -66,7 +62,7 @@ export interface AppPageProps {
         canLogin: boolean
     }
     setting: AppSettingI
-    taxes: TaxI[]
+    taxes: TaxInterfaceI[]
     [key: string]: unknown
 }
 

@@ -68,11 +68,16 @@ export class PreciseCalculator {
     static formatCurrency(
         value: Decimal | string | number,
         decimals: number = 2,
-        symbol: string = '$',
     ): string {
         const decimal = value instanceof Decimal ? value : this.create(value);
         const formatted = decimal.toFixed(decimals);
-        return `${symbol}${formatted}`;
+
+        return Intl.NumberFormat('en-US',{
+            style: 'currency',
+            currency: 'USD',
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 2
+        }).format(Number(formatted));
     }
 
     // 📊 Calcular porcentaje

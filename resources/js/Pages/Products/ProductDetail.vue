@@ -22,13 +22,9 @@ const productStore = useProductStore()
 
 const selectTax = (data:SelectChangeEvent) => {
     const id:number = data.value;
-    // const taxInfo:TaxI | undefined = taxes.find((el)=> el. === data.value)
+    const taxInfo:TaxInterfaceI | undefined = taxes.find((el)=> el.id === data.value)
 
-    productStore.setTaxRateFromPercent(Number(data.value.rate))
-    form.tax_id = data.value.id;
-
-    console.log(data.value.rate)
-
+    productStore.setTaxRateFromPercent(Number(taxInfo?.rate))
 
 }
 
