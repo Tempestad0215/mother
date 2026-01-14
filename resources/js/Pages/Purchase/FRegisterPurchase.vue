@@ -101,27 +101,24 @@ const getTaxInfo = (event: SelectChangeEvent) => {
 
 
 const sumSubTotalByLine = ()=>{
-    form.discount_total = form.info.reduce((acc:number, curr:purchaseInfoI) => acc + curr.discount_amount , 0)
+    const discountTotal = form.info.reduce((acc:number, curr:purchaseInfoI) => acc + curr.discount_amount , 0)
     const subTotal = form.info.reduce((acc:number, curr:purchaseInfoI) => acc + curr.amount , 0)
-    form.tax_total = form.info.reduce((acc:number, curr:purchaseInfoI) => acc + curr.tax , 0)
-
-    const subTotalDiscount = Number(PreciseCalculator.subtract(
-        form.sub_total,
-        form.discount_total
-    ))
+    const taxTotal = form.info.reduce((acc:number, curr:purchaseInfoI) => acc + curr.tax , 0)
 
 
+    form.tax_total = taxTotal;
+    form.discount_total = discountTotal;
 
     form.sub_total = Number(PreciseCalculator.subtract(
         subTotal,
-        form.tax_total
+        taxTotal,
     ))
 
 
     form.amount = Number(
         PreciseCalculator.add(
-            form.tax_total,
-            subTotalDiscount
+            taxTotal,
+            form.sub_total
         )
     )
 }
@@ -143,6 +140,7 @@ const calculateAmount = (index:number) => {
         base.toString(),
         discountRate,
     ))
+
     form.info[index].discount_amount = discountAmount
     form.info[index].amount = Number(
         PreciseCalculator.subtract(
@@ -231,7 +229,7 @@ const addLine = () => {
                                     fluid />
                             </template>
                         </Column>
-                        <Column header="Cantidad" >
+                        <Column class="w-30" header="Cantidad" >
                             <template #body="{index}">
                                 <InputNumber
                                     @blur="calculateAmount(index)"
@@ -239,7 +237,7 @@ const addLine = () => {
                                     fluid />
                             </template>
                         </Column>
-                        <Column header="Costo" >
+                        <Column class="w-30" header="Costo" >
                             <template #body="{index}">
                                 <InputNumber
                                     @blur="calculateAmount(index)"
