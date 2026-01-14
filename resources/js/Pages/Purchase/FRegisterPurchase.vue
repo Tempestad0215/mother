@@ -22,6 +22,7 @@ import {ProductBaseI} from "@/Interfaces/ProductInterface";
 import debounce from "lodash/debounce";
 import {TaxInterfaceI} from "@/Interfaces/TaxInterface";
 import {useProductStore} from "@/stores/ProductStore";
+import {WarehouseBaseI} from "@/Interfaces/WarehouseInterface";
 
 const toast = useToast();
 
@@ -29,6 +30,7 @@ const propsW = defineProps<{
     suppliers: supplierI[],
     products: ProductBaseI[]
     taxes: TaxInterfaceI[]
+    warehouses: WarehouseBaseI[]
 }>()
 
 const productStore = useProductStore()
@@ -37,15 +39,18 @@ const productStore = useProductStore()
  */
 const form = useForm({
     id:0,
+    supplier_id:0,
     info: [{
         id: 0,
         code:"",
         name: "",
         quantity: 0,
         cost: 0,
+        warehouse_id: 0,
         tax_id: 0,
         tax: 0,
         discount_rate: 0,
+        discount_amount: 0,
         amount: 0,
     }] as purchaseInfoI[],
     tax_total: 0,
@@ -94,8 +99,9 @@ const submit = () => {
 }
 
 
-const getTaxInfo = (event: SelectChangeEvent) => {
+const getTaxInfo = (event: SelectChangeEvent, index: number) => {
     const taxInfo:TaxInterfaceI | undefined = propsW.taxes.find((el) => el.id === event.value);
+    form.info[index].tax_id = taxInfo?.id ?? 0
     productStore.setTaxRateFromPercent(Number(taxInfo?.rate) ?? 0)
 }
 
@@ -105,7 +111,6 @@ const sumSubTotalByLine = ()=>{
     const subTotal = form.info.reduce((acc:number, curr:purchaseInfoI) => acc + curr.amount , 0)
     const taxTotal = form.info.reduce((acc:number, curr:purchaseInfoI) => acc + curr.tax , 0)
 
-
     form.tax_total = taxTotal;
     form.discount_total = discountTotal;
 
@@ -113,7 +118,6 @@ const sumSubTotalByLine = ()=>{
         subTotal,
         taxTotal,
     ))
-
 
     form.amount = Number(
         PreciseCalculator.add(
@@ -172,6 +176,7 @@ const addLine = () => {
         name: "",
         quantity: 0,
         cost: 0,
+        warehouse_id: 0,
         tax_id: 0,
         tax: 0,
         discount_rate: 0,
@@ -195,7 +200,7 @@ const addLine = () => {
                     @submit.prevent="submit">
                     <div class="flex gap-3 justify-between">
                         <FloatLabel class="max-w-80" variant="on">
-                            <Select id="supplier_id" fluid :options="propsW.suppliers" optionValue="id" optionLabel="company_name" />
+                            <Select id="supplier_id" fluid :options="propsW.suppliers" v-model="form.supplier_id" optionValue="id" optionLabel="company_name" />
                             <label for="supplier_id">Suplidor</label>
                         </FloatLabel>
                         <FloatLabel variant="on" >
@@ -229,7 +234,7 @@ const addLine = () => {
                                     fluid />
                             </template>
                         </Column>
-                        <Column class="w-30" header="Cantidad" >
+                        <Column class="min-w-25 w-30" header="Cantidad" >
                             <template #body="{index}">
                                 <InputNumber
                                     @blur="calculateAmount(index)"
@@ -237,7 +242,7 @@ const addLine = () => {
                                     fluid />
                             </template>
                         </Column>
-                        <Column class="w-30" header="Costo" >
+                        <Column class="min-w-25 w-30" header="Costo" >
                             <template #body="{index}">
                                 <InputNumber
                                     @blur="calculateAmount(index)"
@@ -245,18 +250,7 @@ const addLine = () => {
                                     fluid />
                             </template>
                         </Column>
-                        <Column header="Imp." >
-                            <template #body="{index}">
-                                <Select
-                                    @blur="calculateAmount(index)"
-                                    placeholder="Itbis"
-                                    :options="taxes"
-                                    @change="getTaxInfo($event)"
-                                    option-value="id"
-                                    option-label="name"
-                                    fluid />
-                            </template>
-                        </Column>
+
                         <Column header="Descuento" >
                             <template #body="{index}">
                                 <InputNumber
@@ -268,12 +262,39 @@ const addLine = () => {
                                     fluid />
                             </template>
                         </Column>
+                        <Column header="Impuesto" >
+                            <template #body="{index}">
+                                <Select
+                                    @blur="calculateAmount(index)"
+                                    placeholder="Itbis"
+                                    :options="taxes"
+                                    @change="getTaxInfo($event, index)"
+                                    option-value="id"
+                                    option-label="name"
+                                    fluid />
+                            </template>
+                        </Column>
+                        <Column header="Almacen" >
+                            <template #body="{index}">
+                                <Select
+                                    placeholder="Alm"
+                                    :options="warehouses"
+                                    option-value="id"
+                                    option-label="name"
+                                    v-model="form.info[index].warehouse_id"
+                                    fluid />
+                            </template>
+                        </Column>
                         <Column header="Importe" >
                             <template #body="{index}">
                                 <InputNumber  v-model="form.info[index].amount" readonly fluid />
                             </template>
                         </Column>
-                        <Column header="Act" />
+                        <Column header="Act" >
+                            <template #body="{index}">
+                                <Button severity="danger" icon="pi pi-trash" />
+                            </template>
+                        </Column>
                         <template #footer>
                             <div class="text-center">
                                 <Button @click="addLine" class="h-8" icon="pi pi-plus"/>

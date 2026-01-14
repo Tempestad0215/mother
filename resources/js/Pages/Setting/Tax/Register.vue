@@ -75,7 +75,7 @@ const editData = (data:TaxInterfaceI) => {
     form.id = data.id!!;
     form.name = data.name;
     form.description = data.description ?? "";
-    form.rate = data.rate ?? 0
+    form.rate = Number(data.rate) ?? 0
     createTax.value = true;
     isUpdate.value = true;
 }

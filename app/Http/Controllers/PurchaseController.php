@@ -3,13 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ProductHelper;
-use App\Http\Requests\PaginationRequest;
 use App\Http\Requests\PurchaseRequest;
 use App\Models\Product;
+use App\Models\Purchase;
 use App\Models\Supplier;
 use App\Models\Tax;
+use App\Models\Warehouse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use Throwable;
 
 class PurchaseController extends Controller
 {
@@ -36,18 +39,29 @@ class PurchaseController extends Controller
 
         $products = $qProduct->get();
 
-
-
         //Repuesta con datos
         return Inertia::render('Purchase/FRegisterPurchase',[
             'suppliers' => Supplier::all(),
             'products' => $products,
             'taxes'=>Tax::all(),
+            'warehouses'=>Warehouse::all(),
         ]);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function store(PurchaseRequest $request)
     {
-        dd($request->all());
+        DB::transaction(function () use ($request) {
+
+            Purchase::create($request->validated());
+
+            collect($request->info)->each(function (array $product):void{
+                dd($product['id']);
+            });
+
+        });
+
     }
 }

@@ -11,7 +11,7 @@ import {
     Button,
     FileUploadSelectEvent, useToast, Breadcrumb
 } from "primevue";
-import {onMounted, onUpdated, ref} from "vue";
+import {onMounted, onUpdated, Ref, ref} from "vue";
 import type {MenuItem} from "primevue/menuitem";
 import {itemsSettings} from "@/Helpers/SettingHelpers";
 
@@ -32,7 +32,7 @@ const propsW = defineProps<{
 Datos de la ventana
  */
 
-const isSequence:Ref<boolean> = ref(false);
+const isSequence = ref(false);
 const imagePath = ref()
 
 
