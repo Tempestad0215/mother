@@ -78,6 +78,7 @@ const getInfoName = (event:AutoCompleteOptionSelectEvent, index: number) => {
 }
 
 
+
 const submit = () => {
     form.post(route('purchase.store'),{
         onSuccess: () => {
@@ -86,6 +87,8 @@ const submit = () => {
                 summary: "Registro Completado",
                 life: 3000
             })
+            form.reset();
+            form.clearErrors()
         },
         onError: (err) => {
             toast.add({
@@ -94,6 +97,8 @@ const submit = () => {
                 detail: `Error en esta peticions, Detalle : ${Object.values(err)[0]}`,
                 life: 5000
             })
+            form.reset();
+            form.clearErrors()
         }
     })
 }

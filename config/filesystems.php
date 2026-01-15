@@ -64,6 +64,13 @@ return [
             'visibility' => 'public',
             'throw' => false,
         ],
+        'purchasePdfs' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/pdfs/purchase'),
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
 
         's3' => [
             'driver' => 's3',

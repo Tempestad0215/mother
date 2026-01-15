@@ -367,6 +367,7 @@ Route::middleware([
 
     Route::get('/test', function () {
 
+        return view('pdfs.purchase.PurchaseV1');
 
     });
 
