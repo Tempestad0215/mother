@@ -53,8 +53,8 @@ const form = useForm({
         discount_amount: 0,
         amount: 0,
     }] as purchaseInfoI[],
-    tax_total: 0,
-    discount_total: 0,
+    tax: 0,
+    discount: 0,
     sub_total: 0,
     amount: 0,
     comment:"",
@@ -111,8 +111,8 @@ const sumSubTotalByLine = ()=>{
     const subTotal = form.info.reduce((acc:number, curr:purchaseInfoI) => acc + curr.amount , 0)
     const taxTotal = form.info.reduce((acc:number, curr:purchaseInfoI) => acc + curr.tax , 0)
 
-    form.tax_total = taxTotal;
-    form.discount_total = discountTotal;
+    form.tax = taxTotal;
+    form.discount = discountTotal;
 
     form.sub_total = Number(PreciseCalculator.subtract(
         subTotal,
@@ -306,13 +306,13 @@ const addLine = () => {
                             <div class="flex justify-between mb-2">
                                 <span class="font-medium">Descuento : </span>
                                 <span class="text-green-600 font-semibold">
-                                      {{ PreciseCalculator.formatCurrency(form.discount_total) }}
+                                      {{ PreciseCalculator.formatCurrency(form.discount) }}
                                     </span>
                             </div>
                             <div class="flex justify-between mb-2">
                                 <span class="font-medium">Impuestos : </span>
                                 <span class="text-blue-600 font-semibold">
-                                      {{ PreciseCalculator.formatCurrency(form.tax_total) }}
+                                      {{ PreciseCalculator.formatCurrency(form.tax) }}
                                     </span>
                             </div>
                             <div class="flex justify-between mb-2">

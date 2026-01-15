@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Date;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -127,36 +128,6 @@ class Product extends Model implements Auditable
     ];
 
 
-    // Relaciones
-
-
-    /**
-     * @return BelongsTo
-     */
-    public function supplier():BelongsTo
-    {
-        return $this->belongsTo(Supplier::class);
-    }
-
-    public function category():BelongsTo
-    {
-        return $this->belongsTo(Category::class);
-    }
-
-    //Transacciones
-    public function trans():HasMany
-    {
-        return $this->hasMany(ProTrans::class, 'product_id','uuid');
-    }
-
-
-    /**
-     * @return HasMany
-     */
-    public function movement():HasMany
-    {
-        return $this->hasMany(InventoryMovement::class);
-    }
 
 
     /**
@@ -194,6 +165,43 @@ class Product extends Model implements Auditable
         // craer el codigp
         return $code.str_pad($nextID, 6,'0', STR_PAD_LEFT);
     }
+
+    // Relaciones
+
+
+    /**
+     * @return BelongsTo
+     */
+    public function supplier():BelongsTo
+    {
+        return $this->belongsTo(Supplier::class);
+    }
+
+    public function category():BelongsTo
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    //Transacciones
+    public function trans():HasMany
+    {
+        return $this->hasMany(ProTrans::class, 'product_id','uuid');
+    }
+
+    public function movements():MorphMany
+    {
+        return $this->morphMany(InventoryMovement::class, 'movementable');
+    }
+
+
+    /**
+     * @return HasMany
+     */
+    public function movement():HasMany
+    {
+        return $this->hasMany(InventoryMovement::class);
+    }
+
 
 
 }

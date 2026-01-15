@@ -6,6 +6,7 @@ use App\Enums\InventoryMovementTypeEnum;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -32,14 +33,16 @@ class InventoryMovement extends Model implements  Auditable
 
     //  Almacenar los datos
     protected $fillable = [
-        'product_id',
         'type',
+        'warehouse_id',
+        'movementable_id',
+        'movementable_type',
+        'movementable_line_id',
+        'movementable_code',
         'quantity',
         'cost',
+        'price',
         'description',
-        'date',
-        'status',
-        'was_updated'
     ];
 
 
@@ -49,8 +52,6 @@ class InventoryMovement extends Model implements  Auditable
     public function casts(): array
     {
         return [
-            'status' => 'boolean',
-            'was_updated' => 'boolean',
             'deleted_at' => 'datetime:Y-m-d H:i:s',
             'updated_at' => 'datetime:Y-m-d H:i:s',
             'created_at' => 'datetime:Y-m-d H:i:s',
@@ -58,10 +59,9 @@ class InventoryMovement extends Model implements  Auditable
     }
 
 
-    //Relaciones
-    public function product():BelongsTo
+    public function movementable():MorphTo
     {
-        return $this->belongsTo(Product::class);
+        return $this->morphTo();
     }
 
 

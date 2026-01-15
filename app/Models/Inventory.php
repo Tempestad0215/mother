@@ -13,8 +13,18 @@ class Inventory extends Model
         'product_id',
         'warehouse_id',
         'stock',
+        'qty_on_hand',
+        'avg_cost',
         'committed',
         'min_stock',
         'max_stock',
+        'rack',
+        'bin',
+        'zone',
+        'expire_date',
+        'system_stock',
+        'difference',
+        'description',
+        'on_order_qty'
     ];
 }

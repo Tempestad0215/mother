@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Enums\PurchaseStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 
@@ -30,12 +32,17 @@ class Purchase extends Model
     //Para guardar los datos
     protected $fillable = [
         'supplier_id',
-        'info',
+        'code',
+        'user_id',
         'amount',
         'tax',
         'sub_total',
-        'proccess',
-        'status'
+        'status',
+        'type',
+        'warehouse_id',
+        'quantity',
+        'cost',
+        'description'
     ];
 
     protected function casts(): array
@@ -78,6 +85,16 @@ class Purchase extends Model
 
         // craer el codigp
         return $code.str_pad($nextID, 6,'0', STR_PAD_LEFT);
+    }
+
+    public function itemMovements():MorphMany
+    {
+        return $this->morphMany(InventoryMovement::class, 'movementable');
+    }
+
+    public function items():HasMany
+    {
+        return $this->hasMany(PurchaseItem::class);
     }
 
 }

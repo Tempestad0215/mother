@@ -1,7 +1,7 @@
 
 
 export interface purchaseInfoI {
-    id:0,
+    id: number
     code: string
     name: string;
     quantity: number;

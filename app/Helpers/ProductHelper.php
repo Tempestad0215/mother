@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Enums\ProductTypeEnum;
+use App\Models\Inventory;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -21,6 +22,30 @@ class ProductHelper
     {
         $product->stock = $request->get('stock');
         $product->save();
+    }
+
+
+    /**
+     * @param Product $product
+     * @param float $quantity
+     * @param float $cost
+     * @return float
+     * @throws \Throwable
+     */
+    public static function getAvgCost(Product $product, float $quantity, float $cost):float
+    {
+        //Obtener los datos de oldStock
+        $oldStock = Inventory::where('product_id', $product->id)
+            ->latest('created_at')
+            ->first();
+
+        if (!$oldStock) {
+            return $cost;
+        }
+
+        // Crear el cálculo para tomar el AVG de cost
+        return (($oldStock->qty_on_hand * $oldStock->avg_cost) + ($quantity * $cost)) / ($oldStock->qty_on_hand + $quantity);
+
     }
 
 

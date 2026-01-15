@@ -10,10 +10,10 @@ class PurchaseRequest extends FormRequest
     {
         return [
             'supplier_id' => ['required','exists:suppliers,id', 'numeric'],
-            'tax_total' => ['required','numeric','min:0'],
+            'tax' => ['required','numeric','min:0'],
             'amount' => ['required','numeric','min:0'],
             'sub_total' => ['required','numeric','min:0'],
-            'discount_global' => ['nullable','numeric','min:0'],
+            'discount' => ['nullable','numeric','min:0'],
             'info' => ['required','array'],
             'info.*.id' => ['required','exists:products,id', 'numeric'],
             'info.*.code' => ['required', 'exists:products,code', 'string'],

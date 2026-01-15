@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\InventoryMovementTypeEnum;
 use App\Helpers\ProductHelper;
 use App\Http\Requests\PurchaseRequest;
+use App\Models\Inventory;
 use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\Supplier;
@@ -54,14 +56,68 @@ class PurchaseController extends Controller
     public function store(PurchaseRequest $request)
     {
         DB::transaction(function () use ($request) {
+            $purchaseData = $request->validated();
+            $purchaseData['user_id'] = auth()->user()->id;
 
-            Purchase::create($request->validated());
+            $purchase = Purchase::create($purchaseData);
 
-            collect($request->info)->each(function (array $product):void{
-                dd($product['id']);
+            collect($request->info)->each(function (array $product) use ($purchase):void{
+                $productId = (int)$product['id'];
+                //Tomar el id del producto
+                $productDB = Product::find($productId);
+                //Tomar el el avg del costo
+                $avgCost = ProductHelper::getAvgCost($productDB, $product['quantity'], $product['cost']);
+
+                //Crare la el valor de product id
+                $product['product_id'] = $productId;
+
+
+                // Obtener los datos de inventario para sumar o crear
+                $stock = Inventory::firstOrCreate([
+                    'product_id' => $productId,
+                    'warehouse_id' => $product['warehouse_id'],
+                ],[
+                    'qty_on_hand' => 0,
+                    'committed' => 0,
+                    'on_order_qty' => 0,
+                    'avg_cost' => $avgCost,
+                    'min_stock' => 0,
+                    'max_stock' => 0,
+                ]);
+
+                // Actualizar los datos de inventario
+                $stock->increment('on_order_qty', $product['quantity']);
+                $stock->avg_cost = $avgCost;
+                $stock->save();
+
+                // Crear los item de la compra
+                $purchase->items()->create($product);
+
+                // Crear el movimiento de inventario
+                $this->createInventoryMovement(
+                    $purchase,
+                    $product['warehouse_id'],
+                    $product['quantity'],
+                    $product['cost']
+                );
+
             });
+
+            return back();
 
         });
 
+    }
+
+
+    private function createInventoryMovement(Purchase $purchase, int $warehouseID, float $quantity,float $cost, string $description = ""):void
+    {
+        $purchase->itemMovements()->create([
+            'type' => InventoryMovementTypeEnum::Entrada,
+            'warehouse_id' => $warehouseID,
+            'quantity' => $quantity,
+            'cost' => $cost,
+            'description' => $description,
+        ]);
     }
 }
