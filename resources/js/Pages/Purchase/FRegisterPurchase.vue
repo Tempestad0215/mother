@@ -191,12 +191,17 @@ const addLine = () => {
 
 }
 
+const printTest = () => {
+    window.open(route('printTest'), '_blank');
+}
+
 </script>
 
 <template>
     <AppLayout>
         <Card>
             <template #header>
+                <Button @click="printTest"  icon="pi pi-print" />
                 <h3 class="text-2xl font-bold text-center" >Orden de Compra</h3>
             </template>
 

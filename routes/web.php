@@ -367,9 +367,13 @@ Route::middleware([
 
     Route::get('/test', function () {
 
-        return view('pdfs.purchase.PurchaseV1');
+        $pdf = new \App\Pdfs\PurchaseV1();
 
-    });
+        $filePath = \Illuminate\Support\Facades\Storage::disk('purchasePdfs')->path('purchase.pdf');
+
+        $pdf->Output($filePath, 'f');
+
+    })->name('printTest');
 
 //    Route::get('/sale', function (){
 //        $sale = Sale::first();
