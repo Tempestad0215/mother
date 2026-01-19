@@ -32,6 +32,7 @@ class Purchase extends Model
     //Para guardar los datos
     protected $fillable = [
         'supplier_id',
+        'doc_date',
         'code',
         'user_id',
         'amount',
@@ -42,6 +43,7 @@ class Purchase extends Model
         'warehouse_id',
         'quantity',
         'cost',
+        'discount',
         'description'
     ];
 

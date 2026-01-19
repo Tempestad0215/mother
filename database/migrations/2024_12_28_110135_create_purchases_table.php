@@ -15,10 +15,11 @@ return new class extends Migration {
             $table->string('code',30)->unique()->comment('codigo unido para cada registro');
             $table->foreignIdFor( Supplier::class,'supplier_id')->comment('Relacion con el suplidor de la orden');
             $table->foreignIdFor(User::class, 'user_id')->comment('Relacion para el usuario');
-            $table->decimal('total_amount', 19,6)->comment('valor total de la compra');
-            $table->decimal('tax_amount', 19,6)->comment('impuesto de la compra');
+            $table->date('doc_date');
+            $table->decimal('amount', 19,6)->comment('valor total de la compra');
+            $table->decimal('tax', 19,6)->comment('impuesto de la compra');
             $table->decimal('sub_total', 19,6)->comment('Sub total de la compra');
-            $table->decimal('discount_global', 19,6)->comment('Descuento Global');
+            $table->decimal('discount', 19,6)->default(0)->comment('Descuento Global');
             $table->enum('status', PurchaseStatusEnum::cases())->default(PurchaseStatusEnum::Borrador)->comment('Estado de la orden de compra');
             $table->string('comment')->nullable()->comment('Comentario');
             $table->timestamps();

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignIdFor(Product::class, 'product_id');
             $table->foreignIdFor(\App\Models\Warehouse::class, 'warehouse_id');
             $table->decimal('qty_on_hand',19,4)->default(0);
+            $table->decimal('on_order_qty',19,4)->default(0);
             $table->decimal('committed', 19,4)->default(0);
             $table->decimal('avg_cost', 19,6)->nullable();
             $table->decimal('min_stock', 19,4);
@@ -28,8 +29,8 @@ return new class extends Migration
             $table->string('zone')->nullable();
 
             $table->date('expire_date')->nullable();
-            $table->decimal('system_stock');
-            $table->decimal('difference');
+            $table->decimal('system_stock')->default(0);
+            $table->decimal('difference')->default(0);
             $table->string('description')->nullable();
             $table->dateTime('last_recalc_at')->nullable();
 

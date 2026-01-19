@@ -16,7 +16,6 @@ return new class extends Migration
     {
         Schema::create('inventory_movements', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Product::class, 'product_id')->comment('Relacionde  productos');
             $table->enum('type', InventoryMovementTypeEnum::cases())->comment('Tipo de movimiento');
             $table->foreignIdFor(Warehouse::class, 'warehouse_id')->comment('Relacionde  almacenes');
             $table->morphs('movementable');

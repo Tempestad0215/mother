@@ -15,8 +15,7 @@ return new class extends Migration {
             $table->foreignIdFor(Purchase::class);
             $table->decimal('quantity',19,6);
             $table->decimal('cost',19,6);
-            $table->decimal('price',19,6);
-            $table->decimal('discount',19,6);
+            $table->decimal('discount',19,6)->default(0);
             $table->decimal('amount',19,6);
             $table->timestamps();
             $table->softDeletes();

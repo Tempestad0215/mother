@@ -11,6 +11,8 @@ import {
     InputNumber,
     Select,
     SelectChangeEvent,
+    Breadcrumb,
+    useConfirm,
     useToast
 } from "primevue";
 import {router, useForm} from "@inertiajs/vue3";
@@ -23,8 +25,10 @@ import debounce from "lodash/debounce";
 import {TaxInterfaceI} from "@/Interfaces/TaxInterface";
 import {useProductStore} from "@/stores/ProductStore";
 import {WarehouseBaseI} from "@/Interfaces/WarehouseInterface";
+import {purchaseBreadCrumb} from "@/Helpers/PurchaseHelper";
 
 const toast = useToast();
+const confirm = useConfirm()
 
 const propsW = defineProps<{
     suppliers: supplierI[],
@@ -40,6 +44,7 @@ const productStore = useProductStore()
 const form = useForm({
     id:0,
     supplier_id:0,
+    doc_date: new Date(),
     info: [{
         id: 0,
         code:"",
@@ -97,8 +102,6 @@ const submit = () => {
                 detail: `Error en esta peticions, Detalle : ${Object.values(err)[0]}`,
                 life: 5000
             })
-            form.reset();
-            form.clearErrors()
         }
     })
 }
@@ -191,8 +194,43 @@ const addLine = () => {
 
 }
 
-const printTest = () => {
-    window.open(route('printTest'), '_blank');
+const destroy = (event:Event, index:number) => {
+    if(form.info.length === 1)
+    {
+        toast.add({
+            severity: "info",
+            summary: "No se Puede Eliminar",
+            life: 3000
+        })
+        return false;
+    }else{
+        confirm.require({
+            target: event.target as HTMLElement,
+            message: "Desea Eliminar Esta Linea",
+            icon: "pi pi-exclamation-triangle",
+            rejectProps: {
+                label: "Cancelar",
+                severity: "secondary",
+                outlined: true
+            },
+            acceptProps: {
+                label: "Eliminar",
+                icon: "pi pi-send",
+                severity: "danger"
+            },
+            accept:() => {
+                form.info.splice(index, 1);
+                toast.add({
+                    severity: "success",
+                    summary: "Fila Eliminada",
+                    life: 3000
+                })
+            }
+
+        })
+
+
+    }
 }
 
 </script>
@@ -201,7 +239,7 @@ const printTest = () => {
     <AppLayout>
         <Card>
             <template #header>
-                <Button @click="printTest"  icon="pi pi-print" />
+                <Breadcrumb :model="purchaseBreadCrumb" />
                 <h3 class="text-2xl font-bold text-center" >Orden de Compra</h3>
             </template>
 
@@ -215,7 +253,7 @@ const printTest = () => {
                         </FloatLabel>
                         <FloatLabel variant="on" >
 
-                            <DatePicker id="doc_date" />
+                            <DatePicker dateFormat="yy-mm-dd" v-model="form.doc_date" id="doc_date" />
                             <label for="doc_date">Fecha Documento</label>
                         </FloatLabel>
 
@@ -223,12 +261,12 @@ const printTest = () => {
 
 
                     <DataTable size="small" striped-rows show-gridlines class="mt-5" :value="form.info">
-                        <Column header="#"  >
+                        <Column class="min-w-25 w-30" header="#"  >
                             <template #body="{index}">
                                 {{index + 1 }}
                             </template>
                         </Column>
-                        <Column header="codigo"  >
+                        <Column class="min-w-25 w-30" header="codigo"  >
                             <template #body="{index}">
                                 {{ form.info[index].code }}
                             </template>
@@ -247,6 +285,9 @@ const printTest = () => {
                         <Column class="min-w-25 w-30" header="Cantidad" >
                             <template #body="{index}">
                                 <InputNumber
+                                    locale="en-US"
+                                    :max-fraction-digits="2"
+                                    :min-fraction-digits="2"
                                     @blur="calculateAmount(index)"
                                     v-model="form.info[index].quantity"
                                     fluid />
@@ -255,13 +296,16 @@ const printTest = () => {
                         <Column class="min-w-25 w-30" header="Costo" >
                             <template #body="{index}">
                                 <InputNumber
+                                    locale="en-US"
+                                    :max-fraction-digits="2"
+                                    :min-fraction-digits="2"
                                     @blur="calculateAmount(index)"
                                     v-model="form.info[index].cost"
                                     fluid />
                             </template>
                         </Column>
 
-                        <Column header="Descuento" >
+                        <Column class="min-w-25 w-30"  header="Descuento" >
                             <template #body="{index}">
                                 <InputNumber
                                     suffix="%"
@@ -272,7 +316,7 @@ const printTest = () => {
                                     fluid />
                             </template>
                         </Column>
-                        <Column header="Impuesto" >
+                        <Column class="min-w-25 w-30"  header="Impuesto" >
                             <template #body="{index}">
                                 <Select
                                     @blur="calculateAmount(index)"
@@ -284,7 +328,7 @@ const printTest = () => {
                                     fluid />
                             </template>
                         </Column>
-                        <Column header="Almacen" >
+                        <Column class="min-w-25 w-30" header="Almacen" >
                             <template #body="{index}">
                                 <Select
                                     placeholder="Alm"
@@ -295,14 +339,20 @@ const printTest = () => {
                                     fluid />
                             </template>
                         </Column>
-                        <Column header="Importe" >
+                        <Column class="min-w-25 w-30" header="Importe" >
                             <template #body="{index}">
-                                <InputNumber  v-model="form.info[index].amount" readonly fluid />
+                                <InputNumber
+                                    locale="en-US"
+                                    :max-fraction-digits="2"
+                                    :min-fraction-digits="2"
+                                    v-model="form.info[index].amount"
+                                    readonly
+                                    fluid />
                             </template>
                         </Column>
-                        <Column header="Act" >
+                        <Column class="min-w-25 w-30" header="Act" >
                             <template #body="{index}">
-                                <Button severity="danger" icon="pi pi-trash" />
+                                <Button @click="destroy($event, index)"  severity="danger" icon="pi pi-trash" />
                             </template>
                         </Column>
                         <template #footer>

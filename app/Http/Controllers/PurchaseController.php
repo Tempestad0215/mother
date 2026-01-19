@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\InventoryMovementTypeEnum;
 use App\Helpers\ProductHelper;
+use App\Http\Requests\PaginationRequest;
 use App\Http\Requests\PurchaseRequest;
 use App\Models\Inventory;
 use App\Models\Product;
@@ -11,6 +12,7 @@ use App\Models\Purchase;
 use App\Models\Supplier;
 use App\Models\Tax;
 use App\Models\Warehouse;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -58,6 +60,9 @@ class PurchaseController extends Controller
         DB::transaction(function () use ($request) {
             $purchaseData = $request->validated();
             $purchaseData['user_id'] = auth()->user()->id;
+            $purchaseData['doc_date'] = Carbon::parse(
+                $request->get('doc_date')
+            )->toDateString();
 
             $purchase = Purchase::create($purchaseData);
 
@@ -107,6 +112,14 @@ class PurchaseController extends Controller
 
         });
 
+    }
+
+
+    public function show(PaginationRequest $request)
+    {
+        return Inertia::render('Purchase/TablePurchase',[
+            'purchases' => Purchase::all()
+        ]);
     }
 
 

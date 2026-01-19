@@ -12,7 +12,7 @@ const route = useRoute();
 Propiedades
  */
 const propsW = defineProps<{
-    products: productI
+    purchases: any
 }>();
 
 /*

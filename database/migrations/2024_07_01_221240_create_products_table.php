@@ -47,10 +47,9 @@ return new class extends Migration
             //Relaciones de los productos
             $table->foreignIdFor(Category::class, 'category_id')->comment('Categoria Item');
             $table->foreignIdFor(Supplier::class, 'supplier_id')->comment('Suplidor del Item');
-            $table->foreignIdFor(Warehouse::class, 'warehouse_id')->comment('Codigo del Warehouse');
 
             //Infomacion del producto
-            $table->enum('type',['producto','servicio'])->default('producto')->comment('Tipo de Servicio');
+            $table->boolean('is_service')->default(0)->comment('Tipo de Servicio');
             $table->boolean('inventoried')->default(true)->comment('Maneja Inventario');
             $table->boolean('status')->default(true)->comment('Estado del Item');
             $table->enum('is_service', \App\Enums\ProductTypeEnum::cases())->default(\App\Enums\ProductTypeEnum::Producto);

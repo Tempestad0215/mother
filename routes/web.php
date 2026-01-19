@@ -304,6 +304,7 @@ Route::middleware([
         ->group(function () {
             Route::get('/', 'index')->name('index');
             Route::post('/', 'store')->name('store');
+            Route::get('/show', 'show')->name('show');
         });
 
     /*
@@ -367,9 +368,14 @@ Route::middleware([
 
     Route::get('/test', function () {
 
-        $pdf = new \App\Pdfs\PurchaseV1();
+        $purchase = \App\Models\Purchase::latest()->first();
+
+        $pdf = new \App\Pdfs\PurchaseV1($purchase);
+        $pdf->renderData();
+
 
         $filePath = \Illuminate\Support\Facades\Storage::disk('purchasePdfs')->path('purchase.pdf');
+
 
         $pdf->Output($filePath, 'f');
 
