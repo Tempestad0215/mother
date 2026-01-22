@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AppLayout from "@layout/AppLayout.vue";
-import {DataTable, Column, Button, Dialog, FloatLabel, InputText, useToast, useConfirm,Breadcrumb, InputNumber} from "primevue";
+import {DataTable, Column, Button, Dialog, FloatLabel, InputText, useToast, useConfirm,Breadcrumb, InputNumber, Card} from "primevue";
 import {ref} from "vue";
 import {router, useForm} from "@inertiajs/vue3";
 import {itemsSettings} from "@/Helpers/SettingHelpers";
@@ -114,9 +114,8 @@ const deleteData = (data:TaxInterfaceI, event: Event) => {
 
 <template>
     <AppLayout>
-        <DataTable
-            :value="taxes">
-            <template #header>
+        <Card>
+            <template #title>
                 <div>
                     <Breadcrumb :model="itemsSettings" />
                 </div>
@@ -125,18 +124,24 @@ const deleteData = (data:TaxInterfaceI, event: Event) => {
                     <Button @click="createTax = true" icon="pi pi-plus" label="Crear Unidad" />
                 </div>
             </template>
-            <Column field="name" header="Nombre" />
-            <Column field="description" header="Descripcion" />
-            <Column :field="(data:TaxInterfaceI) => `${data.rate} %`" header="Tasa" />
-            <Column class="w-40" header="Act">
-                <template #body="{data}:{data:TaxInterfaceI}">
-                    <div class="space-x-3">
-                        <Button @click="editData(data)" class="pt-1 h-8" title="Editar" icon="pi pi-file-edit" />
-                        <Button @click="deleteData(data, $event)" class="pt-1 h-8" title="Elimianr" severity="danger"  icon="pi pi-trash" />
-                    </div>
-                </template>
-            </Column>
-        </DataTable>
+            <template #content>
+                <DataTable
+                    :value="taxes">
+                    <Column field="name" header="Nombre" />
+                    <Column field="description" header="Descripcion" />
+                    <Column :field="(data:TaxInterfaceI) => `${data.rate} %`" header="Tasa" />
+                    <Column class="w-40" header="Act">
+                        <template #body="{data}:{data:TaxInterfaceI}">
+                            <div class="space-x-3">
+                                <Button @click="editData(data)" class="pt-1 h-8" title="Editar" icon="pi pi-file-edit" />
+                                <Button @click="deleteData(data, $event)" class="pt-1 h-8" title="Elimianr" severity="danger"  icon="pi pi-trash" />
+                            </div>
+                        </template>
+                    </Column>
+                </DataTable>
+            </template>
+        </Card>
+
         <Dialog
             modal
             v-model:visible="createTax"

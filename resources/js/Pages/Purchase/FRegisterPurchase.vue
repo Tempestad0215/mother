@@ -238,7 +238,7 @@ const destroy = (event:Event, index:number) => {
 <template>
     <AppLayout>
         <Card>
-            <template #header>
+            <template #title>
                 <Breadcrumb :model="purchaseBreadCrumb" />
                 <h3 class="text-2xl font-bold text-center" >Orden de Compra</h3>
             </template>

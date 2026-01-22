@@ -135,7 +135,7 @@ const getFileInfo = (event: FileUploadSelectEvent) =>{
     <AppLayout>
 
         <Card>
-            <template #header>
+            <template #title>
                 <div>
                     <Breadcrumb :model="itemsSettings"/>
                 </div>

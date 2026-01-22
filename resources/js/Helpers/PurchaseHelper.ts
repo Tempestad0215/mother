@@ -8,7 +8,17 @@ export const purchaseBreadCrumb:MenuItem[] = [
         url: route('purchase.index')
     },
     {
-        label: "Mostrar",
+        label: "Estado Compra",
+        icon: "pi pi-shopping-card",
+        url: route('purchase.show')
+    },
+    {
+        label: "Entrada de Mercancias",
+        icon: "pi pi-shopping-card",
+        url: route('purchase.show')
+    },
+    {
+        label: "Salida de Mercancia",
         icon: "pi pi-shopping-card",
         url: route('purchase.show')
     },

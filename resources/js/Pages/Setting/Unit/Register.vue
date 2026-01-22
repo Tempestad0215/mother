@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AppLayout from "@layout/AppLayout.vue";
-import {DataTable, Column, Button, Dialog, FloatLabel, InputText, useToast, useConfirm,Breadcrumb} from "primevue";
+import {DataTable, Column, Button, Dialog, Card, useToast, useConfirm,Breadcrumb} from "primevue";
 import type {UnitInterfaceI} from "@/Interfaces/UnitInterface";
 import {ref} from "vue";
 import {router, useForm} from "@inertiajs/vue3";
@@ -60,9 +60,8 @@ const deleteData = (data:UnitInterfaceI, event: Event) => {
 
 <template>
     <AppLayout>
-        <DataTable
-            :value="units">
-            <template #header>
+        <Card>
+            <template #title>
                 <div>
                     <Breadcrumb :model="itemsSettings" />
                 </div>
@@ -71,17 +70,23 @@ const deleteData = (data:UnitInterfaceI, event: Event) => {
                     <Button @click="createUnit = true"  icon="pi pi-plus"  label="Crear Unidad" />
                 </div>
             </template>
-            <Column field="name" header="Nombre" />
-            <Column field="description" header="Descripcion" />
-            <Column class="w-40" header="Act">
-                <template #body="{data}:{data:UnitInterfaceI}">
-                    <div class="space-x-3">
-                        <Button @click="editData(data)" class="pt-1 h-8" title="Editar" icon="pi pi-file-edit" />
-                        <Button @click="deleteData(data, $event)" class="pt-1 h-8" title="Elimianr" severity="danger"  icon="pi pi-trash" />
-                    </div>
-                </template>
-            </Column>
-        </DataTable>
+            <template #content>
+                <DataTable
+                    :value="units">
+                    <Column field="name" header="Nombre" />
+                    <Column field="description" header="Descripcion" />
+                    <Column class="w-40" header="Act">
+                        <template #body="{data}:{data:UnitInterfaceI}">
+                            <div class="space-x-3">
+                                <Button @click="editData(data)" class="pt-1 h-8" title="Editar" icon="pi pi-file-edit" />
+                                <Button @click="deleteData(data, $event)" class="pt-1 h-8" title="Elimianr" severity="danger"  icon="pi pi-trash" />
+                            </div>
+                        </template>
+                    </Column>
+                </DataTable>
+            </template>
+        </Card>
+
         <Dialog
             modal
             v-model:visible="createUnit"

@@ -4,7 +4,7 @@ import FRegister from "@/Pages/Setting/WH/FRegister.vue";
 import {WarehouseBaseI} from "@/Interfaces/WarehouseInterface";
 import {reactive, ref} from "vue";
 import {useRoute} from "ziggy-js";
-import {Button, Column, DataTable, Dialog, Breadcrumb, useConfirm, useToast} from "primevue";
+import {Button, Column, DataTable, Dialog, Breadcrumb, useConfirm, useToast, Card} from "primevue";
 import {itemsSettings} from "@/Helpers/SettingHelpers";
 import {router} from "@inertiajs/vue3";
 
@@ -74,10 +74,8 @@ const hideCreate = () => {
 
 <template>
     <AppLayout>
-        <DataTable
-            :loading="!propsW.warehouses"
-            :value="propsW.warehouses" >
-            <template #header>
+        <Card>
+            <template #title>
                 <div>
                     <Breadcrumb :model="itemsSettings" />
                 </div>
@@ -88,21 +86,27 @@ const hideCreate = () => {
                         Crear Almacen
                     </Button>
                 </div>
-
             </template>
-            <Column field="name" header="Nombre"  />
-            <Column field="description" header="Descripcion"  />
-            <Column field="location" header="Ubicacion"  />
-            <Column header="Act">
-                <template #body="{data}:{data:WarehouseBaseI}">
-                    <div class="space-x-2">
-                        <Button @click="editData(data)" class="pt-1 h-8"  title="Editar" icon="pi pi-file-edit" />
-                        <Button @click="deleteData(data, $event)" class="pt-1 h-8"  title="Eliminar" severity="danger" icon="pi pi-trash" />
+            <template #content>
+                <DataTable
+                    :loading="!propsW.warehouses"
+                    :value="propsW.warehouses" >
+                    <Column field="name" header="Nombre"  />
+                    <Column field="description" header="Descripcion"  />
+                    <Column field="location" header="Ubicacion"  />
+                    <Column header="Act">
+                        <template #body="{data}:{data:WarehouseBaseI}">
+                            <div class="space-x-2">
+                                <Button @click="editData(data)" class="pt-1 h-8"  title="Editar" icon="pi pi-file-edit" />
+                                <Button @click="deleteData(data, $event)" class="pt-1 h-8"  title="Eliminar" severity="danger" icon="pi pi-trash" />
 
-                    </div>
-                </template>
-            </Column>
-        </DataTable>
+                            </div>
+                        </template>
+                    </Column>
+                </DataTable>
+            </template>
+        </Card>
+
         <Dialog
             modal
             @hide="hideCreate"

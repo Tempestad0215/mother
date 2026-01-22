@@ -14,7 +14,9 @@ import {
     InputGroupAddon,
     InputText,
     Breadcrumb,
-    useToast, useConfirm
+    useToast,
+    useConfirm,
+    Card
 } from "primevue";
 import Pagination from "@components/Pagination.vue";
 import {PaginationI, PaymentTypeEnumI} from "@/Interfaces/GlobalInterface";
@@ -125,12 +127,8 @@ const clearCreate = ()=>{
 <template>
     <!-- Contenido de la ventana -->
     <AppLayout>
-        <DataTable
-            paginator
-            :rows="propsW.products.per_page ?? 0"
-            :loading="!propsW.products.data"
-            :value="propsW.products.data" >
-            <template #header>
+        <Card>
+            <template #title>
                 <div>
                     <Breadcrumb :model="productBreadCrumb" />
                 </div>
@@ -149,30 +147,38 @@ const clearCreate = ()=>{
                         class="h-8"
                         @click="createProduct = true" />
                 </div>
-
             </template>
-            <Column field="code" header="Codigo"  />
-            <Column field="name" header="Nombre"  />
-            <Column :field="(data:ProductBaseI) => `${PreciseCalculator.formatCurrency(data.cost)}`" header="Costo"  />
-            <Column :field="(data:ProductBaseI) => `${PreciseCalculator.formatCurrency(data.price)}`" header="Precio"  />
-            <Column :field="(data:ProductBaseI) => `${data.is_service ? 'Servicio' : 'Producto'}`" header="Tipo"  />
-            <Column field="email" header="Correo"  />
-            <Column header="Act">
-                <template #body="{data}:{data:ProductBaseI}">
-                    <div class="space-x-2">
-                        <Button @click="editData(data)" class="pt-1 h-8"  title="Editar" icon="pi pi-file-edit" />
-                        <Button @click="deleteData(data, $event)" class="pt-1 h-8"  title="Eliminar" severity="danger" icon="pi pi-trash" />
+            <template #content>
+                <DataTable
+                    paginator
+                    :rows="propsW.products.per_page ?? 0"
+                    :loading="!propsW.products.data"
+                    :value="propsW.products.data" >
+                    <Column field="code" header="Codigo"  />
+                    <Column field="name" header="Nombre"  />
+                    <Column :field="(data:ProductBaseI) => `${PreciseCalculator.formatCurrency(data.cost)}`" header="Costo"  />
+                    <Column :field="(data:ProductBaseI) => `${PreciseCalculator.formatCurrency(data.price)}`" header="Precio"  />
+                    <Column :field="(data:ProductBaseI) => `${data.is_service ? 'Servicio' : 'Producto'}`" header="Tipo"  />
+                    <Column field="email" header="Correo"  />
+                    <Column header="Act">
+                        <template #body="{data}:{data:ProductBaseI}">
+                            <div class="space-x-2">
+                                <Button @click="editData(data)" class="pt-1 h-8"  title="Editar" icon="pi pi-file-edit" />
+                                <Button @click="deleteData(data, $event)" class="pt-1 h-8"  title="Eliminar" severity="danger" icon="pi pi-trash" />
 
-                    </div>
-                </template>
-            </Column>
-            <template #paginatorcontainer>
-                <Pagination
-                    :search="searchValue"
-                    :pag="propsW.products"
-                />
+                            </div>
+                        </template>
+                    </Column>
+                    <template #paginatorcontainer>
+                        <Pagination
+                            :search="searchValue"
+                            :pag="propsW.products"
+                        />
+                    </template>
+                </DataTable>
             </template>
-        </DataTable>
+        </Card>
+
         <Dialog
             modal
             @hide="clearCreate"

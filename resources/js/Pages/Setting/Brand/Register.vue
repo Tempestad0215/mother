@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AppLayout from "@layout/AppLayout.vue";
-import {DataTable, Column, Button, Dialog, useToast, useConfirm,Breadcrumb} from "primevue";
+import {DataTable, Column, Button, Dialog, useToast, useConfirm,Breadcrumb, Card} from "primevue";
 import {ref} from "vue";
 import {router} from "@inertiajs/vue3";
 import {itemsSettings} from "@/Helpers/SettingHelpers";
@@ -65,28 +65,33 @@ const deleteData = (data:BranchInterfaceI, event: Event) => {
 
 <template>
     <AppLayout>
-        <DataTable
-            :value="branches">
-            <template #header>
-                <div>
-                    <Breadcrumb :model="itemsSettings" />
-                </div>
-                <div class="text-right">
-
-                    <Button @click="createBranch = true" icon="pi pi-plus" label="Crear Unidad" />
-                </div>
+        <Card>
+            <template #title>
+                <Breadcrumb :model="itemsSettings" />
             </template>
-            <Column field="name" header="Nombre" />
-            <Column field="description" header="Descripcion" />
-            <Column class="w-40" header="Act">
-                <template #body="{data}:{data:BranchInterfaceI}">
-                    <div class="space-x-3">
-                        <Button @click="editData(data)" class="pt-1 h-8" title="Editar" icon="pi pi-file-edit" />
-                        <Button @click="deleteData(data, $event)" class="pt-1 h-8" title="Elimianr" severity="danger"  icon="pi pi-trash" />
-                    </div>
-                </template>
-            </Column>
-        </DataTable>
+            <template #content>
+                <DataTable
+                    :value="branches">
+                    <template #header>
+                        <div class="text-right">
+
+                            <Button @click="createBranch = true" icon="pi pi-plus" label="Crear Unidad" />
+                        </div>
+                    </template>
+                    <Column field="name" header="Nombre" />
+                    <Column field="description" header="Descripcion" />
+                    <Column class="w-40" header="Act">
+                        <template #body="{data}:{data:BranchInterfaceI}">
+                            <div class="space-x-3">
+                                <Button @click="editData(data)" class="pt-1 h-8" title="Editar" icon="pi pi-file-edit" />
+                                <Button @click="deleteData(data, $event)" class="pt-1 h-8" title="Elimianr" severity="danger"  icon="pi pi-trash" />
+                            </div>
+                        </template>
+                    </Column>
+                </DataTable>
+            </template>
+        </Card>
+
         <Dialog
             modal
             @hide="hideCreate"
