@@ -13,6 +13,8 @@ return new class extends Migration {
             $table->increments('id');
             $table->foreignIdFor(Product::class);
             $table->foreignIdFor(Purchase::class);
+            $table->foreignIdFor(\App\Models\Tax::class);
+            $table->foreignIdFor(\App\Models\Warehouse::class);
             $table->decimal('quantity',19,6);
             $table->decimal('cost',19,6);
             $table->decimal('discount',19,6)->default(0);

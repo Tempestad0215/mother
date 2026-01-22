@@ -22,7 +22,7 @@ return new class extends Migration
             $table->unsignedBigInteger('movementable_line_id')->nullable();
             $table->string('movementable_code')->nullable();
             $table->decimal('quantity',15,4)->comment('Cantidad del movimiento');
-            $table->decimal('price',15,6)->comment('costo del movimiento unitario');
+            $table->decimal('price',15,6)->default(0)->comment('costo del movimiento unitario');
             $table->decimal('cost',15,6)->comment('costo del movimiento unitario');
             $table->string('description')->nullable()->comment('Descripcion');
 

@@ -84,7 +84,7 @@ class SupplierController extends Controller implements HasMiddleware
             $supplier = Supplier::create($request->validated());
 
             //si tiene otro tipo que no sea contado
-            if ($request->get('type_payment') != 'contado')
+            if ($request->get('type_payment') != 'Contado')
             {
                 $supplier->account()->create([
                     'type' => AccountTypeEnum::PAGAR,

@@ -13,20 +13,11 @@ return new class extends Migration
     {
         Schema::table('products', function (Blueprint $table) {
             //
-            $table->foreignIdFor(\App\Models\Tax::class, 'tax_id')
-                ->constrained()
-                ->onUpdate('cascade')
-                ->onDelete('restrict');
+            $table->foreignIdFor(\App\Models\Tax::class, 'tax_id');
             $table->foreignIdFor(\App\Models\Unit::class, 'unit_id')
-                ->nullable()
-                ->constrained()
-                ->onUpdate('cascade')
-                ->onDelete('restrict');
+                ->nullable();
             $table->foreignIdFor(\App\Models\Brand::class, 'brand_id')
-                ->nullable()
-                ->constrained()
-                ->onUpdate('cascade')
-                ->onDelete('restrict');
+                ->nullable();
         });
     }
 
@@ -35,11 +26,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('products', function (Blueprint $table) {
-            //
-            $table->dropForeign('tax_id');
-            $table->dropForeign('unit_id');
-            $table->dropForeign('branch_id');
-        });
+//        Schema::table('products', function (Blueprint $table) {
+//            //
+//            $table->dropForeign('tax_id');
+//            $table->dropForeign('unit_id');
+//            $table->dropForeign('branch_id');
+//        });
     }
 };

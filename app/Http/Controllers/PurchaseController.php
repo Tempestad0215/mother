@@ -31,17 +31,19 @@ class PurchaseController extends Controller
 
         $search = $request->get('productSearch');
 
+
         $qProduct = Product::query();
         if ($search) {
             $qProduct->where(function ($query) use ($search) {
-                $query->where('name', 'like', '%' . $search . '%')
-                    ->orWhere('description', 'like', '%' . $search . '%');
+                $query->where('name', 'ilike', '%' . $search . '%')
+                    ->orWhere('description', 'ilike', '%' . $search . '%');
             });
 
         }
         $qProduct->orderBy('name')->limit(15);
 
         $products = $qProduct->get();
+
 
         //Repuesta con datos
         return Inertia::render('Purchase/FRegisterPurchase',[

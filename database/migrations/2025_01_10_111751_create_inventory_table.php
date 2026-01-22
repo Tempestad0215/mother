@@ -33,7 +33,7 @@ return new class extends Migration
             $table->decimal('difference')->default(0);
             $table->string('description')->nullable();
             $table->dateTime('last_recalc_at')->nullable();
-
+            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -43,6 +43,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('inventory_counts');
+        Schema::dropIfExists('inventories');
     }
 };
