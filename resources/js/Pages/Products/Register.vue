@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppLayout from '@/Layouts/AppLayout.vue';
 import {onMounted, provide, ref} from 'vue';
-import {supplierI} from "@/Interfaces/SupplierInterface";
+import {SupplierI} from "@/Interfaces/SupplierInterface";
 import {ProductBaseI, ProductTypeEnumI} from "@/Interfaces/ProductInterface";
 import {categoryBaseI} from "@/Interfaces/CategoriesInterface";
 import {WarehouseBaseI} from "@/Interfaces/WarehouseInterface";
@@ -39,7 +39,7 @@ const propsW = defineProps<{
     productEdit? : ProductBaseI,
     update? : boolean,
     categories: categoryBaseI[],
-    suppliers: supplierI[],
+    suppliers: SupplierI[],
     warehouse: WarehouseBaseI[],
     nextProduct: string | null,
     paymentTypes: PaymentTypeEnumI,

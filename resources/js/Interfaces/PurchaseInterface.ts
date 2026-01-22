@@ -1,3 +1,4 @@
+import {SupplierI} from "@/Interfaces/SupplierInterface";
 
 
 export interface purchaseInfoI {
@@ -12,4 +13,41 @@ export interface purchaseInfoI {
     discount_amount: number;
     amount: number;
     tax: number;
+}
+
+
+export interface PurchaseSupplierI {
+    id: number
+    code: string
+    supplier_id: number
+    user_id: number
+    doc_date: string
+    amount: number
+    tax:number
+    sub_total: number
+    discount: number
+    status: string
+    comment: string | null
+    created_at: string
+    updated_at: string
+    deleted_at: string | null
+    supplier: SupplierI
+    products: PurchaseItemI[]
+}
+
+
+export interface PurchaseItemI {
+    amount: number
+    cost: number
+    created_at: string
+    deleted_at: string | null
+    discount: number
+    id: number
+    product_id: number
+    purchase_id: number
+    quantity: number
+    tax_id: number
+    updated_at: string
+    warehouse_id: number
+
 }

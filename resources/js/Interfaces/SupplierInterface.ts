@@ -3,7 +3,7 @@ import {creditI} from "@/Interfaces/AccountInterface";
 
 
 
-export interface supplierI {
+export interface SupplierI {
     company_name: string;
     contact: string | null;
     created_at: string;

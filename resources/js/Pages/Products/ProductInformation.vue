@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {inject, ref} from "vue";
 import {categoryBaseI} from "@/Interfaces/CategoriesInterface";
-import {supplierI} from "@/Interfaces/SupplierInterface";
+import {SupplierI} from "@/Interfaces/SupplierInterface";
 import {useRoute} from "ziggy-js";
 import {formProductKey, productDataKey} from "@/Injections/InjectionKeys";
 import {Card, InputText, FloatLabel, Select, Button, AutoComplete, Dialog} from "primevue";
@@ -15,7 +15,7 @@ import {useProductStore} from "@/stores/ProductStore";
 const route = useRoute();
 defineProps<{
 	categories: categoryBaseI[],
-	suppliers: supplierI[],
+	suppliers: SupplierI[],
     paymentTypes: PaymentTypeEnumI,
 }>()
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3';
-import {supplierI} from "@/Interfaces/SupplierInterface";
+import {SupplierI} from "@/Interfaces/SupplierInterface";
 import {computed, onMounted} from "vue";
 import {getMoney} from "@/Global/Helpers";
 import {useRoute} from "ziggy-js";
@@ -13,7 +13,7 @@ const route = useRoute()
 const toast = useToast()
 
 const propsW = defineProps<{
-    supplierEdit: supplierI | null,
+    supplierEdit: SupplierI | null,
     update: boolean,
     paymentTypes: PaymentTypeEnumI
 }>();

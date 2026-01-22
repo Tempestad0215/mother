@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Pagination from "@components/Pagination.vue";
 import FormSearch from "@components/FormSearch.vue";
-import {supplierI} from "@/Interfaces/SupplierInterface";
+import {SupplierI} from "@/Interfaces/SupplierInterface";
 import {router, useForm} from "@inertiajs/vue3";
 import {ref, Ref} from "vue";
 import {PaginationI} from "@/Interfaces/GlobalInterface";
@@ -14,16 +14,16 @@ const route = useRoute();
 Propiedades
  */
 const propsW = defineProps<{
-    suppliers: PaginationI<supplierI>
+    suppliers: PaginationI<SupplierI>
 }>();
 
 
 const emit = defineEmits<{
-    (e:'seeSupplier', data:supplierI):void
+    (e:'seeSupplier', data:SupplierI):void
 }>();
 
 //
-const supplierData:Ref<supplierI | null> = ref(null);
+const supplierData:Ref<SupplierI | null> = ref(null);
 const seeSupplier:Ref<boolean> = ref(false);
 
 /*
@@ -40,7 +40,7 @@ const form = useForm({
  *
  * @param item
  */
-const edit = (item:supplierI) => {
+const edit = (item:SupplierI) => {
     router.get(route('supplier.edit',{supplier: item.id}));
 
 }
@@ -49,7 +49,7 @@ const edit = (item:supplierI) => {
  *
  * @param item
  */
-const destroy = (item:supplierI) => {
+const destroy = (item:SupplierI) => {
 
     // Swal.fire({
     //     title: `Desea Eliminar el suplidor : ${item.company_name}?`,

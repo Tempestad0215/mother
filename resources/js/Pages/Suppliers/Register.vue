@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AppLayout from "@layout/AppLayout.vue";
-import {supplierI} from "@/Interfaces/SupplierInterface";
+import {SupplierI} from "@/Interfaces/SupplierInterface";
 import {useRoute} from "ziggy-js";
 import {
     DataTable,
@@ -26,14 +26,14 @@ const confirm = useConfirm();
 const toast = useToast();
 // Propiedades
 const propsW = defineProps<{
-    suppliers: PaginationI<supplierI>
+    suppliers: PaginationI<SupplierI>
     update?: boolean
     paymentTypes: PaymentTypeEnumI
 }>();
 
 const searchValue = ref("")
 const createSupplier = ref(false)
-const selectedSupplier = ref<supplierI | null>(null)
+const selectedSupplier = ref<SupplierI | null>(null)
 const isUpdate = ref(false)
 
 
@@ -41,13 +41,13 @@ const searchData = () => {
     getSearchTable(route('supplier.create',{search: searchValue.value, per_page: propsW.suppliers.per_page}))
 }
 
-const editData = (data:supplierI) => {
+const editData = (data:SupplierI) => {
     selectedSupplier.value = data;
     createSupplier.value = true;
     isUpdate.value = true;
 }
 
-const deleteData = (data:supplierI, event:Event) => {
+const deleteData = (data:SupplierI, event:Event) => {
     confirm.require({
         target: event.currentTarget as HTMLElement,
         message: "Desea eliminar este registro, los cambios son irreversible",
@@ -109,7 +109,7 @@ const deleteData = (data:supplierI, event:Event) => {
             <Column field="phone" header="Telefono" />
             <Column field="email" header="Correo" />
             <Column header="Act">
-                <template #body="{data}:{data:supplierI}">
+                <template #body="{data}:{data:SupplierI}">
                     <div class="space-x-2">
                         <Button @click="editData(data)" class="pt-1 h-8"  title="Editar" icon="pi pi-file-edit" />
                         <Button @click="deleteData(data, $event)" class="pt-1 h-8"  title="Eliminar" severity="danger" icon="pi pi-trash" />

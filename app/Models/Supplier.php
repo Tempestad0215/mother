@@ -6,6 +6,7 @@ use App\Enums\PaymentTypeEnum;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -61,6 +62,11 @@ class Supplier extends Model implements Auditable
         'type_payment' => PaymentTypeEnum::class,
     ];
 
+
+    public function purchase(): HasMany
+    {
+        return $this->hasMany(Purchase::class);
+    }
 
     // Rleaciones
     public function product():HasMany

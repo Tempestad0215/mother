@@ -17,7 +17,7 @@ import {
 } from "primevue";
 import {router, useForm} from "@inertiajs/vue3";
 import {purchaseInfoI} from "@/Interfaces/PurchaseInterface";
-import {supplierI} from "@/Interfaces/SupplierInterface";
+import {SupplierI} from "@/Interfaces/SupplierInterface";
 import AppLayout from "@layout/AppLayout.vue";
 import {PreciseCalculator} from "@/utils/Decimal";
 import {ProductBaseI} from "@/Interfaces/ProductInterface";
@@ -31,7 +31,7 @@ const toast = useToast();
 const confirm = useConfirm()
 
 const propsW = defineProps<{
-    suppliers: supplierI[],
+    suppliers: SupplierI[],
     products: ProductBaseI[]
     taxes: TaxInterfaceI[]
     warehouses: WarehouseBaseI[]

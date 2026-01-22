@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import {supplierI} from "@/Interfaces/SupplierInterface";
+import {SupplierI} from "@/Interfaces/SupplierInterface";
 import {getMoney} from "@/Global/Helpers";
 
 /*
 Propiedades
  */
 const propsW = defineProps<{
-    supplier: supplierI | null
+    supplier: SupplierI | null
 }>();
 
 </script>

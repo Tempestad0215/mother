@@ -6,6 +6,7 @@ use App\Enums\InventoryMovementTypeEnum;
 use App\Helpers\ProductHelper;
 use App\Http\Requests\PaginationRequest;
 use App\Http\Requests\PurchaseRequest;
+use App\Http\Resources\PurchaseSupplierResource;
 use App\Models\Inventory;
 use App\Models\Product;
 use App\Models\Purchase;
@@ -120,7 +121,7 @@ class PurchaseController extends Controller
     public function show(PaginationRequest $request)
     {
         return Inertia::render('Purchase/TablePurchase',[
-            'purchases' => Purchase::all()
+            'purchases' =>  PurchaseSupplierResource::collection(Purchase::all())
         ]);
     }
 

@@ -5,7 +5,7 @@ import FloatBox from "@components/FloatBox.vue";
 import {ref} from "vue";
 import FShow from "@/Pages/Suppliers/FShow.vue";
 import {PaginationI} from "@/Interfaces/GlobalInterface";
-import {supplierI} from "@/Interfaces/SupplierInterface";
+import {SupplierI} from "@/Interfaces/SupplierInterface";
 import FSee from "@/Pages/Suppliers/FSee.vue";
 import {useRoute} from "ziggy-js";
 
@@ -13,15 +13,15 @@ import {useRoute} from "ziggy-js";
 const route = useRoute();
 // Propiedades
 const propsW = defineProps<{
-    suppliers: PaginationI<supplierI>
+    suppliers: PaginationI<SupplierI>
 }>();
 
 
 const seeSupplier = ref<boolean>(false);
-const supplierData = ref<supplierI | null>(null);
+const supplierData = ref<SupplierI | null>(null);
 
 // Funciones
-const getDataSupplier = (item: supplierI) => {
+const getDataSupplier = (item: SupplierI) => {
     seeSupplier.value = true;
     supplierData.value = item;
 }

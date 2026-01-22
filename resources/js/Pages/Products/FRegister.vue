@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {ProductBaseI, ProductFormI, ProductTypeEnumI} from '@/Interfaces/ProductInterface';
-import {supplierI} from '@/Interfaces/SupplierInterface';
+import {SupplierI} from '@/Interfaces/SupplierInterface';
 import {useForm} from '@inertiajs/vue3';
 import {onMounted, provide} from 'vue';
 import {categoryBaseI} from "@/Interfaces/CategoriesInterface";
@@ -27,7 +27,7 @@ const propsW = defineProps<{
 	productEdit: ProductBaseI | null,
 	update?: boolean,
 	categories: categoryBaseI[],
-	suppliers: supplierI[],
+	suppliers: SupplierI[],
     paymentTypes: PaymentTypeEnumI,
     productType: ProductTypeEnumI,
     branches: BranchInterfaceI[]
