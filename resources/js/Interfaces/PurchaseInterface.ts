@@ -1,4 +1,5 @@
 import {SupplierI} from "@/Interfaces/SupplierInterface";
+import {PurchaseStatusEnum} from "@/Enums/PurchaseEnum";
 
 
 export interface purchaseInfoI {
@@ -26,13 +27,13 @@ export interface PurchaseSupplierI {
     tax:number
     sub_total: number
     discount: number
-    status: string
+    status: PurchaseStatusEnum
     comment: string | null
     created_at: string
     updated_at: string
     deleted_at: string | null
     supplier: SupplierI
-    products: PurchaseItemI[]
+    items: PurchaseItemI[]
 }
 
 
@@ -44,10 +45,13 @@ export interface PurchaseItemI {
     discount: number
     id: number
     product_id: number
+    product_name: string
+    tax_rate: number
     purchase_id: number
     quantity: number
     tax_id: number
     updated_at: string
     warehouse_id: number
+    warehouse_name: string
 
 }

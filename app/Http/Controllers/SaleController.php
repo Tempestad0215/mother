@@ -39,7 +39,7 @@ class SaleController extends Controller
         {
             return redirect()->route('setting.index');
         }
-        //Intancia de los datos
+        //Instancia de los datos
         $dataSale = $this->dataSale($request);
         $lastRecord = Sale::orderBy('created_at', 'desc')->first();
 

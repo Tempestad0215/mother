@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\InventoryMovementTypeEnum;
+use App\Enums\PurchaseStatusEnum;
 use App\Helpers\ProductHelper;
 use App\Http\Requests\PaginationRequest;
 use App\Http\Requests\PurchaseRequest;
@@ -120,10 +121,39 @@ class PurchaseController extends Controller
 
     public function show(PaginationRequest $request)
     {
+
+
         return Inertia::render('Purchase/TablePurchase',[
-            'purchases' =>  PurchaseSupplierResource::collection(Purchase::all())
+            'purchases' =>  PurchaseSupplierResource::collection(Purchase::with(['supplier','items'])->get())
         ]);
     }
+
+
+    public function approve(Purchase $purchase)
+    {
+        $purchase->status = PurchaseStatusEnum::Pendiente;
+        $purchase->save();
+    }
+
+    public function cancel(Purchase $purchase)
+    {
+        $purchase->status = PurchaseStatusEnum::Cancelada;
+        $purchase->save();
+
+        return back();
+    }
+
+
+    public function receive()
+    {
+        return Inertia::render('Purchase/Receive');
+    }
+
+    public function output()
+    {
+        return Inertia::render('Purchase/Output');
+    }
+
 
 
     private function createInventoryMovement(Purchase $purchase, int $warehouseID, float $quantity,float $cost, string $description = ""):void

@@ -1,4 +1,5 @@
 import {MenuItem} from "primevue/menuitem";
+import {PurchaseStatusEnum, TagSeverity} from "@/Enums/PurchaseEnum";
 
 
 export const purchaseBreadCrumb:MenuItem[] = [
@@ -15,7 +16,7 @@ export const purchaseBreadCrumb:MenuItem[] = [
     {
         label: "Entrada de Mercancias",
         icon: "pi pi-shopping-card",
-        url: route('purchase.show')
+        url: route('purchase.receive')
     },
     {
         label: "Salida de Mercancia",
@@ -24,3 +25,14 @@ export const purchaseBreadCrumb:MenuItem[] = [
     },
 
 ]
+
+
+
+export const PurchaseStatusSeverity: Record<PurchaseStatusEnum, TagSeverity> = {
+    [PurchaseStatusEnum.Borrador]: 'info',
+    [PurchaseStatusEnum.Pendiente]: 'warn',
+    [PurchaseStatusEnum.Parcial]: 'warn',
+    [PurchaseStatusEnum.Completada]: 'success',
+    [PurchaseStatusEnum.Cancelada]: 'danger',
+};
+

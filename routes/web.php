@@ -20,6 +20,7 @@ use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Middleware\IsAdminMiddleware;
+use App\Pdfs\ProductLabelV1;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
@@ -172,11 +173,13 @@ Route::middleware([
             Route::get('/show', 'show')->name('show');
             Route::post('/', 'store')->name('store');
             Route::get('/edit/{product}', 'edit')->name('edit');
-            Route::patch('/{product}', 'update')->name('update');
+            Route::get('/get-label/{code}', 'createLabel')->name('get-label');
             Route::get('/get', 'get')->name('get');
             Route::get('/get/json', 'getJson')->name('get.json');
             Route::get('/get/code', 'getByCode')->name('get.code');
+            Route::patch('/update/{product}', 'update')->name('update');
             Route::patch('/delete/{product}', 'destroy')->name('destroy');
+
         });
 
 
@@ -305,6 +308,10 @@ Route::middleware([
             Route::get('/', 'index')->name('index');
             Route::post('/', 'store')->name('store');
             Route::get('/show', 'show')->name('show');
+            Route::get('/receive', 'receive')->name('receive');
+            Route::get('/output', 'output')->name('output');
+            Route::patch('/{purchase}/cancel','cancel')->name('cancel');
+            Route::patch('/{purchase}/approve', 'approve')->name('approve');
         });
 
     /*
@@ -368,16 +375,11 @@ Route::middleware([
 
     Route::get('/test', function () {
 
-        $purchase = \App\Models\Purchase::latest()->first();
+        $pdf = new ProductLabelV1();
 
-        $pdf = new \App\Pdfs\PurchaseV1($purchase);
-        $pdf->renderData();
+        $pdf->createInfo();
 
-
-        $filePath = \Illuminate\Support\Facades\Storage::disk('purchasePdfs')->path('purchase.pdf');
-
-
-        $pdf->Output($filePath, 'f');
+        $pdf->Output('test_pdf.pdf');
 
     })->name('printTest');
 

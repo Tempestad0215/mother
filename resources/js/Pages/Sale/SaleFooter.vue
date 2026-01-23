@@ -14,12 +14,12 @@ const form = inject(saleKey)!;
 		<div>
 			<InputError :message="form.errors.general"/>
 		</div>
-		
+
 		<div>
 			<InputError :message="form.errors.info_sale"/>
 		</div>
-		
-		
+
+
 		<!--                            Comentario de la venta-->
 		<div class="grid grid-cols-4 items-center gap-4">
 			<textarea
@@ -45,12 +45,12 @@ const form = inject(saleKey)!;
 					</tr>
 					<tr>
 						<th class="text-left">Total :</th>
-						<td class="w-[15rem]">{{ getMoney(form.amount) }}</td>
+						<td class="w-60">{{ getMoney(form.amount) }}</td>
 					</tr>
 					</tbody>
 				</table>
 			</div>
-		
+
 		</div>
 	</div>
 </template>

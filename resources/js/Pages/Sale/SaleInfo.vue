@@ -197,7 +197,7 @@ defineExpose({
 				<div class="relative">
 					<TextInput
 						v-model="form.client_rnc"
-						class="w-full pr-[32px]"
+						class="w-full pr-8"
 						type="search"/>
 					<FontAwesomeIcon
 						@click="getRncClient"
@@ -237,7 +237,7 @@ defineExpose({
 				Datos Tributario
 			</legend>
 			<p><strong>RNC :</strong> {{ form.client_rnc }}</p>
-			<p class="max-w-[300px] truncate">
+			<p class="max-w-75 truncate">
 				<strong>Razon Social :</strong>
 				{{ form.client_name }}
 			</p>

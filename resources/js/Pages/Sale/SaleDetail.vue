@@ -64,21 +64,21 @@ function getData(item: productFullI) {
 	} else {
 
 		//Pasar los datos al formulario
-		form.info_sale.push({
-			amount: 0,
-			discount_rate: item.discount,
-			discount_amount: 0,
-			price: item.price,
-			min_price: item.min_price,
-			special_price: item.special_price,
-			product_id: item.id,
-			product_name: item.name,
-			stock: 1,
-			reserved: 1,
-			tax: item.tax,
-			tax_rate: item.tax_rate / 100,
-			type: item.type
-		});
+		// form.info_sale.push({
+		// 	amount: 0,
+		// 	discount_rate: item.discount,
+		// 	discount_amount: 0,
+		// 	price: item.price,
+		// 	min_price: item.min_price,
+		// 	special_price: item.special_price,
+		// 	product_id: item.id,
+		// 	product_name: item.name,
+		// 	stock: 1,
+		// 	reserved: 1,
+		// 	tax: item.tax,
+		// 	tax_rate: item.tax_rate / 100,
+		// 	type: item.type
+		// });
 
 		//Cerrar la ventana
 		showProduct.value = false;
@@ -214,7 +214,7 @@ defineExpose({
 				<TextInput
 					placeholder="Producto"
 					maxLength="15"
-					class="w-[400px]"
+					class="w-100"
 					@blur="getProductCode"
 					v-model="form.code_value"
 				/>
@@ -348,7 +348,7 @@ defineExpose({
 		</template>
 		<template #body>
 			<ReturnForm
-				class="w-[40rem] mx-auto"
+				class="w-160 mx-auto"
 				@closeFormReturn="showFormReturn = false"
 				:error="page.props.errors.general"/>
 		</template>

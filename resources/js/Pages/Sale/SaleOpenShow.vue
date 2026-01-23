@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import {saleDataI} from "@/Interfaces/SaleInterface";
 import {getMoney} from "@/Global/Helpers";
-import Pagination from "@components/Pagination.vue";
 import FormSearch from "@components/FormSearch.vue";
 import {useForm} from "@inertiajs/vue3";
 import {PaginationI} from "@/Interfaces/GlobalInterface";
+import Pagination from "@components/Pagination.vue";
+import {Column, DataTable} from "primevue";
+
 
 /**
  * Propiedades de la ventana
@@ -59,46 +61,23 @@ const submit = () => {
             </form>
         </div>
 
+        <DataTable :value="props.saleOpen.data">
+            <Column header="Cliente"/>
+            <Column header="Itbis"/>
+            <Column header="Total"/>
+            <Column header="Act">
+                <div>
+                    <i
+                        class="icon-efect fa-solid fa-circle-check"></i>
+                </div>
+            </Column>
+            <template #footer>
+                <Pagination
+                    search=""
+                    :pag="props.saleOpen"/>
+            </template>
+        </DataTable>
 
-        <table class="w-full mt-5 styleTable">
-            <thead class="text-left">
-                <tr>
-                    <th>Cliente</th>
-                    <th>Itbis</th>
-                    <th>Total</th>
-                    <th>Act</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr
-                    class=""
-                    v-for="(item, index) in props.saleOpen?.data"  :key="index">
-                    <td>
-                        {{item.client_name ? item.client_name : "N/A"}}
-                    </td>
-                    <td>
-                        {{ getMoney(item.tax)}}
-                    </td>
-                    <td>
-                        {{ getMoney(item.amount)}}
-                    </td>
-                    <td>
-                        <i
-                            @click="$emit('senData', item)"
-                            class="icon-efect fa-solid fa-circle-check"></i>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-
-        <Pagination
-            :field="form.field"
-            :search="form.search"
-            :per-page="form.per_page"
-            :current-page="props.saleOpen?.current_page"
-            :total-page="props.saleOpen?.to"
-            :next="props.saleOpen?.next_page_url"
-            :prev="props.saleOpen?.prev_page_url"/>
     </div>
 </template>
 

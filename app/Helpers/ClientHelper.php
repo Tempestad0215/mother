@@ -28,8 +28,7 @@ class ClientHelper
         $fieldAllowed = ['name','document','phone','personal_id','email'];
 
         //conseguir los datos del cliente
-        return Client::where('status', true)
-            ->where($field,'LIKE','%'.$search.'%' )
+        return Client::where($field,'LIKE','%'.$search.'%' )
             ->latest('created_at')
             ->simplePaginate($perPage);
 

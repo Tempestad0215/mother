@@ -249,30 +249,6 @@ provide(saleKey, form)
 <template>
 	<!--    Contenido general-->
 	<AppLayout>
-		<!--        Cabecera de la ventana-->
-		<template #header>
-			<TabLink
-				:active="true"
-				:href="route('sale.create')">
-				Registrar
-			</TabLink>
-			<TabLink
-				:href="route('sale.show')">
-				Mostrar
-			</TabLink>
-			<TabLink
-				:href="route('credit-note.show')">
-				N. Credito
-			</TabLink>
-			<TabLink
-				:href="route('sale.close')">
-				Cierre
-			</TabLink>
-			<TabLink
-				:href="route('sale.counter')">
-				Conteo
-			</TabLink>
-		</template>
 
 		<!--        //contenido-->
 		<div>
@@ -319,7 +295,6 @@ provide(saleKey, form)
 			</div>
 
 		</div>
-		<ErrorComponent v-model:errors="form.errors"/>
 
 		<!-- Ventana de Devuelta-->
 		<FloatBox

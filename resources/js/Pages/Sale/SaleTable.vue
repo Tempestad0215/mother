@@ -127,7 +127,7 @@ defineExpose({
 <template>
 	<!--                        Listado de los productos-->
 	<div
-		class="max-h-[400px] border-t-2 mt-3 border-black overflow-y-auto shadow-lg p-3 rounded-md">
+		class="max-h-100 border-t-2 mt-3 border-black overflow-y-auto shadow-lg p-3 rounded-md">
 		<table class="styleTable w-full">
 			<thead>
 			<tr>
@@ -150,9 +150,9 @@ defineExpose({
 				<td>
 					{{ item.product_name }}
 				</td>
-				<td class="max-w-[5rem]">
+				<td class="max-w-20">
 					<Money
-						class=" bg-transparent h-[2rem] max-w-[6rem] rounded-md border-none"
+						class=" bg-transparent h-8 max-w-24 rounded-md border-none"
 						@blur="totalAmount(index)"
 						v-bind="moneyConfig"
 						v-model.number="item.stock"/>
@@ -162,19 +162,19 @@ defineExpose({
 				</td>
 
 				<!--                                        Precio solo modificar si es servicio-->
-				<td class="max-w-[5rem]">
+				<td class="max-w-20">
 					<span v-if="item.type === 'producto' || item.type === 'ventas'">{{ getMoney(item.price) }}
 					</span>
 					<Money
-						class=" bg-transparent h-[2rem] max-w-[6rem] rounded-md border-none"
+						class=" bg-transparent h-8 max-w-24 rounded-md border-none"
 						v-if="item.type === 'servicio'"
 						@blur="totalAmount(index)"
 						v-bind="moneyConfig"
 						v-model.number="item.price"/>
 				</td>
-				<td class="max-w-[4rem]">
+				<td class="max-w-16">
 					<Money
-						class=" bg-transparent h-[2rem] max-w-[5rem] rounded-md border-none"
+						class=" bg-transparent h-8 max-w-20 rounded-md border-none"
 						@blur="totalAmount(index)"
 						v-bind="moneyConfig"
 						:min="0"

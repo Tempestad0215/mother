@@ -64,6 +64,13 @@ return [
             'visibility' => 'public',
             'throw' => false,
         ],
+        'labels' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/pdfs/labels'),
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
         'purchasePdfs' => [
             'driver' => 'local',
             'root' => storage_path('app/public/pdfs/purchase'),

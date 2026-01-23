@@ -15,6 +15,7 @@ use App\Models\Supplier;
 use App\Models\Tax;
 use App\Models\Unit;
 use App\Models\Warehouse;
+use App\Pdfs\ProductLabelV1;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Http\JsonResponse;
@@ -23,6 +24,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 use Throwable;
@@ -230,6 +232,12 @@ class ProductController extends Controller implements HasMiddleware
     }
 
 
+//    public function createLabel()
+//    {
+//
+//
+//    }
+
     /**
      * @return Response
      */
@@ -269,6 +277,28 @@ class ProductController extends Controller implements HasMiddleware
             ->where('status', true)
             ->latest('id')
             ->simplePaginate($perPage);
+
+    }
+
+
+    public function createLabel(string $code)
+    {
+        $fileName = "{$code}-label.pdf";
+        $filePath = \Storage::disk('labels')->path($fileName);
+        $pdf = new ProductLabelV1();
+        $pdf->createInfo($code);
+        $pdf->Output($filePath, 'F');
+
+
+        $url = asset("storage/pdfs/labels/{$fileName}");
+
+        if (!Storage::disk('labels')->exists($fileName)) {
+            abort(404, 'No existe el label');
+        }
+
+        return \response()->json([
+            'url' => $url,
+        ]);
 
     }
 
