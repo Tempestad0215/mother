@@ -78,7 +78,7 @@ class ClientController extends Controller implements HasMiddleware
 
         $clients = $query->paginate($perPage)->withQueryString();
         /*Vista con la pagina*/
-        return Inertia::render('Clients/Register',[
+        return Inertia::render('Clients/RegisterClient',[
             'clients' => $data,
             'search' => $search,
             'typeRNC' => config('appconfig.sequenceSale'),
@@ -122,7 +122,7 @@ class ClientController extends Controller implements HasMiddleware
 
 
         //Devolver los datos
-        return Inertia::render('Clients/Show',[
+        return Inertia::render('Clients/ShowClient',[
             'clients' => $data
         ]);
 
@@ -136,7 +136,7 @@ class ClientController extends Controller implements HasMiddleware
     {
 
         // Devolver la vista con los datos
-        return Inertia::render('Clients/Register',[
+        return Inertia::render('Clients/RegisterClient',[
             'update' => true,
             'clientEdit' => new ClientCommentResource($client),
             'typeRNC' => config('appconfig.sequenceSale')

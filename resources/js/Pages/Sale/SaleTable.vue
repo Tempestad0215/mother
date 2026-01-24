@@ -6,6 +6,8 @@ import {inject} from "vue";
 import {infoSaleI} from "@/Interfaces/SaleInterface";
 import {PreciseCalculator} from "@/utils/Decimal";
 import {useRoute} from "ziggy-js";
+import {DataTable, Column} from "primevue";
+
 
 
 const route = useRoute();
@@ -125,78 +127,20 @@ defineExpose({
 </script>
 
 <template>
-	<!--                        Listado de los productos-->
-	<div
-		class="max-h-100 border-t-2 mt-3 border-black overflow-y-auto shadow-lg p-3 rounded-md">
-		<table class="styleTable w-full">
-			<thead>
-			<tr>
-				<th>#</th>
-				<th>Producto/Servicio</th>
-				<th>Cantidad</th>
-				<th>Itbis</th>
-				<th>Precio</th>
-				<th>Desc.</th>
-				<th>Importe</th>
-				<th>Act</th>
-			</tr>
-			</thead>
-			<tbody>
-			<tr
-				v-for="(item, index) in form.info_sale" :key="index">
-				<td>
-					{{ index + 1 }}
-				</td>
-				<td>
-					{{ item.product_name }}
-				</td>
-				<td class="max-w-20">
-					<Money
-						class=" bg-transparent h-8 max-w-24 rounded-md border-none"
-						@blur="totalAmount(index)"
-						v-bind="moneyConfig"
-						v-model.number="item.stock"/>
-				</td>
-				<td>
-					{{ getMoney(item.tax) }}
-				</td>
+    <DataTable :value="form.info_sale">
+        <Column header="#">
+            <template #body="{index}">
+                {{index+1}}
+            </template>
+        </Column>
+        <Column header="Producto/Servicio" field="product_name" />
+        <Column header="Cantidad" />
+        <Column header="Precio" />
+        <Column header="Itbis" />
+        <Column header="Descuento" />
+        <Column header="Importe" />
+        <Column header="Act" />
+    </DataTable>
 
-				<!--                                        Precio solo modificar si es servicio-->
-				<td class="max-w-20">
-					<span v-if="item.type === 'producto' || item.type === 'ventas'">{{ getMoney(item.price) }}
-					</span>
-					<Money
-						class=" bg-transparent h-8 max-w-24 rounded-md border-none"
-						v-if="item.type === 'servicio'"
-						@blur="totalAmount(index)"
-						v-bind="moneyConfig"
-						v-model.number="item.price"/>
-				</td>
-				<td class="max-w-16">
-					<Money
-						class=" bg-transparent h-8 max-w-20 rounded-md border-none"
-						@blur="totalAmount(index)"
-						v-bind="moneyConfig"
-						:min="0"
-						:max="100"
-						v-model.number="item.discount"/>
-				</td>
-				<td>
-					{{ getMoney(item.amount) }}
-				</td>
-
-				<td>
-					<i
-						@click="deleteItem(item.product_name, index)"
-						class=" icon-efect text-red-500 fa-solid fa-circle-xmark"></i>
-				</td>
-			</tr>
-			</tbody>
-		</table>
-
-	</div>
 </template>
-
-<style scoped>
-
-</style>
+\\

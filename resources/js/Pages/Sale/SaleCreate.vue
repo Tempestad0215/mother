@@ -5,21 +5,18 @@ import {onMounted, onUpdated, provide, Ref, ref} from "vue";
 import {productI} from "@/Interfaces/ProductInterface";
 import {printPdf} from "@/Global/Helpers";
 import {clientBaseI} from "@/Interfaces/ClientInterface";
-import PrimaryButton from "@components/PrimaryButton.vue";
 import axios from "axios";
 import {CreateSaleI, creditNotesSaleI, infoSaleI, saleDataI} from "@/Interfaces/SaleInterface";
 import {invoiceTypeI} from "@/Interfaces/SettingInterface";
-import TabLink from "@components/TabLink.vue";
 import {PaginationI} from "@/Interfaces/GlobalInterface";
 import SaleInfo from "@/Pages/Sale/SaleInfo.vue";
-import ErrorComponent from "@components/ErrorComponent.vue";
 import SaleDetail from "@/Pages/Sale/SaleDetail.vue";
 import {saleKey} from "@/utils/keys";
 import SaleFooter from "@/Pages/Sale/SaleFooter.vue";
 import SaleTable from "@/Pages/Sale/SaleTable.vue";
 import PaymentInvoice from "@components/PaymentInvoice.vue";
-import FloatBox from "@components/FloatBox.vue";
 import {useRoute} from "ziggy-js";
+import {Dialog, Card, Button} from "primevue";
 
 const route = useRoute();
 /*
@@ -249,66 +246,55 @@ provide(saleKey, form)
 <template>
 	<!--    Contenido general-->
 	<AppLayout>
+        <Card>
+            <template #title>
 
-		<!--        //contenido-->
-		<div>
-			<div
-				class="fondo p-5 rounded-md mx-auto overflow-hidden">
-				<form
-					class=" max-w-3/5">
-					<div>
-						<SaleInfo
-							ref="saleInfoRef"
-							:clients="propsW.clients"
-							@getSequenceType="(type:string) => saleDetailRef?.getSequenceType(type)"
-							:invoice-type="form.invoice_type"/>
+            </template>
+            <template #content>
+                <form
+                    class="">
+                    <div>
+                        <SaleInfo
+                            ref="saleInfoRef"
+                            :clients="propsW.clients"
+                            @getSequenceType="(type:string) => saleDetailRef?.getSequenceType(type)"
+                            :invoice-type="form.invoice_type"/>
 
-						<SaleDetail
-							ref="saleDetailRef"
-							:products="propsW.products"
-							:sale-open="propsW.saleOpen"
-							:invoice-type="propsW.invoiceType"
-							:refund="propsW.refund"
-							@total-sale=""
-							@totalSale="saleTableRef?.totalSale()"
-							@total-amount="(index:number) => saleTableRef?.totalAmount(index)"
-						/>
+                        <SaleDetail
+                            ref="saleDetailRef"
+                            :products="propsW.products"
+                            :sale-open="propsW.saleOpen"
+                            :invoice-type="propsW.invoiceType"
+                            :refund="propsW.refund"
+                            @total-sale=""
+                            @totalSale="saleTableRef?.totalSale()"
+                            @total-amount="(index:number) => saleTableRef?.totalAmount(index)"
+                        />
 
-						<SaleTable
-							ref="saleTableRef"/>
-						<SaleFooter
-							ref="saleFooterRef"/>
-						<!--                        Devuelta y demas detos-->
-						<div class=" mt-2 w-64 float-right">
-
-							<div class="">
-								<PrimaryButton
-									:disabled="form.processing"
-									@click="salePaymentRef?.checkSale()"
-									type="button">
-									{{ form.close_table ? 'Cerrar Venta' : 'Registrar' }}
-								</PrimaryButton>
-							</div>
-						</div>
-					</div>
-				</form>
-			</div>
-
-		</div>
-
+                        <SaleTable
+                            ref="saleTableRef"/>
+                        <SaleFooter
+                            ref="saleFooterRef"/>
+                        <!--                        Devuelta y demas detos-->
+                        <div class="text-right mt-5">
+                            <Button
+                                @click="salePaymentRef?.checkSale()"
+                                type="button"
+                                :label="form.close_table ? 'Cerrar Venta' : 'Registrar'" />
+                        </div>
+                    </div>
+                </form>
+            </template>
+        </Card>
 		<!-- Ventana de Devuelta-->
-		<FloatBox
-			v-model:show="showReturn">
-			<template #header>
-				Ventana de Pago
-			</template>
-			<template #body>
-				<PaymentInvoice
-					@senData="sendData"
-					v-model:show-return="showReturn"
-					ref="salePaymentRef"/>
-			</template>
-		</FloatBox>
+        <Dialog
+            header="Ventana de Pago"
+            modal>
+            <PaymentInvoice
+                @senData="sendData"
+                v-model:show-return="showReturn"
+                ref="salePaymentRef"/>
+        </Dialog>
 	</AppLayout>
 </template>
 

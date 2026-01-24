@@ -12,7 +12,11 @@ interface paginationActualI {
 
 const propsW = defineProps<paginationActualI>()
 
-const first = computed(() => (propsW.pag.current_page - 1) * propsW.pag.per_page);
+const first = computed(() => {
+    const currentPage = propsW.pag?.current_page ?? 1;
+    const perPage = propsW.pag?.per_page ?? 10;
+    return (currentPage - 1) * perPage;
+})
 
 const onPageChange =(value: number) => {
     const nextRoute = value + 1
@@ -33,8 +37,8 @@ const changePerPage = (value: number) => {
         @update:first="onPageChange"
         @update:rows="changePerPage"
         :rowsPerPageOptions="[15, 30, 45,60,85,100]"
-        :rows="propsW.pag.per_page ?? 0"
-        :totalRecords="propsW.pag.total"
+        :rows="propsW.pag?.per_page ?? 0"
+        :totalRecords="propsW.pag?.total ?? 0"
     >
 
     </Paginator>

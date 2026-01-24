@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import TextInput from "@components/TextInput.vue";
-import InputLabel from "@components/InputLabel.vue";
-import FShowClient from "@/Pages/Clients/FShow.vue";
-import FloatBox from "@components/FloatBox.vue";
 import {computed, inject, reactive, ref} from "vue";
 import {PaginationI} from "@/Interfaces/GlobalInterface";
-import {clientBaseI, rncClientI} from "@/Interfaces/ClientInterface";
+import {clientBaseI} from "@/Interfaces/ClientInterface";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {faMagnifyingGlass, faSpinner} from "@fortawesome/free-solid-svg-icons";
 import {saleKey} from "@/utils/keys";
@@ -13,15 +10,20 @@ import {usePage} from "@inertiajs/vue3";
 import axios from "axios";
 import {sequenceDataI} from "@/Interfaces/SettingInterface";
 import {useRoute} from "ziggy-js";
+import {FloatLabel, InputText, AutoComplete, InputGroup, InputGroupAddon} from "primevue";
 
 
 const route = useRoute();
 const page = usePage()
 
+
+
 const propsW = defineProps<{
 	invoiceType: string;
 	clients: PaginationI<clientBaseI>,
 }>()
+
+
 
 const emit = defineEmits<{
 	(e:'getSequenceType', type:string):void
@@ -165,43 +167,44 @@ defineExpose({
 			<!--                                Botones para buscar datos-->
 			<div class="space-x-5 items-center w-full">
 				<div class="relative">
-					<input-label
-						for="product"
-						value="Cliente"/>
-
-					<div class="relative">
-						<TextInput
-							type="search"
-							:readonly="propsW.invoiceType === 'B04' "
-							class=" w-full pr-10"
-							v-model.trim="form.client_name"
-							placeholder="Cliente"/>
-						<!--                                            Colocar al lado esto-->
-						<div
-							class="absolute inset-y-0 right-0 flex items-center">
-							<i
-								v-if="propsW.invoiceType!== 'B04'"
-								title="Buscar Cliente"
-								@click="showClient = !showClient"
-								class=" icon-efect text-2xl pr-3 fa-solid fa-magnifying-glass-plus"></i>
-						</div>
-					</div>
+                    <InputGroup>
+                        <FloatLabel variant="on">
+                            <AutoComplete/>
+                            <label for="client">Cliente</label>
+                        </FloatLabel>
+                        <InputGroupAddon>
+                            <i
+                                v-if="propsW.invoiceType!== 'B04'"
+                                title="Buscar Cliente"
+                                @click="showClient = !showClient"
+                                class=" icon-efect text-2xl pr-3 fa-solid fa-magnifying-glass-plus"></i>
+                        </InputGroupAddon>
+                    </InputGroup>
 				</div>
 			</div>
 
 			<!--RNC del cliente-->
 			<div v-if="hasRnc" >
-				<InputLabel
-					for="client_rnc"
-					value="RNC"/>
+                <FloatLabel variant="on" >
+                    <InputText/>
+                    <label for="rnc">RNC</label>
+                </FloatLabel>
 				<div class="relative">
-					<TextInput
-						v-model="form.client_rnc"
-						class="w-full pr-8"
-						type="search"/>
-					<FontAwesomeIcon
-						@click="getRncClient"
-						class="absolute flex items-end p-2 top-0 right-0" :icon="faMagnifyingGlass"/>
+                    <InputGroup>
+                        <FloatLabel variant="on" >
+                            <TextInput
+                                v-model="form.client_rnc"
+                                class="w-full pr-8"
+                                type="search"/>
+                            <label for="client_rnc">RNC</label>
+                        </FloatLabel>
+                        <InputGroupAddon>
+                            <FontAwesomeIcon
+                                @click="getRncClient"
+                                class="absolute flex items-end p-2 top-0 right-0" :icon="faMagnifyingGlass"/>
+                        </InputGroupAddon>
+                    </InputGroup>
+
 				</div>
 			</div>
 		</div>
@@ -243,17 +246,17 @@ defineExpose({
 			</p>
 		</fieldset>
 	</div>
-	<FloatBox
-		v-model:show="showClient">
-		<template #header>
-			Lista Cliente
-		</template>
-		<template #body>
-			<FShowClient
-				@getData="getClient"
-				:clients="propsW.clients"/>
-		</template>
+<!--	<FloatBox-->
+<!--		v-model:show="showClient">-->
+<!--		<template #header>-->
+<!--			Lista Cliente-->
+<!--		</template>-->
+<!--		<template #body>-->
+<!--			<FShowClient-->
+<!--				@getData="getClient"-->
+<!--				:clients="propsW.clients"/>-->
+<!--		</template>-->
 
-	</FloatBox>
+<!--	</FloatBox>-->
 
 </template>

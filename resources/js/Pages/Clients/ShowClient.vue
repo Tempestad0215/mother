@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import FShow from "@/Pages/Clients/FShow.vue";
+import FShowClient from "@/Pages/Clients/FShowClient.vue";
 import TabLink from "@components/TabLink.vue";
 import {PaginationI} from "@/Interfaces/GlobalInterface";
 import {clientBaseI} from "@/Interfaces/ClientInterface";
@@ -38,7 +38,7 @@ const props = defineProps<{
 
         <!-- Contenido principal -->
         <div>
-           <FShow
+           <FShowClient
                :clients="props.clients"
                 />
 

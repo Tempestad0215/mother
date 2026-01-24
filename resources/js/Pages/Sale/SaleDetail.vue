@@ -1,13 +1,6 @@
 <script setup lang="ts">
-import TextInput from "@components/TextInput.vue";
-import InputLabel from "@components/InputLabel.vue";
 import {invoiceTypeI} from "@/Interfaces/SettingInterface";
 import {usePage} from "@inertiajs/vue3";
-import FShow from "@/Pages/Products/FShow.vue";
-import FloatBox from "@components/FloatBox.vue";
-import ReturnForm from "@components/ReturnForm.vue";
-import SaleOpenShow from "@/Pages/Sale/SaleOpenShow.vue";
-import PaymentInvoice from "@components/PaymentInvoice.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {
 	faArrowRotateBack,
@@ -16,12 +9,14 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import {productFullI, productI} from "@/Interfaces/ProductInterface";
-import {inject, ref, watch} from "vue";
+import {inject, ref} from "vue";
 import {infoSaleI, saleDataI} from "@/Interfaces/SaleInterface";
 import {saleKey} from "@/utils/keys";
 import {PaginationI} from "@/Interfaces/GlobalInterface";
 import {getSequenceType} from "@/Global/Helpers";
 import {useRoute} from "ziggy-js";
+import {FloatLabel, InputText, Select, ToggleButton} from "primevue";
+
 
 
 const route = useRoute();
@@ -207,24 +202,16 @@ defineExpose({
 			<form
 				v-if="form.invoice_type !== 'B04' "
 				@submit.prevent="getProductCode">
-				<InputLabel
-					for="Product"
-					value="Codigo"/>
-
-				<TextInput
-					placeholder="Producto"
-					maxLength="15"
-					class="w-100"
-					@blur="getProductCode"
-					v-model="form.code_value"
-				/>
+                <FloatLabel>
+                    <InputText/>
+                    <label for="code">Codigo</label>
+                </FloatLabel>
 
 			</form>
 			<!-- Buscar los datos necesario -->
 			<div
 				v-if="!propsW.refund"
 				class="ml-3">
-				<InputLabel value="Datos"/>
 
 				<FontAwesomeIcon
 					title="Productos"
@@ -249,109 +236,93 @@ defineExpose({
 			<div
 				v-if="page.props.setting.sequence"
 				class="ml-3">
-				<InputLabel for="type" value="Tipo de Factura"/>
-				<select
-					:disabled="form.invoice_type == 'B04'"
-					v-model="form.invoice_type"
-					class="inputGeneral py-0"
-					name="type"
-					id="type">
-					<option
-						v-for="(item, index) in propsW.invoiceType"
-						:key="index"
-						@click="checkInvoiceType"
-						:disabled="item.type === 'B04' && !propsW.refund"
-						:value="item.type">
-						{{ item.type }} - {{ item.name }}
-					</option>
-					<!--                                        <option value="">Credito</option>-->
-				</select>
+                <FloatLabel variant="on" >
+                    <Select :options="propsW.invoiceType" />
+                    <label for="type_sale">Tipo Venta</label>
+                </FloatLabel>
 			</div>
 
 
 			<!--Tipo de factura-->
 			<div class="ml-2">
-				<InputLabel for="type" value="Tipo de Venta"/>
-				<select
-					class="inputGeneral py-0"
-					v-model="form.type">
-					<option
-						:disabled="propsW.refund"
-						value="ventas">CONTADO
-					</option>
-					<option
-						:disabled="propsW.refund"
-						value="cotizacion">CREDITO
-					</option>
-					<option
-						:disabled="!propsW.refund"
-						value="devolucion">Devolucion
-					</option>
-				</select>
+                <FloatLabel variant="on" >
+                    <Select />
+                    <label for="type_sale">Tipo Venta</label>
+                </FloatLabel>
+<!--				<InputLabel for="type" value="Tipo de Venta"/>-->
+<!--				<select-->
+<!--					class="inputGeneral py-0"-->
+<!--					v-model="form.type">-->
+<!--					<option-->
+<!--						:disabled="propsW.refund"-->
+<!--						value="ventas">CONTADO-->
+<!--					</option>-->
+<!--					<option-->
+<!--						:disabled="propsW.refund"-->
+<!--						value="cotizacion">CREDITO-->
+<!--					</option>-->
+<!--					<option-->
+<!--						:disabled="!propsW.refund"-->
+<!--						value="devolucion">Devolucion-->
+<!--					</option>-->
+<!--				</select>-->
 			</div>
 			<!--Tipo de cuenta si abierta o cerrada-->
 			<div
 				v-if="!propsW.refund"
 				class="ml-2">
-				<InputLabel
-					for="type_account"
-					value="Cuenta"/>
-				<select
-					v-model="form.close_table"
-					class="inputGeneral py-0">
-					<option :value="false">ABIERTA</option>
-					<option :value="true">CERRADA</option>
-				</select>
+                    <ToggleButton on-label="Cuenta Cerrado" off-label="Cuenta Abieto" />
+
 			</div>
 		</div>
 
 	</div>
 
 	<!-- Ventana de productos-->
-	<FloatBox
-		v-model:show="showProduct">
-		<template #header>
-			Productos
-		</template>
-		<template #body>
-			<FShow
-				:stock="true"
-				@select="getData"
-				class=" fondo  rounded-md px-10 py-5"
-				:products="propsW.products"/>
-		</template>
+<!--	<FloatBox-->
+<!--		v-model:show="showProduct">-->
+<!--		<template #header>-->
+<!--			Productos-->
+<!--		</template>-->
+<!--		<template #body>-->
+<!--			<FShowClient-->
+<!--				:stock="true"-->
+<!--				@select="getData"-->
+<!--				class=" fondo  rounded-md px-10 py-5"-->
+<!--				:products="propsW.products"/>-->
+<!--		</template>-->
 
-	</FloatBox>
+<!--	</FloatBox>-->
 
 
 	<!-- Vetana de las ordenes abierta -->
-	<FloatBox
-		v-model:show="showSaleOpen">
-		<template #header>
-			Cuentas Abiertas
-		</template>
-		<template #body>
-			<SaleOpenShow
-				@sen-data="getSaleOpen"
-				class=" fondo rounded-md px-10 py-5"
-				:sale-open="propsW.saleOpen"/>
-		</template>
+<!--	<FloatBox-->
+<!--		v-model:show="showSaleOpen">-->
+<!--		<template #header>-->
+<!--			Cuentas Abiertas-->
+<!--		</template>-->
+<!--		<template #body>-->
+<!--			<SaleOpenShow-->
+<!--				@sen-data="getSaleOpen"-->
+<!--				class=" fondo rounded-md px-10 py-5"-->
+<!--				:sale-open="propsW.saleOpen"/>-->
+<!--		</template>-->
 
-	</FloatBox>
+<!--	</FloatBox>-->
 
 
 	<!-- Formulario para la nota de credito-->
-	<FloatBox
-		v-model:show="showFormReturn">
-		<template #header>
-			Notas de Credito
-		</template>
-		<template #body>
-			<ReturnForm
-				class="w-160 mx-auto"
-				@closeFormReturn="showFormReturn = false"
-				:error="page.props.errors.general"/>
-		</template>
+<!--	<FloatBox-->
+<!--		v-model:show="showFormReturn">-->
+<!--		<template #header>-->
+<!--			Notas de Credito-->
+<!--		</template>-->
+<!--		<template #body>-->
+<!--			<ReturnForm-->
+<!--				class="w-160 mx-auto"-->
+<!--				@closeFormReturn="showFormReturn = false"-->
+<!--				:error="page.props.errors.general"/>-->
+<!--		</template>-->
 
-	</FloatBox>
+<!--	</FloatBox>-->
 </template>
