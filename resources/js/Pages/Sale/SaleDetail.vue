@@ -8,15 +8,15 @@ import {
 	faTableCellsColumnLock,
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
-import {productFullI, productI} from "@/Interfaces/ProductInterface";
-import {inject, ref} from "vue";
-import {infoSaleI, saleDataI} from "@/Interfaces/SaleInterface";
+import {ProductBaseI, productFullI} from "@/Interfaces/ProductInterface";
+import {computed, inject, ref} from "vue";
+import {infoSaleI, saleDataI, SaleTypeEnumI} from "@/Interfaces/SaleInterface";
 import {saleKey} from "@/utils/keys";
 import {PaginationI} from "@/Interfaces/GlobalInterface";
 import {getSequenceType} from "@/Global/Helpers";
 import {useRoute} from "ziggy-js";
-import {FloatLabel, InputText, Select, ToggleButton} from "primevue";
-
+import {FloatLabel, InputText, Select, ToggleButton, Dialog} from "primevue";
+import FShowProduct from "@/Pages/Products/FShowProduct.vue";
 
 
 const route = useRoute();
@@ -26,7 +26,8 @@ const propsW = defineProps<{
 	invoiceType: invoiceTypeI[],
 	refund?: boolean,
 	saleOpen: PaginationI<saleDataI>,
-	products: productI,
+	products: PaginationI<ProductBaseI>,
+    saleTypeEnum: SaleTypeEnumI
 }>()
 
 
@@ -38,10 +39,23 @@ const emit = defineEmits<{
 
 const form = inject(saleKey)!
 
-const showProduct = ref(false)
+const showProducts = ref(false)
 const showSaleOpen = ref(false)
 const showReturn = ref(false)
 const showFormReturn = ref(false)
+
+
+
+
+const getSaleType = computed(()=>{
+    return Object.entries(propsW.saleTypeEnum).map(([key, value]) => {
+        return {
+            key: key,
+            value: value,
+            hidden: key === "Devolucion"
+        }
+    });
+})
 
 /**
  * Obtener los datos de productos
@@ -54,7 +68,7 @@ function getData(item: productFullI) {
 	// Verificar si el producto exite
 	if (info?.product_id === item.id) {
 		info.stock += 1.00;
-		showProduct.value = false;
+        showProducts.value = false;
 
 	} else {
 
@@ -76,7 +90,7 @@ function getData(item: productFullI) {
 		// });
 
 		//Cerrar la ventana
-		showProduct.value = false;
+        showProducts.value = false;
 	}
 
 	// //Conseguir el index para poder realizar el cálculo
@@ -215,7 +229,7 @@ defineExpose({
 
 				<FontAwesomeIcon
 					title="Productos"
-					@click="showProduct = !showProduct"
+					@click="showProducts = !showProducts"
 					class="icon-efect text-cyan-400 text-3xl" :icon="faBoxOpen"/>
 
 				<FontAwesomeIcon
@@ -244,55 +258,31 @@ defineExpose({
 
 
 			<!--Tipo de factura-->
-			<div class="ml-2">
+			<div class="ml-2 w-40">
                 <FloatLabel variant="on" >
-                    <Select />
+                    <Select fluid v-model="form.type" option-value="value"  option-label="key" :option-disabled="(data) => data.hidden" :options="getSaleType" />
                     <label for="type_sale">Tipo Venta</label>
                 </FloatLabel>
-<!--				<InputLabel for="type" value="Tipo de Venta"/>-->
-<!--				<select-->
-<!--					class="inputGeneral py-0"-->
-<!--					v-model="form.type">-->
-<!--					<option-->
-<!--						:disabled="propsW.refund"-->
-<!--						value="ventas">CONTADO-->
-<!--					</option>-->
-<!--					<option-->
-<!--						:disabled="propsW.refund"-->
-<!--						value="cotizacion">CREDITO-->
-<!--					</option>-->
-<!--					<option-->
-<!--						:disabled="!propsW.refund"-->
-<!--						value="devolucion">Devolucion-->
-<!--					</option>-->
-<!--				</select>-->
 			</div>
 			<!--Tipo de cuenta si abierta o cerrada-->
 			<div
 				v-if="!propsW.refund"
 				class="ml-2">
-                    <ToggleButton on-label="Cuenta Cerrado" off-label="Cuenta Abieto" />
+                    <ToggleButton v-model="form.close_table"  on-label="Cuenta Cerrado" off-label="Cuenta Abieto" />
 
 			</div>
 		</div>
 
 	</div>
 
-	<!-- Ventana de productos-->
-<!--	<FloatBox-->
-<!--		v-model:show="showProduct">-->
-<!--		<template #header>-->
-<!--			Productos-->
-<!--		</template>-->
-<!--		<template #body>-->
-<!--			<FShowClient-->
-<!--				:stock="true"-->
-<!--				@select="getData"-->
-<!--				class=" fondo  rounded-md px-10 py-5"-->
-<!--				:products="propsW.products"/>-->
-<!--		</template>-->
-
-<!--	</FloatBox>-->
+    <Dialog
+        class="w-300"
+        v-model:visible="showProducts"
+        modal>
+        <FShowProduct
+            :isProduct="false"
+            :products="propsW.products"/>
+    </Dialog>
 
 
 	<!-- Vetana de las ordenes abierta -->

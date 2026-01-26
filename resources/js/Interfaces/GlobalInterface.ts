@@ -68,7 +68,7 @@ export interface PaginationI<T> {
     prev_page_url: null | string
     to: number
     total: number
-    data?: T[]
+    data: T[]
 }
 
 export interface PaymentTypeEnumI {

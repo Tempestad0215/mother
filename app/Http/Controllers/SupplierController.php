@@ -180,7 +180,7 @@ class SupplierController extends Controller implements HasMiddleware
      * @param Request $request
      * @return mixed
      */
-    private function get(Request $request):mixed
+    public function get(Request $request):mixed
     {
 
         //Tomar los datos de busqueda
@@ -191,7 +191,7 @@ class SupplierController extends Controller implements HasMiddleware
 
         //Devolver los datos paginado a 15
         $suppliers = Supplier::query()
-            ->where($field,'LIKE','%'.$search.'%')
+            ->where($field,'ilike','%'.$search.'%')
             ->where('status',true)
             ->latest('created_at')
             ->simplePaginate($per_page);

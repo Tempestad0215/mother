@@ -1,5 +1,11 @@
 
 
+export interface SaleTypeEnumI{
+    venta: string
+    cotizacion: string
+    devolucion: string
+}
+
 export interface infoSaleI {
     transID?: number;
     amount: number;

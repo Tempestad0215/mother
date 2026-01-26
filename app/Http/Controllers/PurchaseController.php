@@ -129,6 +129,7 @@ class PurchaseController extends Controller
     }
 
 
+
     public function approve(Purchase $purchase)
     {
         $purchase->status = PurchaseStatusEnum::Pendiente;

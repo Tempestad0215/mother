@@ -38,7 +38,7 @@ class CreditNoteHelper
             $type = $request->get('type');
 
             //Verificar si existe para aumentar el contador de la nota de credito
-            if ($type == SaleTypeEnum::DEVOLUCION->value)
+            if ($type == SaleTypeEnum::Devolucion->value)
             {
                 //Crear el aumento de los comprobante
                 SequenceHelper::incrementSequence(SequenceSaleTypeEnum::B04);
@@ -58,7 +58,7 @@ class CreditNoteHelper
                 'tax' => $request->get('tax'),
                 'sub_total' => $request->get('sub_total'),
                 'amount' => $request->get('amount'),
-                'type' => SaleTypeEnum::DEVOLUCION,
+                'type' => SaleTypeEnum::Devolucion,
                 'n_available' => $request->get('amount'),
                 'comment' => $request->get('comment'),
             ]);

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppLayout from "@layout/AppLayout.vue";
-import { ref} from "vue";
-import {DataTable, Column, Dialog, Card, Breadcrumb, Button, Fieldset, Tag, useConfirm, useToast} from "primevue";
+import {ref} from "vue";
+import {Breadcrumb, Button, Card, Column, DataTable, Dialog, Fieldset, Tag, useConfirm, useToast} from "primevue";
 import {PurchaseItemI, PurchaseSupplierI} from "@/Interfaces/PurchaseInterface";
 import {purchaseBreadCrumb, PurchaseStatusSeverity} from "@/Helpers/PurchaseHelper";
 import {getMoney} from "@/Global/Helpers";
@@ -145,8 +145,8 @@ const cancelOrder = (event:Event) => {
                     <Column header="Item #" :field="(data:PurchaseSupplierI) => `${data.items.length}`"  />
                     <Column header="Descuento" :field="(data:PurchaseSupplierI) => `${getMoney(data.discount)}`"  />
                     <Column header="Itbis" :field="(data:PurchaseSupplierI) => `${getMoney(data.tax)}`"  />
-                    <Column header="Sub Total" :field="(data:PurchaseSupplierI) => `${getMoney(data.tax)}`" />
-                    <Column header="Total" :field="(data:PurchaseSupplierI) => `${getMoney(data.tax)}`"   />
+                    <Column header="Sub Total" :field="(data:PurchaseSupplierI) => `${getMoney(data.sub_total)}`" />
+                    <Column header="Total" :field="(data:PurchaseSupplierI) => `${getMoney(data.amount)}`"   />
                     <Column header="Estado"  >
                         <template #body="{data}:{data:PurchaseSupplierI}">
                             <Tag :severity="getSeverityTag(data.status)" :value="data.status" />
@@ -155,7 +155,9 @@ const cancelOrder = (event:Event) => {
                     <Column header="Act">
                         <template #body="{data}: {data: PurchaseSupplierI}">
                             <div class="space-x-3">
-                                <Button title="Entrada" severity="info" outlined @click="selectPurchase(data)" icon="pi pi-cart-arrow-down" />
+                                <Button
+                                    v-if="data.status !== PurchaseStatusEnum.Borrador"
+                                    title="Entrada" severity="info" outlined @click="selectPurchase(data)" icon="pi pi-cart-arrow-down" />
                                 <Button title="Ver Detalle" @click="selectPurchase(data)" icon="pi pi-eye" />
                             </div>
 
@@ -206,11 +208,12 @@ const cancelOrder = (event:Event) => {
                                 <p>Descuento  : {{getMoney(purchaseSelected?.discount)}}</p>
                                 <p>Itbis  : {{getMoney(purchaseSelected?.tax)}}</p>
                                 <p>Sub Total  : {{getMoney(purchaseSelected?.sub_total)}}</p>
-                                <p class="bg-blue-800 rounded-md px-6 py-1" >Total  : {{getMoney(purchaseSelected?.amount)}}</p>
+                                <p class="text-white bg-blue-800 rounded-md px-6 py-1" >Total  : {{getMoney(purchaseSelected?.amount)}}</p>
                             </div>
                             <div class="clear-both"></div>
                             <div class="text-right mt-5 space-x-3">
-                                <Button @click="cancelOrder($event)" severity="warn" outlined label="Cancelar" />
+                                <Button
+                                    @click="cancelOrder($event)" severity="warn" outlined label="Cancelar" />
                                 <Button
                                     v-if="purchaseSelected?.status === PurchaseStatusEnum.Borrador"
                                     @click="approveOrder($event)" label="Aprobar" />

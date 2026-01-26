@@ -3,7 +3,7 @@ import AppLayout from '@layout/AppLayout.vue';
 import { Head} from '@inertiajs/vue3';
 import { productI } from '@/Interfaces/ProductInterface';
 import { PropType } from 'vue';
-import FShow from "@/Pages/Products/FShow.vue";
+import FShowProduct from "@/Pages/Products/FShowProduct.vue";
 import TabLink from "@components/TabLink.vue";
 import {useRoute} from "ziggy-js";
 
@@ -45,7 +45,7 @@ const props = defineProps({
 <!--        Contenido de la ventana-->
         <div
             class=" fondo rounded-md  p-5">
-               <FShow
+               <FShowProduct
                    class=""
                     :products="props.products"/>
 

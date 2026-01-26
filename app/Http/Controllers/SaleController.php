@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\SaleTypeEnum;
 use App\Helpers\ClientHelper;
 use App\Helpers\ProductHelper;
 use App\Helpers\SaleHelper;
@@ -51,6 +52,8 @@ class SaleController extends Controller
             'saleOpen' => $dataSale['saleOpen'],
             'invoiceType' => config('appconfig.invoiceType'),
             'lastRecord' => $lastRecord?->id,
+            'saleTypeEnum' => collect(SaleTypeEnum::cases())
+                ->mapWithKeys(fn(SaleTypeEnum $item) => [$item->name => $item->value]),
         ]);
     }
 
@@ -174,10 +177,9 @@ class SaleController extends Controller
     {
         $saleHelper = new SaleHelper();
         $clientHelper = new ClientHelper();
-        $productHelper = new ProductHelper();
 
         //Obtener los datos
-        $products = $productHelper->get($request);
+        $products = ProductHelper::get($request);
         $clients = $clientHelper->get($request);
         $saleOpen = $saleHelper->getSaleOpen($request);
 

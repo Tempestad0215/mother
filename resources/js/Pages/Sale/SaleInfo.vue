@@ -11,6 +11,8 @@ import axios from "axios";
 import {sequenceDataI} from "@/Interfaces/SettingInterface";
 import {useRoute} from "ziggy-js";
 import {FloatLabel, InputText, AutoComplete, InputGroup, InputGroupAddon} from "primevue";
+import {SaleTypeEnumI} from "@/Interfaces/SaleInterface";
+import {keys} from "lodash";
 
 
 const route = useRoute();
@@ -21,6 +23,7 @@ const page = usePage()
 const propsW = defineProps<{
 	invoiceType: string;
 	clients: PaginationI<clientBaseI>,
+
 }>()
 
 
@@ -29,18 +32,12 @@ const emit = defineEmits<{
 	(e:'getSequenceType', type:string):void
 }>()
 
-const state = reactive({
-	error: {
-		key:"" as string,
-		value: "" as string
-	}
-})
 
 const form = inject(saleKey)!
 
 
 const showClient = ref<boolean>(false)
-const showClientRnc = ref<boolean>(false)
+// const showClientRnc = ref<boolean>(false)
 
 const sequenceData = defineModel<sequenceDataI | null>('sequenceData',{
 	default: null,
@@ -52,26 +49,28 @@ const hasRnc = computed(()=>{
 })
 
 
-function getClient(item:clientBaseI){
-	//Pasar los datos al formulario
-	form.client_name = item.name;
-	form.client_id = item.id;
-	form.client_rnc = item.type_rnc;
 
 
-	// Si es diferente a b02, colocar el comprobante
-	if (form.invoice_type !== "B02")
-	{
-		form.client_rnc = item.personal_id || "";
-		showClientRnc.value = true;
-	}
-	// Obtener la secuencia del comprobante
-	getSequence(item.type_rnc);
-
-	//
-	showClient.value = false;
-
-}
+// function getClient(item:clientBaseI){
+// 	//Pasar los datos al formulario
+// 	form.client_name = item.name;
+// 	form.client_id = item.id;
+// 	form.client_rnc = item.type_rnc;
+//
+//
+// 	// Si es diferente a b02, colocar el comprobante
+// 	if (form.invoice_type !== "B02")
+// 	{
+// 		form.client_rnc = item.personal_id || "";
+// 		showClientRnc.value = true;
+// 	}
+// 	// Obtener la secuencia del comprobante
+// 	getSequence(item.type_rnc);
+//
+// 	//
+// 	showClient.value = false;
+//
+// }
 
 /*
  * Obtener los datos de la sequencia
@@ -163,7 +162,7 @@ defineExpose({
 
 <template>
 	<div class="grid grid-cols-3 gap-2">
-		<div class="">
+        <div class="">
 			<!--                                Botones para buscar datos-->
 			<div class="space-x-5 items-center w-full">
 				<div class="relative">

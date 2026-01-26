@@ -6,7 +6,7 @@ import {productI} from "@/Interfaces/ProductInterface";
 import {printPdf} from "@/Global/Helpers";
 import {clientBaseI} from "@/Interfaces/ClientInterface";
 import axios from "axios";
-import {CreateSaleI, creditNotesSaleI, infoSaleI, saleDataI} from "@/Interfaces/SaleInterface";
+import {CreateSaleI, creditNotesSaleI, infoSaleI, saleDataI, SaleTypeEnumI} from "@/Interfaces/SaleInterface";
 import {invoiceTypeI} from "@/Interfaces/SettingInterface";
 import {PaginationI} from "@/Interfaces/GlobalInterface";
 import SaleInfo from "@/Pages/Sale/SaleInfo.vue";
@@ -35,6 +35,7 @@ const propsW = defineProps<{
 	saleInfo?: saleDataI,
 	refund?: boolean,
 	pdfUuid?: string,
+    saleTypeEnum: SaleTypeEnumI
 }>();
 
 /*
@@ -75,7 +76,7 @@ const form = useForm<CreateSaleI>({
 	received: 0,
 	returned: 0,
 	general: "",
-	type: "ventas",
+	type: "Venta",
 	type_payment: "CONTADO",
 	update: false,
 	sequence: "",
@@ -255,12 +256,14 @@ provide(saleKey, form)
                     class="">
                     <div>
                         <SaleInfo
+
                             ref="saleInfoRef"
                             :clients="propsW.clients"
                             @getSequenceType="(type:string) => saleDetailRef?.getSequenceType(type)"
                             :invoice-type="form.invoice_type"/>
 
                         <SaleDetail
+                            :saleTypeEnum="propsW.saleTypeEnum"
                             ref="saleDetailRef"
                             :products="propsW.products"
                             :sale-open="propsW.saleOpen"

@@ -12,7 +12,7 @@ import {entryBaseI, entryProductI} from "@/Interfaces/EntryTransInterface";
 import {PaginationI} from "@/Interfaces/GlobalInterface";
 import InputLabel from "@components/InputLabel.vue";
 import FloatBox from "@components/FloatBox.vue";
-import FShow from "@/Pages/Products/FShow.vue";
+import FShowProduct from "@/Pages/Products/FShowProduct.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {faMagnifyingGlass} from "@fortawesome/free-solid-svg-icons";
 import {useRoute} from "ziggy-js";
@@ -220,7 +220,7 @@ const getProductTable = (item:ProductBaseI) => {
 		    Productos`
 	    </template>
 	    <template #body>
-		    <FShow
+		    <FShowProduct
 			    class="fondo p-5 w-[70rem]"
 			    @select="getProductTable"
 			    :products="propsW.productTable"/>

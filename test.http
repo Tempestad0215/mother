@@ -1,0 +1,40 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=PhpStorm
+
+###
+GET http://localhost:8042/studies
+Authorization: Basic orthanc orthanc
+
+###
+GET http://localhost:8042/studies/011e816d-6fdddaf6-1840c971-bd902e4a-b1af2de9/attachments
+Authorization: Basic orthanc orthanc
+Content-Type: application/json
+
+
+###
+GET http://localhost:8042/patients?expand
+Authorization: Basic orthanc orthanc
+
+###
+GET http://localhost:8042/patients/20f417ca-e362a979-db6480e2-e38a47b7-039d249a?expand
+Authorization: Basic orthanc orthanc
+Content-Type: application/json
+
+###
+GET http://localhost:8042/studies/d82c1dfb-45021ef6-0c37a810-061987fb-1df16795
+Authorization: Basic orthanc orthanc
+Content-Type: application/json
+
+###
+GET http://localhost:8042/series/0efcbb0c-ee3764e8-1b6cc23b-1888b6ff-ea795a4c
+Authorization: Basic orthanc orthanc
+Content-Type: application/json
+
+
+###
+GET http://localhost:8042/instances/024696d4-91e14dc9-e9f21552-bd2466d7-77faeccf/preview
+Authorization: Basic orthanc orthanc
+Content-Type: image/jpeg
+
+

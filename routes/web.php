@@ -9,6 +9,7 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\ReceivingController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReportSaleController;
 use App\Http\Controllers\SequenceController;
@@ -314,6 +315,13 @@ Route::middleware([
             Route::patch('/{purchase}/approve', 'approve')->name('approve');
         });
 
+
+    Route::controller(ReceivingController::class)
+        ->prefix('purchase/receiving')
+        ->name('purchase.receiving.')
+        ->group(function () {
+            Route::get('/', 'index')->name('index');
+        });
     /*
      * cuentas contables modification y demas
      */

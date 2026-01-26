@@ -7,8 +7,10 @@ use App\Models\Inventory;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use LaravelIdea\Helper\App\Models\_IH_Product_C;
+use Throwable;
 
 
 class ProductHelper
@@ -30,7 +32,7 @@ class ProductHelper
      * @param float $quantity
      * @param float $cost
      * @return float
-     * @throws \Throwable
+     * @throws Throwable
      */
     public static function getAvgCost(Product $product, float $quantity, float $cost):float
     {
@@ -51,30 +53,39 @@ class ProductHelper
 
     /**
      * @param Request $request
-     * @return Paginator|_IH_Product_C
+     * @return _IH_Product_C|LengthAwarePaginator|Product[]
      */
-    public function get(Request $request):Paginator|_IH_Product_C
-    {
-        //Obtuser los datos de búsqueda
-        $search = $request->get('search','');
-        $perPage = $request->get('perPage',15);
-        $stock = $request->get('stock',false);
 
-        //Pasar los datos a la variable
-        $query = Product::where('status', true)
-            ->where(function ($query) use (&$search) {
-                $query->where('name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('description', 'LIKE', '%' . $search . '%')
-                    ->orWhere('sku', 'LIKE', '%' . $search . '%');
+    public static function get(Request $request): _IH_Product_C|LengthAwarePaginator|array
+    {
+        $search  = trim((string) $request->get('search', ''));
+        $perPage = (int) $request->get('perPage', 15);
+        $stock   = $request->boolean('stock'); // true/false real
+
+        $query = Product::query()
+            ->where('status', true)
+            ->when($search !== '', function (Builder $q) use ($search) {
+                $q->where(function (Builder $qq) use ($search) {
+                    $qq->where('name', 'LIKE', "%{$search}%")
+                        ->orWhere('description', 'LIKE', "%{$search}%")
+                        ->orWhere('sku', 'LIKE', "%{$search}%");
+                });
             })
-            ->where(function (Builder $builder) {
-                $builder->where('is_service', 1)
-                    ->orWhere(function (Builder $query) {
-                        $query->where('is_service', 0)
-                        ->where('stock', '>', 0);
-                    });
+            ->when($stock, function (Builder $q) {
+                // si stock=true: excluir servicios y exigir stock > 0
+                $q->where('is_service', 0)->where('stock', '>', 0);
+            }, function (Builder $q) {
+                // si stock=false: permitir servicios o productos con stock
+                $q->where(function (Builder $builder) {
+                    $builder->where('is_service', 1)
+                        ->orWhere(function (Builder $qq) {
+                            $qq->where('is_service', 0)
+                                ->where('stock', '>', 0);
+                        });
+                });
             });
-        //Devolver los resultado
-        return $query->simplePaginate($perPage);
+
+        return $query->paginate($perPage);
     }
+
 }

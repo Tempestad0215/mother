@@ -24,6 +24,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string updated_at
  * @property string deleted_at
  *
+ *
+ * @property-read Supplier $supplier
+ * @property-read PurchaseItem $items
  */
 class Purchase extends Model
 {
