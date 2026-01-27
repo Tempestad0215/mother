@@ -27,7 +27,7 @@ export interface PurchaseBaseI{
     code: string
     supplier_id: number
     user_id: number
-    doc_date: string
+    doc_date: string | Date
     amount: number
     tax:number
     sub_total: number
@@ -37,10 +37,13 @@ export interface PurchaseBaseI{
 }
 
 
+export interface PurchaseItemFormI extends  PurchaseItemI {
+    isReadOnly: boolean
+}
 
 export interface PurchaseFormI extends PurchaseBaseI{
     supplier_name: string
-    items: PurchaseItemI[]
+    items: PurchaseItemFormI[]
 }
 
 

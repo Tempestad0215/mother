@@ -28,13 +28,28 @@ class ReceivingController extends Controller
             $purchaseAvailable = $this->getPurchaseAvailable((int)$supplierId);
         }
 
+        $purchaseStatus = collect(PurchaseStatusEnum::cases())
+            ->filter(fn(PurchaseStatusEnum $item) => $item !== PurchaseStatusEnum::Borrador && $item !== PurchaseStatusEnum::Cancelada && $item !== PurchaseStatusEnum::Pendiente)
+            ->map(fn(PurchaseStatusEnum $item) => (object)[
+                'name' => $item->name,
+                'value' => $item->value,
+            ])
+            ->values()
+            ->all();
 
 
         return Inertia::render('Purchase/Receiving', [
             'purchases' => $this->getPurchaseApprove($request),
             'suppliers' => $supplier->get($request),
-            'purchaseAvailable' => $purchaseAvailable
+            'purchaseAvailable' => $purchaseAvailable,
+            'purchaseStatus' => $purchaseStatus
         ]);
+    }
+
+
+    public function store()
+    {
+
     }
 
 

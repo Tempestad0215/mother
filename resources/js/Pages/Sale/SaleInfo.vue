@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import TextInput from "@components/TextInput.vue";
-import {computed, inject, reactive, ref} from "vue";
+import {computed, inject, ref} from "vue";
 import {PaginationI} from "@/Interfaces/GlobalInterface";
 import {clientBaseI} from "@/Interfaces/ClientInterface";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
@@ -11,8 +11,6 @@ import axios from "axios";
 import {sequenceDataI} from "@/Interfaces/SettingInterface";
 import {useRoute} from "ziggy-js";
 import {FloatLabel, InputText, AutoComplete, InputGroup, InputGroupAddon} from "primevue";
-import {SaleTypeEnumI} from "@/Interfaces/SaleInterface";
-import {keys} from "lodash";
 
 
 const route = useRoute();
