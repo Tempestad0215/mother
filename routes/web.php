@@ -176,6 +176,7 @@ Route::middleware([
             Route::get('/edit/{product}', 'edit')->name('edit');
             Route::get('/get-label/{code}', 'createLabel')->name('get-label');
             Route::get('/get', 'get')->name('get');
+            Route::get('/in', 'in')->name('in');
             Route::get('/get/json', 'getJson')->name('get.json');
             Route::get('/get/code', 'getByCode')->name('get.code');
             Route::patch('/update/{product}', 'update')->name('update');

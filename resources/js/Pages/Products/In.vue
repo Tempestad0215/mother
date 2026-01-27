@@ -1,8 +1,11 @@
 <script setup lang="ts">
 
 
-  defineProps<{}>()
+import AppLayout from "@layout/AppLayout.vue";
 </script>
 
 <template>
+    <AppLayout>
+
+    </AppLayout>
 </template>

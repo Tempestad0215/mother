@@ -8,7 +8,7 @@ export const productBreadCrumb:MenuItem[] = [
     },
     {
         label: 'Entrada',
-        url: route('product.create'),
+        url: route('product.in'),
         icon: 'pi pi-bottle'
     },
     {

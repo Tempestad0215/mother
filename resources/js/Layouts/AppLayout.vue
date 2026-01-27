@@ -44,12 +44,12 @@ const menuItems = reactive<MenuItemI[]>([
         activePath: "/supplier",
         icon: "pi pi-truck",
     },
-    {
-        label: "Compra",
-        url: route("purchase.index"),
-        activePath: "/product",
-        icon: "pi pi-shopping-cart",
-    },
+    // {
+    //     label: "Compra",
+    //     url: route("purchase.index"),
+    //     activePath: "/product",
+    //     icon: "pi pi-shopping-cart",
+    // },
     {
         label: "Productos",
         url: route("product.create"),
