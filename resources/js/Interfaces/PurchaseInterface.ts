@@ -16,8 +16,13 @@ export interface purchaseInfoI {
     tax: number;
 }
 
+interface timeStampsI {
+    created_at: string;
+    updated_at: string;
+    deleted_at: string | null;
+}
 
-export interface PurchaseSupplierI {
+export interface PurchaseBaseI{
     id: number
     code: string
     supplier_id: number
@@ -29,9 +34,17 @@ export interface PurchaseSupplierI {
     discount: number
     status: PurchaseStatusEnum
     comment: string | null
-    created_at: string
-    updated_at: string
-    deleted_at: string | null
+}
+
+
+
+export interface PurchaseFormI extends PurchaseBaseI{
+    supplier_name: string
+    items: PurchaseItemI[]
+}
+
+
+export interface PurchaseSupplierI extends PurchaseBaseI, timeStampsI{
     supplier: SupplierI
     items: PurchaseItemI[]
 }
@@ -47,6 +60,7 @@ export interface PurchaseItemI {
     product_id: number
     product_name: string
     tax_rate: number
+    tax_amount: number
     purchase_id: number
     quantity: number
     tax_id: number

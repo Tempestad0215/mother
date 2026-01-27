@@ -30,6 +30,10 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property string created_at
  * @property string updated_at
  * @property string deleted_at
+ *
+ *
+ * @property-read Purchase[] purchase
+ * @property-read Product[] product
 */
 
 class Supplier extends Model implements Auditable

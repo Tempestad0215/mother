@@ -299,6 +299,8 @@ Route::middleware([
             Route::put('/restore/{currency}', 'restore')->name('restore');
         });
 
+
+
     /*
      * Compra
      */
@@ -315,13 +317,13 @@ Route::middleware([
             Route::patch('/{purchase}/approve', 'approve')->name('approve');
         });
 
-
     Route::controller(ReceivingController::class)
         ->prefix('purchase/receiving')
         ->name('purchase.receiving.')
         ->group(function () {
             Route::get('/', 'index')->name('index');
         });
+
     /*
      * cuentas contables modification y demas
      */

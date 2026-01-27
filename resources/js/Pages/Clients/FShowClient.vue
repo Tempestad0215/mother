@@ -5,10 +5,12 @@ import {router, useForm, usePage} from "@inertiajs/vue3";
 import {PaginationI} from "@/Interfaces/GlobalInterface";
 import {onMounted, ref} from "vue";
 import {useRoute} from "ziggy-js";
-import {Button, Column, DataTable, InputGroup, InputGroupAddon, InputText, Card} from "primevue";
+import {Button, Column, DataTable, InputGroup, InputGroupAddon, InputText, Card, useToast, useConfirm} from "primevue";
 
 
 const route = useRoute();
+const toast = useToast();
+const confirm = useConfirm();
 /**
  * Datos de la ventana
  */

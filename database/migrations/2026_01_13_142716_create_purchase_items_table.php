@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->decimal('cost',19,6);
             $table->decimal('discount',19,6)->default(0);
             $table->decimal('amount',19,6);
+            $table->decimal('tax',19,6);
             $table->timestamps();
             $table->softDeletes();
         });

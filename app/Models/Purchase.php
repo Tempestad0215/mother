@@ -26,7 +26,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  *
  * @property-read Supplier $supplier
- * @property-read PurchaseItem $items
+ * @property-read PurchaseItem[] $items
  */
 class Purchase extends Model
 {

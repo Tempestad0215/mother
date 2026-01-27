@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\PurchaseStatusEnum;
 use App\Http\Resources\PurchaseSupplierResource;
 use App\Models\Purchase;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -12,12 +13,27 @@ class ReceivingController extends Controller
 {
     public function index(Request $request)
     {
+
+        $validate = $request->validate([
+            'supplier' => ['nullable','numeric','exists:suppliers,id']
+        ]);
+
         $supplier = new SupplierController();
+        $purchaseAvailable = null;
+        $supplierId = $request->get('supplier');
+
+
+        if (!$supplierId !== null)
+        {
+            $purchaseAvailable = $this->getPurchaseAvailable((int)$supplierId);
+        }
+
 
 
         return Inertia::render('Purchase/Receiving', [
             'purchases' => $this->getPurchaseApprove($request),
             'suppliers' => $supplier->get($request),
+            'purchaseAvailable' => $purchaseAvailable
         ]);
     }
 
@@ -45,5 +61,18 @@ class ReceivingController extends Controller
 
 
         return PurchaseSupplierResource::collection($purchases);
+    }
+
+
+    public function getPurchaseAvailable(int  $supplierId)
+    {
+        $supplier = Purchase::query()
+            ->with(['supplier','items.product'])
+            ->whereHas('supplier', function ($q) use ($supplierId) {
+                $q->where('id', $supplierId);
+            })->where('status', PurchaseStatusEnum::Pendiente)->get();
+
+        return PurchaseSupplierResource::collection($supplier);
+
     }
 }

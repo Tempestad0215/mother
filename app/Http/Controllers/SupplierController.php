@@ -159,39 +159,23 @@ class SupplierController extends Controller implements HasMiddleware
     }
 
 
-    // Obtener los suplidores por empreesa
-    public function getJson(Request $request)
-    {
-        //Tomar los datos de busquead
-        $search = $request->get('search');
-
-        //tomar los datos limitado a 10
-         $data = Supplier::search($search)
-             ->where('status',true)
-             ->take(10)
-             ->get();
-
-         //Devolver un json
-        return response()->json($data);
-
-    }
-
     /**
      * @param Request $request
      * @return mixed
      */
-    public function get(Request $request):mixed
+    public static function get(Request $request):mixed
     {
 
         //Tomar los datos de busqueda
         $search = trim($request->get('search'));
         $per_page = $request->get('per_page', 30);
-        $field = $request->get('field','company_name');
 
 
         //Devolver los datos paginado a 15
         $suppliers = Supplier::query()
-            ->where($field,'ilike','%'.$search.'%')
+            ->where('company_name','ilike','%'.$search.'%')
+            ->orWhere('contact','ilike','%'.$search.'%')
+            ->orWhere('email','ilike','%'.$search.'%')
             ->where('status',true)
             ->latest('created_at')
             ->simplePaginate($per_page);
@@ -199,6 +183,25 @@ class SupplierController extends Controller implements HasMiddleware
 
         return SupplierResource::collection($suppliers)->response()->getData(true);
 
+    }
+
+
+    public static function getJson(Request $request)
+    {
+        //Tomar los datos de busqueda
+        $search = trim($request->get('search', ''));
+
+
+        //Devolver los datos paginado a 15
+        $suppliers = Supplier::query()
+            ->where('company_name','ilike','%'.$search.'%')
+            ->orWhere('contact','ilike','%'.$search.'%')
+            ->orWhere('email','ilike','%'.$search.'%')
+            ->where('status',true)
+            ->latest('created_at')
+            ->take(15);
+
+        return response()->json($suppliers->get());
     }
 
 
