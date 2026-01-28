@@ -121,8 +121,6 @@ class PurchaseController extends Controller
 
     public function show(PaginationRequest $request)
     {
-
-
         return Inertia::render('Purchase/TablePurchase',[
             'purchases' =>  PurchaseSupplierResource::collection(Purchase::with(['supplier','items'])->get())
         ]);

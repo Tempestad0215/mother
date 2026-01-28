@@ -323,6 +323,7 @@ Route::middleware([
         ->name('purchase.receiving.')
         ->group(function () {
             Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
         });
 
     /*

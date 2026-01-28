@@ -15,7 +15,7 @@ import {
     Select,
     useToast,
     Textarea,
-    InputNumber, useConfirm
+    InputNumber, useConfirm, Breadcrumb
 } from "primevue";
 import AppLayout from "@layout/AppLayout.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
@@ -34,6 +34,7 @@ import {router, useForm} from "@inertiajs/vue3";
 import {PurchaseStatusEnum} from "@/Enums/PurchaseEnum";
 import {getMoney} from "@/Global/Helpers";
 import {PreciseCalculator} from "@/utils/Decimal";
+import {purchaseBreadCrumb} from "@/Helpers/PurchaseHelper";
 
 
 const toast = useToast()
@@ -200,7 +201,23 @@ const calculateAmount = (index:number) => {
 }
 
 const getDate = (date: Date) => {
-    form.doc_date = date.toLocaleDateString().split('T')[0];
+    form.doc_date = date.toISOString()
+}
+
+const submit = () => {
+    form.post(route('purchase.receiving.store'),{
+        onSuccess: () => {
+            console.log("Esta es nueva")
+        },
+        onError: (err) =>{
+            toast.add({
+                severity: "error",
+                summary: "Error",
+                detail: `Error en Esta Peticion, Detalle : ${Object.values(err)[0]}`,
+                life: 5000
+            })
+        }
+    })
 }
 
 </script>
@@ -209,10 +226,13 @@ const getDate = (date: Date) => {
     <AppLayout>
         <Card>
             <template #title>
-                <h3>Recepcion de Marcancia</h3>
+                <h3 class="text-center text-2xl font-bold">Recepcion de Marcancia</h3>
+                <div>
+                    <Breadcrumb :model="purchaseBreadCrumb" />
+                </div>
             </template>
             <template #content>
-                <form>
+                <form @submit.prevent="submit" >
                     <div class="flex items-center justify-between">
                         <div>
                             <InputGroup>
@@ -305,7 +325,7 @@ const getDate = (date: Date) => {
                     </DataTable>
                     <div class="mt-3 space-x-3 text-right">
                         <Button severity="warn" outlined  icon="pi pi-exclamation-triangle"  label="Cancelar" />
-                        <Button icon="pi pi-send"  label="Registrar" />
+                        <Button @click="submit" :disabled="form.processing" icon="pi pi-send"  label="Registrar" />
                     </div>
                 </form>
             </template>

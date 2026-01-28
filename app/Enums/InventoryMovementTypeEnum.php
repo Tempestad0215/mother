@@ -10,4 +10,5 @@ enum InventoryMovementTypeEnum:string
     case Transferencia = 'Transferencia';
     case Venta = 'Venta';
     case Devolucion = 'Devolucion';
+    case Recepcion = 'Recepcion';
 }

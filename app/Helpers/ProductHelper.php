@@ -2,13 +2,12 @@
 
 namespace App\Helpers;
 
-use App\Enums\ProductTypeEnum;
 use App\Models\Inventory;
 use App\Models\Product;
+use App\Models\Warehouse;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Pagination\Paginator;
 use LaravelIdea\Helper\App\Models\_IH_Product_C;
 use Throwable;
 
@@ -24,6 +23,98 @@ class ProductHelper
     {
         $product->stock = $request->get('stock');
         $product->save();
+    }
+
+
+
+    /**
+     * Incrementa stock y registra un movimiento en Inventory.
+     *
+     * @param Product $product
+     * @param Warehouse $warehouse
+     * @param float $quantity
+     * @param float $cost
+     * @return void
+     * @throws Throwable
+     */
+    public static function incrementStock(Product $product, Warehouse $warehouse, float $quantity, float $cost): void
+    {
+        if ($quantity <= 0) {
+            return;
+        }
+
+        \DB::transaction(function () use ($product, $warehouse, $quantity, $cost) {
+            $oldStock = Inventory::where('product_id', $product->id)
+                ->latest('created_at')
+                ->first();
+
+            if ($oldStock) {
+                $newAvg = self::getAvgCost($product, $quantity, $cost);
+                $newOnHand = $oldStock->qty_on_hand + $quantity;
+            } else {
+                $newAvg = $cost;
+                $newOnHand = $quantity;
+            }
+
+            Inventory::updateOrInsert(
+                ['product_id' => $product->id, 'warehouse_id' => $warehouse->id ?? null],
+                [
+                'product_id'   => $product->id,
+                'warehouse_id' => $warehouse->id ?? null,
+                'qty_on_hand'  => $newOnHand,
+                'avg_cost'     => $newAvg,
+            ]);
+
+            $product->stock = ($product->stock ?? 0) + $quantity;
+            $product->save();
+        });
+    }
+
+    /**
+     * Disminuye stock y registra un movimiento en Inventory.
+     *
+     * @param Product $product
+     * @param Warehouse $warehouse
+     * @param float $quantity
+     * @return void
+     * @throws \RuntimeException|Throwable
+     */
+    public static function decrementStock(Product $product, Warehouse $warehouse, float $quantity): void
+    {
+        if ($quantity <= 0) {
+            return;
+        }
+
+        \DB::transaction(function () use ($product, $warehouse, $quantity) {
+            $oldStock = Inventory::where('product_id', $product->id)
+                ->latest('created_at')
+                ->first();
+
+            if (! $oldStock || ($oldStock->qty_on_hand ?? 0) < $quantity) {
+                throw new \RuntimeException('Stock insuficiente para el producto id=' . $product->id);
+            }
+
+            $newOnHand = $oldStock->qty_on_hand - $quantity;
+            $avg = $oldStock->avg_cost ?? 0;
+
+
+            Inventory::upsert(
+                [
+                    [
+                        'product_id'   => $product->id,
+                        'warehouse_id' => $warehouse->id ?? null,
+                        'qty_on_hand'  => $newOnHand,
+                        'avg_cost'     => $avg,
+                    ],
+                ],
+                ['product_id', 'warehouse_id'], // columnas que definen el conflicto (unique by)
+                ['qty_on_hand', 'avg_cost', 'updated_at'] // columnas a actualizar en conflicto
+            );
+
+
+            $product->stock = max(0, ($product->stock ?? 0) - $quantity);
+            $product->save();
+        });
     }
 
 
