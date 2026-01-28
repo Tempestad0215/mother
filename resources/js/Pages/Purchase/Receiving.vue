@@ -42,7 +42,7 @@ const confirm = useConfirm()
 
 interface PropsI {
     purchases: PaginationI<PurchaseSupplierI>
-    suppliers: PaginationI<SupplierI>
+    suppliers: SupplierI[]
     purchaseAvailable: PurchaseSupplierI[] | null
     purchaseStatus: {
         name: string
@@ -88,7 +88,7 @@ const getSuppliers = async (event:AutoCompleteCompleteEvent) => {
         setTimeout(()=>{
             router.get(route("purchase.receiving.index",{search: event.query}),{},{
                 onSuccess: () =>{
-                    filteredSuppliers.value = propsW.suppliers.data ?? [];
+                    filteredSuppliers.value = propsW.suppliers ?? [];
                 },
                 preserveState: true,
                 preserveScroll: true
@@ -207,7 +207,14 @@ const getDate = (date: Date) => {
 const submit = () => {
     form.post(route('purchase.receiving.store'),{
         onSuccess: () => {
-            console.log("Esta es nueva")
+            toast.add({
+                severity: "success",
+                summary: "Exito",
+                detail: "Recepcion de Mercancia Registrada Exitosamente",
+                life: 5000
+            })
+            form.reset()
+            searchSupplier.value = ""
         },
         onError: (err) =>{
             toast.add({
@@ -226,10 +233,11 @@ const submit = () => {
     <AppLayout>
         <Card>
             <template #title>
-                <h3 class="text-center text-2xl font-bold">Recepcion de Marcancia</h3>
                 <div>
                     <Breadcrumb :model="purchaseBreadCrumb" />
                 </div>
+                <h3 class="text-center text-2xl font-bold">Recepcion de Marcancia</h3>
+
             </template>
             <template #content>
                 <form @submit.prevent="submit" >

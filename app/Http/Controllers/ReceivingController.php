@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\InventoryMovementTypeEnum;
 use App\Enums\PurchaseStatusEnum;
 use App\Helpers\ProductHelper;
+use App\Helpers\SupplierHelper;
 use App\Http\Requests\StorePurchaseReceivingRequest;
 use App\Http\Resources\PurchaseSupplierResource;
 use App\Models\InventoryMovement;
@@ -29,7 +30,6 @@ class ReceivingController extends Controller
             'supplier' => ['nullable','numeric','exists:suppliers,id']
         ]);
 
-        $supplier = new SupplierController();
         $purchaseAvailable = null;
         $supplierId = $request->get('supplier');
 
@@ -51,7 +51,7 @@ class ReceivingController extends Controller
 
         return Inertia::render('Purchase/Receiving', [
             'purchases' => $this->getPurchaseApprove($request),
-            'suppliers' => $supplier->get($request),
+            'suppliers' => SupplierHelper::getReceiving($request),
             'purchaseAvailable' => $purchaseAvailable,
             'purchaseStatus' => $purchaseStatus
         ]);
