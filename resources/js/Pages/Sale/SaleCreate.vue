@@ -2,7 +2,7 @@
 import {router, useForm, usePage} from "@inertiajs/vue3";
 import AppLayout from "@layout/AppLayout.vue";
 import {onMounted, onUpdated, provide, Ref, ref} from "vue";
-import {productI} from "@/Interfaces/ProductInterface";
+import {ProductBaseI, productI} from "@/Interfaces/ProductInterface";
 import {printPdf} from "@/Global/Helpers";
 import {clientBaseI} from "@/Interfaces/ClientInterface";
 import axios from "axios";
@@ -28,7 +28,7 @@ const page = usePage();
  * Datos del back end
  */
 const propsW = defineProps<{
-	products: productI,
+	products: PaginationI<ProductBaseI>,
 	clients: PaginationI<clientBaseI>,
 	saleOpen: PaginationI<saleDataI>,
 	invoiceType: invoiceTypeI[],

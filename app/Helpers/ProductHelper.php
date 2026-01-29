@@ -5,10 +5,12 @@ namespace App\Helpers;
 use App\Models\Inventory;
 use App\Models\Product;
 use App\Models\Warehouse;
+use DB;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use LaravelIdea\Helper\App\Models\_IH_Product_C;
+use RuntimeException;
 use Throwable;
 
 
@@ -43,7 +45,7 @@ class ProductHelper
             return;
         }
 
-        \DB::transaction(function () use ($product, $warehouse, $quantity, $cost) {
+        DB::transaction(function () use ($product, $warehouse, $quantity, $cost) {
             $oldStock = Inventory::where('product_id', $product->id)
                 ->latest('created_at')
                 ->first();
@@ -77,7 +79,7 @@ class ProductHelper
      * @param Warehouse $warehouse
      * @param float $quantity
      * @return void
-     * @throws \RuntimeException|Throwable
+     * @throws RuntimeException|Throwable
      */
     public static function decrementStock(Product $product, Warehouse $warehouse, float $quantity): void
     {
@@ -85,13 +87,13 @@ class ProductHelper
             return;
         }
 
-        \DB::transaction(function () use ($product, $warehouse, $quantity) {
+        DB::transaction(function () use ($product, $warehouse, $quantity) {
             $oldStock = Inventory::where('product_id', $product->id)
                 ->latest('created_at')
                 ->first();
 
             if (! $oldStock || ($oldStock->qty_on_hand ?? 0) < $quantity) {
-                throw new \RuntimeException('Stock insuficiente para el producto id=' . $product->id);
+                throw new RuntimeException('Stock insuficiente para el producto id=' . $product->id);
             }
 
             $newOnHand = $oldStock->qty_on_hand - $quantity;
@@ -157,9 +159,9 @@ class ProductHelper
             ->where('status', true)
             ->when($search !== '', function (Builder $q) use ($search) {
                 $q->where(function (Builder $qq) use ($search) {
-                    $qq->where('name', 'LIKE', "%{$search}%")
-                        ->orWhere('description', 'LIKE', "%{$search}%")
-                        ->orWhere('sku', 'LIKE', "%{$search}%");
+                    $qq->where('name', 'LIKE', "%$search%")
+                        ->orWhere('description', 'LIKE', "%$search%")
+                        ->orWhere('sku', 'LIKE', "%$search%");
                 });
             })
             ->when($stock, function (Builder $q) {

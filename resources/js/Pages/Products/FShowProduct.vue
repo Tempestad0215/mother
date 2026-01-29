@@ -110,6 +110,9 @@ const deleteData = (data:ProductBaseI, event:Event) => {
             <div v-if="propsW.isProduct">
                 <Breadcrumb :model="productBreadCrumb" />
             </div>
+            <div>
+                <h3 class="text-center">Productos</h3>
+            </div>
             <div class="flex justify-between items-center">
                 <form @submit.prevent="searchData">
                     <InputGroup class="max-w-60">
@@ -127,6 +130,7 @@ const deleteData = (data:ProductBaseI, event:Event) => {
             </div>
         </template>
         <template #content>
+            {{component}}
             <DataTable
                 paginator
                 :rows="propsW.products.per_page ?? 0"
@@ -134,9 +138,10 @@ const deleteData = (data:ProductBaseI, event:Event) => {
                 :value="propsW.products.data" >
                 <Column field="code" header="Codigo"  />
                 <Column field="name" header="Nombre"  />
-                <Column :field="(data:ProductBaseI) => `${PreciseCalculator.formatCurrency(data.cost)}`" header="Costo"  />
+                <Column v-if="component === 'Products/Register'" :field="(data:ProductBaseI) => `${PreciseCalculator.formatCurrency(data.cost)}`" header="Costo"  />
                 <Column :field="(data:ProductBaseI) => `${PreciseCalculator.formatCurrency(data.price)}`" header="Precio"  />
                 <Column :field="(data:ProductBaseI) => `${data.is_service ? 'Servicio' : 'Producto'}`" header="Tipo"  />
+                <Column field="stock" header="Stock" v-if="propsW.stock" />
                 <Column field="email" header="Correo"  />
                 <Column header="Act">
                     <template #body="{data}:{data:ProductBaseI}">
