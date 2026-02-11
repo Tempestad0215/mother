@@ -17,6 +17,7 @@ import {getSequenceType} from "@/Global/Helpers";
 import {useRoute} from "ziggy-js";
 import {FloatLabel, InputText, Select, ToggleButton, Dialog} from "primevue";
 import FShowProduct from "@/Pages/Products/FShowProduct.vue";
+import {item} from "@primeuix/themes/aura/dock";
 
 
 const route = useRoute();
@@ -207,6 +208,18 @@ defineExpose({
 	openReturn
 })
 
+
+const getDataProduct = (data:ProductBaseI) => {
+    showProducts.value = false;
+    const getIndex = form.info_sale.findIndex((el) => el.product_id === data.id);
+
+    if (getIndex >= 0) {
+        form.info_sale[getIndex].stock += 1.00;
+    }else {
+
+    }
+}
+
 </script>
 
 <template>
@@ -277,9 +290,12 @@ defineExpose({
 
     <Dialog
         class="w-300"
+        header="Productos"
         v-model:visible="showProducts"
         modal>
         <FShowProduct
+            @select-data="getDataProduct"
+            :stock="true"
             :isProduct="false"
             :products="propsW.products"/>
     </Dialog>

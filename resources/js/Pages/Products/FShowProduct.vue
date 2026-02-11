@@ -20,6 +20,7 @@ import {useProductStore} from "@/stores/ProductStore";
 import {productBreadCrumb} from "@/Helpers/ProductHelper";
 import {PreciseCalculator} from "@/utils/Decimal";
 import {PaginationI} from "@/Interfaces/GlobalInterface";
+import {getMoney} from "@/Global/Helpers";
 
 
 const toast = useToast()
@@ -44,6 +45,10 @@ const propsW = withDefaults(defineProps<PropsI>(),{
     stock: false,
     isProduct: true
 })
+
+const emit = defineEmits<{
+    (e:'selectData', data:ProductBaseI):void
+}>()
 
 
 //store
@@ -110,9 +115,6 @@ const deleteData = (data:ProductBaseI, event:Event) => {
             <div v-if="propsW.isProduct">
                 <Breadcrumb :model="productBreadCrumb" />
             </div>
-            <div>
-                <h3 class="text-center">Productos</h3>
-            </div>
             <div class="flex justify-between items-center">
                 <form @submit.prevent="searchData">
                     <InputGroup class="max-w-60">
@@ -124,13 +126,13 @@ const deleteData = (data:ProductBaseI, event:Event) => {
                     </InputGroup>
                 </form>
                 <Button
+                    v-if="component != 'Sale/SaleCreate'"
                     label="Agregar Producto"
                     class="h-8"
                     @click="createProduct = true" />
             </div>
         </template>
         <template #content>
-            {{component}}
             <DataTable
                 paginator
                 :rows="propsW.products.per_page ?? 0"
@@ -141,13 +143,30 @@ const deleteData = (data:ProductBaseI, event:Event) => {
                 <Column v-if="component === 'Products/Register'" :field="(data:ProductBaseI) => `${PreciseCalculator.formatCurrency(data.cost)}`" header="Costo"  />
                 <Column :field="(data:ProductBaseI) => `${PreciseCalculator.formatCurrency(data.price)}`" header="Precio"  />
                 <Column :field="(data:ProductBaseI) => `${data.is_service ? 'Servicio' : 'Producto'}`" header="Tipo"  />
-                <Column field="stock" header="Stock" v-if="propsW.stock" />
-                <Column field="email" header="Correo"  />
+                <Column :field="(data:ProductBaseI) => `${getMoney(data.stock)}`" header="Stock" v-if="propsW.stock" />
                 <Column header="Act">
                     <template #body="{data}:{data:ProductBaseI}">
                         <div class="space-x-2">
-                            <Button @click="editData(data)" class="pt-1 h-8"  title="Editar" icon="pi pi-file-edit" />
-                            <Button @click="deleteData(data, $event)" class="pt-1 h-8"  title="Eliminar" severity="danger" icon="pi pi-trash" />
+                            <Button
+                                v-if="component != 'Sale/SaleCreate'"
+                                @click="editData(data)"
+                                class="pt-1 h-8"
+                                title="Editar"
+                                icon="pi pi-file-edit" />
+                            <Button
+                                v-if="component != 'Sale/SaleCreate'"
+                                @click="deleteData(data, $event)"
+                                class="pt-1 h-8"
+                                title="Eliminar" severity="danger"
+                                icon="pi pi-trash" />
+                            <Button
+                                v-if="component == 'Sale/SaleCreate'"
+                                @click="$emit('selectData', data)"
+                                class="pt-1 h-8"
+                                title="Seleccionar"
+                                outlined
+                                severity="secondary"
+                                icon="pi pi-check-circle" />
 
                         </div>
                     </template>

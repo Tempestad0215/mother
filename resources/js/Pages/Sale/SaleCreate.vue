@@ -2,7 +2,7 @@
 import {router, useForm, usePage} from "@inertiajs/vue3";
 import AppLayout from "@layout/AppLayout.vue";
 import {onMounted, onUpdated, provide, Ref, ref} from "vue";
-import {ProductBaseI, productI} from "@/Interfaces/ProductInterface";
+import {ProductBaseI} from "@/Interfaces/ProductInterface";
 import {printPdf} from "@/Global/Helpers";
 import {clientBaseI} from "@/Interfaces/ClientInterface";
 import axios from "axios";
