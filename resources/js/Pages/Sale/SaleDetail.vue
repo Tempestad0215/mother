@@ -217,6 +217,23 @@ const getDataProduct = (data:ProductBaseI) => {
         form.info_sale[getIndex].stock += 1.00;
     }else {
 
+        form.info_sale.push({
+            product_id: data.id,
+            product_name: data.name,
+            stock: 1,
+            price: data.price,
+            min_price: data.min_price,
+            special_price: data.special_price,
+            tax: data.tax_id,
+            tax_rate: data.tax_rate || 0,
+            discount: 0,
+            discount_amount: 0,
+            reserved: 0,
+            amount: data.price,
+            is_service: Boolean(data.is_service),
+            price_temp: data.price
+
+        })
     }
 }
 

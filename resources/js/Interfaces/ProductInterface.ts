@@ -47,6 +47,7 @@ export interface ProductBaseI {
     supplier_id: number;
     category_id: number;
     tax_id: number;
+    tax_rate?: number;
     weight: string;
     created_at: string;
     updated_at: string;
