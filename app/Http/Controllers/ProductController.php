@@ -108,8 +108,16 @@ class ProductController extends Controller implements HasMiddleware
         //Para asegurar que no se guarda si hay problema
         DB::transaction(function () use ($request) {
 
-            //Guardar los datos del productos
-            $product = Product::create($request->validated());
+            $tax_id = $request->input('tax_id');
+            $tax = Tax::find($tax_id);
+
+            $data = $request->validated();
+
+            //Guardar los datos de los productos
+            $data['tax_rate'] = $tax->rate / 100;
+            $data['tax'] = $data['price'] * $data['tax_rate'];
+
+            $product = Product::create($data);
 
 
             // Guardar los datos de los productos

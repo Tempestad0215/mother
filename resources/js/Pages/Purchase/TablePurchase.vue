@@ -127,9 +127,14 @@ const cancelOrder = (event:Event) => {
     })
 }
 
+const createReception = (data: PurchaseSupplierI) => {
+    router.get(route('purchase.receiving.index', {supplier: data.supplier_id}))
+}
 
 
 </script>
+
+
 
 <template>
     <AppLayout>
@@ -157,7 +162,7 @@ const cancelOrder = (event:Event) => {
                             <div class="space-x-3">
                                 <Button
                                     v-if="data.status !== PurchaseStatusEnum.Borrador"
-                                    title="Entrada" severity="info" outlined @click="selectPurchase(data)" icon="pi pi-cart-arrow-down" />
+                                    title="Entrada" severity="info" outlined @click="createReception(data)" icon="pi pi-cart-arrow-down" />
                                 <Button title="Ver Detalle" @click="selectPurchase(data)" icon="pi pi-eye" />
                             </div>
 

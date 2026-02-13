@@ -91,6 +91,8 @@ class Product extends Model implements Auditable
         'benefits',
         'benefits_rate',
         'tax_id',
+        'tax_rate',
+        'tax',
         'status',
         'comment',
         'inventoried',

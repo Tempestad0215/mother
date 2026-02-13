@@ -10,6 +10,8 @@ export interface MenuItemI extends MenuItem{
     activePath?: string
 }
 
+export type MoveDirectionEdit = "UP" | "DOWN"
+
 export interface AppSettingI {
     id: number;
     name: string;

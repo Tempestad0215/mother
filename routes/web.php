@@ -322,7 +322,7 @@ Route::middleware([
         ->prefix('purchase/receiving')
         ->name('purchase.receiving.')
         ->group(function () {
-            Route::get('/', 'index')->name('index');
+            Route::get('/{supplier}', 'index')->name('index');
             Route::post('/', 'store')->name('store');
         });
 

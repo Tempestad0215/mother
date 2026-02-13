@@ -77,9 +77,21 @@ const searchProduct = debounce((index: number) => {
 
 const getInfoName = (event:AutoCompleteOptionSelectEvent, index: number) => {
     const info = event.value as purchaseInfoI;
-    form.info[index].id = info.id;
-    form.info[index].code = info.code;
-    form.info[index].name = info.name;
+
+    const existsIndex = form.info.findIndex((el) => el.code === info.code)
+
+    if (existsIndex === -1)
+    {
+        form.info[index].id = info.id;
+        form.info[index].code = info.code;
+        form.info[index].name = info.name;
+        return;
+    }else{
+        form.info[existsIndex].quantity += 1;
+    }
+
+
+
 }
 
 

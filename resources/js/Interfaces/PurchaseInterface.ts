@@ -37,13 +37,11 @@ export interface PurchaseBaseI{
 }
 
 
-export interface PurchaseItemFormI extends  PurchaseItemI {
-    isReadOnly: boolean
-}
 
 export interface PurchaseFormI extends PurchaseBaseI{
     supplier_name: string
-    items: PurchaseItemFormI[]
+    items: PurchaseItemI[]
+    supplier?: SupplierI
 }
 
 
@@ -56,8 +54,8 @@ export interface PurchaseSupplierI extends PurchaseBaseI, timeStampsI{
 export interface PurchaseItemI {
     amount: number
     cost: number
-    created_at: string
-    deleted_at: string | null
+    created_at?: string
+    deleted_at?: string | null
     discount: number
     id: number
     product_id: number
@@ -67,8 +65,9 @@ export interface PurchaseItemI {
     purchase_id: number
     quantity: number
     tax_id: number
-    updated_at: string
+    updated_at?: string
     warehouse_id: number
     warehouse_name: string
+    isReadOnly?: boolean
 
 }

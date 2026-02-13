@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import {
-    AutoComplete,
+    InputText,
+    ConfirmDialog,
     AutoCompleteCompleteEvent,
     AutoCompleteOptionSelectEvent,
+    Breadcrumb,
     Button,
     Card,
     Column,
@@ -12,29 +14,26 @@ import {
     FloatLabel,
     InputGroup,
     InputGroupAddon,
+    InputNumber,
     Select,
-    useToast,
     Textarea,
-    InputNumber, useConfirm, Breadcrumb
+    useConfirm,
+    useToast
 } from "primevue";
 import AppLayout from "@layout/AppLayout.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import {faTruckField} from "@fortawesome/free-solid-svg-icons";
-import {PaginationI} from "@/Interfaces/GlobalInterface";
-import {
-    PurchaseBaseI,
-    PurchaseFormI,
-    PurchaseItemFormI,
-    PurchaseItemI,
-    PurchaseSupplierI
-} from "@/Interfaces/PurchaseInterface";
+import {faArrowAltCircleDown, faArrowAltCircleUp, faEdit, faTruckField} from "@fortawesome/free-solid-svg-icons";
+import {MoveDirectionEdit, PaginationI} from "@/Interfaces/GlobalInterface";
+import {PurchaseBaseI, PurchaseFormI, PurchaseItemI, PurchaseSupplierI} from "@/Interfaces/PurchaseInterface";
 import {SupplierI} from "@/Interfaces/SupplierInterface";
-import {onMounted, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import {router, useForm} from "@inertiajs/vue3";
 import {PurchaseStatusEnum} from "@/Enums/PurchaseEnum";
 import {getMoney} from "@/Global/Helpers";
 import {PreciseCalculator} from "@/utils/Decimal";
 import {purchaseBreadCrumb} from "@/Helpers/PurchaseHelper";
+import TextInput from "@components/TextInput.vue";
+import {info} from "autoprefixer";
 
 
 const toast = useToast()
@@ -59,6 +58,9 @@ const filteredSuppliers = ref<SupplierI[]>([])
 const showPurchaseAvailable = ref(false)
 const purchaseAvailable = ref<PurchaseBaseI | null>(null)
 const docDate = ref<Date | null>(new Date())
+const editItem = ref(false)
+const itemToEdit = ref<PurchaseItemI | null>(null)
+const lastIndex = ref(0)
 
 const form = useForm<PurchaseFormI>({
     id: 0,
@@ -79,9 +81,35 @@ const form = useForm<PurchaseFormI>({
 
 
 
+
 onMounted(()=>{
     getDate(new Date())
+
+    if(propsW.purchaseAvailable && propsW.purchaseAvailable?.length > 1)
+    {
+        console.log("Existe mas de uno, por favor elije")
+    }else{
+        //Verifica que exista el available
+        if(!propsW.purchaseAvailable) return
+        // Tomar en una variable
+        const info = propsW.purchaseAvailable
+
+        // Verificar si existe o no
+        if(!info) return
+
+        const data = info[0]
+        // Tomar el primer registro
+        Object.assign(form, data)
+        form.status = PurchaseStatusEnum.Completada
+    }
 })
+
+const getSupplierName = computed(()=>{
+    return form.supplier?.company_name ?? ""
+})
+
+const maxIndex = computed(()=> form.items.length - 1)
+const minIndex = computed(()=> 0)
 
 const getSuppliers = async (event:AutoCompleteCompleteEvent) => {
     try {
@@ -138,22 +166,41 @@ const selectSupplier = async (event: AutoCompleteOptionSelectEvent) => {
     })
 }
 
-const deleteItem = (index:number) => {
-    confirm.require({
-        message: '¿Estás seguro de que deseas eliminar este artículo?',
+const deleteItem = () => {
+    const data = form.items[lastIndex.value]
+    if(!data) return
+
+    if(data.quantity === 0)
+    {
+        confirm.require({
+        message: `¿Estás seguro de que deseas eliminar este artículo : ${data.product_name}?`,
         header: 'Confirmar eliminación',
         icon: 'pi pi-exclamation-triangle',
         accept: () => {
-            form.items.splice(index, 1);
+            editItem.value = false;
+            form.items.splice(lastIndex.value,1);
+            calculateAmount(maxIndex.value)
+
             toast.add({severity:'success', summary: 'Éxito', detail:'Artículo eliminado correctamente', life: 3000});
         },
+        acceptProps:{
+            label: 'Eliminar',
+            severity: 'danger'
+        },
+        rejectProps: {
+            label: 'Cancelar',
+            outlined: true
+        }
     });
+
+    }
+
 }
 
 const sumSubTotalByLine = ()=>{
-    const discountTotal = form.items.reduce((acc:number, curr:PurchaseItemFormI) => acc + curr.discount , 0)
-    const subTotal = form.items.reduce((acc:number, curr:PurchaseItemFormI) => acc + curr.amount , 0)
-    const taxTotal = form.items.reduce((acc:number, curr:PurchaseItemFormI) => acc + curr.tax_amount , 0)
+    const discountTotal = form.items.reduce((acc:number, curr:PurchaseItemI) => acc + curr.discount , 0)
+    const subTotal = form.items.reduce((acc:number, curr:PurchaseItemI) => acc + curr.amount , 0)
+    const taxTotal = form.items.reduce((acc:number, curr:PurchaseItemI) => acc + curr.tax_amount , 0)
 
     form.tax = taxTotal;
     form.discount = discountTotal;
@@ -227,6 +274,31 @@ const submit = () => {
     })
 }
 
+const showEditItem = () => {
+    //
+    if (lastIndex.value < 0 || lastIndex.value >= form.items.length) return;
+    // Abrir la ventana
+    lastIndex.value = maxIndex.value
+    editItem.value = true
+    itemToEdit.value = form.items[lastIndex.value]
+}
+
+const moveEditItem = (direction: MoveDirectionEdit) => {
+    const currentIndex = lastIndex.value
+
+    if( direction === 'DOWN')
+    {
+        if(currentIndex >= maxIndex.value) return;
+        lastIndex.value += 1
+    }
+
+    if( direction === 'UP')
+    {
+        if(currentIndex <= minIndex.value) return;
+        lastIndex.value -= 1
+    }
+}
+
 </script>
 
 <template>
@@ -244,12 +316,7 @@ const submit = () => {
                     <div class="flex items-center justify-between">
                         <div>
                             <InputGroup>
-                                <AutoComplete
-                                    @itemSelect="selectSupplier"
-                                    v-model="searchSupplier"
-                                    @complete="getSuppliers"
-                                    optionLabel="company_name"
-                                    :suggestions="filteredSuppliers" />
+                                <InputText v-model="getSupplierName" />
                                 <InputGroupAddon >
                                     <FontAwesomeIcon title="Mostrar Suplidores" class="text-3xl" :icon="faTruckField"/>
                                 </InputGroupAddon>
@@ -282,7 +349,7 @@ const submit = () => {
                         </Column>
                         <Column field="product_name" header="Producto/Servicio" />
                         <Column header="Cantidad" >
-                            <template #body="{index, data}:{index:number, data:PurchaseItemFormI}">
+                            <template #body="{index, data}:{index:number, data:PurchaseItemI}">
                                 <InputNumber @blur="calculateAmount(index)" :readonly="data.isReadOnly" locale="en-US" :minFractionDigits="2" :maxFractionDigits="2" v-model="form.items[index].quantity" />
                             </template>
                         </Column>
@@ -303,34 +370,37 @@ const submit = () => {
                             </template>
                         </Column>
                         <Column header="Importe" >
-                            <template #body="{data}:{data:PurchaseItemFormI}">
+                            <template #body="{data}:{data:PurchaseItemI}">
                                 {{getMoney(data.amount)}}
                             </template>
                         </Column>
-                        <Column header="Act" >
-                            <template #body="{index, data}:{index:number, data:PurchaseItemFormI}">
-                                <Button title="Editar" :severity="data.isReadOnly ? 'danger' : 'success' "  @click="form.items[index].isReadOnly = false"  icon="pi pi-pencil" class="mr-2" />
-                                <Button v-if="form.items.length > 1" @click="deleteItem(index)" icon="pi pi-trash" severity="danger" />
-                            </template>
-                        </Column>
                         <template #footer>
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <FloatLabel variant="on" >
-                                        <Textarea :cols="30" :rows="2" class="max-w-60 min-w-20 min-h-15 max-h-30"  v-model="form.comment" />
-                                        <label for="">Comentario</label>
-                                    </FloatLabel>
+                            <div class="text-center">
+                                <FontAwesomeIcon
+                                    @click="showEditItem"
+                                    class="text-3xl text-orange-500 hover:scale-110 duration-300"
+                                    title="Editar"
+                                    :icon="faEdit"/>
 
-                                </div>
-                                <div class=" ">
-                                    <p>Descuento  : {{getMoney(form.discount)}}</p>
-                                    <p>Itbis  : {{getMoney(form.tax)}}</p>
-                                    <p>Sub Total  : {{getMoney(form.sub_total)}}</p>
-                                    <p class="text-white bg-blue-800 rounded-md px-6 py-1" >Total  : {{getMoney(form.amount)}}</p>
-                                </div>
                             </div>
                         </template>
                     </DataTable>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <FloatLabel variant="on" >
+                                <Textarea :cols="30" :rows="2" class="max-w-60 min-w-20 min-h-15 max-h-30"  v-model="form.comment" />
+                                <label for="">Comentario</label>
+                            </FloatLabel>
+
+                        </div>
+                        <div class=" ">
+                            <p>Descuento  : {{getMoney(form.discount)}}</p>
+                            <p>Itbis  : {{getMoney(form.tax)}}</p>
+                            <p>Sub Total  : {{getMoney(form.sub_total)}}</p>
+                            <p class="text-white bg-blue-800 rounded-md px-6 py-1" >Total  : {{getMoney(form.amount)}}</p>
+                        </div>
+                    </div>
+
                     <div class="mt-3 space-x-3 text-right">
                         <Button severity="warn" outlined  icon="pi pi-exclamation-triangle"  label="Cancelar" />
                         <Button @click="submit" :disabled="form.processing" icon="pi pi-send"  label="Registrar" />
@@ -354,6 +424,36 @@ const submit = () => {
                     </template>
                 </Column>
             </DataTable>
+        </Dialog>
+
+<!--        Para poder editar los datos y borrar en 0-->
+        <Dialog
+            class=""
+            :header="`Editando El Item :${itemToEdit?.product_name}`"
+            v-model:visible="editItem"
+            modal>
+            <div class="mt-5">
+                <div class="flex gap-5 items-center">
+                    <FloatLabel variant="on" >
+                        <InputNumber
+                            @blur="deleteItem"
+                            v-model="form.items[lastIndex].quantity"  />
+                        <label for="quantity">Cantidad</label>
+                    </FloatLabel>
+                    <div class="text-2xl space-x-3">
+                        <FontAwesomeIcon
+                            @click="moveEditItem('DOWN')"
+                            title="Bajar"
+                            :icon="faArrowAltCircleDown"/>
+                        <FontAwesomeIcon
+                            @click="moveEditItem('UP')"
+                            title="Subir"
+                            :icon="faArrowAltCircleUp"/>
+                    </div>
+                </div>
+            </div>
+
+
         </Dialog>
     </AppLayout>
 

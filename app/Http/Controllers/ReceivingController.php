@@ -23,21 +23,16 @@ use Throwable;
 
 class ReceivingController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, Supplier $supplier)
     {
 
-        $validate = $request->validate([
-            'supplier' => ['nullable','numeric','exists:suppliers,id']
-        ]);
-
-        $purchaseAvailable = null;
-        $supplierId = $request->get('supplier');
-
-
-        if (!$supplierId !== null)
-        {
-            $purchaseAvailable = $this->getPurchaseAvailable((int)$supplierId);
-        }
+        $purchaseAvailable = PurchaseSupplierResource::collection(
+            $supplier->purchase()
+                ->where('status', PurchaseStatusEnum::Pendiente)
+                ->with('items')
+                ->with('supplier')
+                ->get()
+        );
 
         $purchaseStatus = collect(PurchaseStatusEnum::cases())
             ->filter(fn(PurchaseStatusEnum $item) => $item !== PurchaseStatusEnum::Borrador && $item !== PurchaseStatusEnum::Cancelada && $item !== PurchaseStatusEnum::Pendiente)

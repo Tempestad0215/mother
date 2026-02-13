@@ -9,6 +9,7 @@ import {InputNumber, Button, Dialog, FloatLabel, Checkbox, RadioButton} from "pr
 import {getMoney} from "@/Global/Helpers";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {faArrowAltCircleDown, faArrowAltCircleUp} from "@fortawesome/free-solid-svg-icons";
+import {MoveDirectionEdit} from "@/Interfaces/GlobalInterface";
 
 
 
@@ -214,6 +215,8 @@ const changePrice = () =>{
     totalAmount(idx);
 }
 
+
+
 </script>
 
 <template>
@@ -234,7 +237,7 @@ const changePrice = () =>{
             :field="(data:infoSaleI) => `${getMoney(data.price)}`"/>
         <Column
             header="Itbis"
-            :field="(data:infoSaleI) => `${getMoney(data.tax_rate)}`" />
+            :field="(data:infoSaleI) => `${data.tax_rate}`" />
         <Column
             class="max-w-20"
             header="Descuento"
@@ -290,7 +293,7 @@ const changePrice = () =>{
 
                 </div>
                 <div class="mt-5 text-3xl space-x-3">
-                    <FontAwesomeIcon v-if="lastIndex > minIndex" @click="moveEdit('up')" :icon="faArrowAltCircleUp" />
+                    <FontAwesomeIcon  v-if="lastIndex > minIndex" @click="moveEdit('up')" :icon="faArrowAltCircleUp" />
                     <FontAwesomeIcon v-if="lastIndex < maxIndex"  @click="moveEdit('down')" :icon="faArrowAltCircleDown" />
                 </div>
             </div>
