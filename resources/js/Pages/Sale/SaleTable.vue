@@ -198,12 +198,12 @@ const changePrice = () =>{
 
         case 2:
             // precio mínimo
-            item.price_temp = item.min_price ?? 0;
+            item.price_temp = item.special_price ?? 0;
             break;
 
         case 3:
             // precio especial
-            item.price_temp = item.special_price ?? 0;
+            item.price_temp = item.min_price ?? 0;
             break;
 
         default:
@@ -277,7 +277,9 @@ const changePrice = () =>{
                             <label for="stock">Cantidad</label>
                         </FloatLabel>
                         <FloatLabel variant="on">
-                            <InputNumber :readonly="form.info_sale[lastIndex].is_service" v-model="form.info_sale[lastIndex].price_temp" />
+                            <InputNumber
+                                :min="form.info_sale[lastIndex].min_price"
+                                :readonly="form.info_sale[lastIndex].is_service" v-model="form.info_sale[lastIndex].price_temp" />
                             <label for="price">Precio</label>
                         </FloatLabel>
                         <FloatLabel variant="on">

@@ -12,9 +12,13 @@ const form = inject(saleKey)!;
 <template>
 	<!--                        Dato de la ventas-->
 	<div class="flex items-center justify-between">
-        <div class="flex-1">
+        <div class="flex-1 mt-3">
             <FloatLabel variant="on" >
-                <Textarea v-model.trim="form.comment" />
+                <Textarea
+                    class="max-w-60 max-h-26"
+                    :rows="3"
+                    :cols="30"
+                    v-model.trim="form.comment" />
                 <label for="comment">Comentario</label>
             </FloatLabel>
 
