@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import {
     InputText,
-    ConfirmDialog,
-    AutoCompleteCompleteEvent,
-    AutoCompleteOptionSelectEvent,
     Breadcrumb,
     Button,
     Card,
@@ -27,13 +24,11 @@ import {MoveDirectionEdit, PaginationI} from "@/Interfaces/GlobalInterface";
 import {PurchaseBaseI, PurchaseFormI, PurchaseItemI, PurchaseSupplierI} from "@/Interfaces/PurchaseInterface";
 import {SupplierI} from "@/Interfaces/SupplierInterface";
 import {computed, onMounted, ref} from "vue";
-import {router, useForm} from "@inertiajs/vue3";
+import {useForm} from "@inertiajs/vue3";
 import {PurchaseStatusEnum} from "@/Enums/PurchaseEnum";
 import {getMoney} from "@/Global/Helpers";
 import {PreciseCalculator} from "@/utils/Decimal";
 import {purchaseBreadCrumb} from "@/Helpers/PurchaseHelper";
-import TextInput from "@components/TextInput.vue";
-import {info} from "autoprefixer";
 
 
 const toast = useToast()
@@ -54,7 +49,6 @@ const propsW = withDefaults(defineProps<PropsI>(),{
 })
 
 const searchSupplier = ref("")
-const filteredSuppliers = ref<SupplierI[]>([])
 const showPurchaseAvailable = ref(false)
 const purchaseAvailable = ref<PurchaseBaseI | null>(null)
 const docDate = ref<Date | null>(new Date())
@@ -101,6 +95,15 @@ onMounted(()=>{
         // Tomar el primer registro
         Object.assign(form, data)
         form.status = PurchaseStatusEnum.Completada
+
+        data.items.map((el) => {
+            const index = form.items.findIndex((ite) => ite.id === el.id)
+            const taxAmount = Number(
+                PreciseCalculator.multiply(
+
+                )
+            )
+        })
     }
 })
 
@@ -111,61 +114,6 @@ const getSupplierName = computed(()=>{
 const maxIndex = computed(()=> form.items.length - 1)
 const minIndex = computed(()=> 0)
 
-const getSuppliers = async (event:AutoCompleteCompleteEvent) => {
-    try {
-        setTimeout(()=>{
-            router.get(route("purchase.receiving.index",{search: event.query}),{},{
-                onSuccess: () =>{
-                    filteredSuppliers.value = propsW.suppliers ?? [];
-                },
-                preserveState: true,
-                preserveScroll: true
-            })
-        },250)
-
-
-    }catch (err){
-        filteredSuppliers.value = [];
-    }
-}
-
-const selectSupplier = async (event: AutoCompleteOptionSelectEvent) => {
-    const params = new URLSearchParams(window.location.search)
-    const search = params.get('search') ?? "";
-    const supplier:SupplierI = event.value
-
-    router.get(route("purchase.receiving.index",{search, supplier: supplier.id}),{},{
-        preserveScroll: true,
-        preserveState: true,
-        onSuccess: () => {
-
-            if (propsW.purchaseAvailable && propsW.purchaseAvailable?.length > 1)
-            {
-                showPurchaseAvailable.value = true;
-            }else{
-                const purchase = propsW.purchaseAvailable ? propsW.purchaseAvailable[0] : null;
-                if (purchase)
-                {
-                    form.id = purchase.id;
-                    form.code = purchase.code;
-                    form.supplier_id = purchase.supplier_id;
-                    form.supplier_name = supplier.company_name;
-                    form.user_id = purchase.user_id;
-                    form.amount = purchase.amount;
-                    form.tax = purchase.tax;
-                    form.discount = purchase.discount;
-                    form.sub_total = purchase.sub_total;
-                    form.items = purchase.items.map(item => ({
-                        ...item,
-                        isReadOnly: true
-                    }));
-                }
-            }
-
-        }
-    })
-}
-
 const deleteItem = () => {
     const data = form.items[lastIndex.value]
     if(!data) return
@@ -173,26 +121,28 @@ const deleteItem = () => {
     if(data.quantity === 0)
     {
         confirm.require({
-        message: `¿Estás seguro de que deseas eliminar este artículo : ${data.product_name}?`,
-        header: 'Confirmar eliminación',
-        icon: 'pi pi-exclamation-triangle',
-        accept: () => {
-            editItem.value = false;
-            form.items.splice(lastIndex.value,1);
-            calculateAmount(maxIndex.value)
+            message: `¿Estás seguro de que deseas eliminar este artículo : ${data.product_name}?`,
+            header: 'Confirmar eliminación',
+            icon: 'pi pi-exclamation-triangle',
+            accept: () => {
+                editItem.value = false;
+                form.items.splice(lastIndex.value,1);
+                calculateAmount(maxIndex.value)
 
-            toast.add({severity:'success', summary: 'Éxito', detail:'Artículo eliminado correctamente', life: 3000});
-        },
-        acceptProps:{
-            label: 'Eliminar',
-            severity: 'danger'
-        },
-        rejectProps: {
-            label: 'Cancelar',
-            outlined: true
-        }
-    });
+                toast.add({severity:'success', summary: 'Éxito', detail:'Artículo eliminado correctamente', life: 3000});
+            },
+            acceptProps:{
+                label: 'Eliminar',
+                severity: 'danger'
+            },
+            rejectProps: {
+                label: 'Cancelar',
+                outlined: true
+            }
+        });
 
+    }else{
+        calculateAmount(lastIndex.value)
     }
 
 }
@@ -204,6 +154,9 @@ const sumSubTotalByLine = ()=>{
 
     form.tax = taxTotal;
     form.discount = discountTotal;
+
+    console.log("form itbis", form.tax)
+    console.log("form discpount", form.discount)
 
     form.sub_total = Number(PreciseCalculator.subtract(
         subTotal,
@@ -227,6 +180,7 @@ const calculateAmount = (index:number) => {
         info.discount,
         100
     ));
+
     const taxPerProduct = PreciseCalculator.multiply(cost, taxPercent.toString())
     form.items[index].tax_amount = Number(PreciseCalculator.multiply(taxPerProduct.toString(), quantity));
     const base = PreciseCalculator.multiply(quantity, cost);

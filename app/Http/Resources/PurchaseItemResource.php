@@ -37,12 +37,13 @@ class PurchaseItemResource extends JsonResource
     public function toArray(Request $request): array
     {
 
+
         return [
             ...parent::toArray($request),
             'product_name' => $this->product?->name,
             'tax_rate' => $this->tax?->rate ?? $this->product->tax_rate ?? 0,
             'warehouse_name' => $this->warehouse?->name,
-            'tax_amount' => $this->tax_amount
+            'tax_amount' => ((1 + $this->tax?->rate) * $this->cost)
         ];
     }
 }

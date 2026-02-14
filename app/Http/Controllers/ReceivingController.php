@@ -34,6 +34,7 @@ class ReceivingController extends Controller
                 ->get()
         );
 
+
         $purchaseStatus = collect(PurchaseStatusEnum::cases())
             ->filter(fn(PurchaseStatusEnum $item) => $item !== PurchaseStatusEnum::Borrador && $item !== PurchaseStatusEnum::Cancelada && $item !== PurchaseStatusEnum::Pendiente)
             ->map(fn(PurchaseStatusEnum $item) => (object)[

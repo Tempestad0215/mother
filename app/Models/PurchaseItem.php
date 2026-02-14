@@ -20,7 +20,8 @@ class PurchaseItem extends Model
         'discount',
         'amount',
         'warehouse_id',
-        'tax_id'
+        'tax_id',
+        'tax_amount'
     ];
 
 

@@ -161,8 +161,12 @@ const createReception = (data: PurchaseSupplierI) => {
                         <template #body="{data}: {data: PurchaseSupplierI}">
                             <div class="space-x-3">
                                 <Button
-                                    v-if="data.status !== PurchaseStatusEnum.Borrador"
-                                    title="Entrada" severity="info" outlined @click="createReception(data)" icon="pi pi-cart-arrow-down" />
+                                    v-if="data.status !== PurchaseStatusEnum.Borrador && data.status !== PurchaseStatusEnum.Completada"
+                                    title="Entrada"
+                                    severity="info"
+                                    outlined
+                                    @click="createReception(data)"
+                                    icon="pi pi-cart-arrow-down" />
                                 <Button title="Ver Detalle" @click="selectPurchase(data)" icon="pi pi-eye" />
                             </div>
 

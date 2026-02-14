@@ -22,6 +22,7 @@ class PurchaseRequest extends FormRequest
             'info.*.cost' => ['required','numeric','min:0'],
             'info.*.warehouse_id' => ['required','numeric','min:0','exists:warehouses,id'],
             'info.*.tax_id' => ['required','numeric','min:0','exists:taxes,id'],
+            'info.*.tax' => ['required','numeric','min:0'],
             'info.*.discount_rate' => ['nullable','numeric','min:0'],
             'info.*.discount_amount' => ['nullable','numeric','min:0'],
             'info.*.amount' => ['nullable','numeric','min:0'],

@@ -72,6 +72,7 @@ class PurchaseController extends Controller
 
             collect($request->info)->each(function (array $product) use ($purchase):void{
                 $productId = (int)$product['id'];
+
                 //Tomar el id del producto
                 $productDB = Product::find($productId);
                 //Tomar el el avg del costo
@@ -79,6 +80,10 @@ class PurchaseController extends Controller
 
                 //Crare la el valor de product id
                 $product['product_id'] = $productId;
+                $product['tax_amount'] = $product['tax'];
+
+
+
 
 
                 // Obtener los datos de inventario para sumar o crear
