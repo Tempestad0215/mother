@@ -24,11 +24,23 @@ const form = inject(saleKey)!;
 
         </div>
 		<!--                            Mensaje generales-->
-        <div class="">
-            <p>Descuento : {{getMoney(form.discount_amount)}}</p>
-            <p>Itbis : {{getMoney(form.tax)}}</p>
-            <p>Sub Total : {{getMoney(form.sub_total)}}</p>
-            <p>Total : {{getMoney(form.amount)}}</p>
+        <div class="w-full max-w-sm ml-auto space-y-2 text-sm mt-3">
+            <div class="flex justify-between">
+                <span class="text-gray-600">Sub Total</span>
+                <span class="font-medium">{{ getMoney(form.sub_total) }}</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="text-gray-600">ITBIS</span>
+                <span class="font-medium">{{ getMoney(form.tax) }}</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="text-gray-600">Descuento</span>
+                <span class="font-medium text-emerald-600">-{{ getMoney(form.discount_amount) }}</span>
+            </div>
+            <div class="border-t pt-2 mt-2 flex justify-between text-base">
+                <span class="font-semibold">Total</span>
+                <span class="font-semibold text-primary-600">{{ getMoney(form.amount) }}</span>
+            </div>
         </div>
         <div class="clear-both"></div>
 

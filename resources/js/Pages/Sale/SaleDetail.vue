@@ -9,7 +9,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import {ProductBaseI, productFullI} from "@/Interfaces/ProductInterface";
-import {computed, inject, ref} from "vue";
+import {computed, inject, ref, watch} from "vue";
 import {infoSaleI, saleDataI, SaleTypeEnumI} from "@/Interfaces/SaleInterface";
 import {saleKey} from "@/utils/keys";
 import {PaginationI} from "@/Interfaces/GlobalInterface";
@@ -17,7 +17,7 @@ import {getSequenceType} from "@/Global/Helpers";
 import {useRoute} from "ziggy-js";
 import {FloatLabel, InputText, Select, ToggleButton, Dialog} from "primevue";
 import FShowProduct from "@/Pages/Products/FShowProduct.vue";
-import {item} from "@primeuix/themes/aura/dock";
+import {PreciseCalculator} from "@/utils/Decimal";
 
 
 const route = useRoute();
@@ -58,11 +58,19 @@ const getSaleType = computed(()=>{
     });
 })
 
+watch(
+    () => form.type,
+    (newVal) => {
+        form.close_table = newVal === "Cotizacion";
+    }
+)
+
+
 /**
  * Obtener los datos de productos
  * @param item
  */
-function getData(item: productFullI) {
+const getData = (item: productFullI) => {
 	//Obtener los datos de productos
 	let info: infoSaleI | undefined = form.info_sale.find((el) => el.product_id === item.id);
 
@@ -105,7 +113,7 @@ function getData(item: productFullI) {
 /**
  * Verificar el tipo de factura
  */
-async function checkInvoiceType() {
+const checkInvoiceType = async ()=> {
 
 	// Verificar si es nota de credito
 	if (form.invoice_type === 'B04') {
@@ -138,7 +146,7 @@ async function checkInvoiceType() {
 /**
  * Obtener el producto por codigo
  */
-function getProductCode() {
+const getProductCode =()=> {
 
 	//Verificar que tenga más de 6 caracter
 	if (form.code_value.length > 0) {
@@ -159,7 +167,7 @@ function getProductCode() {
 }
 
 //Obtener los datos de las cuentas abiertas
-function getSaleOpen(item: saleDataI) {
+const getSaleOpen = (item: saleDataI) => {
 
 	//Colocar la variable en nada al principio
 	form.info_sale = [];
@@ -198,15 +206,11 @@ function getSaleOpen(item: saleDataI) {
 }
 
 
-function openReturn(){
+const openReturn = () =>{
 	showReturn.value = !showReturn.value;
 }
 
-defineExpose({
-	showReturn,
-	getSequenceType,
-	openReturn
-})
+
 
 
 const getDataProduct = (data:ProductBaseI) => {
@@ -217,6 +221,25 @@ const getDataProduct = (data:ProductBaseI) => {
         form.info_sale[getIndex].stock += 1.00;
     }else {
 
+        const taxPlus = Number(
+            PreciseCalculator.multiply(
+                (data.tax_rate || 0),
+                data.price
+            )
+        )
+        let taxForProduct = 0;
+
+        if (taxPlus === 0) {
+            taxForProduct = 0;
+        }else{
+            taxForProduct = Number(
+                PreciseCalculator.multiply(
+                    taxPlus,
+                    1
+                )
+            )
+        }
+
         form.info_sale.push({
             product_id: data.id,
             product_name: data.name,
@@ -225,7 +248,7 @@ const getDataProduct = (data:ProductBaseI) => {
             min_price: data.min_price,
             special_price: data.special_price,
             tax: data.tax_id,
-            tax_rate: data.tax_rate || 0,
+            tax_rate: taxForProduct,
             discount: 0,
             discount_amount: 0,
             reserved: 0,
@@ -235,18 +258,27 @@ const getDataProduct = (data:ProductBaseI) => {
 
         })
     }
+
+    emit('totalSale')
 }
+
+defineExpose({
+    showReturn,
+    getSequenceType,
+    openReturn
+})
 
 </script>
 
 <template>
 	<!--                        Datos del formulario-->
 	<div class=" flex justify-between items-center mt-3">
-		<div class="flex">
+		<div class="flex mt-2">
 			<form
+                class=""
 				v-if="form.invoice_type !== 'B04' "
 				@submit.prevent="getProductCode">
-                <FloatLabel>
+                <FloatLabel variant="on">
                     <InputText/>
                     <label for="code">Codigo</label>
                 </FloatLabel>
@@ -290,7 +322,13 @@ const getDataProduct = (data:ProductBaseI) => {
 			<!--Tipo de factura-->
 			<div class="ml-2 w-40">
                 <FloatLabel variant="on" >
-                    <Select fluid v-model="form.type" option-value="value"  option-label="key" :option-disabled="(data) => data.hidden" :options="getSaleType" />
+                    <Select
+                        fluid
+                        v-model="form.type"
+                        option-value="value"
+                        option-label="key"
+                        :option-disabled="(data) => data.hidden"
+                        :options="getSaleType" />
                     <label for="type_sale">Tipo Venta</label>
                 </FloatLabel>
 			</div>
@@ -298,7 +336,11 @@ const getDataProduct = (data:ProductBaseI) => {
 			<div
 				v-if="!propsW.refund"
 				class="ml-2">
-                    <ToggleButton v-model="form.close_table"  on-label="Cuenta Cerrado" off-label="Cuenta Abieto" />
+                    <ToggleButton
+                        :disabled="form.type === 'Cotizacion'"
+                        v-model="form.close_table"
+                        on-label="Cuenta Cerrada"
+                        off-label="Cuenta Abierta" />
 
 			</div>
 		</div>

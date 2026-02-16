@@ -12,6 +12,10 @@ export interface MenuItemI extends MenuItem{
 
 export type MoveDirectionEdit = "UP" | "DOWN"
 
+export interface ValidationErrors {
+    [fielName:string]: string;
+}
+
 export interface AppSettingI {
     id: number;
     name: string;

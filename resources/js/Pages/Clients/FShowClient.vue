@@ -21,6 +21,7 @@ const page = usePage();
  */
 const propsW = defineProps<{
     clientData: PaginationI<clientBaseI>;
+    otherComponent?: boolean;
 }>();
 const searchValue = ref("")
 const showClient = defineModel<boolean>('showClient',{
@@ -117,6 +118,7 @@ const deleteData = (data:clientBaseI, event: Event) => {
                     </InputGroup>
                 </form>
                 <Button
+                    v-if="!propsW.otherComponent"
                     class="h-8"
                     @click="showClient = !showClient">
                     Crear Cliente

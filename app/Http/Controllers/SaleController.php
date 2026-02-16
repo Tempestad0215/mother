@@ -58,11 +58,7 @@ class SaleController extends Controller
     }
 
 
-    /**
-     * Crear la venta
-     * @param StoreProductSaleRequest $request
-     * @return JsonResponse
-     */
+
     public function store(StoreProductSaleRequest $request)
     {
 
@@ -79,10 +75,7 @@ class SaleController extends Controller
 
         });
 
-        // Repuesta
-        return response()->json([
-            'pdfUuid' => $data->id,
-        ]);
+        return back();
 
     }
 

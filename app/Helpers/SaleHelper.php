@@ -79,10 +79,11 @@ class SaleHelper
             //Actualizar los datos de la notas de credito
             CreditNoteHelper::updateAvailableFor($creditNotes, $request->get('amount'));
 
-
-            //Recorrer la ventas para descontar los productos
-            foreach ($request->get('info_sale') as $value)
+             //Recorrer la ventas para descontar los productos
+             foreach ($request->get('info_sale') as $value)
             {
+
+                dd($value);
                 //Verificar si la mesa es cerrada
                 $closeTable = $request->get('close_table');
                 //Instancia

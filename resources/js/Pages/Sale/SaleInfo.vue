@@ -10,7 +10,8 @@ import {usePage} from "@inertiajs/vue3";
 import axios from "axios";
 import {sequenceDataI} from "@/Interfaces/SettingInterface";
 import {useRoute} from "ziggy-js";
-import {FloatLabel, InputText, AutoComplete, InputGroup, InputGroupAddon} from "primevue";
+import {FloatLabel, InputText, AutoComplete, InputGroup, InputGroupAddon, Dialog} from "primevue";
+import FShowClient from "@/Pages/Clients/FShowClient.vue";
 
 
 const route = useRoute();
@@ -212,7 +213,7 @@ defineExpose({
 			class="grid grid-cols-1 w-full justify-items-center ">
 			<div
 				class="animate-pulse text-gray-50 ">
-				Cargando <FontAwesomeIcon class="animate-spin" :icon="faSpinner"/>
+				Cargando... <FontAwesomeIcon class="animate-spin" :icon="faSpinner"/>
 			</div>
 		</div>
 
@@ -243,17 +244,14 @@ defineExpose({
 			</p>
 		</fieldset>
 	</div>
-<!--	<FloatBox-->
-<!--		v-model:show="showClient">-->
-<!--		<template #header>-->
-<!--			Lista Cliente-->
-<!--		</template>-->
-<!--		<template #body>-->
-<!--			<FShowClient-->
-<!--				@getData="getClient"-->
-<!--				:clients="propsW.clients"/>-->
-<!--		</template>-->
-
-<!--	</FloatBox>-->
+    <Dialog
+        class="w-250"
+        header="Listado de Cliente"
+        v-model:visible="showClient"
+        modal>
+        <FShowClient
+            :other-component="true"
+            :client-data="propsW.clients"/>
+    </Dialog>
 
 </template>

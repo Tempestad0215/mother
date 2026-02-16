@@ -24,6 +24,14 @@ class  StoreProductSaleRequest extends FormRequest
         return true;
     }
 
+    protected function isTypePaymentRequired(): bool
+    {
+        $type = $this->input('type'); // o $this->type
+
+        return $type !== SaleTypeEnum::Devolucion->value
+            && $type !== SaleTypeEnum::Cotizacion->value;
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -34,8 +42,6 @@ class  StoreProductSaleRequest extends FormRequest
         //datos de configuracion
         $sequence = Setting::pluck('sequence')->first() ??  false;
 
-        //Obtener el tipo de venta
-        $type = $this->get('type');
 
         //Tomar los datos de la info_sale
         $info_sale = $this->input('info_sale');
@@ -64,7 +70,7 @@ class  StoreProductSaleRequest extends FormRequest
             'sub_total' => ['required','numeric'],
             'discount_amount' => ['required','numeric'],
             'type' => ['required',Rule::enum(SaleTypeEnum::class)],
-            'type_payment' => ['nullable',Rule::requiredIf(SaleTypeEnum::Devolucion->value !== $type) ,Rule::enum(PaymentTypeEnum::class)],
+            'type_payment' => ['nullable',Rule::requiredIf($this->isTypePaymentRequired()) ,Rule::enum(PaymentTypeEnum::class)],
             'received' => ['required','numeric'],
             'returned' => ['required','numeric'],
             'credit_notes' => ['nullable','array'],
@@ -74,4 +80,6 @@ class  StoreProductSaleRequest extends FormRequest
             'close_table' => ['required','boolean'],
         ];
     }
+
+
 }

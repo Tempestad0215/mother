@@ -1,16 +1,14 @@
 <script setup lang="ts">
 import {typePaymentData} from "@/Global/ShareData";
-import {getMoney, moneyConfig} from "@/Global/Helpers";
-import TextInput from "@components/TextInput.vue";
-import InputLabel from "@components/InputLabel.vue";
-import PrimaryButton from "@components/PrimaryButton.vue";
+import {getMoney} from "@/Global/Helpers";
 import axios from "axios";
 import {inject, onMounted} from "vue";
-import {Money} from "v-money3";
 import {saleKey} from "@/utils/keys";
-import ErrorComponent from "@components/ErrorComponent.vue";
 import {PreciseCalculator} from "@/utils/Decimal";
 import {useRoute} from "ziggy-js";
+import {Select, InputNumber, FloatLabel, InputGroup, InputGroupAddon, InputText, DataTable, Column, Button} from "primevue";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import {faSearch, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 
 
 
@@ -110,7 +108,7 @@ function amountCreditNote() {
 /**
  * verificar la venta
  */
-function checkSale() {
+const checkSale = () => {
 	showReturn.value = true;
 	//Verificar si se puede mostrar los datos
 	if (form.close_table && form.info_sale.length > 0) {
@@ -131,7 +129,7 @@ function checkSale() {
 /**
  * Devuelta de cambio
  */
-function returned() {
+const returned = () => {
 
 	let totalForPay: number = Number(PreciseCalculator.add(form.credit_notes_amount, form.received))
 	//Restar la cantidad
@@ -145,11 +143,9 @@ function returned() {
 /**
  * Return blir
  */
-function returnedBlur() {
+const returnedBlur = () => {
 	//Primero verifica la cantidad
 	returned()
-
-	console.log("returned", form.returned)
 
 	//Verificar el cálculo
 	if (form.returned < 0) {
@@ -175,112 +171,64 @@ defineExpose({
 <template>
 	<!--Datos de la ventana-->
 	<div
-		class="fondo p-5 rounded-md min-w-[30rem]  max-w-[50rem]  h-fit mx-auto">
-		<h3 class="text-2xl text-center">
-			Datos de pagos
-		</h3>
+		class="fondo p-5 rounded-md min-w-120  max-w-200  h-fit mx-auto">
 
-		<div class="flex items-center gap-3">
+		<div class="flex items-center gap-3 mt-5">
 			<!--Tipo de apgo-->
 			<div class="flex-1">
-				<InputLabel
-					for="typePayment"
-					value="Tipo Pago"/>
-				<select
-					autofocus
-					v-model="form.type_payment"
-					id="typePayment"
-					class="inputGeneral py-1 w-full">
-					<option
-						v-for="(item, index) in typePaymentData" :key="index"
-						:value="item.value">
-						{{ item.name }}
-					</option>
-				</select>
+                <FloatLabel variant="on" >
+                    <Select :options="typePaymentData" optionLabel="name" optionValue="value"  v-model="form.type_payment" />
+                    <label for="typePayment">Tipo de Pago</label>
+                </FloatLabel>
+
 			</div>
 			<div class="flex-1">
-				<InputLabel
-					for="credit_notes"
-					value="Notas Creditos"/>
-				<div class="relative">
-					<TextInput
-						class="w-full mr-10"
-						v-model.trim="creditNote"
-						type="search"/>
-					<i
-						@click="getCreditNote"
-						class="icon-efect absolute right-0 p-2 flex items-center inset-y-0 fa-solid fa-magnifying-glass"></i>
-				</div>
+                <FloatLabel variant="on" >
+                    <InputGroup>
+                        <InputText v-model="creditNote" />
+                        <InputGroupAddon><FontAwesomeIcon :icon="faSearch"/></InputGroupAddon>
+                    </InputGroup>
+                </FloatLabel>
 			</div>
 		</div>
 
-		<!--                        Aplicar nota de credito-->
+		<!--Aplicar nota de credito-->
 		<div class=" mt-3">
+            <DataTable :value="form.credit_notes">
+                <Column header="Cod./NCF" field="code" />
+                <Column header="Disponible" field="n_available" />
+                <Column header="Act" >
+                    <template #body="{index}:{index:number}" >
+                        <FontAwesomeIcon @click="deleteCreditNote(index)"  :icon="faTrashAlt"/>
+                    </template>
+                </Column>
+            </DataTable>
 
-			<!--                            Mostrar las notas de creditos asociada a esa venta-->
-			<table class="table-auto w-full mt-3 text-white">
-				<caption class="font-bold text-3xl">
-					Notas De Credito
-				</caption>
-				<thead class="text-left">
-				<tr class="border-2 border-b-gray-800">
-					<th>Cod./NCF</th>
-					<th>Disponible</th>
-					<th class="w-1/12">Act</th>
-				</tr>
-				</thead>
-				<!--                                Cuerpod de los datos-->
-				<tbody>
-				<tr
-					v-for="(item, index) in form.credit_notes" :key="index">
-					<td>{{ item.code }}</td>
-					<td>{{ getMoney(item.n_available) }}</td>
-					<td class="text-center w-1/12">
-						<i
-							@click="deleteCreditNote(index)"
-							class=" icon-efect fa-solid fa-trash"></i></td>
-				</tr>
-				<tr class=" border-t-2 border-gray-800">
-					<th>Total :</th>
-					<th colspan="2">{{ getMoney(form.credit_notes_amount) }}</th>
-				</tr>
-				</tbody>
-			</table>
 		</div>
 
-		<!--                      Monto Recibido-->
+		<!--Monto Recibido-->
 		<div class="w-full mt-3">
-			<InputLabel
-				for="received"
-				value="Recibido"/>
-			<Money
-				class="inputGeneral text-3xl"
-				@blur="returnedBlur"
-				v-model="form.received"
-				v-bind="moneyConfig"/>
+            <FloatLabel variant="on" >
+                <InputNumber v-model="form.received" />
+                <label for="received"></label>
+            </FloatLabel>
 		</div>
 
-		<div class="text-gray-50">
-			<!--                        Datos pendiente para cobrar-->
-			<div class="mt-3 text-3xl text0">
-				Pendiente...: {{ getMoney(form.pending) }}
-			</div>
-			<!--                        Datos Para devuelta-->
-			<div class="mt-3 text-3xl">
-				Devuelta......: {{ getMoney(form.returned) }}
-			</div>
+		<div class="mt-5">
+            <div class="flex justify-between py-2 text-red-300">
+                <span>Pendiente :</span>
+                <p>{{ getMoney(form.pending) }}</p>
+            </div>
+            <div class="flex justify-between border-t-2 py-2 text-green-200 text-2xl">
+                <span>Devuelta :</span>
+                <p>{{ getMoney(form.returned) }}</p>
+            </div>
 		</div>
 
 
 		<!--                        Boton para cerrar la factura-->
 		<div class="mt-3 text-right">
-			<PrimaryButton
-				:disabled="form.processing"
-				@click="returnedBlur">
-				Cerrar Factura
-			</PrimaryButton>
+            <Button label="Cerrar Factura" />
 		</div>
-		<ErrorComponent v-model:errors="form.errors"/>
-
 	</div>
 </template>
