@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
@@ -88,6 +89,11 @@ class Supplier extends Model implements Auditable
     public function account():MorphOne
     {
         return $this->morphOne(Account::class, 'accountable');
+    }
+
+    public function receipts(): HasMany
+    {
+        return $this->hasMany(PurchaseReceipts::class);
     }
 
     /*

@@ -161,7 +161,7 @@ const createReception = (data: PurchaseSupplierI) => {
                         <template #body="{data}: {data: PurchaseSupplierI}">
                             <div class="space-x-3">
                                 <Button
-                                    v-if="data.status !== PurchaseStatusEnum.Borrador && data.status !== PurchaseStatusEnum.Completada"
+                                    v-if="data.status !== PurchaseStatusEnum.Borrador && data.status !== PurchaseStatusEnum.Completada && data.status !== PurchaseStatusEnum.Parcial "
                                     title="Entrada"
                                     severity="info"
                                     outlined

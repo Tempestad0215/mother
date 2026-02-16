@@ -3,28 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Etiqueta de Impresión</title>
-    <style>
-        @page  {
-            max-height: 30mm;
-            max-width: 60mm;
-        }
-        body{
-            margin: 0;
-            padding: 0;
-        }
-        .title{
-            margin: 0;
-            padding: 0;
-            font-size: 14pt;
-            font-weight: bold;
-            text-align: center;
-            font-family: monospace, monospace;
-        }
-    </style>
+
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class=" font-mono">
-<div class="">
-    <div class="title">
+<div class="text-center text-[10px]">
+    <div class="title ">
         {{ $name }}
     </div>
     <p class="text-center">
@@ -33,8 +17,20 @@
 {{--    <p>--}}
 {{--        {{$code_bar}}--}}
 {{--    </p>--}}
+    <div class="flex justify-center items-center">
+        <svg id="barcode"></svg>
 
-
-    <img src="{{$code_bar}}" alt="">
+    </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.12.3/dist/barcodes/JsBarcode.code128.min.js"></script>
+<script>
+    JsBarcode("#barcode", "{{ $code_bar }}", {
+        format: "CODE128",
+        width: 1.5,
+        height: 35,
+        displayValue: true,
+        margin: 0,
+        fontSize: 10
+    });
+</script>
 </body>

@@ -9,6 +9,19 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $description
+ * @property float $rate
+ * @property ModelStatusEnum $status
+ *
+ *
+ * @property-read PurchaseItem $purchaseItem
+ * @property-read PurchaseReceiptsItem $receiptsItem
+ *
+ */
+
 class Tax extends Model
 {
     use SoftDeletes;
@@ -38,6 +51,11 @@ class Tax extends Model
     public function purchaseItem(): HasMany
     {
         return $this->hasMany(PurchaseItem::class);
+    }
+
+    public function receiptsItem(): HasMany
+    {
+        return $this->hasMany(PurchaseReceiptsItem::class);
     }
 
     protected function casts(): array

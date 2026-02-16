@@ -387,11 +387,34 @@ Route::middleware([
 
     Route::get('/test', function () {
 
-        $pdf = new ProductLabelV1();
+        $filename = "invoie".time().".pdf";
+        $path = storage_path('app/public/pdfs/receptions');
+        $fullPath = $path.'/'.$filename;
 
-        $pdf->createInfo();
+        $purchase_receipts = \App\Models\PurchaseReceipts::first();
+        $setting = \App\Models\Setting::latest()->first();
 
-        $pdf->Output('test_pdf.pdf');
+
+
+        // Asegúrate que el directorio existe
+        if (!file_exists(storage_path('app/public/pdfs/receptions'))) {
+            mkdir(storage_path('app/public/pdfs/receptions'), 0777, true);
+        }
+
+        return \Spatie\LaravelPdf\Facades\Pdf::view('pdfs.purchase.reception.v1',[
+            'receipts' => $purchase_receipts,
+            'setting' => $setting
+        ])
+            ->format('letter')
+            ->headerView('pdfs.headers.header-reception-v1',[
+                'receipts'=> $purchase_receipts,
+                'setting' => $setting
+            ])
+            ->footerView('pdfs.footers.footer-reception-v1',[
+                'receipts' => $purchase_receipts,
+                'setting' => $setting
+            ])
+            ->name('test.pdf');
 
     })->name('printTest');
 

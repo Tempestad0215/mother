@@ -11,13 +11,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
- * @property int id
- * @property string name
- * @property string description
- * @property string location
- * @property Carbon deleted_at
- * @property Carbon updated_at
- * @property Carbon created_at
+ * @property int $id
+ * @property string $name
+ * @property string $description
+ * @property string $location
+ * @property Carbon $deleted_at
+ * @property Carbon $updated_at
+ * @property Carbon $created_at
+ *
+ * @property-read PurchaseReceiptsItem $receiptsItem
  */
 class Warehouse extends Model implements Auditable
 {
@@ -37,5 +39,10 @@ class Warehouse extends Model implements Auditable
     public function purchaseItem(): HasMany
     {
         return $this->hasMany(PurchaseItem::class);
+    }
+
+    public function receiptItem(): HasMany
+    {
+        return $this->hasMany(PurchaseReceiptsItem::class);
     }
 }

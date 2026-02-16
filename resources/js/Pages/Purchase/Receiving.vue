@@ -96,14 +96,6 @@ onMounted(()=>{
         Object.assign(form, data)
         form.status = PurchaseStatusEnum.Completada
 
-        data.items.map((el) => {
-            const index = form.items.findIndex((ite) => ite.id === el.id)
-            const taxAmount = Number(
-                PreciseCalculator.multiply(
-
-                )
-            )
-        })
     }
 })
 
@@ -148,15 +140,27 @@ const deleteItem = () => {
 }
 
 const sumSubTotalByLine = ()=>{
-    const discountTotal = form.items.reduce((acc:number, curr:PurchaseItemI) => acc + curr.discount , 0)
-    const subTotal = form.items.reduce((acc:number, curr:PurchaseItemI) => acc + curr.amount , 0)
-    const taxTotal = form.items.reduce((acc:number, curr:PurchaseItemI) => acc + curr.tax_amount , 0)
+    const discountTotal = form.items.reduce((acc:number, curr:PurchaseItemI) => Number(
+        PreciseCalculator.add(
+            acc,
+            curr.discount
+        )
+    ), 0)
+    const subTotal = form.items.reduce((acc:number, curr:PurchaseItemI) => Number(
+        PreciseCalculator.add(
+            acc,
+            curr.amount
+        )
+    ), 0)
+    const taxTotal = form.items.reduce((acc:number, curr:PurchaseItemI) => Number(
+        PreciseCalculator.add(
+            acc,
+            curr.tax_amount
+        )
+    ), 0)
 
     form.tax = taxTotal;
     form.discount = discountTotal;
-
-    console.log("form itbis", form.tax)
-    console.log("form discpount", form.discount)
 
     form.sub_total = Number(PreciseCalculator.subtract(
         subTotal,

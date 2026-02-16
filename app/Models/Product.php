@@ -15,43 +15,45 @@ use OwenIt\Auditing\Contracts\Auditable;
 use function PHPSTORM_META\map;
 
 /**
- * @property int id
- * @property string type
- * @property string code
- * @property string name
- * @property string description
- * @property string unit
- * @property float stock
- * @property float reserved
- * @property float cost
- * @property float special_price
- * @property float min_price
- * @property float price
- * @property string sku
- * @property string bar_code
- * @property float weight
- * @property string dimensions
- * @property string brand
- * @property float tax_rate
- * @property float tax
- * @property float discount
- * @property float discount_amount
- * @property float product_no_tax
- * @property float benefits
- * @property float benefits_rate
- * @property string comment
- * @property boolean inventoried
- * @property boolean status
- * @property boolean has_fraction
- * @property boolean has_special
- * @property boolean has_promotion
- * @property boolean has_tax
- * @property  int supplier_id
- * @property int category_id
- * @property string created_at
- * @property string updated_at
- * @property Date deleted_at
+ * @property int $id
+* @property string $type
+* @property string $code
+* @property string $name
+* @property string $description
+* @property string $unit
+* @property float $stock
+* @property float $reserved
+* @property float $cost
+* @property float $special_price
+* @property float $min_price
+* @property float $price
+* @property string $sku
+* @property string $bar_code
+* @property float $weight
+* @property string $dimensions
+* @property string $brand
+* @property float $tax_rate
+* @property float $tax
+* @property float $discount
+* @property float $discount_amount
+* @property float $product_no_tax
+* @property float $benefits
+* @property float $benefits_rate
+* @property string $comment
+* @property bool $inventoried
+* @property bool $status
+* @property bool $has_fraction
+* @property bool $has_special
+* @property bool $has_promotion
+* @property bool $has_tax
+* @property int $supplier_id
+* @property int $category_id
+* @property \Illuminate\Support\Carbon $created_at
+ * @property \Illuminate\Support\Carbon $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
  *
+ *
+ * @property-read PurchaseReceiptsItem $receiptsItem
  * @method static create(mixed $validated)
  */
 class Product extends Model implements Auditable
@@ -177,6 +179,11 @@ class Product extends Model implements Auditable
     public function supplier():BelongsTo
     {
         return $this->belongsTo(Supplier::class);
+    }
+
+    public function receiptsItem(): HasMany
+    {
+        return $this->hasMany(PurchaseReceiptsItem::class);
     }
 
     public function category():BelongsTo
