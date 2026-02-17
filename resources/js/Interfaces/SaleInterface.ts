@@ -15,6 +15,7 @@ export interface infoSaleI {
     min_price?: number;
     special_price?: number;
     price: number;
+    warehouse_id: number;
     price_temp: number;
     product_id: number;
     product_name: string;
@@ -23,7 +24,7 @@ export interface infoSaleI {
     status?: boolean;
     stock: number;
     reserved: number;
-    tax: number;
+    tax_id: number;
     tax_rate: number;
     type?: string;
     trans_type?: string;
@@ -64,6 +65,8 @@ export interface CreateSaleI {
     credit_notes_amount: number,
     pending: number,
 }
+
+export type WarehouseMapType = Record<string, number>
 
 export interface saleI{
     id: number;

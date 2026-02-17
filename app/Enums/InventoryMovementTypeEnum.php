@@ -9,6 +9,7 @@ enum InventoryMovementTypeEnum:string
     case Ajuste = 'Ajuste';
     case Transferencia = 'Transferencia';
     case Venta = 'Venta';
+    case Cotizacion = 'Cotizacion';
     case Devolucion = 'Devolucion';
     case Recepcion = 'Recepcion';
 }

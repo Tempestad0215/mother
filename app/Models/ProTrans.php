@@ -73,7 +73,8 @@ class ProTrans extends Model implements Auditable
         'tax_amount',
         'amount',
         'type',
-        'status'
+        'status',
+        'deleted_at'
     ];
 
     //formatear los datos

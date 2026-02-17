@@ -1,17 +1,18 @@
 <script setup lang="ts">
 import {saleKey} from "@/utils/keys";
-import {computed, inject, reactive, ref, watch} from "vue";
-import {infoSaleI} from "@/Interfaces/SaleInterface";
+import {computed, inject, onMounted, reactive, ref, watch} from "vue";
+import {infoSaleI, WarehouseMapType} from "@/Interfaces/SaleInterface";
 import {PreciseCalculator} from "@/utils/Decimal";
 import {DataTable, Column} from "primevue";
-import {InputNumber, Button, Dialog, FloatLabel, RadioButton} from "primevue";
+import {InputNumber, Button, Dialog, FloatLabel, RadioButton, Select} from "primevue";
 import {getMoney} from "@/Global/Helpers";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {faArrowAltCircleDown, faArrowAltCircleUp} from "@fortawesome/free-solid-svg-icons";
 
 
-defineProps<{
+const propsW = defineProps<{
 	refund?: boolean;
+    warehouses?: WarehouseMapType;
 }>()
 
 const form = inject(saleKey)!;
@@ -45,6 +46,20 @@ const productEditingName = computed(():string => {
 const productIsService = computed(() => {
     const item = form.info_sale[lastIndex.value]
     return !!item?.is_service
+})
+
+const getWarehouses = computed(()=>{
+    if(propsW.warehouses)
+    {
+        return Object.entries(propsW.warehouses).map(([key, value])=>{
+            return{
+                name: key,
+                value: value
+            }
+        })
+    }else{
+        return []
+    }
 })
 
 
@@ -87,6 +102,7 @@ const getLastIndex = () => {
 
     lastIndex.value = form.info_sale.length - 1;
     showEdit.value = true;
+
     // asingDataToEditItemForm()
     Object.assign(editItemForm, form.info_sale[lastIndex.value])
 }
@@ -194,9 +210,9 @@ const totalAmount = (index: number) => {
     //Descuento datos
     info.discount_amount = parseFloat((PreciseCalculator.multiply(info.amount, discountRate.toString())).toFixed(2));
     //Pasar los datos al formulario
-    info.tax = parseFloat((PreciseCalculator.multiply(info.amount, info.tax_rate)).toFixed(2));
+    info.tax_id = parseFloat((PreciseCalculator.multiply(info.amount, info.tax_rate)).toFixed(2));
 
-    console.log(info.tax)
+    console.log(info.tax_id)
 
     //Calcular los totales
     calculateTotals();
@@ -271,6 +287,17 @@ defineExpose({
             header="Descuento"
             :field="(data:infoSaleI) => `${getMoney(data.discount_amount)}`" />
         <Column
+            class="max-w-20"
+            header="Almacen">
+            <template #body="{index}">
+                <Select
+                    v-model="form.info_sale[index].warehouse_id"
+                    :options="getWarehouses"
+                    optionLabel="name"
+                    optionValue="value" />
+            </template>
+        </Column>
+        <Column
             header="Importe"
             :field="(data:infoSaleI) => `${getMoney(data.amount)}`" />
         <template #footer>
@@ -284,7 +311,7 @@ defineExpose({
         modal>
         <div class="flex flex-col gap-5 items-center">
             <div v-if="form.info_sale.length > 0" class="text-2xl font-bold">
-                Editanto el Item : {{productEditingName}}, es un: {{productIsService ? 'Servicios' : 'Producto'}}
+                Editando el Item : {{productEditingName}}, es un: {{productIsService ? 'Servicios' : 'Producto'}}
             </div>
             <div class="flex gap-5">
                 <div class="flex flex-col gap-5 mt-5">

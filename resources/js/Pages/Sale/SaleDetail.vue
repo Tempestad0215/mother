@@ -7,10 +7,9 @@ import {
 	faBoxOpen,
 	faTableCellsColumnLock,
 } from "@fortawesome/free-solid-svg-icons";
-import axios from "axios";
-import {ProductBaseI, productFullI} from "@/Interfaces/ProductInterface";
+import {ProductBaseI} from "@/Interfaces/ProductInterface";
 import {computed, inject, ref, watch} from "vue";
-import {infoSaleI, saleDataI, SaleTypeEnumI} from "@/Interfaces/SaleInterface";
+import {saleDataI, SaleTypeEnumI} from "@/Interfaces/SaleInterface";
 import {saleKey} from "@/utils/keys";
 import {PaginationI} from "@/Interfaces/GlobalInterface";
 import {getSequenceType} from "@/Global/Helpers";
@@ -67,104 +66,59 @@ watch(
 
 
 /**
- * Obtener los datos de productos
- * @param item
- */
-const getData = (item: productFullI) => {
-	//Obtener los datos de productos
-	let info: infoSaleI | undefined = form.info_sale.find((el) => el.product_id === item.id);
-
-	// Verificar si el producto exite
-	if (info?.product_id === item.id) {
-		info.stock += 1.00;
-        showProducts.value = false;
-
-	} else {
-
-		//Pasar los datos al formulario
-		// form.info_sale.push({
-		// 	amount: 0,
-		// 	discount_rate: item.discount,
-		// 	discount_amount: 0,
-		// 	price: item.price,
-		// 	min_price: item.min_price,
-		// 	special_price: item.special_price,
-		// 	product_id: item.id,
-		// 	product_name: item.name,
-		// 	stock: 1,
-		// 	reserved: 1,
-		// 	tax: item.tax,
-		// 	tax_rate: item.tax_rate / 100,
-		// 	type: item.type
-		// });
-
-		//Cerrar la ventana
-        showProducts.value = false;
-	}
-
-	// //Conseguir el index para poder realizar el cálculo
-	let index = form.info_sale.findIndex((el) => el.product_id === item.id);
-
-	//Calcular el indice
-	emit('totalAmount', index)
-
-}
-
-/**
  * Verificar el tipo de factura
  */
-const checkInvoiceType = async ()=> {
-
-	// Verificar si es nota de credito
-	if (form.invoice_type === 'B04') {
-		//Resultado de la pregunta
-		// const result = await Swal.fire({
-		// 	title: "Desea Colocar Comprobante?",
-		// 	text: "Registre El Comprobante Del Cliente!",
-		// 	icon: "question",
-		// 	showCancelButton: true,
-		// 	confirmButtonColor: "#3085d6",
-		// 	cancelButtonColor: "#d33",
-		// 	confirmButtonText: "Si",
-		// 	cancelButtonText: "No"
-		// });
-
-		//Verificar la accion
-		// showClientRnc.value = result.isConfirmed;
-
-	}
-	// else showClientRnc.value = form.invoice_type !== 'B02';
-
-	// Solo buscar los datos si es igual a 0 el ID. eso quiere decir que debe generar un comprobante
-	if (form.id == 0) {
-		//llamar el tipo de boleta
-		getSequenceType(form.invoice_type);
-	}
-}
+// const checkInvoiceType = async ()=> {
+//
+// 	// Verificar si es nota de credito
+// 	if (form.invoice_type === 'B04') {
+// 		//Resultado de la pregunta
+// 		// const result = await Swal.fire({
+// 		// 	title: "Desea Colocar Comprobante?",
+// 		// 	text: "Registre El Comprobante Del Cliente!",
+// 		// 	icon: "question",
+// 		// 	showCancelButton: true,
+// 		// 	confirmButtonColor: "#3085d6",
+// 		// 	cancelButtonColor: "#d33",
+// 		// 	confirmButtonText: "Si",
+// 		// 	cancelButtonText: "No"
+// 		// });
+//
+// 		//Verificar la accion
+// 		// showClientRnc.value = result.isConfirmed;
+//
+// 	}
+// 	// else showClientRnc.value = form.invoice_type !== 'B02';
+//
+// 	// Solo buscar los datos si es igual a 0 el ID. eso quiere decir que debe generar un comprobante
+// 	if (form.id == 0) {
+// 		//llamar el tipo de boleta
+// 		getSequenceType(form.invoice_type);
+// 	}
+// }
 
 
 /**
  * Obtener el producto por codigo
  */
-const getProductCode =()=> {
-
-	//Verificar que tenga más de 6 caracter
-	if (form.code_value.length > 0) {
-		//realizar la busqueda en automatico
-		axios.get(route('product.get.code', {search: form.code_value}))
-			.then((res) => {
-				//Formatear los datos
-				const product: productFullI = res.data;
-				//Pasar los datos al metodo
-				getData(product);
-				//Limpiar campo y errores en caso de tenerlo
-			})
-			.catch(() => {
-				//Mensjae de que no existe en la base de datos
-				form.setError('code_value', 'Este Producto no existe en la Base de Datos');
-			})
-	}
-}
+// const getProductCode =()=> {
+//
+// 	//Verificar que tenga más de 6 caracter
+// 	if (form.code_value.length > 0) {
+// 		//realizar la busqueda en automatico
+// 		axios.get(route('product.get.code', {search: form.code_value}))
+// 			.then((res) => {
+// 				//Formatear los datos
+// 				const product: productFullI = res.data;
+// 				//Pasar los datos al metodo
+// 				//Limpiar campo y errores en caso de tenerlo
+// 			})
+// 			.catch(() => {
+// 				//Mensjae de que no existe en la base de datos
+// 				form.setError('code_value', 'Este Producto no existe en la Base de Datos');
+// 			})
+// 	}
+// }
 
 //Obtener los datos de las cuentas abiertas
 const getSaleOpen = (item: saleDataI) => {
@@ -200,8 +154,6 @@ const getSaleOpen = (item: saleDataI) => {
 	//Cerra la ventana
 	showSaleOpen.value = false;
 
-	// Ejecutar el metodo de invoice
-	checkInvoiceType();
 
 }
 
@@ -247,7 +199,8 @@ const getDataProduct = (data:ProductBaseI) => {
             price: data.price,
             min_price: data.min_price,
             special_price: data.special_price,
-            tax: data.tax_id,
+            tax_id: data.tax_id,
+            warehouse_id: data.warehouse_id,
             tax_rate: taxForProduct,
             discount: 0,
             discount_amount: 0,
@@ -277,7 +230,7 @@ defineExpose({
 			<form
                 class=""
 				v-if="form.invoice_type !== 'B04' "
-				@submit.prevent="getProductCode">
+				>
                 <FloatLabel variant="on">
                     <InputText/>
                     <label for="code">Codigo</label>

@@ -12,6 +12,7 @@ use App\Models\Product;
 use App\Models\Sale;
 use App\Models\Setting;
 use App\Models\User;
+use App\Models\Warehouse;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -21,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Inertia\Response;
+use Throwable;
 
 class SaleController extends Controller
 {
@@ -44,6 +46,10 @@ class SaleController extends Controller
         $dataSale = $this->dataSale($request);
         $lastRecord = Sale::orderBy('created_at', 'desc')->first();
 
+        $warehouses = Warehouse::pluck('id','name')->toArray();
+
+
+
 
         //DEvolver la vista y los datos
         return Inertia::render('Sale/SaleCreate', [
@@ -54,6 +60,7 @@ class SaleController extends Controller
             'lastRecord' => $lastRecord?->id,
             'saleTypeEnum' => collect(SaleTypeEnum::cases())
                 ->mapWithKeys(fn(SaleTypeEnum $item) => [$item->name => $item->value]),
+            'warehouses' => $warehouses,
         ]);
     }
 
@@ -80,7 +87,7 @@ class SaleController extends Controller
     }
 
     /**
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function update(StoreProductSaleRequest $request, Sale $sale)
     {
@@ -124,6 +131,7 @@ class SaleController extends Controller
      * @param Product $product
      * @param Sale $sale
      * @return RedirectResponse
+     * @throws Throwable
      */
     public function destroyItem(Request $request, Product $product, Sale $sale)
     {
@@ -145,6 +153,7 @@ class SaleController extends Controller
      * @param Sale $sale
      * @param bool $inventoried
      * @return RedirectResponse
+     * @throws Throwable
      */
     public function destroySale(Request $request, Sale $sale, bool $inventoried)
     {

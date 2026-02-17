@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Dtos\SaleCreditNoteDto;
 use App\Enums\TransTypeEnum;
 use App\Enums\ProductTypeEnum;
 use App\Enums\SaleTypeEnum;
@@ -12,6 +13,7 @@ use App\Models\Product;
 use App\Models\ProTrans;
 use App\Models\Sale;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Throwable;
@@ -193,14 +195,22 @@ class CreditNoteHelper
 
     /**
      * Verificar la notas de credito
-     * @param array $info
+     * @param SaleCreditNoteDto[] $info
      * @param float $amount
      * @return void
      */
-    public static function updateAvailableFor(array $info, float $amount):void
+    public static function updateAvailableFor(array $info = [], float $amount = 0):void
     {
+        if (empty($info) || $amount <= 0) {
+            return;
+        }
+
         //Total de nota de credito
-        $totalCredit = array_sum(array_column($info, 'n_available'));
+        $totalCredit = array_sum(
+            Arr::map(
+                $info,
+                fn(SaleCreditNoteDto $dto) => $dto->n_available
+            ));
         //Scar el resultado de la nota de credito y la venta total
         $result =  $totalCredit - $amount;
 

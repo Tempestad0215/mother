@@ -6,7 +6,14 @@ import {ProductBaseI} from "@/Interfaces/ProductInterface";
 import {printPdf} from "@/Global/Helpers";
 import {clientBaseI} from "@/Interfaces/ClientInterface";
 import axios from "axios";
-import {CreateSaleI, creditNotesSaleI, infoSaleI, saleDataI, SaleTypeEnumI} from "@/Interfaces/SaleInterface";
+import {
+    CreateSaleI,
+    creditNotesSaleI,
+    infoSaleI,
+    saleDataI,
+    SaleTypeEnumI,
+    WarehouseMapType
+} from "@/Interfaces/SaleInterface";
 import {invoiceTypeI} from "@/Interfaces/SettingInterface";
 import {PaginationI, ValidationErrors} from "@/Interfaces/GlobalInterface";
 import SaleInfo from "@/Pages/Sale/SaleInfo.vue";
@@ -36,7 +43,8 @@ const propsW = defineProps<{
 	saleInfo?: saleDataI,
 	refund?: boolean,
 	pdfUuid?: string,
-    saleTypeEnum: SaleTypeEnumI
+    saleTypeEnum: SaleTypeEnumI,
+    warehouses: WarehouseMapType
 }>();
 
 /*
@@ -77,7 +85,7 @@ const form = useForm<CreateSaleI>({
 	received: 0,
 	returned: 0,
 	general: "",
-	type: "Venta",
+	type: "Ventas",
 	type_payment: "Contado",
 	update: false,
 	sequence: "",
@@ -193,8 +201,6 @@ const  sendData = async () => {
 			await updateSale()
 
 		} else {
-
-            console.log("creando")
 			createSale()
 		}
 	}
@@ -205,8 +211,13 @@ const createSale = () => {
 	// try {
 		// const res = await axios.patch(route('sale.update', {sale: form.id}), form)
     form.post(route("sale.store"),{
-        onSuccess:(data) => {
-            console.log(data)
+        onSuccess:() => {
+            toast.add({
+                summary: "Registro Creado Correctamente",
+                severity: "success",
+                life: 3000
+            })
+            form.reset();
         },
         onError:(err) => {
             const errors  = Object.values(err)
@@ -259,9 +270,8 @@ const updateSale = async () => {
 
 const registerSale = () =>{
 
-    if(form.type === "Cotizacion" || form.close_table)
+    if(form.type === "Cotizacion" || !form.close_table)
     {
-        console.log('sen data')
         sendData();
     }else{
         paymentBox.value = true;
@@ -306,6 +316,7 @@ provide(saleKey, form)
                         />
 
                         <SaleTable
+                            :warehouses="propsW.warehouses"
                             ref="saleTableRef"/>
                         <SaleFooter
                             ref="saleFooterRef"/>

@@ -186,6 +186,11 @@ class Product extends Model implements Auditable
         return $this->hasMany(PurchaseReceiptsItem::class);
     }
 
+    public function SaleItem(): HasMany
+    {
+        return $this->hasMany(SaleItem::class);
+    }
+
     public function category():BelongsTo
     {
         return $this->belongsTo(Category::class);

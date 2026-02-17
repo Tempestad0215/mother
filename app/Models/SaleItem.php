@@ -26,7 +26,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read Tax $tax
  */
 
-class sale_item extends Model
+class SaleItem extends Model
 {
     use SoftDeletes;
 

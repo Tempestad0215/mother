@@ -2,6 +2,8 @@
 
 namespace App\Helpers;
 
+use App\Dtos\InventoryMovementDto;
+use App\Enums\InventoryMovementTypeEnum;
 use App\Models\Inventory;
 use App\Models\Product;
 use App\Models\Warehouse;
@@ -9,6 +11,7 @@ use DB;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Validation\ValidationException;
 use LaravelIdea\Helper\App\Models\_IH_Product_C;
 use RuntimeException;
 use Throwable;
@@ -75,36 +78,47 @@ class ProductHelper
     /**
      * Disminuye stock y registra un movimiento en Inventory.
      *
-     * @param Product $product
-     * @param Warehouse $warehouse
-     * @param float $quantity
+     * @param InventoryMovementDto $data
      * @return void
-     * @throws RuntimeException|Throwable
+     * @throws Throwable
      */
-    public static function decrementStock(Product $product, Warehouse $warehouse, float $quantity): void
+    public static function decrementStock(InventoryMovementDto $data): void
     {
-        if ($quantity <= 0) {
+        $qt = $data->quantity;
+
+        if ($qt <= 0) {
             return;
         }
 
-        DB::transaction(function () use ($product, $warehouse, $quantity) {
-            $oldStock = Inventory::where('product_id', $product->id)
+        DB::transaction(function () use ($data, $qt){
+
+            $product = Product::find($data->product_id);
+
+            if(!$product){
+                throw ValidationException::withMessages([
+                    'product_id' => 'No Existe Registro Con Este ID'
+                ]);
+            }
+
+            $oldStock = Inventory::where('product_id', $data->product_id)
+                ->where('warehouse_id', $data->warehouse_id)
                 ->latest('created_at')
                 ->first();
 
-            if (! $oldStock || ($oldStock->qty_on_hand ?? 0) < $quantity) {
-                throw new RuntimeException('Stock insuficiente para el producto id=' . $product->id);
+            if (!$oldStock || ($oldStock->qty_on_hand ?? 0) < $qt) {
+                throw ValidationException::withMessages([
+                    'warehouse_id' => "No Existen Registro Con Este id :".$data->product_id,
+                ]);
             }
 
-            $newOnHand = $oldStock->qty_on_hand - $quantity;
+            $newOnHand = $oldStock->qty_on_hand - $qt;
             $avg = $oldStock->avg_cost ?? 0;
-
 
             Inventory::upsert(
                 [
                     [
-                        'product_id'   => $product->id,
-                        'warehouse_id' => $warehouse->id ?? null,
+                        'product_id'   => $data->product_id,
+                        'warehouse_id' => $data->warehouse_id ?? null,
                         'qty_on_hand'  => $newOnHand,
                         'avg_cost'     => $avg,
                     ],
@@ -113,9 +127,23 @@ class ProductHelper
                 ['qty_on_hand', 'avg_cost', 'updated_at'] // columnas a actualizar en conflicto
             );
 
+            if($data->type !== InventoryMovementTypeEnum::Cotizacion)
+            {
+                dd($newOnHand);
+                $product->stock = max(0, ($product->stock ?? 0) - $qt);
+                $product->save();
+            }
 
-            $product->stock = max(0, ($product->stock ?? 0) - $quantity);
-            $product->save();
+
+//            Crear el movimiento de inventario
+            $product->movements()->create([
+                'type' => $data->type,
+                'warehouse_id' => $data->warehouse_id,
+                'quantity' => $data->quantity,
+                'price' => $data->price,
+                'cost' => $data->cost ?? $product->cost,
+                'description' => $data->description,
+            ]);
         });
     }
 

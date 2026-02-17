@@ -20,7 +20,7 @@ return new class extends Migration
             $table->enum('type_payment',\App\Enums\PaymentTypeEnum::cases())->default(\App\Enums\PaymentTypeEnum::Contado)->comment('Tipo de Pago');
             $table->decimal('received',19,6)->default(0)->comment('Valor Recibido');
             $table->decimal('returned', 19,6)->default(0)->comment('Valor Devuelto');
-            $table->boolean('status')->default(true)->comment('Estado');
+            $table->boolean('status')->nullable()->default(true)->comment('Estado');
             $table->boolean('close_table')->default(false)->comment('Cuentas abierto o cerrada');
             $table->json('credit_notes')->nullable()->comment('Pago por nota de credito');
             $table->float('credit_notes_amount')->default(0)->comment('Monto de todas las notas de creditos');

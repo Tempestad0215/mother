@@ -58,6 +58,10 @@ class Tax extends Model
         return $this->hasMany(PurchaseReceiptsItem::class);
     }
 
+    public function SaleItem(): HasMany
+    {
+        return $this->hasMany(SaleItem::class);
+    }
     protected function casts(): array
     {
         return [

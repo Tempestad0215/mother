@@ -20,12 +20,15 @@ class ClientHelper
     public  function  get(Request $request):mixed
     {
 
-        $search = $request->get('search');
-        $perPage = $request->get('perPage',15);
-        $field = $request->get('field','name');
+        $search = $request->input('search');
+        $perPage = $request->input('perPage',15);
+        $field = $request->input('field','name');
 
 
         $fieldAllowed = ['name','document','phone','personal_id','email'];
+        $field = in_array($request->input('field'), $fieldAllowed, true)
+            ? $request->input('field')
+            : 'name'; // fallback seguro
 
         //conseguir los datos del cliente
         return Client::where($field,'LIKE','%'.$search.'%' )

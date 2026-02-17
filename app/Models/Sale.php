@@ -113,6 +113,10 @@ class Sale extends Model implements Auditable
         return $this->hasMany(CreditNote::class, 'sale_id','uuid');
     }
 
+    public function Item(): HasMany
+    {
+        return $this->hasMany(SaleItem::class);
+    }
 
     /**
      * @return HasManyThrough
