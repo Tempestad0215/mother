@@ -2,8 +2,8 @@
 
 namespace App\Rules;
 
-use App\Enums\ProductTypeEnum;
-use App\Models\Product;
+use App\Factories\SaleItemFactory;
+use App\Models\Inventory;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Translation\PotentiallyTranslatedString;
@@ -12,55 +12,51 @@ class CheckStock implements ValidationRule
 {
 
 
-    public  function __construct(
-        protected array $info_sale
-    )
-    {
-
-
-    }
     /**
      * Run the validation rule.
-     *
-     * @param  \Closure(string): PotentiallyTranslatedString  $fail
+     * @param string $attribute
+     * @param mixed $value
+     * @param Closure(string): PotentiallyTranslatedString $fail
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $existsError = false;
         $errorMessage = '';
 
-        //Sacar los datos del producto introducido para validar
-        foreach ($this->info_sale as $info) {
+        $saleItem = SaleItemFactory::fromArrayList($value);
 
-            //Buscar los datos del producto
-            $product = Product::where('status', true)
-                ->find($info['product_id']);
+        $productIds = [];
+        $warehouseIds = [];
 
-            //Tomar los datos de la cantidad
-            $quantity = $info['stock'];
+        foreach ($saleItem as $product) {
+            $productIds[] = $product->product_id;
+            $warehouseIds[] = $product->warehouse_id;
+        }
+
+        $inventories = Inventory::whereIn('id', $productIds)
+            ->whereIn('warehouse_id', $warehouseIds)
+            ->with('product')
+            ->get()
+            ->keyBy('id');
 
 
-            if ($product->stock == 0.00 && $product->type == ProductTypeEnum::Producto)
+        foreach ($saleItem as $item)
+        {
+            /**@var Inventory $inventory */
+            $inventory = $inventories[$item->product_id];
+
+            if(!$item->is_service)
             {
-                $existsError = true;
-                $errorMessage = 'El Producto "' . $info['product_name'] . '" no tiene suficiente stock.';
-
-                //Verificar si existe en reservado
-            }else if ($product && $product->reserved > 0)
-            {
-
-                //Restar la cantidad de la reserva
-                $quantity -= $product->reserved;
-
-                //Realizar la verificacion
-                if($quantity > $product->stock && $product->type == ProductTypeEnum::Producto){
-                    // Enviar el mensaje de que no puede ser mayor
+                if($inventory->qty_on_hand <= 0 || $item->stock > $inventory->qty_on_hand)
+                {
                     $existsError = true;
-                    $errorMessage = 'El Producto "' . $info['product_name'] . '" no tiene suficiente stock.';
+                    $errorMessage = 'El Producto "' . $inventory->product->name. '" no tiene suficiente stock.';
                     break;
                 }
             }
+
         }
+
 
         //Verificar si existe un mensaje de error
         if($existsError)

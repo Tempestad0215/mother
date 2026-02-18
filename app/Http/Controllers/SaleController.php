@@ -14,6 +14,7 @@ use App\Models\Setting;
 use App\Models\User;
 use App\Models\Warehouse;
 use Carbon\Carbon;
+use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -65,7 +66,9 @@ class SaleController extends Controller
     }
 
 
-
+    /**
+     * @throws LockTimeoutException
+     */
     public function store(StoreProductSaleRequest $request)
     {
 
@@ -73,7 +76,8 @@ class SaleController extends Controller
         $data = null;
 
         // Evitar que se realicen 2 operaciones al mismo tiempo
-        Cache::lock('sale', 5)->get(function () use (&$request, &$data) {
+        Cache::lock('sale_warehouse'.auth()->id(), 5)
+            ->block(3, function () use (&$request, &$data) {
 
             //Intancia de los datos
             $saleHelper = new SaleHelper();

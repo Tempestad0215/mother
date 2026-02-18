@@ -78,37 +78,42 @@ class SaleHelper
 
              $infoSale = SaleItemFactory::fromArrayList($rawInfoSale);
 
+             $movementsInfos = [];
+             $itemsInfos = [];
              //Recorrer la venta para descontar los productos
              foreach ($infoSale as $value)
             {
+
                 //Verificar si la mesa es cerrada
                 $closeTable = (bool)$request->input('close_table');
-                //Instancia
-                //Descontar los productos del inventario
-                self::processSale($closeTable, $value, $salePayload->type);
 
                 $typeMovement = $this->movementType($salePayload->type);
 
-                $movementPayload = new InventoryMovementDto(
+                $movementsInfos[] = new InventoryMovementDto(
                     type: $typeMovement,
                     product_id: $value->product_id,
                     quantity: $value->stock,
                     warehouse_id: $value->warehouse_id,
                     price: $value->price,
-                );
+                )->toArray();
 
-                 ProductHelper::decrementStock($movementPayload);
-
-//                // Buscar el producto para crear la transaction
-//                $product = Product::find($value->product_id);
-//
-//                // Actualizar los datos del producto para actualizar
-//                $product->stock -= $value->stock;
-//                $product->reserved += $value->stock;
-//                $product->save();
-
-                //Crear la transaccion individual
-                SaleItemHelper::createItem($sale, $value);
+                $itemsInfos[] = new SaleItemDto(
+                    product_id: $value->product_id,
+                    product_name: $value->product_name,
+                    stock: $value->stock,
+                    price: $value->price,
+                    min_price: $value->min_price,
+                    special_price: $value->special_price,
+                    tax_id: $value->tax_id,
+                    warehouse_id: $value->warehouse_id,
+                    tax_rate: $value->tax_rate,
+                    discount: $value->discount,
+                    discount_amount: $value->discount_amount,
+                    reserved: $value->reserved,
+                    amount: $value->amount,
+                    is_service: $value->is_service,
+                    price_temp: $value->price_temp
+                )->toArray();
 
             }
 
@@ -132,32 +137,6 @@ class SaleHelper
         }
     }
 
-    /**
-     * @param bool $table
-     * @param SaleItemDto $info
-     * @param SaleTypeEnum $saleType
-     * @return void
-     */
-    public static function processSale(bool $table, SaleItemDto $info, SaleTypeEnum $saleType):void
-    {
-        //Tomar los datos del producto
-        $product = Product::find($info->product_id);
-
-        if (!$info->is_service && $saleType !== SaleTypeEnum::Cotizacion && $saleType !== SaleTypeEnum::Devolucion)
-        {
-            //reducir el stock
-            $product->stock -= $info->stock;
-        }
-
-        //si la cuenta es abierta
-        if (!$table && !$info->is_service) {
-
-            //Reducir los productos y aumentar el contador
-            $product->reserved += $info->stock;
-        }
-        $product->save();
-
-    }
 
 
     /**

@@ -179,8 +179,8 @@ class ProductHelper
 
     public static function get(Request $request): _IH_Product_C|LengthAwarePaginator|array
     {
-        $search  = trim((string) $request->get('search', ''));
-        $perPage = (int) $request->get('perPage', 15);
+        $search  = trim((string) $request->input('search', ''));
+        $perPage = (int) $request->input('perPage', 15);
         $stock   = $request->boolean('stock'); // true/false real
 
         $query = Product::query()
@@ -194,16 +194,10 @@ class ProductHelper
             })
             ->when($stock, function (Builder $q) {
                 // si stock=true: excluir servicios y exigir stock > 0
-                $q->where('is_service', 0)->where('stock', '>', 0);
-            }, function (Builder $q) {
-                // si stock=false: permitir servicios o productos con stock
-                $q->where(function (Builder $builder) {
-                    $builder->where('is_service', 1)
-                        ->orWhere(function (Builder $qq) {
-                            $qq->where('is_service', 0)
-                                ->where('stock', '>', 0);
-                        });
-                });
+                $q->where('is_service', '=',0)
+                    ->whereHas('inventory', function ($query) {
+                        $query->where('qty_on_hand', '>', 0);
+                    });
             });
 
         return $query->paginate($perPage);

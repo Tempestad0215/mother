@@ -43,8 +43,6 @@ class  StoreProductSaleRequest extends FormRequest
         $sequence = Setting::pluck('sequence')->first() ??  false;
 
 
-        //Tomar los datos de la info_sale
-        $info_sale = $this->input('info_sale');
 
         // Crear la validacion de los datos
         return [
@@ -54,7 +52,7 @@ class  StoreProductSaleRequest extends FormRequest
             'client_name' => ['nullable', 'string','min:3','max:75'],
             'client_id' => ['nullable','integer'],
             'client_rnc' => ['nullable','string','max:20'],
-            'info_sale' => ['required','array', new CheckStock($info_sale)],
+            'info_sale' => ['required','array', new CheckStock()],
             'info_sale.*.product_id' => ['required','integer','exists:products,id'],
             'info_sale.*.code' => ['nullable','string','min:4','max:50'],
             'info_sale.*.product_name' => ['required','string','min:3','max:75'],

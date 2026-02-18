@@ -7,8 +7,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -21,8 +23,6 @@ use function PHPSTORM_META\map;
 * @property string $name
 * @property string $description
 * @property string $unit
-* @property float $stock
-* @property float $reserved
 * @property float $cost
 * @property float $special_price
 * @property float $min_price
@@ -48,9 +48,9 @@ use function PHPSTORM_META\map;
 * @property bool $has_tax
 * @property int $supplier_id
 * @property int $category_id
-* @property \Illuminate\Support\Carbon $created_at
- * @property \Illuminate\Support\Carbon $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
+* @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property Carbon|null $deleted_at
  *
  *
  * @property-read PurchaseReceiptsItem $receiptsItem
@@ -72,8 +72,6 @@ class Product extends Model implements Auditable
         'name',
         'description',
         'unit_id',
-        'stock',
-        'reserved',
         'cost',
         'special_price',
         'min_price',
@@ -200,6 +198,11 @@ class Product extends Model implements Auditable
     public function trans():HasMany
     {
         return $this->hasMany(ProTrans::class, 'product_id','uuid');
+    }
+
+    public function inventory():HasOne
+    {
+        return $this->hasOne(Inventory::class);
     }
 
     public function movements():MorphMany

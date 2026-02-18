@@ -25,6 +25,8 @@ return new class extends Migration {
             $table->boolean('is_service');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->unique(['product_id', 'sale_id']);
         });
     }
 
