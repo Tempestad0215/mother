@@ -129,7 +129,7 @@ class ProductHelper
 
             if($data->type !== InventoryMovementTypeEnum::Cotizacion)
             {
-                dd($newOnHand);
+                dd(max(0, ($product->stock ?? 0) - $qt), $qt, $product);
                 $product->stock = max(0, ($product->stock ?? 0) - $qt);
                 $product->save();
             }
