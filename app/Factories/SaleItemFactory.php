@@ -4,7 +4,7 @@ namespace App\Factories;
 
 use App\Dtos\SaleItemDto;
 
-class SaleItemFactory
+class SaleItemFactory extends BaseFactory
 {
     /**
      * Crea un SaleItemDto desde un array (por ejemplo, un item de info_sale del request).
@@ -29,20 +29,6 @@ class SaleItemFactory
             amount: (float) $data['amount'],
             is_service: (bool) $data['is_service'],
             price_temp: (float) $data['price_temp']
-        );
-    }
-
-    /**
-     * Crea una lista de SaleItemDto desde el array info_sale completo.
-     *
-     * @param array<int, array<string,mixed>> $items
-     * @return SaleItemDto[]
-     */
-    public static function fromArrayList(array $items): array
-    {
-        return array_map(
-            fn (array $row) => self::fromArray($row),
-            $items
         );
     }
 }

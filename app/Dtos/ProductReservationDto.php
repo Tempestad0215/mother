@@ -4,7 +4,7 @@ namespace App\Dtos;
 
 use App\Enums\ProductReservationEnum;
 
-class ProductReservationDto
+class ProductReservationDto extends BaseDto
 {
 
     public function __construct(
@@ -17,10 +17,5 @@ class ProductReservationDto
     {
     }
 
-
-    public function toArray():array
-    {
-        return get_object_vars($this);
-    }
 
 }

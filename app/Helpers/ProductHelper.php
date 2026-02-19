@@ -11,6 +11,7 @@ use DB;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
 use LaravelIdea\Helper\App\Models\_IH_Product_C;
 use RuntimeException;
@@ -177,11 +178,10 @@ class ProductHelper
      * @return _IH_Product_C|LengthAwarePaginator|Product[]
      */
 
-    public static function get(Request $request): _IH_Product_C|LengthAwarePaginator|array
+    public static function get(Request $request, bool $stock = false): _IH_Product_C|LengthAwarePaginator|array
     {
         $search  = trim((string) $request->input('search', ''));
         $perPage = (int) $request->input('perPage', 15);
-        $stock   = $request->boolean('stock'); // true/false real
 
         $query = Product::query()
             ->where('status', true)
@@ -201,6 +201,16 @@ class ProductHelper
             });
 
         return $query->paginate($perPage);
+    }
+
+
+    /**
+     * @param array<int> $ids
+     * @return Collection<Product>
+     */
+    public static function getProductsByIds(array $ids): Collection
+    {
+        return Product::whereIn('id', $ids)->get()->keyBy('id');
     }
 
 }

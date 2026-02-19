@@ -9,7 +9,7 @@ use App\Http\Requests\StoreProductSaleRequest;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 
-class SaleFactory
+class SaleFactory extends BaseFactory
 {
     /**
      * Crea un SaleItemDto desde un array (por ejemplo, un item de info_sale del request).
@@ -62,18 +62,5 @@ class SaleFactory
 
     }
 
-    /**
-     * Crea una lista de SaleItemDto desde el array info_sale completo.
-     *
-     * @param array<int, array<string,mixed>> $items
-     * @return SaleDto[]
-     */
-    public static function fromArrayList(array $items): array
-    {
-        return array_map(
-            fn (array $row) => self::fromArray($row),
-            $items
-        );
-    }
 
 }

@@ -4,7 +4,7 @@ namespace App\Dtos;
 
 use App\Enums\InventoryMovementTypeEnum;
 
-class InventoryMovementDto
+class InventoryMovementDto extends BaseDto
 {
     public function __construct(
         public InventoryMovementTypeEnum $type,

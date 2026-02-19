@@ -5,7 +5,7 @@ namespace App\Factories;
 use App\Dtos\ProductReservationDto;
 use App\Enums\ProductReservationEnum;
 
-class ProductReservationFactory
+class ProductReservationFactory extends BaseFactory
 {
     /**
      * Crea un SaleItemDto desde un array (por ejemplo, un item de info_sale del request).
@@ -22,19 +22,6 @@ class ProductReservationFactory
             status: ProductReservationEnum::from($data['status'])
         );
     }
-
-    /**
-     * Crea una lista de SaleItemDto desde el array info_sale completo.
-     *
-     * @param array<int, array<string,mixed>> $items
-     * @return ProductReservationDto[]
-     */
-    public static function fromArrayList(array $items): array
-    {
-        return array_map(
-            fn (array $row) => self::fromArray($row),
-            $items
-        );
-    }
+    
 
 }

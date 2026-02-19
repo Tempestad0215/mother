@@ -7,7 +7,11 @@ use App\Models\InventoryMovement;
 class InventoryMovementHelper
 {
 
-    public static function multipleInsert(array $data)
+    /**
+     * @param array $data
+     * @return void
+     */
+    public static function multipleInsert(array $data): void
     {
         if(empty($data))
         {

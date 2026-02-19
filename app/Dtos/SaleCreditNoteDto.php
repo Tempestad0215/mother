@@ -2,7 +2,9 @@
 
 namespace App\Dtos;
 
-class SaleCreditNoteDto
+use App\Interfaces\ArrayableDto;
+
+class SaleCreditNoteDto extends BaseDto
 {
     public function __construct(
         public int $id,
@@ -18,6 +20,11 @@ class SaleCreditNoteDto
     {
 
 
+    }
+
+    public function toArray():array
+    {
+        return get_object_vars($this);
     }
 
 }

@@ -2,45 +2,53 @@
 
 namespace App\Helpers;
 
+use App\Dtos\ProductInventoryDto;
 use App\Dtos\SaleItemDto;
+use App\Factories\ProductInventoryFactory;
+use App\Factories\SaleItemFactory;
 use App\Models\Sale;
 use App\Models\SaleItem;
+use Database\Factories\ProductFactory;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class SaleItemHelper
 {
-    public static function createItem(Sale $sale, SaleItemDto $data):SaleItem
-    {
-        $payload = $data->toArray();
-        $payload['sale_id'] = $sale->id;
 
 
-        return SaleItem::create($payload);
-    }
-
+    /**
+     * @throws Throwable
+     */
     public static function multipleUpsert(Sale $sale, array $data):void
     {
-        if (empty($data))
-        {
-            return;
-        }
 
-//        TODO: Se debe crear el metodo para eliminar del item, pero de igual forma se debe controlar el stock y el movimiento
-//        $productIds = array_column($data, 'product_id');
+        DB::transaction(function() use ($data, $sale)  {
+            if (empty($data))
+            {
+                return;
+            }
+
+            $inventoryDtos = [];
+            $dataForInsert = [];
+
+            foreach ($data as $value) {
+
+                $saleItemDto = SaleItemFactory::fromArray($value);
+
+                $inventoryDtos[] = ProductInventoryFactory::fromSaleItemDto($saleItemDto);
+
+                $dataForInsert[] = [
+                    ...$value,
+                    'sale_id' => $sale->id,
+                ];
+            }
+
+            ProductInventoryHelper::decrementStockMultiple($inventoryDtos, $sale);
+
+            SaleItem::insert($dataForInsert);
+        });
 
 
-        $dataForInsert = array_map(function ($value) use($sale){
-            return [
-                ...$value,
-                'sale_id' => $sale->id,
-            ];
-        }, $data);
-
-
-        SaleItem::upsert(
-            $dataForInsert,
-            ['sale_id','product_id'],
-            ['stock','price','tax_rate','tax_id','discount','amount','discount_amount','reserved','is_service']
-        );
 
     }
 }

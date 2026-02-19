@@ -5,7 +5,7 @@ namespace App\Dtos;
 use App\Enums\PaymentTypeEnum;
 use App\Enums\SaleTypeEnum;
 
-class SaleDto
+class SaleDto extends BaseDto
 {
     public function __construct(
         public float $discount_amount,

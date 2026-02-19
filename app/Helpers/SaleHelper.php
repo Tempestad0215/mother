@@ -76,13 +76,13 @@ class SaleHelper
 
             $rawInfoSale = $request->input('info_sale',[]);
 
-             $infoSale = SaleItemFactory::fromArrayList($rawInfoSale);
+             $infoSale = SaleItemFactory::fromListArray($rawInfoSale);
 
              $movementsInfos = [];
              $itemsInfos = [];
              //Recorrer la venta para descontar los productos
              foreach ($infoSale as $value)
-            {
+             {
 
                 //Verificar si la mesa es cerrada
                 $closeTable = (bool)$request->input('close_table');
@@ -115,7 +115,10 @@ class SaleHelper
                     price_temp: $value->price_temp
                 )->toArray();
 
-            }
+             }
+
+             SaleItemHelper::multipleUpsert($sale, $itemsInfos);
+             InventoryMovementHelper::multipleInsert($movementsInfos);
 
             return $sale;
         });

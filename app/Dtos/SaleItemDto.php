@@ -3,7 +3,7 @@
 namespace App\Dtos;
 
 
-class SaleItemDto
+class SaleItemDto extends BaseDto
 {
 
     public function __construct(

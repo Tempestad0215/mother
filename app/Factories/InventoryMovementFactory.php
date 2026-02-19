@@ -6,7 +6,7 @@ use App\Dtos\InventoryMovementDto;
 use App\Enums\InventoryMovementTypeEnum;
 use Illuminate\Support\Arr;
 
-class InventoryMovementFactory
+class InventoryMovementFactory extends BaseFactory
 {
     /**
      * @param array $data
@@ -24,19 +24,6 @@ class InventoryMovementFactory
             description: $data['description'] ?? null,
         );
 
-    }
-
-    /**
-     * @param array<int, array<string, mixed>> $data
-     * @return InventoryMovementDto[]
-     */
-
-    public static function fromListArray(array $data):array
-    {
-        return Arr::map(
-            $data,
-            fn(array $row) => self::fromArray($row),
-        );
     }
 
 }

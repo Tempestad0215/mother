@@ -2,7 +2,9 @@
 
 namespace App\Rules;
 
+use App\Dtos\SaleItemDto;
 use App\Factories\SaleItemFactory;
+use App\Helpers\InventoryHelper;
 use App\Models\Inventory;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -23,27 +25,30 @@ class CheckStock implements ValidationRule
         $existsError = false;
         $errorMessage = '';
 
-        $saleItem = SaleItemFactory::fromArrayList($value);
+        $saleItemDto = [];
 
-        $productIds = [];
-        $warehouseIds = [];
-
-        foreach ($saleItem as $product) {
-            $productIds[] = $product->product_id;
-            $warehouseIds[] = $product->warehouse_id;
+        foreach ($value as $item) {
+            $saleItemDto[] = SaleItemFactory::fromArray($item);
         }
 
-        $inventories = Inventory::whereIn('id', $productIds)
-            ->whereIn('warehouse_id', $warehouseIds)
-            ->with('product')
-            ->get()
-            ->keyBy('id');
+
+        $infoProducts = collect($saleItemDto)
+            ->map(fn (SaleItemDto $item) => [
+                'product_id' => $item->product_id,
+                'warehouse_id' => $item->warehouse_id,
+            ])->toArray();
+
+        $inventories = InventoryHelper::getInventoryProductWarehouse($infoProducts);
 
 
-        foreach ($saleItem as $item)
+
+        /** @var SaleItemDto $item */
+        foreach ($saleItemDto as $item)
         {
+            $indexFind = $item->product_id.'-'.$item->warehouse_id;
+
             /**@var Inventory $inventory */
-            $inventory = $inventories[$item->product_id];
+            $inventory = $inventories[$indexFind];
 
             if(!$item->is_service)
             {

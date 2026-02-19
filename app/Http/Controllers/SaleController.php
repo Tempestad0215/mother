@@ -185,7 +185,7 @@ class SaleController extends Controller
         $clientHelper = new ClientHelper();
 
         //Obtener los datos
-        $products = ProductHelper::get($request);
+        $products = ProductHelper::get($request, true);
         $clients = $clientHelper->get($request);
         $saleOpen = $saleHelper->getSaleOpen($request);
 
