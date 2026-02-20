@@ -79,9 +79,9 @@ class SaleController extends Controller
         Cache::lock('sale_warehouse'.auth()->id(), 5)
             ->block(3, function () use (&$request, &$data) {
 
-            //Intancia de los datos
+            //Instancia de los datos
             $saleHelper = new SaleHelper();
-            //Llamar el metodo
+            //Llamar el servicio
             $data = $saleHelper->store($request);
 
         });

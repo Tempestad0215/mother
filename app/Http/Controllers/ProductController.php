@@ -122,11 +122,11 @@ class ProductController extends Controller implements HasMiddleware
 
 
             // Guardar los datos de los productos
-            if ($request->get('type') === 'servicio') {
+            if ($request->input('type') === 'servicio') {
                 //Actualizar datos por fuera cuando son servicio
                 $product->inventoried = false;
                 $product->unit = "N/A";
-                $product->tax = $request->get('tax_rate') / 100;
+                $product->tax = $request->input('tax_rate') / 100;
                 $product->save();
             }
         });

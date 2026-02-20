@@ -84,9 +84,6 @@ class SaleHelper
              foreach ($infoSale as $value)
              {
 
-                //Verificar si la mesa es cerrada
-                $closeTable = (bool)$request->input('close_table');
-
                 $typeMovement = $this->movementType($salePayload->type);
 
                 $movementsInfos[] = new InventoryMovementDto(

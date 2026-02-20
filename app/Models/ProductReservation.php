@@ -3,10 +3,28 @@
 namespace App\Models;
 
 use App\Enums\ProductReservationEnum;
+use Barryvdh\LaravelIdeHelper\Eloquent;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+
+/**
+ * @property int $product_id
+ * @property int $sale_id
+ * @property int $warehouse_id
+ * @property float $quantity
+ * @property ProductReservationEnum $status
+ *
+ *
+ * @property-read Product $product
+ * @property-read Sale $sale
+ * @property-read Warehouse $warehouse
+ *
+ *
+ * @mixin Builder
+ */
 class ProductReservation extends Model
 {
     use SoftDeletes;
