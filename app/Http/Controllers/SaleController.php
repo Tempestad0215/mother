@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Dtos\GeneralDto;
 use App\Enums\SaleTypeEnum;
 use App\Helpers\ClientHelper;
 use App\Helpers\ProductHelper;
@@ -15,7 +16,6 @@ use App\Models\User;
 use App\Models\Warehouse;
 use Carbon\Carbon;
 use Illuminate\Contracts\Cache\LockTimeoutException;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -59,8 +59,7 @@ class SaleController extends Controller
             'saleOpen' => $dataSale['saleOpen'],
             'invoiceType' => config('appconfig.invoiceType'),
             'lastRecord' => $lastRecord?->id,
-            'saleTypeEnum' => collect(SaleTypeEnum::cases())
-                ->mapWithKeys(fn(SaleTypeEnum $item) => [$item->name => $item->value]),
+            'saleTypeEnum' => GeneralDto::getEnumToArray(SaleTypeEnum::class),
             'warehouses' => $warehouses,
         ]);
     }
@@ -97,9 +96,9 @@ class SaleController extends Controller
     {
 
        $sale =  DB::transaction(function () use (&$request, &$sale) {
-           //Instanacia
+           //Instancia
            $saleHelper = new SaleHelper();
-           //Llamar el metodo
+           //Llamar la funcion
            return $saleHelper->updateSale($request, $sale);
        });
 
@@ -169,7 +168,7 @@ class SaleController extends Controller
         //Crear la instancia
         $saleHelper = new SaleHelper();
 
-        //llamar el metodo
+        //llamar el método
         $saleHelper->deleteSale($request, $sale, $inventoried);
 
         return back();

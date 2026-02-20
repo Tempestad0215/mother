@@ -8,6 +8,7 @@ import {usePage} from "@inertiajs/vue3";
 import {AppPageProps} from "@/global";
 import {TaxInterfaceI} from "@/Interfaces/TaxInterface";
 import {useProductStore} from "@/stores/ProductStore";
+import {WarehouseBaseI} from "@/Interfaces/WarehouseInterface";
 
 
 
@@ -18,6 +19,7 @@ const page = usePage<AppPageProps>();
 const propsW = defineProps<{
     units: UnitInterfaceI[],
     branches: BranchInterfaceI[]
+    warehouses: WarehouseBaseI[]
 }>()
 
 
@@ -68,6 +70,15 @@ const selectTax = (data:SelectChangeEvent) => {
             <FloatLabel   variant="on" >
                 <InputText fluid  id="dimension" v-model="form.dimensions" />
                 <label for="dimension">Dimensiones</label>
+            </FloatLabel>
+            <FloatLabel   variant="on" >
+                <Select
+                    fluid
+                    :options="propsW.warehouses"
+                    v-model="form.warehouse_id"
+                    optionValue="id"
+                    optionLabel="name"/>
+                <label id="warehouse" >Almacen</label>
             </FloatLabel>
         </div>
     </Fieldset>

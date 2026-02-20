@@ -16,6 +16,7 @@ import {formProductKey} from "@/Injections/InjectionKeys";
 import {BranchInterfaceI} from "@/Interfaces/BranchInterface";
 import {UnitInterfaceI} from "@/Interfaces/UnitInterface";
 import {Button, useToast} from "primevue";
+import {WarehouseBaseI} from "@/Interfaces/WarehouseInterface";
 
 const route = useRoute();
 const toast = useToast();
@@ -32,6 +33,7 @@ const propsW = defineProps<{
     productType: ProductTypeEnumI,
     branches: BranchInterfaceI[]
     units: UnitInterfaceI[]
+    warehouses: WarehouseBaseI[]
 }>();
 
 
@@ -191,6 +193,7 @@ function setCalculateData(
 
 				<!--Detalle del producto-->
             <ProductDetail
+                :warehouses="propsW.warehouses"
                 :units="propsW.units"
                 :branches="propsW.branches"/>
 

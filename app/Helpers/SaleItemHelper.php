@@ -2,13 +2,12 @@
 
 namespace App\Helpers;
 
-use App\Dtos\ProductInventoryDto;
+use App\Dtos\SaleItemApiDto;
 use App\Dtos\SaleItemDto;
-use App\Factories\ProductInventoryFactory;
 use App\Factories\SaleItemFactory;
 use App\Models\Sale;
 use App\Models\SaleItem;
-use Database\Factories\ProductFactory;
+use http\Params;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
@@ -17,9 +16,12 @@ class SaleItemHelper
 
 
     /**
+     * @param Sale $sale
+     * @param array $data
+     * @return void
      * @throws Throwable
      */
-    public static function multipleUpsert(Sale $sale, array $data):void
+    public static function multipleInsertWithSale(Sale $sale, array $data):void
     {
 
         DB::transaction(function() use ($data, $sale)  {
@@ -28,23 +30,16 @@ class SaleItemHelper
                 return;
             }
 
-            $inventoryDtos = [];
             $dataForInsert = [];
 
             foreach ($data as $value) {
 
-                $saleItemDto = SaleItemFactory::fromArray($value);
+                $value['sale_id'] = $sale->id;
 
-                $inventoryDtos[] = ProductInventoryFactory::fromSaleItemDto($saleItemDto);
-
-                $dataForInsert[] = [
-                    ...$value,
-                    'sale_id' => $sale->id,
-                ];
+                $dataForInsert[] = SaleItemFactory::fromArray($value)->toArray();
             }
 
-            ProductInventoryHelper::decrementStockMultiple($inventoryDtos, $sale);
-
+            // Insertar de forma masiva
             SaleItem::insert($dataForInsert);
         });
 

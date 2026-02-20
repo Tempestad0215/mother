@@ -128,12 +128,13 @@ class ProductHelper
                 ['qty_on_hand', 'avg_cost', 'updated_at'] // columnas a actualizar en conflicto
             );
 
-            if($data->type !== InventoryMovementTypeEnum::Cotizacion)
-            {
-                dd(max(0, ($product->stock ?? 0) - $qt), $qt, $product);
-                $product->stock = max(0, ($product->stock ?? 0) - $qt);
-                $product->save();
-            }
+//            TODO: Se debe verificar esta condicion
+
+//            if($data->type !== InventoryMovementTypeEnum::Cotizacion)
+//            {
+//                $product->stock = max(0, ($product->stock ?? 0) - $qt);
+//                $product->save();
+//            }
 
 
 //            Crear el movimiento de inventario
@@ -175,6 +176,7 @@ class ProductHelper
 
     /**
      * @param Request $request
+     * @param bool $stock
      * @return _IH_Product_C|LengthAwarePaginator|Product[]
      */
 
@@ -211,6 +213,16 @@ class ProductHelper
     public static function getProductsByIds(array $ids): Collection
     {
         return Product::whereIn('id', $ids)->get()->keyBy('id');
+    }
+
+
+    public static function getProductWithWarehouse(array $data)
+    {
+        return Product::whereIn('id', $data['product_id'])
+            ->whereHas('inventory', function ($q1) use ($data) {
+                $q1->whereIn('warehouse_id', $data['warehouse_id']);
+            })
+            ->get()->keyBy('id');
     }
 
 }

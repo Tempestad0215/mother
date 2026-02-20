@@ -57,9 +57,11 @@ class PurchaseController extends Controller
     }
 
     /**
+     * @param PurchaseRequest $request
+     * @return void
      * @throws Throwable
      */
-    public function store(PurchaseRequest $request)
+    public function store(PurchaseRequest $request):void
     {
         DB::transaction(function () use ($request) {
             $purchaseData = $request->validated();
@@ -81,9 +83,6 @@ class PurchaseController extends Controller
                 //Crare la el valor de product id
                 $product['product_id'] = $productId;
                 $product['tax_amount'] = $product['tax'];
-
-
-
 
 
                 // Obtener los datos de inventario para sumar o crear

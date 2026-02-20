@@ -35,6 +35,12 @@ class Warehouse extends Model implements Auditable
         'location'
     ];
 
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'deleted_at'
+    ];
+
 
     public function purchaseItem(): HasMany
     {

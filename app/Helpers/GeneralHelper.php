@@ -49,4 +49,20 @@ class GeneralHelper
         return $exists;
 
     }
+
+
+    /**
+     * @param array<int, array> $data
+     * @return array
+     */
+    public static function getProductWarehouseArray(array $data):array
+    {
+        return collect($data)
+            ->map(function ($item) {
+                return [
+                    'product_id' => $item['product_id'],
+                    'warehouse_id' => $item['warehouse_id'],
+                ];
+            })->toArray();
+    }
 }

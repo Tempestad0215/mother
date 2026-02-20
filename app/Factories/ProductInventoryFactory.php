@@ -25,12 +25,12 @@ class ProductInventoryFactory extends BaseFactory
         );
     }
 
-    public static function fromSaleItemDto(SaleItemDto $saleItem): ProductInventoryDto
+    public static function fromSaleItemDto(SaleItemDto $saleItem, int $warehouse_id): ProductInventoryDto
     {
 
         return new ProductInventoryDto(
             product_id: $saleItem->product_id,
-            warehouse_id:  $saleItem->warehouse_id,
+            warehouse_id:  $warehouse_id,
             qty_on_hand: $saleItem->stock,
             committed: $saleItem->reserved,
         );

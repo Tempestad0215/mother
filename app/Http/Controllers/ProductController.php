@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Dtos\InventoryDto;
+use App\Dtos\ProductInventoryDto;
 use App\Enums\ProductTypeEnum;
 use App\Helpers\GeneralHelper;
+use App\Helpers\ProductInventoryHelper;
 use App\Http\Requests\PaginationRequest;
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Inventory;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Resources\ProductSupplierResource;
@@ -55,8 +59,8 @@ class ProductController extends Controller implements HasMiddleware
         //Obtener los datos de los productos
         $data = $this->get($request);
 
-        $search = $request->get('search');
-        $perPage = $request->get('per_page');
+        $search = $request->input('search');
+        $perPage = $request->input('per_page');
         $queryProduct = Product::query();
         if (!empty($search)) {
             $queryProduct->where('name', 'like', '%' . $search . '%')
@@ -86,6 +90,7 @@ class ProductController extends Controller implements HasMiddleware
                 'branches' => Brand::all(),
                 'units' => Unit::all(),
                 'taxes' => Tax::all(),
+                'warehouses' => Warehouse::all(),
             ]);
 
         } else {
@@ -112,6 +117,7 @@ class ProductController extends Controller implements HasMiddleware
             $tax_id = $request->input('tax_id');
             $tax = Tax::find($tax_id);
 
+            /** @var StoreProductRequest $data */
             $data = $request->validated();
 
             //Guardar los datos de los productos
@@ -120,7 +126,16 @@ class ProductController extends Controller implements HasMiddleware
 
             $product = Product::create($data);
 
+            $productInventory = new InventoryDto(
+                product_id: $product->id,
+                warehouse_id: $data['warehouse_id'],
+                qty_on_hand: 0,
+                on_order_qty: 0,
+                committed: 0,
+                avg_cost: 0
+            );
 
+            ProductInventoryHelper::createProductInventory($productInventory);
             // Guardar los datos de los productos
             if ($request->input('type') === 'servicio') {
                 //Actualizar datos por fuera cuando son servicio
@@ -180,38 +195,55 @@ class ProductController extends Controller implements HasMiddleware
      * @param StoreProductRequest $request
      * @param Product $product
      * @return RedirectResponse
+     * @throws Throwable
      */
     public function update(StoreProductRequest $request, Product $product): RedirectResponse
     {
 
-        // Actualizar los datos validados
-        $product->update($request->validated());
+        DB::transaction(function () use ($request, $product) {
+            // Actualizar los datos validados
+            $product->update($request->validated());
 
-        //Actualizar estos datos si es servicios
-        if ($request->get('type') === 'servicio') {
-            //Actualizar datos por fuera cuando son servicio
-            $product->inventoried = false;
-            $product->price = $request->get('price');
-            $product->unit = "N/A";
-            $product->tax = $request->get('tax_rate') / 100;
-            $product->save();
-        }
+            $inventory = Inventory::where('product_id', $product->id)->first();
 
-        // devolver hacia atras
+            $inventory->warehouse_id = $request->input('warehouse_id');
+            $inventory->save();
+
+            //Actualizar estos datos si es servicios
+            if ($request->input('is_service')) {
+                //Actualizar datos por fuera cuando son servicio
+                $product->inventoried = false;
+                $product->price = $request->input('price');
+                $product->unit = "N/A";
+                $product->tax = $request->input('tax_rate') / 100;
+                $product->save();
+            }
+        });
+
+
+        // devolver hacia atrás
         return back();
     }
 
     /**
      * @param Product $product
      * @return RedirectResponse
+     * @throws Throwable
      */
     public function destroy(Product $product): RedirectResponse
     {
 
+//        TODO: Antes de eliminar se debe verificar ciertas funciones y parametros
 
-        //Actulizar los datos
-        $product->deleted_at = Carbon::now();
-        $product->save();
+//        //Actualizer los datos
+//        DB::transaction(function () use ($product) {
+//            $inventory = Inventory::where('product_id', $product->id)
+//                ->wher
+//                ->first();
+//            $product->delete();
+//            $inventory->delete();
+//        });
+
 
         //Devolver atras
         return back();

@@ -2,23 +2,50 @@
 
 namespace App\Helpers;
 
+use App\Dtos\ProductReservationDto;
+use App\Enums\ProductReservationEnum;
+use App\Factories\ProductReservationFactory;
 use App\Models\InventoryMovement;
+use App\Models\Product;
+use App\Models\Sale;
+use Laravel\Octane\Exceptions\DdException;
 
 class InventoryMovementHelper
 {
 
     /**
+     * @param Sale $sale
      * @param array $data
      * @return void
      */
-    public static function multipleInsert(array $data): void
+    public static function multipleInsertWithSale(Sale $sale, array $data): void
     {
         if(empty($data))
         {
             return;
         }
 
-        InventoryMovement::insert($data);
+        $productWarehouseIds = GeneralHelper::getProductWarehouseArray($data);
+
+        $productReservations = [];
+
+        foreach ($data as $item) {
+            $item['sale_id'] = $sale->id;
+            $item['status'] = ProductReservationEnum::Active->value;
+            $productReservations[] = ProductReservationFactory::fromArray($item);
+
+
+        }
+
+        ProductReservationHelper::createMultipleReservation($productReservations, $sale);
+
+        dd($data);
+    }
+
+
+    private function get()
+    {
+
     }
 
 }

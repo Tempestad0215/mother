@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Dtos\InventoryMovementDto;
+use App\Dtos\SaleItemApiDto;
 use App\Dtos\SaleItemDto;
 use App\Enums\InventoryMovementTypeEnum;
 use App\Enums\TransTypeEnum;
@@ -10,6 +11,7 @@ use App\Enums\ProductTypeEnum;
 use App\Enums\SaleTypeEnum;
 use App\Enums\SequenceSaleTypeEnum;
 use App\Factories\SaleFactory;
+use App\Factories\SaleItemApiFactory;
 use App\Factories\SaleItemFactory;
 use App\Http\Requests\StoreProductSaleRequest;
 use App\Http\Resources\SaleInfoResource;
@@ -76,7 +78,7 @@ class SaleHelper
 
             $rawInfoSale = $request->input('info_sale',[]);
 
-             $infoSale = SaleItemFactory::fromListArray($rawInfoSale);
+             $infoSale = SaleItemApiFactory::fromListArray($rawInfoSale);
 
              $movementsInfos = [];
              $itemsInfos = [];
@@ -94,28 +96,28 @@ class SaleHelper
                     price: $value->price,
                 )->toArray();
 
-                $itemsInfos[] = new SaleItemDto(
+                $itemsInfos[] = new SaleItemApiDto(
                     product_id: $value->product_id,
                     product_name: $value->product_name,
                     stock: $value->stock,
                     price: $value->price,
                     min_price: $value->min_price,
                     special_price: $value->special_price,
-                    tax_id: $value->tax_id,
                     warehouse_id: $value->warehouse_id,
                     tax_rate: $value->tax_rate,
+                    tax_id: $value->tax_id,
+                    price_temp: $value->price_temp,
                     discount: $value->discount,
                     discount_amount: $value->discount_amount,
                     reserved: $value->reserved,
                     amount: $value->amount,
                     is_service: $value->is_service,
-                    price_temp: $value->price_temp
                 )->toArray();
 
              }
 
-             SaleItemHelper::multipleUpsert($sale, $itemsInfos);
-             InventoryMovementHelper::multipleInsert($movementsInfos);
+             SaleItemHelper::multipleInsertWithSale($sale, $itemsInfos);
+             InventoryMovementHelper::multipleInsertWithSale($sale, $movementsInfos);
 
             return $sale;
         });

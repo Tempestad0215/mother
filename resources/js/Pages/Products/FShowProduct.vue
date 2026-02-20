@@ -21,6 +21,7 @@ import {productBreadCrumb} from "@/Helpers/ProductHelper";
 import {PreciseCalculator} from "@/utils/Decimal";
 import {PaginationI} from "@/Interfaces/GlobalInterface";
 import {getMoney} from "@/Global/Helpers";
+import {WarehouseBaseI} from "@/Interfaces/WarehouseInterface";
 
 
 const toast = useToast()
@@ -36,7 +37,7 @@ const {auth} = props;
 interface PropsI {
     products: PaginationI<ProductBaseI>
     stock?: boolean,
-    isProduct?:boolean
+    isProduct?:boolean,
 }
 /**
  * Propiedades de la ventana

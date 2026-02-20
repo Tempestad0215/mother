@@ -18,9 +18,6 @@ import {useProductStore} from "@/stores/ProductStore";
 import FShowProduct from "@/Pages/Products/FShowProduct.vue";
 
 
-
-
-
 //Propiedades de la ventana
 const propsW = defineProps<{
     products: PaginationI<ProductBaseI>
@@ -28,10 +25,10 @@ const propsW = defineProps<{
     update? : boolean,
     categories: categoryBaseI[],
     suppliers: SupplierI[],
-    warehouse: WarehouseBaseI[],
+    warehouses: WarehouseBaseI[],
     nextProduct: string | null,
     paymentTypes: PaymentTypeEnumI,
-    productType: ProductTypeEnumI,
+    productType: ProductTypeEnumI
     branches: BranchInterfaceI[]
     units: UnitInterfaceI[]
     taxes: TaxInterfaceI[]
@@ -71,6 +68,7 @@ const clearCreate = ()=>{
     <!-- Contenido de la ventana -->
     <AppLayout>
         <FShowProduct
+
             v-model:createProduct="createProduct"
             v-model:selectedProduct="selectedProduct"
             :products="propsW.products"/>
@@ -81,6 +79,7 @@ const clearCreate = ()=>{
             v-model:visible="createProduct"
             header="Registro de Producto">
             <FRegister
+                :warehouses="propsW.warehouses"
                 :units="propsW.units"
                 :branches="propsW.branches"
                 :productType="propsW.productType"

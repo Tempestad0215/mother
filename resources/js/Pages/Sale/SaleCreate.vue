@@ -15,7 +15,7 @@ import {
     WarehouseMapType
 } from "@/Interfaces/SaleInterface";
 import {invoiceTypeI} from "@/Interfaces/SettingInterface";
-import {PaginationI, ValidationErrors} from "@/Interfaces/GlobalInterface";
+import {PaginationI} from "@/Interfaces/GlobalInterface";
 import SaleInfo from "@/Pages/Sale/SaleInfo.vue";
 import SaleDetail from "@/Pages/Sale/SaleDetail.vue";
 import {saleKey} from "@/utils/keys";

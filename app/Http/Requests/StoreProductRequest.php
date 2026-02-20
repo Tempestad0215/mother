@@ -24,7 +24,7 @@ class StoreProductRequest extends FormRequest
      */
     public function rules(): array
     {
-        $isArticle = $this->get('type') === 'producto';
+        $isArticle = $this->input('type') === 'producto';
 
 
         return [
@@ -38,6 +38,7 @@ class StoreProductRequest extends FormRequest
             'sku' => ['nullable','string','max:75'],
             'is_service' => [Rule::enum(ProductTypeEnum::class), 'required'],
             'tax_id' => ['required','numeric','exists:taxes,id'],
+            'warehouse_id' => ['required','integer','exists:warehouses,id'],
             'price' => ['required', 'numeric',Rule::notIn(0.00)],
             'min_price' => ['required', 'numeric',Rule::notIn(0.00)],
             'special_price' => ['required', 'numeric',Rule::notIn(0.00)],

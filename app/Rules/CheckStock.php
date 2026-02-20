@@ -2,8 +2,9 @@
 
 namespace App\Rules;
 
-use App\Dtos\SaleItemDto;
-use App\Factories\SaleItemFactory;
+use App\Dtos\SaleItemApiDto;
+use App\Factories\SaleItemApiFactory;
+use App\Helpers\GeneralHelper;
 use App\Helpers\InventoryHelper;
 use App\Models\Inventory;
 use Closure;
@@ -27,22 +28,16 @@ class CheckStock implements ValidationRule
 
         $saleItemDto = [];
 
+
         foreach ($value as $item) {
-            $saleItemDto[] = SaleItemFactory::fromArray($item);
+            $saleItemDto[] = SaleItemApiFactory::fromArray($item);
         }
 
-
-        $infoProducts = collect($saleItemDto)
-            ->map(fn (SaleItemDto $item) => [
-                'product_id' => $item->product_id,
-                'warehouse_id' => $item->warehouse_id,
-            ])->toArray();
+        $infoProducts = GeneralHelper::getProductWarehouseArray($value);
 
         $inventories = InventoryHelper::getInventoryProductWarehouse($infoProducts);
 
-
-
-        /** @var SaleItemDto $item */
+        /** @var SaleItemApiDto $item */
         foreach ($saleItemDto as $item)
         {
             $indexFind = $item->product_id.'-'.$item->warehouse_id;

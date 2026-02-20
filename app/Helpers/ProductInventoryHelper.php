@@ -2,17 +2,25 @@
 
 namespace App\Helpers;
 
+use App\Dtos\InventoryDto;
 use App\Dtos\ProductInventoryDto;
 use App\Enums\SaleTypeEnum;
 use App\Models\Inventory;
 use App\Models\Sale;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\ValidationException;
-use Laravel\Octane\Exceptions\DdException;
 
 class ProductInventoryHelper
 {
 
+
+    /**
+     * @param InventoryDto $dto
+     * @return void
+     */
+    public static function createProductInventory(InventoryDto $dto): void
+    {
+        Inventory::create($dto->toArray());
+    }
 
     /**
      * @param array $data
@@ -55,15 +63,9 @@ class ProductInventoryHelper
 
 
             }
-
-
             $inventory->save();
 
         }
-
-
-
-
     }
 
 }
