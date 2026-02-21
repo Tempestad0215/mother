@@ -2,13 +2,9 @@
 
 namespace App\Helpers;
 
-use App\Dtos\ProductReservationDto;
 use App\Enums\ProductReservationEnum;
 use App\Factories\ProductReservationFactory;
-use App\Models\InventoryMovement;
-use App\Models\Product;
 use App\Models\Sale;
-use Laravel\Octane\Exceptions\DdException;
 
 class InventoryMovementHelper
 {
@@ -38,13 +34,6 @@ class InventoryMovementHelper
         }
 
         ProductReservationHelper::createMultipleReservation($productReservations, $sale);
-
-        dd($data);
-    }
-
-
-    private function get()
-    {
 
     }
 

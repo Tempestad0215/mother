@@ -2,12 +2,9 @@
 
 namespace App\Helpers;
 
-use App\Dtos\SaleItemApiDto;
-use App\Dtos\SaleItemDto;
 use App\Factories\SaleItemFactory;
 use App\Models\Sale;
 use App\Models\SaleItem;
-use http\Params;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
