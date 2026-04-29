@@ -9,8 +9,8 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('trans_cos', function (Blueprint $table) {
-            $table->id();
-            $table->foreignIdFor(ACO::class,'account_co_id')->comment('Relacion de cuenta');
+            $table->uuid();
+            $table->foreignUuid('account_co_id')->comment('Relacion de cuenta');
             $table->decimal('amount', 20)->comment('Monto');
             $table->enum('type',['CREDITO','DEBITO'])->comment('Tipo cuenta');
             $table->decimal('debit',15)->default(0)->comment('Monto de debito');

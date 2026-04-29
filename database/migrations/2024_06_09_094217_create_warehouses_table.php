@@ -8,7 +8,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('warehouses', function (Blueprint $table) {
-            $table->id();
+            $table->uuid();
             $table->string('name',30)->unique()->comment('Nombre');
             $table->string('description',200)->comment('Descripcion');
             $table->string('location',200)->nullable()->comment('Ubicacion');

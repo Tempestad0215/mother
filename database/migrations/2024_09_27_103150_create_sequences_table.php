@@ -9,7 +9,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('sequences', function (Blueprint $table) {
-            $table->id();
+            $table->uuid();
             $table->string('code',30)->unique()->comment('codigo unido para cada registro');
             $table->enum('type', NcfTypeEnum::cases())->comment('Tipo de registro');
             $table->integer('from')->comment('numero inicial');

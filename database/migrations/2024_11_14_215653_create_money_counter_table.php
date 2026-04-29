@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('money_counter', function (Blueprint $table) {
-            $table->id();
+            $table->uuid();
             $table->string('code',30)->unique()->comment('Codigo');
             $table->decimal('coin_first', 19,6)->default(0);
             $table->decimal('coin_second' , 19,6)->default(0);

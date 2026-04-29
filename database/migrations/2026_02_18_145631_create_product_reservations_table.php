@@ -11,10 +11,10 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('product_reservations', function (Blueprint $table) {
-            $table->increments('id');
-            $table->foreignIdFor(Product::class);
-            $table->foreignIdFor(Sale::class);
-            $table->foreignIdFor(Warehouse::class);
+            $table->uuid();
+            $table->foreignUuid('product_uuid');
+            $table->foreignUuid('sale_uuid');
+            $table->foreignUuid('warehouse_uuid');
             $table->decimal('quantity');
             $table->enum('status', \App\Enums\ProductReservationEnum::cases());
             $table->timestamps();

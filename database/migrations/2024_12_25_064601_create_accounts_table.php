@@ -8,7 +8,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('accounts', function (Blueprint $table) {
-            $table->id();
+            $table->uuid();
             $table->string('code', 30)->unique()->comment('Codigo');
             $table->morphs('accountable');
             $table->enum('type',['PAYABLE','RECEIVABLE'])->comment('Tipo de cuenta');

@@ -20,9 +20,9 @@ class CreateAuditsTable extends Migration
 
             $morphPrefix = config('audit.user.morph_prefix', 'user');
 
-            $table->bigIncrements('id');
+            $table->uuid('id');
             $table->string($morphPrefix . '_type')->nullable();
-            $table->integer($morphPrefix . '_id')->nullable();
+            $table->uuid($morphPrefix . '_id')->nullable();
             $table->string('event');
             $table->morphs('auditable');
             $table->text('old_values')->nullable();
@@ -30,7 +30,7 @@ class CreateAuditsTable extends Migration
             $table->text('url')->nullable();
             $table->ipAddress()->nullable();
             $table->text('user_agent', 1023)->nullable();
-            
+
             $table->softDeletes();
             $table->text('tags')->nullable();
             $table->timestamps();

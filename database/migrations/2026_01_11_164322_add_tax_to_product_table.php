@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::table('products', function (Blueprint $table) {
             //
-            $table->foreignIdFor(\App\Models\Tax::class, 'tax_id');
-            $table->foreignIdFor(\App\Models\Unit::class, 'unit_id')
+            $table->foreignUuid( 'tax_id');
+            $table->foreignUuid( 'unit_id')
                 ->nullable();
-            $table->foreignIdFor(\App\Models\Brand::class, 'brand_id')
+            $table->foreignUuid('brand_id')
                 ->nullable();
         });
     }

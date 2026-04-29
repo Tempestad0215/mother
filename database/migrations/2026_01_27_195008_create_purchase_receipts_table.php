@@ -8,10 +8,10 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('purchase_receipts', function (Blueprint $table) {
-            $table->id();
-            $table->foreignIdFor(\App\Models\Purchase::class);
-            $table->foreignIdFor(\App\Models\Supplier::class);
-            $table->foreignIdFor(\App\Models\User::class);
+            $table->uuid();
+            $table->foreignUuid('purchase_uuid');
+            $table->foreignUuid('account_co_uuid');
+            $table->foreignUuid('user_uuid');
             $table->timestamp('doc_date')->nullable();
             $table->decimal('tax', 15, 2)->default(0);
             $table->decimal('discount', 15, 2)->default(0);

@@ -13,7 +13,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('clients', function (Blueprint $table) {
-            $table->id();
+            $table->uuid();
             $table->string('code', 30)->unique()->comment('Codigo');
             $table->enum('type_rnc', \App\Enums\NcfTypeEnum::cases())->default(\App\Enums\NcfTypeEnum::CONSUMO)->comment('Tipo de RNC');
             $table->string('name', 75)->comment('Nombre');

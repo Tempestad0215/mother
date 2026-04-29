@@ -11,13 +11,13 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('sale_items', function (Blueprint $table) {
-            $table->increments('id');
-            $table->foreignIdFor(Product::class);
-            $table->foreignIdFor(Sale::class);
+            $table->uuid();
+            $table->foreignUuid('product_uuid');
+            $table->foreignUuid('sale_uuid');
             $table->decimal('stock',19,4);
             $table->decimal('price',19,4);
             $table->decimal('tax_rate');
-            $table->foreignIdFor(Tax::class);
+            $table->foreignUuid('tax_uuid');
             $table->decimal('discount',19,4)->nullable();
             $table->decimal('discount_amount',19,4)->nullable();
             $table->decimal('reserved',19,4)->nullable();

@@ -15,7 +15,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pro_trans', function (Blueprint $table) {
-            $table->id();
+            $table->uuid();
             $table->string('code',30)->unique()->comment('codigo');
             $table->foreignIdFor(Sale::class,'sale_id')
                 ->nullable()->comment('Relacion de ventas');

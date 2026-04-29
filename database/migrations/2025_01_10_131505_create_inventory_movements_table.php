@@ -15,10 +15,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('inventory_movements', function (Blueprint $table) {
-            $table->id();
+            $table->uuid();
             $table->enum('type', InventoryMovementTypeEnum::cases())->comment('Tipo de movimiento');
-            $table->foreignIdFor(Warehouse::class, 'warehouse_id')->comment('Relacionde  almacenes');
-            $table->foreignIdFor(Product::class, 'product_id')->comment('Relacionde  productos');
+            $table->foreignUuid( 'warehouse_id')->comment('Relacionde  almacenes');
+            $table->foreignUuid('product_id')->comment('Relacionde  productos');
             $table->decimal('quantity',15,4)->comment('Cantidad del movimiento');
             $table->decimal('price',15,6)->default(0)->comment('costo del movimiento unitario');
             $table->decimal('cost',15,6)->comment('costo del movimiento unitario');

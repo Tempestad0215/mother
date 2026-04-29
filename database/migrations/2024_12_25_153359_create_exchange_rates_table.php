@@ -8,7 +8,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('exchange_rates', function (Blueprint $table) {
-            $table->id();
+            $table->uuid();
             $table->string('code',30)->unique()->comment('Codigo');
             $table->json('rate_info')->comment('informacion de la tasa');
             $table->integer('month')->comment('mes');

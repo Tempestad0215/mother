@@ -14,9 +14,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('inventories', function (Blueprint $table) {
-            $table->id();
-            $table->foreignIdFor(Product::class, 'product_id');
-            $table->foreignIdFor(Warehouse::class, 'warehouse_id');
+            $table->uuid();
+            $table->foreignUuid('product_id');
+            $table->foreignUuid('warehouse_id');
             $table->decimal('qty_on_hand',19,4)->default(0);
             $table->decimal('on_order_qty',19,4)->default(0);
             $table->decimal('committed', 19,4)->default(0);

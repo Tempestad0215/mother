@@ -9,7 +9,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('brands', function (Blueprint $table) {
-            $table->id();
+            $table->uuid();
             $table->string('name', 50)->unique();
             $table->string('description', 150)->nullable();
             $table->enum('model_status', ModelStatusEnum::cases())->default(ModelStatusEnum::Activo);

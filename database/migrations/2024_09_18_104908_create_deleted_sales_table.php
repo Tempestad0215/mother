@@ -10,7 +10,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('deleted_sales', function (Blueprint $table) {
-            $table->id();
+            $table->uuid();
             $table->string('code',30)->unique()->comment('Codigo');
 
             $table->foreignIdFor(TransCo::class,'trans_co_id')->comment('Relacion de transcciones');

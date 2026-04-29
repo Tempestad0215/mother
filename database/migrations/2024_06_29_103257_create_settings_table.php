@@ -13,7 +13,7 @@ return new class extends Migration
         Schema::create('settings', function (Blueprint $table) {
 
             //Id
-            $table->id();
+            $table->uuid();
             //Datos de la empresa necesarios
             $table->string('name',150)->comment('Nombre de la empresa');
             $table->string('email',150)->unique()->comment('Correo electronico');
