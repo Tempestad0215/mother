@@ -6,6 +6,7 @@ use App\Enums\ClientDocumentEnum;
 use App\Enums\ClientTypeEnum;
 use App\Enums\ClientTypePriceEnum;
 use App\Enums\SequenceSaleTypeEnum;
+use App\Helpers\CodeHelper;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -118,9 +119,17 @@ class Client extends Model implements Auditable
         parent::boot();
 
         //Generar el codigo los codigos
-//        static::creating(function ($model) {
-//            $model->code = self::generateCode();
-//        });
+        static::creating(function ($model) {
+            $model->code = self::generateCode($model);
+        });
+    }
+
+    private static function generateCode(Model $model):string
+    {
+//        Contar los nuemros totales
+        $nextNumber = self::withTrashed()->count('uuid') + 1;
+
+        return CodeHelper::generateCode($model, $nextNumber);
     }
 
 

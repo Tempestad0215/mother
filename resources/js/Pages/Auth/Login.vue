@@ -2,7 +2,7 @@
 import { Link, useForm } from '@inertiajs/vue3';
 import {ref, Ref} from "vue";
 import {useRoute} from "ziggy-js";
-import {FloatLabel, InputText, Password, ToggleSwitch, Button, Image} from "primevue";
+import {FloatLabel, InputText, Password, ToggleSwitch, Button, Image, Tag} from "primevue";
 
 
 const route = useRoute();
@@ -54,18 +54,27 @@ const submit = () => {
         </div>
         <!--        formulario de inicio-->
         <form
-            class="max-w-[600px] mx-auto fondo p-10 rounded-md flex-col items-center shadow-md "
+            class="max-w-150 mx-auto fondo p-10 rounded-md flex-col items-center shadow-md "
             @submit.prevent="submit">
             <Image :src="`${urlImage}/logo.jpeg`" />
 
-            <FloatLabel variant="on">
+            <FloatLabel class="mt-5" variant="on">
                 <InputText fluid v-model="form.email" />
                 <label for="email">Correo Electronico</label>
+
             </FloatLabel>
+            <div class="text-center">
+                <Tag severity="danger" class="scale-75 text-center" v-if="form.errors.email" :value="form.errors.email" />
+
+            </div>
             <FloatLabel class="mt-3" variant="on">
                 <Password fluid toggleMask v-model="form.password" />
                 <label for="passowrd">Contraseña</label>
             </FloatLabel>
+            <div class="text-center">
+                <Tag severity="danger" class="scale-75 text-center" v-if="form.errors.password" :value="form.errors.password" />
+
+            </div>
 
             <div class="flex items-center mt-5 space-x-3">
                 <ToggleSwitch id="remember" v-model="form.remember" />

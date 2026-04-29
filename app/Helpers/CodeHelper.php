@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class CodeHelper
 {
 
-    public static function generateCode(Model $model, int $nextNumber)
+    public static function generateCode(Model $model, int $nextNumber):string
     {
 //        Obtener los datos
         $map = self::getState();
@@ -16,13 +16,21 @@ class CodeHelper
         $modelName = get_class($model);
 //        Tomar el prefijo de los datos
         $prefix = $map[$modelName] ?? 'GEN';
+//        Longitud de carcater
+        $length = 6;
+
 //      Tomar el ultimo registro
+        return sprintf(
+            '%s-%s',
+            $prefix,
+            str_pad((string) $nextNumber, $length,'0', STR_PAD_LEFT)
+        );
 
 
     }
 
 
-    private function getState():array
+    private static function getState():array
     {
         return [
             Client::class => config('appconfig.cliCode'),
