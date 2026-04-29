@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Storage;
 class General
 {
 
-
     /**
      * @param Request $request
      * @param Model $model

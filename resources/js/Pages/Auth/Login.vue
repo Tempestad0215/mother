@@ -60,9 +60,11 @@ const submit = () => {
 
             <FloatLabel variant="on">
                 <InputText fluid v-model="form.email" />
+                <label for="email">Correo Electronico</label>
             </FloatLabel>
             <FloatLabel class="mt-3" variant="on">
                 <Password fluid toggleMask v-model="form.password" />
+                <label for="passowrd">Contraseña</label>
             </FloatLabel>
 
             <div class="flex items-center mt-5 space-x-3">

@@ -20,7 +20,7 @@ class CreateAuditsTable extends Migration
 
             $morphPrefix = config('audit.user.morph_prefix', 'user');
 
-            $table->uuid('id');
+            $table->id('id');
             $table->string($morphPrefix . '_type')->nullable();
             $table->uuid($morphPrefix . '_id')->nullable();
             $table->string('event');

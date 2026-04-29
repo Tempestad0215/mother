@@ -7,6 +7,7 @@ use App\Enums\ClientTypeEnum;
 use App\Enums\ClientTypePriceEnum;
 use App\Enums\SequenceSaleTypeEnum;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -43,12 +44,16 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 class Client extends Model implements Auditable
 {
-
-
     use Searchable;
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
     use softDeletes;
+    use HasUuids;
+
+
+    protected $primaryKey = 'uuid';
+    protected $keyType = 'string';
+    public $incrementing = false;
 
     /**
      * @var string[]
@@ -113,31 +118,12 @@ class Client extends Model implements Auditable
         parent::boot();
 
         //Generar el codigo los codigos
-        static::creating(function ($model) {
-            $model->code = self::generateCode();
-        });
+//        static::creating(function ($model) {
+//            $model->code = self::generateCode();
+//        });
     }
 
-    /**
-     * @return string
-     */
-    // funcion para generar el codigo
-    private static function generateCode():string
-    {
-        // Obtener el ultimo registros
-        $total = self::withTrashed()->latest('id')->value('id');
 
-
-
-        // Generar el proximo ID
-        $nextID = $total ? $total + 1 : 1;
-
-        // Devolver los datos
-        $code = config('appconfig.cliCode');
-
-        // craer el codigp
-        return $code.str_pad($nextID, 6,'0', STR_PAD_LEFT);
-    }
 
 
 }

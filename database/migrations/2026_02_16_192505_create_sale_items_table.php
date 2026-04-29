@@ -26,7 +26,7 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes();
 
-            $table->unique(['product_id', 'sale_id']);
+            $table->unique(['product_uuid', 'sale_uuid']);
         });
     }
 
