@@ -1,20 +1,19 @@
 <script setup lang="ts">
 import Pagination from "@components/Pagination.vue";
 import {clientBaseI} from "@/Interfaces/ClientInterface";
-import {router, useForm, usePage} from "@inertiajs/vue3";
+import {router, useForm} from "@inertiajs/vue3";
 import {PaginationI} from "@/Interfaces/GlobalInterface";
 import {onMounted, ref} from "vue";
 import {useRoute} from "ziggy-js";
-import {Button, Column, DataTable, InputGroup, InputGroupAddon, InputText, Card, useToast, useConfirm} from "primevue";
+import {Button, Card, Column, DataTable, InputGroup, InputGroupAddon, InputText, useConfirm, useToast} from "primevue";
+import {getSearchTable} from "@/Global/SearchTable";
+import {FilePenLine, Shredder, UserRoundPlus} from '@lucide/vue';
 
 
 const route = useRoute();
 const toast = useToast();
 const confirm = useConfirm();
-/**
- * Datos de la ventana
- */
-const page = usePage();
+
 
 /**
  * Datos del back end
@@ -30,15 +29,18 @@ const showClient = defineModel<boolean>('showClient',{
 const clientSelected = defineModel<clientBaseI | null>('clientSelected',{
     default: null
 })
+const updateClient = defineModel<boolean>('updateClient', {
+    default: false
+})
 
 
 
 /**
  * Para emitir los eventos
  */
-const emit = defineEmits<{
-    (e: 'getData', item:clientBaseI):void
-}>();
+// const emit = defineEmits<{
+//     (e: 'getData', item:clientBaseI):void
+// }>();
 
 
 /**
@@ -65,12 +67,14 @@ const searchData = ()=> {
 }
 
 
+// Para editar los datos
 const editData = (data:clientBaseI) => {
     clientSelected.value = data;
-    createClient.value = true;
-    isUpdate.value = true;
+    showClient.value = true;
+    updateClient.value = true;
 }
 
+// Elimianr los datos
 const deleteData = (data:clientBaseI, event: Event) => {
     confirm.require({
         target: event.currentTarget as HTMLElement,
@@ -83,10 +87,11 @@ const deleteData = (data:clientBaseI, event: Event) => {
         },
         acceptProps:{
             label: "Eliminar",
+            severity: "warn",
 
         },
         accept: () => {
-            router.delete(route('un.destroy', {client: data.id}),{
+            router.delete(route('client.destroy', {client: data.uuid}),{
                 onSuccess: () => {
                     toast.add({
                         severity: "success",
@@ -99,6 +104,12 @@ const deleteData = (data:clientBaseI, event: Event) => {
         }
 
     })
+}
+
+const showClientBox = () =>{
+    showClient.value = true;
+    updateClient.value = false;
+    clientSelected.value = null;
 }
 
 
@@ -120,8 +131,10 @@ const deleteData = (data:clientBaseI, event: Event) => {
                 <Button
                     v-if="!propsW.otherComponent"
                     class="h-8"
-                    @click="showClient = !showClient">
-                    Crear Cliente
+                    @click="showClientBox">
+                    <template #icon>
+                        <UserRoundPlus/>
+                    </template>
                 </Button>
             </div>
         </template>
@@ -139,8 +152,12 @@ const deleteData = (data:clientBaseI, event: Event) => {
                 <Column header="Act">
                     <template #body="{data}:{data:clientBaseI}">
                         <div class="space-x-2">
-                            <Button @click="editData(data)" class="pt-1 h-8"  title="Editar" icon="pi pi-file-edit" />
-                            <Button @click="deleteData(data, $event)" class="pt-1 h-8"  title="Eliminar" severity="danger" icon="pi pi-trash" />
+                            <Button @click="editData(data)" class="pt-1 h-8"  title="Editar">
+                                <FilePenLine/>
+                            </Button>
+                            <Button @click="deleteData(data, $event)" class="pt-1 h-8"  title="Eliminar" severity="danger" >
+                                <Shredder />
+                            </Button>
 
                         </div>
                     </template>

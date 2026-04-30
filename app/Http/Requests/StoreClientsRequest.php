@@ -33,7 +33,6 @@ class StoreClientsRequest extends FormRequest
         //Convertir a true
         $isRequired = $type != 'contado';
 
-
         return [
             'name' => ['required','string','min:4','max:75'],
             'phone' => ['nullable','max:20',Rule::requiredIf($isRequired)],

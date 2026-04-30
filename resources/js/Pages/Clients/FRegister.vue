@@ -4,6 +4,7 @@ import {clientBaseI, clientDocumentI, clientPriceI, clientTypeI} from "@/Interfa
 import {useForm} from "@inertiajs/vue3";
 import {useRoute} from "ziggy-js";
 import {Card, Select, ToggleSwitch, FloatLabel, InputText, Divider, Button, InputMask, useToast} from "primevue"
+import {Eraser, Forward} from '@lucide/vue'
 
 
 const route = useRoute()
@@ -28,7 +29,7 @@ onMounted(()=>{
     //Verificar si existe datos para poner en el formulario
     if(propsW.clientEdit)
     {
-        form.id = propsW.clientEdit.id;
+        form.uuid = propsW.clientEdit.uuid;
         form.name = propsW.clientEdit.name;
         form.document = propsW.clientEdit.document
         form.personal_id = propsW.clientEdit.personal_id ? propsW.clientEdit.personal_id : "";
@@ -86,7 +87,7 @@ const selectedMask = computed(()=>{
  * DAtos del formulario
  */
 const form = useForm({
-    id:0,
+    uuid:"",
     type_rnc:"B02",
     name:"",
     personal_id:"",
@@ -120,7 +121,7 @@ const submit = ():void => {
     if(propsW.update)
     {
 
-        form.patch(route('client.update', form.id),{
+        form.patch(route('client.update', form.uuid),{
             onSuccess:()=>{
                 toast.add({
                     severity: "success",
@@ -147,6 +148,13 @@ const submit = ():void => {
             onSuccess:()=>{
 
                 form.reset();
+
+                toast.add({
+                    severity: "success",
+                    summary: "Actualizado",
+                    detail: "Registro Actualizado Correctamente",
+                    life: 3000
+                })
             }
         });
     }
@@ -204,7 +212,7 @@ const searchRNC = async () => {
 </script>
 
 <template>
-    <Card class="max-w-250">
+    <Card class="max-w-250 ">
         <template #header>
             <h3 class="text-2xl font-bold text-center" >{{propsW.update ? "Actualizar" : "Crear"}} Cliente</h3>
             <Divider/>
@@ -264,8 +272,16 @@ const searchRNC = async () => {
                 </div>
 
                 <div class="mt-5 text-right space-x-3">
-                    <Button severity="warn" icon="pi pi-eraser" type="reset"  label="limpiar" />
-                    <Button icon="pi pi-send" :label="propsW.update ? 'Actualizar' : 'Registrar'" type="submit" />
+                    <Button severity="warn" type="reset"  label="limpiar" >
+                        <template #icon>
+                            <Eraser />
+                        </template>
+                    </Button>
+                    <Button :label="propsW.update ? 'Actualizar' : 'Registrar'" type="submit" >
+                        <template #icon>
+                            <Forward />
+                        </template>
+                    </Button>
                 </div>
             </form>
 

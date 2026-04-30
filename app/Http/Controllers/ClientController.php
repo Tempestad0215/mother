@@ -152,6 +152,7 @@ class ClientController extends Controller implements HasMiddleware
      */
     public function update(UpdateClientsRequest $request, Client $client)
     {
+
         //Actualizer los datos
         $this->clientHelper->update($request, $client);
         // Devolver hacia atras

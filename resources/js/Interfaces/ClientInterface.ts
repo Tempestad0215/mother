@@ -30,7 +30,7 @@ export interface clientBaseI {
     document: string
     type_price: number;
     type_rnc: string;
-    id: number
+    uuid: string
     name: string
     type: string
     phone: string | null

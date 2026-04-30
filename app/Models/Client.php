@@ -69,7 +69,9 @@ class Client extends Model implements Auditable
         'email',
         'address',
         'type',
-        'comment'
+        'comment',
+        'status',
+        'type_price'
     ];
 
 

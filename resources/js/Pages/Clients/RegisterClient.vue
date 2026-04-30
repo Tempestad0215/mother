@@ -8,12 +8,6 @@ import FRegister from "@/Pages/Clients/FRegister.vue";
 import {useRoute} from "ziggy-js";
 import FShowClient from "@/Pages/Clients/FShowClient.vue";
 
-/**
- * propsW de la vantana
- */
-const route = useRoute();
-const confirm = useConfirm();
-const toast = useToast();
 
 const createClient = ref<boolean>(false);
 const selectedClient = ref<clientBaseI | null>(null);
@@ -40,10 +34,10 @@ const handleKeyDown = (event: KeyboardEvent) => {
     }
 }
 
-
-
-
-
+const closeModal = () => {
+    selectedClient.value = null;
+    isUpdate.value = false;
+}
 </script>
 
 <template>
@@ -51,10 +45,11 @@ const handleKeyDown = (event: KeyboardEvent) => {
         <FShowClient
             v-model:show-client="createClient"
             v-model:client-selected="selectedClient"
+            v-model:update-client="isUpdate"
             :client-data="propsW.clientData"/>
         <Dialog
             modal
-            @hide="selectedClient = null"
+            @hide="closeModal"
             v-model:visible="createClient" >
             <FRegister
                 :clientDocument="clientDocument"
