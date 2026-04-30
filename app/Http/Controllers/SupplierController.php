@@ -53,10 +53,10 @@ class SupplierController extends Controller implements HasMiddleware
 
         if ($search) {
             $query->where(function ($query) use ($search) {
-                $query->where('company_name', 'like', '%' . $search . '%')
-                    ->orWhere('contact', 'like', '%' . $search . '%')
-                    ->orWhere('email', 'like', '%' . $search . '%');
-            });
+                $query->where('company_name', 'ILIKE', '%' . $search . '%')
+                    ->orWhere('contact', 'ILIKE', '%' . $search . '%')
+                    ->orWhere('email', 'ILIKE', '%' . $search . '%');
+            })->orderBy('created_at', 'desc');
         }
 
         $suppliers = $query->paginate($per_page)->withQueryString();

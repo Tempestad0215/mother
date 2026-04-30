@@ -8,7 +8,7 @@ export interface SupplierI {
     contact: string | null;
     created_at: string;
     email: string| null;
-    id: number;
+    uuid: string;
     phone: string | null;
     status: number;
     payment: {

@@ -7,6 +7,7 @@ import {useRoute} from "ziggy-js";
 import {Button, Column, DataTable, Dialog, Breadcrumb, useConfirm, useToast, Card} from "primevue";
 import {itemsSettings} from "@/Helpers/SettingHelpers";
 import {router} from "@inertiajs/vue3";
+import {HousePlus, FilePenLine, Shredder} from "@lucide/vue"
 
 
 const route = useRoute();
@@ -46,10 +47,11 @@ const deleteData = (data: WarehouseBaseI, event: Event) => {
         },
         acceptProps:{
             label: "Eliminar",
+            severity: "danger"
 
         },
         accept: () => {
-            router.delete(route('wh.destroy', {wh: data.id}),{
+            router.delete(route('wh.destroy', {wh: data.uuid}),{
                 onSuccess: () => {
                     toast.add({
                         severity: "success",
@@ -83,7 +85,7 @@ const hideCreate = () => {
                     <Button
                         class="h-8"
                         @click="createWarehouse = true">
-                        Crear Almacen
+                        <HousePlus/>
                     </Button>
                 </div>
             </template>
@@ -97,8 +99,16 @@ const hideCreate = () => {
                     <Column header="Act">
                         <template #body="{data}:{data:WarehouseBaseI}">
                             <div class="space-x-2">
-                                <Button @click="editData(data)" class="pt-1 h-8"  title="Editar" icon="pi pi-file-edit" />
-                                <Button @click="deleteData(data, $event)" class="pt-1 h-8"  title="Eliminar" severity="danger" icon="pi pi-trash" />
+                                <Button @click="editData(data)" class="pt-1 h-8"  title="Editar" >
+                                    <template #icon>
+                                        <FilePenLine/>
+                                    </template>
+                                </Button>
+                                <Button @click="deleteData(data, $event)" class="pt-1 h-8"  title="Eliminar" severity="danger" >
+                                    <template #icon>
+                                        <Shredder/>
+                                    </template>
+                                </Button>
 
                             </div>
                         </template>

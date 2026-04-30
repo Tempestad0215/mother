@@ -46,7 +46,7 @@ const form = useForm({
     supplier_id:0,
     doc_date: new Date(),
     info: [{
-        id: 0,
+        uuid: 0,
         code:"",
         name: "",
         quantity: 0,

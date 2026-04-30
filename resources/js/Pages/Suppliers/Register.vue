@@ -19,6 +19,7 @@ import {PaginationI, PaymentTypeEnumI} from "@/Interfaces/GlobalInterface";
 import Pagination from "@components/Pagination.vue";
 import {getSearchTable} from "@/Global/SearchTable";
 import {router} from "@inertiajs/vue3";
+import {PackagePlus, FilePenLine, Shredder } from "@lucide/vue"
 
 
 const route = useRoute();
@@ -47,6 +48,8 @@ const editData = (data:SupplierI) => {
     isUpdate.value = true;
 }
 
+
+// Elimianr el registro seleccionado
 const deleteData = (data:SupplierI, event:Event) => {
     confirm.require({
         target: event.currentTarget as HTMLElement,
@@ -59,10 +62,11 @@ const deleteData = (data:SupplierI, event:Event) => {
         },
         acceptProps:{
             label: "Eliminar",
+            severity: "danger",
 
         },
         accept: () => {
-            router.delete(route('supplier.destroy', {supplier: data.id}),{
+            router.delete(route('supplier.destroy', {supplier: data.uuid}),{
                 onSuccess: () => {
                     toast.add({
                         severity: "success",
@@ -98,7 +102,7 @@ const deleteData = (data:SupplierI, event:Event) => {
                     <Button
                         class="h-8"
                         @click="createSupplier = true">
-                        Crear Suplido
+                        <PackagePlus/>
                     </Button>
                 </div>
 
@@ -111,8 +115,16 @@ const deleteData = (data:SupplierI, event:Event) => {
             <Column header="Act">
                 <template #body="{data}:{data:SupplierI}">
                     <div class="space-x-2">
-                        <Button @click="editData(data)" class="pt-1 h-8"  title="Editar" icon="pi pi-file-edit" />
-                        <Button @click="deleteData(data, $event)" class="pt-1 h-8"  title="Eliminar" severity="danger" icon="pi pi-trash" />
+                        <Button @click="editData(data)" class="pt-1 h-8"  title="Editar" >
+                            <template #icon>
+                                <FilePenLine/>
+                            </template>
+                        </Button>
+                        <Button @click="deleteData(data, $event)" class="pt-1 h-8"  title="Eliminar" severity="danger">
+                            <template #icon>
+                                <Shredder/>
+                            </template>
+                        </Button>
 
                     </div>
                 </template>

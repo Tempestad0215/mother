@@ -4,6 +4,7 @@ import {WarehouseBaseI} from "@/Interfaces/WarehouseInterface";
 import {onMounted} from "vue";
 import {useRoute} from "ziggy-js";
 import {FloatLabel, InputText, Button, Card, useToast} from "primevue";
+import {Forward} from "@lucide/vue"
 
 
 const route = useRoute();
@@ -20,7 +21,7 @@ const propsW = defineProps<{
  * Formularios
  */
 const form = useForm({
-    id:0,
+    uuid:"",
     name:"",
     description:"",
     location:"",
@@ -30,7 +31,7 @@ const form = useForm({
 onMounted(()=>{
     if(propsW.editWareHouses)
     {
-        form.id = propsW.editWareHouses.id;
+        form.uuid = propsW.editWareHouses.uuid;
         form.name = propsW.editWareHouses.name;
         form.description = propsW.editWareHouses.description;
         form.location = propsW.editWareHouses.location;
@@ -45,7 +46,7 @@ funciones
  */
 const submit = () => {
     if (propsW.update) {
-        form.put(route('wh.update',{wh: form.id}),{
+        form.put(route('wh.update',{wh: form.uuid}),{
             onSuccess: () => {
                 toast.add({
                     severity: "success",
@@ -103,7 +104,11 @@ const submit = () => {
                     <label for="location">Ubicacion</label>
                 </FloatLabel>
                 <div class="mt-5 text-right">
-                    <Button type="submit" :label=" propsW.update ? 'Actualizar' : 'Registrar'" />
+                    <Button type="submit" :label=" propsW.update ? 'Actualizar' : 'Registrar'" >
+                        <template #icon>
+                            <Forward/>
+                        </template>
+                    </Button>
                 </div>
             </form>
         </template>

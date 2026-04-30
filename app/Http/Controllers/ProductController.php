@@ -309,14 +309,13 @@ class ProductController extends Controller implements HasMiddleware
         return Product::query()
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
-                    $query->where('id', 'LIKE', "%$search%")
-                        ->orWhere('name', 'LIKE', "%$search%")
-                        ->orWhere('description', 'LIKE', "%$search%")
-                        ->orWhere('sku', 'LIKE', "%$search%");
+                    $query->where('id', 'ILIKE', "%$search%")
+                        ->orWhere('name', 'ILIKE', "%$search%")
+                        ->orWhere('description', 'ILIKE', "%$search%")
+                        ->orWhere('sku', 'ILIKE', "%$search%");
                 });
             })
             ->where('status', true)
-            ->latest('id')
             ->simplePaginate($perPage);
 
     }

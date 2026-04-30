@@ -47,6 +47,11 @@ class Setting extends Model implements Auditable
     use \OwenIt\Auditing\Auditable;
     use softDeletes;
     use HasFactory;
+    use HasUuids;
+
+    protected $primaryKey = 'uuid';
+    protected $keyType = 'string';
+    public $incrementing = false;
 
     /**
      * @var string[]

@@ -5,7 +5,8 @@ import {computed, onMounted} from "vue";
 import {getMoney} from "@/Global/Helpers";
 import {useRoute} from "ziggy-js";
 import {PaymentTypeEnumI} from "@/Interfaces/GlobalInterface";
-import {Select, Card, FloatLabel, InputText, ToggleSwitch, Button, useToast} from "primevue";
+import {Select, Card, FloatLabel, InputText, ToggleSwitch, Button, useToast, InputNumber} from "primevue";
+import {Eraser, Forward} from "@lucide/vue"
 
 
 
@@ -24,7 +25,7 @@ Al momento de cargar
 onMounted(()=>{
     if (propsW.supplierEdit)
     {
-        form.id = propsW.supplierEdit.id;
+        form.uuid = propsW.supplierEdit.uuid;
         form.contact = propsW.supplierEdit.contact ?? "";
         form.company_name = propsW.supplierEdit.company_name;
         form.phone = propsW.supplierEdit.phone ?? "";
@@ -38,7 +39,7 @@ onMounted(()=>{
 Formulario
  */
 const form = useForm({
-    id: 0,
+    uuid: "",
     contact:"",
     company_name:"",
     phone:"",
@@ -81,7 +82,7 @@ const submit = () => {
     // Si es actualziar
     if(propsW.update)
     {
-        form.patch(route('supplier.update', {supplier: form.id}),{
+        form.patch(route('supplier.update', {supplier: form.uuid}),{
             onSuccess:()=>{
                 toast.add({
                     severity: "success",
@@ -117,7 +118,7 @@ const submit = () => {
 <template>
     <Card>
         <template #header>
-            <h3 class="text-2xl font-bold text-center" >{{propsW.update ? "Actualizar" : "Crear"}} Cliente</h3>
+            <h3 class="text-2xl font-bold text-center" >{{propsW.update ? "Actualizar" : "Crear"}} Suplidor</h3>
         </template>
         <template #content>
             <form @submit.prevent="submit"  class="grid grid-cols-2 gap-4 w-150">
@@ -142,7 +143,7 @@ const submit = () => {
                     <label for="account_bank">Cuenta de Banco</label>
                 </FloatLabel>
                 <FloatLabel variant="on" >
-                    <InputText class="w-full"  id="payment_day" v-model="form.payment_day" />
+                    <InputNumber class="w-full"  id="payment_day" v-model="form.payment_day" />
                     <label for="payment_day">Dia de pago</label>
                 </FloatLabel>
                 <FloatLabel class="col-span-full" variant="on" >
@@ -161,8 +162,16 @@ const submit = () => {
                     <Select class="w-60" v-model="form.type_payment" option-label="label" option-value="value" :options="getPaymentTypes" />
                 </div>
                 <div class="mt-5 space-x-3 text-right col-span-full">
-                    <Button icon="pi pi-eraser" severity="warn" type="reset" label="Limpiar" />
-                    <Button icon="pi pi-send" type="submit" :label="propsW.update ? 'Actualizar' : 'Registrar'" />
+                    <Button severity="warn" type="reset" label="Limpiar" >
+                        <template #icon>
+                            <Eraser/>
+                        </template>
+                    </Button>
+                    <Button type="submit" :label="propsW.update ? 'Actualizar' : 'Registrar'" >
+                        <template #icon>
+                            <Forward/>
+                        </template>
+                    </Button>
                 </div>
             </form>
         </template>
