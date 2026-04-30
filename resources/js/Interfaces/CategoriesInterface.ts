@@ -1,5 +1,5 @@
 export interface categoryBaseI{
-    id: number;
+    uuid: string;
     code: string;
     name: string;
     description: string | null;

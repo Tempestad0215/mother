@@ -87,7 +87,7 @@ const deleteData = (data:clientBaseI, event: Event) => {
         },
         acceptProps:{
             label: "Eliminar",
-            severity: "warn",
+            severity: "danger",
 
         },
         accept: () => {

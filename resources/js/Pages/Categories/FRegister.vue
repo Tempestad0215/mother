@@ -4,6 +4,8 @@ import {categoryBaseI} from "@/Interfaces/CategoriesInterface";
 import {onMounted} from "vue";
 import {useRoute} from "ziggy-js";
 import {Card, FloatLabel, InputText, Button, useToast} from "primevue";
+import {Eraser, Forward} from "@lucide/vue"
+
 
 const route = useRoute()
 const toast = useToast()
@@ -19,7 +21,7 @@ const propsW = defineProps<{
 Formularios
  */
 const form = useForm({
-    id: 0,
+    uuid: "",
     name:"",
     description:"",
 });
@@ -29,7 +31,7 @@ const form = useForm({
 onMounted(()=>{
    if (propsW.categoryEdit)
    {
-       form.id = propsW.categoryEdit.id;
+       form.uuid = propsW.categoryEdit.uuid;
        form.name = propsW.categoryEdit.name;
        form.description = propsW.categoryEdit.description || '';
    }
@@ -41,7 +43,7 @@ const submit = () => {
     //si es para actualizar
     if(propsW.update)
     {
-        form.patch(route('category.update',{category: form.id}),{
+        form.patch(route('category.update',{category: form.uuid}),{
             onSuccess: ()=>{
                 toast.add({
                     severity: "success",
@@ -80,7 +82,6 @@ const submit = () => {
     }
 }
 
-
 </script>
 
 <template>
@@ -101,8 +102,16 @@ const submit = () => {
                     <label for="description">Descripción</label>
                 </FloatLabel>
                 <div class="mt-5 text-right space-x-3 ">
-                    <Button type="reset" class="h-8" severity="warn" icon="pi pi-eraser"  label="Limpiar" />
-                    <Button type="submit" class="h-8" icon="pi pi-send" :label=" propsW.update ? 'Actualizar' : 'Registrar'" />
+                    <Button @click="form.reset()"  type="reset" class="h-8" severity="warn"  label="Limpiar" >
+                        <template #icon>
+                            <Eraser/>
+                        </template>
+                    </Button>
+                    <Button type="submit" class="h-8" icon="pi pi-send" :label=" propsW.update ? 'Actualizar' : 'Registrar'" >
+                        <template #icon >
+                            <Forward/>
+                        </template>
+                    </Button>
                 </div>
             </form>
         </template>

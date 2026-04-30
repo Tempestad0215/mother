@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Models\Category;
 use App\Models\Client;
 use Illuminate\Database\Eloquent\Model;
 
@@ -34,6 +35,7 @@ class CodeHelper
     {
         return [
             Client::class => config('appconfig.cliCode'),
+            Category::class => config('appconfig.category')
 
         ];
     }

@@ -44,8 +44,8 @@ class CategoryController extends Controller implements HasMiddleware
 
         if ($search)
         {
-            $query->where('name', 'like', "%$search%")
-                ->orWhere('description', 'like', "%$search%");
+            $query->where('name', 'ILIKE', "%$search%")
+                ->orWhere('description', 'ILIKE', "%$search%");
         }
 
         $categories = $query->paginate($request->per_page)->withQueryString();

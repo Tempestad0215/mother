@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Helpers\CodeHelper;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -26,6 +28,11 @@ class Category extends Model implements Auditable
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
     use softDeletes;
+    use HasUuids;
+
+    protected $primaryKey = 'uuid';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     /**
      * @var string[]
@@ -64,7 +71,7 @@ class Category extends Model implements Auditable
 
         //Generar el codigo los codigos
         static::creating(function ($model) {
-            $model->code = self::generateCode();
+            $model->code = self::generateCode($model);
 
         });
     }
@@ -74,19 +81,13 @@ class Category extends Model implements Auditable
      * @return string
      */
     // funcion para generar el codigo
-    private static function generateCode():string
+    private static function generateCode(Model $model):string
     {
         // Obtener el ultimo registros
-        $total = self::withTrashed()->latest('id')->value('id');
+        $total = self::withTrashed()->count() + 1;
 
-        // Generar el proximo ID
-        $nextID = $total ? $total + 1 : 1;
+        return CodeHelper::generateCode($model, $total);
 
-        // Devolver los datos
-        $code = config('appconfig.category');
-
-        // craer el codigp
-        return $code.str_pad($nextID, 6,'0', STR_PAD_LEFT);
     }
 
 }
