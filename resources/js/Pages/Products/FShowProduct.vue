@@ -22,6 +22,7 @@ import {PreciseCalculator} from "@/utils/Decimal";
 import {PaginationI} from "@/Interfaces/GlobalInterface";
 import {getMoney} from "@/Global/Helpers";
 import {WarehouseBaseI} from "@/Interfaces/WarehouseInterface";
+import {SquarePlus} from "@lucide/vue"
 
 
 const toast = useToast()
@@ -128,9 +129,13 @@ const deleteData = (data:ProductBaseI, event:Event) => {
                 </form>
                 <Button
                     v-if="component != 'Sale/SaleCreate'"
-                    label="Agregar Producto"
+                    title="Nuevo"
                     class="h-8"
-                    @click="createProduct = true" />
+                    @click="createProduct = true" >
+                    <template #icon >
+                        <SquarePlus/>
+                    </template>
+                </Button>
             </div>
         </template>
         <template #content>

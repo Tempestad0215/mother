@@ -5,6 +5,7 @@ import {ref} from "vue";
 import {router, useForm} from "@inertiajs/vue3";
 import {itemsSettings} from "@/Helpers/SettingHelpers";
 import {TaxInterfaceI} from "@/Interfaces/TaxInterface";
+import {SquarePlus, Forward} from "@lucide/vue"
 
 
 const confirm = useConfirm()
@@ -18,7 +19,7 @@ const createTax = ref(false)
 const isUpdate = ref(false)
 
 const form = useForm({
-    id: 0,
+    uuid: "",
     name: "",
     description: "",
     rate: 0
@@ -26,12 +27,12 @@ const form = useForm({
 
 
 const formReset = () => {
-    form.reset('name','description','id','rate')
+    form.reset('name','description','uuid','rate')
 }
 
 const submit = () => {
     if (isUpdate.value) {
-        form.put(route('tax.update', {tax: form.id}),{
+        form.put(route('tax.update', {tax: form.uuid}),{
             onSuccess: () => {
                 toast.add({
                     severity: "success",
@@ -72,7 +73,7 @@ const submit = () => {
 }
 
 const editData = (data:TaxInterfaceI) => {
-    form.id = data.id!!;
+    form.uuid = data.uuid!!;
     form.name = data.name;
     form.description = data.description ?? "";
     form.rate = Number(data.rate) ?? 0
@@ -95,7 +96,7 @@ const deleteData = (data:TaxInterfaceI, event: Event) => {
 
         },
         accept: () => {
-            router.delete(route('unit.destroy', {unit: data.id}),{
+            router.delete(route('unit.destroy', {unit: data.uuid}),{
                 onSuccess: () => {
                     toast.add({
                         severity: "success",
@@ -121,7 +122,11 @@ const deleteData = (data:TaxInterfaceI, event: Event) => {
                 </div>
                 <div class="text-right">
 
-                    <Button @click="createTax = true" icon="pi pi-plus" label="Crear Unidad" />
+                    <Button @click="createTax = true" title="Nuevo"  >
+                        <template #icon>
+                            <SquarePlus/>
+                        </template>
+                    </Button>
                 </div>
             </template>
             <template #content>
@@ -160,7 +165,11 @@ const deleteData = (data:TaxInterfaceI, event: Event) => {
                     <label  for="name">Descripcion</label>
                 </FloatLabel>
                 <div class="mt-5 text-right">
-                    <Button type="submit" icon="pi pi-send" label="Registrar" />
+                    <Button type="submit" label="Registrar" >
+                        <template #icon>
+                            <Forward/>
+                        </template>
+                    </Button>
                 </div>
             </form>
 

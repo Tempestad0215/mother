@@ -1,7 +1,7 @@
 
 
 export interface TaxInterfaceI {
-    id?: number;
+    uuid?: "";
     name: string;
     description?: string;
     rate: string;
