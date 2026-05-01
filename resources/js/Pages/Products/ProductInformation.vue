@@ -4,14 +4,14 @@ import {categoryBaseI} from "@/Interfaces/CategoriesInterface";
 import {SupplierI} from "@/Interfaces/SupplierInterface";
 import {useRoute} from "ziggy-js";
 import {formProductKey, productDataKey} from "@/Injections/InjectionKeys";
-import {Card, InputText, FloatLabel, Select, Button, AutoComplete, Dialog, useToast} from "primevue";
+import {AutoComplete, Button, Card, Dialog, FloatLabel, InputText, Select, useToast} from "primevue";
 import {router} from "@inertiajs/vue3";
-import debounce from "lodash/debounce";
 import FRegisterCategory from "@/Pages/Categories/FRegister.vue";
 import FRegisterSupplier from "@/Pages/Suppliers/FRegister.vue";
 import {PaymentTypeEnumI} from "@/Interfaces/GlobalInterface";
 import {useProductStore} from "@/stores/ProductStore";
 import axios from "axios";
+import {Printer} from "@lucide/vue"
 
 const route = useRoute();
 const toast = useToast();
@@ -33,13 +33,13 @@ const productStore = useProductStore()
 const pdfFrame = ref<HTMLIFrameElement | null>(null);
 
 
-const searchProduct = debounce(()=>{
+const searchProduct = ()=>{
     router.get(route('product.create', {search: form.name}),{},{
         preserveState: true,
         preserveScroll: true,
         replace: true
     })
-}, 300);
+};
 
 
 const printLabel = async (code:string | null) => {
@@ -90,18 +90,23 @@ const printLabel = async (code:string | null) => {
     }
 }
 
+
 </script>
 
 <template>
     <Card>
         <template #header>
-            <div class="flex justify-between items-center">
+            <div class="flex justify-between items-center mt-5">
 
-                <div class="flex items-center gap-3">
-                    <p>ID Siguiente : {{productStore.nextCode}}</p>
-                    <Button :disabled="loadingUrlLabel" @click="printLabel(productStore.nextCode)"  icon="pi pi-print" />
-                </div>
-                <div class="text-right space-x-3">
+<!--                <div class="flex items-center gap-3">-->
+<!--                    <p>ID Siguiente : {{productStore.nextCode}}</p>-->
+<!--                    <Button title="Imprimir" :disabled="loadingUrlLabel" @click="printLabel(productStore.nextCode)"  >-->
+<!--                        <template #icon>-->
+<!--                            <Printer />-->
+<!--                        </template>-->
+<!--                    </Button>-->
+<!--                </div>-->
+                <div class="text-right space-x-3 mx-3">
                     <Button @click="createCategory = true"  icon="" label="Crear Categoria" />
                     <Button @click="createSupplier = true" icon="" label="Crear Suplidor" />
                 </div>
