@@ -42,6 +42,7 @@ class Category extends Model implements Auditable
         'name',
         'description',
         'status',
+        'prefix',
         'deleted_at',
     ];
 

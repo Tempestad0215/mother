@@ -28,31 +28,31 @@ export interface ProductTypeEnumI {
  *
  */
 export interface ProductBaseI {
-    id: number;
+    uuid: string;
     code: string;
     name: string;
     description: string | null;
     bar_code: string | null;
     sku: string | null;
-    brand_id: number | null;
+    brand_uuid: string | null;
     dimensions: string | null;
     process: number;
-    unit_id: number;
+    unit_uuid: string;
     stock: number;
     cost: number;
     price: number;
     min_price?: number;
     special_price?: number;
     is_service: 1 | 0;
-    supplier_id: number;
-    category_id: number;
-    tax_id: number;
+    supplier_uuid: string;
+    category_uuid: string;
+    tax_uuid: string;
     tax_rate?: number;
     weight: string;
     created_at: string;
     updated_at: string;
     inventoried: boolean;
-    warehouse_id: number;
+    warehouse_uuid: string;
     has_fraction: boolean;
     has_special: boolean;
     has_discount: boolean;
@@ -93,10 +93,10 @@ export interface productTransI extends ProductBaseI {
 }
 
 export interface ProductFormI {
-    id: number
+    uuid: string
     name: string
     description: string
-    unit_id: number | null
+    unit_uuid: string | null
     price: number
     cost: number
     min_price: number
@@ -105,15 +105,15 @@ export interface ProductFormI {
     benefits: number
     benefits_rate: number
     is_service: boolean
-    category_id: number
-    supplier_id: number
-    warehouse_id: number
+    category_uuid: string
+    supplier_uuid: string
+    warehouse_uuid: string
     search: string
-    tax_id: number
+    tax_uuid: string
     weight: number
     bar_code: string
     sku: string
-    brand_id: number | null
+    brand_uuid: string | null
     dimensions: string
     inventoried: boolean
     has_fraction: boolean

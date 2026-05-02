@@ -47,10 +47,10 @@ const emit = defineEmits(['showSupplier']);
  * Datos del formulario
  */
 const form = useForm<ProductFormI>({
-	id: 0,
+	uuid: "",
 	name: "",
 	description: "",
-	unit_id: null,
+	unit_uuid: null,
 	price: 0,
 	cost: 0,
 	min_price: 0,
@@ -59,15 +59,15 @@ const form = useForm<ProductFormI>({
 	benefits: 0,
 	benefits_rate: 0,
 	is_service: false,
-	category_id: 0,
-	supplier_id: 0,
-	warehouse_id: 0,
+	category_uuid: "",
+	supplier_uuid: "",
+	warehouse_uuid: "",
 	search: "",
-	tax_id: 0,
+	tax_uuid: "",
 	weight: 0,
 	bar_code: "",
 	sku: "",
-	brand_id: null,
+	brand_uuid: null,
 	dimensions: "",
 	inventoried: true,
 	has_fraction: true,
@@ -90,17 +90,17 @@ onMounted(() => {
 
 	// Pasar los datos a editar
 	if (propsW.productEdit) {
-		form.id = propsW.productEdit.id;
+		form.uuid = propsW.productEdit.uuid;
 		form.name = propsW.productEdit.name;
 		form.is_service = propsW.productEdit.is_service === 1;
 		form.description = propsW.productEdit.description ? propsW.productEdit.description : "";
 		form.bar_code = propsW.productEdit.bar_code ? propsW.productEdit.bar_code : "";
-		form.category_id = propsW.productEdit.category_id;
-		form.supplier_id = propsW.productEdit.supplier_id;
-		form.tax_id = Number(propsW.productEdit.tax_id);
+		form.category_uuid = propsW.productEdit.category_uuid;
+		form.supplier_uuid = propsW.productEdit.supplier_uuid;
+		form.tax_uuid = propsW.productEdit.tax_uuid;
 		form.sku = propsW.productEdit.sku || "";
-		form.unit_id = propsW.productEdit.unit_id;
-		form.brand_id = propsW.productEdit.brand_id || 0;
+		form.unit_uuid = propsW.productEdit.unit_uuid;
+		form.brand_uuid = propsW.productEdit.brand_uuid || "";
 		form.cost = Number(propsW.productEdit.cost);
 		form.price = Number(propsW.productEdit.price);
 		form.min_price = Number(propsW.productEdit.min_price) || 0;
@@ -116,7 +116,7 @@ onMounted(() => {
  */
 const submit = () => {
 	if (propsW.update || form.update) {
-		form.patch(route('product.update', form.id), {
+		form.patch(route('product.update', form.uuid), {
 			onSuccess: () => {
                 toast.add({
                     severity: "success",

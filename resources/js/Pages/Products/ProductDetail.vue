@@ -31,7 +31,7 @@ const productStore = useProductStore()
 
 
 const selectTax = (data:SelectChangeEvent) => {
-    const taxInfo:TaxInterfaceI | undefined = taxes.find((el)=> el.id === data.value)
+    const taxInfo:TaxInterfaceI | undefined = taxes.find((el)=> el.uuid === data.value)
 
     productStore.setTaxRateFromPercent(Number(taxInfo?.rate))
 
@@ -47,16 +47,16 @@ const selectTax = (data:SelectChangeEvent) => {
                 <Select
                     fluid
                     id="tax"
-                    option-value="id"
+                    option-value="uuid"
                     @change="selectTax"
                     :optionLabel="(item:TaxInterfaceI) => `${item.name } | ${item.rate}`"
                     :options="taxes"
-                    v-model="form.tax_id">
+                    v-model="form.tax_uuid">
                 </Select>
                 <label for="tax">Impuesto</label>
             </FloatLabel>
             <FloatLabel   variant="on" >
-                <Select fluid id="unit" optionValue="id" optionLabel="name"  :options="propsW.units"  v-model="form.unit_id" />
+                <Select fluid id="unit" optionValue="uuid" optionLabel="name"  :options="propsW.units"  v-model="form.unit_uuid" />
                 <label for="tax">Unidad</label>
             </FloatLabel>
             <FloatLabel   variant="on" >
@@ -64,7 +64,7 @@ const selectTax = (data:SelectChangeEvent) => {
                 <label for="weight">Peso</label>
             </FloatLabel>
             <FloatLabel   variant="on" >
-                <Select optionLabel="name" optionValue="id" fluid :options="propsW.branches"  id="branch" v-model="form.brand_id" />
+                <Select optionLabel="name" optionValue="uuid" fluid :options="propsW.branches"  id="branch" v-model="form.brand_uuid" />
                 <label for="branch">Ramas</label>
             </FloatLabel>
             <FloatLabel   variant="on" >
@@ -75,8 +75,8 @@ const selectTax = (data:SelectChangeEvent) => {
                 <Select
                     fluid
                     :options="propsW.warehouses"
-                    v-model="form.warehouse_id"
-                    optionValue="id"
+                    v-model="form.warehouse_uuid"
+                    optionValue="uuid"
                     optionLabel="name"/>
                 <label id="warehouse" >Almacen</label>
             </FloatLabel>

@@ -1,10 +1,23 @@
 <script setup lang="ts">
 import { ToggleSwitch, Fieldset} from "primevue";
-import {inject} from "vue";
+import {computed, inject} from "vue";
 import {formProductKey} from "@/Injections/InjectionKeys";
 
 
 const form = inject(formProductKey)!!
+
+
+const isService = computed(() => {
+
+    if (form.is_service){
+        form.inventoried = false;
+        form.has_fraction = false;
+        return true
+
+    }else{
+        return false
+    }
+});
 
 </script>
 
@@ -12,11 +25,14 @@ const form = inject(formProductKey)!!
     <Fieldset legend="Detalle">
         <div class="grid grid-cols-2 gap-3">
             <div class="flex items-center space-x-3">
-                <ToggleSwitch id="has_inventoried" v-model="form.inventoried" />
+                <ToggleSwitch
+                    :disabled="isService"
+                    id="has_inventoried"
+                    v-model="form.inventoried" />
                 <label for="has_inventoried">Inventariar</label>
             </div>
             <div class="flex items-center space-x-3">
-                <ToggleSwitch id="has_fraction" v-model="form.has_fraction" />
+                <ToggleSwitch :disabled="isService" id="has_fraction" v-model="form.has_fraction" />
                 <label for="has_fraction">Fraccionar</label>
             </div>
             <div class="flex items-center space-x-3">

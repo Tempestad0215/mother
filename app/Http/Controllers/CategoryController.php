@@ -10,6 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 use Maatwebsite\Excel\Facades\Excel;
@@ -58,6 +59,32 @@ class CategoryController extends Controller implements HasMiddleware
     }
 
 
+    private function createPrefix(string $name):string
+    {
+//        Limiar la cadena y convertir a Mayuscula
+        $cleanName = Str::upper(Str::trim(Str::replace(" ","", $name)));
+
+//        tomar los primero 4 digitos
+        $prefix = Str::substr($cleanName, 0 , 3);
+        $originalPrefix = $prefix;
+        $counter = 1;
+
+
+        while(Category::where('prefix', $prefix)->exists()){
+            if (Str::length($cleanName) >= 4 && $counter === 1) {
+                $prefix = Str::substr($cleanName, 0, 3);
+                $counter ++;
+            }else{
+                $prefix = $originalPrefix.$counter;
+                $counter ++;
+            }
+        }
+
+        return $prefix;
+
+    }
+
+
     /**
      * @param Request $request
      * @return RedirectResponse
@@ -66,13 +93,15 @@ class CategoryController extends Controller implements HasMiddleware
     {
 
         //Validar los datos
-        $request->validate([
+        $validated = $request->validate([
             'name' => ['required','string','min:3','max:70'],
             'description' => ['nullable','string','max:255'],
         ]);
 
+        $dataForInsert = $validated;
+        $dataForInsert['prefix'] = self::createPrefix($request->input('name'));
         // Crear los datos
-        Category::create($request->only(['name','description']));
+        Category::create($dataForInsert);
 
         //Devolver hacia atras
         return back();

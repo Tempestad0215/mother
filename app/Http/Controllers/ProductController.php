@@ -3,24 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Dtos\InventoryDto;
-use App\Dtos\ProductInventoryDto;
 use App\Enums\ProductTypeEnum;
 use App\Helpers\GeneralHelper;
 use App\Helpers\ProductInventoryHelper;
 use App\Http\Requests\PaginationRequest;
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Resources\ProductSupplierResource;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Inventory;
 use App\Models\Product;
-use App\Http\Requests\StoreProductRequest;
-use App\Http\Resources\ProductSupplierResource;
 use App\Models\Setting;
 use App\Models\Supplier;
 use App\Models\Tax;
 use App\Models\Unit;
 use App\Models\Warehouse;
 use App\Pdfs\ProductLabelV1;
-use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -31,7 +29,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
-use Spatie\LaravelPdf\Facades\Pdf;
 use Throwable;
 
 
@@ -56,8 +53,6 @@ class ProductController extends Controller implements HasMiddleware
      */
     public function create(PaginationRequest $request): Response|RedirectResponse
     {
-        //Obtener los datos de los productos
-        $data = $this->get($request);
 
         $search = $request->input('search');
         $perPage = $request->input('per_page');
@@ -84,7 +79,6 @@ class ProductController extends Controller implements HasMiddleware
                 'categories' => Category::orderBy('name')->get(),
                 'suppliers' => Supplier::orderBy('company_name')->get(),
                 'warehouse' => Warehouse::all(),
-                'nextProduct' => Product::generateCode() ?? null,
                 'paymentTypes' => GeneralHelper::getPaymentTypes(),
                 'productType' => $productType,
                 'branches' => Brand::all(),
@@ -256,7 +250,7 @@ class ProductController extends Controller implements HasMiddleware
     public function getByCode(Request $request): JsonResponse
     {
         //conseguir los datos a buscar
-        $search = $request->get('search');
+        $search = $request->input('search');
 
 
         //Buscar los datos
@@ -309,8 +303,7 @@ class ProductController extends Controller implements HasMiddleware
         return Product::query()
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
-                    $query->where('id', 'ILIKE', "%$search%")
-                        ->orWhere('name', 'ILIKE', "%$search%")
+                    $query->where('name', 'ILIKE', "%$search%")
                         ->orWhere('description', 'ILIKE', "%$search%")
                         ->orWhere('sku', 'ILIKE', "%$search%");
                 });
@@ -323,14 +316,14 @@ class ProductController extends Controller implements HasMiddleware
 
     public function createLabel(string $code)
     {
-        $fileName = "{$code}-label.pdf";
+        $fileName = "$code-label.pdf";
         $filePath = \Storage::disk('labels')->path($fileName);
         $pdf = new ProductLabelV1();
         $pdf->createInfo($code);
         $pdf->Output($filePath, 'F');
 
 
-        $url = asset("storage/pdfs/labels/{$fileName}");
+        $url = asset("storage/pdfs/labels/$fileName");
 
         if (!Storage::disk('labels')->exists($fileName)) {
             abort(404, 'No existe el label');
@@ -354,13 +347,13 @@ class ProductController extends Controller implements HasMiddleware
             'search' => 'nullable|string|max:255',
         ]);
         //Buscar los datos
-        $search = $request->get('search');
+        $search = $request->input('search');
 
 
         // Tomar los datos
         $products = Product::where(function ($query) use (&$search) {
-            $query->orWhere("name", "LIKE", "%$search%")
-                ->orWhere("description", "LIKE", "%$search%");
+            $query->orWhere("name", "ILIKE", "%$search%")
+                ->orWhere("description", "ILIKE", "%$search%");
         })->where("status", true)
             ->orderBy("name")
             ->take(15)

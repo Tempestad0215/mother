@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ProductTypeEnum;
+use App\Helpers\CodeHelper;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -137,8 +138,6 @@ class Product extends Model implements Auditable
     ];
 
 
-
-
     /**
      * @return void
      */
@@ -147,35 +146,9 @@ class Product extends Model implements Auditable
         // Llamar el metodo principal
         parent::boot();
 
-        //Generar el codigo los codigos
-        static::creating(function ($model) {
-            $model->code = self::generateCode();
-        });
     }
 
 
-    /**
-     * @return string
-     */
-    // funcion para generar el codigo
-    public static function generateCode():string
-    {
-        // Obtener el ultimo registros
-        $total = self::count();
-
-
-
-        // Generar el proximo ID
-        $nextID = $total ? $total + 1 : 1;
-
-        // Devolver los datos
-        $code = config('appconfig.product');
-
-        // craer el codigp
-        return $code.str_pad($nextID, 6,'0', STR_PAD_LEFT);
-    }
-
-    // Relaciones
 
 
     /**

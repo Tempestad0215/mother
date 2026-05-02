@@ -30,8 +30,7 @@ const route = useRoute();
 /**
  * Informacion de la ventana
  */
-const {url, component, props} = usePage();
-const {auth} = props;
+const {component} = usePage();
 
 
 interface PropsI {
@@ -47,7 +46,7 @@ const propsW = withDefaults(defineProps<PropsI>(),{
     isProduct: true
 })
 
-const emit = defineEmits<{
+defineEmits<{
     (e:'selectData', data:ProductBaseI):void
 }>()
 
@@ -92,7 +91,7 @@ const deleteData = (data:ProductBaseI, event:Event) => {
 
         },
         accept: () => {
-            router.delete(route('un.destroy', {client: data.id}),{
+            router.delete(route('un.destroy', {client: data.uuid}),{
                 onSuccess: () => {
                     toast.add({
                         severity: "success",
