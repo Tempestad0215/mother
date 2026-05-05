@@ -27,7 +27,7 @@ class ProductHelper
      */
     public function update(Request $request, Product $product):void
     {
-        $product->stock = $request->get('stock');
+        $product->stock = $request->input('stock');
         $product->save();
     }
 

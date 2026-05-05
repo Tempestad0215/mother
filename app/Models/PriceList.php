@@ -2,12 +2,20 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class PriceList extends Model
+class PriceList extends Model implements Auditable
 {
     use SoftDeletes;
+    use HasUuids;
+    use \OwenIt\Auditing\Auditable;
+
+    protected $primaryKey = 'uuid';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
         'uuid',

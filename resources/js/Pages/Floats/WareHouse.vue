@@ -17,7 +17,3 @@ import TextInput from "@components/TextInput.vue";
 <!--        Botones-->
     </form>
 </template>
-
-<style scoped>
-
-</style>

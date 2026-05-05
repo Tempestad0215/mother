@@ -123,11 +123,11 @@ const searchProduct = ()=>{
                     <label for="description">Descripcion</label>
                 </FloatLabel>
                 <FloatLabel variant="on">
-                    <Select fluid placeholder="Seleccione"  v-model="form.category_uuid" option-value="uuid" id="category" option-label="name" :options="categories" />
+                    <Select fluid  v-model="form.category_uuid" option-value="uuid" id="category" option-label="name" :options="categories" />
                     <label for="category">Categoria</label>
                 </FloatLabel>
                 <FloatLabel variant="on">
-                    <Select fluid placeholder="Seleccione"  v-model="form.supplier_uuid" option-value="uuid" id="supplier" option-label="company_name" :options="suppliers" />
+                    <Select fluid  v-model="form.supplier_uuid" option-value="uuid" id="supplier" option-label="company_name" :options="suppliers" />
                     <label for="supplier">Suplidor</label>
                 </FloatLabel>
             </div>

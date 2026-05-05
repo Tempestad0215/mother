@@ -28,19 +28,19 @@ const isHiddenMenu = ref<boolean>(false);
 const menuItems = reactive<MenuItemI[]>([
     {
         label: "Clientes",
-        url: route("client.create"), // o .create si prefieres
+        url: route("client.index"), // o .create si prefieres
         activePath: "/client",
         icon: "pi pi-user",
     },
     {
         label: "Categorías",
-        url: route("category.create"),
+        url: route("category.index"),
         activePath: "/category",
         icon: "pi pi-sitemap",
     },
     {
         label: "Proveedores",
-        url: route("supplier.create"),
+        url: route("supplier.index"),
         activePath: "/supplier",
         icon: "pi pi-truck",
     },
@@ -52,13 +52,13 @@ const menuItems = reactive<MenuItemI[]>([
     },
     {
         label: "Productos",
-        url: route("product.create"),
+        url: route("product.index"),
         activePath: "/product",
         icon: "pi pi-box",
     },
     {
         label: "Nueva Venta",
-        url: route("sale.create"),
+        url: route("sale.index"),
         activePath: "/sale/create",
         icon: "pi pi-shopping-cart",
         // Resaltado especial para POS
@@ -66,7 +66,7 @@ const menuItems = reactive<MenuItemI[]>([
     },
     {
         label: "Ventas",
-        url: route("sale.create"),
+        url: route("sale.index"),
         activePath: "/sale",
         icon: "pi pi-receipt",
     },

@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import {inject, watch} from "vue";
 import {PreciseCalculator} from "@/utils/Decimal";
-import {Fieldset, InputNumber, FloatLabel} from "primevue";
+import {Fieldset, InputNumber, FloatLabel, Select} from "primevue";
 import {formProductKey} from "@/Injections/InjectionKeys";
 import {useProductStore} from "@/stores/ProductStore";
 import {storeToRefs} from "pinia";
+import {WarehouseBaseI} from "@/Interfaces/WarehouseInterface";
 
+
+const propsW = defineProps<{
+    warehouses: WarehouseBaseI[]
+}>()
 
 const form = inject(formProductKey)!!
 const productStore = storeToRefs(useProductStore())
@@ -18,7 +23,7 @@ Propiedades computada
  */
 
 watch(
-	() => [form.tax_id, form.cost, form.price, form.tax_id],
+	() => [form.tax_uuid, form.cost, form.price, form.tax_uuid],
 	()=>{
 
         const tax = PreciseCalculator.multiply(
@@ -59,7 +64,17 @@ watch(
 </script>
 
 <template>
-    <Fieldset legend="Datos de Ventas">
+    <Fieldset legend="Detalle de Ventas">
+        <div class=" mb-5 max-w-60">
+            <FloatLabel variant="on"  >
+                <Select
+                    :options="propsW.warehouses"
+                    option-label="name"
+                    option-value="uuid"
+                    fluid />
+                <label for="warehouse">Almacen</label>
+            </FloatLabel>
+        </div>
         <div class="flex flex-col md:flex-row  gap-3">
             <FloatLabel variant="on" >
                 <InputNumber currency="DOP" locale="en-US" :max-fraction-digits="2" fluid id="sale_cost"  v-model="form.cost" />
@@ -77,6 +92,20 @@ watch(
                 <InputNumber :min="form.min_price" currency="DOP" locale="en-US" :max-fraction-digits="2" fluid id="sale_special_price" v-model="form.special_price" />
                 <label for="sale_special_price">Precio Especial</label>
             </FloatLabel>
+        </div>
+        <div class="flex flex-col md:flex-row justify-between mt-5">
+            <p>
+                <strong>Precio - Itbis</strong>
+                <span class="inline-block px-3 rounded-md ml-3">{{ PreciseCalculator.formatCurrency(form.product_no_tax)  }}</span>
+            </p>
+            <p>
+                <strong>Beneficio</strong>
+                <span class="inline-block px-3 rounded-md ml-3">{{ PreciseCalculator.formatCurrency(form.benefits) }}</span>
+            </p>
+            <p>
+                <strong>Beneficios Margen </strong>
+                <span class="inline-block px-3 rounded-md ml-3">{{ form.benefits_rate }} %</span>
+            </p>
         </div>
     </Fieldset>
 </template>

@@ -8,7 +8,7 @@ export const itemsSettings:MenuItem[] = [
     },
     {
         label: "Almacenes",
-        url: route('wh.index'),
+        url: route('warehouse.index'),
         icon: "pi pi-warehouse",
     },
     {
@@ -24,6 +24,11 @@ export const itemsSettings:MenuItem[] = [
     {
         label: "Impuestos",
         url: route('tax.index'),
+        icon: "pi pi-wallet",
+    },
+    {
+        label: "Lista Precio",
+        url: route('price-list.index'),
         icon: "pi pi-wallet",
     },
 ]

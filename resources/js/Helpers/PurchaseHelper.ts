@@ -11,7 +11,7 @@ export const purchaseBreadCrumb:MenuItem[] = [
     {
         label: "Estado Compra",
         icon: "pi pi-shopping-card",
-        url: route('purchase.show')
+        url: route('purchase.index')
     },
     {
         label: "Entrada de Mercancias",
@@ -21,7 +21,7 @@ export const purchaseBreadCrumb:MenuItem[] = [
     {
         label: "Salida de Mercancia",
         icon: "pi pi-shopping-card",
-        url: route('purchase.show')
+        url: route('purchase.index')
     },
 
 ]

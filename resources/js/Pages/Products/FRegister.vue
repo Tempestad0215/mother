@@ -8,15 +8,15 @@ import {PaymentTypeEnumI} from "@/Interfaces/GlobalInterface";
 import ProductExtra from "@/Pages/Products/ProductExtra.vue";
 import ProductDetail from "@/Pages/Products/ProductDetail.vue";
 import ProductGeneral from "@/Pages/Products/ProductGeneral.vue";
-import ProductSale from "@/Pages/Products/ProductSale.vue";
-import ProductSaleValue from "@/Pages/Products/ProductSaleValue.vue";
 import ProductInformation from "@/Pages/Products/ProductInformation.vue";
 import {useRoute} from "ziggy-js";
 import {formProductKey} from "@/Injections/InjectionKeys";
 import {BranchInterfaceI} from "@/Interfaces/BranchInterface";
 import {UnitInterfaceI} from "@/Interfaces/UnitInterface";
-import {Button, useToast} from "primevue";
+import {Button, Tabs, useToast, TabList, Tab, TabPanels, TabPanel} from "primevue";
 import {WarehouseBaseI} from "@/Interfaces/WarehouseInterface";
+import ProductSaleValue from "@/Pages/Products/ProductSaleValue.vue";
+import ProductSale from "@/Pages/Products/ProductSale.vue";
 
 const route = useRoute();
 const toast = useToast();
@@ -170,45 +170,65 @@ function setCalculateData(
 
 
 <template>
-	<!--Formulario-->
-	<form
-		@submit.prevent="submit">
+    <Tabs value="0" >
+        <TabList>
+            <Tab value="0">Producto</Tab>
+            <Tab v-if="form.name && form.name.length > 3" value="1">Precio</Tab>
+        </TabList>
+        <TabPanels>
+            <TabPanel value="0" >
+                <!--Formulario-->
+                <form
+                    @submit.prevent="submit">
 
-		<!--Informacion General-->
-		<div class="">
-			<ProductInformation
-                :paymentTypes="propsW.paymentTypes"
-				:categories="propsW.categories"
-				:suppliers="propsW.suppliers"/>
-            <div class="flex flex-col md:flex-row flex-wrap gap-3">
+                    <!--Informacion General-->
+                    <div class="">
+                        <ProductInformation
+                            :paymentTypes="propsW.paymentTypes"
+                            :categories="propsW.categories"
+                            :suppliers="propsW.suppliers"/>
+                        <div class="flex flex-col md:flex-row flex-wrap gap-3">
 
-                <ProductExtra
-                    class="flex-1"
-                    :productType="propsW.productType"/>
+                            <ProductExtra
+                                class="flex-1"
+                                :productType="propsW.productType"/>
 
-                <ProductGeneral
-                    class=""
-                />
-            </div>
+                            <ProductGeneral
+                                class=""
+                            />
+                        </div>
 
-				<!--Detalle del producto-->
-            <ProductDetail
-                :warehouses="propsW.warehouses"
-                :units="propsW.units"
-                :branches="propsW.branches"/>
+                        <!--Detalle del producto-->
+                        <ProductDetail
+                            :warehouses="propsW.warehouses"
+                            :units="propsW.units"
+                            :branches="propsW.branches"/>
+                    </div>
 
-			<ProductSaleValue
-				@calculate="setCalculateData"/>
-			<ProductSale/>
+                    <!-- Botones -->
+                    <div class="mt-4 text-right">
+                        <Button :disabled="form.processing" type="submit" icon="pi pi-send" :label="propsW.update ? 'Actualizar' : 'Registrar'" />
+                    </div>
+                </form>
+            </TabPanel>
+            <TabPanel  value="1">
+                <form>
+                    <div class="text-center text-2xl font-bold">
+                        Detalle de Ventas
+                    </div>
+                    <ProductSaleValue
+                        :warehouses="propsW.warehouses"
+                        @calculate="setCalculateData"/>
+                    <div class="space-x-3 mt-5 text-right">
+                        <Button label="Limpiar" />
+                        <Button label="Registrar" />
+                    </div>
+                </form>
+            </TabPanel>
+        </TabPanels>
 
-		</div>
+    </Tabs>
 
-
-		<!-- Botones -->
-		<div class="mt-4 text-right">
-            <Button :disabled="form.processing" type="submit" icon="pi pi-send" :label="propsW.update ? 'Actualizar' : 'Registrar'" />
-		</div>
-	</form>
 
 
 </template>

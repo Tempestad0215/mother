@@ -129,6 +129,7 @@ class ProductController extends Controller implements HasMiddleware
                 avg_cost: 0
             );
 
+//            Para almacenar los datos
             ProductInventoryHelper::createProductInventory($productInventory);
             // Guardar los datos de los productos
             if ($request->input('type') === 'servicio') {

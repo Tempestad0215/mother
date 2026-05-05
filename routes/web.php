@@ -6,29 +6,29 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\ExchangeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\CreditNoteController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\InventoryMovementController;
+use App\Http\Controllers\PriceListController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\ReceivingController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReportSaleController;
 use App\Http\Controllers\SequenceController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TaxController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SaleController;
-use App\Http\Controllers\SettingController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Middleware\IsAdminMiddleware;
-use App\Pdfs\ProductLabelV1;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
-use App\Http\Controllers\CreditNoteController;
-use App\Http\Controllers\InventoryMovementController;
 use Spatie\Permission\Models\Role;
 
 Route::middleware([
@@ -36,9 +36,8 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    /*
-     * Ruta de bienvenida
-     */
+
+    // Ruta de bienvenida
     Route::get('/', function () {
         return Inertia::render('Welcome', [
             'canLogin' => Route::has('login'),
@@ -47,356 +46,195 @@ Route::middleware([
         ]);
     });
 
-    /*
-     * Configuracion de la app
-     */
-    Route::controller(SettingController::class)
-        ->prefix('setting')
-        ->name('setting.')
-        ->group(function () {
-            Route::get('/', 'index')
-                ->name('index');
-            Route::post('/', 'store')->name('store');
-        });
-
-    /*
-     * Secuencia de RNC
-     */
-    Route::middleware([IsAdminMiddleware::class])->controller(SequenceController::class)
-        ->prefix('setting/sequence')
-        ->name('sequence.')
-        ->group(function () {
-            Route::get('/', 'create')->name('create');
-            Route::get('/get/{type}', 'get')->name('get');
-            Route::get('/get/rnc/{rnc}', 'getRnc')->name('getRnc');
-            Route::post('/', 'store')->name('store');
-            Route::get('/{sequence}', 'edit')->name('edit');
-            Route::delete('/{sequence}', 'destroy')->name('destroy');
-        });
-
-    /*
-     * Dashboard de la app
-     */
+    // Dashboard
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+
+    // Register users list (mantener por ser especial)
     Route::get('/register', function (Request $request) {
-
-        //Crear la instancia
         $userHelper = new UserHelper();
-
-        //Obtener los datos desde el helpers
         $users = $userHelper->getUserPaginator($request);
 
-        //Devolver la vista con los datos
         return Inertia::render('Auth/Register', [
             'users' => $users,
             'roles' => Role::all()
         ]);
-    })->name('register')
-        ->middleware(['role:Super Admin|Supervisor']);
+    })->name('register')->middleware(['role:Super Admin|Supervisor']);
 
     /*
-     * Usuario
+     * Configuración de la app
      */
-    Route::controller(UserController::class)
-        ->prefix('user')
-        ->name('user.')
-        ->group(function () {
-            Route::post('/', 'store')->name('store');
-            Route::patch('/{user}', 'update')->name('update');
-            Route::patch('/destroy/{user}', 'destroy')->name('destroy');
-        });
+    Route::apiResource('setting', SettingController::class)->only(['index', 'store']);
 
     /*
-     * Cliente
+     * Secuencia de RNC - Solo para admin
      */
-    Route::controller(ClientController::class)
-        ->prefix('client')
-        ->name('client.')
-        ->group(function () {
-            Route::get('/', 'create')->name('create');
-            Route::get('/get', 'getJson')->name('get.json');
-            Route::get('/show', 'show')->name('show');
-            Route::get('/edit/{client}', 'edit')->name('edit');
-            Route::post('/', 'store')->name('store');
-            Route::patch('/{client}', 'update')->name('update');
-            Route::delete('/destroy/{client}', 'destroy')->name('destroy');
-            Route::get('/download', 'exportExcel')->name('export-excel')
-                ->withoutMiddleware(VerifyCsrfToken::class);
-
-        });
+    Route::middleware([IsAdminMiddleware::class])->prefix('setting/sequence')->name('sequence.')->group(function () {
+        Route::get('/', [SequenceController::class, 'create'])->name('create');
+        Route::get('/get/{type}', [SequenceController::class, 'get'])->name('get');
+        Route::get('/get/rnc/{rnc}', [SequenceController::class, 'getRnc'])->name('getRnc');
+        Route::post('/', [SequenceController::class, 'store'])->name('store');
+        Route::get('/{sequence}', [SequenceController::class, 'edit'])->name('edit');
+        Route::delete('/{sequence}', [SequenceController::class, 'destroy'])->name('destroy');
+    });
 
     /*
-     * Categoria
+     * Usuarios - Custom porque no sigue completamente REST
      */
-    Route::controller(CategoryController::class)
-        ->prefix('category')
-        ->name('category.')
-        ->group(function () {
-            Route::get('/', 'create')->name('create');
-            Route::get('/download', 'exportExcel')->name('export-excel')
-                ->withoutMiddleware(VerifyCsrfToken::class);
-            Route::get('/{category}', 'edit')->name('edit');
-            Route::post('/', 'store')->name('store');
-            Route::patch('/{category}', 'update')->name('update');
-            Route::delete('/destroy/{category}', 'destroy')->name('destroy');
-            Route::get('/get', 'getJson')->name('get.json');
-
-        });
+    Route::prefix('user')->name('user.')->group(function () {
+        Route::post('/', [UserController::class, 'store'])->name('store');
+        Route::patch('/{user}', [UserController::class, 'update'])->name('update');
+        Route::patch('/destroy/{user}', [UserController::class, 'destroy'])->name('destroy');
+    });
 
     /*
-     * Suplidore
+     * Resources principales
      */
-    Route::controller(SupplierController::class)
-        ->prefix('supplier')
-        ->name('supplier.')
-        ->group(function () {
-            Route::get('/', 'create')->name('create');
-            Route::get('/show', 'show')->name('show');
-            Route::get('/get', 'getJson')->name('get.json');
-            Route::get('/dowmload', 'exportExcel')->name('export-excel');
-            Route::get('/{supplier}', 'edit')->name('edit');
-            Route::post('/', 'store')->name('store');
-            Route::patch('/{supplier}', 'update')->name('update');
-            Route::delete('/destroy/{supplier}', 'destroy')->name('destroy');
-
-        });
+    Route::apiResources([
+        'client' => ClientController::class,
+        'category' => CategoryController::class,
+        'supplier' => SupplierController::class,
+        'product' => ProductController::class,
+        'sale' => SaleController::class,
+        'purchase' => PurchaseController::class,
+        'price-list' => PriceListController::class,
+        'setting/warehouse' => WarehouseController::class,
+        'aco' => AccontCoController::class,
+        'unit' => UnitController::class,
+        'tax' => TaxController::class,
+        'branch' => BrandController::class
+    ]);
 
     /*
-     * Productos
+     * Resources con personalización
      */
-    Route::controller(ProductController::class)
-        ->prefix('product')
-        ->name('product.')
-        ->group(function () {
-            Route::get('/', 'create')->name('create');
-            Route::get('/show', 'show')->name('show');
-            Route::post('/', 'store')->name('store');
-            Route::get('/edit/{product}', 'edit')->name('edit');
-            Route::get('/get-label/{code}', 'createLabel')->name('get-label');
-            Route::get('/get', 'get')->name('get');
-            Route::get('/in', 'in')->name('in');
-            Route::get('/get/json', 'getJson')->name('get.json');
-            Route::get('/get/code', 'getByCode')->name('get.code');
-            Route::patch('/update/{product}', 'update')->name('update');
-            Route::patch('/delete/{product}', 'destroy')->name('destroy');
-
-        });
-
-
-    // Movimiento de inventario de productos
-    Route::controller(InventoryMovementController::class)
-        ->prefix('product/entry')
-        ->name('entry.')
-        ->group(function () {
-            Route::get('/', 'index')->name('index');
-            Route::get('/{entry}', 'edit')->name('edit');
-            Route::post('/', 'entry')->name('store');
-            Route::patch('/{entry}', 'update')->name('update');
-            Route::delete('/{entry}', 'destroy')->name('destroy');
-        });
-
+    Route::apiResource('inventory-movement', InventoryMovementController::class)
+        ->parameter('inventory-movement', 'entry')
+        ->names([
+            'index' => 'entry.index',
+            'store' => 'entry.store',
+            'show' => 'entry.show',
+            'update' => 'entry.update',
+            'destroy' => 'entry.destroy',
+        ]);
 
     /*
-     * Ventas
+     * Rutas adicionales para productos (no estándar REST)
      */
-    Route::controller(SaleController::class)
-        ->prefix('sale')
-        ->name('sale.')
-        ->group(function () {
-            Route::get('/', 'create')->name('create');
-            Route::get('/get', 'getJson')->name('get.json');
-            Route::get('/show', 'show')->name('show');
-            Route::get('/close', 'close')->name('close');
-            Route::post('/close/get', 'getClose')->name('get.close');
-            Route::get('/test/invoice', 'testInvoice')->name('test-invoice');
-            Route::get('/counter', 'counter')->name('counter');
-            Route::post('/counter', 'counterPost')->name('counterPost');
-            Route::post('/', 'store')->name('store');
-            Route::patch('/update/{sale}', 'update')->name('update');
-            Route::patch('/item/destroy/{product}/{sale}', 'destroyItem')->name('destroy.item');
-            Route::patch('/destroy/{sale}/{inventoried}', 'destroySale')->name('destroy-sale');
-        });
-
+    Route::prefix('product')->name('product.')->group(function () {
+        Route::get('/get-label/{code}', [ProductController::class, 'createLabel'])->name('get-label');
+        Route::get('/get', [ProductController::class, 'get'])->name('get');
+        Route::get('/in', [ProductController::class, 'in'])->name('in');
+        Route::get('/get/json', [ProductController::class, 'getJson'])->name('get.json');
+        Route::get('/get/code', [ProductController::class, 'getByCode'])->name('get.code');
+        Route::patch('/delete/{product}', [ProductController::class, 'destroy'])->name('destroy');
+    });
 
     /*
-     * Repotes de las ventas
+     * Rutas específicas de ventas
      */
-    Route::controller(ExchangeController::class)
-        ->prefix('sale/report')
-        ->name('sale.report.')
-        ->group(function () {
-            Route::get('/', 'index')->name('index');
-            Route::post('/', 'store')->name('store');
-        });
+    Route::prefix('sale')->name('sale.')->group(function () {
+        Route::get('/close', [SaleController::class, 'close'])->name('close');
+        Route::post('/close/get', [SaleController::class, 'getClose'])->name('get.close');
+        Route::get('/test/invoice', [SaleController::class, 'testInvoice'])->name('test-invoice');
+        Route::get('/counter', [SaleController::class, 'counter'])->name('counter');
+        Route::post('/counter', [SaleController::class, 'counterPost'])->name('counterPost');
+        Route::patch('/item/destroy/{product}/{sale}', [SaleController::class, 'destroyItem'])->name('destroy.item');
+        Route::patch('/destroy/{sale}/{inventoried}', [SaleController::class, 'destroySale'])->name('destroy-sale');
+    });
 
     /*
-     * Notas de credito o devoluciones
+     * Reportes de ventas/Exchange
      */
-    Route::controller(CreditNoteController::class)
-        ->prefix('sale/credit-note')
-        ->name('credit-note.')
-        ->group(function () {
-            Route::get('/', 'index')->name('index');
-            Route::get('/show', 'show')->name('show');
-            Route::get('/get/balance/{code}', 'getBalance')->name('balance');
-            Route::get('/get/{code}', 'creditNoteGet')->name('get');
-            Route::patch('/{sale}', 'store')->name('store');
-        });
-
+    Route::apiResource('sale/report', ExchangeController::class)
+        ->parameter('sale/report', 'exchange')
+        ->names('sale.report.');
 
     /*
-     * Reportes
+     * Notas de crédito
      */
-    Route::controller(ReportController::class)
-        ->prefix('report')
-        ->name('report.')
-        ->group(function () {
-            Route::get('/', 'index')->name('index');
-            Route::get('/day', 'getDay')->name('day');
-            Route::get('/day/date', 'getDailyByDate')->name('day.date');
-            Route::get('/product/low', 'stockLow')->name('product.low');
-            Route::post('/daily', 'getDailyByDate')->name('getDailyByDate');
-        });
+    Route::prefix('sale/credit-note')->name('credit-note.')->group(function () {
+        Route::get('/', [CreditNoteController::class, 'index'])->name('index');
+        Route::get('/show', [CreditNoteController::class, 'show'])->name('show');
+        Route::get('/get/balance/{code}', [CreditNoteController::class, 'getBalance'])->name('balance');
+        Route::get('/get/{code}', [CreditNoteController::class, 'creditNoteGet'])->name('get');
+        Route::patch('/{sale}', [CreditNoteController::class, 'store'])->name('store');
+    });
 
     /*
-     * Reporte de Ventas
+     * Reportes generales
      */
-    Route::controller(ReportSaleController::class)
-        ->prefix('report/sale')
-        ->name('report-sale.')
-        ->group(function () {
-            Route::get('/', 'index')->name('index');
-            Route::get('/json', 'reportSaleRange')->name('range');
-        });
+    Route::prefix('report')->name('report.')->group(function () {
+        Route::get('/', [ReportController::class, 'index'])->name('index');
+        Route::get('/day', [ReportController::class, 'getDay'])->name('day');
+        Route::get('/day/date', [ReportController::class, 'getDailyByDate'])->name('day.date');
+        Route::get('/product/low', [ReportController::class, 'stockLow'])->name('product.low');
+        Route::post('/daily', [ReportController::class, 'getDailyByDate'])->name('getDailyByDate');
+    });
 
     /*
-     * Facturas del sistema
+     * Reporte de ventas
      */
-    Route::controller(InvoiceController::class)
-        ->prefix('invoice')
-        ->name('invoice.')
-        ->group(function () {
-            Route::get('/belt/sale/{sale}', 'beltSale')->name('belt.sale');
-            Route::get('/belt/note/{creditNote}', 'beltNote')->name('belt.note');
-            Route::get('/getA/{sale}', 'getA')->name('getA');
-            Route::get('/getB/{counter}', 'getB')->name('getB');
-            Route::get('/label/{product}', 'label')->name('label');
-        });
-
+    Route::get('report/sale', [ReportSaleController::class, 'index'])->name('report-sale.index');
+    Route::get('report/sale/json', [ReportSaleController::class, 'reportSaleRange'])->name('report-sale.range');
 
     /*
-    *Monedas
-    */
-    Route::controller(AccontCoController::class)
-        ->prefix('/setting/currency')
-        ->name('currency.')
-        ->group(function () {
-            Route::get('/check-exchange', 'checkExchange')->name('check');
-            Route::get('/getExchange/{month}/{year}', 'getExchange')->name('get.exchange');
-            Route::post('/exchange', 'exchangeStore')->name('exchange.store');
-            Route::delete('/{currency}', 'destroy')->name('destroy');
-            Route::put('/restore/{currency}', 'restore')->name('restore');
-        });
-
-
-
-    /*
-     * Compra
+     * Facturas
      */
-    Route::controller(PurchaseController::class)
-        ->prefix('purchase')
-        ->name('purchase.')
-        ->group(function () {
-            Route::get('/', 'index')->name('index');
-            Route::post('/', 'store')->name('store');
-            Route::get('/show', 'show')->name('show');
-            Route::get('/receive', 'receive')->name('receive');
-            Route::get('/output', 'output')->name('output');
-            Route::patch('/{purchase}/cancel','cancel')->name('cancel');
-            Route::patch('/{purchase}/approve', 'approve')->name('approve');
-        });
-
-    Route::controller(ReceivingController::class)
-        ->prefix('purchase/receiving')
-        ->name('purchase.receiving.')
-        ->group(function () {
-            Route::get('/{supplier}', 'index')->name('index');
-            Route::post('/', 'store')->name('store');
-        });
+    Route::prefix('invoice')->name('invoice.')->group(function () {
+        Route::get('/belt/sale/{sale}', [InvoiceController::class, 'beltSale'])->name('belt.sale');
+        Route::get('/belt/note/{creditNote}', [InvoiceController::class, 'beltNote'])->name('belt.note');
+        Route::get('/getA/{sale}', [InvoiceController::class, 'getA'])->name('getA');
+        Route::get('/getB/{counter}', [InvoiceController::class, 'getB'])->name('getB');
+        Route::get('/label/{product}', [InvoiceController::class, 'label'])->name('label');
+    });
 
     /*
-     * cuentas contables modification y demas
+     * Configuraciones (Settings)
      */
-    Route::controller(AccontCoController::class)
-        ->prefix('/setting/aco')
-        ->name('aco.')
-        ->group(function () {
-            Route::get('/', 'index')->name('index');
-            Route::post('/', 'store')->name('store');
-            Route::put('/{aco}', 'update')->name('update');
-            Route::delete('/{aco}', 'destroy')->name('destroy');
+    Route::prefix('setting')->name('setting.')->group(function () {
+        // Monedas/Exchange
+        Route::controller(AccontCoController::class)->group(function () {
+            Route::get('/currency', 'index')->name('currency.index');
+            Route::post('/currency', 'store')->name('currency.store');
+            Route::get('/currency/check-exchange', 'checkExchange')->name('currency.check');
+            Route::get('/currency/getExchange/{month}/{year}', 'getExchange')->name('currency.get.exchange');
+            Route::post('/currency/exchange', 'exchangeStore')->name('currency.exchange.store');
+            Route::delete('/currency/{currency}', 'destroy')->name('currency.destroy');
+            Route::put('/currency/restore/{currency}', 'restore')->name('currency.restore');
         });
+
+    });
 
     /*
-     * Alamceneces
+     * Recepción de compras
      */
-    Route::controller(WarehouseController::class)
-        ->prefix('/setting/warehouse')
-        ->name('wh.')
-        ->group(function () {
-            Route::get('/', 'index')->name('index');
-            Route::post('/', 'store')->name('store');
-            Route::put('/{wh}', 'update')->name('update');
-            Route::delete('/{wh}', 'destroy')->name('destroy');
-        });
+    Route::prefix('purchase/receiving')->name('purchase.receiving.')->group(function () {
+        Route::get('/{supplier}', [ReceivingController::class, 'index'])->name('index');
+        Route::post('/', [ReceivingController::class, 'store'])->name('store');
+    });
 
+    /*
+     * Rutas adicionales de compras (no estándar)
+     */
+    Route::prefix('purchase')->name('purchase.')->group(function () {
+        Route::get('/show', [PurchaseController::class, 'show'])->name('show');
+        Route::get('/receive', [PurchaseController::class, 'receive'])->name('receive');
+        Route::get('/output', [PurchaseController::class, 'output'])->name('output');
+        Route::patch('/{purchase}/cancel', [PurchaseController::class, 'cancel'])->name('cancel');
+        Route::patch('/{purchase}/approve', [PurchaseController::class, 'approve'])->name('approve');
+    });
 
-    Route::controller(UnitController::class)
-        ->prefix('/setting/unit')
-        ->name('unit.')
-        ->group(function () {
-            Route::get('/', 'index')->name('index');
-            Route::post('/', 'store')->name('store');
-            Route::put('/{unit}', 'update')->name('update');
-            Route::delete('/{unit}', 'destroy')->name('destroy');
-        });
-
-
-    Route::controller(TaxController::class)
-        ->prefix('/setting/tax')
-        ->name('tax.')
-        ->group(function () {
-            Route::get('/', 'index')->name('index');
-            Route::post('/', 'store')->name('store');
-            Route::put('/{tax}', 'update')->name('update');
-            Route::delete('/{tax}', 'destroy')->name('destroy');
-        });
-
-    Route::controller(BrandController::class)
-        ->prefix('/setting/branch')
-        ->name('branch.')
-        ->group(function () {
-            Route::get('/', 'index')->name('index');
-            Route::post('/', 'store')->name('store');
-            Route::put('/{branch}', 'update')->name('update');
-            Route::delete('/{branch}', 'destroy')->name('destroy');
-        });
-//
-
+    // Test route
     Route::get('/test', function () {
-
-        $filename = "invoie".time().".pdf";
+        $filename = "invoice".time().".pdf";
         $path = storage_path('app/public/pdfs/receptions');
         $fullPath = $path.'/'.$filename;
 
         $purchase_receipts = \App\Models\PurchaseReceipts::first();
         $setting = \App\Models\Setting::latest()->first();
 
-
-
-        // Asegúrate que el directorio existe
         if (!file_exists(storage_path('app/public/pdfs/receptions'))) {
             mkdir(storage_path('app/public/pdfs/receptions'), 0777, true);
         }
@@ -415,29 +253,5 @@ Route::middleware([
                 'setting' => $setting
             ])
             ->name('test.pdf');
-
     })->name('printTest');
-
-//    Route::get('/sale', function (){
-//        $sale = Sale::first();
-//
-//
-//        $pdf = new \App\Invoices\Ticket80($sale);
-//
-//        return $pdf->output('ticket80.pdf');
-//
-//    });
-//
-//
-//    Route::get('/credit', function (){
-//        $sale = \App\Models\CreditNote::first();
-//
-//
-//        $pdf = new \App\Invoices\Ticket80($sale);
-//
-//        return $pdf->output('credit.pdf');
-//
-//    });
-
-
 });

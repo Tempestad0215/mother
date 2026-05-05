@@ -9,9 +9,9 @@ class PriceListRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'uuid' => ['required'],
-            'name' => ['required'],
-            'currency' => ['nullable'],
+            'uuid' => ['required','uuid'],
+            'name' => ['required','string','min:3','max:30'],
+            'currency' => ['nullable','string'],
             'status' => ['nullable', 'boolean'],
         ];
     }

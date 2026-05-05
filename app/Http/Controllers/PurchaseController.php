@@ -31,14 +31,14 @@ class PurchaseController extends Controller
         //Intancia de los datos
         $productHelper = new ProductHelper();
 
-        $search = $request->get('productSearch');
+        $search = $request->input('productSearch','');
 
 
         $qProduct = Product::query();
         if ($search) {
             $qProduct->where(function ($query) use ($search) {
-                $query->where('name', 'ilike', '%' . $search . '%')
-                    ->orWhere('description', 'ilike', '%' . $search . '%');
+                $query->where('name', 'ILIKE', '%' . $search . '%')
+                    ->orWhere('description', 'ILIKE', '%' . $search . '%');
             });
 
         }
