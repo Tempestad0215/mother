@@ -12,6 +12,7 @@ use App\Http\Resources\ProductSupplierResource;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Inventory;
+use App\Models\PriceList;
 use App\Models\Product;
 use App\Models\Setting;
 use App\Models\Supplier;
@@ -51,7 +52,7 @@ class ProductController extends Controller implements HasMiddleware
      * @param PaginationRequest $request
      * @return RedirectResponse|Response
      */
-    public function create(PaginationRequest $request): Response|RedirectResponse
+    public function index(PaginationRequest $request): Response|RedirectResponse
     {
 
         $search = $request->input('search');
@@ -85,6 +86,7 @@ class ProductController extends Controller implements HasMiddleware
                 'units' => Unit::all(),
                 'taxes' => Tax::all(),
                 'warehouses' => Warehouse::all(),
+                'priceLists' => PriceList::all(),
             ]);
 
         } else {

@@ -17,6 +17,8 @@ import {Button, Tabs, useToast, TabList, Tab, TabPanels, TabPanel} from "primevu
 import {WarehouseBaseI} from "@/Interfaces/WarehouseInterface";
 import ProductSaleValue from "@/Pages/Products/ProductSaleValue.vue";
 import ProductSale from "@/Pages/Products/ProductSale.vue";
+import {PriceListWTI} from "@/Interfaces/PriceListInterface";
+import InventoryDetail from "@/Pages/Products/Inventory/InventoryDetail.vue";
 
 const route = useRoute();
 const toast = useToast();
@@ -34,6 +36,7 @@ const propsW = defineProps<{
     branches: BranchInterfaceI[]
     units: UnitInterfaceI[]
     warehouses: WarehouseBaseI[]
+    priceLists: Array<PriceListWTI>
 }>();
 
 
@@ -174,6 +177,7 @@ function setCalculateData(
         <TabList>
             <Tab value="0">Producto</Tab>
             <Tab v-if="form.name && form.name.length > 3" value="1">Precio</Tab>
+            <Tab v-if="form.name && form.name.length > 3" value="2">Inventario</Tab>
         </TabList>
         <TabPanels>
             <TabPanel value="0" >
@@ -217,6 +221,7 @@ function setCalculateData(
                         Detalle de Ventas
                     </div>
                     <ProductSaleValue
+                        :priceLists="propsW.priceLists"
                         :warehouses="propsW.warehouses"
                         @calculate="setCalculateData"/>
                     <div class="space-x-3 mt-5 text-right">
@@ -224,6 +229,10 @@ function setCalculateData(
                         <Button label="Registrar" />
                     </div>
                 </form>
+            </TabPanel>
+            <TabPanel  value="2">
+                <InventoryDetail
+                    :warehouses="propsW.warehouses"/>
             </TabPanel>
         </TabPanels>
 

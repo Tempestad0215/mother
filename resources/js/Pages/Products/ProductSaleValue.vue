@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import {inject, watch} from "vue";
 import {PreciseCalculator} from "@/utils/Decimal";
-import {Fieldset, InputNumber, FloatLabel, Select} from "primevue";
+import {Fieldset, InputNumber, FloatLabel, Select, DataTable, Column} from "primevue";
 import {formProductKey} from "@/Injections/InjectionKeys";
 import {useProductStore} from "@/stores/ProductStore";
 import {storeToRefs} from "pinia";
 import {WarehouseBaseI} from "@/Interfaces/WarehouseInterface";
+import {PriceListWTI} from "@/Interfaces/PriceListInterface";
 
 
 const propsW = defineProps<{
-    warehouses: WarehouseBaseI[]
+    warehouses: Array<WarehouseBaseI>
+    priceLists: Array<PriceListWTI>
 }>()
 
 const form = inject(formProductKey)!!
@@ -64,6 +66,7 @@ watch(
 </script>
 
 <template>
+
     <Fieldset legend="Detalle de Ventas">
         <div class=" mb-5 max-w-60">
             <FloatLabel variant="on"  >

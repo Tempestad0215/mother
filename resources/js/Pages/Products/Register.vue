@@ -16,6 +16,7 @@ import {UnitInterfaceI} from "@/Interfaces/UnitInterface";
 import {TaxInterfaceI} from "@/Interfaces/TaxInterface";
 import {useProductStore} from "@/stores/ProductStore";
 import FShowProduct from "@/Pages/Products/FShowProduct.vue";
+import {PriceListWTI} from "@/Interfaces/PriceListInterface";
 
 
 //Propiedades de la ventana
@@ -32,6 +33,7 @@ const propsW = defineProps<{
     branches: BranchInterfaceI[]
     units: UnitInterfaceI[]
     taxes: TaxInterfaceI[]
+    priceLists: Array<PriceListWTI>
 }>();
 
 
@@ -79,6 +81,7 @@ const clearCreate = ()=>{
             v-model:visible="createProduct"
             header="Registro de Producto">
             <FRegister
+                :priceLists="propsW.priceLists"
                 :warehouses="propsW.warehouses"
                 :units="propsW.units"
                 :branches="propsW.branches"

@@ -17,7 +17,9 @@ class PriceListController extends Controller
 
     public function store(PriceListRequest $request)
     {
-        return PriceList::create($request->validated());
+        $price = PriceList::create($request->validated());
+
+        return redirect()->back();
     }
 
     public function show(PriceList $priceList)
