@@ -1,69 +1,63 @@
 <script setup lang="ts">
-import {invoiceTypeI} from "@/Interfaces/SettingInterface";
-import {usePage} from "@inertiajs/vue3";
-import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import { invoiceTypeI } from '@/Interfaces/SettingInterface';
+import { usePage } from '@inertiajs/vue3';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import {
-	faArrowRotateBack,
-	faBoxOpen,
-	faTableCellsColumnLock,
-} from "@fortawesome/free-solid-svg-icons";
-import {ProductBaseI} from "@/Interfaces/ProductInterface";
-import {computed, inject, ref, watch} from "vue";
-import {saleDataI, SaleTypeEnumI} from "@/Interfaces/SaleInterface";
-import {saleKey} from "@/utils/keys";
-import {PaginationI} from "@/Interfaces/GlobalInterface";
-import {getSequenceType} from "@/Global/Helpers";
-import {useRoute} from "ziggy-js";
-import {FloatLabel, InputText, Select, ToggleButton, Dialog} from "primevue";
-import FShowProduct from "@/Pages/Products/FShowProduct.vue";
-import {PreciseCalculator} from "@/utils/Decimal";
-
+  faArrowRotateBack,
+  faBoxOpen,
+  faTableCellsColumnLock,
+} from '@fortawesome/free-solid-svg-icons';
+import { ProductBaseI } from '@/Interfaces/ProductInterface';
+import { computed, inject, ref, watch } from 'vue';
+import { saleDataI, SaleTypeEnumI } from '@/Interfaces/SaleInterface';
+import { saleKey } from '@/utils/keys';
+import { PaginationI } from '@/Interfaces/GlobalInterface';
+import { getSequenceType } from '@/Global/Helpers';
+import { useRoute } from 'ziggy-js';
+import { FloatLabel, InputText, Select, ToggleButton, Dialog } from 'primevue';
+import FShowProduct from '@/Pages/Products/FShowProduct.vue';
+import { PreciseCalculator } from '@/utils/Decimal';
 
 const route = useRoute();
-const page = usePage()
+const page = usePage();
 
 const propsW = defineProps<{
-	invoiceType: invoiceTypeI[],
-	refund?: boolean,
-	saleOpen: PaginationI<saleDataI>,
-	products: PaginationI<ProductBaseI>,
-    saleTypeEnum: SaleTypeEnumI
-}>()
-
+  invoiceType: invoiceTypeI[];
+  refund?: boolean;
+  saleOpen: PaginationI<saleDataI>;
+  products: PaginationI<ProductBaseI>;
+  saleTypeEnum: SaleTypeEnumI;
+}>();
 
 const emit = defineEmits<{
-	(e: 'retunedBlur'): void,
-	(e: 'totalAmount', index: number): void,
-	(e: 'totalSale'):void
-}>()
+  (e: 'retunedBlur'): void;
+  (e: 'totalAmount', index: number): void;
+  (e: 'totalSale'): void;
+}>();
 
-const form = inject(saleKey)!
+const form = inject(saleKey)!;
 
-const showProducts = ref(false)
-const showSaleOpen = ref(false)
-const showReturn = ref(false)
-const showFormReturn = ref(false)
+const showProducts = ref(false);
+const showSaleOpen = ref(false);
+const showReturn = ref(false);
+const showFormReturn = ref(false);
 
-
-
-
-const getSaleType = computed(()=>{
-    return Object.entries(propsW.saleTypeEnum).map(([key, value]) => {
-        return {
-            key: key,
-            value: value,
-            hidden: key === "Devolucion"
-        }
-    });
-})
+const getSaleType = computed(() => {
+  return Object.entries(propsW.saleTypeEnum).map(([key, value]) => {
+    return {
+      key: key,
+      value: value,
+      hidden: key === 'Devolucion',
+    };
+  });
+});
 
 watch(
-    () => form.type,
-    (newVal) => {
-        form.close_table = newVal === "Cotizacion";
-    }
-)
-
+  () => form.type,
+  (newVal) => {
+    form.close_table = newVal === 'Cotizacion';
+  }
+);
 
 /**
  * Verificar el tipo de factura
@@ -97,7 +91,6 @@ watch(
 // 	}
 // }
 
-
 /**
  * Obtener el producto por codigo
  */
@@ -122,225 +115,191 @@ watch(
 
 //Obtener los datos de las cuentas abiertas
 const getSaleOpen = (item: saleDataI) => {
+  //Colocar la variable en nada al principio
+  form.info_sale = [];
+  form.id = item.id;
+  form.update = true;
 
-	//Colocar la variable en nada al principio
-	form.info_sale = [];
-	form.id = item.id;
-	form.update = true;
+  setTimeout(() => {
+    //Verificar Pasar los datos a la variable
+    item.info_sale.map((el, index) => {
+      form.info_sale.push({ ...el });
 
-	setTimeout(() => {
-		//Verificar Pasar los datos a la variable
-		item.info_sale.map((el, index) => {
+      //Calcular el total
+      emit('totalAmount', index);
+    });
+  }, 2);
 
-			form.info_sale.push({...el})
+  //calcular el total de las ventas
+  emit('totalSale');
 
-			//Calcular el total
-			emit('totalAmount', index);
-		})
-	}, 2);
+  //colocar los datos en el formulario
+  form.client_id = item.client_id;
+  form.client_rnc = item.client_document ?? '';
+  form.ncf = item.ncf;
+  form.invoice_type = item.invoice_type;
+  form.client_name = item.client_name;
+  form.close_table = item.close_table;
+  form.comment = item.comment ?? '';
 
-	//calcular el total de las ventas
-	emit('totalSale')
+  //Cerra la ventana
+  showSaleOpen.value = false;
+};
 
-	//colocar los datos en el formulario
-	form.client_id = item.client_id;
-	form.client_rnc = item.client_document ?? "";
-	form.ncf = item.ncf;
-	form.invoice_type = item.invoice_type;
-	form.client_name = item.client_name;
-	form.close_table = item.close_table;
-	form.comment = item.comment ?? "";
+const openReturn = () => {
+  showReturn.value = !showReturn.value;
+};
 
-	//Cerra la ventana
-	showSaleOpen.value = false;
+const getDataProduct = (data: ProductBaseI) => {
+  showProducts.value = false;
+  const getIndex = form.info_sale.findIndex((el) => el.product_id === data.id);
 
+  if (getIndex >= 0) {
+    form.info_sale[getIndex].stock += 1.0;
+  } else {
+    const taxPlus = Number(PreciseCalculator.multiply(data.tax_rate || 0, data.price));
+    let taxForProduct = 0;
 
-}
-
-
-const openReturn = () =>{
-	showReturn.value = !showReturn.value;
-}
-
-
-
-
-const getDataProduct = (data:ProductBaseI) => {
-    showProducts.value = false;
-    const getIndex = form.info_sale.findIndex((el) => el.product_id === data.id);
-
-    if (getIndex >= 0) {
-        form.info_sale[getIndex].stock += 1.00;
-    }else {
-
-        const taxPlus = Number(
-            PreciseCalculator.multiply(
-                (data.tax_rate || 0),
-                data.price
-            )
-        )
-        let taxForProduct = 0;
-
-        if (taxPlus === 0) {
-            taxForProduct = 0;
-        }else{
-            taxForProduct = Number(
-                PreciseCalculator.multiply(
-                    taxPlus,
-                    1
-                )
-            )
-        }
-
-        form.info_sale.push({
-            product_id: data.id,
-            product_name: data.name,
-            stock: 1,
-            price: data.price,
-            min_price: data.min_price,
-            special_price: data.special_price,
-            tax_id: data.tax_id,
-            warehouse_id: data.warehouse_id,
-            tax_rate: taxForProduct,
-            discount: 0,
-            discount_amount: 0,
-            reserved: 0,
-            amount: data.price,
-            is_service: Boolean(data.is_service),
-            price_temp: data.price
-
-        })
+    if (taxPlus === 0) {
+      taxForProduct = 0;
+    } else {
+      taxForProduct = Number(PreciseCalculator.multiply(taxPlus, 1));
     }
 
-    emit('totalSale')
-}
+    form.info_sale.push({
+      product_id: data.id,
+      product_name: data.name,
+      stock: 1,
+      price: data.price,
+      min_price: data.min_price,
+      special_price: data.special_price,
+      tax_id: data.tax_id,
+      warehouse_id: data.warehouse_id,
+      tax_rate: taxForProduct,
+      discount: 0,
+      discount_amount: 0,
+      reserved: 0,
+      amount: data.price,
+      is_service: Boolean(data.is_service),
+      price_temp: data.price,
+    });
+  }
+
+  emit('totalSale');
+};
 
 defineExpose({
-    showReturn,
-    getSequenceType,
-    openReturn
-})
-
+  showReturn,
+  getSequenceType,
+  openReturn,
+});
 </script>
 
 <template>
-	<!--                        Datos del formulario-->
-	<div class=" flex justify-between items-center mt-3">
-		<div class="flex mt-2">
-			<form
-                class=""
-				v-if="form.invoice_type !== 'B04' "
-				>
-                <FloatLabel variant="on">
-                    <InputText/>
-                    <label for="code">Codigo</label>
-                </FloatLabel>
+  <!--                        Datos del formulario-->
+  <div class="flex justify-between items-center mt-3">
+    <div class="flex mt-2">
+      <form class="" v-if="form.invoice_type !== 'B04'">
+        <FloatLabel variant="on">
+          <InputText />
+          <label for="code">Codigo</label>
+        </FloatLabel>
+      </form>
+      <!-- Buscar los datos necesario -->
+      <div v-if="!propsW.refund" class="ml-3">
+        <FontAwesomeIcon
+          title="Productos"
+          @click="showProducts = !showProducts"
+          class="icon-efect text-cyan-400 text-3xl"
+          :icon="faBoxOpen"
+        />
 
-			</form>
-			<!-- Buscar los datos necesario -->
-			<div
-				v-if="!propsW.refund"
-				class="ml-3">
+        <FontAwesomeIcon
+          title="Cuentas Abiertas"
+          @click="showSaleOpen = !showSaleOpen"
+          class="ml-3 icon-efect text-cyan-400 text-3xl"
+          :icon="faTableCellsColumnLock"
+        />
+        <FontAwesomeIcon
+          @click="showFormReturn = !showFormReturn"
+          title="Devolucion"
+          class="ml-3 icon-efect text-cyan-400 text-3xl"
+          :icon="faArrowRotateBack"
+        />
+      </div>
+    </div>
 
-				<FontAwesomeIcon
-					title="Productos"
-					@click="showProducts = !showProducts"
-					class="icon-efect text-cyan-400 text-3xl" :icon="faBoxOpen"/>
+    <div class="flex">
+      <!--Tipo de factura-->
+      <div v-if="page.props.setting.sequence" class="ml-3">
+        <FloatLabel variant="on">
+          <Select :options="propsW.invoiceType" />
+          <label for="type_sale">Tipo Venta</label>
+        </FloatLabel>
+      </div>
 
-				<FontAwesomeIcon
-					title="Cuentas Abiertas"
-					@click="showSaleOpen = !showSaleOpen"
-					class=" ml-3 icon-efect text-cyan-400 text-3xl" :icon="faTableCellsColumnLock"/>
-				<FontAwesomeIcon
-					@click="showFormReturn = !showFormReturn"
-					title="Devolucion"
-					class="ml-3 icon-efect text-cyan-400 text-3xl"
-					:icon="faArrowRotateBack"/>
+      <!--Tipo de factura-->
+      <div class="ml-2 w-40">
+        <FloatLabel variant="on">
+          <Select
+            fluid
+            v-model="form.type"
+            option-value="value"
+            option-label="key"
+            :option-disabled="(data) => data.hidden"
+            :options="getSaleType"
+          />
+          <label for="type_sale">Tipo Venta</label>
+        </FloatLabel>
+      </div>
+      <!--Tipo de cuenta si abierta o cerrada-->
+      <div v-if="!propsW.refund" class="ml-2">
+        <ToggleButton
+          :disabled="form.type === 'Cotizacion'"
+          v-model="form.close_table"
+          on-label="Cuenta Cerrada"
+          off-label="Cuenta Abierta"
+        />
+      </div>
+    </div>
+  </div>
 
-			</div>
-		</div>
+  <Dialog class="w-300" header="Productos" v-model:visible="showProducts" modal>
+    <FShowProduct
+      @select-data="getDataProduct"
+      :stock="true"
+      :isProduct="false"
+      :products="propsW.products"
+    />
+  </Dialog>
 
-		<div class="flex">
-			<!--Tipo de factura-->
-			<div
-				v-if="page.props.setting.sequence"
-				class="ml-3">
-                <FloatLabel variant="on" >
-                    <Select :options="propsW.invoiceType" />
-                    <label for="type_sale">Tipo Venta</label>
-                </FloatLabel>
-			</div>
+  <!-- Vetana de las ordenes abierta -->
+  <!--	<FloatBox-->
+  <!--		v-model:show="showSaleOpen">-->
+  <!--		<template #header>-->
+  <!--			Cuentas Abiertas-->
+  <!--		</template>-->
+  <!--		<template #body>-->
+  <!--			<SaleOpenShow-->
+  <!--				@sen-data="getSaleOpen"-->
+  <!--				class=" fondo rounded-md px-10 py-5"-->
+  <!--				:sale-open="propsW.saleOpen"/>-->
+  <!--		</template>-->
 
+  <!--	</FloatBox>-->
 
-			<!--Tipo de factura-->
-			<div class="ml-2 w-40">
-                <FloatLabel variant="on" >
-                    <Select
-                        fluid
-                        v-model="form.type"
-                        option-value="value"
-                        option-label="key"
-                        :option-disabled="(data) => data.hidden"
-                        :options="getSaleType" />
-                    <label for="type_sale">Tipo Venta</label>
-                </FloatLabel>
-			</div>
-			<!--Tipo de cuenta si abierta o cerrada-->
-			<div
-				v-if="!propsW.refund"
-				class="ml-2">
-                    <ToggleButton
-                        :disabled="form.type === 'Cotizacion'"
-                        v-model="form.close_table"
-                        on-label="Cuenta Cerrada"
-                        off-label="Cuenta Abierta" />
+  <!-- Formulario para la nota de credito-->
+  <!--	<FloatBox-->
+  <!--		v-model:show="showFormReturn">-->
+  <!--		<template #header>-->
+  <!--			Notas de Credito-->
+  <!--		</template>-->
+  <!--		<template #body>-->
+  <!--			<ReturnForm-->
+  <!--				class="w-160 mx-auto"-->
+  <!--				@closeFormReturn="showFormReturn = false"-->
+  <!--				:error="page.props.errors.general"/>-->
+  <!--		</template>-->
 
-			</div>
-		</div>
-
-	</div>
-
-    <Dialog
-        class="w-300"
-        header="Productos"
-        v-model:visible="showProducts"
-        modal>
-        <FShowProduct
-            @select-data="getDataProduct"
-            :stock="true"
-            :isProduct="false"
-            :products="propsW.products"/>
-    </Dialog>
-
-
-	<!-- Vetana de las ordenes abierta -->
-<!--	<FloatBox-->
-<!--		v-model:show="showSaleOpen">-->
-<!--		<template #header>-->
-<!--			Cuentas Abiertas-->
-<!--		</template>-->
-<!--		<template #body>-->
-<!--			<SaleOpenShow-->
-<!--				@sen-data="getSaleOpen"-->
-<!--				class=" fondo rounded-md px-10 py-5"-->
-<!--				:sale-open="propsW.saleOpen"/>-->
-<!--		</template>-->
-
-<!--	</FloatBox>-->
-
-
-	<!-- Formulario para la nota de credito-->
-<!--	<FloatBox-->
-<!--		v-model:show="showFormReturn">-->
-<!--		<template #header>-->
-<!--			Notas de Credito-->
-<!--		</template>-->
-<!--		<template #body>-->
-<!--			<ReturnForm-->
-<!--				class="w-160 mx-auto"-->
-<!--				@closeFormReturn="showFormReturn = false"-->
-<!--				:error="page.props.errors.general"/>-->
-<!--		</template>-->
-
-<!--	</FloatBox>-->
+  <!--	</FloatBox>-->
 </template>

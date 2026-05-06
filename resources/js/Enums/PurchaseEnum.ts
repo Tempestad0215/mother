@@ -1,11 +1,16 @@
-
-
 export enum PurchaseStatusEnum {
-    Borrador = 'Borrador',
-    Pendiente = 'Pendiente',
-    Parcial = 'Parcial',
-    Completada = 'Completada',
-    Cancelada = 'Cancelada'
+  Borrador = 'Borrador',
+  Pendiente = 'Pendiente',
+  Parcial = 'Parcial',
+  Completada = 'Completada',
+  Cancelada = 'Cancelada',
 }
 
-export type TagSeverity = 'primary' | 'secondary' | 'success' | 'info' | 'warn' | 'danger' | undefined;
+export type TagSeverity =
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'info'
+  | 'warn'
+  | 'danger'
+  | undefined;

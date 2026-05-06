@@ -1,36 +1,30 @@
 <script setup lang="ts">
-import {Link} from "@inertiajs/vue3";
-import {computed} from "vue";
-
+import { Link } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 const props = defineProps({
-    href: {
-        type: String,
-        required: true
-    },
-    active:{
-        type: Boolean
-    }
+  href: {
+    type: String,
+    required: true,
+  },
+  active: {
+    type: Boolean,
+  },
 });
 
-const isActive = computed(()=>{
-    return props.active ? '!bg-cyan-400' : '';
+const isActive = computed(() => {
+  return props.active ? '!bg-cyan-400' : '';
 });
-
-
 </script>
 
 <template>
-    <Link
-        class=" block bg-gray-400 font-bold px-3 py-1 rounded-md shadow-md hover:bg-gray-200 ease-in-out duration-300 "
-        :class="isActive"
-        :href="props.href">
-        <slot/>
-    </Link>
-
+  <Link
+    class="block bg-gray-400 font-bold px-3 py-1 rounded-md shadow-md hover:bg-gray-200 ease-in-out duration-300"
+    :class="isActive"
+    :href="props.href"
+  >
+    <slot />
+  </Link>
 </template>
 
-
-<style scoped >
-
-</style>
+<style scoped></style>

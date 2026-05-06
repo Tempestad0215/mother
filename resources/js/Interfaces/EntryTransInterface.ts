@@ -1,16 +1,16 @@
-import {ProductBaseI} from "@/Interfaces/ProductInterface";
+import { ProductBaseI } from '@/Interfaces/ProductInterface';
 
-export  interface entryBaseI {
-    id: number;
-    quantity: number;
-    cost: number;
-    description?: string;
-    type?: string;
-    status?: boolean;
-    was_updated?: boolean;
-    created_at?: string;
+export interface entryBaseI {
+  id: number;
+  quantity: number;
+  cost: number;
+  description?: string;
+  type?: string;
+  status?: boolean;
+  was_updated?: boolean;
+  created_at?: string;
 }
 
 export interface entryProductI extends entryBaseI {
-    product: ProductBaseI
+  product: ProductBaseI;
 }
