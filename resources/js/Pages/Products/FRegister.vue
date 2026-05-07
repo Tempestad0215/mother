@@ -164,7 +164,7 @@ function setCalculateData(productNoTax: string, benefits: string, benefitsMargin
       :categories="propsW.categories"
       :suppliers="propsW.suppliers"
     />
-    <Tabs value="0">
+    <Tabs value="0" class="h-110">
       <TabList>
         <Tab value="0">General</Tab>
         <Tab v-if="form.name && form.name.length > 3" value="1">Ventas</Tab>
