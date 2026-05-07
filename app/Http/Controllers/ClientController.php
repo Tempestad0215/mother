@@ -52,7 +52,7 @@ class ClientController extends Controller implements HasMiddleware
     /**
      * @return Response
      */
-    public function create(Request $request)
+    public function index(Request $request)
     {
         // Validar los datos
         $request->validate([

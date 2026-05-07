@@ -22,7 +22,7 @@ const props = defineProps({
   <AppLayout>
     <!--        Titulo de la ventana-->
     <template #header>
-      <TabLink :href="route('product.create')"> Registrar </TabLink>
+      <TabLink :href="route('product.index')"> Registrar </TabLink>
       <TabLink :href="route('entry.index')"> Entrada </TabLink>
       <TabLink :active="true" :href="route('product.show')"> Mostrar </TabLink>
     </template>

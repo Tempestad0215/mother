@@ -48,28 +48,30 @@ watch(
 </script>
 
 <template>
-  <Fieldset legend="Detalle de Ventas">
-    <div>
-      <FloatLabel variant="on">
-        <Select :options="propsW.warehouses" option-label="name" option-value="uuid" fluid />
-        <label for="warehouse">Almacen</label>
-      </FloatLabel>
-    </div>
-    <div>
-      <FloatLabel variant="on">
-        <Select
-          fluid
-          id="unit"
-          optionValue="uuid"
-          optionLabel="name"
-          :options="propsW.units"
-          v-model="form.unit_uuid"
-        />
-        <label for="tax">Unidad</label>
-      </FloatLabel>
+  <div>
+    <div class="grid grid-cols-2 gap-3">
+      <div>
+        <FloatLabel variant="on">
+          <Select :options="propsW.warehouses" option-label="name" option-value="uuid" fluid />
+          <label for="warehouse">Almacen</label>
+        </FloatLabel>
+      </div>
+      <div>
+        <FloatLabel variant="on">
+          <Select
+            fluid
+            id="unit"
+            optionValue="uuid"
+            optionLabel="name"
+            :options="propsW.units"
+            v-model="form.unit_uuid"
+          />
+          <label for="tax">Unidad</label>
+        </FloatLabel>
+      </div>
     </div>
 
-    <div class="flex flex-col md:flex-row gap-3">
+    <div class="grid grid-cols-4 gap-3 mt-5">
       <FloatLabel variant="on">
         <InputNumber
           currency="DOP"
@@ -117,7 +119,9 @@ watch(
         <label for="sale_special_price">Precio Especial</label>
       </FloatLabel>
     </div>
-    <div class="flex flex-col md:flex-row justify-between mt-5">
+    <div
+      class="flex flex-col md:flex-row justify-between mt-5 border-2 rounded-md p-2 border-gray-200"
+    >
       <p>
         <strong>Precio - Itbis</strong>
         <span class="inline-block px-3 rounded-md ml-3">{{
@@ -135,5 +139,5 @@ watch(
         <span class="inline-block px-3 rounded-md ml-3">{{ form.benefits_rate }} %</span>
       </p>
     </div>
-  </Fieldset>
+  </div>
 </template>

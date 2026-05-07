@@ -24,7 +24,6 @@ const propsW = defineProps<{
   categories: categoryBaseI[];
   suppliers: SupplierI[];
   warehouses: WarehouseBaseI[];
-  nextProduct: string | null;
   paymentTypes: PaymentTypeEnumI;
   productType: ProductTypeEnumI;
   branches: BranchInterfaceI[];
@@ -45,16 +44,11 @@ provide(taxCurrentValueKey, taxCurrentValue);
 //store
 const productStore = useProductStore();
 
-onMounted(() => {
-  if (propsW.nextProduct) {
-    productStore.nextCode = propsW.nextProduct;
-  }
-});
+onMounted(() => {});
 
 const clearCreate = () => {
   selectedProduct.value = null;
   isUpdate.value = false;
-  productStore.nextCode = propsW.nextProduct || null;
 };
 </script>
 
@@ -67,7 +61,13 @@ const clearCreate = () => {
       :products="propsW.products"
     />
 
-    <Dialog modal @hide="clearCreate" v-model:visible="createProduct" header="Registro de Producto">
+    <Dialog
+      class="max-w-4/5"
+      modal
+      @hide="clearCreate"
+      v-model:visible="createProduct"
+      header="Registro de Producto"
+    >
       <FRegister
         :priceLists="propsW.priceLists"
         :warehouses="propsW.warehouses"

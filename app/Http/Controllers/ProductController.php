@@ -74,6 +74,7 @@ class ProductController extends Controller implements HasMiddleware
         //si existe la configuración
         if (isset($setting)) {
 
+
             //Devolver correctamente
             return Inertia::render('Products/Register', [
                 'products' => $products,

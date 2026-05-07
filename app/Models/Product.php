@@ -2,21 +2,17 @@
 
 namespace App\Models;
 
-use App\Enums\ProductTypeEnum;
-use App\Helpers\CodeHelper;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Date;
 use OwenIt\Auditing\Contracts\Auditable;
-
-use function PHPSTORM_META\map;
 
 /**
  * @property int $id
@@ -150,6 +146,34 @@ class Product extends Model implements Auditable
 
 
 
+
+//    Relacion para el stock
+    public function warehouses():BelongsToMany
+    {
+        return $this->belongsToMany(Warehouse::class, 'warehouse_products')
+            ->withPivot(
+                'stock_quantity',
+                'committed_stock',
+                'min_stock',
+                'max_stock',
+                'reorder_level',
+                'is_active',
+                'last_counted_at'
+            )->withTimestamps();
+    }
+
+    public function getTotalAttribute()
+    {
+        return $this->warehouses->sum('pivot.stock_quantity');
+    }
+
+    // Stock disponible total
+    public function getTotalAvailableAttribute()
+    {
+        return $this->warehouses->sum(function($warehouse) {
+            return $warehouse->pivot->stock_quantity - $warehouse->pivot->committed_stock;
+        });
+    }
 
     /**
      * @return BelongsTo

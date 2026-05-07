@@ -76,6 +76,7 @@ const form = useForm<ProductFormI>({
   has_special: false,
   has_promotion: false,
   update: false,
+  warehouseProduct: [],
 });
 
 provide(formProductKey, form);

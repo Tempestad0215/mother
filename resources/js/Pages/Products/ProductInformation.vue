@@ -26,7 +26,7 @@ const createSupplier = ref(false);
 
 const searchProduct = () => {
   router.get(
-    route('product.create', { search: form.name }),
+    route('product.index', { search: form.name }),
     {},
     {
       preserveState: true,

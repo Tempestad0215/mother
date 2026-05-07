@@ -16,11 +16,13 @@ class WarehouseProduct extends Model implements Auditable
     protected $fillable = [
         'uuid',
         'product_id',
+        'committed_stock',
         'warehouse_id',
         'stock_quantity',
         'min_stock',
         'max_stock',
         'is_active',
+        'reorder_level',
     ];
 
     protected function casts(): array
@@ -31,5 +33,16 @@ class WarehouseProduct extends Model implements Auditable
             'warehouse_id' => 'string',
             'is_active' => 'boolean',
         ];
+    }
+
+    // Helpers
+    public function getAvailableStockAttribute(): int
+    {
+        return $this->stock_quantity - ($this->committed_stock ?? 0);
+    }
+
+    public function needsReorder(): bool
+    {
+        return $this->getAvailableStockAttribute() <= $this->reorder_level;
     }
 }

@@ -97,7 +97,7 @@ onMounted(() => {
   //Verificar si exsite la transacciones
   if (propsW.trans) {
     showForm.value = true;
-    form.tran_id = propsW.trans.id;
+    form.tran_id = propsW.trans.uuid;
     form.product_id = propsW.trans.product_id;
     form.product_name = propsW.trans.product_name;
     form.stock = propsW.trans.stock;
@@ -198,13 +198,13 @@ const totalTax = () => {
   <Head title="Entrada" />
   <AppLayout>
     <template #header>
-      <TabLink :href="route('product.create')"> Registrar </TabLink>
+      <TabLink :href="route('product.index')"> Registrar </TabLink>
       <TabLink :active="true" :href="route('in.create')"> Entrada </TabLink>
       <TabLink :href="route('product.show')"> Mostrar </TabLink>
     </template>
 
     <!-- Contenido de la pagina -->
-    <div class="max-w-[1100px] mx-auto max-h-[85vh] overflow-y-auto">
+    <div class="max-w-275 mx-auto max-h-[85vh] overflow-y-auto">
       <form v-if="showForm" class="p-5 rounded-md bg-blue-300" @submit.prevent="submit">
         <h3 class="text-2xl font-bold text-center">Entrada de producto</h3>
         <!-- Seleccionar el producto -->

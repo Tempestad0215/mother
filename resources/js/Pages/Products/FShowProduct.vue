@@ -116,6 +116,7 @@ const deleteData = (data: ProductBaseI, event: Event) => {
           v-if="component != 'Sale/SaleCreate'"
           title="Nuevo"
           class="h-8"
+          label="Producto"
           @click="createProduct = true"
         >
           <template #icon>

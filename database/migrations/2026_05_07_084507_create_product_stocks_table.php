@@ -7,27 +7,26 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('warehouse_products', function (Blueprint $table) {
-            $table->uuid('uuid');
+        Schema::create('product_stocks', function (Blueprint $table) {
+            $table->uuid();
             $table->foreignUuid('product_uuid');
             $table->foreignUuid('warehouse_uuid');
-            $table->decimal('available',19,4);
-            $table->decimal('committed',19,4);
-            $table->decimal('min_stock',19,4)->nullable();
-            $table->decimal('max_stock',19,4)->nullable();
-            $table->decimal('reorder_level',19,4)->nullable();
+            $table->decimal('available');
+            $table->decimal('committed_stock')->nullable();
+            $table->decimal('min_stock')->nullable();
+            $table->decimal('max_stock')->nullable();
             $table->timestamp('last_counted_at')->nullable();
-            $table->boolean('is_active');
+            $table->decimal('reorder_level')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
             $table->index(['product_uuid','warehouse_uuid']);
-            $table->unique(['product_uuid','warehouse_uuid']);
+            $table->unique(['product_uuid, warehouse_uuid']);
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('warehouse_products');
+        Schema::dropIfExists('product_stocks');
     }
 };

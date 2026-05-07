@@ -31,7 +31,7 @@ class CategoryController extends Controller implements HasMiddleware
      * @param Request $request
      * @return Response
      */
-    public function create(Request $request){
+    public function index(Request $request){
 
         $request->validate([
             'search' => 'nullable|string',

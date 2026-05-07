@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -47,6 +48,20 @@ class Warehouse extends Model implements Auditable
         'deleted_at'
     ];
 
+
+    public function products():BelongsToMany
+    {
+        return $this->belongsToMany(Product::class,'warehouse_products')
+            ->withPivot(
+                'stock_quantity',
+                'committed_stock',
+                'min_stock',
+                'max_stock',
+                'reorder_level',
+                'is_active',
+                'last_counted_at'
+            )->withTimestamps();
+    }
 
     public function purchaseItem(): HasMany
     {

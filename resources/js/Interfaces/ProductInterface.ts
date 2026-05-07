@@ -117,6 +117,20 @@ export interface ProductFormI {
   has_special: boolean;
   has_promotion: boolean;
   update: boolean;
+  warehouseProduct?: Array<WarehouseProductI>;
+  handleForWarehouse?: boolean;
+}
+
+export interface WarehouseProductI {
+  warehouse_uuid: string;
+  prefix: string;
+  name: string;
+  stock_quantity: number;
+  committed_stock?: number;
+  min_stock?: number;
+  max_stock?: number;
+  reorder_level?: number;
+  status?: boolean;
 }
 
 /**
