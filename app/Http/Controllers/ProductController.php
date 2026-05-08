@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Dtos\InventoryDto;
+use App\Dtos\ProductDto;
 use App\Enums\ProductTypeEnum;
 use App\Helpers\GeneralHelper;
 use App\Helpers\ProductInventoryHelper;
+use App\Helpers\TaxHelper;
+use App\Helpers\WarehouseProductHelper;
 use App\Http\Requests\PaginationRequest;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Resources\ProductSupplierResource;
@@ -110,38 +113,38 @@ class ProductController extends Controller implements HasMiddleware
 
         //Para asegurar que no se guarda si hay problema
         DB::transaction(function () use ($request) {
+//            Transformar los datos
+            $product_dto = ProductDto::fromArray($request->validated());
 
-            $tax_id = $request->input('tax_id');
-            $tax = Tax::find($tax_id);
+//            /** @var StoreProductRequest $data */
+//            $data = $request->validated();
 
-            /** @var StoreProductRequest $data */
-            $data = $request->validated();
+//           Tomar los datos de warehouseProduct y asinar al productos
+            WarehouseProductHelper::create($product_dto->warehouse_product);
 
-            //Guardar los datos de los productos
-            $data['tax_rate'] = $tax->rate / 100;
-            $data['tax'] = $data['price'] * $data['tax_rate'];
+//            Crear los datos de productos
+            $product = Product::create($product_dto->toArray());
 
-            $product = Product::create($data);
-
-            $productInventory = new InventoryDto(
-                product_id: $product->id,
-                warehouse_id: $data['warehouse_id'],
-                qty_on_hand: 0,
-                on_order_qty: 0,
-                committed: 0,
-                avg_cost: 0
-            );
+////            Craer el movimiento de inventario
+//            $productInventory = new InventoryDto(
+//                product_id: $product->id,
+//                warehouse_id: $data['warehouse_id'],
+//                qty_on_hand: 0,
+//                on_order_qty: 0,
+//                committed: 0,
+//                avg_cost: 0
+//            );
 
 //            Para almacenar los datos
-            ProductInventoryHelper::createProductInventory($productInventory);
-            // Guardar los datos de los productos
-            if ($request->input('type') === 'servicio') {
-                //Actualizar datos por fuera cuando son servicio
-                $product->inventoried = false;
-                $product->unit = "N/A";
-                $product->tax = $request->input('tax_rate') / 100;
-                $product->save();
-            }
+//            ProductInventoryHelper::createProductInventory($productInventory);
+//            // Guardar los datos de los productos
+//            if ($request->input('type') === 'servicio') {
+//                //Actualizar datos por fuera cuando son servicio
+//                $product->inventoried = false;
+//                $product->unit = "N/A";
+//                $product->tax = $request->input('tax_rate') / 100;
+//                $product->save();
+//            }
         });
 
         // Devolver hacia atras
