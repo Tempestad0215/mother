@@ -31,6 +31,7 @@ class StoreProductRequest extends FormRequest
             'name' => ['required','string','min:3','max:75'],
             'description' => ['nullable','string','max:150'],
             'unit_uuid' => ['nullable','uuid:','exists:units,uuid'],
+            'price_list' => ['uuid','exists:price_lists'],
             'supplier_uuid' => ['required','uuid','exists:suppliers,uuid'],
             'category_uuid' => ['required','uuid','exists:categories,uuid'],
             'bar_code' => ['nullable','string','max:100'],
@@ -38,7 +39,6 @@ class StoreProductRequest extends FormRequest
             'sku' => ['nullable','string','max:75'],
             'is_service' => [Rule::enum(ProductTypeEnum::class), 'required'],
             'tax_uuid' => ['required','uuid','exists:taxes,uuid'],
-            'warehouse_uuid' => ['required','uuid','exists:warehouses,uuid'],
             'price' => ['required', 'numeric',Rule::notIn(0.00)],
             'min_price' => ['required', 'numeric',Rule::notIn(0.00)],
             'special_price' => ['required', 'numeric',Rule::notIn(0.00)],
@@ -54,6 +54,13 @@ class StoreProductRequest extends FormRequest
             'has_tax' => ['required','boolean'],
             'has_special' => ['required','boolean'],
             'has_promotion' => ['required','boolean'],
+            'handle_warehouse' => ['required','boolean'],
+            'warehouse_product' => ['array','nullable','required_array_keys:warehouse_uuid,stock_quantity,min_stock,max_stock,reorder_level'],
+            'warehouse_product.*.warehouse_uuid' => ['nullable','uuid','exists:warehouses,uuid'],
+            'warehouse_product.*.stock_quantity' => ['nullable','numeric','min:0'],
+            'warehouse_product.*.min_stock' => ['nullable','numeric','min:0'],
+            'warehouse_product.*.max_stock' => ['nullable','numeric','min:0'],
+            'warehouse_product.*.reoder_level' => ['nullable','numeric','min:0'],
         ];
     }
 }

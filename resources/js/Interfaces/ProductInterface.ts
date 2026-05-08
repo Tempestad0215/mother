@@ -117,8 +117,9 @@ export interface ProductFormI {
   has_special: boolean;
   has_promotion: boolean;
   update: boolean;
-  warehouseProduct?: Array<WarehouseProductI>;
-  handleForWarehouse?: boolean;
+  warehouse_product?: Array<WarehouseProductI>;
+  handle_warehouse?: boolean;
+  price_list_uuid: string
 }
 
 export interface WarehouseProductI {

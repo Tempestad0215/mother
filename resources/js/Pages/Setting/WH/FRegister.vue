@@ -19,6 +19,7 @@ const propsW = defineProps<{
  */
 const form = useForm({
   uuid: '',
+  prefix: '',
   name: '',
   description: '',
   location: '',
@@ -27,6 +28,7 @@ const form = useForm({
 onMounted(() => {
   if (propsW.editWareHouses) {
     form.uuid = propsW.editWareHouses.uuid;
+    form.prefix = propsW.editWareHouses.prefix
     form.name = propsW.editWareHouses.name;
     form.description = propsW.editWareHouses.description;
     form.location = propsW.editWareHouses.location;
@@ -41,7 +43,7 @@ funciones
  */
 const submit = () => {
   if (propsW.update) {
-    form.put(route('wh.update', { wh: form.uuid }), {
+    form.put(route('warehouse.update', { wh: form.uuid }), {
       onSuccess: () => {
         toast.add({
           severity: 'success',
@@ -60,7 +62,7 @@ const submit = () => {
       },
     });
   } else {
-    form.post(route('wh.store'), {
+    form.post(route('warehouse.store'), {
       onSuccess: () => {
         form.reset();
         toast.add({
@@ -86,16 +88,20 @@ const submit = () => {
   <Card>
     <template #content>
       <form class="w-80" @submit.prevent="submit">
+          <FloatLabel variant="on" class="mt-5">
+              <InputText fluid id="prefix" v-model="form.prefix" />
+              <label for="prefix">Prefix</label>
+          </FloatLabel>
         <FloatLabel variant="on" class="mt-5">
-          <InputText class="w-full" id="name" v-model="form.name" />
+          <InputText fluid id="name" v-model="form.name" />
           <label for="name">Nombre</label>
         </FloatLabel>
         <FloatLabel variant="on" class="mt-5">
-          <InputText class="w-full" id="description" v-model="form.description" />
+          <InputText fluid id="description" v-model="form.description" />
           <label for="description">Descripcion</label>
         </FloatLabel>
         <FloatLabel variant="on" class="mt-5">
-          <InputText class="w-full" id="location" v-model="form.location" />
+          <InputText fluid id="location" v-model="form.location" />
           <label for="location">Ubicacion</label>
         </FloatLabel>
         <div class="mt-5 text-right">

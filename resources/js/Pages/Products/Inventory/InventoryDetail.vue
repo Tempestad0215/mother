@@ -23,10 +23,10 @@ const handleStockValue = reactive({
 onMounted(() => {
   if (propsW.warehouses && propsW.warehouses.length > 0) {
     propsW.warehouses.forEach((warehouse: WarehouseBaseI) => {
-      form.warehouseProduct = [];
-      form.warehouseProduct?.push({
+      form.warehouse_product = [];
+      form.warehouse_product?.push({
         warehouse_uuid: warehouse.uuid,
-        prefix: '',
+        prefix: warehouse.prefix,
         name: warehouse.name,
         stock_quantity: 0,
         committed_stock: 0,
@@ -42,7 +42,7 @@ onMounted(() => {
 watch(
   () => handleStockValue,
   (newVal) => {
-    form.warehouseProduct?.forEach((wh: WarehouseProductI) => {
+    form.warehouse_product?.forEach((wh: WarehouseProductI) => {
       wh.min_stock = newVal.min_stock;
       wh.max_stock = newVal.max_stock;
       wh.reorder_level = newVal.reorder_level;
@@ -65,10 +65,10 @@ const checkReorderLevel = computed(() => {
   <div>
     <div>
       <div class="space-x-2">
-        <Checkbox binary v-model="form.handleForWarehouse" />
+        <Checkbox binary v-model="form.handle_warehouse" />
         <label for="handleWarehouse">Manejar Por Almacen</label>
       </div>
-      <div class="grid grid-cols-3 gap-3 mt-3" v-if="!form.handleForWarehouse">
+      <div class="grid grid-cols-3 gap-3 mt-3" v-if="!form.handle_warehouse">
         <FloatLabel variant="on">
           <InputNumber :min="0" v-model="handleStockValue.min_stock" fluid />
           <label for="min_stock">Stock Minimo</label>
@@ -83,8 +83,9 @@ const checkReorderLevel = computed(() => {
         </FloatLabel>
       </div>
     </div>
-    <DataTable :value="form.warehouseProduct">
-      <Column header="PREFIX" field="prefix"></Column>
+    <DataTable :value="form.warehouse_product">
+      <Column header="PREFIX" field="prefix">
+      </Column>
       <Column header="NOMBRE" field="name"></Column>
       <Column header="STOCK" class="w-30">
         <template #body="{ data }: { data: WarehouseProductI }">
@@ -103,18 +104,18 @@ const checkReorderLevel = computed(() => {
       </Column>
       <Column header="STOCK MINIMO" class="w-30">
         <template #body="{ data }: { data: WarehouseProductI }">
-          <InputNumber :readonly="!form.handleForWarehouse" fluid v-model="data.min_stock" />
+          <InputNumber :readonly="!form.handle_warehouse" fluid v-model="data.min_stock" />
         </template>
       </Column>
       <Column header="STOCK MAXIMO" class="w-30">
         <template #body="{ data }: { data: WarehouseProductI }">
-          <InputNumber :readonly="!form.handleForWarehouse" fluid v-model="data.max_stock" />
+          <InputNumber :readonly="!form.handle_warehouse" fluid v-model="data.max_stock" />
         </template>
       </Column>
       <Column header="NIVEL NESARIO" class="w-30">
         <template #body="{ data }: { data: WarehouseProductI }">
           <InputNumber
-            :readonly="!form.handleForWarehouse"
+            :readonly="!form.handle_warehouse"
             :invalid="checkReorderLevel(data.min_stock || 0, data.reorder_level || 0)"
             fluid
             v-model="data.reorder_level"

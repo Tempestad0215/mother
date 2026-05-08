@@ -56,7 +56,7 @@ const deleteData = (data: WarehouseBaseI, event: Event) => {
       severity: 'danger',
     },
     accept: () => {
-      router.delete(route('wh.destroy', { wh: data.uuid }), {
+      router.delete(route('warehouse.destroy', { wh: data.uuid }), {
         onSuccess: () => {
           toast.add({
             severity: 'success',
@@ -91,10 +91,11 @@ const hideCreate = () => {
       </template>
       <template #content>
         <DataTable :loading="!propsW.warehouses" :value="propsW.warehouses">
-          <Column field="name" header="Nombre" />
-          <Column field="description" header="Descripcion" />
-          <Column field="location" header="Ubicacion" />
-          <Column header="Act">
+          <Column field="prefix" header="PREFIX" />
+          <Column field="name" header="NOMBRE" />
+          <Column field="description" header="DESCRIPCION" />
+          <Column field="location" header="UBICACION" />
+          <Column header="ACT">
             <template #body="{ data }: { data: WarehouseBaseI }">
               <div class="space-x-2">
                 <Button @click="editData(data)" class="pt-1 h-8" title="Editar">

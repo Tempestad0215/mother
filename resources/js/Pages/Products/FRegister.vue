@@ -76,7 +76,9 @@ const form = useForm<ProductFormI>({
   has_special: false,
   has_promotion: false,
   update: false,
-  warehouseProduct: [],
+  warehouse_product: [],
+  price_list_uuid:"",
+  handle_warehouse: false
 });
 
 provide(formProductKey, form);
@@ -182,6 +184,7 @@ function setCalculateData(productNoTax: string, benefits: string, benefitsMargin
 
             <!--Detalle del producto-->
             <ProductDetail
+              :priceLists="propsW.priceLists"
               :warehouses="propsW.warehouses"
               :units="propsW.units"
               :branches="propsW.branches"
@@ -189,7 +192,6 @@ function setCalculateData(productNoTax: string, benefits: string, benefitsMargin
           </div>
         </TabPanel>
         <TabPanel value="1">
-          <div class="text-center text-2xl font-bold">Detalle de Ventas</div>
           <ProductSaleValue
             :units="propsW.units"
             :priceLists="propsW.priceLists"

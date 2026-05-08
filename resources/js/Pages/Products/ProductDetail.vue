@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Fieldset, FloatLabel, Select, InputNumber, InputText, SelectChangeEvent } from 'primevue';
-import { inject } from 'vue';
+import { computed, inject } from 'vue';
 import { formProductKey } from '@/Injections/InjectionKeys';
 import { BranchInterfaceI } from '@/Interfaces/BranchInterface';
 import { UnitInterfaceI } from '@/Interfaces/UnitInterface';
@@ -9,6 +9,7 @@ import { AppPageProps } from '@/global';
 import { TaxInterfaceI } from '@/Interfaces/TaxInterface';
 import { useProductStore } from '@/stores/ProductStore';
 import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
+import { PriceListWTI } from '@/Interfaces/PriceListInterface';
 
 const page = usePage<AppPageProps>();
 
@@ -16,6 +17,7 @@ const propsW = defineProps<{
   units: UnitInterfaceI[];
   branches: BranchInterfaceI[];
   warehouses: WarehouseBaseI[];
+  priceLists: Array<PriceListWTI>
 }>();
 
 const form = inject(formProductKey)!!;
@@ -27,12 +29,14 @@ const selectTax = (data: SelectChangeEvent) => {
 
   productStore.setTaxRateFromPercent(Number(taxInfo?.rate));
 };
+
 </script>
 
 <template>
   <Fieldset legend="Caracteristicas">
     <div class="grid grid-cols-2 gap-4">
-      <FloatLabel variant="on">
+<!--      Impuesto del producto-->
+      <FloatLabel v-if="form.has_tax"  variant="on">
         <Select
           fluid
           id="tax"
@@ -45,14 +49,28 @@ const selectTax = (data: SelectChangeEvent) => {
         </Select>
         <label for="tax">Impuesto</label>
       </FloatLabel>
-
+<!--Peso del producto-->
       <FloatLabel variant="on">
         <InputNumber fluid id="weight" v-model="form.weight" />
         <label for="weight">Peso</label>
       </FloatLabel>
+<!--      Dimensiones-->
       <FloatLabel variant="on">
         <InputText fluid id="dimension" v-model="form.dimensions" />
         <label for="dimension">Dimensiones</label>
+      </FloatLabel>
+<!--      Lista de precio-->
+      <FloatLabel variant="on">
+        <Select
+          fluid
+          id="price_list"
+          option-value="uuid"
+          :optionLabel="(item: PriceListWTI) => `${item.name} | ${item.currency}`"
+          :options="propsW.priceLists"
+          v-model="form.price_list_uuid"
+        >
+        </Select>
+        <label for="tax">Lista de Precio</label>
       </FloatLabel>
     </div>
   </Fieldset>

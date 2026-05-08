@@ -50,14 +50,15 @@ class WarehouseController extends Controller implements HasMiddleware
     public function store(Request $request)
     {
         //Validar los datos
-        $request->validate([
+        $validated = $request->validate([
+            'prefix' => ['required','string','min:3','max:5'],
             'name' => ['required', 'string', 'max:75','unique:warehouses,name'],
             'description' => ['required', 'string', 'max:200'],
             'location' => ['nullable', 'string', 'max:200']
         ]);
 
         // Craer los datos
-        Warehouse::create($request->toArray());
+        Warehouse::create($validated);
 
         // Devolver
         return back();

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
@@ -37,6 +38,7 @@ class Warehouse extends Model implements Auditable
      * @var array
      */
     protected $fillable = [
+        'prefix',
         'name',
         'description',
         'location'
@@ -62,6 +64,7 @@ class Warehouse extends Model implements Auditable
                 'last_counted_at'
             )->withTimestamps();
     }
+
 
     public function purchaseItem(): HasMany
     {
