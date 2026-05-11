@@ -2,13 +2,11 @@
 
 use App\Models\Category;
 use App\Models\Supplier;
-use App\Models\Warehouse;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -16,28 +14,25 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->uuid();
-            $table->string('code',30)->unique()->comment('Codigo');
-            $table->string('name',75)->comment('nombre');
-            $table->string('description',255)->nullable()->comment('descripcion');
-            $table->string('location',255)->nullable()->comment('ubicacion');
-            $table->string('sku',75)->nullable()->comment('codigo unico');
-            $table->string('bar_code',100)->nullable()->comment('codigo de barra');
+            $table->string('code', 30)->unique()->comment('Codigo');
+            $table->string('name', 75)->comment('nombre');
+            $table->string('description', 255)->nullable()->comment('descripcion');
+            $table->string('location', 255)->nullable()->comment('ubicacion');
+            $table->string('sku', 75)->nullable()->comment('codigo unico');
+            $table->string('bar_code', 100)->nullable()->comment('codigo de barra');
             $table->float('weight')->default(0)->comment('peso');
-            $table->string('dimensions',255)->nullable()->comment('dimensiones');
+            $table->string('dimensions', 255)->nullable()->comment('dimensiones');
             //Precio y costo
-            $table->decimal('cost', 19,6)->comment('costo');
-            $table->decimal('special_price', 19,6)->default(0)->comment('Precio Especial');
-            $table->decimal('min_price', 19,6)->default(0)->comment('Precio Minimo');
-            $table->decimal('price', 19,6)->comment('precio');
+            $table->decimal('cost', 19, 6)->comment('costo');
             //Informacion del producto
-            $table->decimal('product_no_tax', 19,6)->default(0)->comment('Precio sin Impuesto');
-            $table->decimal('tax', 19,6)->default(0)->comment('Impuesto para este Item');
-            $table->decimal('tax_rate', 19,6)->default(0)->comment('Tasa de Impuesto');
-            $table->decimal('benefits', 19,6)->default(0)->comment('Beneficios del producto');
-            $table->decimal('benefits_rate', 19,6)->default(0)->comment('Porcentaje de Margen');
+            $table->decimal('product_no_tax', 19, 6)->default(0)->comment('Precio sin Impuesto');
+            $table->decimal('tax', 19, 6)->default(0)->comment('Impuesto para este Item');
+            $table->decimal('tax_rate', 19, 6)->default(0)->comment('Tasa de Impuesto');
+            $table->decimal('benefits', 19, 6)->default(0)->comment('Beneficios del producto');
+            $table->decimal('benefits_rate', 19, 6)->default(0)->comment('Porcentaje de Margen');
 
-            $table->decimal('discount', 19,6)->default(0)->comment('Porcentaje de descuento');
-            $table->decimal('discount_amount', 19,6)->default(0)->comment('Descuento Total');
+            $table->decimal('discount', 19, 6)->default(0)->comment('Porcentaje de descuento');
+            $table->decimal('discount_amount', 19, 6)->default(0)->comment('Descuento Total');
 
 
             //Relaciones de los productos
@@ -56,7 +51,6 @@ return new class extends Migration
 
             $table->softDeletes();
             $table->timestamps();
-
 
 
             //Texto de busqueda completa

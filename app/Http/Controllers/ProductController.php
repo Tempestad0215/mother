@@ -3,14 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Dtos\InventoryDto;
+use App\Dtos\PriceListProductDto;
 use App\Dtos\ProductDto;
 use App\Enums\ProductTypeEnum;
 use App\Helpers\GeneralHelper;
+use App\Helpers\PriceListProductHelper;
 use App\Helpers\ProductInventoryHelper;
 use App\Helpers\TaxHelper;
 use App\Helpers\WarehouseProductHelper;
 use App\Http\Requests\PaginationRequest;
 use App\Http\Requests\StoreProductRequest;
+use App\Http\Resources\ProductResource;
 use App\Http\Resources\ProductSupplierResource;
 use App\Models\Brand;
 use App\Models\Category;
@@ -60,16 +63,16 @@ class ProductController extends Controller implements HasMiddleware
 
         $search = $request->input('search');
         $perPage = $request->input('per_page');
-        $queryProduct = Product::query();
+        $queryProduct = Product::query()->with(['price_list']);
         if (!empty($search)) {
             $queryProduct->where('name', 'like', '%' . $search . '%')
                 ->orWhere('description', 'like', '%' . $search . '%');
 
         }
-        $products = $queryProduct->paginate($perPage)->withQueryString();
+        $products = ProductResource::collection($queryProduct->paginate($perPage)->withQueryString());
 
 
-        $productType = collect(ProductTypeEnum::cases())->mapWithKeys(fn (ProductTypeEnum $item) => [$item->name => $item->value])->toArray();
+        $productType = collect(ProductTypeEnum::cases())->mapWithKeys(fn(ProductTypeEnum $item) => [$item->name => $item->value])->toArray();
 
         //Verificar si existe configuración
         $setting = Setting::first();
@@ -113,38 +116,24 @@ class ProductController extends Controller implements HasMiddleware
 
         //Para asegurar que no se guarda si hay problema
         DB::transaction(function () use ($request) {
-//            Transformar los datos
+            // Transformar los datos
             $product_dto = ProductDto::fromArray($request->validated());
-
-//            /** @var StoreProductRequest $data */
-//            $data = $request->validated();
-
-//           Tomar los datos de warehouseProduct y asinar al productos
-            WarehouseProductHelper::create($product_dto->warehouse_product);
-
-//            Crear los datos de productos
+            // Crear los datos de productos
             $product = Product::create($product_dto->toArray());
+            // Tomar los datos de warehouseProduct y asinar al productos
+            WarehouseProductHelper::create($product_dto->warehouse_product, $product);
+            // Trasnformar los datos
+            $data_price = new PriceListProductDto(
+                $product->uuid,
+                $product_dto->price_list_uuid,
+                $product_dto->price,
+                $product_dto->min_price,
+                $product_dto->special_price
 
-////            Craer el movimiento de inventario
-//            $productInventory = new InventoryDto(
-//                product_id: $product->id,
-//                warehouse_id: $data['warehouse_id'],
-//                qty_on_hand: 0,
-//                on_order_qty: 0,
-//                committed: 0,
-//                avg_cost: 0
-//            );
+            );
 
-//            Para almacenar los datos
-//            ProductInventoryHelper::createProductInventory($productInventory);
-//            // Guardar los datos de los productos
-//            if ($request->input('type') === 'servicio') {
-//                //Actualizar datos por fuera cuando son servicio
-//                $product->inventoried = false;
-//                $product->unit = "N/A";
-//                $product->tax = $request->input('tax_rate') / 100;
-//                $product->save();
-//            }
+            // Craer la lista de precios
+            PriceListProductHelper::create($data_price, $product);
         });
 
         // Devolver hacia atras

@@ -16,6 +16,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property integer id
  * @property string code
  * @property string name
+ * @property string prefix
  * @property null|string description
  * @property boolean status
  * @property Carbon deleted_at

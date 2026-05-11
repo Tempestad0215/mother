@@ -8,7 +8,7 @@ use http\Exception\InvalidArgumentException;
 class TaxHelper
 {
 
-    public function getTaxById(string $tax_uuid):?Tax
+    public static function getTaxById(string $tax_uuid):?Tax
     {
         return Tax::find($tax_uuid);
     }

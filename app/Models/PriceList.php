@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -30,5 +31,11 @@ class PriceList extends Model implements Auditable
             'uuid' => 'string',
             'status' => 'boolean',
         ];
+    }
+
+
+    public function products():BelongsToMany
+    {
+        return $this->belongsToMany(Product::class,'price_list_products');
     }
 }

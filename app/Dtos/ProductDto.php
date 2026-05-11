@@ -3,6 +3,8 @@
 namespace App\Dtos;
 
 use App\Helpers\TaxHelper;
+use App\Models\Category;
+use App\Models\Product;
 
 class ProductDto extends BaseDto
 {
@@ -10,7 +12,7 @@ class ProductDto extends BaseDto
         public string  $name,
         public ?string $description,
         public ?string $unit_uuid,
-        public string  $price_list,
+        public string  $price_list_uuid,
         public string  $supplier_uuid,
         public string  $category_uuid,
         public ?string $bar_code,
@@ -62,7 +64,7 @@ class ProductDto extends BaseDto
             name: $data['name'] ?? '',
             description: $data['description'] ?? null,
             unit_uuid: $data['unit_uuid'] ?? null,
-            price_list: $data['price_list'] ?? '',
+            price_list_uuid: $data['price_list_uuid'] ?? '',
             supplier_uuid: $data['supplier_uuid'] ?? '',
             category_uuid: $data['category_uuid'] ?? '',
             bar_code: $data['bar_code'] ?? null,
@@ -97,9 +99,10 @@ class ProductDto extends BaseDto
     {
         return [
             'name' => $this->name,
+            'code' => $this->getPrefix(),
             'description' => $this->description,
             'unit_uuid' => $this->unit_uuid,
-            'price_list' => $this->price_list,
+            'price_list_uuid' => $this->price_list_uuid,
             'supplier_uuid' => $this->supplier_uuid,
             'category_uuid' => $this->category_uuid,
             'bar_code' => $this->bar_code,
@@ -128,5 +131,26 @@ class ProductDto extends BaseDto
             'tax_rate' => $this->getTaxRate(),
             'tax' => $this->getTotalWithTax(),
         ];
+    }
+
+    private function getPrefix():string
+    {
+//        Contar los registro
+        $next_number = Product::count() + 1;
+//        Buscar la categorya
+        $category = Category::find($this->category_uuid);
+
+//        Verificar si existe
+        if(!$category->prefix){
+            $prefix = "GEN";
+        }else{
+            $prefix = $category->prefix;
+        }
+
+//        Crea los datos
+        $number_padded = str_pad((string)$next_number, 6, "0", STR_PAD_LEFT);
+
+        return $prefix.$number_padded;
+
     }
 }

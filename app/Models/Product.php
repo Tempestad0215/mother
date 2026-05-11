@@ -12,19 +12,17 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
- * @property int $id
+ * @property string $uuid
 * @property string $type
 * @property string $code
 * @property string $name
 * @property string $description
-* @property string $unit
+* @property string $unit_uuid
 * @property float $cost
-* @property float $special_price
-* @property float $min_price
-* @property float $price
 * @property string $sku
 * @property string $bar_code
 * @property float $weight
@@ -44,13 +42,13 @@ use OwenIt\Auditing\Contracts\Auditable;
 * @property bool $has_special
 * @property bool $has_promotion
 * @property bool $has_tax
-* @property int $supplier_id
-* @property int $category_id
+* @property string $supplier_uuid
+* @property string $category_uuid
 * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property Carbon|null $deleted_at
  *
- *
+ * @property-read Collection<int, PriceList[] $price_list>
  * @property-read PurchaseReceiptsItem $receiptsItem
  * @method static create(mixed $validated)
  */
@@ -75,18 +73,15 @@ class Product extends Model implements Auditable
         'code',
         'name',
         'description',
-        'unit_id',
+        'unit_uuid',
         'cost',
-        'special_price',
-        'min_price',
-        'price',
-        'supplier_id',
-        'category_id',
+        'supplier_uuid',
+        'category_uuid',
         'sku',
         'bar_code',
         'weight',
         'dimensions',
-        'branch_id',
+        'branch_uuid',
         'is_service',
         'discount',
         'discount_amount',
@@ -94,7 +89,7 @@ class Product extends Model implements Auditable
         'product_no_tax',
         'benefits',
         'benefits_rate',
-        'tax_id',
+        'tax_uuid',
         'tax_rate',
         'tax',
         'status',
@@ -130,7 +125,8 @@ class Product extends Model implements Auditable
         'has_promotion' => 'boolean',
         'has_tax' => 'boolean',
         'close_table' => 'boolean',
-        'is_service' => 'boolean'
+        'is_service' => 'boolean',
+        'handle_warehouse' => 'boolean',
     ];
 
 
@@ -145,7 +141,15 @@ class Product extends Model implements Auditable
     }
 
 
-
+    public function price_list():BelongsToMany
+    {
+        return $this->belongsToMany(PriceList::class,'price_list_products')
+            ->withPivot([
+                'price',
+                'min_price',
+                'promotional_price'
+            ]);
+    }
 
 //    Relacion para el stock
     public function warehouses():BelongsToMany

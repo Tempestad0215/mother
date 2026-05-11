@@ -70,7 +70,7 @@ class CategoryController extends Controller implements HasMiddleware
         $counter = 1;
 
 
-        while(Category::where('code', $prefix)->exists()){
+        while(Category::where('prefix', $prefix)->exists()){
             if (Str::length($cleanName) >= 4 && $counter === 1) {
                 $prefix = Str::substr($cleanName, 0, 3);
                 $counter ++;
@@ -99,7 +99,7 @@ class CategoryController extends Controller implements HasMiddleware
         ]);
 
         $dataForInsert = $validated;
-        $dataForInsert['code'] = self::createPrefix($request->input('name'));
+        $dataForInsert['prefix'] = self::createPrefix($request->input('name'));
         // Crear los datos
         Category::create($dataForInsert);
 

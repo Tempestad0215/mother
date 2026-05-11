@@ -17,7 +17,7 @@ const propsW = defineProps<{
   units: UnitInterfaceI[];
   branches: BranchInterfaceI[];
   warehouses: WarehouseBaseI[];
-  priceLists: Array<PriceListWTI>
+  priceLists: Array<PriceListWTI>;
 }>();
 
 const form = inject(formProductKey)!!;
@@ -29,14 +29,13 @@ const selectTax = (data: SelectChangeEvent) => {
 
   productStore.setTaxRateFromPercent(Number(taxInfo?.rate));
 };
-
 </script>
 
 <template>
   <Fieldset legend="Caracteristicas">
     <div class="grid grid-cols-2 gap-4">
-<!--      Impuesto del producto-->
-      <FloatLabel v-if="form.has_tax"  variant="on">
+      <!--      Impuesto del producto-->
+      <FloatLabel v-if="form.has_tax" variant="on">
         <Select
           fluid
           id="tax"
@@ -49,17 +48,17 @@ const selectTax = (data: SelectChangeEvent) => {
         </Select>
         <label for="tax">Impuesto</label>
       </FloatLabel>
-<!--Peso del producto-->
+      <!--Peso del producto-->
       <FloatLabel variant="on">
         <InputNumber fluid id="weight" v-model="form.weight" />
         <label for="weight">Peso</label>
       </FloatLabel>
-<!--      Dimensiones-->
+      <!--      Dimensiones-->
       <FloatLabel variant="on">
         <InputText fluid id="dimension" v-model="form.dimensions" />
         <label for="dimension">Dimensiones</label>
       </FloatLabel>
-<!--      Lista de precio-->
+      <!--      Lista de precio-->
       <FloatLabel variant="on">
         <Select
           fluid
