@@ -106,10 +106,8 @@ Route::middleware([
         'branch' => BrandController::class
     ]);
 
-
-    // Rutas personalizada para show
-    Route::get('price-list/{priceList}/{product}',[PriceListController::class, 'show'])
-    ->name('price-list.show');
+    Route::get('price-list/{product}/{priceList}',[PriceListController::class,'productShow'])
+        ->name('price-list.product.show');
 
     /*
      * Resources con personalización

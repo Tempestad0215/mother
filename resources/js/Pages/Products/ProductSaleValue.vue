@@ -50,9 +50,9 @@ watch(
 const getInfoFromPriceList = async () => {
   try {
     const res = await axios.get(
-      route('price-list.show', { price_list: form.price_list_uuid, product: form.uuid })
+      route('price-list.product.show', { priceList: form.price_list_uuid, product: form.uuid })
     );
-    console.log(JSON.stringify(res.data) );
+    console.log(res.data);
   } catch (error) {
     console.log(error);
   }
