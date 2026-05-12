@@ -6,7 +6,7 @@ import { BranchInterfaceI } from '@/Interfaces/BranchInterface';
 import { UnitInterfaceI } from '@/Interfaces/UnitInterface';
 import { usePage } from '@inertiajs/vue3';
 import { AppPageProps } from '@/global';
-import { TaxInterfaceI } from '@/Interfaces/TaxInterface';
+import { TaxBaseI } from '@/Interfaces/TaxInterface';
 import { useProductStore } from '@/stores/ProductStore';
 import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
 import { PriceListWTI } from '@/Interfaces/PriceListInterface';
@@ -25,7 +25,7 @@ const taxes = page.props.taxes;
 const productStore = useProductStore();
 
 const selectTax = (data: SelectChangeEvent) => {
-  const taxInfo: TaxInterfaceI | undefined = taxes.find((el) => el.uuid === data.value);
+  const taxInfo: TaxBaseI | undefined = taxes.find((el) => el.uuid === data.value);
 
   productStore.setTaxRateFromPercent(Number(taxInfo?.rate));
 };
@@ -41,7 +41,7 @@ const selectTax = (data: SelectChangeEvent) => {
           id="tax"
           option-value="uuid"
           @change="selectTax"
-          :optionLabel="(item: TaxInterfaceI) => `${item.name} | ${item.rate}`"
+          :optionLabel="(item: TaxBaseI) => `${item.name} | ${item.rate}`"
           :options="taxes"
           v-model="form.tax_uuid"
         >
@@ -57,19 +57,6 @@ const selectTax = (data: SelectChangeEvent) => {
       <FloatLabel variant="on">
         <InputText fluid id="dimension" v-model="form.dimensions" />
         <label for="dimension">Dimensiones</label>
-      </FloatLabel>
-      <!--      Lista de precio-->
-      <FloatLabel variant="on">
-        <Select
-          fluid
-          id="price_list"
-          option-value="uuid"
-          :optionLabel="(item: PriceListWTI) => `${item.name} | ${item.currency}`"
-          :options="propsW.priceLists"
-          v-model="form.price_list_uuid"
-        >
-        </Select>
-        <label for="tax">Lista de Precio</label>
       </FloatLabel>
     </div>
   </Fieldset>

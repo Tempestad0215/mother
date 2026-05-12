@@ -2,7 +2,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { onMounted, provide, ref } from 'vue';
 import { SupplierI } from '@/Interfaces/SupplierInterface';
-import { ProductBaseI, ProductTypeEnumI } from '@/Interfaces/ProductInterface';
+import { ProductBaseI, ProductTableI, ProductTypeEnumI } from '@/Interfaces/ProductInterface';
 import { categoryBaseI } from '@/Interfaces/CategoriesInterface';
 import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
 import { Dialog } from 'primevue';
@@ -11,15 +11,15 @@ import FRegister from '@/Pages/Products/FRegister.vue';
 import { productDataKey, taxCurrentValueKey } from '@/Injections/InjectionKeys';
 import { BranchInterfaceI } from '@/Interfaces/BranchInterface';
 import { UnitInterfaceI } from '@/Interfaces/UnitInterface';
-import { TaxInterfaceI } from '@/Interfaces/TaxInterface';
+import { TaxBaseI } from '@/Interfaces/TaxInterface';
 import { useProductStore } from '@/stores/ProductStore';
 import FShowProduct from '@/Pages/Products/FShowProduct.vue';
 import { PriceListWTI } from '@/Interfaces/PriceListInterface';
 
 //Propiedades de la ventana
 const propsW = defineProps<{
-  products: PaginationI<ProductBaseI>;
-  productEdit?: ProductBaseI;
+  products: PaginationI<ProductTableI>;
+  productEdit?: ProductTableI;
   update?: boolean;
   categories: categoryBaseI[];
   suppliers: SupplierI[];
@@ -28,13 +28,13 @@ const propsW = defineProps<{
   productType: ProductTypeEnumI;
   branches: BranchInterfaceI[];
   units: UnitInterfaceI[];
-  taxes: TaxInterfaceI[];
+  taxes: TaxBaseI[];
   priceLists: Array<PriceListWTI>;
 }>();
 
 const taxCurrentValue = ref(0);
 //Mostrar la ventana de suplidores
-const selectedProduct = ref<ProductBaseI | null>(null);
+const selectedProduct = ref<ProductTableI | null>(null);
 const createProduct = ref(false);
 const isUpdate = ref(false);
 

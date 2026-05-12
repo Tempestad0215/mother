@@ -25,9 +25,6 @@ return new class extends Migration {
             //Precio y costo
             $table->decimal('cost', 19, 6)->comment('costo');
             //Informacion del producto
-            $table->decimal('product_no_tax', 19, 6)->default(0)->comment('Precio sin Impuesto');
-            $table->decimal('tax', 19, 6)->default(0)->comment('Impuesto para este Item');
-            $table->decimal('tax_rate', 19, 6)->default(0)->comment('Tasa de Impuesto');
             $table->decimal('benefits', 19, 6)->default(0)->comment('Beneficios del producto');
             $table->decimal('benefits_rate', 19, 6)->default(0)->comment('Porcentaje de Margen');
 
@@ -36,8 +33,10 @@ return new class extends Migration {
 
 
             //Relaciones de los productos
-            $table->foreignIdFor(Category::class, 'category_id')->comment('Categoria Item');
-            $table->foreignIdFor(Supplier::class, 'supplier_id')->comment('Suplidor del Item');
+            $table->foreignUuid('default_warehouse')->index();
+            $table->foreignUuid('default_price_list')->index();
+            $table->foreignUuid('category_uuid')->index()->comment('Categoria Item');
+            $table->foreignUuid('supplier_uuid')->index()->comment('Suplidor del Item');
 
             //Infomacion del producto
             $table->boolean('is_service')->default(0)->comment('Tipo de Servicio');
@@ -48,6 +47,7 @@ return new class extends Migration {
             $table->boolean('has_discount')->default(true)->comment('Aplica para descuento');
             $table->boolean('has_promotion')->default(true)->comment('Aplica para comisiones');
             $table->boolean('has_tax')->default(true)->comment('Aplica para impuestos');
+            $table->boolean('handle_warehouse')->default(true)->comment('Aplica para impuestos');
 
             $table->softDeletes();
             $table->timestamps();

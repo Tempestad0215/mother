@@ -16,14 +16,14 @@ import {
 import { ref } from 'vue';
 import { router, useForm } from '@inertiajs/vue3';
 import { itemsSettings } from '@/Helpers/SettingHelpers';
-import { TaxInterfaceI } from '@/Interfaces/TaxInterface';
+import { TaxBaseI } from '@/Interfaces/TaxInterface';
 import { SquarePlus, Forward } from '@lucide/vue';
 
 const confirm = useConfirm();
 const toast = useToast();
 
 defineProps<{
-  taxes: TaxInterfaceI[];
+  taxes: TaxBaseI[];
 }>();
 
 const createTax = ref(false);
@@ -82,7 +82,7 @@ const submit = () => {
   }
 };
 
-const editData = (data: TaxInterfaceI) => {
+const editData = (data: TaxBaseI) => {
   form.uuid = data.uuid!!;
   form.name = data.name;
   form.description = data.description ?? '';
@@ -91,7 +91,7 @@ const editData = (data: TaxInterfaceI) => {
   isUpdate.value = true;
 };
 
-const deleteData = (data: TaxInterfaceI, event: Event) => {
+const deleteData = (data: TaxBaseI, event: Event) => {
   confirm.require({
     target: event.currentTarget as HTMLElement,
     message: 'Desea eliminar este registro, los cambios son irreversible',
@@ -138,9 +138,9 @@ const deleteData = (data: TaxInterfaceI, event: Event) => {
         <DataTable :value="taxes">
           <Column field="name" header="Nombre" />
           <Column field="description" header="Descripcion" />
-          <Column :field="(data: TaxInterfaceI) => `${data.rate} %`" header="Tasa" />
+          <Column :field="(data: TaxBaseI) => `${data.rate} %`" header="Tasa" />
           <Column class="w-40" header="Act">
-            <template #body="{ data }: { data: TaxInterfaceI }">
+            <template #body="{ data }: { data: TaxBaseI }">
               <div class="space-x-3">
                 <Button
                   @click="editData(data)"

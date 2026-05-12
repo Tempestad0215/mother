@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { inject, watch } from 'vue';
 import { PreciseCalculator } from '@/utils/Decimal';
-import { Fieldset, InputNumber, FloatLabel, Select, DataTable, Column } from 'primevue';
+import { InputNumber, FloatLabel, Select } from 'primevue';
 import { formProductKey } from '@/Injections/InjectionKeys';
 import { useProductStore } from '@/stores/ProductStore';
 import { storeToRefs } from 'pinia';
 import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
 import { PriceListWTI } from '@/Interfaces/PriceListInterface';
 import { UnitInterfaceI } from '@/Interfaces/UnitInterface';
+import axios from 'axios';
 
 const propsW = defineProps<{
   warehouses: Array<WarehouseBaseI>;
@@ -45,17 +46,48 @@ watch(
     );
   }
 );
+
+const getInfoFromPriceList = async () => {
+  try {
+    const res = await axios.get(
+      route('price-list.show', { price_list: form.price_list_uuid, product: form.uuid })
+    );
+    console.log(JSON.stringify(res.data) );
+  } catch (error) {
+    console.log(error);
+  }
+};
 </script>
 
 <template>
   <div>
-    <div class="grid grid-cols-2 gap-3">
+    <div class="grid grid-cols-3 gap-3">
       <div>
         <FloatLabel variant="on">
-          <Select :options="propsW.warehouses" option-label="name" option-value="uuid" fluid />
+          <Select
+            :options="propsW.warehouses"
+            v-model="form.warehouse_uuid"
+            option-label="name"
+            option-value="uuid"
+            fluid
+          />
           <label for="warehouse">Almacen</label>
         </FloatLabel>
       </div>
+      <!--      Lista de precio-->
+      <FloatLabel variant="on">
+        <Select
+          @change="getInfoFromPriceList"
+          fluid
+          id="price_list"
+          option-value="uuid"
+          :optionLabel="(item: PriceListWTI) => `${item.name} | ${item.currency}`"
+          :options="propsW.priceLists"
+          v-model="form.price_list_uuid"
+        >
+        </Select>
+        <label for="tax">Lista de Precio</label>
+      </FloatLabel>
       <div>
         <FloatLabel variant="on">
           <Select

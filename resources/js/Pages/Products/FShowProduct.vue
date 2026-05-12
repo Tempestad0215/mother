@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Pagination from '@components/Pagination.vue';
-import { ProductBaseI } from '@/Interfaces/ProductInterface';
+import { ProductBaseI, ProductTableI } from '@/Interfaces/ProductInterface';
 import { router, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { useRoute } from 'ziggy-js';
@@ -16,7 +16,6 @@ import {
   useConfirm,
   useToast,
 } from 'primevue';
-import { useProductStore } from '@/stores/ProductStore';
 import { productBreadCrumb } from '@/Helpers/ProductHelper';
 import { PreciseCalculator } from '@/utils/Decimal';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
@@ -32,7 +31,7 @@ const route = useRoute();
 const { component } = usePage();
 
 interface PropsI {
-  products: PaginationI<ProductBaseI>;
+  products: PaginationI<ProductTableI>;
   stock?: boolean;
   isProduct?: boolean;
 }
@@ -45,13 +44,10 @@ const propsW = withDefaults(defineProps<PropsI>(), {
 });
 
 defineEmits<{
-  (e: 'selectData', data: ProductBaseI): void;
+  (e: 'selectData', data: ProductTableI): void;
 }>();
 
-//store
-const productStore = useProductStore();
-
-const selectedProduct = defineModel<ProductBaseI | null>('selectedProduct', {
+const selectedProduct = defineModel<ProductTableI | null>('selectedProduct', {
   default: null,
 });
 const searchValue = ref('');
@@ -62,14 +58,13 @@ const isUpdate = ref(false);
 
 const searchData = () => {};
 
-const editData = (data: ProductBaseI) => {
+const editData = (data: ProductTableI) => {
   selectedProduct.value = data;
   isUpdate.value = true;
   createProduct.value = true;
-  productStore.nextCode = data.code;
 };
 
-const deleteData = (data: ProductBaseI, event: Event) => {
+const deleteData = (data: ProductTableI, event: Event) => {
   confirm.require({
     target: event.currentTarget as HTMLElement,
     message: 'Desea eliminar este registro, los cambios son irreversible',
@@ -94,6 +89,15 @@ const deleteData = (data: ProductBaseI, event: Event) => {
       });
     },
   });
+};
+
+const getPriceFromList = (product: ProductTableI): number => {
+  const item = product.price_lists.find((el) => el.uuid == product.default_price_list);
+  if (item) {
+    return item.price;
+  } else {
+    return 0;
+  }
 };
 </script>
 
@@ -128,7 +132,7 @@ const deleteData = (data: ProductBaseI, event: Event) => {
     <template #content>
       <DataTable
         paginator
-        :rows="propsW.products.per_page ?? 0"
+        :rows="propsW.products.meta.per_page ?? 0"
         :loading="!propsW.products.data"
         :value="propsW.products.data"
       >
@@ -139,10 +143,13 @@ const deleteData = (data: ProductBaseI, event: Event) => {
           :field="(data: ProductBaseI) => `${PreciseCalculator.formatCurrency(data.cost)}`"
           header="Costo"
         />
-        <Column
-          :field="(data: ProductBaseI) => `${PreciseCalculator.formatCurrency(data.price)}`"
-          header="Precio"
-        />
+        <Column header="Precio">
+          <template #body="{ data }: { data: ProductTableI }">
+            <span :class="{ 'text-red-500': getPriceFromList(data) <= 0 }">{{
+              getMoney(getPriceFromList(data))
+            }}</span>
+          </template>
+        </Column>
         <Column
           :field="(data: ProductBaseI) => `${data.is_service ? 'Servicio' : 'Producto'}`"
           header="Tipo"
@@ -153,7 +160,7 @@ const deleteData = (data: ProductBaseI, event: Event) => {
           v-if="propsW.stock"
         />
         <Column header="Act">
-          <template #body="{ data }: { data: ProductBaseI }">
+          <template #body="{ data }: { data: ProductTableI }">
             <div class="space-x-2">
               <Button
                 v-if="component != 'Sale/SaleCreate'"

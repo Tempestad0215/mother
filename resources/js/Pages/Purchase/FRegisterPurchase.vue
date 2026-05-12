@@ -22,7 +22,7 @@ import AppLayout from '@layout/AppLayout.vue';
 import { PreciseCalculator } from '@/utils/Decimal';
 import { ProductBaseI } from '@/Interfaces/ProductInterface';
 import debounce from 'lodash/debounce';
-import { TaxInterfaceI } from '@/Interfaces/TaxInterface';
+import { TaxBaseI } from '@/Interfaces/TaxInterface';
 import { useProductStore } from '@/stores/ProductStore';
 import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
 import { purchaseBreadCrumb } from '@/Helpers/PurchaseHelper';
@@ -33,7 +33,7 @@ const confirm = useConfirm();
 const propsW = defineProps<{
   suppliers: SupplierI[];
   products: ProductBaseI[];
-  taxes: TaxInterfaceI[];
+  taxes: TaxBaseI[];
   warehouses: WarehouseBaseI[];
 }>();
 
@@ -117,7 +117,7 @@ const submit = () => {
 };
 
 const getTaxInfo = (event: SelectChangeEvent, index: number) => {
-  const taxInfo: TaxInterfaceI | undefined = propsW.taxes.find((el) => el.id === event.value);
+  const taxInfo: TaxBaseI | undefined = propsW.taxes.find((el) => el.id === event.value);
   form.info[index].tax_id = taxInfo?.id ?? 0;
   productStore.setTaxRateFromPercent(Number(taxInfo?.rate) ?? 0);
 };

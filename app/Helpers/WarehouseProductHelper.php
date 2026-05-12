@@ -2,15 +2,13 @@
 
 namespace App\Helpers;
 
-use App\Dtos\ProductWarehouseDto;
 use App\Models\Product;
 use App\Models\Warehouse;
-use App\Models\WarehouseProduct;
 use Illuminate\Validation\ValidationException;
 
 class WarehouseProductHelper
 {
-    // 
+    //
     public static function create(array $data,Product $product, bool $is_service = false):void
     {
         // No hacer nada si es servicios

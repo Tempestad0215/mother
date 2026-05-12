@@ -1,8 +1,14 @@
 <script setup lang="ts">
-import { ProductBaseI, ProductFormI, ProductTypeEnumI } from '@/Interfaces/ProductInterface';
+import {
+  ProductBaseI,
+  ProductFormI,
+  ProductTableI,
+  ProductTypeEnumI,
+  WarehouseProductI,
+} from '@/Interfaces/ProductInterface';
 import { SupplierI } from '@/Interfaces/SupplierInterface';
 import { useForm } from '@inertiajs/vue3';
-import { onMounted, provide } from 'vue';
+import { computed, onMounted, provide, watch } from 'vue';
 import { categoryBaseI } from '@/Interfaces/CategoriesInterface';
 import { PaymentTypeEnumI } from '@/Interfaces/GlobalInterface';
 import ProductExtra from '@/Pages/Products/ProductExtra.vue';
@@ -16,7 +22,7 @@ import { UnitInterfaceI } from '@/Interfaces/UnitInterface';
 import { Button, Tab, TabList, TabPanel, TabPanels, Tabs, useToast } from 'primevue';
 import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
 import ProductSaleValue from '@/Pages/Products/ProductSaleValue.vue';
-import { PriceListWTI } from '@/Interfaces/PriceListInterface';
+import { PriceListProducts, PriceListWTI } from '@/Interfaces/PriceListInterface';
 import InventoryDetail from '@/Pages/Products/Inventory/InventoryDetail.vue';
 
 const route = useRoute();
@@ -26,7 +32,7 @@ const toast = useToast();
  * Propiedades de la ventana
  */
 const propsW = defineProps<{
-  productEdit: ProductBaseI | null;
+  productEdit: ProductTableI | null;
   update?: boolean;
   categories: categoryBaseI[];
   suppliers: SupplierI[];
@@ -77,8 +83,8 @@ const form = useForm<ProductFormI>({
   has_promotion: false,
   update: false,
   warehouse_product: [],
-  price_list_uuid:"",
-  handle_warehouse: false
+  price_list_uuid: '',
+  handle_warehouse: false,
 });
 
 provide(formProductKey, form);
@@ -91,19 +97,20 @@ onMounted(() => {
   if (propsW.productEdit) {
     form.uuid = propsW.productEdit.uuid;
     form.name = propsW.productEdit.name;
-    form.is_service = propsW.productEdit.is_service === 1;
+    form.is_service = propsW.productEdit.is_service;
     form.description = propsW.productEdit.description ? propsW.productEdit.description : '';
     form.bar_code = propsW.productEdit.bar_code ? propsW.productEdit.bar_code : '';
-    form.category_uuid = propsW.productEdit.category_uuid;
+    form.category_uuid = propsW.productEdit.category_uuid!!;
     form.supplier_uuid = propsW.productEdit.supplier_uuid;
-    form.tax_uuid = propsW.productEdit.tax_uuid;
+    form.tax_uuid = propsW.productEdit.tax.uuid;
     form.sku = propsW.productEdit.sku || '';
     form.unit_uuid = propsW.productEdit.unit_uuid;
-    form.brand_uuid = propsW.productEdit.brand_uuid || '';
+    form.brand_uuid = propsW.productEdit?.brand?.uuid ?? null;
     form.cost = Number(propsW.productEdit.cost);
-    form.price = Number(propsW.productEdit.price);
-    form.min_price = Number(propsW.productEdit.min_price) || 0;
-    form.special_price = Number(propsW.productEdit.special_price) || 0;
+    form.price_list_uuid = propsW.productEdit.default_price_list;
+    form.handle_warehouse = propsW.productEdit.handle_warehouse;
+    form.warehouse_uuid = propsW.productEdit.default_warehouse;
+    form.warehouse_product = propsW.productEdit.warehouses;
   }
 });
 
@@ -157,6 +164,28 @@ function setCalculateData(productNoTax: string, benefits: string, benefitsMargin
   form.benefits = Number(benefits);
   form.benefits_rate = Number(benefitsMargin);
 }
+
+watch(
+  () => form.warehouse_uuid,
+  (newVal) => {}
+);
+
+const getInfoFromPriceList = () => {
+  if (
+    propsW.productEdit &&
+    propsW.productEdit.price_lists &&
+    propsW.productEdit.price_lists.length > 0
+  ) {
+    const info = propsW.productEdit.price_lists.find((el) => el.uuid === form.price_list_uuid);
+
+    if (info) {
+      console.log(info);
+      form.price = info.price;
+      form.min_price = info.min_price;
+      form.special_price = info.promotional_price;
+    }
+  }
+};
 </script>
 
 <template>

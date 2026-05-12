@@ -61,19 +61,25 @@ interface LinksI {
 
 // Pagination
 export interface PaginationI<T> {
+  links: LinksI;
+  meta: MetaI;
+  data: T[];
+}
+
+interface LinksI {
+  first: string;
+  last: string;
+  prev: string | null;
+  next: string | null;
+}
+
+interface MetaI {
   current_page: number;
-  first_page_url: string;
+  current_page_url: string;
   from: number;
-  links: LinksI[];
-  last_page: number;
-  last_page_url: string;
-  next_page_url: null | string;
   path: string;
   per_page: number;
-  prev_page_url: null | string;
   to: number;
-  total: number;
-  data: T[];
 }
 
 export interface PaymentTypeEnumI {

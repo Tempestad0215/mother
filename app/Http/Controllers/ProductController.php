@@ -63,13 +63,16 @@ class ProductController extends Controller implements HasMiddleware
 
         $search = $request->input('search');
         $perPage = $request->input('per_page');
-        $queryProduct = Product::query()->with(['price_list']);
+        $queryProduct = Product::query()->with(['price_list','brand','warehouses']);
         if (!empty($search)) {
             $queryProduct->where('name', 'like', '%' . $search . '%')
                 ->orWhere('description', 'like', '%' . $search . '%');
 
         }
-        $products = ProductResource::collection($queryProduct->paginate($perPage)->withQueryString());
+
+        $product_paginated = $queryProduct->simplePaginate($perPage);
+        $product_paginated->withQueryString();
+        $products = ProductResource::collection($product_paginated);
 
 
         $productType = collect(ProductTypeEnum::cases())->mapWithKeys(fn(ProductTypeEnum $item) => [$item->name => $item->value])->toArray();
@@ -203,9 +206,8 @@ class ProductController extends Controller implements HasMiddleware
             if ($request->input('is_service')) {
                 //Actualizar datos por fuera cuando son servicio
                 $product->inventoried = false;
-                $product->price = $request->input('price');
-                $product->unit = "N/A";
-                $product->tax = $request->input('tax_rate') / 100;
+//                $product->price = $request->input('price');
+//                $product->unit = "N/A";
                 $product->save();
             }
         });

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\ModelStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Date;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -23,6 +24,10 @@ class Brand extends Model implements Auditable
     use softDeletes;
 
     protected $table = 'brands';
+
+    protected $primaryKey = 'uuid';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
         'name',
@@ -44,6 +49,12 @@ class Brand extends Model implements Auditable
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
         ];
+    }
+
+    // Relaciones
+    public function products():HasMany
+    {
+        return $this->hasMany(Product::class);
     }
 
 

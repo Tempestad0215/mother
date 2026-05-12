@@ -106,6 +106,11 @@ Route::middleware([
         'branch' => BrandController::class
     ]);
 
+
+    // Rutas personalizada para show
+    Route::get('price-list/{priceList}/{product}',[PriceListController::class, 'show'])
+    ->name('price-list.show');
+
     /*
      * Resources con personalización
      */
@@ -232,8 +237,8 @@ Route::middleware([
         $path = storage_path('app/public/pdfs/receptions');
         $fullPath = $path.'/'.$filename;
 
-        $purchase_receipts = \App\Models\PurchaseReceipts::first();
-        $setting = \App\Models\Setting::latest()->first();
+        $purchase_receipts = \App\Models\PurchaseReceipts::first('*');
+        $setting = \App\Models\Setting::latest('created_at')->first();
 
         if (!file_exists(storage_path('app/public/pdfs/receptions'))) {
             mkdir(storage_path('app/public/pdfs/receptions'), 0777, true);

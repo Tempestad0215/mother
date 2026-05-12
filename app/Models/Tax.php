@@ -57,6 +57,11 @@ class Tax extends Model implements Auditable
         );
     }
 
+    public function products():HasMany
+    {
+        return $this->hasMany(Product::class);
+    }
+
     public function purchaseItem(): HasMany
     {
         return $this->hasMany(PurchaseItem::class);

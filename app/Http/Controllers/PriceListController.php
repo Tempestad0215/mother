@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PriceListRequest;
 use App\Models\PriceList;
+use App\Models\Product;
+use Illuminate\Http\JsonResponse;
 use Inertia\Inertia;
 
 class PriceListController extends Controller
@@ -22,9 +24,13 @@ class PriceListController extends Controller
         return redirect()->back();
     }
 
-    public function show(PriceList $priceList)
+    public function show(PriceList $priceList, Product $product): JsonResponse
     {
-        return $priceList;
+
+
+        return response()->json($product);
+
+
     }
 
     public function update(PriceListRequest $request, PriceList $priceList)
@@ -36,7 +42,7 @@ class PriceListController extends Controller
 
     public function destroy(PriceList $priceList)
     {
-        $priceList->delete();
+        $priceList->delete;
 
         return response()->json();
     }

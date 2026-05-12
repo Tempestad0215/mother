@@ -1,3 +1,8 @@
+import { TaxBaseI } from '@/Interfaces/TaxInterface';
+import { PriceListProducts } from '@/Interfaces/PriceListInterface';
+import { TaxI } from '@/Interfaces/GlobalInterface';
+import { BrandFullI } from '@/Interfaces/BrandInterface';
+
 export interface productI {
   current_page: number;
   data: productFullI[];
@@ -54,6 +59,37 @@ export interface ProductBaseI {
   has_discount: boolean;
   has_tax: boolean;
   status: boolean;
+}
+
+export interface ProductTableI {
+  bar_code: string | null;
+  benefits: number;
+  benefits_rate: number;
+  brand: BrandFullI | null;
+  category_uuid: string | null;
+  code: string;
+  cost: number;
+  default_price_list: string;
+  default_warehouse: string;
+  description: string | null;
+  dimensions: string | null;
+  handle_warehouse: boolean;
+  has_fraction: boolean;
+  has_promotion: boolean;
+  has_special: boolean;
+  has_tax: boolean;
+  inventoried: boolean;
+  is_service: boolean;
+  name: string;
+  price_lists: Array<PriceListProducts>; // O puedes definir una interfaz específica si sabes su estructura
+  sku: string | null;
+  status: boolean;
+  supplier_uuid: string;
+  tax: TaxBaseI; // Interfaz para el objeto tax, ajústala si conoces sus campos
+  unit_uuid: string | null;
+  uuid: string;
+  weight: number | null;
+  warehouses: Array<WarehouseProductI>;
 }
 
 /**
@@ -119,7 +155,7 @@ export interface ProductFormI {
   update: boolean;
   warehouse_product?: Array<WarehouseProductI>;
   handle_warehouse?: boolean;
-  price_list_uuid: string
+  price_list_uuid: string;
 }
 
 export interface WarehouseProductI {

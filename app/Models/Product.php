@@ -27,21 +27,20 @@ use OwenIt\Auditing\Contracts\Auditable;
 * @property string $bar_code
 * @property float $weight
 * @property string $dimensions
-* @property string $brand
-* @property float $tax_rate
-* @property float $tax
+* @property string $brand_uuid
 * @property float $discount
 * @property float $discount_amount
-* @property float $product_no_tax
 * @property float $benefits
 * @property float $benefits_rate
 * @property string $comment
+* @property string $default_price_list
 * @property bool $inventoried
 * @property bool $status
 * @property bool $has_fraction
 * @property bool $has_special
 * @property bool $has_promotion
 * @property bool $has_tax
+* @property bool $handle_warehouse
 * @property string $supplier_uuid
 * @property string $category_uuid
 * @property Carbon $created_at
@@ -49,6 +48,8 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property Carbon|null $deleted_at
  *
  * @property-read Collection<int, PriceList[] $price_list>
+ * @property-read Brand $brand
+ * @property-read Tax $tax
  * @property-read PurchaseReceiptsItem $receiptsItem
  * @method static create(mixed $validated)
  */
@@ -60,6 +61,9 @@ class Product extends Model implements Auditable
     use HasUuids;
 
 
+    /**
+     * @var mixed|string
+     */
     protected $primaryKey = 'uuid';
     protected $keyType = 'string';
     public $incrementing = false;
@@ -81,7 +85,7 @@ class Product extends Model implements Auditable
         'bar_code',
         'weight',
         'dimensions',
-        'branch_uuid',
+        'brand_uuid',
         'is_service',
         'discount',
         'discount_amount',
@@ -98,7 +102,9 @@ class Product extends Model implements Auditable
         'has_fraction',
         'has_special',
         'has_promotion',
-        'has_tax'
+        'has_tax',
+        'handle_warehouse',
+        'default_price_list'
     ];
 
 
@@ -166,6 +172,13 @@ class Product extends Model implements Auditable
             )->withTimestamps();
     }
 
+    public function brand():BelongsTo
+    {
+        return $this->belongsTo(Brand::class);
+    }
+
+
+
     public function getTotalAttribute()
     {
         return $this->warehouses->sum('pivot.stock_quantity');
@@ -179,6 +192,8 @@ class Product extends Model implements Auditable
         });
     }
 
+
+
     /**
      * @return BelongsTo
      */
@@ -187,6 +202,11 @@ class Product extends Model implements Auditable
         return $this->belongsTo(Supplier::class);
     }
 
+
+    public function tax():BelongsTo
+    {
+        return $this->belongsTo(Tax::class);
+    }
     public function receiptsItem(): HasMany
     {
         return $this->hasMany(PurchaseReceiptsItem::class);
