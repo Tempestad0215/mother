@@ -60,7 +60,7 @@ const form = useForm<ProductFormI>({
   price: 0,
   cost: 0,
   min_price: 0,
-  special_price: 0,
+  promotional_price: 0,
   product_no_tax: 0,
   benefits: 0,
   benefits_rate: 0,
@@ -182,7 +182,7 @@ const getInfoFromPriceList = () => {
       console.log(info);
       form.price = info.price;
       form.min_price = info.min_price;
-      form.special_price = info.promotional_price;
+      form.promotional_price = info.promotional_price;
     }
   }
 };
@@ -222,6 +222,7 @@ const getInfoFromPriceList = () => {
         </TabPanel>
         <TabPanel value="1">
           <ProductSaleValue
+            :isUpdate="propsW.update"
             :units="propsW.units"
             :priceLists="propsW.priceLists"
             :warehouses="propsW.warehouses"

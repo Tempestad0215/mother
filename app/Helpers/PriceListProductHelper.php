@@ -7,7 +7,7 @@ use App\Models\Product;
 
 class PriceListProductHelper
 {
-    public static function create(PriceListProductDto $data, Product $product):void
+    public static function upSert(PriceListProductDto $data, Product $product):void
     {
         $product->price_list()->syncWithoutDetaching([
            $data->price_list_uuid => [

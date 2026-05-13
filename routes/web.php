@@ -106,7 +106,7 @@ Route::middleware([
         'branch' => BrandController::class
     ]);
 
-    Route::get('price-list/{product}/{priceList}',[PriceListController::class,'productShow'])
+    Route::get('price-list/product/{product}',[PriceListController::class,'productShow'])
         ->name('price-list.product.show');
 
     /*

@@ -77,7 +77,7 @@ const deleteData = (data: ProductTableI, event: Event) => {
       label: 'Eliminar',
     },
     accept: () => {
-      router.delete(route('un.destroy', { client: data.uuid }), {
+      router.delete(route('product.destroy', { product: data.uuid }), {
         onSuccess: () => {
           toast.add({
             severity: 'success',

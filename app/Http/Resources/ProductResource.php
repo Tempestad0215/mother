@@ -58,17 +58,6 @@ class ProductResource extends JsonResource
 
     public function toArray(Request $request): array
     {
-
-        // 👇 TOMAMOS LA TASA DE IMPUESTO CORRECTAMENTE
-        // Verificamos que la relación tax esté cargada, si no, usamos 0
-        $tax_rate_value = $this->whenLoaded('tax', $this->tax->rate ?? 0, 0);
-        // Convertimos a cadena para que bcmath funcione bien
-        $tax_rate = (string)$tax_rate_value;
-        // Calculamos porcentaje y multiplicador
-        $tax_percent = bcdiv($tax_rate, '100', 2);
-        $tax_multiplier = bcadd($tax_percent, '1', 2);
-
-
         return [
             // 🆔 Identificadores
             'uuid'           =>  $this->uuid,
@@ -88,56 +77,11 @@ class ProductResource extends JsonResource
             'tax'       => $this->tax,
 
             // 💰 Valores numéricos e impuestos por lista de precio
-            'price_lists' => $this->whenLoaded('price_list', function () use ($tax_percent, $tax_multiplier, $tax_rate) {
-                return $this->price_list->map(function (PriceList $item) use ($tax_percent, $tax_multiplier, $tax_rate) {
-                    // Tomamos los precios de la tabla intermedia
-                    $price = (string)($item->pivot->price ?? '0.00');
-                    $min_price = (string)($item->pivot->min_price ?? '0.00');
-                    $promotional_price = (string)($item->pivot->promotional_price ?? '0.00');
-
-                    return [
-                        'uuid' => $item->uuid,
-                        'name' => $item->name,
-                        'currency' => $item->currency,
-
-                        // Precios sin impuesto
-                        'price' => (float)$price,
-                        'min_price' => (float)$min_price,
-                        'promotional_price' => (float)$promotional_price,
-
-                        // Datos de impuesto
-                        'tax_rate' => (int)$tax_rate,
-                        'tax_percent' => (float)$tax_percent,
-
-                        // Impuestos calculados (formato con coma)
-                        'tax_amount_price' => number_format((float)bcmul($price, $tax_percent, 2), 2),
-                        'tax_amount_min_price' => number_format((float)bcmul($min_price, $tax_percent, 2), 2),
-                        'tax_amount_promotional' => number_format((float)bcmul($promotional_price, $tax_percent, 2), 2),
-
-                        // Totales con impuesto
-                        'total_with_tax_price' => number_format((float)bcmul($price, $tax_multiplier, 2), 2),
-                        'total_with_tax_min_price' => number_format((float)bcmul($min_price, $tax_multiplier, 2), 2),
-                        'total_with_tax_promotional' => number_format((float)bcmul($promotional_price, $tax_multiplier, 2), 2),
-                    ];
-                });
+            'price_lists' => $this->whenLoaded('price_list', function () {
+                return new ProductPriceListResource($this);
             }),
             'warehouses' => $this->whenLoaded('warehouses', function (){
-
-                return $this->warehouses->map(function (Warehouse $warehouse){
-                    $quantity = (string)$warehouse->pivot->stock_quantity ?? 0;
-                    $committed = (string)$warehouse->pivot->committed_stock ?? 0;
-
-                    return [
-                        'warehouse_uuid' => $warehouse->uuid,
-                        'stock_quantity' => (float)$quantity,
-                        'committed_stock' => (float)$committed,
-                        'available_stock' => (float)bcsub($quantity, $committed,2),
-                        'min_stock' => (float)$warehouse->pivot->min_stock ?? 0,
-                        'max_stock' => (float)$warehouse->pivot->max_stock ?? 0,
-                        'reorder_leve' => (float)$warehouse->pivot->reorder_leve ?? 0,
-                        'is_active' => (bool)$warehouse->pivot->is_active,
-                    ];
-                });
+                return new ProductWarehouseResource($this);
             }),
             'cost'           => (float) number_format($this->cost, 2),
             'benefits'       => (float) number_format($this->benefits, 2),

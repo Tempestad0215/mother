@@ -35,9 +35,9 @@ class PriceListController extends Controller
     }
 
     // Para obtener el producto con los precios de lista
-    public function productShow(Product $product, PriceList $priceList){
-        $data = $product->price_list()->firstWhere('uuid', $priceList->uuid);
-        return new ProductPriceListResource($data);
+    public function productShow(Product $product){
+
+        return new ProductPriceListResource($product);
     }
 
     public function update(PriceListRequest $request, PriceList $priceList)

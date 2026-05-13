@@ -124,7 +124,7 @@ class ProductController extends Controller implements HasMiddleware
             // Crear los datos de productos
             $product = Product::create($product_dto->toArray());
             // Tomar los datos de warehouseProduct y asinar al productos
-            WarehouseProductHelper::create($product_dto->warehouse_product, $product);
+            WarehouseProductHelper::upSert($product_dto->warehouse_product, $product);
             // Trasnformar los datos
             $data_price = new PriceListProductDto(
                 $product->uuid,
@@ -136,7 +136,7 @@ class ProductController extends Controller implements HasMiddleware
             );
 
             // Craer la lista de precios
-            PriceListProductHelper::create($data_price, $product);
+            PriceListProductHelper::upSert($data_price, $product);
         });
 
         // Devolver hacia atras
@@ -195,21 +195,26 @@ class ProductController extends Controller implements HasMiddleware
 
         DB::transaction(function () use ($request, $product) {
             // Actualizar los datos validados
-            $product->update($request->validated());
+            $product_dto = ProductDto::fromArray($request->validated());
 
-            $inventory = Inventory::where('product_id', $product->id)->first();
+            // Actualizar los datos de productos
+            $product->update($product_dto->toArray());
 
-            $inventory->warehouse_id = $request->input('warehouse_id');
-            $inventory->save();
+//            Actualizar los datos de
+            // Tomar los datos de warehouseProduct y asinar al productos
+            WarehouseProductHelper::upSert($product_dto->warehouse_product, $product);
+            // Trasnformar los datos
+            $data_price = new PriceListProductDto(
+                $product->uuid,
+                $product_dto->price_list_uuid,
+                $product_dto->price,
+                $product_dto->min_price,
+                $product_dto->special_price
 
-            //Actualizar estos datos si es servicios
-            if ($request->input('is_service')) {
-                //Actualizar datos por fuera cuando son servicio
-                $product->inventoried = false;
-//                $product->price = $request->input('price');
-//                $product->unit = "N/A";
-                $product->save();
-            }
+            );
+
+            // Craer la lista de precios
+            PriceListProductHelper::upSert($data_price, $product);
         });
 
 
@@ -225,16 +230,21 @@ class ProductController extends Controller implements HasMiddleware
     public function destroy(Product $product): RedirectResponse
     {
 
-//        TODO: Antes de eliminar se debe verificar ciertas funciones y parametros
 
-//        //Actualizer los datos
-//        DB::transaction(function () use ($product) {
-//            $inventory = Inventory::where('product_id', $product->id)
-//                ->wher
-//                ->first();
-//            $product->delete();
-//            $inventory->delete();
-//        });
+
+       //Actualizer los datos
+        DB::transaction(function () use ($product) {
+            // Tomar la varible de verificacion
+            $hasStock = WarehouseProductHelper::checkStockForProduct($product);
+
+            // Verificar si tien stock disponible
+            if($hasStock){
+                throw new \Exception("No se puede eliminar el producto, ya que tiene stock disponible.");
+            }
+
+            // Elimianr el producto
+            $product->delete();
+        });
 
 
         //Devolver atras

@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Models\Inventory;
+use App\Models\Product;
 use Illuminate\Support\Collection;
 
 class InventoryHelper
@@ -26,5 +27,8 @@ class InventoryHelper
         )->get()
             ->keyBy(fn(Inventory $item) => $item->product_id.'-'.$item->warehouse_id);
     }
+
+
+
 
 }

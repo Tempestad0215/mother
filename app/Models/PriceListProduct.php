@@ -13,8 +13,9 @@ class PriceListProduct extends Model
     protected $fillable = [
         'product_uuid',
         'price_list_uuid',
-        'warehouse_uuid',
         'price',
+        'min_price',
+        'promotional_price'
     ];
 
     public function productUuid(): BelongsTo

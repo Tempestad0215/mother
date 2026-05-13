@@ -36,7 +36,7 @@ class ProductDto extends BaseDto
         public bool    $has_special,
         public bool    $has_promotion,
         public bool    $handle_warehouse,
-        public ?array  $warehouse_product = null,
+        public array  $warehouse_product,
     )
     {
     }
@@ -135,6 +135,14 @@ class ProductDto extends BaseDto
 
     private function getPrefix():string
     {
+
+//        Verificar si existe para no genear codigo
+        $code = self::existsProducts($this->name);
+
+        if ($code){
+            return $code;
+        }
+
 //        Contar los registro
         $next_number = Product::count() + 1;
 //        Buscar la categorya
@@ -152,5 +160,16 @@ class ProductDto extends BaseDto
 
         return $prefix.$number_padded;
 
+    }
+
+    /**
+     * @param string $name
+     * @return string|null
+     */
+    private function existsProducts(string $name): string | null
+    {
+        $product = Product::where('name', $name)->first();
+
+        return $product?->code;
     }
 }

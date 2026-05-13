@@ -1,23 +1,34 @@
 <script setup lang="ts">
-import { inject, watch } from 'vue';
+import { inject, onMounted, watch } from 'vue';
 import { PreciseCalculator } from '@/utils/Decimal';
-import { InputNumber, FloatLabel, Select } from 'primevue';
+import { InputNumber, FloatLabel, Select, useToast } from 'primevue';
 import { formProductKey } from '@/Injections/InjectionKeys';
 import { useProductStore } from '@/stores/ProductStore';
 import { storeToRefs } from 'pinia';
 import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
-import { PriceListWTI } from '@/Interfaces/PriceListInterface';
+import { PriceListProducts, PriceListWTI } from '@/Interfaces/PriceListInterface';
 import { UnitInterfaceI } from '@/Interfaces/UnitInterface';
 import axios from 'axios';
+
+const toast = useToast();
 
 const propsW = defineProps<{
   warehouses: Array<WarehouseBaseI>;
   priceLists: Array<PriceListWTI>;
   units: Array<UnitInterfaceI>;
+  isUpdate: boolean;
 }>();
 
 const form = inject(formProductKey)!!;
 const productStore = storeToRefs(useProductStore());
+
+onMounted(() => {
+  if (propsW.isUpdate) {
+    setTimeout(async () => {
+      await getInfoFromPriceList();
+    }, 300);
+  }
+});
 
 /*
 Propiedades computada
@@ -49,12 +60,29 @@ watch(
 
 const getInfoFromPriceList = async () => {
   try {
-    const res = await axios.get(
-      route('price-list.product.show', { priceList: form.price_list_uuid, product: form.uuid })
-    );
-    console.log(res.data);
+    //   Tomar la respuesta
+    const res = await axios.get(route('price-list.product.show', form.uuid));
+    // Tranformar los datos con tipos
+    const data = res.data as Array<PriceListProducts>;
+    // Tomar los datos de la respuesta
+    const infoPriceList = data.find((el) => el.uuid === form.price_list_uuid);
+    // Verificar si existe
+    if (infoPriceList) {
+      form.price = infoPriceList.price;
+      form.min_price = infoPriceList.min_price;
+      form.promotional_price = infoPriceList.promotional_price;
+    } else {
+      //   Si no existe los valores a 0
+      form.price = 0;
+      form.min_price = 0;
+      form.promotional_price = 0;
+    }
   } catch (error) {
-    console.log(error);
+    toast.add({
+      severity: 'error',
+      detail: 'Error al obtener la lista de precio',
+      life: 3000,
+    });
   }
 };
 </script>
@@ -146,7 +174,7 @@ const getInfoFromPriceList = async () => {
           :max-fraction-digits="2"
           fluid
           id="sale_special_price"
-          v-model="form.special_price"
+          v-model="form.promotional_price"
         />
         <label for="sale_special_price">Precio Especial</label>
       </FloatLabel>

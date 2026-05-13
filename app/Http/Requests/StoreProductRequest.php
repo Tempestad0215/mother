@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\ProductTypeEnum;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -24,8 +23,6 @@ class StoreProductRequest extends FormRequest
      */
     public function rules(): array
     {
-        $isArticle = $this->input('type') === 'producto';
-
 
         return [
             'name' => ['required','string','min:3','max:75'],
@@ -41,11 +38,10 @@ class StoreProductRequest extends FormRequest
             'tax_uuid' => ['required','uuid','exists:taxes,uuid'],
             'price' => ['required', 'numeric',Rule::notIn(0.00)],
             'min_price' => ['required', 'numeric',Rule::notIn(0.00)],
-            'special_price' => ['required', 'numeric',Rule::notIn(0.00)],
+            'promotional_price' => ['required', 'numeric',Rule::notIn(0.00)],
             'cost' => ['required', 'numeric',Rule::notIn(0.00)],
             'benefits' => ['required', 'numeric',Rule::notIn(0.00)],
             'benefits_rate' => ['required', 'numeric',Rule::notIn(0.00)],
-            'product_no_tax' => ['required','numeric',Rule::notIn(0.00)],
             'weight' => ['nullable','numeric'],
             'dimensions' => ['nullable','string','max:255'],
             'inventoried' => ['required','boolean'],
@@ -61,6 +57,7 @@ class StoreProductRequest extends FormRequest
             'warehouse_product.*.min_stock' => ['nullable','numeric','min:0'],
             'warehouse_product.*.max_stock' => ['nullable','numeric','min:0'],
             'warehouse_product.*.reorder_level' => ['nullable','numeric','min:0'],
+            'warehouse_product.*.is_active' => ['nullable','bool:','min:0'],
         ];
     }
 }

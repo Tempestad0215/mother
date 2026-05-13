@@ -131,7 +131,7 @@ export interface ProductFormI {
   price: number;
   cost: number;
   min_price: number;
-  special_price: number;
+  promotional_price: number;
   product_no_tax: number;
   benefits: number;
   benefits_rate: number;

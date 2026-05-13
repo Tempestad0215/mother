@@ -22,6 +22,8 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property Carbon $updated_at
  * @property Carbon $created_at
  *
+ *
+ * @property-read WarehouseProduct $pivot
  * @property-read PurchaseReceiptsItem $receiptsItem
  */
 class Warehouse extends Model implements Auditable

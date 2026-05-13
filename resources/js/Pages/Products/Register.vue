@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { onMounted, provide, ref } from 'vue';
+import { onMounted, provide, ref, watch } from 'vue';
 import { SupplierI } from '@/Interfaces/SupplierInterface';
 import { ProductBaseI, ProductTableI, ProductTypeEnumI } from '@/Interfaces/ProductInterface';
 import { categoryBaseI } from '@/Interfaces/CategoriesInterface';
@@ -32,7 +32,9 @@ const propsW = defineProps<{
   priceLists: Array<PriceListWTI>;
 }>();
 
+//
 const taxCurrentValue = ref(0);
+
 //Mostrar la ventana de suplidores
 const selectedProduct = ref<ProductTableI | null>(null);
 const createProduct = ref(false);
@@ -41,15 +43,19 @@ const isUpdate = ref(false);
 provide(productDataKey, propsW.products.data ?? []);
 provide(taxCurrentValueKey, taxCurrentValue);
 
-//store
-const productStore = useProductStore();
-
 onMounted(() => {});
 
 const clearCreate = () => {
   selectedProduct.value = null;
   isUpdate.value = false;
 };
+
+watch(
+  () => selectedProduct.value,
+  (newValue) => {
+    isUpdate.value = !!newValue;
+  }
+);
 </script>
 
 <template>

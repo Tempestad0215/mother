@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
+/**
+ * @property-read PriceListProduct $pivot
+ */
+
 class PriceList extends Model implements Auditable
 {
     use SoftDeletes;
@@ -36,6 +40,7 @@ class PriceList extends Model implements Auditable
 
     public function products():BelongsToMany
     {
-        return $this->belongsToMany(Product::class,'price_list_products');
+        return $this->belongsToMany(Product::class,'price_list_products')
+            ->using(PriceListProduct::class);
     }
 }
