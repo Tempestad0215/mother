@@ -2,6 +2,7 @@
 import {
   AutoComplete,
   AutoCompleteOptionSelectEvent,
+  Breadcrumb,
   Button,
   Card,
   Column,
@@ -11,7 +12,6 @@ import {
   InputNumber,
   Select,
   SelectChangeEvent,
-  Breadcrumb,
   useConfirm,
   useToast,
 } from 'primevue';
@@ -21,7 +21,6 @@ import { SupplierI } from '@/Interfaces/SupplierInterface';
 import AppLayout from '@layout/AppLayout.vue';
 import { PreciseCalculator } from '@/utils/Decimal';
 import { ProductBaseI } from '@/Interfaces/ProductInterface';
-import debounce from 'lodash/debounce';
 import { TaxBaseI } from '@/Interfaces/TaxInterface';
 import { useProductStore } from '@/stores/ProductStore';
 import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
@@ -42,18 +41,18 @@ const productStore = useProductStore();
    Formulario
  */
 const form = useForm({
-  id: 0,
-  supplier_id: 0,
+  uuid: 0,
+  supplier_uuid: 0,
   doc_date: new Date(),
   info: [
     {
-      uuid: 0,
+      uuid: '',
       code: '',
       name: '',
       quantity: 0,
       cost: 0,
-      warehouse_id: 0,
-      tax_id: 0,
+      warehouse_uuid: '',
+      tax_uuid: '',
       tax: 0,
       discount_rate: 0,
       discount_amount: 0,
@@ -67,7 +66,7 @@ const form = useForm({
   comment: '',
 });
 
-const searchProduct = debounce((index: number) => {
+const searchProduct = (index: number) => {
   const productSearch = form.info[index].name;
   router.get(
     route('purchase.index', { productSearch }),
@@ -77,7 +76,7 @@ const searchProduct = debounce((index: number) => {
       preserveState: true,
     }
   );
-}, 500);
+};
 
 const getInfoName = (event: AutoCompleteOptionSelectEvent, index: number) => {
   const info = event.value as purchaseInfoI;
@@ -85,7 +84,7 @@ const getInfoName = (event: AutoCompleteOptionSelectEvent, index: number) => {
   const existsIndex = form.info.findIndex((el) => el.code === info.code);
 
   if (existsIndex === -1) {
-    form.info[index].id = info.id;
+    form.info[index].uuid = info.uuid;
     form.info[index].code = info.code;
     form.info[index].name = info.name;
     return;
@@ -117,8 +116,8 @@ const submit = () => {
 };
 
 const getTaxInfo = (event: SelectChangeEvent, index: number) => {
-  const taxInfo: TaxBaseI | undefined = propsW.taxes.find((el) => el.id === event.value);
-  form.info[index].tax_id = taxInfo?.id ?? 0;
+  const taxInfo: TaxBaseI | undefined = propsW.taxes.find((el) => el.uuid === event.value);
+  form.info[index].tax_uuid = taxInfo?.uuid ?? '';
   productStore.setTaxRateFromPercent(Number(taxInfo?.rate) ?? 0);
 };
 
@@ -167,13 +166,13 @@ const addLine = () => {
     return false;
   }
   form.info.push({
-    id: 0,
+    uuid: '',
     code: '',
     name: '',
     quantity: 0,
     cost: 0,
-    warehouse_id: 0,
-    tax_id: 0,
+    warehouse_uuid: '',
+    tax_uuid: '',
     tax: 0,
     discount_rate: 0,
     amount: 0,
@@ -233,8 +232,8 @@ const destroy = (event: Event, index: number) => {
                 id="supplier_id"
                 fluid
                 :options="propsW.suppliers"
-                v-model="form.supplier_id"
-                optionValue="id"
+                v-model="form.supplier_uuid"
+                optionValue="uuid"
                 optionLabel="company_name"
               />
               <label for="supplier_id">Suplidor</label>
@@ -312,7 +311,7 @@ const destroy = (event: Event, index: number) => {
                   placeholder="Itbis"
                   :options="taxes"
                   @change="getTaxInfo($event, index)"
-                  option-value="id"
+                  option-value="uuid"
                   option-label="name"
                   fluid
                 />
@@ -323,9 +322,9 @@ const destroy = (event: Event, index: number) => {
                 <Select
                   placeholder="Alm"
                   :options="warehouses"
-                  option-value="id"
+                  option-value="uuid"
                   option-label="name"
-                  v-model="form.info[index].warehouse_id"
+                  v-model="form.info[index].warehouse_uuid"
                   fluid
                 />
               </template>

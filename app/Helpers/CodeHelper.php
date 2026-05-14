@@ -5,6 +5,7 @@ namespace App\Helpers;
 use App\Models\Category;
 use App\Models\Client;
 use App\Models\Product;
+use App\Models\Purchase;
 use App\Models\Supplier;
 use Illuminate\Database\Eloquent\Model;
 
@@ -39,6 +40,7 @@ class CodeHelper
             Client::class => config('appconfig.cliCode'),
             Category::class => config('appconfig.category'),
             Supplier::class => config('appconfig.supplier'),
+            Purchase::class => config('appconfig.purchase'),
 
         ];
     }

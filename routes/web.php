@@ -3,32 +3,33 @@
 use App\Helpers\UserHelper;
 use App\Http\Controllers\AccontCoController;
 use App\Http\Controllers\BrandController;
-use App\Http\Controllers\ExchangeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\CreditNoteController;
-use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\ExchangeController;
 use App\Http\Controllers\InventoryMovementController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PriceListController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\ReceivingController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReportSaleController;
+use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SequenceController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TaxController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\SaleController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Middleware\IsAdminMiddleware;
+use App\Models\PurchaseReceipts;
+use App\Models\Setting;
 use Illuminate\Foundation\Application;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 
 Route::middleware([
@@ -140,9 +141,7 @@ Route::middleware([
     Route::prefix('sale')->name('sale.')->group(function () {
         Route::get('/close', [SaleController::class, 'close'])->name('close');
         Route::post('/close/get', [SaleController::class, 'getClose'])->name('get.close');
-        Route::get('/test/invoice', [SaleController::class, 'testInvoice'])->name('test-invoice');
         Route::get('/counter', [SaleController::class, 'counter'])->name('counter');
-        Route::post('/counter', [SaleController::class, 'counterPost'])->name('counterPost');
         Route::patch('/item/destroy/{product}/{sale}', [SaleController::class, 'destroyItem'])->name('destroy.item');
         Route::patch('/destroy/{sale}/{inventoried}', [SaleController::class, 'destroySale'])->name('destroy-sale');
     });
@@ -180,7 +179,7 @@ Route::middleware([
      * Reporte de ventas
      */
     Route::get('report/sale', [ReportSaleController::class, 'index'])->name('report-sale.index');
-    Route::get('report/sale/json', [ReportSaleController::class, 'reportSaleRange'])->name('report-sale.range');
+//    Route::get('report/sale/json', [ReportSaleController::class, 'reportSaleRange'])->name('report-sale.range');
 
     /*
      * Facturas
@@ -189,7 +188,7 @@ Route::middleware([
         Route::get('/belt/sale/{sale}', [InvoiceController::class, 'beltSale'])->name('belt.sale');
         Route::get('/belt/note/{creditNote}', [InvoiceController::class, 'beltNote'])->name('belt.note');
         Route::get('/getA/{sale}', [InvoiceController::class, 'getA'])->name('getA');
-        Route::get('/getB/{counter}', [InvoiceController::class, 'getB'])->name('getB');
+//        Route::get('/getB/{counter}', [InvoiceController::class, 'getB'])->name('getB');
         Route::get('/label/{product}', [InvoiceController::class, 'label'])->name('label');
     });
 
@@ -231,12 +230,9 @@ Route::middleware([
 
     // Test route
     Route::get('/test', function () {
-        $filename = "invoice".time().".pdf";
-        $path = storage_path('app/public/pdfs/receptions');
-        $fullPath = $path.'/'.$filename;
 
-        $purchase_receipts = \App\Models\PurchaseReceipts::first('*');
-        $setting = \App\Models\Setting::latest('created_at')->first();
+        $purchase_receipts = PurchaseReceipts::first('*');
+        $setting = Setting::latest('created_at')->first();
 
         if (!file_exists(storage_path('app/public/pdfs/receptions'))) {
             mkdir(storage_path('app/public/pdfs/receptions'), 0777, true);

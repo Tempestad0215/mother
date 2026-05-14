@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Enums\PurchaseStatusEnum;
+use App\Helpers\CodeHelper;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,17 +14,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 
 /**
- * @property int id
- * @property string supplier_id
- * @property object info
- * @property float amount
- * @property float tax
- * @property float sub_total
- * @property PurchaseStatusEnum process
- * @property bool status
- * @property string created_at
- * @property string updated_at
- * @property string deleted_at
+ * @property string $id
+ * @property string $supplier_uuid
+ * @property object $info
+ * @property float $amount
+ * @property float $tax
+ * @property float $sub_total
+ * @property PurchaseStatusEnum $process
+ * @property bool $status
+ * @property string $created_at
+ * @property string $updated_at
+ * @property string $deleted_at
  *
  *
  * @property-read Supplier $supplier
@@ -31,20 +33,24 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Purchase extends Model
 {
     use HasFactory, SoftDeletes;
+    use HasUuids;
+
+    protected $primaryKey = "uuid";
+    protected $keyType = 'string';
+    public $incrementing = false;
 
 
     //Para guardar los datos
     protected $fillable = [
-        'supplier_id',
+        'supplier_uuid',
         'doc_date',
         'code',
-        'user_id',
+        'user_uuid',
         'amount',
         'tax',
         'sub_total',
         'status',
         'type',
-        'warehouse_id',
         'quantity',
         'cost',
         'discount',
@@ -69,28 +75,23 @@ class Purchase extends Model
 
         //Generar el codigo los codigos
         static::creating(function ($model) {
-            $model->code = self::generateCode();
+            $model->code = self::generateCode($model);
         });
     }
 
 
     /**
+     * @param Model $model
      * @return string
      */
     // funcion para generar el codigo
-    private static function generateCode():string
+    private static function generateCode(Model $model):string
     {
-        // Obtener el ultimo registros
-        $total = self::count();
+        //        Contar los nuemros totales
+        $nextNumber = self::withTrashed()->count('uuid') + 1;
 
         // Generar el proximo ID
-        $nextID = $total ? $total + 1 : 1;
-
-        // Devolver los datos
-        $code = config('appconfig.purchase');
-
-        // craer el codigp
-        return $code.str_pad($nextID, 6,'0', STR_PAD_LEFT);
+        return CodeHelper::generateCode($model, $nextNumber);
     }
 
     public function itemMovements():MorphMany

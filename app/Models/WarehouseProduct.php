@@ -13,9 +13,8 @@ class WarehouseProduct extends Model implements Auditable
     use \OwenIt\Auditing\Auditable;
     use HasUuids;
 
+
     protected $fillable = [
-        'uuid',
-        'product_id',
         'committed_stock',
         'warehouse_id',
         'stock_quantity',
@@ -23,24 +22,31 @@ class WarehouseProduct extends Model implements Auditable
         'max_stock',
         'is_active',
         'reorder_level',
+        'purchase_pending',
+        'product_uuid',
+        'warehouse_uuid',
     ];
 
     protected function casts(): array
     {
         return [
-            'uuid' => 'string',
-            'product_id' => 'string',
-            'warehouse_id' => 'string',
+            'product_uuid' => 'string',
+            'warehouse_uuid' => 'string',
             'is_active' => 'boolean',
         ];
     }
 
-    // Helpers
+    /**
+     * @return int
+     */
     public function getAvailableStockAttribute(): int
     {
         return $this->stock_quantity - ($this->committed_stock ?? 0);
     }
 
+    /**
+     * @return bool
+     */
     public function needsReorder(): bool
     {
         return $this->getAvailableStockAttribute() <= $this->reorder_level;

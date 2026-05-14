@@ -47,6 +47,8 @@ class PriceListController extends Controller
         return $priceList;
     }
 
+
+
     public function destroy(PriceList $priceList)
     {
         $priceList->delete();

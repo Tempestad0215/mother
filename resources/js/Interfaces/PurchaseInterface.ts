@@ -2,13 +2,13 @@ import { SupplierI } from '@/Interfaces/SupplierInterface';
 import { PurchaseStatusEnum } from '@/Enums/PurchaseEnum';
 
 export interface purchaseInfoI {
-  id: number;
+  uuid: string;
   code: string;
   name: string;
   quantity: number;
-  warehouse_id: number;
+  warehouse_uuid: string;
   cost: number;
-  tax_id: number;
+  tax_uuid: string;
   discount_rate: number;
   discount_amount: number;
   amount: number;

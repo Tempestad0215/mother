@@ -2,19 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Dtos\PurchaseDto;
 use App\Enums\InventoryMovementTypeEnum;
 use App\Enums\PurchaseStatusEnum;
-use App\Helpers\ProductHelper;
 use App\Http\Requests\PaginationRequest;
 use App\Http\Requests\PurchaseRequest;
 use App\Http\Resources\PurchaseSupplierResource;
-use App\Models\Inventory;
 use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\Supplier;
 use App\Models\Tax;
 use App\Models\Warehouse;
-use Carbon\Carbon;
+use App\Models\WarehouseProduct;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -28,8 +27,6 @@ class PurchaseController extends Controller
             'productSearch' => ['nullable', 'string', 'min:2','max:60'],
         ]);
 
-        //Intancia de los datos
-        $productHelper = new ProductHelper();
 
         $search = $request->input('productSearch','');
 
@@ -63,58 +60,32 @@ class PurchaseController extends Controller
      */
     public function store(PurchaseRequest $request):void
     {
-        DB::transaction(function () use ($request) {
-            $purchaseData = $request->validated();
-            $purchaseData['user_id'] = auth()->user()->id;
-            $purchaseData['doc_date'] = Carbon::parse(
-                $request->get('doc_date')
-            )->toDateString();
+        // Asingar desde
+        $purchaseDto = PurchaseDto::fromRequest($request->validated());
 
-            $purchase = Purchase::create($purchaseData);
+        // Proteger la transaction
+        DB::transaction(function () use ($purchaseDto) {
+            // Crear la compra
+            $purchase = Purchase::create($purchaseDto->toArray());
 
-            collect($request->info)->each(function (array $product) use ($purchase):void{
-                $productId = (int)$product['id'];
+            $itemsData = [];
 
-                //Tomar el id del producto
-                $productDB = Product::find($productId);
-                //Tomar el el avg del costo
-                $avgCost = ProductHelper::getAvgCost($productDB, $product['quantity'], $product['cost']);
+            foreach ($purchaseDto->info as $item) {
 
-                //Crare la el valor de product id
-                $product['product_id'] = $productId;
-                $product['tax_amount'] = $product['tax'];
+                $itemsData[] = $item->toArray();
 
-
-                // Obtener los datos de inventario para sumar o crear
-                $stock = Inventory::firstOrCreate([
-                    'product_id' => $productId,
-                    'warehouse_id' => $product['warehouse_id'],
+                // Guardar los datos en productos
+                $warehouseProduct = WarehouseProduct::updateOrCreate([
+                    'product_uuid' => $item->uuid,
+                    'warehouse_uuid' => $item->warehouse_uuid,
                 ],[
-                    'qty_on_hand' => 0,
-                    'committed' => 0,
-                    'on_order_qty' => 0,
-                    'avg_cost' => $avgCost,
-                    'min_stock' => 0,
-                    'max_stock' => 0,
+                   'purchase_pending' => DB::raw("COALESCE('purchase_pending, 0') + $item->quantity"),
                 ]);
 
-                // Actualizar los datos de inventario
-                $stock->increment('on_order_qty', $product['quantity']);
-                $stock->avg_cost = $avgCost;
-                $stock->save();
+                $warehouseProduct->increment('purchase_pending', $item->quantity);
+            }
 
-                // Crear los item de la compra
-                $purchase->items()->create($product);
-
-                // Crear el movimiento de inventario
-                $this->createInventoryMovement(
-                    $purchase,
-                    $product['warehouse_id'],
-                    $product['quantity'],
-                    $product['cost']
-                );
-
-            });
+            $purchase->items()->insert($itemsData);
 
             return back();
 

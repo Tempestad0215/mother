@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->decimal('max_stock',19,4)->nullable();
             $table->decimal('reorder_level',19,4)->nullable();
             $table->timestamp('last_counted_at')->nullable();
+            $table->decimal('purchase_pending',19,4)->default(0)->nullable();
             $table->boolean('is_active');
             $table->timestamps();
             $table->softDeletes();

@@ -2,24 +2,30 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class PurchaseItem extends Model
+class PurchaseItem extends Model implements Auditable
 {
+    use \OwenIt\Auditing\Auditable;
     use SoftDeletes;
+    use HasUuids;
+
+    protected $primaryKey = 'uuid';
+    protected $keyType = 'string';
+    public $incrementing = false;
 
     protected $fillable = [
-        'product_id',
-        'purchase_id',
+        'product_uuid',
+        'purchase_uuid',
         'quantity',
         'cost',
         'price',
         'discount',
         'amount',
-        'warehouse_id',
         'tax_id',
         'tax_amount'
     ];
