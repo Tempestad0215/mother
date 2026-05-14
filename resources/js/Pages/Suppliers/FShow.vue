@@ -5,7 +5,6 @@ import { SupplierI } from '@/Interfaces/SupplierInterface';
 import { router, useForm } from '@inertiajs/vue3';
 import { ref, Ref } from 'vue';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
-import { exportExcel } from '@/Global/Helpers';
 import { useRoute } from 'ziggy-js';
 
 const route = useRoute();
@@ -38,14 +37,14 @@ const form = useForm({
  * @param item
  */
 const edit = (item: SupplierI) => {
-  router.get(route('supplier.edit', { supplier: item.id }));
+  router.get(route('supplier.edit', { supplier: item.uuid }));
 };
 
 /**
  *
- * @param item
+ * @param _
  */
-const destroy = (item: SupplierI) => {
+const destroy = (_: SupplierI) => {
   // Swal.fire({
   //     title: `Desea Eliminar el suplidor : ${item.company_name}?`,
   //     text: "Los cambios realizados son irreversible!",

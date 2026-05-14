@@ -3,18 +3,17 @@ import { Head, useForm, usePage } from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
 import { useRoute } from 'ziggy-js';
 import {
+  Breadcrumb,
+  Button,
   Card,
+  FileUpload,
+  FileUploadSelectEvent,
   FloatLabel,
   InputText,
   ToggleSwitch,
-  FileUpload,
-  Button,
-  FileUploadSelectEvent,
   useToast,
-  Breadcrumb,
 } from 'primevue';
-import { onMounted, onUpdated, Ref, ref } from 'vue';
-import type { MenuItem } from 'primevue/menuitem';
+import { onMounted, onUpdated, ref } from 'vue';
 import { itemsSettings } from '@/Helpers/SettingHelpers';
 
 const route = useRoute();

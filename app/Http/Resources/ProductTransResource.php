@@ -39,7 +39,7 @@ class ProductTransResource extends JsonResource
             'id' => $this->id,
             'code' => $this->code,
             'sale_id' => $this->sale ? $this->sale->id : 0,
-            'product_id' => $this->product->id,
+            'product_id' => $this->product->uuid,
             'product_code' => $this->product->code,
             'product_name' => $this->product->name,
             'cost' => $this->product->cost,

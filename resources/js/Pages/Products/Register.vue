@@ -2,7 +2,7 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { onMounted, provide, ref, watch } from 'vue';
 import { SupplierI } from '@/Interfaces/SupplierInterface';
-import { ProductBaseI, ProductTableI, ProductTypeEnumI } from '@/Interfaces/ProductInterface';
+import { ProductTableI, ProductTypeEnumI } from '@/Interfaces/ProductInterface';
 import { categoryBaseI } from '@/Interfaces/CategoriesInterface';
 import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
 import { Dialog } from 'primevue';
@@ -12,7 +12,6 @@ import { productDataKey, taxCurrentValueKey } from '@/Injections/InjectionKeys';
 import { BranchInterfaceI } from '@/Interfaces/BranchInterface';
 import { UnitInterfaceI } from '@/Interfaces/UnitInterface';
 import { TaxBaseI } from '@/Interfaces/TaxInterface';
-import { useProductStore } from '@/stores/ProductStore';
 import FShowProduct from '@/Pages/Products/FShowProduct.vue';
 import { PriceListWTI } from '@/Interfaces/PriceListInterface';
 

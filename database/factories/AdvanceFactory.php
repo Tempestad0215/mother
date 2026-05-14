@@ -2,13 +2,11 @@
 
 namespace Database\Factories;
 
-use App\Models\Advance;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
 class AdvanceFactory extends Factory
 {
-    protected $model = Advance::class;
 
     public function definition(): array
     {

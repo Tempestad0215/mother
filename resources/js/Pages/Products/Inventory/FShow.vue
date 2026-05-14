@@ -40,9 +40,9 @@ const edit = (item: entryProductI) => {
 
 /**
  * Eliminar
- * @param item
+ * @param _
  */
-const destroy = (item: entryProductI) => {
+const destroy = (_: entryProductI) => {
   // Swal.fire({
   //     title: "Desea Eliminar?",
   //     text: "Los Cambios Realizados Son Irreversible!",

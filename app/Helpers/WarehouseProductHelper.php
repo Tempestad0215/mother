@@ -39,7 +39,7 @@ class WarehouseProductHelper
             // Verificar si el almacen existe en la base de datos
             if (!Warehouse::find($item->warehouse_uuid)->exists()){
                 throw ValidationException::withMessages([
-                    'warehouse_uuid' => "El almacén {$item->warehouse_uuid} no existe"
+                    'warehouse_uuid' => "El almacén $item->warehouse_uuid no existe"
                 ]);
             }
 

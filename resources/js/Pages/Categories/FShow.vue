@@ -3,9 +3,8 @@ import Pagination from '@components/Pagination.vue';
 import FormSearch from '@components/FormSearch.vue';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
 import { categoryBaseI } from '@/Interfaces/CategoriesInterface';
-import { router, useForm } from '@inertiajs/vue3';
+import { useForm } from '@inertiajs/vue3';
 import { onMounted } from 'vue';
-import { exportExcel } from '@/Global/Helpers';
 import { useRoute } from 'ziggy-js';
 
 const route = useRoute();
@@ -36,9 +35,9 @@ const search = () => {
 };
 /**
  * Para editar los datos
- * @param item
+ * @param _
  */
-const edit = (item: categoryBaseI) => {
+const edit = (_: categoryBaseI) => {
   // Swal.fire({
   //     title: `Desea editar la categoria: ${item.name}?`,
   //     text: "Estos Datos Seran Editada!",
@@ -57,9 +56,9 @@ const edit = (item: categoryBaseI) => {
 
 /**
  * Para eliminar los datos
- * @param item
+ * @param _
  */
-const destroy = (item: categoryBaseI) => {
+const destroy = (_: categoryBaseI) => {
   // Preguntar antes de eliminar
   // Swal.fire({
   //     title: `Desea eliminar la categoria: ${item.name}?`,

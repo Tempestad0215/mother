@@ -47,12 +47,11 @@ class EntryController extends Controller
     }
 
 
-
-
     /**
      * @param StoreProductInRequest $request
      * @param Product $productIn
      * @return RedirectResponse
+     * @throws \Throwable
      */
     public function store(StoreProductInRequest $request, Product $productIn): RedirectResponse
     {
@@ -68,7 +67,7 @@ class EntryController extends Controller
             $inHelper->updateProduct($request, $productIn);
 
             // Crear los datos de la transaccion
-            $transHelper->store($request->toArray(), TransTypeEnum::ENTRADA, 0, $productIn->id);
+//            $transHelper->store($request->toArray(), TransTypeEnum::ENTRADA, , $productIn);
         });
 
         //Devolver hacia atras
@@ -174,7 +173,7 @@ class EntryController extends Controller
 
 
                 //Actualizar la transaciom
-                $transHelper->store($request->toArray(), TransTypeEnum::AJUSTE, 0, $product->id);
+//                $transHelper->store($request->toArray(), TransTypeEnum::AJUSTE, 0, $product->id);
                 //Actualizar los productos
                 $inHelper->adjustProduct($request, $product);
             });

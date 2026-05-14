@@ -2,13 +2,11 @@
 
 namespace Database\Factories;
 
-use App\Models\Credit;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
 class CreditFactory extends Factory
 {
-    protected $model = Credit::class;
 
     public function definition(): array
     {

@@ -166,16 +166,16 @@ class SaleHelper
             ]);
 
             // si tiene reserva, pues se descuenta ese monto
-            if ($product->reserved > 0 && $transType == TransTypeEnum::RESERVA->value )
-            {
-                $product->reserved -= $productStock;
-            }
+//            if ($product->reserved > 0 && $transType == TransTypeEnum::RESERVA->value )
+//            {
+//                $product->reserved -= $productStock;
+//            }
 
             //Solo actualizar si es producto
-            if($product->type === ProductTypeEnum::Producto->value )
-            {
-                $product->stock += $productStock;
-            }
+//            if($product->type === ProductTypeEnum::Producto->value )
+//            {
+//                $product->stock += $productStock;
+//            }
             //Guardar los datos
             $product->save();
         });

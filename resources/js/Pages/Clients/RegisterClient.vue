@@ -6,11 +6,10 @@ import {
   clientTypeI,
 } from '@/Interfaces/ClientInterface';
 import AppLayout from '@layout/AppLayout.vue';
-import { useConfirm, useToast, Dialog } from 'primevue';
+import { Dialog } from 'primevue';
 import { onMounted, ref } from 'vue';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
 import FRegister from '@/Pages/Clients/FRegister.vue';
-import { useRoute } from 'ziggy-js';
 import FShowClient from '@/Pages/Clients/FShowClient.vue';
 
 const createClient = ref<boolean>(false);

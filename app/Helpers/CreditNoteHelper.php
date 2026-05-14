@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use JetBrains\PhpStorm\NoReturn;
 use Throwable;
 
 class CreditNoteHelper
@@ -272,7 +273,8 @@ class CreditNoteHelper
 
 
     //Buscar el balance de la nota de credito
-    public static function getBalance (string $code)
+    #[NoReturn]
+    public static function getBalance (string $code):void
     {
 
         $creditNote = self::creditNoteGet($code);

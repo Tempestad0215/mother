@@ -16,7 +16,7 @@ class ReportSaleHelper
      * @param string|null $typePayment
      * @return array
      */
-    public function repotSaleRange(string $from, string $to, string $typePayment = null): array
+    public function repotSaleRange(string $from, string $to, ?string $typePayment = null): array
     {
 
         //buscar los datos de la ventas

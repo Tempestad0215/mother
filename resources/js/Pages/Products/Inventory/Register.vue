@@ -1,23 +1,20 @@
 <script lang="ts" setup>
 import { ProductBaseI, productI } from '@/Interfaces/ProductInterface';
-import TabLink from '@components/TabLink.vue';
-import { Head } from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
 import { ref, watch } from 'vue';
 import { entryBaseI, entryProductI } from '@/Interfaces/EntryTransInterface';
 import axios from 'axios';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
 import FRegister from '@/Pages/Products/Inventory/FRegister.vue';
-import FShowEntrie from '@/Pages/Products/Inventory/FShow.vue';
 import { useRoute } from 'ziggy-js';
 import {
-  DataTable,
-  Column,
-  InputText,
   Button,
+  Column,
+  DataTable,
   Dialog,
-  InputGroupAddon,
   InputGroup,
+  InputGroupAddon,
+  InputText,
 } from 'primevue';
 import { clientBaseI } from '@/Interfaces/ClientInterface';
 import Pagination from '@components/Pagination.vue';

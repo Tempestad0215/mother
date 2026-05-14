@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { saleDataI } from '@/Interfaces/SaleInterface';
-import { getMoney } from '@/Global/Helpers';
 import FormSearch from '@components/FormSearch.vue';
 import { useForm } from '@inertiajs/vue3';
 import { PaginationI } from '@/Interfaces/GlobalInterface';

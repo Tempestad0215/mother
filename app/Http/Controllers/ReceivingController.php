@@ -76,8 +76,8 @@ class ReceivingController extends Controller
                 $purchaseItem = $purchaseItemsByProductId->get($line['product_id']);
 
                 $line['purchase_receipts_id'] = $purchaseReceipts->id;
-                $line['purchase_item_id'] = $purchaseItem->id;
-                $line['product_id'] = $purchaseItem->product_id;
+                $line['purchase_item_id'] = $purchaseItem->uuid;
+                $line['product_id'] = $purchaseItem->product_uuid;
                 $line['quantity_expected'] = $purchaseItem->quantity;
                 $line['quantity_received'] = $line['quantity'];
 

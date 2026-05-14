@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
-import { router } from '@inertiajs/vue3';
 import { useRoute } from 'ziggy-js';
 
 const route = useRoute();
@@ -30,9 +29,9 @@ const edit = (item: WarehouseBaseI) => {
 
 /**
  *
- * @param item
+ * @param _
  */
-const destroy = (item: WarehouseBaseI) => {
+const destroy = (_: WarehouseBaseI) => {
   // Swal.fire({
   //     title: "Desea Eliminar?",
   //     text: "Los Cambios Realizados Son Irreversible!",

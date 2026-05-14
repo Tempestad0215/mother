@@ -1,5 +1,5 @@
 import { InjectionKey, Ref } from 'vue';
-import { ProductBaseI, ProductFormI, ProductTableI } from '@/Interfaces/ProductInterface';
+import { ProductFormI, ProductTableI } from '@/Interfaces/ProductInterface';
 
 export const formProductKey = Symbol() as InjectionKey<ProductFormI>;
 export const taxCurrentValueKey = Symbol('Valor de impuesto seleccionado') as InjectionKey<

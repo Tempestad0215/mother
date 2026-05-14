@@ -27,7 +27,7 @@ class ProductHelper
      */
     public function update(Request $request, Product $product):void
     {
-        $product->stock = $request->input('stock');
+
         $product->save();
     }
 
@@ -50,7 +50,7 @@ class ProductHelper
         }
 
         DB::transaction(function () use ($product, $warehouse, $quantity, $cost) {
-            $oldStock = Inventory::where('product_id', $product->id)
+            $oldStock = Inventory::where('product_id', $product->uuid)
                 ->latest('created_at')
                 ->first();
 
@@ -63,15 +63,14 @@ class ProductHelper
             }
 
             Inventory::updateOrInsert(
-                ['product_id' => $product->id, 'warehouse_id' => $warehouse->id ?? null],
+                ['product_id' => $product->uuid, 'warehouse_id' => $warehouse->uuid ?? null],
                 [
-                'product_id'   => $product->id,
+                'product_id'   => $product->uuid,
                 'warehouse_id' => $warehouse->id ?? null,
                 'qty_on_hand'  => $newOnHand,
                 'avg_cost'     => $newAvg,
             ]);
 
-            $product->stock = ($product->stock ?? 0) + $quantity;
             $product->save();
         });
     }
@@ -160,7 +159,7 @@ class ProductHelper
     public static function getAvgCost(Product $product, float $quantity, float $cost):float
     {
         //Obtener los datos de oldStock
-        $oldStock = Inventory::where('product_id', $product->id)
+        $oldStock = Inventory::where('product_id', $product->uuid)
             ->latest('created_at')
             ->first();
 

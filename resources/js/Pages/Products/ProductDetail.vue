@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Fieldset, FloatLabel, Select, InputNumber, InputText, SelectChangeEvent } from 'primevue';
-import { computed, inject } from 'vue';
+import { Fieldset, FloatLabel, InputNumber, InputText, Select, SelectChangeEvent } from 'primevue';
+import { inject } from 'vue';
 import { formProductKey } from '@/Injections/InjectionKeys';
 import { BranchInterfaceI } from '@/Interfaces/BranchInterface';
 import { UnitInterfaceI } from '@/Interfaces/UnitInterface';

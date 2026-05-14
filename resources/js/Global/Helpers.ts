@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { useRoute } from 'ziggy-js';
 
 /**
  *

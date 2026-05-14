@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use JetBrains\PhpStorm\NoReturn;
 use Throwable;
 
 class CreditNoteController extends Controller
@@ -179,6 +180,7 @@ class CreditNoteController extends Controller
      * @param string $code
      * @return void
      */
+    #[NoReturn]
     public function getBalance(string $code)
     {
         CreditNoteHelper::getBalance($code);

@@ -43,8 +43,7 @@ class InHelper
     public function updateProduct(Request $request, Product $product):void
     {
 
-        //Actulizar los datos
-        $product->stock += $request->get('stock');
+
 
         $product->save();
         $this->updateGeneral($request, $product);
@@ -57,8 +56,7 @@ class InHelper
      */
     public function adjustProduct(Request $request, Product $product):void
     {
-        //Actulizar los datos
-        $product->stock = $request->get('stock');
+    ;
         $product->save();
         $this->updateProduct($request, $product);
     }
@@ -71,15 +69,10 @@ class InHelper
     public function updateGeneral(Request $request, Product $product): void
     {
 
-        $product->min_price = $request->get('min_price');
-        $product->special_price = $request->get('special_price');
-        $product->price = $request->get('price');
-        $product->cost = $request->get('cost');
-        $product->discount = $request->get('discount');
-        $product->discount_amount = $request->get('discount_amount');
-        $product->tax = $request->get('tax');
-        $product->product_no_tax = $request->get('product_no_tax');
-        $product->benefits = $request->get('benefits');
+        $product->cost = $request->input('cost');
+        $product->discount = $request->input('discount');
+        $product->discount_amount = $request->input('discount_amount');
+        $product->benefits = $request->input('benefits');
         $product->save();
     }
 }

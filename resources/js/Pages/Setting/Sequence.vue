@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Head, router, useForm } from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
-import LinkHeader from '@components/LinkHeader.vue';
 import TextInput from '@components/TextInput.vue';
 import PrimaryButton from '@components/PrimaryButton.vue';
 import SecondaryButton from '@components/SecondaryButton.vue';
@@ -10,6 +9,7 @@ import { onMounted, reactive } from 'vue';
 import ErrorComponent from '@components/ErrorComponent.vue';
 import TabLink from '@components/TabLink.vue';
 import { useRoute } from 'ziggy-js';
+import InputLabel from '@components/InputLabel.vue';
 
 const route = useRoute();
 /*
@@ -101,7 +101,7 @@ const edit = (id: number): void => {
 /**
  * Eliminar la secuencia
  */
-const destroy = (id: number): void => {
+const destroy = (_: number): void => {
   // Swal.fire({
   //     title: "Desea Eliminar?",
   //     text: "Los Cambios Realizados Son Irreversible!",
@@ -139,7 +139,7 @@ const destroy = (id: number): void => {
     </template>
 
     <!--        Conteneido de la ventana-->
-    <div class="fondo p-5 rounded-md max-w-[1180px] mx-auto grid grid-cols-3 gap-3">
+    <div class="fondo p-5 rounded-md max-w-295 mx-auto grid grid-cols-3 gap-3">
       <div class="col-span-2">
         <!--            Tabla de las secuencias registrada-->
         <table class="w-full styleTable">

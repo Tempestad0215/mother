@@ -1,14 +1,8 @@
 <script setup lang="ts">
-import {
-  ProductBaseI,
-  ProductFormI,
-  ProductTableI,
-  ProductTypeEnumI,
-  WarehouseProductI,
-} from '@/Interfaces/ProductInterface';
+import { ProductFormI, ProductTableI, ProductTypeEnumI } from '@/Interfaces/ProductInterface';
 import { SupplierI } from '@/Interfaces/SupplierInterface';
 import { useForm } from '@inertiajs/vue3';
-import { computed, onMounted, provide, watch } from 'vue';
+import { onMounted, provide, watch } from 'vue';
 import { categoryBaseI } from '@/Interfaces/CategoriesInterface';
 import { PaymentTypeEnumI } from '@/Interfaces/GlobalInterface';
 import ProductExtra from '@/Pages/Products/ProductExtra.vue';
@@ -22,7 +16,7 @@ import { UnitInterfaceI } from '@/Interfaces/UnitInterface';
 import { Button, Tab, TabList, TabPanel, TabPanels, Tabs, useToast } from 'primevue';
 import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
 import ProductSaleValue from '@/Pages/Products/ProductSaleValue.vue';
-import { PriceListProducts, PriceListWTI } from '@/Interfaces/PriceListInterface';
+import { PriceListWTI } from '@/Interfaces/PriceListInterface';
 import InventoryDetail from '@/Pages/Products/Inventory/InventoryDetail.vue';
 
 const route = useRoute();
@@ -167,7 +161,7 @@ function setCalculateData(productNoTax: string, benefits: string, benefitsMargin
 
 watch(
   () => form.warehouse_uuid,
-  (newVal) => {}
+  (_) => {}
 );
 
 const getInfoFromPriceList = () => {

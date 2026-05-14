@@ -24,6 +24,8 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.12.3/dist/barcodes/JsBarcode.code128.min.js"></script>
 <script>
+    import JsBarcode from "jsbarcode";
+
     JsBarcode("#barcode", "{{ $code_bar }}", {
         format: "CODE128",
         width: 1.5,

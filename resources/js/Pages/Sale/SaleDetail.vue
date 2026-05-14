@@ -152,13 +152,13 @@ const openReturn = () => {
 
 const getDataProduct = (data: ProductBaseI) => {
   showProducts.value = false;
-  const getIndex = form.info_sale.findIndex((el) => el.product_id === data.id);
+  const getIndex = form.info_sale.findIndex((el) => el.product_uuid === data.id);
 
   if (getIndex >= 0) {
     form.info_sale[getIndex].stock += 1.0;
   } else {
     const taxPlus = Number(PreciseCalculator.multiply(data.tax_rate || 0, data.price));
-    let taxForProduct = 0;
+    let taxForProduct: number;
 
     if (taxPlus === 0) {
       taxForProduct = 0;
@@ -167,14 +167,14 @@ const getDataProduct = (data: ProductBaseI) => {
     }
 
     form.info_sale.push({
-      product_id: data.id,
+      product_uuid: data.uuid,
       product_name: data.name,
       stock: 1,
       price: data.price,
       min_price: data.min_price,
       special_price: data.special_price,
-      tax_id: data.tax_id,
-      warehouse_id: data.warehouse_id,
+      tax_uuid: data.tax_id,
+      warehouse_uuid: data.warehouse_id,
       tax_rate: taxForProduct,
       discount: 0,
       discount_amount: 0,

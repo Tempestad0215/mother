@@ -2,7 +2,7 @@ import type { PageProps as InertiaPageProps } from '@inertiajs/core';
 import { AxiosInstance } from 'axios';
 import ziggyRoute, { Config as ZiggyConfig } from 'ziggy-js';
 import { PageProps as AppPageProps } from './';
-import { AppSettingI, TaxI, UserAuthI } from '@/Interfaces/GlobalInterface';
+import { AppSettingI, UserAuthI } from '@/Interfaces/GlobalInterface';
 import { TaxBaseI } from '@/Interfaces/TaxInterface';
 
 declare global {

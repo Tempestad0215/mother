@@ -1,6 +1,6 @@
 <script setup lang="ts" generic="T">
 import { PaginationI } from '@/Interfaces/GlobalInterface';
-import { PageState, Paginator } from 'primevue';
+import { Paginator } from 'primevue';
 import { router } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
@@ -17,8 +17,7 @@ const first = computed(() => {
   return (currentPage - 1) * perPage;
 });
 
-const onPageChange = (value: number) => {
-  const nextRoute = value + 1;
+const onPageChange = (_: number) => {
   const perPage = propsW.pag.per_page;
 
   router.get(`${propsW.pag.path}?search=${propsW.search}&per_page=${perPage}`);

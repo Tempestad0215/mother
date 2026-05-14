@@ -1,18 +1,9 @@
 <script setup lang="ts">
 import { ProductTypeEnumI } from '@/Interfaces/ProductInterface';
-import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
 import FRegisterWarehouse from '@/Pages/Setting/WH/FRegister.vue';
 import { inject, ref } from 'vue';
 import { formProductKey } from '@/Injections/InjectionKeys';
-import {
-  FloatLabel,
-  InputText,
-  Select,
-  Dialog,
-  InputGroup,
-  InputGroupAddon,
-  Fieldset,
-} from 'primevue';
+import { Dialog, Fieldset, FloatLabel, InputText } from 'primevue';
 
 const propsW = defineProps<{
   productType: ProductTypeEnumI;

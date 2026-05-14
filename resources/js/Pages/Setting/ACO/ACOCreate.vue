@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, router, useForm } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
 import TextInput from '@components/TextInput.vue';
 import { ref } from 'vue';
@@ -68,7 +68,7 @@ const edit = (item: acoBaseI) => {
   form.update = true;
 };
 
-const destroy = (item: acoBaseI) => {
+const destroy = (_: acoBaseI) => {
   // Swal.fire({
   //     title: "Desea Eliminar?",
   //     text: "Los Cambios Realizados Son Irreversible!",

@@ -1,10 +1,18 @@
 <script setup lang="ts">
 import { saleKey } from '@/utils/keys';
-import { computed, inject, onMounted, reactive, ref, watch } from 'vue';
+import { computed, inject, reactive, ref, watch } from 'vue';
 import { infoSaleI, WarehouseMapType } from '@/Interfaces/SaleInterface';
 import { PreciseCalculator } from '@/utils/Decimal';
-import { DataTable, Column } from 'primevue';
-import { InputNumber, Button, Dialog, FloatLabel, RadioButton, Select } from 'primevue';
+import {
+  Button,
+  Column,
+  DataTable,
+  Dialog,
+  FloatLabel,
+  InputNumber,
+  RadioButton,
+  Select,
+} from 'primevue';
 import { getMoney } from '@/Global/Helpers';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faArrowAltCircleDown, faArrowAltCircleUp } from '@fortawesome/free-solid-svg-icons';
@@ -166,9 +174,9 @@ const totalAmount = (index: number) => {
     PreciseCalculator.multiply(info.amount, discountRate.toString()).toFixed(2)
   );
   //Pasar los datos al formulario
-  info.tax_id = parseFloat(PreciseCalculator.multiply(info.amount, info.tax_rate).toFixed(2));
+  info.tax_uuid = parseFloat(PreciseCalculator.multiply(info.amount, info.tax_rate).toFixed(2));
 
-  console.log(info.tax_id);
+  console.log(info.tax_uuid);
 
   //Calcular los totales
   calculateTotals();
@@ -241,7 +249,7 @@ defineExpose({
     <Column class="max-w-20" header="Almacen">
       <template #body="{ index }">
         <Select
-          v-model="form.info_sale[index].warehouse_id"
+          v-model="form.info_sale[index].warehouse_uuid"
           :options="getWarehouses"
           optionLabel="name"
           optionValue="value"

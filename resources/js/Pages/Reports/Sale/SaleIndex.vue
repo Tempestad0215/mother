@@ -9,7 +9,7 @@ import { getMoney, moneyConfig, setHour } from '@/Global/Helpers';
 import InputError from '@components/InputError.vue';
 import { totalSoldAmountI } from '@/Interfaces/ReportInterface';
 import { saleFullI } from '@/Interfaces/SaleInterface';
-import { route } from '../../../../../vendor/tightenco/ziggy';
+import { route } from 'ziggy-js';
 import { Money } from 'v-money3';
 
 //Propiedadesd de la ventana

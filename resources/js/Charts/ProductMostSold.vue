@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import { Chart } from 'chart.js/auto';
 import { onMounted, reactive } from 'vue';
 import { mostSoldI } from '@/Interfaces/ReportInterface';
-import { generateColors } from '@/Global/Helpers';
 
 /*
 Propiedades de la ventana
@@ -37,8 +35,7 @@ const dataFormat = reactive({
  */
 const createChart = () => {
   //Ontener el id
-  const ctx = document.getElementById('mostSold');
-
+  // const ctx = document.getElementById('mostSold');
   //Crea los datos
   // new Chart(ctx, {
   //     type: 'doughnut',

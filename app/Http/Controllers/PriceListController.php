@@ -49,7 +49,7 @@ class PriceListController extends Controller
 
     public function destroy(PriceList $priceList)
     {
-        $priceList->delete;
+        $priceList->delete();
 
         return response()->json();
     }

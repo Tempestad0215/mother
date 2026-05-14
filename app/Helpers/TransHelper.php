@@ -19,7 +19,7 @@ class TransHelper
      * @param CreditNote|null $credit_note
      * @return void
      */
-    public static function store(Array $request, TransTypeEnum $type, Sale $sale, Product $product = null, CreditNote $credit_note = null):void
+    public static function store(Array $request, TransTypeEnum $type, Sale $sale, ?Product $product = null, ?CreditNote $credit_note = null):void
     {
 
 
@@ -27,7 +27,7 @@ class TransHelper
         ProTrans::create(
             [
                 'sale_id' => $sale->id,
-                'product_id' => $product?->id,
+                'product_id' => $product?->uuid,
                 'product_name' => $request["product_name"],
                 'reserved' => $type === TransTypeEnum::RESERVA ? $request["stock"] : 0,
                 'stock' => $request['stock'],

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, router, useForm } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
 import { productTransI } from '@/Interfaces/ProductInterface';
 import FormSearch from '@components/FormSearch.vue';
@@ -44,7 +44,7 @@ const submit = () => {
 // }
 
 //Eliminar la transaccion
-const destroy = (uuid: string) => {
+const destroy = (_: string) => {
   // Swal.fire({
   //     title: "Desea Eliminar?",
   //     text: "Los Cambios Realizados Son Irreversible!",

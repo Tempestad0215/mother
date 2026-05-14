@@ -8,15 +8,16 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 
 /**
- * @property int id
- * @property string name
- * @property string email
- * @property string profile_photo_url
- * @property UserRoleEnum role
+ * @property int $id
+ * @property string $name
+ * @property string $email
+ * @property string $profile_photo_url
+ * @property UserRoleEnum $roles
  * @property bool status
  */
 class UserResource extends JsonResource
 {
+
     /**
      * Transform the resource into an array.
      *
@@ -30,7 +31,7 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'photo_url' => $this->profile_photo_url,
-            'role' => $this->roles->pluck('name')->first(),
+//            'role' => $this->roles->pluck('name')->first(),
             'status' => $this->status,
 
         ];

@@ -1,5 +1,3 @@
-import { PaginationI } from '@/Interfaces/GlobalInterface';
-
 export interface acoBaseI {
   code: string;
   created_at: string;

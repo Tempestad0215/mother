@@ -6,7 +6,7 @@ import ImageMenu from '@components/ImageMenu.vue';
 import { useRoute } from 'ziggy-js';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faArrowCircleLeft } from '@fortawesome/free-solid-svg-icons';
-import { PanelMenu, ScrollPanel, ConfirmPopup, Toast, ConfirmDialog } from 'primevue';
+import { ConfirmDialog, PanelMenu, ScrollPanel, Toast } from 'primevue';
 import { MenuItemI } from '@/Interfaces/GlobalInterface';
 
 // ✅ Elimina: const route = useRoute();

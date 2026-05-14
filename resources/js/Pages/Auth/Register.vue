@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, router, useForm } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
@@ -85,7 +85,7 @@ const edit = (item: userI) => {
 };
 
 // Eliminar los datos
-const destroy = (item: userI) => {
+const destroy = (_: userI) => {
   // Swal.fire({
   //     title: "Desea eliminar este registro?",
   //     text: "Los cambios realizados son irreversible!",

@@ -1,6 +1,5 @@
 import { TaxBaseI } from '@/Interfaces/TaxInterface';
 import { PriceListProducts } from '@/Interfaces/PriceListInterface';
-import { TaxI } from '@/Interfaces/GlobalInterface';
 import { BrandFullI } from '@/Interfaces/BrandInterface';
 
 export interface productI {

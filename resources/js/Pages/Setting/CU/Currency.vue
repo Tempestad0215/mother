@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { Head, router } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
 import TabLink from '@components/TabLink.vue';
 import InputLabel from '@components/InputLabel.vue';
 import TextInput from '@components/TextInput.vue';
-import { useForm } from '@inertiajs/vue3';
 import ToggleButton from '@components/ToggleButton.vue';
 import PrimaryButton from '@components/PrimaryButton.vue';
 import { currencyI } from '@/Interfaces/CurrencyInterface';
@@ -46,7 +45,7 @@ const submit = () => {
 /**
  * Eliminar la moneda
  */
-const destroy = (item: currencyI) => {
+const destroy = (_: currencyI) => {
   // Swal.fire({
   //     title: "Desea Eliminar?",
   //     text: "Los Cambios Realizados Son Irreversible!",
@@ -70,7 +69,7 @@ const destroy = (item: currencyI) => {
 /**
  *
  */
-const restore = (item: currencyI) => {
+const restore = (_: currencyI) => {
   // Swal.fire({
   //     title: "Desea Activar?",
   //     text: "Los Cambios Realizados Son Irreversible!",
