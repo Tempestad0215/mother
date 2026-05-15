@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Enums;
+
+enum InventoryMovementConceptEnum:string
+{
+    case Entrada = 'Entrada';
+    case Salida = 'Salida';
+    case Ajuste = 'Ajuste';
+    case Transferencia = 'Transferencia';
+    case Venta = 'Venta';
+    case Devolucion = 'Devolucion';
+    case Recepcion = 'Recepcion';
+}

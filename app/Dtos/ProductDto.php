@@ -4,7 +4,11 @@ namespace App\Dtos;
 
 use App\Helpers\TaxHelper;
 use App\Models\Category;
+use App\Models\PriceList;
 use App\Models\Product;
+use App\Models\Warehouse;
+use App\Models\WarehouseProduct;
+use Illuminate\Validation\ValidationException;
 
 class ProductDto extends BaseDto
 {
@@ -37,6 +41,8 @@ class ProductDto extends BaseDto
         public bool    $has_promotion,
         public bool    $handle_warehouse,
         public array  $warehouse_product,
+        public ?string $default_warehouse = null,
+        public ?string $default_price_list = null
     )
     {
     }
@@ -60,7 +66,7 @@ class ProductDto extends BaseDto
      */
     public static function fromArray(array $data): self
     {
-        return new self(
+        $instance = new self(
             name: $data['name'] ?? '',
             description: $data['description'] ?? null,
             unit_uuid: $data['unit_uuid'] ?? null,
@@ -90,6 +96,19 @@ class ProductDto extends BaseDto
             handle_warehouse: (bool) ($data['handle_warehouse'] ?? false),
             warehouse_product: $data['warehouse_product'] ?? null,
         );
+
+        // warehouse
+        if(empty($instance->default_warehouse)){
+            $instance->default_warehouse = $instance->getDefaultWarehouse();
+        }
+
+        // Price list
+        if(empty($instance->default_price_list)){
+            $instance->default_price_list = $instance->getDefaultPriceList();
+        }
+
+        //
+        return $instance;
     }
 
     /**
@@ -171,5 +190,43 @@ class ProductDto extends BaseDto
         $product = Product::where('name', $name)->first();
 
         return $product?->code;
+    }
+
+    /**
+     * @return string
+     */
+    private function getDefaultWarehouse():string
+    {
+        // Tomar el primer almacen
+        $warehouse =  Warehouse::first();
+
+        // Verificar si existe
+        if(!$warehouse){
+            throw ValidationException::withMessages([
+                'warehouse' => ['No se encontró un almacén por defecto configurado en el sistema.']
+            ]);
+        }
+
+        // Devolver el id
+        return $warehouse->uuid;
+    }
+
+    /**
+     * @return string
+     */
+    private function getDefaultPriceList():string
+    {
+        // Lista de precio
+        $priceList =  PriceList::first();
+
+        // Verificar si existe
+        if(!$priceList){
+            throw ValidationException::withMessages([
+                'price_list' => ['No se encontró una lista de precio por defecto configurado en el sistema.']
+            ]);
+        }
+
+        // Devolver la lista de pecio
+        return $priceList->uuid;
     }
 }

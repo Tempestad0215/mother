@@ -5,7 +5,7 @@ namespace App\Helpers;
 use App\Dtos\InventoryMovementDto;
 use App\Dtos\SaleItemApiDto;
 use App\Dtos\SaleItemDto;
-use App\Enums\InventoryMovementTypeEnum;
+use App\Enums\InventoryMovementConceptEnum;
 use App\Enums\TransTypeEnum;
 use App\Enums\ProductTypeEnum;
 use App\Enums\SaleTypeEnum;
@@ -126,16 +126,16 @@ class SaleHelper
 
     /**
      * @param SaleTypeEnum $saleType
-     * @return InventoryMovementTypeEnum
+     * @return InventoryMovementConceptEnum
      */
-    public function movementType(SaleTypeEnum $saleType): InventoryMovementTypeEnum
+    public function movementType(SaleTypeEnum $saleType): InventoryMovementConceptEnum
     {
         if($saleType == SaleTypeEnum::Ventas){
-            return InventoryMovementTypeEnum::Venta;
+            return InventoryMovementConceptEnum::Venta;
         }else if($saleType == SaleTypeEnum::Devolucion){
-            return InventoryMovementTypeEnum::Devolucion;
+            return InventoryMovementConceptEnum::Devolucion;
         }else{
-            return InventoryMovementTypeEnum::Cotizacion;
+            return InventoryMovementConceptEnum::Cotizacion;
         }
     }
 

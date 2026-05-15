@@ -3,24 +3,33 @@
 namespace App\Http\Controllers;
 
 use App\Dtos\PurchaseDto;
-use App\Enums\InventoryMovementTypeEnum;
+use App\Dtos\PurchaseRequestItemDto;
+use App\Enums\InventoryMovementConceptEnum;
 use App\Enums\PurchaseStatusEnum;
 use App\Http\Requests\PaginationRequest;
 use App\Http\Requests\PurchaseRequest;
 use App\Http\Resources\PurchaseSupplierResource;
 use App\Models\Product;
 use App\Models\Purchase;
+use App\Models\PurchaseItem;
 use App\Models\Supplier;
 use App\Models\Tax;
 use App\Models\Warehouse;
 use App\Models\WarehouseProduct;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use Inertia\Response;
 use Throwable;
 
 class PurchaseController extends Controller
 {
+    /**
+     * @param Request $request
+     * @return Response
+     */
     public function index(Request $request)
     {
         $request->validate([
@@ -68,25 +77,58 @@ class PurchaseController extends Controller
             // Crear la compra
             $purchase = Purchase::create($purchaseDto->toArray());
 
-            $itemsData = [];
+            // Almacenar los modelos en el array
+            $purchaseItemsModels = [];
 
+            // Obtener los ids de productos
+            $productIds = array_map(fn(PurchaseRequestItemDto $item) => $item->product_uuid, $purchaseDto->info);
+
+            // Consultar los productos
+            $productsDb = Product::WhereIn('uuid', $productIds)->get()->keyBy('uuid');
+
+            // Recorrer los item
             foreach ($purchaseDto->info as $item) {
 
-                $itemsData[] = $item->toArray();
-
-                // Guardar los datos en productos
-                $warehouseProduct = WarehouseProduct::updateOrCreate([
-                    'product_uuid' => $item->uuid,
-                    'warehouse_uuid' => $item->warehouse_uuid,
-                ],[
-                   'purchase_pending' => DB::raw("COALESCE('purchase_pending, 0') + $item->quantity"),
+                // Almacenar los items
+                $purchaseItemsModels[] = new PurchaseItem([
+                    'product_uuid' => $item->product_uuid,
+                    'purchase_uuid' => $purchase->supplier_uuid,
+                    'quantity' => $item->quantity,
+                    'cost' => $item->cost,
+                    'discount' => $item->discount,
+                    'amount' => $item->amount,
+                    'tax' => $item->tax,
                 ]);
 
-                $warehouseProduct->increment('purchase_pending', $item->quantity);
+                // Guardar los datos en productos
+                /** @var Product $product */
+                $product = $productsDb->get($item->product_uuid);
+
+                if($product)
+                {
+                    // Tomar el primero que exita con el almacen y con producto
+                    /** @var WarehouseProduct | null $currentPivot */
+                    $currentPivot = $product->warehouses()->where('warehouse_uuid', $item->warehouse_uuid)
+                        ->first()?->pivot;
+
+                    // Si existe se coloca el valor o 0
+                    $currentPending = $currentPivot ? $currentPivot->purchase_pending : 0;
+                    // Crear la nueva cantidad pendiente
+                    $newPending = bcadd($currentPending, $item->quantity);
+                    // Actualizar el producto con el almacen
+                    $product->warehouses()->syncWithoutDetaching([
+                        $item->warehouse_uuid => [
+                            'purchase_pending' => $newPending,
+                        ]
+                    ]);
+                }
+
             }
 
-            $purchase->items()->insert($itemsData);
+            // Guardar todos los los datos
+            $purchase->items()->saveMany($purchaseItemsModels);
 
+            // Devolver hacia atras
             return back();
 
         });
@@ -94,6 +136,10 @@ class PurchaseController extends Controller
     }
 
 
+    /**
+     * @param PaginationRequest $request
+     * @return Response
+     */
     public function show(PaginationRequest $request)
     {
         return Inertia::render('Purchase/TablePurchase',[
@@ -102,13 +148,20 @@ class PurchaseController extends Controller
     }
 
 
-
+    /**
+     * @param Purchase $purchase
+     * @return void
+     */
     public function approve(Purchase $purchase)
     {
         $purchase->status = PurchaseStatusEnum::Pendiente;
         $purchase->save();
     }
 
+    /**
+     * @param Purchase $purchase
+     * @return RedirectResponse
+     */
     public function cancel(Purchase $purchase)
     {
         $purchase->status = PurchaseStatusEnum::Cancelada;
@@ -118,22 +171,35 @@ class PurchaseController extends Controller
     }
 
 
+    /**
+     * @return Response
+     */
     public function receive()
     {
         return Inertia::render('Purchase/Receive');
     }
 
+    /**
+     * @return Response
+     */
     public function output()
     {
         return Inertia::render('Purchase/Output');
     }
 
 
-
+    /**
+     * @param Purchase $purchase
+     * @param int $warehouseID
+     * @param float $quantity
+     * @param float $cost
+     * @param string $description
+     * @return void
+     */
     private function createInventoryMovement(Purchase $purchase, int $warehouseID, float $quantity,float $cost, string $description = ""):void
     {
         $purchase->itemMovements()->create([
-            'type' => InventoryMovementTypeEnum::Entrada,
+            'type' => InventoryMovementConceptEnum::Entrada,
             'warehouse_id' => $warehouseID,
             'quantity' => $quantity,
             'cost' => $cost,

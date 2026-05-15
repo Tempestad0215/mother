@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\InventoryMovementTypeEnum;
+use App\Enums\InventoryMovementConceptEnum;
 use App\Enums\PurchaseStatusEnum;
 use App\Helpers\ProductHelper;
 use App\Helpers\SupplierHelper;
@@ -88,7 +88,7 @@ class ReceivingController extends Controller
 
                 $purchaseReceipts->itemMovements()->create([
                     'warehouse_id' => $line['warehouse_id'],
-                    'type' => InventoryMovementTypeEnum::Recepcion->value,
+                    'type' => InventoryMovementConceptEnum::Recepcion->value,
                     'quantity' => $line['quantity'],
                     'cost' => $line['cost'],
                     'price' => $line['amount'],

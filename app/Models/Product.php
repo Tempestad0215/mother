@@ -101,6 +101,7 @@ class Product extends Model implements Auditable
         'has_tax',
         'handle_warehouse',
         'default_price_list',
+        'default_warehouse',
         'purchase_pending'
     ];
 

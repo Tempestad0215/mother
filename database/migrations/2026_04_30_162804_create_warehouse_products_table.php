@@ -8,11 +8,11 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('warehouse_products', function (Blueprint $table) {
-            $table->uuid('uuid');
             $table->foreignUuid('product_uuid');
             $table->foreignUuid('warehouse_uuid');
-            $table->decimal('available',19,4);
-            $table->decimal('committed',19,4);
+            $table->decimal('stock_quantity',19,4);
+            $table->decimal('available',19,4)->default(0)->nullable();
+            $table->decimal('committed',19,4)->default(0)->nullable();
             $table->decimal('min_stock',19,4)->nullable();
             $table->decimal('max_stock',19,4)->nullable();
             $table->decimal('reorder_level',19,4)->nullable();

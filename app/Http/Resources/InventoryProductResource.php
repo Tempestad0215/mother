@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Enums\InventoryMovementTypeEnum;
+use App\Enums\InventoryMovementConceptEnum;
 use App\Models\Product;
 use Carbon\Carbon;
 use Carbon\Traits\Date;
@@ -13,7 +13,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @property int id
  * @property  int product_id
- * @property InventoryMovementTypeEnum type
+ * @property InventoryMovementConceptEnum type
  * @property float quantity
  * @property float cost
  * @property string description

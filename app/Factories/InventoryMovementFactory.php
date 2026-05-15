@@ -3,7 +3,7 @@
 namespace App\Factories;
 
 use App\Dtos\InventoryMovementDto;
-use App\Enums\InventoryMovementTypeEnum;
+use App\Enums\InventoryMovementConceptEnum;
 use Illuminate\Support\Arr;
 
 class InventoryMovementFactory extends BaseFactory
@@ -15,7 +15,7 @@ class InventoryMovementFactory extends BaseFactory
     public static function fromArray(array $data):InventoryMovementDto
     {
         return new InventoryMovementDto(
-            type: InventoryMovementTypeEnum::from($data['type']),
+            type: InventoryMovementConceptEnum::from($data['type']),
             product_id: (int) $data['product_id'],
             quantity: (float) $data['quantity'],
             warehouse_id: isset($data['warehouse_id']) ? (int) $data['warehouse_id'] : null,

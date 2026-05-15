@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\InventoryMovementTypeEnum;
+use App\Enums\InventoryMovementConceptEnum;
 use App\Helpers\ProductHelper;
 use App\Http\Resources\InventoryProductResource;
 use App\Models\InventoryMovement;
@@ -66,7 +66,7 @@ class InventoryMovementController extends Controller implements HasMiddleware
             'quantity' => ['required','numeric', Rule::notIn(0.00)],
             'cost' => ['required','numeric', Rule::notIn(0.00)],
             'description' => ['nullable','string','max:255'],
-            'type' => ['required',new Enum(InventoryMovementTypeEnum::class)],
+            'type' => ['required',new Enum(InventoryMovementConceptEnum::class)],
         ]);
 
 
@@ -125,7 +125,7 @@ class InventoryMovementController extends Controller implements HasMiddleware
             'quantity' => ['required','numeric', Rule::notIn(0.00)],
             'cost' => ['required','numeric', Rule::notIn(0.00)],
             'description' => ['nullable','string','max:255'],
-            'type' => ['required',new Enum(InventoryMovementTypeEnum::class)],
+            'type' => ['required',new Enum(InventoryMovementConceptEnum::class)],
         ]);
 
 

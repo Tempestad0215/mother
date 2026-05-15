@@ -15,7 +15,7 @@ class WarehouseProduct extends Model implements Auditable
 
 
     protected $fillable = [
-        'committed_stock',
+        'committed',
         'warehouse_id',
         'stock_quantity',
         'min_stock',

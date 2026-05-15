@@ -14,7 +14,7 @@ class PurchaseDto extends BaseDto
      * @param float $sub_total
      * @param float|null $discount
      * @param array $info
-     * @param string $user_id
+     * @param string $user_uuid
      */
     public function __construct(
         // Datos generales

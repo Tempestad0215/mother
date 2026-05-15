@@ -3,7 +3,7 @@
 namespace App\Helpers;
 
 use App\Dtos\InventoryMovementDto;
-use App\Enums\InventoryMovementTypeEnum;
+use App\Enums\InventoryMovementConceptEnum;
 use App\Models\Inventory;
 use App\Models\Product;
 use App\Models\Warehouse;

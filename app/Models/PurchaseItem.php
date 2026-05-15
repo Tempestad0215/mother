@@ -23,29 +23,25 @@ class PurchaseItem extends Model implements Auditable
         'purchase_uuid',
         'quantity',
         'cost',
-        'price',
         'discount',
         'amount',
-        'tax_id',
+        'tax',
+        'tax_uuid',
         'tax_amount'
     ];
 
 
-    public function tax(): BelongsTo
-    {
-        return $this->belongsTo(Tax::class);
-    }
-
-    public function warehouse(): BelongsTo
-    {
-        return $this->belongsTo(Warehouse::class);
-    }
-
+    /**
+     * @return BelongsTo
+     */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function purchase(): BelongsTo
     {
         return $this->belongsTo(Purchase::class);
