@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->uuid();
             $table->string('code',30)->unique()->comment('codigo unico');
+            $table->string('prefix',30);
             $table->string('name',75)->comment('nombre');
             $table->string('description',255)->nullable()->comment('descripcion');
             $table->boolean('status')->default(true)->comment('estado');

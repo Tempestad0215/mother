@@ -30,18 +30,12 @@ class SupplierController extends Controller implements HasMiddleware
             new Middleware('role:Super Admin|Supervisor'),
         ];
     }
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
+
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create(PaginationRequest $request)
+    public function index(PaginationRequest $request)
     {
 
         //Tomar los datos de búsqueda
