@@ -13,8 +13,8 @@ return new class extends Migration {
         Schema::create('purchases', function (Blueprint $table) {
             $table->uuid();
             $table->string('code',30)->unique()->comment('codigo unido para cada registro');
-            $table->foreignIdFor( Supplier::class,'supplier_id')->comment('Relacion con el suplidor de la orden');
-            $table->foreignIdFor(User::class, 'user_id')->comment('Relacion para el usuario');
+            $table->foreignUuid( 'supplier_uuid')->comment('Relacion con el suplidor de la orden');
+            $table->foreignUuid( 'user_uuid')->comment('Relacion para el usuario');
             $table->date('doc_date');
             $table->decimal('amount', 19,6)->comment('valor total de la compra');
             $table->decimal('tax', 19,6)->comment('impuesto de la compra');

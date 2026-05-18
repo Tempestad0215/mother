@@ -161,7 +161,7 @@ class Product extends Model implements Auditable
         return $this->belongsToMany(Warehouse::class, 'warehouse_products')
             ->withPivot(
                 'stock_quantity',
-                'committed_stock',
+                'committed',
                 'min_stock',
                 'max_stock',
                 'reorder_level',

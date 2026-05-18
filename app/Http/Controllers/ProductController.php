@@ -122,6 +122,8 @@ class ProductController extends Controller implements HasMiddleware
             // Transformar los datos
             $product_dto = ProductDto::fromArray($request->validated());
             // Crear los datos de productos
+
+
             $product = Product::create($product_dto->toArray());
             // Tomar los datos de warehouseProduct y asinar al productos
             WarehouseProductHelper::upSert($product_dto->warehouse_product, $product);

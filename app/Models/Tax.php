@@ -31,10 +31,17 @@ class Tax extends Model implements Auditable
     use HasUuids;
     use \OwenIt\Auditing\Auditable;
 
+    /**
+     * @var string
+     */
     protected $primaryKey = 'uuid';
     protected $keyType = 'string';
     public $incrementing = false;
 
+
+    /**
+     * @var string[]
+     */
     protected $fillable = [
         'name',
         'description',
@@ -42,6 +49,9 @@ class Tax extends Model implements Auditable
         'model_status',
     ];
 
+    /**
+     * @var string[]
+     */
     protected $hidden = [
         'deleted_at',
         'created_at',
@@ -49,6 +59,9 @@ class Tax extends Model implements Auditable
     ];
 
 
+    /**
+     * @return Attribute
+     */
     public function name():Attribute
     {
         return Attribute::make(
@@ -57,25 +70,42 @@ class Tax extends Model implements Auditable
         );
     }
 
+    /**
+     * @return HasMany
+     */
     public function products():HasMany
     {
         return $this->hasMany(Product::class);
     }
 
+    /**
+     * @return HasMany
+     */
     public function purchaseItem(): HasMany
     {
-        return $this->hasMany(PurchaseItem::class);
+        return $this->hasMany(PurchaseItem::class,'tax_uuid','uuid');
     }
 
+    /**
+     * @return HasMany
+     */
     public function receiptsItem(): HasMany
     {
         return $this->hasMany(PurchaseReceiptsItem::class);
     }
 
+
+    /**
+     * @return HasMany
+     */
     public function SaleItem(): HasMany
     {
         return $this->hasMany(SaleItem::class);
     }
+
+    /**
+     * @return \class-string[]
+     */
     protected function casts(): array
     {
         return [

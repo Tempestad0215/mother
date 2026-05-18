@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->uuid();
             $table->string('prefix',5);
             $table->string('name',30)->unique()->comment('Nombre');
-            $table->string('description',200)->comment('Descripcion');
+            $table->string('description',200)->nullable()->comment('Descripcion');
             $table->string('location',200)->nullable()->comment('Ubicacion');
             $table->timestamps();
             $table->softDeletes();

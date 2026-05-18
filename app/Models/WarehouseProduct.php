@@ -41,7 +41,7 @@ class WarehouseProduct extends Model implements Auditable
      */
     public function getAvailableStockAttribute(): int
     {
-        return $this->stock_quantity - ($this->committed_stock ?? 0);
+        return $this->stock_quantity - ($this->commited ?? 0);
     }
 
     /**

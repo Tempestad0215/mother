@@ -29,7 +29,7 @@ use Illuminate\Support\Facades\Date;
  *
  * @property-read Product $product
  * @property-read Purchase $purchase
- * @property-read Tax $tax
+ * @property-read Tax $taxR
  * @property-read Warehouse $warehouse
  */
 class PurchaseItemResource extends JsonResource
@@ -38,12 +38,15 @@ class PurchaseItemResource extends JsonResource
     {
 
 
+        dd($this->taxR);
+        $tax = bcadd(1, $this->tax->rate,2);
+        $tax_amount = bcmul($tax, $this->cost);
         return [
             ...parent::toArray($request),
             'product_name' => $this->product?->name,
             'tax_rate' => $this->tax?->rate ?? $this->product->tax_rate ?? 0,
             'warehouse_name' => $this->warehouse?->name,
-            'tax_amount' => ((1 + $this->tax?->rate) * $this->cost)
+            'tax_amount' => (float)$tax_amount
         ];
     }
 }

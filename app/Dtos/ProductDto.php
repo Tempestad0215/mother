@@ -149,6 +149,8 @@ class ProductDto extends BaseDto
             // Propiedades calculadas
             'tax_rate' => $this->getTaxRate(),
             'tax' => $this->getTotalWithTax(),
+            'default_warehouse' => $this->getDefaultWarehouse(),
+            'default_price_list' => $this->getDefaultPriceList(),
         ];
     }
 
