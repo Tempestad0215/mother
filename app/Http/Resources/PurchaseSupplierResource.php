@@ -12,17 +12,8 @@ class PurchaseSupplierResource extends JsonResource
      * @param Request $request
      * @return array
      */
-
     public function toArray(Request $request): array
     {
-
-//        $data = parent::toArray($request);
-//
-//        $data['products'] = collect($this->items)->map(function ($item){
-//            $itemOld = $item;
-//            $itemOld['product_name'] => $item->product->name;
-//            dd($item->product);
-//        });
 
         return [
             ...parent::toArray($request),

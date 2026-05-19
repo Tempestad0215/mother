@@ -90,6 +90,17 @@ Route::middleware([
     });
 
     /*
+     * Rutas adicionales de compras (no estándar)
+     */
+    Route::prefix('purchase')->name('purchase.')->group(function () {
+        Route::get('/show', [PurchaseController::class, 'show'])->name('show');
+        Route::get('/receive', [PurchaseController::class, 'receive'])->name('receive');
+        Route::get('/output', [PurchaseController::class, 'output'])->name('output');
+        Route::patch('/{purchase}/cancel', [PurchaseController::class, 'cancel'])->name('cancel');
+        Route::patch('/{purchase}/approve', [PurchaseController::class, 'approve'])->name('approve');
+    });
+
+    /*
      * Resources principales
      */
     Route::apiResources([
@@ -217,16 +228,7 @@ Route::middleware([
         Route::post('/', [ReceivingController::class, 'store'])->name('store');
     });
 
-    /*
-     * Rutas adicionales de compras (no estándar)
-     */
-    Route::prefix('purchase')->name('purchase.')->group(function () {
-        Route::get('/show', [PurchaseController::class, 'show'])->name('show');
-        Route::get('/receive', [PurchaseController::class, 'receive'])->name('receive');
-        Route::get('/output', [PurchaseController::class, 'output'])->name('output');
-        Route::patch('/{purchase}/cancel', [PurchaseController::class, 'cancel'])->name('cancel');
-        Route::patch('/{purchase}/approve', [PurchaseController::class, 'approve'])->name('approve');
-    });
+
 
     // Test route
     Route::get('/test', function () {

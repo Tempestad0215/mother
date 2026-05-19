@@ -2,22 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\InventoryMovementConceptEnum;
+use App\Dtos\ReceivingDto;
+use App\Dtos\ReceivingItemDto;
 use App\Enums\PurchaseStatusEnum;
-use App\Helpers\ProductHelper;
 use App\Helpers\SupplierHelper;
 use App\Http\Requests\StorePurchaseReceivingRequest;
 use App\Http\Resources\PurchaseSupplierResource;
-use App\Models\InventoryMovement;
 use App\Models\Product;
 use App\Models\Purchase;
+use App\Models\PurchaseItem;
 use App\Models\PurchaseReceipts;
 use App\Models\PurchaseReceiptsItem;
 use App\Models\Supplier;
-use App\Models\Warehouse;
+use App\Models\WarehouseProduct;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Throwable;
 
@@ -28,15 +28,19 @@ class ReceivingController extends Controller
 
         $purchaseAvailable = PurchaseSupplierResource::collection(
             $supplier->purchase()
-                ->where('status', PurchaseStatusEnum::Pendiente)
+                ->whereIn('status', [PurchaseStatusEnum::Pendiente, PurchaseStatusEnum::Parcial])
                 ->with('items')
                 ->with('supplier')
                 ->get()
         );
 
 
+
         $purchaseStatus = collect(PurchaseStatusEnum::cases())
-            ->filter(fn(PurchaseStatusEnum $item) => $item !== PurchaseStatusEnum::Borrador && $item !== PurchaseStatusEnum::Cancelada && $item !== PurchaseStatusEnum::Pendiente)
+            ->filter(fn(PurchaseStatusEnum $item) =>
+                $item !== PurchaseStatusEnum::Borrador &&
+                $item !== PurchaseStatusEnum::Cancelada &&
+                $item !== PurchaseStatusEnum::Pendiente)
             ->map(fn(PurchaseStatusEnum $item) => (object)[
                 'name' => $item->name,
                 'value' => $item->value,
@@ -59,54 +63,91 @@ class ReceivingController extends Controller
      */
     public function store(StorePurchaseReceivingRequest $request)
     {
-        $data = $request->validated();
+        // Convertir los datos
+        $receivingDto = ReceivingDto::fromArray($request->validated());
 
-        DB::transaction(function () use ($data) {
+        // ejecutar para proteger los datos
+        DB::transaction(function () use ($receivingDto) {
             //Obtener la compra antigua
-            $purchase = Purchase::find($data['id']);
+            $purchase = Purchase::with('items')->where('uuid', $receivingDto->purchase_uuid)->firstOrFail();
 
-            $payloadReceipts = Arr::except($data, ['id']);
-            $payloadReceipts['purchase_id'] = $data['id'];
-            $purchaseReceipts = PurchaseReceipts::create($payloadReceipts);
+            // Obtener los items de la compra
+            $purchaseItem = $purchase->items()->get()->keyBy('product_uuid');
 
-            $purchaseItemsByProductId = $purchase->items->keyBy('product_id');
+            // Guardar los datos
+            $purchaseReceipts = PurchaseReceipts::create($receivingDto->toArray());
 
-            foreach ($data['items'] as $line)
+            // Obtener los ids de productos
+            $productUuids = array_map(fn(ReceivingItemDto $item) => $item->product_uuid, $receivingDto->items);
+            ;
+
+            // Almacenar los datos en un array
+            $receivingItemModel = [];
+            $productBatch = Product::with('warehouses')->whereIn('uuid', $productUuids)->get()->keyBy('uuid');
+            ;
+
+            // Reccorrer los datos del array
+            foreach ($receivingDto->items as $item)
             {
-                $purchaseItem = $purchaseItemsByProductId->get($line['product_id']);
 
-                $line['purchase_receipts_id'] = $purchaseReceipts->id;
-                $line['purchase_item_id'] = $purchaseItem->uuid;
-                $line['product_id'] = $purchaseItem->product_uuid;
-                $line['quantity_expected'] = $purchaseItem->quantity;
-                $line['quantity_received'] = $line['quantity'];
+                // Obtener el item actual viejo
+                /** @var PurchaseItem|null $oldItemCurrent */
+                $oldItemCurrent = $purchaseItem->get($item->product_uuid);
 
+                // Continuar si no existe
+                if (!$oldItemCurrent){
+                    continue;
+                }
 
-                $payloadReceiptsItem = Arr::except($line, ['id']);
-                PurchaseReceiptsItem::create($payloadReceiptsItem);
-
-
-                $purchaseReceipts->itemMovements()->create([
-                    'warehouse_id' => $line['warehouse_id'],
-                    'type' => InventoryMovementConceptEnum::Recepcion->value,
-                    'quantity' => $line['quantity'],
-                    'cost' => $line['cost'],
-                    'price' => $line['amount'],
+                // Crear el arreglo de los item
+                $receivingItemModel[$item->product_uuid] = new PurchaseReceiptsItem([
+                    'purchase_receipt_uuid' => $purchaseReceipts->uuid,
+                    'purchase_item_uuid' => $oldItemCurrent->uuid,
+                    'product_uuid' => $item->product_uuid,
+                    'cost' => $oldItemCurrent->cost,
+                    'quantity_expected' => $oldItemCurrent->quantity,
+                    'quantity_received' => $item->quantity,
+                    'tax_uuid' => $item->tax_uuid,
+                    'warehouse_uuid' =>$item->warehouse_uuid,
+                    'tax_rate' => $item->tax_rate,
+                    'tax_amount' => $item->tax_amount,
+                    'discount' => $item->discount,
+                    'amount' => $item->amount,
                 ]);
 
-                $warehouse = Warehouse::find($line['warehouse_id']);
-                $product = Product::find($line['product_id']);
+                // Obtener el producto en la lista
+                $product = $productBatch->get($item->product_uuid);
 
-                ProductHelper::incrementStock(
-                    $product,
-                    $warehouse,
-                    $line['quantity'],
-                    $line['cost']
-                );
+
+                // Buscar la primera coincidencia
+                /** @var WarehouseProduct|null $warehousePivot */
+                $warehousePivot = $product->warehouses()->where('uuid', $item->warehouse_uuid)->first();
+
+                dd($warehousePivot);
+
+                // Verificar si existe
+                if (!$warehousePivot) {
+                    throw ValidationException::withMessages([
+                        'warehouse_uuid' => "El producto {$item->product_name} no tiene asignado el almacén seleccionado en los registros.",
+                    ]);
+                }
+
+                // Actulizar los datos con raw
+//                $product->warehouses()->updateExistingPivot(
+//                    $item->warehouse_uuid,
+//                    [
+//                        'stock_quantity' => DB::raw("stock_quantity + $item->quantity"),
+//                        'updated_at' => now(),
+//                    ]);
+
 
             }
 
-            $purchase->status = $data['status'];
+            // Insertar los datos
+            $purchaseReceipts->items()->saveMany($receivingItemModel);
+
+            // Actualizar los datos del status
+            $purchase->status = $receivingDto->status;
             $purchase->save();
         });
 

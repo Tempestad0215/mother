@@ -11,13 +11,21 @@ class CheckConfigExitsMiddleware
 {
     public function handle(Request $request, Closure $next)
     {
-        //        Verificar si existe configuracion registrada
+        // Verificar si existe configuracion registrada
         $config = Setting::first();
 
-//        Si la configuracion no existe y no estamos en la ruta de configuracion por favor, redirige a la ventana
-        if(!$config && !Route::is('setting.index') && $request->isMethod('get' && !Route::is('login')) ){
-            return redirect()->route('setting.index');
+        if(!$config){
+            if(!Route::is('setting.*') && !Route::is('login')){
+                if ($request->isMethod('get')){
+                    return redirect(route('setting.index'));
+                }
+            }
         }
+////        Si la configuracion no existe y no estamos en la ruta de configuracion por favor, redirige a la ventana
+//        if(!$config && !Route::is('setting.index') && $request->isMethod('get' && !Route::is('login')) ){
+//            return redirect()->route('setting.index');
+//        }
+
 
         return $next($request);
     }

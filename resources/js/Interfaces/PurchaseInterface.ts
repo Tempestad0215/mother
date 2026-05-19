@@ -22,10 +22,10 @@ interface timeStampsI {
 }
 
 export interface PurchaseBaseI {
-  id: number;
+  uuid: string;
   code: string;
-  supplier_id: number;
-  user_id: number;
+  supplier_uuid: string;
+  user_uuid: string;
   doc_date: string | Date;
   amount: number;
   tax: number;
@@ -52,16 +52,16 @@ export interface PurchaseItemI {
   created_at?: string;
   deleted_at?: string | null;
   discount: number;
-  id: number;
-  product_id: number;
+  uuid: string;
+  product_uuid: string;
   product_name: string;
   tax_rate: number;
   tax_amount: number;
-  purchase_id: number;
+  purchase_uuid: string;
   quantity: number;
-  tax_id: number;
+  tax_uuid: string;
   updated_at?: string;
-  warehouse_id: number;
+  warehouse_uuid: string;
   warehouse_name: string;
   isReadOnly?: boolean;
 }

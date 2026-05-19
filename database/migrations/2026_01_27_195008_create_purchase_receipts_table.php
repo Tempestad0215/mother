@@ -9,6 +9,7 @@ return new class extends Migration {
     {
         Schema::create('purchase_receipts', function (Blueprint $table) {
             $table->uuid();
+            $table->foreignUuid('supplier_uuid');
             $table->foreignUuid('purchase_uuid');
             $table->foreignUuid('account_co_uuid');
             $table->foreignUuid('user_uuid');

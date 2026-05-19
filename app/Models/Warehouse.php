@@ -70,7 +70,7 @@ class Warehouse extends Model implements Auditable
 
     public function purchaseItem(): HasMany
     {
-        return $this->hasMany(PurchaseItem::class);
+        return $this->hasMany(PurchaseItem::class, 'warehouse_uuid', 'uuid');
     }
 
     public function receiptItem(): HasMany

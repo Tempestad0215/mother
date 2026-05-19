@@ -2,21 +2,23 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
 
 /**
- * @property int purchase_receipts_id
- * @property int purchase_item_id
- * @property int product_id
+ * @property string purchase_receipts_uuid
+ * @property string purchase_item_uuid
+ * @property string product_uuid
  * @property float cost
  * @property float quantity_expected
  * @property float quantity_received
- * @property int tax_id
- * @property int warehouse_id
+ * @property string tax_uuid
+ * @property string warehouse_uuid
  * @property float tax_rate
  * @property float tax_amount
  * @property float discount
@@ -29,42 +31,68 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read PurchaseReceipts purchaseReceipts
  * @property-read Product product
  */
-class PurchaseReceiptsItem extends Model
+class PurchaseReceiptsItem extends Model implements Auditable
 {
     use SoftDeletes;
+    use \OwenIt\Auditing\Auditable;
+    use HasUuids;
 
+    /**
+     * @var string
+     */
+    protected $primaryKey = 'uuid';
+    public $incrementing = false;
+    protected $keyType = 'string';
+
+
+    /**
+     * @var string[]
+     */
     protected $fillable = [
-        'purchase_receipts_id',
-        'purchase_item_id',
-        'product_id',
+        'purchase_receipts_uuid',
+        'purchase_item_uuid',
+        'product_uuid',
         'cost',
         'quantity_expected',
         'quantity_received',
-        'tax_id',
-        'warehouse_id',
+        'tax_uuid',
+        'warehouse_uuid',
         'tax_rate',
         'tax_amount',
         'discount',
-        'amount'
+        'amount',
+        'purchase_receipt_uuid'
     ];
 
+    /**
+     * @return BelongsTo
+     */
     public function tax(): BelongsTo
     {
-        return $this->belongsTo(Tax::class);
+        return $this->belongsTo(Tax::class, 'tax_uuid','uuid');
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function warehouse(): BelongsTo
     {
-        return $this->belongsTo(Warehouse::class);
+        return $this->belongsTo(Warehouse::class, 'warehouse_uuid','uuid');
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function product(): BelongsTo
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class, 'product_uuid','uuid');
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function purchaseReceipts(): BelongsTo
     {
-        return $this->belongsTo(PurchaseReceipts::class);
+        return $this->belongsTo(PurchaseReceipts::class, 'purchase_receipt_uuid','uuid');
     }
 }

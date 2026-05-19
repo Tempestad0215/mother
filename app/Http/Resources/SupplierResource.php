@@ -10,7 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 
 /**
- * @property int id
+ * @property string uuid
  * @property string|null contact
  * @property string company_name
  * @property string|null phone
@@ -33,7 +33,7 @@ class SupplierResource extends JsonResource
     {
 
         return [
-            'id' => $this->id,
+            'uuid' => $this->uuid,
             'contact' => $this->contact,
             'company_name' => $this->company_name,
             'payment' => [
@@ -44,16 +44,16 @@ class SupplierResource extends JsonResource
             'email' => $this->email,
             'receive_email' => $this->receive_email,
             'account_bank' => $this->account_bank,
-            'account' => $this->when(isset($this->account), function () use ($request) {
-                return [
-                    'id' =>  $this->account->id,
-                    'amount' => $this->account->amount,
-                    'due_date' => $this->account->due_date,
-                    'balance' => $this->account->balance,
-                    'consumed' => (($this->account->amount * 100 ) - ($this->account->balance * 100)) / 100,
-                    'late_fee_interest' => $this->account->late_fee,
-                ];
-            })
+//            'account' => $this->when(isset($this->account), function () use ($request) {
+//                return [
+//                    'id' =>  $this->account->id,
+//                    'amount' => $this->account->amount,
+//                    'due_date' => $this->account->due_date,
+//                    'balance' => $this->account->balance,
+//                    'consumed' => (($this->account->amount * 100 ) - ($this->account->balance * 100)) / 100,
+//                    'late_fee_interest' => $this->account->late_fee,
+//                ];
+//            })
         ];
     }
 }

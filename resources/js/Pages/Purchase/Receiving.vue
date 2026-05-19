@@ -66,10 +66,10 @@ const itemToEdit = ref<PurchaseItemI | null>(null);
 const lastIndex = ref(0);
 
 const form = useForm<PurchaseFormI>({
-  id: 0,
+  uuid: '',
   code: '',
-  supplier_id: 0,
-  user_id: 0,
+  supplier_uuid: '',
+  user_uuid: '',
   supplier_name: '',
   items: [],
   doc_date: '',

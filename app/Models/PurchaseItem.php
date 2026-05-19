@@ -58,6 +58,14 @@ class PurchaseItem extends Model implements Auditable
     /**
      * @return BelongsTo
      */
+    public function warehouse(): BelongsTo
+    {
+        return $this->belongsTo(Warehouse::class, 'warehouse_uuid','uuid');
+    }
+
+    /**
+     * @return BelongsTo
+     */
     public function taxR():BelongsTo
     {
         return $this->belongsTo(Tax::class, 'tax_uuid', 'uuid');
