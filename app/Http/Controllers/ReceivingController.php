@@ -7,6 +7,7 @@ use App\Dtos\ReceivingItemDto;
 use App\Enums\PurchaseStatusEnum;
 use App\Helpers\SupplierHelper;
 use App\Http\Requests\StorePurchaseReceivingRequest;
+use App\Http\Resources\PurchaseReceiptResource;
 use App\Http\Resources\PurchaseSupplierResource;
 use App\Models\Product;
 use App\Models\Purchase;
@@ -16,6 +17,7 @@ use App\Models\PurchaseReceiptsItem;
 use App\Models\Supplier;
 use App\Models\WarehouseProduct;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
@@ -26,7 +28,9 @@ class ReceivingController extends Controller
     public function index(Request $request, Supplier $supplier)
     {
 
-        $purchaseAvailable = PurchaseSupplierResource::collection(
+
+        // Obtener los datos de la recepcion
+        $purchaseAvailable = PurchaseReceiptResource::collection(
             $supplier->purchase()
                 ->whereIn('status', [PurchaseStatusEnum::Pendiente, PurchaseStatusEnum::Parcial])
                 ->with('items')
@@ -121,9 +125,7 @@ class ReceivingController extends Controller
 
                 // Buscar la primera coincidencia
                 /** @var WarehouseProduct|null $warehousePivot */
-                $warehousePivot = $product->warehouses()->where('uuid', $item->warehouse_uuid)->first();
-
-                dd($warehousePivot);
+                $warehousePivot = $product->warehouses()->where('uuid', $item->warehouse_uuid)->first()->pivot;
 
                 // Verificar si existe
                 if (!$warehousePivot) {
@@ -132,14 +134,7 @@ class ReceivingController extends Controller
                     ]);
                 }
 
-                // Actulizar los datos con raw
-//                $product->warehouses()->updateExistingPivot(
-//                    $item->warehouse_uuid,
-//                    [
-//                        'stock_quantity' => DB::raw("stock_quantity + $item->quantity"),
-//                        'updated_at' => now(),
-//                    ]);
-
+                $warehousePivot->increment('stock_quantity', $item->quantity);
 
             }
 
@@ -157,6 +152,10 @@ class ReceivingController extends Controller
     }
 
 
+    /**
+     * @param Request $request
+     * @return AnonymousResourceCollection
+     */
     private function getPurchaseApprove(Request $request)
     {
         $validate = $request->validate([
@@ -183,6 +182,10 @@ class ReceivingController extends Controller
     }
 
 
+    /**
+     * @param int $supplierId
+     * @return AnonymousResourceCollection
+     */
     public function getPurchaseAvailable(int  $supplierId)
     {
         $supplier = Purchase::query()

@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\PurchaseReceipts;
+use App\Models\PurchaseReceiptsItem;
 use App\Models\Tax;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\Date;
  * @property string $purchase_uuid
  * @property string $tax_uuid
  * @property string $warehouse_uuid
+ * @property string $supplier_uuid
  * @property float $quantity
  * @property float $cost
  * @property float $discount
@@ -39,18 +41,15 @@ class PurchaseItemResource extends JsonResource
     public function toArray(Request $request): array
     {
 
-        $receipts = PurchaseReceipts::with('items')->get();
 
-        dd($receipts->firstWhere('uuid', $this->purchaseReceipts));
 
-        $tax = bcadd(1, $this->taxR->rate,2);
-        $tax_amount = bcmul($tax, $this->cost);
+        // Devolver los dato ya listo
         return [
             ...parent::toArray($request),
             'product_name' => $this->product?->name,
             'tax_rate' => $this->taxR?->rate ?? $this->product->tax_rate ?? 0,
             'warehouse_name' => $this->warehouse?->name,
-            'tax_amount' => (float)$tax_amount
+            'tax_amount' => $this->tax_amount
         ];
     }
 }
