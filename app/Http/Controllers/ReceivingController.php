@@ -38,8 +38,7 @@ class ReceivingController extends Controller
                 ->get()
         );
 
-
-
+        // Obtener los estados de la compra
         $purchaseStatus = collect(PurchaseStatusEnum::cases())
             ->filter(fn(PurchaseStatusEnum $item) =>
                 $item !== PurchaseStatusEnum::Borrador &&
@@ -53,6 +52,7 @@ class ReceivingController extends Controller
             ->all();
 
 
+        // Renderizar la vista
         return Inertia::render('Purchase/Receiving', [
             'purchases' => $this->getPurchaseApprove($request),
             'suppliers' => SupplierHelper::getReceiving($request),
@@ -134,6 +134,7 @@ class ReceivingController extends Controller
                     ]);
                 }
 
+                // Incrementar la cantidad en el almacén
                 $warehousePivot->increment('stock_quantity', $item->quantity);
 
             }

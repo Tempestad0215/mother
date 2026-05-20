@@ -3,11 +3,11 @@
 namespace App\Http\Resources;
 
 use App\Enums\ProductTypeEnum;
-use App\Enums\TransTypeEnum;
+use App\Enums\ProductTransactionTypeEnum;
 use App\Enums\SaleTypeEnum;
 use App\Models\Comment;
 use App\Models\Product;
-use App\Models\ProTrans;
+use App\Models\ProductTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;
@@ -30,9 +30,9 @@ use Illuminate\Validation\ValidationException;
  * @property Carbon created_at,
  * @property Carbon updated_at
  * @property Carbon deleted_at
- * @property ProTrans[] infoSale
- * @property ProTrans[] sale
- * @property ProTrans[] trans
+ * @property ProductTransaction[] infoSale
+ * @property ProductTransaction[] sale
+ * @property ProductTransaction[] trans
  * @property Comment comment
  */
 
@@ -42,19 +42,19 @@ class SaleCreditNoteResource extends JsonResource
     {
         //Convertir al collectio
         $infoCollect = collect($this->infoSale)->filter(function ($item) {
-           return $item['type'] === TransTypeEnum::VENTAS;
+           return $item['type'] === ProductTransactionTypeEnum::SALE;
         });
 
         //Para pasar los datos
         $info = [];
 
         //Recorrer los datos
-        $infoCollect->map(function (ProTrans $item) use (&$info) {
+        $infoCollect->map(function (ProductTransaction $item) use (&$info) {
 
             //Obtener los productos que tengan devolucion pendiente
-            $transProduct = ProTrans::where('product_id', $item->product_id)
+            $transProduct = ProductTransaction::where('product_uuid', $item->product_uuid)
                 ->where('sale_id', $item->sale_id)
-                ->where('type', TransTypeEnum::DEVOLUCION)
+                ->where('type', ProductTransactionTypeEnum::RETURN)
                 ->where('status', true)
                 ->get();
 
@@ -62,10 +62,10 @@ class SaleCreditNoteResource extends JsonResource
             //TODO para comparar
 //            $productFirst = $transProduct->first();
             //Tomar el producto para poner los datos
-            $productFirst = Product::find($item->product_id);
+            $productFirst = Product::find($item->product_uuid);
 
             //Tomar el valor del stock para la devolucion, si es 0 pues no se incluye
-            $stockAmount = $item['stock'] - $transProduct->sum('stock');
+            $stockAmount = $item['stock'] - $transProduct->sum('quantity');
 
             //Verificar si existe
             if ($transProduct->isEmpty()) $stockAmount = $item["stock"];

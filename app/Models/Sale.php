@@ -35,7 +35,7 @@ use OwenIt\Auditing\Models\Audit;
  * @property Carbon created_at
  * @property Carbon updated_at
  * @property Carbon deleted_at
- * @property ProTrans[] infoSale
+ * @property ProductTransaction[] infoSale
  * @property PaymentTypeEnum type_payment
  * @property float received
  * @property float returned
@@ -124,7 +124,7 @@ class Sale extends Model implements Auditable
      */
     public function credit_trans():HasManyThrough
     {
-        return $this->hasManyThrough(ProTrans::class, CreditNote::class, 'sale_id','credit_note_id','uuid');
+        return $this->hasManyThrough(ProductTransaction::class, CreditNote::class, 'sale_id','credit_note_uuid','uuid');
     }
 
 
@@ -134,7 +134,7 @@ class Sale extends Model implements Auditable
      */
     public function infoSale():HasMany
     {
-        return $this->hasMany(ProTrans::class);
+        return $this->hasMany(ProductTransaction::class);
     }
 
 

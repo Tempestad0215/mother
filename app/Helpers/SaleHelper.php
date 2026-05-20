@@ -6,7 +6,7 @@ use App\Dtos\InventoryMovementDto;
 use App\Dtos\SaleItemApiDto;
 use App\Dtos\SaleItemDto;
 use App\Enums\InventoryMovementConceptEnum;
-use App\Enums\TransTypeEnum;
+use App\Enums\ProductTransactionTypeEnum;
 use App\Enums\ProductTypeEnum;
 use App\Enums\SaleTypeEnum;
 use App\Enums\SequenceSaleTypeEnum;
@@ -17,7 +17,7 @@ use App\Http\Requests\StoreProductSaleRequest;
 use App\Http\Resources\SaleInfoResource;
 use App\Models\DeletedSale;
 use App\Models\Product;
-use App\Models\ProTrans;
+use App\Models\ProductTransaction;
 use App\Models\Sale;
 use App\Models\Setting;
 use Illuminate\Database\Eloquent\Builder;
@@ -159,10 +159,10 @@ class SaleHelper
             $idTransProduct = $request->input('info')['transID'];
 
 
-            ProTrans::where('id',$idTransProduct)->update([
+            ProductTransaction::where('uuid',$idTransProduct)->update([
                 'deleted_at' => now(),
-                'reserved' => 0,
-                'type' => TransTypeEnum::ELIMINADO,
+                'reserved_quantity' => 0,
+                'type' => ProductTransactionTypeEnum::CANCELLED,
             ]);
 
             // si tiene reserva, pues se descuenta ese monto
@@ -320,11 +320,11 @@ class SaleHelper
             if ($closeTable)
             {
                 //Crear la transacciones
-                TransHelper::store($item, TransTypeEnum::VENTAS, $sale, $product);
+                TransHelper::store($item, ProductTransactionTypeEnum::SALE, $sale, $product);
 
             }else{
                 //Crear la transacciones
-                TransHelper::store($item, TransTypeEnum::RESERVA, $sale, $product);
+                TransHelper::store($item, ProductTransactionTypeEnum::RESERVATION, $sale, $product);
             }
         });
 

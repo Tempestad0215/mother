@@ -223,7 +223,7 @@ class Product extends Model implements Auditable
     //Transacciones
     public function trans():HasMany
     {
-        return $this->hasMany(ProTrans::class, 'product_id','uuid');
+        return $this->hasMany(ProductTransaction::class, 'product_uuid','uuid');
     }
 
     public function inventory():HasOne

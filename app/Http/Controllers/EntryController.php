@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\TransTypeEnum;
+use App\Enums\ProductTransactionTypeEnum;
 use App\Helpers\InHelper;
 use App\Helpers\TransHelper;
 use App\Http\Resources\ProductTransResource;
 use App\Models\Product;
 use App\Http\Requests\StoreProductInRequest;
 use App\Http\Requests\UpdateProductInRequest;
-use App\Models\ProTrans;
+use App\Models\ProductTransaction;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -96,10 +96,10 @@ class EntryController extends Controller
 
     /**
      * @param Request $request
-     * @param ProTrans $trans
+     * @param ProductTransaction $trans
      * @return Response
      */
-    public function edit(Request $request, ProTrans $trans): Response
+    public function edit(Request $request, ProductTransaction $trans): Response
     {
 
         //conseguir  los datos
@@ -136,10 +136,10 @@ class EntryController extends Controller
 
     /**
      * @param UpdateProductInRequest $request
-     * @param ProTrans $trans
+     * @param ProductTransaction $trans
      * @return RedirectResponse|void
      */
-    public function update(UpdateProductInRequest $request, ProTrans $trans)
+    public function update(UpdateProductInRequest $request, ProductTransaction $trans)
     {
         //        Tomar las fechas
         $updateDay = config('appconfig.document-update');
@@ -169,7 +169,7 @@ class EntryController extends Controller
 
 
                 //conseguir los datos del producto
-                $product = Product::find($trans->product_id);
+                $product = Product::find($trans->product_uuid);
 
 
                 //Actualizar la transaciom
@@ -185,10 +185,10 @@ class EntryController extends Controller
     }
 
     /**
-     * @param ProTrans $trans
+     * @param ProductTransaction $trans
      * @return RedirectResponse
      */
-    public function destroy(ProTrans $trans)
+    public function destroy(ProductTransaction $trans)
     {
 
         //dia para eliminar documento
@@ -210,8 +210,8 @@ class EntryController extends Controller
             $trans->save();
 
             //Obtener el producto
-            $prodcut = Product::find($trans->product_id);
-            $prodcut->stock -= $trans->stock;
+            $prodcut = Product::find($trans->product_uuid);
+            $prodcut->stock -= $trans->quantity;
             $prodcut->save();
 
             //Retornar hacia atras

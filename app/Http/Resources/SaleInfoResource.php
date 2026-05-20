@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use App\Enums\SaleTypeEnum;
 use App\Models\Client;
 use App\Models\Comment;
-use App\Models\ProTrans;
+use App\Models\ProductTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;
@@ -30,7 +30,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon created_at,
  * @property Carbon updated_at
  * @property Carbon deleted_at
- * @property ProTrans[] infoSale
+ * @property ProductTransaction[] infoSale
  * @property Comment comment
  */
 class SaleInfoResource extends JsonResource
@@ -44,14 +44,14 @@ class SaleInfoResource extends JsonResource
         $data = collect($this->infoSale);
 
         //Recorrer los datos para guardarlos
-        $data->each(function (ProTrans $item) use (&$infoFinal) {
+        $data->each(function (ProductTransaction $item) use (&$infoFinal) {
 
 
             //Agregar los datos
            $infoFinal[] = [
                'transID' => $item->uuid,
                'code' => $item->product->code ?? null,
-               'product_id' => $item->product_id,
+               'product_id' => $item->product_uuid,
                'product_name' => $item->product_name,
                'sale_id' => $item->sale_id,
                'amount' => $item->amount,
@@ -61,8 +61,8 @@ class SaleInfoResource extends JsonResource
                'min_price' => $item->min_price,
                'special_price' => $item->special_price,
                'status' => $item->status,
-               'stock' => $item->stock,
-               'reserved' => $item->reserved,
+               'stock' => $item->quantity,
+               'reserved' => $item->reserved_quantity,
                'tax' => $item->tax,
                'tax_rate' => $item->tax_rate,
                'type' => $item->product->type,

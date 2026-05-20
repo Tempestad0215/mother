@@ -30,7 +30,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property Carbon created_at,
  * @property Carbon updated_at
  * @property Carbon deleted_at
- * @property ProTrans[] trans
+ * @property ProductTransaction[] trans
  * @property Sale sale_id,
  * @property PaymentTypeEnum type_payment,
  * @property float received
@@ -85,7 +85,7 @@ class CreditNote extends Model implements Auditable
      */
     public function trans():HasMany
     {
-        return $this->hasMany(ProTrans::class,'credit_note_id');
+        return $this->hasMany(ProductTransaction::class,'credit_note_uuid');
 
     }
 

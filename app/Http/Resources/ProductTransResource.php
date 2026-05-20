@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Enums\TransTypeEnum;
+use App\Enums\ProductTransactionTypeEnum;
 use App\Models\Product;
 use App\Models\Sale;
 use Illuminate\Http\Request;
@@ -20,7 +20,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property float $price
  * @property float $discount
  * @property float $discount_amount
- * @property TransTypeEnum $type
+ * @property ProductTransactionTypeEnum $type
  * @property boolean $status
  * @property string $created_at
  * @property string $updated_at
@@ -44,7 +44,7 @@ class ProductTransResource extends JsonResource
             'product_name' => $this->product->name,
             'cost' => $this->product->cost,
             'tax_rate' => $this->product->tax_rate,
-            'stock' => $this->stock,
+            'stock' => $this->quantity,
             'price' => $this->price,
             'discount' => $this->discount,
             'tax' => $this->tax,

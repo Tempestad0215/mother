@@ -4,7 +4,7 @@ namespace App\Helpers;
 
 use App\Http\Resources\ProductTransResource;
 use App\Models\Product;
-use App\Models\ProTrans;
+use App\Models\ProductTransaction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
@@ -21,7 +21,7 @@ class InHelper
         $search = $request->get('search');
 
         //Extraer los datos
-        $data = ProTrans::where('status', true)
+        $data = ProductTransaction::where('status', true)
             ->whereHas('product', function (Builder $query) use ($search) {
                $query->where('name', 'LIKE', '%'.$search.'%');
             })

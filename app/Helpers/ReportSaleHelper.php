@@ -3,7 +3,7 @@
 namespace App\Helpers;
 
 use App\Enums\PaymentTypeEnum;
-use App\Models\ProTrans;
+use App\Models\ProductTransaction;
 use App\Models\Sale;
 
 class ReportSaleHelper
@@ -40,9 +40,9 @@ class ReportSaleHelper
         if ($data)
         {
             //suma los productos vendidos
-            $productsSold = ProTrans::where('status', true)
-                ->whereIn('sale_id', $data->pluck('uuid'))
-                ->sum('stock');
+            $productsSold = ProductTransaction::where('status', true)
+                ->whereIn('sale_id', $data->pluck('id'))
+                ->sum('quantity');
 
             //Para almacenar los datos
             $dataTotal = [

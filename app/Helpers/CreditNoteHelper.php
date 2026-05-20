@@ -3,14 +3,14 @@
 namespace App\Helpers;
 
 use App\Dtos\SaleCreditNoteDto;
-use App\Enums\TransTypeEnum;
+use App\Enums\ProductTransactionTypeEnum;
 use App\Enums\ProductTypeEnum;
 use App\Enums\SaleTypeEnum;
 use App\Enums\SequenceSaleTypeEnum;
 use App\Http\Requests\StoreProductSaleRequest;
 use App\Models\CreditNote;
 use App\Models\Product;
-use App\Models\ProTrans;
+use App\Models\ProductTransaction;
 use App\Models\Sale;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
@@ -102,7 +102,7 @@ class CreditNoteHelper
                 else{
 
                     //Crear la transaccion individual
-                    TransHelper::store($item, TransTypeEnum::DEVOLUCION, $sale,$product, $creditNote);
+                    TransHelper::store($item, ProductTransactionTypeEnum::RETURN, $sale,$product, $creditNote);
 
                     // Verificar si la nota de credito y la venta es 0
                     $amount = $sale->amount - $creditNote->amount;
@@ -124,7 +124,7 @@ class CreditNoteHelper
                         $product->increment('stock', $item['stock']);
 
                         //Verificar si es resera o no
-                        if ($productCheck?->type == TransTypeEnum::RESERVA)
+                        if ($productCheck?->type == ProductTransactionTypeEnum::RESERVATION)
                         {
                             //Deducir de la reserva
                             $product->decrement('reserved', $item['stock']);
@@ -134,9 +134,9 @@ class CreditNoteHelper
 
                     //Tomar el total de toda la devoluciones
                     $stockRet = $product->trans
-                        ->where('type', TransTypeEnum::DEVOLUCION)
+                        ->where('type', ProductTransactionTypeEnum::RETURN)
                         ->where('sale_id', $sale->id)
-                        ->sum('stock');
+                        ->sum('quantity');
 
 
                     //Tomar el resultado
@@ -150,7 +150,7 @@ class CreditNoteHelper
                     {
 
                         // Actualizar el status del producto
-                        ProTrans::where('id', $saleInfo->id)
+                        ProductTransaction::where('uuid', $saleInfo->uuid)
                             ->update([
                                 'status' => false
                             ]);
