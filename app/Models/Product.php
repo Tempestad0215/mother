@@ -145,7 +145,10 @@ class Product extends Model implements Auditable
     }
 
 
-    public function price_list():BelongsToMany
+    /***
+     * @return BelongsToMany
+     */
+    public function priceList():BelongsToMany
     {
         return $this->belongsToMany(PriceList::class,'price_list_products')
             ->withPivot([
@@ -155,7 +158,10 @@ class Product extends Model implements Auditable
             ]);
     }
 
-//    Relacion para el stock
+
+    /***
+     * @return BelongsToMany
+     */
     public function warehouses():BelongsToMany
     {
         return $this->belongsToMany(Warehouse::class, 'warehouse_products')
@@ -170,19 +176,26 @@ class Product extends Model implements Auditable
             )->withTimestamps();
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function brand():BelongsTo
     {
         return $this->belongsTo(Brand::class);
     }
 
 
-
+    /**
+     * @return mixed
+     */
     public function getTotalAttribute()
     {
         return $this->warehouses->sum('pivot.stock_quantity');
     }
 
-    // Stock disponible total
+    /**
+     * @return mixed
+     */
     public function getTotalAvailableAttribute()
     {
         return $this->warehouses->sum(function($warehouse) {
@@ -200,37 +213,58 @@ class Product extends Model implements Auditable
         return $this->belongsTo(Supplier::class);
     }
 
-
+    /**
+     * @return BelongsTo
+     */
     public function tax():BelongsTo
     {
         return $this->belongsTo(Tax::class);
     }
+
+    /**
+     * @return HasMany
+     */
     public function receiptsItem(): HasMany
     {
         return $this->hasMany(PurchaseReceiptsItem::class);
     }
 
+    /**
+     * @return HasMany
+     */
     public function SaleItem(): HasMany
     {
         return $this->hasMany(SaleItem::class);
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function category():BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
+    /**
+     * @return HasMany
+     */
     //Transacciones
     public function trans():HasMany
     {
         return $this->hasMany(ProductTransaction::class, 'product_uuid','uuid');
     }
 
+    /**
+     * @return HasOne
+     */
     public function inventory():HasOne
     {
         return $this->hasOne(Inventory::class);
     }
 
+    /**
+     * @return MorphMany
+     */
     public function movements():MorphMany
     {
         return $this->morphMany(InventoryMovement::class, 'movementable');

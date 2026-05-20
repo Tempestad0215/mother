@@ -28,7 +28,6 @@ class ReceivingController extends Controller
     public function index(Request $request, Supplier $supplier)
     {
 
-
         // Obtener los datos de la recepcion
         $purchaseAvailable = PurchaseReceiptResource::collection(
             $supplier->purchase()
@@ -68,6 +67,7 @@ class ReceivingController extends Controller
     public function store(StorePurchaseReceivingRequest $request)
     {
         // Convertir los datos
+
         $receivingDto = ReceivingDto::fromArray($request->validated());
 
         // ejecutar para proteger los datos
@@ -120,19 +120,16 @@ class ReceivingController extends Controller
                 ]);
 
                 // Obtener el producto en la lista
+                /** @var Product|null $product */
                 $product = $productBatch->get($item->product_uuid);
 
+                // Actualizar el productos
+                $product->cost = $item->cost;
+                $product->save();
 
                 // Buscar la primera coincidencia
                 /** @var WarehouseProduct|null $warehousePivot */
                 $warehousePivot = $product->warehouses()->where('uuid', $item->warehouse_uuid)->first()->pivot;
-
-                // Verificar si existe
-                if (!$warehousePivot) {
-                    throw ValidationException::withMessages([
-                        'warehouse_uuid' => "El producto {$item->product_name} no tiene asignado el almacén seleccionado en los registros.",
-                    ]);
-                }
 
                 // Incrementar la cantidad en el almacén
                 $warehousePivot->increment('stock_quantity', $item->quantity);
@@ -146,9 +143,6 @@ class ReceivingController extends Controller
             $purchase->status = $receivingDto->status;
             $purchase->save();
         });
-
-
-
 
     }
 

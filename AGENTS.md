@@ -264,4 +264,3 @@ All model changes are logged via `OwenIT\Auditing\Auditable`:
 - Check `storage/logs/laravel.log`
 - Vue DevTools extension for Inertia props
 - PHPStorm debugger with Xdebug for step-through debugging
-

@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;
+use PhpOffice\PhpSpreadsheet\Calculation\Financial\Securities\Price;
+
 /**
  * @property string $uuid
  * @property string $type
@@ -47,6 +49,7 @@ use Illuminate\Support\Carbon;
  *
  *
  * @property-read Brand $brand
+ * @property-read PriceList[] $priceList
  * @property-read Tax $tax
  * @property-read Collection<int, PriceList $price_list>
  * @property-read Collection<int, Warehouse $warehouses>
@@ -58,6 +61,13 @@ class ProductResource extends JsonResource
 
     public function toArray(Request $request): array
     {
+        /** @var PriceList[] $priceLists */
+        $priceLists = $this->whenLoaded('priceList');
+
+//        dd($priceLists->map(function (PriceList $priceList) {
+//            return $priceList->pivot->price;
+//        }));
+
         return [
             // 🆔 Identificadores
             'uuid'           =>  $this->uuid,

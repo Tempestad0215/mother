@@ -2,7 +2,7 @@
 import Pagination from '@components/Pagination.vue';
 import { ProductBaseI, ProductTableI } from '@/Interfaces/ProductInterface';
 import { router, usePage } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useRoute } from 'ziggy-js';
 import {
   Breadcrumb,
@@ -92,12 +92,12 @@ const deleteData = (data: ProductTableI, event: Event) => {
 };
 
 const getPriceFromList = (product: ProductTableI): number => {
-  const item = product.price_lists.find((el) => el.uuid == product.default_price_list);
-  if (item) {
-    return item.price;
-  } else {
+  // Add safety check for price_lists
+  if (!product || !product.price_lists || !Array.isArray(product.price_lists)) {
     return 0;
   }
+  const item = product.price_lists.find((el) => el.uuid == product.default_price_list);
+  return item ? item.price : 0;
 };
 </script>
 
@@ -145,9 +145,12 @@ const getPriceFromList = (product: ProductTableI): number => {
         />
         <Column header="Precio">
           <template #body="{ data }: { data: ProductTableI }">
-            <span :class="{ 'text-red-500': getPriceFromList(data) <= 0 }">{{
-              getMoney(getPriceFromList(data))
-            }}</span>
+            <span
+              :key="`price-${data.uuid}`"
+              :class="{ 'text-red-500': getPriceFromList(data) <= 0 }"
+            >
+              {{}}
+            </span>
           </template>
         </Column>
         <Column

@@ -16,7 +16,7 @@ class ReceivingDto extends BaseDto
      * @param float $tax
      * @param float $discount
      * @param float $sub_total
-     * @param string $comment
+     * @param string|null $comment
      * @param string $status
      */
     public function __construct(
@@ -30,7 +30,7 @@ class ReceivingDto extends BaseDto
         public  float  $tax,
         public  float  $discount,
         public  float  $sub_total,
-        public  string $comment,
+        public  ?string $comment = null,
         public  string $status,
     )
     {

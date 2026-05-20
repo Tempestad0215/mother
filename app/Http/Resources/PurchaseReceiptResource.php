@@ -12,7 +12,7 @@ class PurchaseReceiptResource extends JsonResource
         // Tomar el item
         $items = $this->whenLoaded('items');
         // Convertir a colección de recursos para tener los valores recalculados
-        $itemResources = $items ? PurchaseItemResource::collection($items) : null;
+        $itemResources = $items ? PurchaseReceiptItemResource::collection($items) : null;
 
         // Extraer los arrays con los valores ya recalculados
         $itemsArray = $itemResources ? $itemResources->resolve() : [];

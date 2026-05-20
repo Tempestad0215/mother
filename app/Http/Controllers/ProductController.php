@@ -61,20 +61,29 @@ class ProductController extends Controller implements HasMiddleware
     public function index(PaginationRequest $request): Response|RedirectResponse
     {
 
+        /** @var string|null $search */
         $search = $request->input('search');
+        // Para controlar la cantidad de datos por pagina
         $perPage = $request->input('per_page');
-        $queryProduct = Product::query()->with(['price_list','brand','warehouses']);
+        // Realizar la busqueda
+        $queryProduct = Product::query()->with(['priceList','brand','warehouses']);
+
+        // Verificar si existe
         if (!empty($search)) {
             $queryProduct->where('name', 'like', '%' . $search . '%')
                 ->orWhere('description', 'like', '%' . $search . '%');
 
         }
 
+        // Tomar los datos paginados
         $product_paginated = $queryProduct->simplePaginate($perPage);
+
+        // Pasarlo con los query
         $product_paginated->withQueryString();
+        // Transformar los datos
         $products = ProductResource::collection($product_paginated);
 
-
+        // Tomar los datos de tipo de producto
         $productType = collect(ProductTypeEnum::cases())->mapWithKeys(fn(ProductTypeEnum $item) => [$item->name => $item->value])->toArray();
 
         //Verificar si existe configuración
