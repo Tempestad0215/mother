@@ -2,7 +2,7 @@
 import Pagination from '@components/Pagination.vue';
 import { ProductBaseI, ProductTableI } from '@/Interfaces/ProductInterface';
 import { router, usePage } from '@inertiajs/vue3';
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import { useRoute } from 'ziggy-js';
 import {
   Breadcrumb,
@@ -145,11 +145,8 @@ const getPriceFromList = (product: ProductTableI): number => {
         />
         <Column header="Precio">
           <template #body="{ data }: { data: ProductTableI }">
-            <span
-              :key="`price-${data.uuid}`"
-              :class="{ 'text-red-500': getPriceFromList(data) <= 0 }"
-            >
-              {{}}
+            <span :key="`price-${data.uuid}`" :class="{ 'text-red-500': data.price <= 0 }">
+              {{ PreciseCalculator.formatCurrency(data.price) }}
             </span>
           </template>
         </Column>

@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\Brand;
 use App\Models\PriceList;
+use App\Models\PriceListProduct;
 use App\Models\PurchaseReceiptsItem;
 use App\Models\Tax;
 use App\Models\Warehouse;
@@ -40,6 +41,7 @@ use PhpOffice\PhpSpreadsheet\Calculation\Financial\Securities\Price;
  * @property bool $has_promotion
  * @property bool $has_tax
  * @property bool $is_service
+ * @property string $default_price_list
  * @property bool $handle_warehouse
  * @property string $supplier_uuid
  * @property string $category_uuid
@@ -63,10 +65,13 @@ class ProductResource extends JsonResource
     {
         /** @var PriceList[] $priceLists */
         $priceLists = $this->whenLoaded('priceList');
+        //Tomar la primera
+        /** @var PriceList $priceListCurrent */
+        $priceListCurrent = collect($priceLists)->firstWhere('uuid', $this->default_price_list);
+        // Pivot
+        /** @var PriceListProduct $pivotPrice */
+        $pivotPrice = $priceListCurrent->pivot;
 
-//        dd($priceLists->map(function (PriceList $priceList) {
-//            return $priceList->pivot->price;
-//        }));
 
         return [
             // 🆔 Identificadores
@@ -94,6 +99,7 @@ class ProductResource extends JsonResource
                 return new ProductWarehouseResource($this);
             }),
             'cost'           => (float) number_format($this->cost, 2),
+            'price' => (float) $pivotPrice->price,
             'benefits'       => (float) number_format($this->benefits, 2),
             'benefits_rate'  => (float) number_format($this->benefits_rate, 2),
 

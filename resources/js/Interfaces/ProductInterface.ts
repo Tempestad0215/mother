@@ -68,6 +68,7 @@ export interface ProductTableI {
   category_uuid: string | null;
   code: string;
   cost: number;
+  price: number;
   default_price_list: string;
   default_warehouse: string;
   description: string | null;
