@@ -7,7 +7,7 @@ import {
   faBoxOpen,
   faTableCellsColumnLock,
 } from '@fortawesome/free-solid-svg-icons';
-import { ProductBaseI } from '@/Interfaces/ProductInterface';
+import { ProductBaseI, ProductTableI } from '@/Interfaces/ProductInterface';
 import { computed, inject, ref, watch } from 'vue';
 import { saleDataI, SaleTypeEnumI } from '@/Interfaces/SaleInterface';
 import { saleKey } from '@/utils/keys';
@@ -17,6 +17,7 @@ import { useRoute } from 'ziggy-js';
 import { FloatLabel, InputText, Select, ToggleButton, Dialog } from 'primevue';
 import FShowProduct from '@/Pages/Products/FShowProduct.vue';
 import { PreciseCalculator } from '@/utils/Decimal';
+import { Grid2X2Plus, ShoppingCart, Undo2 } from '@lucide/vue';
 
 const route = useRoute();
 const page = usePage();
@@ -25,7 +26,7 @@ const propsW = defineProps<{
   invoiceType: invoiceTypeI[];
   refund?: boolean;
   saleOpen: PaginationI<saleDataI>;
-  products: PaginationI<ProductBaseI>;
+  products: PaginationI<ProductTableI>;
   saleTypeEnum: SaleTypeEnumI;
 }>();
 
@@ -117,7 +118,7 @@ watch(
 const getSaleOpen = (item: saleDataI) => {
   //Colocar la variable en nada al principio
   form.info_sale = [];
-  form.id = item.id;
+  form.uuid = item.uuid;
   form.update = true;
 
   setTimeout(() => {
@@ -134,7 +135,7 @@ const getSaleOpen = (item: saleDataI) => {
   emit('totalSale');
 
   //colocar los datos en el formulario
-  form.client_id = item.client_id;
+  form.client_uuid = item.client_uuid;
   form.client_rnc = item.client_document ?? '';
   form.ncf = item.ncf;
   form.invoice_type = item.invoice_type;
@@ -150,14 +151,14 @@ const openReturn = () => {
   showReturn.value = !showReturn.value;
 };
 
-const getDataProduct = (data: ProductBaseI) => {
+const getDataProduct = (data: ProductTableI) => {
   showProducts.value = false;
-  const getIndex = form.info_sale.findIndex((el) => el.product_uuid === data.id);
+  const getIndex = form.info_sale.findIndex((el) => el.product_uuid === data.uuid);
 
   if (getIndex >= 0) {
     form.info_sale[getIndex].stock += 1.0;
   } else {
-    const taxPlus = Number(PreciseCalculator.multiply(data.tax_rate || 0, data.price));
+    const taxPlus = Number(PreciseCalculator.multiply(data.tax.rate || 0, data.price));
     let taxForProduct: number;
 
     if (taxPlus === 0) {
@@ -173,8 +174,8 @@ const getDataProduct = (data: ProductBaseI) => {
       price: data.price,
       min_price: data.min_price,
       special_price: data.special_price,
-      tax_uuid: data.tax_id,
-      warehouse_uuid: data.warehouse_id,
+      tax_uuid: data.tax_uuid,
+      warehouse_uuid: data.warehouse_uuid,
       tax_rate: taxForProduct,
       discount: 0,
       discount_amount: 0,
@@ -206,26 +207,29 @@ defineExpose({
         </FloatLabel>
       </form>
       <!-- Buscar los datos necesario -->
-      <div v-if="!propsW.refund" class="ml-3">
-        <FontAwesomeIcon
-          title="Productos"
-          @click="showProducts = !showProducts"
-          class="icon-efect text-cyan-400 text-3xl"
-          :icon="faBoxOpen"
-        />
+      <div v-if="!propsW.refund" class="ml-3 flex items-center space-x-3">
+        <ShoppingCart class="hover:scale-125 duration-300" :size="30" />
+        <Grid2X2Plus class="hover:scale-125 duration-300" :size="30" />
+        <Undo2 class="hover:scale-125 duration-300" :size="30" />
+        <!--        <FontAwesomeIcon-->
+        <!--          title="Productos"-->
+        <!--          @click="showProducts = !showProducts"-->
+        <!--          class="icon-efect text-cyan-400 text-3xl"-->
+        <!--          :icon="faBoxOpen"-->
+        <!--        />-->
 
-        <FontAwesomeIcon
-          title="Cuentas Abiertas"
-          @click="showSaleOpen = !showSaleOpen"
-          class="ml-3 icon-efect text-cyan-400 text-3xl"
-          :icon="faTableCellsColumnLock"
-        />
-        <FontAwesomeIcon
-          @click="showFormReturn = !showFormReturn"
-          title="Devolucion"
-          class="ml-3 icon-efect text-cyan-400 text-3xl"
-          :icon="faArrowRotateBack"
-        />
+        <!--        <FontAwesomeIcon-->
+        <!--          title="Cuentas Abiertas"-->
+        <!--          @click="showSaleOpen = !showSaleOpen"-->
+        <!--          class="ml-3 icon-efect text-cyan-400 text-3xl"-->
+        <!--          :icon="faTableCellsColumnLock"-->
+        <!--        />-->
+        <!--        <FontAwesomeIcon-->
+        <!--          @click="showFormReturn = !showFormReturn"-->
+        <!--          title="Devolucion"-->
+        <!--          class="ml-3 icon-efect text-cyan-400 text-3xl"-->
+        <!--          :icon="faArrowRotateBack"-->
+        <!--        />-->
       </div>
     </div>
 

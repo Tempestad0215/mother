@@ -255,4 +255,33 @@ Route::middleware([
             ])
             ->name('test.pdf');
     })->name('printTest');
+
+
+    Route::get('/test/2', function (){
+
+        $product = \App\Models\Product::first();
+
+        $labelTemplate = view('pdfs.ticket.label',[
+            'code' => $product->code
+        ])->render();
+
+        $response = \Illuminate\Support\Facades\Http::attach('index.hmtl', $labelTemplate, 'index.html')
+            ->post("http://localhost:3100/forms/chromium/convert/html",[
+                'paperWidth' => '3.14',  // 80mm en pulgadas
+                'paperHeight' => '1.5',   // Alto estimado de página corta
+                'marginLeft' => '0.1',
+                'marginRight' => '0.1',
+                'marginTop' => '0.1',    // Espacio para la cabecera fija
+                'marginBottom' => '0.1',
+                'waitDelay' => '600ms',  // Tiempo para que cargue Tailwind 4 por CDN
+            ]);
+
+        if ($response->successful()){
+            return response($response->body(),200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="ticket.pdf"',
+            ]);
+        }
+        return response()->json(['error' => 'No se pudo conectar con Gotenberg'], 500);
+    });
 });

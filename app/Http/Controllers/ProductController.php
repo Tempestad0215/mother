@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Dtos\InventoryDto;
 use App\Dtos\PriceListProductDto;
 use App\Dtos\ProductDto;
 use App\Enums\ProductTypeEnum;
 use App\Helpers\GeneralHelper;
 use App\Helpers\PriceListProductHelper;
-use App\Helpers\ProductInventoryHelper;
-use App\Helpers\TaxHelper;
 use App\Helpers\WarehouseProductHelper;
 use App\Http\Requests\PaginationRequest;
 use App\Http\Requests\StoreProductRequest;
@@ -17,7 +14,6 @@ use App\Http\Resources\ProductResource;
 use App\Http\Resources\ProductSupplierResource;
 use App\Models\Brand;
 use App\Models\Category;
-use App\Models\Inventory;
 use App\Models\PriceList;
 use App\Models\Product;
 use App\Models\Setting;
@@ -25,15 +21,16 @@ use App\Models\Supplier;
 use App\Models\Tax;
 use App\Models\Unit;
 use App\Models\Warehouse;
-use App\Pdfs\ProductLabelV1;
+use Exception;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 use Inertia\Response;
 use Throwable;
@@ -118,7 +115,7 @@ class ProductController extends Controller implements HasMiddleware
     }
 
     /**
-     * Summary of store
+     * Summary of the store
      * @param StoreProductRequest $request
      * @return RedirectResponse
      * @throws Throwable
@@ -156,7 +153,7 @@ class ProductController extends Controller implements HasMiddleware
     }
 
     /**
-     * Summary of show
+     * Summary of the show
      * @param Request $request
      * @return Response
      */
@@ -250,7 +247,7 @@ class ProductController extends Controller implements HasMiddleware
 
             // Verificar si tien stock disponible
             if($hasStock){
-                throw new \Exception("No se puede eliminar el producto, ya que tiene stock disponible.");
+                throw new Exception("No se puede eliminar el producto, ya que tiene stock disponible.");
             }
 
             // Elimianr el producto
@@ -333,24 +330,39 @@ class ProductController extends Controller implements HasMiddleware
     }
 
 
+    /**
+     * @throws Throwable
+     * @throws ConnectionException
+     */
     public function createLabel(string $code)
     {
-        $fileName = "$code-label.pdf";
-        $filePath = \Storage::disk('labels')->path($fileName);
-        $pdf = new ProductLabelV1();
-        $pdf->createInfo($code);
-        $pdf->Output($filePath, 'F');
 
+        // Craer el template con los datos
+        $labelTemplate = view('pdfs.ticket.label',[
+            'code' => $code
+        ])->render();
 
-        $url = asset("storage/pdfs/labels/$fileName");
+        // Crear la respuestas
+        $response = Http::attach('index.hmtl', $labelTemplate, 'index.html')
+            ->post("http://localhost:3100/forms/chromium/convert/html",[
+                'paperWidth' => '3.14',  // 80mm en pulgadas
+                'paperHeight' => '1.5',   // Alto estimado de página corta
+                'marginLeft' => '0.1',
+                'marginRight' => '0.1',
+                'marginTop' => '0.1',    // Espacio para la cabecera fija
+                'marginBottom' => '0.1',
+                'waitDelay' => '600ms',  // Tiempo para que cargue Tailwind 4 por CDN
+            ]);
 
-        if (!Storage::disk('labels')->exists($fileName)) {
-            abort(404, 'No existe el label');
+        // Devolver si es correcto
+        if ($response->successful()){
+            return response($response->body(),200,[
+                'content-type' => 'application/pdf'
+            ]);
         }
 
-        return \response()->json([
-            'url' => $url,
-        ]);
+        // Devolver mensaje de error
+        return response()->json(['error' => 'Error al generar ticket'], 500);
 
     }
 

@@ -176,8 +176,6 @@ const totalAmount = (index: number) => {
   //Pasar los datos al formulario
   info.tax_uuid = parseFloat(PreciseCalculator.multiply(info.amount, info.tax_rate).toFixed(2));
 
-  console.log(info.tax_uuid);
-
   //Calcular los totales
   calculateTotals();
 };

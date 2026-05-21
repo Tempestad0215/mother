@@ -51,7 +51,9 @@ class Client extends Model implements Auditable
     use softDeletes;
     use HasUuids;
 
-
+    /**
+     * @var string
+     */
     protected $primaryKey = 'uuid';
     protected $keyType = 'string';
     public $incrementing = false;
@@ -75,6 +77,9 @@ class Client extends Model implements Auditable
     ];
 
 
+    /**
+     * @var string[]
+     */
     protected $casts = [
         'type' => ClientTypeEnum::class,
         'type_rnc' => SequenceSaleTypeEnum::class,
@@ -83,6 +88,9 @@ class Client extends Model implements Auditable
     ];
 
 
+    /**
+     * @return Attribute
+     */
     public function email():Attribute
     {
         return Attribute::make(
@@ -91,12 +99,17 @@ class Client extends Model implements Auditable
         );
     }
 
+    /**
+     * @return MorphOne
+     */
     public function image():MorphOne
     {
         return $this->morphOne(Image::class, 'imageable');
     }
 
-
+    /**
+     * @return MorphOne
+     */
     public function account():MorphOne
     {
         return $this->morphOne(Account::class, 'accountable');
@@ -126,6 +139,10 @@ class Client extends Model implements Auditable
         });
     }
 
+    /**
+     * @param Model $model
+     * @return string
+     */
     private static function generateCode(Model $model):string
     {
 //        Contar los nuemros totales

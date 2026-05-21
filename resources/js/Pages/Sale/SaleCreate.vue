@@ -2,7 +2,7 @@
 import { router, useForm, usePage } from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
 import { onMounted, onUpdated, provide, Ref, ref } from 'vue';
-import { ProductBaseI } from '@/Interfaces/ProductInterface';
+import { ProductBaseI, ProductTableI } from '@/Interfaces/ProductInterface';
 import { printPdf } from '@/Global/Helpers';
 import { clientBaseI } from '@/Interfaces/ClientInterface';
 import axios from 'axios';
@@ -36,7 +36,7 @@ const page = usePage();
  * Datos del back end
  */
 const propsW = defineProps<{
-  products: PaginationI<ProductBaseI>;
+  products: PaginationI<ProductTableI>;
   clients: PaginationI<clientBaseI>;
   saleOpen: PaginationI<saleDataI>;
   invoiceType: invoiceTypeI[];
@@ -64,12 +64,12 @@ const salePaymentRef = ref<InstanceType<typeof PaymentInvoice>>()!;
  * Formulario
  */
 const form = useForm<CreateSaleI>({
-  id: 0,
+  uuid: '',
   code_value: '',
   ncf: '',
   ncf_m: '',
   client_name: '',
-  client_id: 0,
+  client_uuid: '',
   client_rnc: '',
   client_rnc_status: '',
   client_social: '',
@@ -79,7 +79,7 @@ const form = useForm<CreateSaleI>({
   amount: 0,
   sub_total: 0,
   comment: '',
-  comment_id: 0,
+  comment_uuid: '',
   close_table: false,
   received: 0,
   returned: 0,
@@ -144,10 +144,10 @@ Funciones
 const setDataForm = () => {
   //Verificar si existe los datos para devoluicion
   if (propsW.refund && propsW.saleInfo) {
-    form.id = propsW.saleInfo.id;
+    form.uuid = propsW.saleInfo.uuid;
     form.ncf_m = propsW.saleInfo.ncf;
     form.client_name = propsW.saleInfo.client_name;
-    form.client_id = propsW.saleInfo.client_id;
+    form.client_uuid = propsW.saleInfo.client_uuid;
     form.client_rnc = propsW.saleInfo.client_rnc;
     form.info_sale = propsW.saleInfo.info_sale;
     form.invoice_type = page.props.setting.sequence ? 'B04' : '';
@@ -164,7 +164,7 @@ const setDataForm = () => {
 const createCreditNotes = () => {
   // Enviar los datos para las devoluciones
   axios
-    .patch(route('credit-note.store', { sale: form.id }), form)
+    .patch(route('credit-note.store', { sale: form.uuid }), form)
     .then((res) => {
       if (res.data.success) {
         //Imprimir el pdf

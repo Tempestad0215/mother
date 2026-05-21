@@ -136,7 +136,7 @@ class ProductHelper
 //            }
 
 
-//            Crear el movimiento de inventario
+            // Crear el movimiento de inventario
             $product->movements()->create([
                 'type' => $data->type,
                 'warehouse_id' => $data->warehouse_id,
@@ -195,10 +195,7 @@ class ProductHelper
             })
             ->when($stock, function (Builder $q) {
                 // si stock=true: excluir servicios y exigir stock > 0
-                $q->where('is_service', '=',0)
-                    ->whereHas('inventory', function ($query) {
-                        $query->where('qty_on_hand', '>', 0);
-                    });
+                $q->where('is_service', '=',0);
             });
 
         return $query->paginate($perPage);

@@ -13,16 +13,16 @@ export interface infoSaleI {
   min_price?: number;
   special_price?: number;
   price: number;
-  warehouse_uuid: number;
+  warehouse_uuid: string;
   price_temp: number;
   product_uuid: string;
   product_name: string;
   is_service?: boolean;
-  sale_id?: number;
+  sale_uuid?: string;
   status?: boolean;
   stock: number;
   reserved: number;
-  tax_uuid: number;
+  tax_uuid: string;
   tax_rate: number;
   type?: string;
   trans_type?: string;
@@ -31,12 +31,12 @@ export interface infoSaleI {
 }
 
 export interface CreateSaleI {
-  id: number;
+  uuid: string;
   code_value: string;
   ncf: string;
   ncf_m: string;
   client_name: string;
-  client_id: number;
+  client_uuid: string;
   client_rnc: string;
   client_rnc_status: string;
   client_social: string;
@@ -46,7 +46,7 @@ export interface CreateSaleI {
   amount: number;
   sub_total: number;
   comment: string;
-  comment_id: number;
+  comment_uuid: string;
   close_table: boolean;
   received: number;
   returned: number;
@@ -76,7 +76,7 @@ export interface saleI {
 }
 
 export interface saleDataI {
-  client_id: number;
+  client_uuid: string;
   client_name: string;
   client_document: string | null;
   client_rnc: string;
@@ -87,7 +87,7 @@ export interface saleDataI {
   comment: '' | null;
   created_at: string;
   discount: number;
-  id: number;
+  uuid: string;
   info_sale: infoSaleI[];
   status: boolean;
   sub_total: number;

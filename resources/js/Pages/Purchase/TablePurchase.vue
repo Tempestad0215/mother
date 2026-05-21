@@ -154,8 +154,11 @@ const createReception = (data: PurchaseSupplierI) => {
       <template #content>
         <DataTable :value="propsW.purchases">
           <Column header="ID" field="id" />
-          <Column header="Name" field="supplier.company_name" />
-          <Column header="Item #" :field="(data: PurchaseSupplierI) => `${data.items.length}`" />
+          <Column header="Proveedor" field="supplier.company_name" />
+          <Column
+            header="Cantidad Item #"
+            :field="(data: PurchaseSupplierI) => `${data.items.length}`"
+          />
           <Column
             header="Descuento"
             :field="(data: PurchaseSupplierI) => `${getMoney(data.discount)}`"

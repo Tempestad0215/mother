@@ -32,7 +32,7 @@ class SaleController extends Controller
      * @param Request $request
      * @return RedirectResponse|Response
      */
-    public function create(Request $request):RedirectResponse|Response
+    public function index(Request $request):RedirectResponse|Response
     {
 
         //Verificar si existe la configuracion
@@ -43,14 +43,14 @@ class SaleController extends Controller
         {
             return redirect()->route('setting.index');
         }
+
+
         //Instancia de los datos
         $dataSale = $this->dataSale($request);
         $lastRecord = Sale::orderBy('created_at', 'desc')->first();
 
-        $warehouses = Warehouse::pluck('id','name')->toArray();
-
-
-
+        //
+        $warehouses = Warehouse::pluck('uuid','name')->toArray();
 
         //DEvolver la vista y los datos
         return Inertia::render('Sale/SaleCreate', [
@@ -186,8 +186,11 @@ class SaleController extends Controller
         //Obtener los datos
         $products = ProductHelper::get($request, true);
         $clients = $clientHelper->get($request);
+
         $saleOpen = $saleHelper->getSaleOpen($request);
 
+
+        // Devolver los datos
         return  [
             'products' => $products,
             'clients' => $clients,
@@ -212,8 +215,10 @@ class SaleController extends Controller
     }
 
 
-
-
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getClose(Request $request)
     {
         //Obtner el codigo del usuarios
@@ -253,6 +258,9 @@ class SaleController extends Controller
 
     }
 
+    /**
+     * @return Response
+     */
     public function counter()
     {
         return Inertia::render('Sale/MoneyCounter');
