@@ -14,6 +14,7 @@ import money from 'v-money';
 
 import { createVfm } from 'vue-final-modal';
 import { ConfirmationService, ToastService } from 'primevue';
+import { Tooltip } from 'primevue';
 import { createPinia } from 'pinia';
 
 const vfm = createVfm();
@@ -39,6 +40,7 @@ createInertiaApp({
       })
       .use(ConfirmationService)
       .use(ToastService)
+      .directive('tooltip', Tooltip)
       .mount(el);
   },
 }).then(() => {});

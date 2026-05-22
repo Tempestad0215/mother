@@ -3,18 +3,16 @@
 namespace App\Helpers;
 
 use App\Dtos\InventoryMovementDto;
-use App\Enums\InventoryMovementConceptEnum;
+use App\Http\Resources\ProductResource;
 use App\Models\Inventory;
 use App\Models\Product;
 use App\Models\Warehouse;
 use DB;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
-use LaravelIdea\Helper\App\Models\_IH_Product_C;
-use RuntimeException;
 use Throwable;
 
 
@@ -176,29 +174,38 @@ class ProductHelper
     /**
      * @param Request $request
      * @param bool $stock
-     * @return _IH_Product_C|LengthAwarePaginator|Product[]
+     * @return AnonymousResourceCollection
      */
-
-    public static function get(Request $request, bool $stock = false): _IH_Product_C|LengthAwarePaginator|array
+    public static function get(Request $request, bool $stock = false): AnonymousResourceCollection
     {
         $search  = trim((string) $request->input('search', ''));
         $perPage = (int) $request->input('perPage', 15);
 
         $query = Product::query()
+            ->with(['priceList', 'warehouses'])
             ->where('status', true)
             ->when($search !== '', function (Builder $q) use ($search) {
                 $q->where(function (Builder $qq) use ($search) {
-                    $qq->where('name', 'LIKE', "%$search%")
-                        ->orWhere('description', 'LIKE', "%$search%")
-                        ->orWhere('sku', 'LIKE', "%$search%");
+                    $qq->where('name', 'ILIKE', "%$search%")
+                        ->orWhere('description', 'ILIKE', "%$search%")
+                        ->orWhere('sku', 'ILIKE', "%$search%");
                 });
             })
             ->when($stock, function (Builder $q) {
                 // si stock=true: excluir servicios y exigir stock > 0
-                $q->where('is_service', '=',0);
+                $q->where('is_service', '=',0)
+                    ->whereHas('warehouses', function (Builder $qq) {
+                        $qq->where('warehouse_products.stock_quantity','>',0)
+                            ->where('warehouse_products.is_active', true);
+                    });
+
             });
 
-        return $query->paginate($perPage);
+        $paginatedData = $query->simplePaginate($perPage);
+
+
+
+        return ProductResource::collection($paginatedData);
     }
 
 

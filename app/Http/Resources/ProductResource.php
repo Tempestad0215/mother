@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;
-use PhpOffice\PhpSpreadsheet\Calculation\Financial\Securities\Price;
 
 /**
  * @property string $uuid
@@ -92,7 +91,7 @@ class ProductResource extends JsonResource
             'tax'       => $this->tax,
 
             // 💰 Valores numéricos e impuestos por lista de precio
-            'price_lists' => $this->whenLoaded('price_list', function () {
+            'price_lists' => $this->whenLoaded('priceList', function () {
                 return new ProductPriceListResource($this);
             }),
             'warehouses' => $this->whenLoaded('warehouses', function (){

@@ -163,11 +163,14 @@ export interface WarehouseProductI {
   prefix: string;
   name: string;
   stock_quantity: number;
-  committed_stock?: number;
+  available: number;
+  committed?: number;
   min_stock?: number;
   max_stock?: number;
   reorder_level?: number;
-  status?: boolean;
+  last_counted_at?: string;
+  purchase_pending?: number;
+  is_active?: boolean;
 }
 
 /**

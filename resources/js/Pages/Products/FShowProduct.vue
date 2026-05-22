@@ -16,7 +16,11 @@ import {
   useConfirm,
   useToast,
 } from 'primevue';
-import { productBreadCrumb } from '@/Helpers/ProductHelper';
+import {
+  getInfoFromPriceList,
+  getInfoFromWarehouse,
+  productBreadCrumb,
+} from '@/Helpers/ProductHelper';
 import { PreciseCalculator } from '@/utils/Decimal';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
 import { getMoney } from '@/Global/Helpers';
@@ -155,7 +159,10 @@ const getPriceFromList = (product: ProductTableI): number => {
           header="Tipo"
         />
         <Column
-          :field="(data: ProductBaseI) => `${getMoney(data.stock)}`"
+          :field="
+            (data: ProductTableI) =>
+              `${getInfoFromWarehouse(data.warehouses, data.default_warehouse)?.available ?? 0}`
+          "
           header="Stock"
           v-if="propsW.stock"
         />

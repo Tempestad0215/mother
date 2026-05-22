@@ -1,23 +1,18 @@
 <script setup lang="ts">
 import { invoiceTypeI } from '@/Interfaces/SettingInterface';
 import { usePage } from '@inertiajs/vue3';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import {
-  faArrowRotateBack,
-  faBoxOpen,
-  faTableCellsColumnLock,
-} from '@fortawesome/free-solid-svg-icons';
-import { ProductBaseI, ProductTableI } from '@/Interfaces/ProductInterface';
+import { ProductTableI } from '@/Interfaces/ProductInterface';
 import { computed, inject, ref, watch } from 'vue';
 import { saleDataI, SaleTypeEnumI } from '@/Interfaces/SaleInterface';
 import { saleKey } from '@/utils/keys';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
 import { getSequenceType } from '@/Global/Helpers';
 import { useRoute } from 'ziggy-js';
-import { FloatLabel, InputText, Select, ToggleButton, Dialog } from 'primevue';
+import { Dialog, FloatLabel, InputText, Select, ToggleButton } from 'primevue';
 import FShowProduct from '@/Pages/Products/FShowProduct.vue';
 import { PreciseCalculator } from '@/utils/Decimal';
 import { Grid2X2Plus, ShoppingCart, Undo2 } from '@lucide/vue';
+import { getInfoFromPriceList } from '@/Helpers/ProductHelper';
 
 const route = useRoute();
 const page = usePage();
@@ -158,7 +153,9 @@ const getDataProduct = (data: ProductTableI) => {
   if (getIndex >= 0) {
     form.info_sale[getIndex].stock += 1.0;
   } else {
-    const taxPlus = Number(PreciseCalculator.multiply(data.tax.rate || 0, data.price));
+    const taxRate = PreciseCalculator.divide(data.tax.rate, 100) ?? 0;
+    const taxPlus = Number(PreciseCalculator.multiply(taxRate.toString(), data.price));
+
     let taxForProduct: number;
 
     if (taxPlus === 0) {
@@ -167,15 +164,19 @@ const getDataProduct = (data: ProductTableI) => {
       taxForProduct = Number(PreciseCalculator.multiply(taxPlus, 1));
     }
 
+    // Tomar la info de la price list
+    const priceList = getInfoFromPriceList(data.price_lists, data.default_price_list);
+
     form.info_sale.push({
       product_uuid: data.uuid,
       product_name: data.name,
       stock: 1,
-      price: data.price,
-      min_price: data.min_price,
-      special_price: data.special_price,
-      tax_uuid: data.tax_uuid,
-      warehouse_uuid: data.warehouse_uuid,
+      price: priceList?.price ?? 0,
+      min_price: priceList?.min_price ?? 0,
+      special_price: priceList?.promotional_price ?? 0,
+      tax_uuid: data.tax.uuid,
+      tax_amount: taxForProduct,
+      warehouse_uuid: data.default_warehouse,
       tax_rate: taxForProduct,
       discount: 0,
       discount_amount: 0,
@@ -208,28 +209,24 @@ defineExpose({
       </form>
       <!-- Buscar los datos necesario -->
       <div v-if="!propsW.refund" class="ml-3 flex items-center space-x-3">
-        <ShoppingCart class="hover:scale-125 duration-300" :size="30" />
-        <Grid2X2Plus class="hover:scale-125 duration-300" :size="30" />
-        <Undo2 class="hover:scale-125 duration-300" :size="30" />
-        <!--        <FontAwesomeIcon-->
-        <!--          title="Productos"-->
-        <!--          @click="showProducts = !showProducts"-->
-        <!--          class="icon-efect text-cyan-400 text-3xl"-->
-        <!--          :icon="faBoxOpen"-->
-        <!--        />-->
-
-        <!--        <FontAwesomeIcon-->
-        <!--          title="Cuentas Abiertas"-->
-        <!--          @click="showSaleOpen = !showSaleOpen"-->
-        <!--          class="ml-3 icon-efect text-cyan-400 text-3xl"-->
-        <!--          :icon="faTableCellsColumnLock"-->
-        <!--        />-->
-        <!--        <FontAwesomeIcon-->
-        <!--          @click="showFormReturn = !showFormReturn"-->
-        <!--          title="Devolucion"-->
-        <!--          class="ml-3 icon-efect text-cyan-400 text-3xl"-->
-        <!--          :icon="faArrowRotateBack"-->
-        <!--        />-->
+        <ShoppingCart
+          v-tooltip.bottom="'Productos Disponibles'"
+          @click="showProducts = !showProducts"
+          class="hover:scale-125 duration-300"
+          :size="30"
+        />
+        <Grid2X2Plus
+          v-tooltip.bottom="'Cuentas Abiertas'"
+          @click="showSaleOpen = !showSaleOpen"
+          class="hover:scale-125 duration-300"
+          :size="30"
+        />
+        <Undo2
+          v-tooltip.bottom="'Devoluciones'"
+          @click="showFormReturn = !showFormReturn"
+          class="hover:scale-125 duration-300"
+          :size="30"
+        />
       </div>
     </div>
 

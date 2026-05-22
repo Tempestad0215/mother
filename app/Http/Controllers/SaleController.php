@@ -50,7 +50,7 @@ class SaleController extends Controller
         $lastRecord = Sale::orderBy('created_at', 'desc')->first();
 
         //
-        $warehouses = Warehouse::pluck('uuid','name')->toArray();
+        $warehouses = Warehouse::pluck('uuid','prefix')->toArray();
 
         //DEvolver la vista y los datos
         return Inertia::render('Sale/SaleCreate', [

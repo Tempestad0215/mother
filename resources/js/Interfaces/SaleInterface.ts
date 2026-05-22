@@ -23,6 +23,7 @@ export interface infoSaleI {
   stock: number;
   reserved: number;
   tax_uuid: string;
+  tax_amount: number;
   tax_rate: number;
   type?: string;
   trans_type?: string;

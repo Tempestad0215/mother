@@ -16,37 +16,61 @@ import {
 import { getMoney } from '@/Global/Helpers';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faArrowAltCircleDown, faArrowAltCircleUp } from '@fortawesome/free-solid-svg-icons';
+import { FilePenLine } from '@lucide/vue';
 
+/**
+ *
+ */
 const propsW = defineProps<{
   refund?: boolean;
   warehouses?: WarehouseMapType;
 }>();
 
+/**
+ *
+ */
 const form = inject(saleKey)!;
 const lastIndex = ref<number>(0);
 const showEdit = ref(false);
 const typePrice = ref(1);
 const minIndex = computed(() => 0);
 const maxIndex = computed(() => (form.info_sale.length > 0 ? form.info_sale.length - 1 : 0));
+
+/**
+ *
+ */
 interface editFormI {
   stock: number;
   price: number;
   discount: number;
 }
+
+/**
+ *
+ */
 const editItemForm = reactive<editFormI>({
   stock: 0,
   price: 0,
   discount: 0,
 });
 
+/**
+ *
+ */
 const minPrice = computed((): number => {
   if (!checkIndex()) return 0;
   return Number(form.info_sale[lastIndex.value].min_price);
 });
+/**
+ *
+ */
 const productEditingName = computed((): string => {
   if (!checkIndex()) return '';
   return form.info_sale[lastIndex.value].product_name;
 });
+/**
+ *
+ */
 const productIsService = computed(() => {
   const item = form.info_sale[lastIndex.value];
   return !!item?.is_service;
@@ -55,6 +79,7 @@ const productIsService = computed(() => {
 const getWarehouses = computed(() => {
   if (propsW.warehouses) {
     return Object.entries(propsW.warehouses).map(([key, value]) => {
+      console.log(value);
       return {
         name: key,
         value: value,
@@ -104,6 +129,11 @@ const getLastIndex = () => {
 };
 
 type MoveDirection = 'up' | 'down';
+
+/**
+ *
+ * @param direction
+ */
 const moveEdit = (direction: MoveDirection) => {
   const current = lastIndex.value;
 
@@ -121,6 +151,9 @@ const moveEdit = (direction: MoveDirection) => {
   Object.assign(editItemForm, form.info_sale[lastIndex.value]);
 };
 
+/**
+ *
+ */
 const calculateTotals = () => {
   // 1) Totales base
   const subTotal = form.info_sale.reduce(
@@ -154,6 +187,10 @@ const calculateTotals = () => {
   form.amount = Number(PreciseCalculator.subtract(subTotalNoTax, discountTotal));
 };
 
+/**
+ *
+ * @param index
+ */
 const totalAmount = (index: number) => {
   if (index < 0 || index >= form.info_sale.length) return;
 
@@ -174,12 +211,15 @@ const totalAmount = (index: number) => {
     PreciseCalculator.multiply(info.amount, discountRate.toString()).toFixed(2)
   );
   //Pasar los datos al formulario
-  info.tax_uuid = parseFloat(PreciseCalculator.multiply(info.amount, info.tax_rate).toFixed(2));
+  info.tax_amount = parseFloat(PreciseCalculator.multiply(info.amount, info.tax_rate).toFixed(2));
 
   //Calcular los totales
   calculateTotals();
 };
 
+/**
+ *
+ */
 const changePrice = () => {
   if (form.info_sale.length <= 0) return;
   const idx = lastIndex.value;
@@ -238,7 +278,7 @@ defineExpose({
       header="Precio"
       :field="(data: infoSaleI) => `${getMoney(data.price)}`"
     />
-    <Column header="Itbis" :field="(data: infoSaleI) => `${data.tax_rate}`" />
+    <Column header="Itbis" :field="(data: infoSaleI) => `${data.tax_amount}`" />
     <Column
       class="max-w-20"
       header="Descuento"
@@ -257,12 +297,15 @@ defineExpose({
     <Column header="Importe" :field="(data: infoSaleI) => `${getMoney(data.amount)}`" />
     <template #footer>
       <div class="text-center">
-        <Button
-          v-if="form.info_sale.length > 0"
-          title="Editar"
+        <button
+          type="button"
           @click="getLastIndex"
-          icon="pi pi-pencil"
-        />
+          v-if="form.info_sale.length > 0"
+          v-tooltip.bottom="'Editar Item'"
+          class="bg-green-300 p-1 rounded-md"
+        >
+          <FilePenLine :size="30" />
+        </button>
       </div>
     </template>
   </DataTable>
