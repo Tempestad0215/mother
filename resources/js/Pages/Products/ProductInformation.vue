@@ -35,6 +35,7 @@ const form = inject(formProductKey)!!;
 const productDataOption = inject(productDataKey);
 const createCategory = ref(false);
 const createSupplier = ref(false);
+const loadingLabel = ref(false);
 
 /**
  *
@@ -57,6 +58,7 @@ const searchProduct = () => {
 const printLabel = async () => {
   // Verificar si existe el codigo
   if (propsW.code) {
+    loadingLabel.value = true;
     try {
       //
       const response = await axios.get(route('product.get-label', { code: propsW.code }), {
@@ -91,6 +93,8 @@ const printLabel = async () => {
         severity: 'error',
         life: 500,
       });
+    } finally {
+      loadingLabel.value = false;
     }
   }
 };
@@ -157,9 +161,14 @@ const printLabel = async () => {
       <!--                </div>-->
       <div class="grid grid-cols-2">
         <div>
-          <button type="button" @click="printLabel()" class="bg-green-300 p-2 rounded-md">
+          <Button
+            :loading="loadingLabel"
+            type="button"
+            @click="printLabel()"
+            class="bg-green-300 p-2 rounded-md"
+          >
             <Printer />
-          </button>
+          </Button>
         </div>
 
         <div class="text-right space-x-3">

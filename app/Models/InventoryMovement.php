@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\InventoryMovementConceptEnum;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -30,6 +31,7 @@ class InventoryMovement extends Model implements  Auditable
 
     use \OwenIt\Auditing\Auditable;
     use softDeletes;
+    use HasUuids;
 
     //  Almacenar los datos
     protected $fillable = [
@@ -41,7 +43,8 @@ class InventoryMovement extends Model implements  Auditable
         'movementable_code',
         'quantity',
         'cost',
-        'price',
+        'stock_before',
+        'stock_after',
         'description',
     ];
 
@@ -59,10 +62,6 @@ class InventoryMovement extends Model implements  Auditable
     }
 
 
-    public function movementable():MorphTo
-    {
-        return $this->morphTo();
-    }
 
 
 

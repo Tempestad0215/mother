@@ -17,7 +17,6 @@ return new class extends Migration
             $table->foreignUuid('product_uuid');
             $table->foreignUuid('warehouse_uuid');
             $table->uuidMorphs('movementable');
-            $table->enum('type', \App\Enums\InventoryMovementTypeEnum::cases());
             $table->enum('concept', InventoryMovementConceptEnum::cases());
             $table->decimal('quantity', 19, 4);
             $table->decimal('cost', 19, 6);
