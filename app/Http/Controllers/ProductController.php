@@ -31,6 +31,7 @@ use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 use Throwable;
@@ -245,7 +246,9 @@ class ProductController extends Controller implements HasMiddleware
 
             // Verificar si tien stock disponible
             if($hasStock){
-                throw new Exception("No se puede eliminar el producto, ya que tiene stock disponible.");
+                throw ValidationException::withMessages([
+                    'product_uuid'=> "No se puede eliminar el producto, ya que tiene stock disponible.",
+                ]);
             }
 
             // Elimianr el producto
