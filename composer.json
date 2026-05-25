@@ -34,7 +34,7 @@
     "tightenco/ziggy": "^2.2"
   },
   "require-dev": {
-    "barryvdh/laravel-ide-helper": "^3.6",
+    "barryvdh/laravel-ide-helper": "^3.7",
     "fakerphp/faker": "^1.23",
     "laravel-lang/common": "^6.3",
     "laravel/pint": "^1.13",

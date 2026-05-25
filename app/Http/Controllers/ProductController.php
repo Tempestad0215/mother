@@ -84,7 +84,7 @@ class ProductController extends Controller implements HasMiddleware
         $productType = collect(ProductTypeEnum::cases())->mapWithKeys(fn(ProductTypeEnum $item) => [$item->name => $item->value])->toArray();
 
         //Verificar si existe configuración
-        $setting = Setting::first();
+        $setting = Setting::first('*');
 
         //si existe la configuración
         if (isset($setting)) {
@@ -93,8 +93,8 @@ class ProductController extends Controller implements HasMiddleware
             //Devolver correctamente
             return Inertia::render('Products/Register', [
                 'products' => $products,
-                'categories' => Category::orderBy('name')->get(),
-                'suppliers' => Supplier::orderBy('company_name')->get(),
+                'categories' => Category::orderBy('name','asc')->get(),
+                'suppliers' => Supplier::orderBy('company_name','asc')->get(),
                 'warehouse' => Warehouse::all(),
                 'paymentTypes' => GeneralHelper::getPaymentTypes(),
                 'productType' => $productType,
@@ -237,8 +237,6 @@ class ProductController extends Controller implements HasMiddleware
      */
     public function destroy(Product $product): RedirectResponse
     {
-
-
 
        //Actualizer los datos
         DB::transaction(function () use ($product) {

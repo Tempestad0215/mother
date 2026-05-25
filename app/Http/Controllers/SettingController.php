@@ -34,7 +34,7 @@ class SettingController extends Controller implements HasMiddleware
     public function index()
     {
         return Inertia::render('Setting/SettingIndex',[
-            'setting' => Setting::first(),
+            'setting' => Setting::first('*'),
             'company_type' => config('appconfig.company_type'),
         ]);
     }
