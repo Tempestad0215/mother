@@ -10,7 +10,7 @@ export const productBreadCrumb: MenuItem[] = [
   },
   {
     label: 'Entrada',
-    url: route('product.in'),
+    url: route('entry.index'),
     icon: 'pi pi-bottle',
   },
   {

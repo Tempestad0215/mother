@@ -382,7 +382,8 @@ class ProductController extends Controller implements HasMiddleware
 
 
         // Tomar los datos
-        $products = Product::where(function ($query) use (&$search) {
+        $products = Product::with(['warehouses','priceList'])
+        ->where(function ($query) use (&$search) {
             $query->orWhere("name", "ILIKE", "%$search%")
                 ->orWhere("description", "ILIKE", "%$search%");
         })->where("status", true)
@@ -390,8 +391,10 @@ class ProductController extends Controller implements HasMiddleware
             ->take(15)
             ->get();
 
+        $productResource = ProductResource::collection($products);
+
         //tomar los datos
-        return response()->json($products);
+        return response()->json($productResource);
     }
 
 

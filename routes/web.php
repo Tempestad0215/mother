@@ -6,6 +6,7 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\CreditNoteController;
+use App\Http\Controllers\EntryController;
 use App\Http\Controllers\ExchangeController;
 use App\Http\Controllers\InventoryMovementController;
 use App\Http\Controllers\InvoiceController;
@@ -115,7 +116,8 @@ Route::middleware([
         'aco' => AccontCoController::class,
         'unit' => UnitController::class,
         'tax' => TaxController::class,
-        'branch' => BrandController::class
+        'branch' => BrandController::class,
+        'entry' => EntryController::class
     ]);
 
     Route::get('price-list/product/{product}',[PriceListController::class,'productShow'])
@@ -140,7 +142,6 @@ Route::middleware([
     Route::prefix('product')->name('product.')->group(function () {
         Route::get('/get-label/{code}', [ProductController::class, 'createLabel'])->name('get-label');
         Route::get('/get', [ProductController::class, 'get'])->name('get');
-        Route::get('/in', [ProductController::class, 'in'])->name('in');
         Route::get('/get/json', [ProductController::class, 'getJson'])->name('get.json');
         Route::get('/get/code', [ProductController::class, 'getByCode'])->name('get.code');
         Route::patch('/delete/{product}', [ProductController::class, 'destroy'])->name('destroy');

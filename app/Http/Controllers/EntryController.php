@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Dtos\EntryDto;
 use App\Enums\ProductTransactionTypeEnum;
 use App\Helpers\InHelper;
 use App\Helpers\TransHelper;
+use App\Http\Resources\ProductResource;
 use App\Http\Resources\ProductTransResource;
 use App\Models\Product;
 use App\Http\Requests\StoreProductInRequest;
 use App\Http\Requests\UpdateProductInRequest;
 use App\Models\ProductTransaction;
+use App\Models\Warehouse;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -39,35 +42,63 @@ class EntryController extends Controller
 
         //conseguir los datos
         $data = $this->getProduct($request);
+        $productResource = ProductResource::collection($data);
 
         //Devolver la vista con los datos
         return Inertia::render('ProductsIn/ProductIn', [
-            'products' => $data,
+            'products' => $productResource,
+            'warehouses' => Warehouse::all(),
         ]);
     }
 
 
     /**
      * @param StoreProductInRequest $request
-     * @param Product $productIn
      * @return RedirectResponse
      * @throws \Throwable
      */
-    public function store(StoreProductInRequest $request, Product $productIn): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
 
+
+        $validated = $request->validate([
+            'product_uuid'   => 'required|uuid|exists:products,uuid',
+            'warehouse_uuid' => 'required|uuid|exists:warehouses,uuid',
+            'quantity'       => 'required|numeric|min:0.0001',
+            'cost'           => 'required|numeric|min:0', // Con qué costo entra al almacén
+            'reference'      => 'nullable|string|max:255',
+        ]);
+
+
+        $entryDto = EntryDto::fromArray($validated);
+
+
+
         // Para asegurar la transaccion
-        DB::transaction(function () use ($request, $productIn) {
+        DB::transaction(function () use ($request, $entryDto) {
 
-            // Actulizar los datos
-            $inHelper = new inHelper();
-            $transHelper = new TransHelper();
+            // Tomar el producto
+            $product = Product::with(['warehouses'])
+                ->where('products.uuid','=',$entryDto->product_uuid)->first();
 
-            // Actualizar los datos del producto
-            $inHelper->updateProduct($request, $productIn);
+            // Incremental el stock
+            $product->cost = $entryDto->cost;
+            $product->save();
 
-            // Crear los datos de la transaccion
-//            $transHelper->store($request->toArray(), TransTypeEnum::ENTRADA, , $productIn);
+            // Tomar el warehouse por el id
+            $warehouse = $product->warehouses()->where('uuid', $entryDto->warehouse_uuid)->first();
+            // Tomar la tabal pivot
+            $pivot = $warehouse->pivot;
+            dd($pivot);
+
+            // Actualizar los datos
+            $product->warehouses()->updateExistingPivot($entryDto->warehouse_uuid,[
+                'stock_quantity' => DB::raw("stock_quantity + {$entryDto->quantity}"),
+                'updated_at' => now()
+            ]);
+
+
+
         });
 
         //Devolver hacia atras
@@ -228,12 +259,13 @@ class EntryController extends Controller
     private function getProduct(Request $request):Paginator
     {
         //Obtener los datos de busqueda
-        $search = $request->get('search');
-        $perPage = $request->get('perPage',15);
+        $search = $request->input('search');
+        $perPage = $request->input('perPage',15);
 
 
         //Devolver los datos
-        return Product::where('status', true)
+        return Product::with(['priceList','warehouses'])
+            ->where('status', true)
             ->where('name','LIKE','%'.$search.'%')
             ->latest()
             ->simplePaginate($perPage);

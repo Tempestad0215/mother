@@ -41,6 +41,9 @@ importers:
       '@primevue/themes':
         specifier: ^4.5.4
         version: 4.5.4
+      '@types/lodash-es':
+        specifier: ^4.17.12
+        version: 4.17.12
       chart.js:
         specifier: ^4.4.5
         version: 4.5.1
@@ -56,6 +59,9 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.23
+      lodash-es:
+        specifier: ^4.18.1
+        version: 4.18.1
       micromatch:
         specifier: ^4.0.8
         version: 4.0.8
@@ -1437,8 +1443,8 @@ packages:
     resolution: {integrity: sha512-9rrA30MRRP3gBD3HTGnC6cDFpaE1kVDWxWgqWJUN0RvDNAo+Nz/9GxB+nHOH0ifbVFy0hSA1V6vFDvnx54lTEQ==}
     engines: {node: '>=14'}
 
-  lodash-es@4.17.23:
-    resolution: {integrity: sha512-kVI48u3PZr38HdYz98UmfPnXl2DXrpdctLrFLCd3kOx1xUkOmpFPx7gCWWM5MPkL/fD8zb+Ph0QzjGFs4+hHWg==}
+  lodash-es@4.18.1:
+    resolution: {integrity: sha512-J8xewKD/Gk22OZbhpOVSwcs60zhd95ESDwezOFuA3/099925PdHJ7OFHNTGtajL3AlZkykD32HykiMo+BIBI8A==}
 
   lodash@4.17.23:
     resolution: {integrity: sha512-LgVTMpQtIopCi79SJeDiP0TfWi5CNEc/L/aRdTh3yIvmZXTnheWpKjSZhnvMl8iXbC1tFg9gdHHDMLoV7CnG+w==}
@@ -2023,7 +2029,7 @@ snapshots:
       '@types/lodash-es': 4.17.12
       axios: 1.15.2
       laravel-precognition: 1.0.2
-      lodash-es: 4.17.23
+      lodash-es: 4.18.1
       qs: 6.15.0
     transitivePeerDependencies:
       - debug
@@ -2033,7 +2039,7 @@ snapshots:
       '@inertiajs/core': 2.3.15
       '@types/lodash-es': 4.17.12
       laravel-precognition: 1.0.2
-      lodash-es: 4.17.23
+      lodash-es: 4.18.1
       vue: 3.5.28(typescript@5.9.3)
     transitivePeerDependencies:
       - debug
@@ -2977,7 +2983,7 @@ snapshots:
   laravel-precognition@1.0.2:
     dependencies:
       axios: 1.15.2
-      lodash-es: 4.17.23
+      lodash-es: 4.18.1
     transitivePeerDependencies:
       - debug
 
@@ -3092,7 +3098,7 @@ snapshots:
       mlly: 1.8.0
       pkg-types: 1.3.1
 
-  lodash-es@4.17.23: {}
+  lodash-es@4.18.1: {}
 
   lodash@4.17.23: {}
 
