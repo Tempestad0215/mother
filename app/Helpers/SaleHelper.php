@@ -7,6 +7,7 @@ use App\Dtos\SaleDto;
 use App\Dtos\SaleItemApiDto;
 use App\Dtos\SaleItemDto;
 use App\Enums\InventoryMovementConceptEnum;
+use App\Enums\InventoryMovementTypeEnum;
 use App\Enums\ProductTransactionTypeEnum;
 use App\Enums\SaleTypeEnum;
 use App\Enums\SequenceSaleTypeEnum;
@@ -22,7 +23,9 @@ use App\Models\Setting;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use LaravelIdea\Helper\App\Models\_IH_Sale_C;
 use Throwable;
 
@@ -74,6 +77,13 @@ class SaleHelper
             //Actualizar los datos de la notas de crédito
             CreditNoteHelper::updateAvailableFor($salePayload->credit_notes, $salePayload->amount);
 
+            // Obtener los ids de productos
+            $productUuids = collect($salePayload->info_sale->toArray())->pluck('product_uuid')->toArray();
+
+            // Obteenr los productos y colocar el id en el key
+            /** @var Collection<string, Product> $products */
+            $products = Product::whereIn('uuid', $productUuids)->get()->keyBy('uuid');
+
             //Arrays para movimientos de inventario e items de venta
             $movementsInfos = [];
             $itemsInfos = [];
@@ -85,14 +95,27 @@ class SaleHelper
                 // Determinar el tipo de movimiento según el tipo de venta 
                 $typeMovement = $this->movementType($salePayload->type);
 
+
+                // Obtener el products
+                $product = $products->get($value->product_uuid);
+
+
+                // Verificar si el producto existe
+                if(!$product)
+                {
+                    // Si no existe, lanzar un error
+                    throw ValidationException::withMessages(['El producto no existe']);
+                }
+
                 // Crear el array para insertar los movimientos de inventario
-                // $movementsInfos[] = new InventoryMovementDto(
-                //     type: $value->,
-                //     product_uuid: $value->product_uuid,
-                //     quantity: $value->stock,
-                //     warehouse_uuid: $value->warehouse_uuid,
-                //     price: $value->price,
-                // )->toArray();
+                $movementsInfos[] = new InventoryMovementDto(
+                    type: InventoryMovementTypeEnum::OUT->value,
+                    product_uuid: $value->product_uuid,
+                    quantity: $value->stock,
+                    warehouse_uuid: $value->warehouse_uuid,
+                    concept: InventoryMovementConceptEnum::Venta->value.'-'.$product->name,
+                    cost: $product->cost,
+                )->toArray();
 
                 //Crear el array para insertar los items de la venta
                 $itemsInfos[] = $value->toArray();
