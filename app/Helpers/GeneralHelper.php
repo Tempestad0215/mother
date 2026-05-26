@@ -60,8 +60,8 @@ class GeneralHelper
         return collect($data)
             ->map(function ($item) {
                 return [
-                    'product_id' => $item['product_id'],
-                    'warehouse_id' => $item['warehouse_id'],
+                    'product_uuid' => $item['product_uuid'],
+                    'warehouse_uuid' => $item['warehouse_uuid'],
                 ];
             })->toArray();
     }

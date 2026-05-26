@@ -337,7 +337,7 @@ defineExpose({
             <FloatLabel variant="on">
               <InputNumber
                 :min="minPrice"
-                :readonly="productIsService"
+                :readonly="!productIsService"
                 v-model="editItemForm.price"
               />
               <label for="price">Precio</label>

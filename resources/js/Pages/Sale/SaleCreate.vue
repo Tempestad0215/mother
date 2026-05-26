@@ -266,6 +266,8 @@ const updateSale = async () => {
 
 // Registrar la venta
 const registerSale = () => {
+
+  // Verificar si no hay problema con nada
   if (form.type === 'Cotizacion' || !form.close_table) {
     sendData();
   } else {

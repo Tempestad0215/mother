@@ -22,7 +22,7 @@ class SaleDto extends BaseDto
         public ?string $invoice_type = null,
         public ?string $client_name = null,
         public ?string $client_rnc = null,
-        public ?int $client_id = null,
+        public ?string $client_uuid = null,
         /** @var SaleCreditNoteDto[]|null */
         public ?array $credit_notes = null,
         public ?string $comment = null,

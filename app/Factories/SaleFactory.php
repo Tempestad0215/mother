@@ -7,7 +7,6 @@ use App\Enums\PaymentTypeEnum;
 use App\Enums\SaleTypeEnum;
 use App\Http\Requests\StoreProductSaleRequest;
 use App\Models\Setting;
-use Illuminate\Http\Request;
 
 class SaleFactory extends BaseFactory
 {
@@ -48,13 +47,13 @@ class SaleFactory extends BaseFactory
     {
 
         //obtener notas de credito
-        $creditNotes = $request->get('credit_notes');
+        $creditNotes = $request->input('credit_notes');
         //Sacar los IDS
-        $ids = array_column($creditNotes, 'id');
+        $ids = array_column($creditNotes, 'uuid');
 
         $saleData = $request->validated();
-        $saleData['client_id'] = $request->get('client_id') ?: null;
-        $saleData['invoice_type'] = $setting->sequence ? $request->get('invoice_type') : null;
+        $saleData['client_id'] = $request->input('client_id') ?: null;
+        $saleData['invoice_type'] = $setting->sequence ? $request->input('invoice_type') : null;
         $saleData['credit_notes'] = $ids;
 
 

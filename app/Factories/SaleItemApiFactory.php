@@ -15,15 +15,15 @@ class SaleItemApiFactory extends BaseFactory
     {
 
         return new SaleItemApiDto(
-            product_id: $data['product_id'],
+            product_uuid: $data['product_uuid'],
             product_name: $data['product_name'],
             stock: $data['stock'],
             price: $data['price'],
             min_price: $data['min_price'],
             special_price: $data['special_price'],
-            warehouse_id: $data['warehouse_id'],
+            warehouse_uuid: $data['warehouse_uuid'],
             tax_rate: $data['tax_rate'],
-            tax_id: $data['tax_id'],
+            tax_uuid: $data['tax_uuid'],
             price_temp: $data['price_temp'],
             discount: $data['discount'],
             discount_amount: $data['discount_amount'],

@@ -4,15 +4,12 @@ namespace App\Helpers;
 
 use App\Dtos\InventoryMovementDto;
 use App\Dtos\SaleItemApiDto;
-use App\Dtos\SaleItemDto;
 use App\Enums\InventoryMovementConceptEnum;
 use App\Enums\ProductTransactionTypeEnum;
-use App\Enums\ProductTypeEnum;
 use App\Enums\SaleTypeEnum;
 use App\Enums\SequenceSaleTypeEnum;
 use App\Factories\SaleFactory;
 use App\Factories\SaleItemApiFactory;
-use App\Factories\SaleItemFactory;
 use App\Http\Requests\StoreProductSaleRequest;
 use App\Http\Resources\SaleInfoResource;
 use App\Models\DeletedSale;
@@ -97,15 +94,15 @@ class SaleHelper
                 )->toArray();
 
                 $itemsInfos[] = new SaleItemApiDto(
-                    product_id: $value->product_id,
+                    product_uuid:: $value->product_uuid,
                     product_name: $value->product_name,
                     stock: $value->stock,
                     price: $value->price,
                     min_price: $value->min_price,
                     special_price: $value->special_price,
-                    warehouse_id: $value->warehouse_id,
+                    warehouse_uuid: $value->warehouse_uuid,
                     tax_rate: $value->tax_rate,
-                    tax_id: $value->tax_id,
+                    tax_uuid: $value->tax_uuid,
                     price_temp: $value->price_temp,
                     discount: $value->discount,
                     discount_amount: $value->discount_amount,
