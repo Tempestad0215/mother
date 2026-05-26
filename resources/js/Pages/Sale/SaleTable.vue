@@ -59,7 +59,6 @@ const productIsService = computed(() => {
 const getWarehouses = computed(() => {
   if (propsW.warehouses) {
     return Object.entries(propsW.warehouses).map(([key, value]) => {
-      console.log(value);
       return {
         name: key,
         value: value,
@@ -145,7 +144,7 @@ const calculateTotals = () => {
   // 1.1) Totales de impuestos y descuentos
   const taxTotal = form.info_sale.reduce(
     (acc: number, currentValue: infoSaleI): number =>
-      Number(PreciseCalculator.add(acc, currentValue.tax_rate)),
+      Number(PreciseCalculator.add(acc, currentValue.tax_amount)),
     0
   );
 
@@ -181,6 +180,8 @@ const totalAmount = (index: number) => {
   if (!checkIndex()) return;
   let info: infoSaleI = form.info_sale[index];
 
+  console.log('info', info);
+
   let discountRate = PreciseCalculator.divide(info.discount || 0, 100);
 
   //Para calcular los datos
@@ -189,6 +190,7 @@ const totalAmount = (index: number) => {
   info.discount_amount = parseFloat(
     PreciseCalculator.multiply(info.amount, discountRate.toString()).toFixed(2)
   );
+
   //Pasar los datos al formulario
   info.tax_amount = parseFloat(PreciseCalculator.multiply(info.amount, info.tax_rate).toFixed(2));
 
@@ -295,7 +297,7 @@ defineExpose({
       </div>
       <div class="flex gap-5">
         <div class="flex flex-col gap-5 mt-5">
-          <div class="flex gap-5">
+          <div v-if="productIsService" class="flex gap-5">
             <div class="flex items-center gap-2">
               <RadioButton
                 @change="changePrice"

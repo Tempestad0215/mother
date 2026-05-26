@@ -14,7 +14,6 @@ import { PreciseCalculator } from '@/utils/Decimal';
 import { Grid2X2Plus, ShoppingCart, Undo2 } from '@lucide/vue';
 import { getInfoFromPriceList } from '@/Helpers/ProductHelper';
 
-const route = useRoute();
 const page = usePage();
 
 const propsW = defineProps<{
@@ -142,10 +141,12 @@ const getSaleOpen = (item: saleDataI) => {
   showSaleOpen.value = false;
 };
 
+// Abrir el formulario para las devoluciones
 const openReturn = () => {
   showReturn.value = !showReturn.value;
 };
 
+// Abrir el formulario para las devoluciones
 const getDataProduct = (data: ProductTableI) => {
   showProducts.value = false;
   const getIndex = form.info_sale.findIndex((el) => el.product_uuid === data.uuid);
@@ -154,6 +155,7 @@ const getDataProduct = (data: ProductTableI) => {
     form.info_sale[getIndex].stock += 1.0;
   } else {
     const taxRate = PreciseCalculator.divide(data.tax.rate, 100) ?? 0;
+
     const taxPlus = Number(PreciseCalculator.multiply(taxRate.toString(), data.price));
 
     let taxForProduct: number;
@@ -167,6 +169,7 @@ const getDataProduct = (data: ProductTableI) => {
     // Tomar la info de la price list
     const priceList = getInfoFromPriceList(data.price_lists, data.default_price_list);
 
+    
     form.info_sale.push({
       product_uuid: data.uuid,
       product_name: data.name,
@@ -177,7 +180,7 @@ const getDataProduct = (data: ProductTableI) => {
       tax_uuid: data.tax.uuid,
       tax_amount: taxForProduct,
       warehouse_uuid: data.default_warehouse,
-      tax_rate: taxForProduct,
+      tax_rate: parseFloat(PreciseCalculator.divide(data.tax.rate, 100).toString()),
       discount: 0,
       discount_amount: 0,
       reserved: 0,
@@ -190,6 +193,7 @@ const getDataProduct = (data: ProductTableI) => {
   emit('totalSale');
 };
 
+// Exponer los datos para el componente de devoluciones
 defineExpose({
   showReturn,
   getSequenceType,
