@@ -46,7 +46,7 @@ class  StoreProductSaleRequest extends FormRequest
 
         // Crear la validacion de los datos
         return [
-            'id' => ['nullable', 'integer'],
+            'uuid' => ['nullable', 'string','uuid'],
             'ncf' => ['nullable','string','max:30',Rule::requiredIf($sequence)],
             'invoice_type' => ['nullable','max:6','string', Rule::requiredIf($sequence)],
             'client_name' => ['nullable', 'string','min:3','max:75'],

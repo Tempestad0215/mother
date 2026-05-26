@@ -258,7 +258,7 @@ defineExpose({
       header="Precio"
       :field="(data: infoSaleI) => `${getMoney(data.price)}`"
     />
-    <Column header="Itbis" :field="(data: infoSaleI) => `${data.tax_amount}`" />
+    <Column header="Itbis" :field="(data: infoSaleI) => `${getMoney(data.tax_amount)}`" />
     <Column
       class="max-w-20"
       header="Descuento"

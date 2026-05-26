@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Dtos\SaleItemDto;
 use App\Factories\SaleItemFactory;
 use App\Models\Sale;
 use App\Models\SaleItem;
@@ -14,31 +15,26 @@ class SaleItemHelper
 
     /**
      * @param Sale $sale
-     * @param array $data
+     * @param SaleItemDto[] $data
      * @return void
      * @throws Throwable
      */
     public static function multipleInsertWithSale(Sale $sale, array $data):void
     {
 
-        DB::transaction(function() use ($data, $sale)  {
-            if (empty($data))
-            {
-                return;
-            }
+        // Si no hay datos, no hacemos nada
+        if (empty($data))
+        {
+            return;
+        }
 
-            $dataForInsert = [];
+        // Formatear los datos para la inserción masiva
+        $fomattedData = collect($data)->map(fn(SaleItemDto $item) => $item->toArray())->all();
+    
+        // Crear los objetos SaleItemFactory a partir de los datos y convertirlos a array para la inserción masiva
+        $sale->items()->createMany($fomattedData);
 
-            foreach ($data as $value) {
 
-                $value['sale_id'] = $sale->id;
-
-                $dataForInsert[] = SaleItemFactory::fromArray($value)->toArray();
-            }
-
-            // Insertar de forma masiva
-            SaleItem::insert($dataForInsert);
-        });
 
 
 

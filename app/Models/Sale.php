@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\PaymentTypeEnum;
 use App\Enums\SaleTypeEnum;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,32 +18,32 @@ use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Models\Audit;
 
 /**
- * @property int id
- * @property string code
- * @property string invoice_type
- * @property string ncf
- * @property string ncf_m
- * @property string client_rnc
- * @property string client_name
- * @property int client_id
- * @property float discount_amount
- * @property float tax
- * @property float sub_total
- * @property float amount
- * @property boolean status
- * @property SaleTypeEnum type
- * @property bool close_table
- * @property Carbon created_at
- * @property Carbon updated_at
- * @property Carbon deleted_at
- * @property ProductTransaction[] infoSale
- * @property PaymentTypeEnum type_payment
- * @property float received
- * @property float returned
- * @property string[] credit_notes
- * @property float credit_notes_amount
- * @property Audit audits
- * @property string comment
+ * @property string $uuid
+ * @property string $code
+ * @property string $invoice_type
+ * @property string $ncf
+ * @property string $ncf_m
+ * @property string $client_rnc
+ * @property string $client_name
+ * @property string $client_uuid
+ * @property float $discount_amount
+ * @property float $tax
+ * @property float $sub_total
+ * @property float $amount
+ * @property boolean $status
+ * @property SaleTypeEnum $type
+ * @property bool $close_table
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property Carbon $deleted_at
+ * @property ProductTransaction[] $infoSale
+ * @property PaymentTypeEnum $type_payment
+ * @property float $received
+ * @property float $returned
+ * @property string[] $credit_notes
+ * @property float $credit_notes_amount
+ * @property Audit $audits
+ * @property string $comment
  */
 
 
@@ -51,10 +52,14 @@ class Sale extends Model implements Auditable
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
     use softDeletes;
+    use HasUuids;
 
     // La tabla que se ve a utilizar
     protected $table = 'sales';
-
+    
+    protected $primaryKey = 'uuid';
+    protected  $keyType = 'string';
+    public $incrementing = false;
 
     /**
      * Guardar los datos
@@ -114,7 +119,7 @@ class Sale extends Model implements Auditable
         return $this->hasMany(CreditNote::class, 'sale_id','uuid');
     }
 
-    public function Item(): HasMany
+    public function items(): HasMany
     {
         return $this->hasMany(SaleItem::class);
     }

@@ -3,6 +3,7 @@
 namespace App\Factories;
 
 use App\Dtos\SaleDto;
+use App\Dtos\SaleItemDto;
 use App\Enums\PaymentTypeEnum;
 use App\Enums\SaleTypeEnum;
 use App\Http\Requests\StoreProductSaleRequest;
@@ -24,6 +25,7 @@ class SaleFactory extends BaseFactory
             amount: $data['amount'],
             type: SaleTypeEnum::from($data['type']),
             type_payment: PaymentTypeEnum::from($data['type_payment']),
+            info_sale: SaleItemDto::fromArray($data['info_sale']),
             received: $data['received'],
             returned: $data['returned'],
             close_table: $data['close_table'],
@@ -32,7 +34,7 @@ class SaleFactory extends BaseFactory
             invoice_type: $data['invoice_type'],
             client_name: $data['client_name'],
             client_rnc: $data['client_rnc'],
-            client_id: $data['client_id'],
+            client_uuid: $data['client_uuid'],
             credit_notes: $data['credit_notes'],
             comment: $data['comment'],
         );

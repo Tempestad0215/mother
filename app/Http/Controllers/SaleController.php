@@ -29,8 +29,9 @@ class SaleController extends Controller
 {
 
     /**
+     * Summary of index
      * @param Request $request
-     * @return RedirectResponse|Response
+     * @return RedirectResponse|\Inertia\Response
      */
     public function index(Request $request):RedirectResponse|Response
     {
@@ -66,8 +67,11 @@ class SaleController extends Controller
 
 
     /**
-     * @throws LockTimeoutException
+     * Summary of store
+     * @param StoreProductSaleRequest $request
+     * @return RedirectResponse
      */
+
     public function store(StoreProductSaleRequest $request)
     {
 
@@ -90,7 +94,10 @@ class SaleController extends Controller
     }
 
     /**
-     * @throws Throwable
+     * 
+     * @param StoreProductSaleRequest $request
+     * @param Sale $sale
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(StoreProductSaleRequest $request, Sale $sale)
     {

@@ -3,7 +3,9 @@
 namespace App\Helpers;
 
 use App\Dtos\InventoryMovementDto;
+use App\Dtos\SaleDto;
 use App\Dtos\SaleItemApiDto;
+use App\Dtos\SaleItemDto;
 use App\Enums\InventoryMovementConceptEnum;
 use App\Enums\ProductTransactionTypeEnum;
 use App\Enums\SaleTypeEnum;
@@ -57,15 +59,14 @@ class SaleHelper
     {
 
         //Para asegurar que se cumplan los registro
-         return DB::transaction(function () use ($request) {
+        return DB::transaction(function () use ($request) {
+            //obtener notas de crédito
+            $salePayload = SaleDto::fromArray($request->validated());
             //Obtener la configuración
-             $setting = Setting::first();
+            // $setting = Setting::first();
 
             //Incrementar la secuencia enviada
-            SequenceHelper::incrementSequence(SequenceSaleTypeEnum::from($request->invoice_type));
-
-            //obtener notas de crédito
-            $salePayload = SaleFactory::fromRequest($request, $setting);
+            SequenceHelper::incrementSequence($salePayload->sale_type);
 
             // Crear la venta
             $sale = Sale::create($salePayload->toArray());
@@ -73,49 +74,35 @@ class SaleHelper
             //Actualizar los datos de la notas de crédito
             CreditNoteHelper::updateAvailableFor($salePayload->credit_notes, $salePayload->amount);
 
-            $rawInfoSale = $request->input('info_sale',[]);
-
-             $infoSale = SaleItemApiFactory::fromListArray($rawInfoSale);
-
-             $movementsInfos = [];
-             $itemsInfos = [];
-             //Recorrer la venta para descontar los productos
-             foreach ($infoSale as $value)
-             {
-
+            //Arrays para movimientos de inventario e items de venta
+            $movementsInfos = [];
+            $itemsInfos = [];
+            
+            //Recorrer la venta para descontar los productos
+            /** @var SaleItemDto $value */
+            foreach ($salePayload->info_sale as $value)
+            {
+                // Determinar el tipo de movimiento según el tipo de venta 
                 $typeMovement = $this->movementType($salePayload->type);
 
-                $movementsInfos[] = new InventoryMovementDto(
-                    type: $typeMovement,
-                    product_id: $value->product_id,
-                    quantity: $value->stock,
-                    warehouse_id: $value->warehouse_id,
-                    price: $value->price,
-                )->toArray();
+                // Crear el array para insertar los movimientos de inventario
+                // $movementsInfos[] = new InventoryMovementDto(
+                //     type: $value->,
+                //     product_uuid: $value->product_uuid,
+                //     quantity: $value->stock,
+                //     warehouse_uuid: $value->warehouse_uuid,
+                //     price: $value->price,
+                // )->toArray();
 
-                $itemsInfos[] = new SaleItemApiDto(
-                    product_uuid:: $value->product_uuid,
-                    product_name: $value->product_name,
-                    stock: $value->stock,
-                    price: $value->price,
-                    min_price: $value->min_price,
-                    special_price: $value->special_price,
-                    warehouse_uuid: $value->warehouse_uuid,
-                    tax_rate: $value->tax_rate,
-                    tax_uuid: $value->tax_uuid,
-                    price_temp: $value->price_temp,
-                    discount: $value->discount,
-                    discount_amount: $value->discount_amount,
-                    reserved: $value->reserved,
-                    amount: $value->amount,
-                    is_service: $value->is_service,
-                )->toArray();
+                //Crear el array para insertar los items de la venta
+                $itemsInfos[] = $value->toArray();
 
-             }
+            }
 
-             SaleItemHelper::multipleInsertWithSale($sale, $itemsInfos);
-             InventoryMovementHelper::multipleInsertWithSale($sale, $movementsInfos);
+            // Crear los movimientos de inventario
+            SaleItemHelper::multipleInsertWithSale($sale, $itemsInfos);
 
+            // Crear las transacciones de productos
             return $sale;
         });
     }
@@ -132,7 +119,7 @@ class SaleHelper
         }else if($saleType == SaleTypeEnum::Devolucion){
             return InventoryMovementConceptEnum::Devolucion;
         }else{
-            return InventoryMovementConceptEnum::Cotizacion;
+            return InventoryMovementConceptEnum::TransferenciaSalida;
         }
     }
 
@@ -247,7 +234,6 @@ class SaleHelper
             //Poner la variable en 0
             $stock = 0;
 
-
             //Verificar si el item existe
             if (count($infoSale) !== 0)
             {
@@ -260,7 +246,6 @@ class SaleHelper
 
             //Restar la cantidad que llega - la registrada
             $result = $item['stock'] - $stock;
-
 
             //Verificar el resultado
             if ($result > 0)
@@ -285,15 +270,18 @@ class SaleHelper
             // Actualizar los cambios realizados
             $product->save();
 
-
             // Tomar los datos de validacion
             $data = $request->validated();
+
             //Conseguiir notas de creditos
             $creditNotes = $request->input('credit_notes');
+
             //Obtener los ids
             $ids = array_column($creditNotes, 'id');
-//            Agrager los ids de notas de creditos
+
+            // Agrager los ids de notas de creditos
             $data['credit_notes'] = $ids;
+
             //Actualizar los datos de la ventas
             $sale->update($data);
 
@@ -345,7 +333,7 @@ class SaleHelper
             $query->where('status', true)
                 ->where('close_table', false);
         })->when($search != null ,function (Builder $query) use ($search) {
-            $query->where('client_name', 'LIKE', "%$search%") ;
+            $query->where('client_name', 'ILIKE', "%$search%") ;
         })->with('infoSale')
             ->latest()
             ->simplePaginate(15);

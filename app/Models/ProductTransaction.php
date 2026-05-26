@@ -13,7 +13,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property string $uuid
  * @property string $code
  * @property string $product_uuid
- * @property int $sale_id
+ * @property string $sale_uuid
  * @property string $credit_note_uuid
  * @property float $quantity
  * @property float $price
@@ -34,7 +34,6 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon|null $deleted_at
- *
  * @property-read Product $product
  * @property-read Sale $sale
  * @property-read CreditNote $creditNote
@@ -101,7 +100,7 @@ class ProductTransaction extends Model implements Auditable
 
     public function sale(): BelongsTo
     {
-        return $this->belongsTo(Sale::class, 'sale_id');
+        return $this->belongsTo(Sale::class, 'sale_uuid', 'uuid');
     }
 
     public function creditNote(): BelongsTo

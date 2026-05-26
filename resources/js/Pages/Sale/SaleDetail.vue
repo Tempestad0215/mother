@@ -7,15 +7,15 @@ import { saleDataI, SaleTypeEnumI } from '@/Interfaces/SaleInterface';
 import { saleKey } from '@/utils/keys';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
 import { getSequenceType } from '@/Global/Helpers';
-import { useRoute } from 'ziggy-js';
 import { Dialog, FloatLabel, InputText, Select, ToggleButton } from 'primevue';
 import FShowProduct from '@/Pages/Products/FShowProduct.vue';
 import { PreciseCalculator } from '@/utils/Decimal';
 import { Grid2X2Plus, ShoppingCart, Undo2 } from '@lucide/vue';
 import { getInfoFromPriceList } from '@/Helpers/ProductHelper';
 
+//Datos de la ventana
 const page = usePage();
-
+//Datos del back end
 const propsW = defineProps<{
   invoiceType: invoiceTypeI[];
   refund?: boolean;
@@ -24,19 +24,23 @@ const propsW = defineProps<{
   saleTypeEnum: SaleTypeEnumI;
 }>();
 
+//Emitir eventos para el componente de devoluciones
 const emit = defineEmits<{
   (e: 'retunedBlur'): void;
   (e: 'totalAmount', index: number): void;
   (e: 'totalSale'): void;
 }>();
 
+//Formulario
 const form = inject(saleKey)!;
 
+//Ventanas
 const showProducts = ref(false);
 const showSaleOpen = ref(false);
 const showReturn = ref(false);
 const showFormReturn = ref(false);
 
+// Obtener el tipo de venta
 const getSaleType = computed(() => {
   return Object.entries(propsW.saleTypeEnum).map(([key, value]) => {
     return {
@@ -47,6 +51,7 @@ const getSaleType = computed(() => {
   });
 });
 
+// Obtener el tipo de factura
 watch(
   () => form.type,
   (newVal) => {
@@ -189,7 +194,7 @@ const getDataProduct = (data: ProductTableI) => {
       price_temp: data.price,
     });
   }
-
+//calcular el total de las ventas
   emit('totalSale');
 };
 
@@ -202,7 +207,7 @@ defineExpose({
 </script>
 
 <template>
-  <!--                        Datos del formulario-->
+  <!-- Datos del formulario-->
   <div class="flex justify-between items-center mt-3">
     <div class="flex mt-2">
       <form class="" v-if="form.invoice_type !== 'B04'">

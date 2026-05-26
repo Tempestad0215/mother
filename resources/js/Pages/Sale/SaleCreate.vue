@@ -25,6 +25,7 @@ import PaymentInvoice from '@components/PaymentInvoice.vue';
 import { useRoute } from 'ziggy-js';
 import { Dialog, Card, Button, useToast } from 'primevue';
 
+//Datos de la ventana
 const toast = useToast();
 const route = useRoute();
 /*
@@ -32,9 +33,7 @@ Utilizar el page para los datos de la página
  */
 const page = usePage();
 
-/*
- * Datos del back end
- */
+//Datos del back end
 const propsW = defineProps<{
   products: PaginationI<ProductTableI>;
   clients: PaginationI<clientBaseI>;
@@ -47,22 +46,17 @@ const propsW = defineProps<{
   warehouses: WarehouseMapType;
 }>();
 
-/*
- * Datos de la ventana
- */
+//Ventanas
 const showReturn: Ref<boolean> = ref(false);
 const showFormReturn: Ref<boolean> = ref(false);
 const paymentBox = ref(false);
-
 const saleInfoRef = ref<InstanceType<typeof SaleInfo>>()!;
 const saleDetailRef = ref<InstanceType<typeof SaleDetail>>()!;
 const saleTableRef = ref<InstanceType<typeof SaleTable>>()!;
 const saleFooterRef = ref<InstanceType<typeof SaleFooter>>()!;
 const salePaymentRef = ref<InstanceType<typeof PaymentInvoice>>()!;
 
-/*
- * Formulario
- */
+// Formulario
 const form = useForm<CreateSaleI>({
   uuid: '',
   code_value: '',
@@ -96,9 +90,7 @@ const form = useForm<CreateSaleI>({
   pending: 0,
 });
 
-/*
-al momento de cargar
- */
+// Al momento de cargar el componente
 onMounted(() => {
   //Verificar si existe los datos para devoluicion
   setDataForm();
@@ -114,9 +106,7 @@ onMounted(() => {
   }
 });
 
-/*
- * al momento de cargar
- */
+// Obtener los datos de las cuentas abiertas
 onUpdated(() => {
   //Buscar la secuencia si está en la configuracion
   setTimeout(() => {
@@ -135,12 +125,7 @@ onUpdated(() => {
   setDataForm();
 });
 
-/*
-Funciones
- */
-/**
- * Poner los datos en el formuilario
- */
+// Obtener el tipo de venta
 const setDataForm = () => {
   //Verificar si existe los datos para devoluicion
   if (propsW.refund && propsW.saleInfo) {
@@ -179,9 +164,7 @@ const createCreditNotes = () => {
     .catch(() => {});
 };
 
-/**
- * Enviar los datos para guardar
- */
+// Obtener el tipo de boleta
 const sendData = async () => {
   // Verificar si esta el retorno
   if (propsW.refund) {
