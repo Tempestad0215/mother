@@ -10,6 +10,7 @@ use App\Http\Controllers\EntryController;
 use App\Http\Controllers\ExchangeController;
 use App\Http\Controllers\InventoryMovementController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\OutController;
 use App\Http\Controllers\PriceListController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
@@ -117,7 +118,8 @@ Route::middleware([
         'unit' => UnitController::class,
         'tax' => TaxController::class,
         'branch' => BrandController::class,
-        'entry' => EntryController::class
+        'entry' => EntryController::class,
+        'out' => OutController::class
     ]);
 
     Route::get('price-list/product/{product}',[PriceListController::class,'productShow'])

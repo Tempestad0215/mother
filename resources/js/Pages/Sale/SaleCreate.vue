@@ -2,7 +2,7 @@
 import { router, useForm, usePage } from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
 import { onMounted, onUpdated, provide, Ref, ref } from 'vue';
-import { ProductBaseI, ProductTableI } from '@/Interfaces/ProductInterface';
+import { ProductTableI } from '@/Interfaces/ProductInterface';
 import { printPdf } from '@/Global/Helpers';
 import { clientBaseI } from '@/Interfaces/ClientInterface';
 import axios from 'axios';
@@ -161,6 +161,8 @@ const setDataForm = () => {
   }
 };
 
+
+// Enviar los datos para las devoluciones
 const createCreditNotes = () => {
   // Enviar los datos para las devoluciones
   axios
@@ -199,6 +201,8 @@ const sendData = async () => {
   }
 };
 
+
+// Crear la venta
 const createSale = () => {
   // try {
   // const res = await axios.patch(route('sale.update', {sale: form.id}), form)
@@ -238,6 +242,8 @@ const createSale = () => {
   // }
 };
 
+
+// Actualizar la venta
 const updateSale = async () => {
   try {
     const res = await axios.post(route('sale.create'), form);
@@ -257,6 +263,8 @@ const updateSale = async () => {
   }
 };
 
+
+// Registrar la venta
 const registerSale = () => {
   if (form.type === 'Cotizacion' || !form.close_table) {
     sendData();
@@ -266,6 +274,7 @@ const registerSale = () => {
   }
 };
 
+// Proveer el formulario a los componentes hijos
 provide(saleKey, form);
 </script>
 

@@ -3,32 +3,19 @@ import { saleKey } from '@/utils/keys';
 import { computed, inject, reactive, ref, watch } from 'vue';
 import { infoSaleI, WarehouseMapType } from '@/Interfaces/SaleInterface';
 import { PreciseCalculator } from '@/utils/Decimal';
-import {
-  Button,
-  Column,
-  DataTable,
-  Dialog,
-  FloatLabel,
-  InputNumber,
-  RadioButton,
-  Select,
-} from 'primevue';
+import { Column, DataTable, Dialog, FloatLabel, InputNumber, RadioButton, Select } from 'primevue';
 import { getMoney } from '@/Global/Helpers';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faArrowAltCircleDown, faArrowAltCircleUp } from '@fortawesome/free-solid-svg-icons';
 import { FilePenLine } from '@lucide/vue';
 
-/**
- *
- */
+// Para eliminar un item de la venta
 const propsW = defineProps<{
   refund?: boolean;
   warehouses?: WarehouseMapType;
 }>();
 
-/**
- *
- */
+// Para eliminar un item de la venta
 const form = inject(saleKey)!;
 const lastIndex = ref<number>(0);
 const showEdit = ref(false);
@@ -36,46 +23,39 @@ const typePrice = ref(1);
 const minIndex = computed(() => 0);
 const maxIndex = computed(() => (form.info_sale.length > 0 ? form.info_sale.length - 1 : 0));
 
-/**
- *
- */
+// Para eliminar un item de la venta
 interface editFormI {
   stock: number;
   price: number;
   discount: number;
 }
 
-/**
- *
- */
+// Formulario para editar un item de la venta
 const editItemForm = reactive<editFormI>({
   stock: 0,
   price: 0,
   discount: 0,
 });
 
-/**
- *
- */
+// Para obtener el precio mínimo del producto que se está editando
 const minPrice = computed((): number => {
   if (!checkIndex()) return 0;
   return Number(form.info_sale[lastIndex.value].min_price);
 });
-/**
- *
- */
+
+// Para mostrar el nombre del producto que se está editando
 const productEditingName = computed((): string => {
   if (!checkIndex()) return '';
   return form.info_sale[lastIndex.value].product_name;
 });
-/**
- *
- */
+
+// Para saber si el producto es un servicio o no
 const productIsService = computed(() => {
   const item = form.info_sale[lastIndex.value];
   return !!item?.is_service;
 });
 
+// Obtener los almacenes para el select
 const getWarehouses = computed(() => {
   if (propsW.warehouses) {
     return Object.entries(propsW.warehouses).map(([key, value]) => {
@@ -90,6 +70,7 @@ const getWarehouses = computed(() => {
   }
 });
 
+// Almacenes para el select
 watch(
   () => editItemForm,
   (newVal) => {
@@ -102,10 +83,12 @@ watch(
   { deep: true }
 );
 
+// Para verificar si el índice es válido
 const checkIndex = (): boolean => {
   return !(lastIndex.value < minIndex.value || lastIndex.value > maxIndex.value);
 };
 
+// Para mostrar el formulario de edición
 const deletedItem = (index: number) => {
   if (form.info_sale[index].stock === 0) {
     form.info_sale.splice(index, 1);
@@ -118,6 +101,7 @@ const deletedItem = (index: number) => {
   }
 };
 
+// Para mostrar el formulario de edición
 const getLastIndex = () => {
   if (form.info_sale.length <= 0) return;
 
@@ -128,12 +112,10 @@ const getLastIndex = () => {
   Object.assign(editItemForm, form.info_sale[lastIndex.value]);
 };
 
+// Para mostrar el formulario de edición
 type MoveDirection = 'up' | 'down';
 
-/**
- *
- * @param direction
- */
+// Para mover el formulario de edición hacia arriba o hacia abajo
 const moveEdit = (direction: MoveDirection) => {
   const current = lastIndex.value;
 
@@ -151,9 +133,7 @@ const moveEdit = (direction: MoveDirection) => {
   Object.assign(editItemForm, form.info_sale[lastIndex.value]);
 };
 
-/**
- *
- */
+// Para calcular los totales de la venta
 const calculateTotals = () => {
   // 1) Totales base
   const subTotal = form.info_sale.reduce(
@@ -162,12 +142,14 @@ const calculateTotals = () => {
     0
   );
 
+  // 1.1) Totales de impuestos y descuentos
   const taxTotal = form.info_sale.reduce(
     (acc: number, currentValue: infoSaleI): number =>
       Number(PreciseCalculator.add(acc, currentValue.tax_rate)),
     0
   );
 
+  // 1.2) Totales de descuentos
   const discountTotal = form.info_sale.reduce(
     (acc: number, currentValue: infoSaleI): number =>
       Number(PreciseCalculator.add(acc, currentValue.discount_amount || 0)),
@@ -187,10 +169,7 @@ const calculateTotals = () => {
   form.amount = Number(PreciseCalculator.subtract(subTotalNoTax, discountTotal));
 };
 
-/**
- *
- * @param index
- */
+// Formulario para la venta
 const totalAmount = (index: number) => {
   if (index < 0 || index >= form.info_sale.length) return;
 
@@ -217,9 +196,7 @@ const totalAmount = (index: number) => {
   calculateTotals();
 };
 
-/**
- *
- */
+// Formulario para la venta
 const changePrice = () => {
   if (form.info_sale.length <= 0) return;
   const idx = lastIndex.value;
@@ -254,6 +231,7 @@ const changePrice = () => {
   totalAmount(idx);
 };
 
+// Exponer funciones al componente padre
 defineExpose({
   totalAmount,
   calculateTotals,

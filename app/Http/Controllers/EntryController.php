@@ -3,16 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Dtos\EntryDto;
-use App\Enums\ProductTransactionTypeEnum;
+use App\Enums\InventoryMovementTypeEnum;
 use App\Helpers\InHelper;
 use App\Helpers\TransHelper;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\ProductTransResource;
+use App\Models\InventoryMovement;
 use App\Models\Product;
 use App\Http\Requests\StoreProductInRequest;
 use App\Http\Requests\UpdateProductInRequest;
 use App\Models\ProductTransaction;
 use App\Models\Warehouse;
+use App\Models\WarehouseProduct;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -60,22 +62,20 @@ class EntryController extends Controller
     public function store(Request $request): RedirectResponse
     {
 
-
+        // Validar los datos
         $validated = $request->validate([
-            'product_uuid'   => 'required|uuid|exists:products,uuid',
-            'warehouse_uuid' => 'required|uuid|exists:warehouses,uuid',
-            'quantity'       => 'required|numeric|min:0.0001',
-            'cost'           => 'required|numeric|min:0', // Con qué costo entra al almacén
-            'reference'      => 'nullable|string|max:255',
+            'product_uuid'   => ['required','uuid','exists:products,uuid'],
+            'warehouse_uuid' => ['required','uuid','exists:warehouses,uuid'],
+            'quantity'       => ['required','numeric','min:0.0001'],
+            'cost'           => ['required','numeric','min:0'], // Con qué costo entra al almacén
+            'reference'      => ['nullable','string','max:255'],
         ]);
 
-
+        // Crear el dto de la entrada
         $entryDto = EntryDto::fromArray($validated);
 
-
-
         // Para asegurar la transaccion
-        DB::transaction(function () use ($request, $entryDto) {
+        DB::transaction(function () use ($entryDto) {
 
             // Tomar el producto
             $product = Product::with(['warehouses'])
@@ -86,10 +86,21 @@ class EntryController extends Controller
             $product->save();
 
             // Tomar el warehouse por el id
+            /**
+             * @var Warehouse|null $warehouse
+             */
             $warehouse = $product->warehouses()->where('uuid', $entryDto->warehouse_uuid)->first();
             // Tomar la tabal pivot
+            /**
+             * @var WarehouseProduct $pivot
+             */
             $pivot = $warehouse->pivot;
-            dd($pivot);
+            
+            /**
+             * @var float $oldStock
+             */
+            $oldStock = $pivot->stock_quantity;
+            $pivot->increment('stock_quantity', $entryDto->quantity);
 
             // Actualizar los datos
             $product->warehouses()->updateExistingPivot($entryDto->warehouse_uuid,[
@@ -97,7 +108,17 @@ class EntryController extends Controller
                 'updated_at' => now()
             ]);
 
-
+            // Crear el movimiento de inventario
+            InventoryMovement::create([
+                'product_uuid' => $entryDto->product_uuid,
+                'warehouse_uuid' => $entryDto->warehouse_uuid,
+                'quantity' => $entryDto->quantity,
+                'stock_before' => $oldStock,
+                'stock_after' => $pivot->stock_quantity,
+                'type' => InventoryMovementTypeEnum::IN,
+                'cost' => $entryDto->cost,
+                'concept' => $entryDto->reference,
+            ]);
 
         });
 
@@ -256,7 +277,7 @@ class EntryController extends Controller
      * @param Request $request
      * @return Paginator
      */
-    private function getProduct(Request $request):Paginator
+    public function getProduct(Request $request):Paginator
     {
         //Obtener los datos de busqueda
         $search = $request->input('search');

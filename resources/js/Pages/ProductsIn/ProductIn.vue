@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, useForm, usePage } from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
 import { productI, ProductTableI } from '@/Interfaces/ProductInterface';
 import { useRoute } from 'ziggy-js';
@@ -16,14 +16,15 @@ import {
   Tag,
   useToast,
   AutoCompleteOptionSelectEvent,
+  AutoCompleteCompleteEvent,
 } from 'primevue';
 import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
-import { debounce } from 'lodash-es';
 import axios from 'axios';
 import { ref } from 'vue';
 
 const toast = useToast();
 const route = useRoute();
+const page = usePage();
 /**
  * Datos de la pagina
  */
@@ -36,7 +37,7 @@ const propsW = defineProps<{
   products: productI;
   warehouses: Array<WarehouseBaseI>;
 }>();
-
+const urlPage = ref(page.url.replace('/', ''));
 const products = ref<Array<ProductTableI>>([]);
 /**
  * Formulario para enviar los daots
@@ -52,28 +53,54 @@ const form = useForm({
 
 // Enviar formulario
 const submit = () => {
-  form.post(route('entry.store'), {
-    onSuccess: () => {
-      toast.add({
-        severity: 'success',
-        summary: 'Exito',
-        detail: 'Registro Creado Correctamente',
-        life: 3000,
-      });
-      form.reset();
-    },
-    onError: () => {
-      toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Error al crear lo registro',
-        life: 3000,
-      });
-    },
-  });
+  if (urlPage.value == 'out') {
+    form.post(route('out.store'), {
+      onSuccess: () => {
+        toast.add({
+          severity: 'success',
+          summary: 'Exito',
+          detail: 'Registro Creado Correctamente',
+          life: 3000,
+        });
+        form.reset();
+      },
+      onError: () => {
+        toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error al crear lo registro',
+          life: 3000,
+        });
+      },
+    });
+  }
+  {
+    form.post(route('entry.store'), {
+      onSuccess: () => {
+        toast.add({
+          severity: 'success',
+          summary: 'Exito',
+          detail: 'Registro Creado Correctamente',
+          life: 3000,
+        });
+        form.reset();
+      },
+      onError: () => {
+        toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error al crear lo registro',
+          life: 3000,
+        });
+      },
+    });
+  }
 };
 
-const getProductJson = debounce(async (event: { query: string }) => {
+/**
+ * Funciones para el autocomplete
+ */
+const getProductJson = async (event: AutoCompleteCompleteEvent) => {
   try {
     const res = await axios.get(route('product.get.json'), {
       params: {
@@ -90,8 +117,12 @@ const getProductJson = debounce(async (event: { query: string }) => {
       life: 3000,
     });
   }
-});
+};
 
+/**
+ * Obtener el uuid del producto seleccionado
+ * @param event
+ */
 const getProductUuid = (event: AutoCompleteOptionSelectEvent) => {
   const data = event.value as ProductTableI;
   form.product_uuid = data.uuid;
@@ -110,14 +141,16 @@ const getProductUuid = (event: AutoCompleteOptionSelectEvent) => {
       <template #content>
         <form @submit.prevent="submit()" class="grid grid-cols-2 gap-3">
           <div class="col-span-full">
-            <h3 class="text-2xl text-center font-bold">Entrada de Mercancia</h3>
+            <h3 class="text-2xl text-center font-bold">
+              {{ urlPage == 'out' ? 'Salida' : 'Entrada' }} de Mercancia
+            </h3>
           </div>
           <FloatLabel variant="on">
             <AutoComplete
               :suggestions="products"
               @itemSelect="getProductUuid"
               :option-label="(data: ProductTableI) => `${data.code} | ${data.name}`"
-              @valueChange="getProductJson"
+              @complete="getProductJson"
               fluid
               class="w-full"
             />
@@ -133,7 +166,7 @@ const getProductUuid = (event: AutoCompleteOptionSelectEvent) => {
             />
             <label for="product_id">Almacen</label>
           </FloatLabel>
-          <FloatLabel variant="on">
+          <FloatLabel v-if="urlPage !== 'out'" variant="on">
             <InputNumber v-model="form.cost" fluid />
             <label for="product_id">Costo</label>
           </FloatLabel>
@@ -147,7 +180,11 @@ const getProductUuid = (event: AutoCompleteOptionSelectEvent) => {
             <label for="product_id">Referencia</label>
           </FloatLabel>
           <div class="col-span-full">
-            <Tag severity="danger" :value="Object.values(form.errors)[0]" />
+            <Tag
+              v-if="Object.values(form.errors).length > 0"
+              severity="danger"
+              :value="Object.values(form.errors)[0]"
+            />
           </div>
           <div class="col-span-full text-right space-x-3">
             <Button severity="secondary">Limpiar</Button>

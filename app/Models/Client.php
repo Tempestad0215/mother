@@ -20,27 +20,27 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 
 /**
- * @property integer id;
- * @property string name
- * @property SequenceSaleTypeEnum type_rnc
- * @property string phone
- * @property string personal_id
- * @property string email
- * @property ClientDocumentEnum document
- * @property string address
- * @property boolean status
- * @property float limit
- * @property integer due_date
- * @property ClientTypeEnum type
- * @property float late_fee_interest
- * @property float balance
- * @property float consumed
- * @property ClientTypePriceEnum type_price
- * @property boolean receive_email
- * @property string comment
- * @property Date deleted_at
- * @property Date created_at
- * @property Date updated_at
+ * @property string $uuid
+ * @property string $name
+ * @property SequenceSaleTypeEnum $type_rnc
+ * @property string $phone
+ * @property string $personal_id
+ * @property string $email
+ * @property ClientDocumentEnum $document
+ * @property string $address
+ * @property boolean $status
+ * @property float $limit
+ * @property integer $due_date
+ * @property ClientTypeEnum $type
+ * @property float $late_fee_interest
+ * @property float $balance
+ * @property float $consumed
+ * @property ClientTypePriceEnum $type_price
+ * @property boolean $receive_email
+ * @property string $comment
+ * @property Date $deleted_at
+ * @property Date $created_at
+ * @property Date $updated_at
  */
 
 class Client extends Model implements Auditable

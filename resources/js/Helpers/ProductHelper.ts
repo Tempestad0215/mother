@@ -1,5 +1,5 @@
 import type { MenuItem } from 'primevue/menuitem';
-import { PriceListBaseI, PriceListProducts } from '@/Interfaces/PriceListInterface';
+import { PriceListProducts } from '@/Interfaces/PriceListInterface';
 import { WarehouseProductI } from '@/Interfaces/ProductInterface';
 
 export const productBreadCrumb: MenuItem[] = [
@@ -15,7 +15,7 @@ export const productBreadCrumb: MenuItem[] = [
   },
   {
     label: 'Salida',
-    url: route('product.index'),
+    url: route('out.index'),
     icon: 'pi pi-bottle',
   },
 ];
