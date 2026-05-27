@@ -20,7 +20,7 @@ class SaleItemApiFactory extends BaseFactory
             stock: $data['stock'],
             price: $data['price'],
             min_price: $data['min_price'],
-            special_price: $data['special_price'],
+            promotional_price: $data['promotional_price'],
             warehouse_uuid: $data['warehouse_uuid'],
             tax_rate: $data['tax_rate'],
             tax_uuid: $data['tax_uuid'],

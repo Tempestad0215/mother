@@ -47,7 +47,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property Carbon $updated_at
  * @property Carbon|null $deleted_at
  *
- * @property-read Collection<int, PriceList[] $price_list>
+ * @property-read Collection<int, PriceList[] > $price_list
  * @property-read Brand $brand
  * @property-read Tax $tax
  * @property-read PurchaseReceiptsItem $receiptsItem

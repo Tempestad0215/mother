@@ -24,7 +24,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property float $tax
  * @property float $tax_amount
  * @property float $min_price
- * @property float $special_price
+ * @property float $promotional_price
  * @property float $subtotal
  * @property float $amount
  * @property bool $status
@@ -66,7 +66,7 @@ class ProductTransaction extends Model implements Auditable
         'tax',
         'tax_amount',
         'min_price',
-        'special_price',
+        'promotional_price',
         'subtotal',
         'amount',
         'status',
@@ -85,7 +85,7 @@ class ProductTransaction extends Model implements Auditable
         'tax' => 'decimal:6',
         'tax_amount' => 'decimal:6',
         'min_price' => 'decimal:6',
-        'special_price' => 'decimal:6',
+        'promotional_price' => 'decimal:6',
         'subtotal' => 'decimal:6',
         'amount' => 'decimal:6',
         'reserved_quantity' => 'decimal:6',

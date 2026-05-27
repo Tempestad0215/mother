@@ -10,7 +10,7 @@ class SaleItemApiDto extends BaseDto
         public float $stock,
         public float $price,
         public float $min_price,
-        public float $special_price,
+        public float $promotional_price,
         public string $warehouse_uuid,
         public float $tax_rate,
         public string $tax_uuid,

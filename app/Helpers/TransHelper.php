@@ -31,7 +31,7 @@ class TransHelper
                 'credit_note_uuid' => $credit_note?->uuid ?: null,
                 'price' => $request['price'],
                 'min_price' => $request['min_price'],
-                'special_price' => $request['special_price'],
+                'promotional_price' => $request['promotional_price'],
                 'discount' => $request['discount'],
                 'discount_amount' => $request['discount_amount'],
                 'tax_rate' => $request['tax_rate'],

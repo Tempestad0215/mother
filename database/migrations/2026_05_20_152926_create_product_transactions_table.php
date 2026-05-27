@@ -26,7 +26,7 @@ return new class extends Migration
             $table->decimal('tax', 10, 6)->default(0);
             $table->decimal('tax_amount', 10, 6)->default(0);
             $table->decimal('min_price', 10, 6)->default(0);
-            $table->decimal('special_price', 10, 6)->default(0);
+            $table->decimal('promotional_price', 10, 6)->default(0);
             $table->decimal('subtotal', 10, 6)->default(0);
             $table->decimal('amount', 10, 6)->default(0);
             $table->boolean('status')->default(true);

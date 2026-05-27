@@ -222,7 +222,7 @@ class CreditNoteHelper
             foreach ($info as $item)
             {
                 //colocar en 0 las notas de credito
-                CreditNote::where('id', $item['id'])
+                CreditNote::where('uuid', $item['uuid'])
                     ->update([
                        'n_available' => 0,
                         'status' => false

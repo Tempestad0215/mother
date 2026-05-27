@@ -174,14 +174,13 @@ const getDataProduct = (data: ProductTableI) => {
     // Tomar la info de la price list
     const priceList = getInfoFromPriceList(data.price_lists, data.default_price_list);
 
-    
     form.info_sale.push({
       product_uuid: data.uuid,
       product_name: data.name,
       stock: 1,
       price: priceList?.price ?? 0,
       min_price: priceList?.min_price ?? 0,
-      special_price: priceList?.promotional_price ?? 0,
+      promotional_price: priceList?.promotional_price ?? 0,
       tax_uuid: data.tax.uuid,
       tax_amount: taxForProduct,
       warehouse_uuid: data.default_warehouse,
@@ -191,10 +190,10 @@ const getDataProduct = (data: ProductTableI) => {
       reserved: 0,
       amount: data.price,
       is_service: Boolean(data.is_service),
-      price_temp: data.price,
+      temp_price: data.price,
     });
   }
-//calcular el total de las ventas
+  //calcular el total de las ventas
   emit('totalSale');
 };
 

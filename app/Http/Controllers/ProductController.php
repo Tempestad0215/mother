@@ -140,7 +140,7 @@ class ProductController extends Controller implements HasMiddleware
                 $product_dto->price_list_uuid,
                 $product_dto->price,
                 $product_dto->min_price,
-                $product_dto->special_price
+                $product_dto->promotional_price
 
             );
 
@@ -218,7 +218,7 @@ class ProductController extends Controller implements HasMiddleware
                 $product_dto->price_list_uuid,
                 $product_dto->price,
                 $product_dto->min_price,
-                $product_dto->special_price
+                $product_dto->promotional_price
 
             );
 

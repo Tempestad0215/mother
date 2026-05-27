@@ -53,7 +53,7 @@ class StoreProductInRequest extends FormRequest
             'product_id' => ['required','exists:products,id','integer'],
             'stock' => [Rule::requiredIf($product->type == ProductTypeEnum::Producto), 'required', 'numeric'],
             'cost' => ['required', 'numeric'],
-            'special_price' => ['required','numeric', new SaveCostProductRule($this->cost)],
+            'promotional_price' => ['required','numeric', new SaveCostProductRule($this->cost)],
             'min_price' => ['required', 'numeric'],
             'price' => ['required', 'numeric'],
             'tax_rate' => ['required', 'numeric'],

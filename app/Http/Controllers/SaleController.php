@@ -229,7 +229,7 @@ class SaleController extends Controller
     public function getClose(Request $request)
     {
         //Obtner el codigo del usuarios
-        $user = $request->get('user',1);
+        $user = $request->input('user',1);
 
         //Obtner la ventas de ese usuarios por el dia
         $sale = Sale::whereHas('audits', function ($query) use ($user) {

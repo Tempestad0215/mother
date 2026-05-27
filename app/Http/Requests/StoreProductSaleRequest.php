@@ -58,6 +58,7 @@ class  StoreProductSaleRequest extends FormRequest
             'info_sale.*.product_name' => ['required','string','min:3','max:75'],
             'info_sale.*.stock' => ['required','numeric'],
             'info_sale.*.price' => ['required','numeric'],
+            'info_sale.*.temp_price' => ['required','numeric'],
             'info_sale.*.tax_uuid' => ['required','uuid','exists:taxes,uuid'],
             'info_sale.*.warehouse_uuid' => ['required','uuid','exists:warehouses,uuid'],
             'info_sale.*.tax_rate' => ['required','numeric'],

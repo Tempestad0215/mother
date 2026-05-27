@@ -42,7 +42,7 @@ export interface ProductBaseI {
   cost: number;
   price: number;
   min_price?: number;
-  special_price?: number;
+  promotional_price?: number;
   is_service: 1 | 0;
   supplier_uuid: string;
   category_uuid: string;
@@ -98,7 +98,7 @@ export interface ProductTableI {
 export interface productFullI extends ProductBaseI {
   reserved: number;
   min_price: number;
-  special_price: number;
+  promotional_price: number;
   price: number;
   discount: number;
   tax: number;
@@ -114,7 +114,7 @@ export interface productTransI extends ProductBaseI {
   discount_amount: number;
   price: number;
   min_price: number;
-  special_price: number;
+  promotional_price: number;
   product_code: string;
   product_id: number;
   product_name: string;

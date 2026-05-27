@@ -217,7 +217,7 @@ const changePrice = () => {
 
     case 2:
       // precio mínimo
-      item.price_temp = item.special_price ?? 0;
+      item.price_temp = item.promotional_price ?? 0;
       break;
 
     case 3:
@@ -312,11 +312,11 @@ defineExpose({
               <RadioButton
                 @change="changePrice"
                 v-model="typePrice"
-                inputId="special_price"
-                name="special_price"
+                inputId="promotional_price"
+                name="promotional_price"
                 :value="2"
               />
-              <label for="special_price"> Precio Especial </label>
+              <label for="promotional_price"> Precio Promocional </label>
             </div>
             <div class="flex items-center gap-2">
               <RadioButton

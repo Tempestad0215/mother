@@ -83,7 +83,7 @@ class SaleCreditNoteResource extends JsonResource
                     'product_name' => $productFirst->name,
                     'stock' => $stockAmount ?: $item['stock'],
                     'price' => $item['price'],
-                    'special_price' => $item['special_price'],
+                    'promotional_price' => $item['promotional_price'],
                     'min_price' => $item['min_price'],
                     'tax_rate' => $item['tax_rate'],
                     'tax' => $item['tax'],

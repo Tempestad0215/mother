@@ -69,7 +69,7 @@ class SaleHelper
             // $setting = Setting::first();
 
             //Incrementar la secuencia enviada
-            SequenceHelper::incrementSequence($salePayload->sale_type);
+            SequenceHelper::incrementSequence($salePayload->invoice_type);
 
             // Crear la venta
             $sale = Sale::create($salePayload->toArray());
@@ -78,27 +78,20 @@ class SaleHelper
             CreditNoteHelper::updateAvailableFor($salePayload->credit_notes, $salePayload->amount);
 
             // Obtener los ids de productos
-            $productUuids = collect($salePayload->info_sale->toArray())->pluck('product_uuid')->toArray();
+            $productUuids = array_map(fn (SaleItemDto $item) => $item->product_uuid, $salePayload->info_sale);
 
             // Obteenr los productos y colocar el id en el key
             /** @var Collection<string, Product> $products */
             $products = Product::whereIn('uuid', $productUuids)->get()->keyBy('uuid');
 
-            //Arrays para movimientos de inventario e items de venta
-            $movementsInfos = [];
-            $itemsInfos = [];
             
             //Recorrer la venta para descontar los productos
             /** @var SaleItemDto $value */
             foreach ($salePayload->info_sale as $value)
             {
-                // Determinar el tipo de movimiento según el tipo de venta 
-                $typeMovement = $this->movementType($salePayload->type);
-
-
+    
                 // Obtener el products
                 $product = $products->get($value->product_uuid);
-
 
                 // Verificar si el producto existe
                 if(!$product)
@@ -117,13 +110,10 @@ class SaleHelper
                     cost: $product->cost,
                 )->toArray();
 
-                //Crear el array para insertar los items de la venta
-                $itemsInfos[] = $value->toArray();
-
             }
 
             // Crear los movimientos de inventario
-            SaleItemHelper::multipleInsertWithSale($sale, $itemsInfos);
+            SaleItemHelper::multipleInsertWithSale($sale, $salePayload->info_sale);
 
             // Crear las transacciones de productos
             return $sale;
@@ -249,7 +239,7 @@ class SaleHelper
         $closeTable = $request->input('close_table');
 
         //Recorrer los datos
-        $infoRequest->map(callback: function ($item) use (&$sale, &$closeTable, &$request){
+        $infoRequest->map(function ($item) use (&$sale, &$closeTable, &$request){
 
             //convertir la info sale a collection
             $infoSale = collect($sale->infoSale);

@@ -11,10 +11,10 @@ export interface infoSaleI {
   discount?: number;
   discount_amount?: number;
   min_price?: number;
-  special_price?: number;
+  promotional_price?: number;
   price: number;
   warehouse_uuid: string;
-  price_temp: number;
+  temp_price: number;
   product_uuid: string;
   product_name: string;
   is_service?: boolean;

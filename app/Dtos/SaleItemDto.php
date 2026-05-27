@@ -10,7 +10,6 @@ class SaleItemDto extends BaseDto
      * 
      * @param string $product_uuid
      * @param string $product_name
-     * @param string $sale_uuid
      * @param float $stock
      * @param float $price
      * @param string $tax_uuid
@@ -24,7 +23,6 @@ class SaleItemDto extends BaseDto
     public function __construct(
         public string $product_uuid,
         public string $product_name,
-        public string $sale_uuid,
         public float $stock,
         public float $price,
         public float $min_price,
@@ -48,23 +46,23 @@ class SaleItemDto extends BaseDto
      */
     public static function fromArray(array $data): SaleItemDto
     {
+
         return new SaleItemDto(
             product_uuid: $data['product_uuid'],
             product_name: $data['product_name'],
-            sale_uuid: $data['sale_uuid'],
             stock: $data['stock'],
             price: $data['price'],
-            min_price: $data['min_price'],
-            promotional_price: $data['promotional_price'],
-            temp_price: $data['temp_price'],
+            min_price: $data['min_price'] ?? 0,
+            promotional_price: $data['promotional_price'] ?? 0,
+            temp_price: $data['temp_price'] ?? 0,
             tax_uuid: $data['tax_uuid'],
             tax_rate: $data['tax_rate'],
             discount: $data['discount'],
             warehouse_uuid: $data['warehouse_uuid'],
             discount_amount: $data['discount_amount'],
-            reserved: $data['reserved'],
+            reserved: $data['reserved'] ?? 0,
             amount: $data['amount'],
-            is_service: $data['is_service'],
+            is_service: $data['is_service'] ?? false,
         );
     }
 
