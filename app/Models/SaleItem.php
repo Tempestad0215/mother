@@ -82,6 +82,8 @@ class SaleItem extends Model implements Auditable
         return $this->belongsTo(Product::class, 'product_uuid', 'uuid');
     }
 
+    
+
 
     /**
      * 

@@ -29,6 +29,7 @@ export interface infoSaleI {
   trans_type?: string;
   updated_at?: string;
   created_at?: string;
+  uuid?: string;
 }
 
 export interface CreateSaleI {
@@ -87,7 +88,7 @@ export interface saleDataI {
   ncf_m: string;
   comment: '' | null;
   created_at: string;
-  discount: number;
+  discount_amount: number;
   uuid: string;
   info_sale: infoSaleI[];
   status: boolean;

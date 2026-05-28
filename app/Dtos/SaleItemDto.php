@@ -19,6 +19,7 @@ class SaleItemDto extends BaseDto
      * @param float $reserved
      * @param float $amount
      * @param bool $is_service
+     * @param string $uuid
      */
     public function __construct(
         public string $product_uuid,
@@ -36,6 +37,7 @@ class SaleItemDto extends BaseDto
         public float $reserved,
         public float $amount,
         public bool $is_service,
+        public ?string $uuid
     ) {}
 
 
@@ -63,6 +65,7 @@ class SaleItemDto extends BaseDto
             reserved: $data['reserved'] ?? 0,
             amount: $data['amount'],
             is_service: $data['is_service'] ?? false,
+            uuid: $data['uuid'] ?? null
         );
     }
 

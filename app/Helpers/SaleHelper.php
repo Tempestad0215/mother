@@ -16,6 +16,7 @@ use App\Factories\SaleItemApiFactory;
 use App\Http\Requests\StoreProductSaleRequest;
 use App\Http\Resources\SaleInfoResource;
 use App\Models\DeletedSale;
+use App\Models\InventoryMovement;
 use App\Models\Product;
 use App\Models\ProductTransaction;
 use App\Models\Sale;
@@ -86,7 +87,6 @@ class SaleHelper
 
             
             //Recorrer la venta para descontar los productos
-            /** @var SaleItemDto $value */
             foreach ($salePayload->info_sale as $value)
             {
     
@@ -100,16 +100,6 @@ class SaleHelper
                     throw ValidationException::withMessages(['El producto no existe']);
                 }
 
-                // Crear el array para insertar los movimientos de inventario
-                $movementsInfos[] = new InventoryMovementDto(
-                    type: InventoryMovementTypeEnum::OUT->value,
-                    product_uuid: $value->product_uuid,
-                    quantity: $value->stock,
-                    warehouse_uuid: $value->warehouse_uuid,
-                    concept: InventoryMovementConceptEnum::Venta->value.'-'.$product->name,
-                    cost: $product->cost,
-                )->toArray();
-
             }
 
             // Crear los movimientos de inventario
@@ -121,20 +111,20 @@ class SaleHelper
     }
 
 
-    /**
-     * @param SaleTypeEnum $saleType
-     * @return InventoryMovementConceptEnum
-     */
-    public function movementType(SaleTypeEnum $saleType): InventoryMovementConceptEnum
-    {
-        if($saleType == SaleTypeEnum::Ventas){
-            return InventoryMovementConceptEnum::Venta;
-        }else if($saleType == SaleTypeEnum::Devolucion){
-            return InventoryMovementConceptEnum::Devolucion;
-        }else{
-            return InventoryMovementConceptEnum::TransferenciaSalida;
-        }
-    }
+    // /**
+    //  * @param SaleTypeEnum $saleType
+    //  * @return InventoryMovementConceptEnum
+    //  */
+    // public function movementType(SaleTypeEnum $saleType): InventoryMovementConceptEnum
+    // {
+    //     if($saleType == SaleTypeEnum::Ventas){
+    //         return InventoryMovementConceptEnum::Venta;
+    //     }else if($saleType == SaleTypeEnum::Devolucion){
+    //         return InventoryMovementConceptEnum::Devolucion;
+    //     }else{
+    //         return InventoryMovementConceptEnum::TransferenciaSalida;
+    //     }
+    // }
 
 
 
@@ -234,9 +224,39 @@ class SaleHelper
     {
 
         //Obtener la info
-        $infoRequest = collect($request->input('info_sale'));
-        //Verificar si esta cerrada
-        $closeTable = $request->input('close_table');
+        $saleDto = SaleDto::fromArray($request->validated());
+
+        // Actualizar los datos de la venta
+        $sale->update($saleDto->toArray());
+
+
+        // Obtner los ids de productos
+        $productUuids = array_map(fn (SaleItemDto $item) => [
+            'product_uuid' => $item->product_uuid,
+            'warehouse_uuid' => $item->warehouse_uuid
+        ], $saleDto->info_sale);
+
+        // Actualizar los datos de los items
+        foreach ($saleDto->info_sale as $itemDto)
+        {
+
+            //Crear la key para buscar los datos
+
+            $saleItem = $sale->items()->where('product_uuid', $itemDto->product_uuid)->first();
+
+            if ($saleItem)
+            {
+                $saleItem->update([
+                    'stock' => $itemDto->stock,
+                    'price' => $itemDto->price,
+                    'discount_amount' => $itemDto->discount_amount,
+                    'tax_amount' => $itemDto->tax_amount,
+                    'total' => $itemDto->total,
+                ]);
+            }else{
+                SaleItemHelper::createSaleItem($sale, $itemDto);
+            }
+        }
 
         //Recorrer los datos
         $infoRequest->map(function ($item) use (&$sale, &$closeTable, &$request){
@@ -342,16 +362,23 @@ class SaleHelper
 
 
         //Ralizar la busqueda en la base de datos de Sale cuando el campo close_table sea false
-        $data = Sale::where(function (Builder $query) {
+        $data = Sale::where('close_table', false) // Filtrar primero por la mesa/venta abierta
+        ->where(function (Builder $query) {
+            // Esto asegura que traiga las que tienen status true O las que aún están en NULL (abiertas)
             $query->where('status', true)
-                ->where('close_table', false);
-        })->when($search != null ,function (Builder $query) use ($search) {
-            $query->where('client_name', 'ILIKE', "%$search%") ;
-        })->with('infoSale')
-            ->latest()
-            ->simplePaginate(15);
+                  ->orWhereNull('status');
+        })
+        // filled() solo se ejecuta si el buscador tiene texto real escrito
+        ->when($request->filled('search'), function (Builder $query) use ($search) {
+            $query->where('client_name', 'ILIKE', "%{$search}%")
+                  ->orWhere('code', 'ILIKE', "%{$search}%"); // Opcional: buscar también por el código FAC0002
+        })
+        ->with('items')
+        ->latest()
+        ->simplePaginate(15);
 
-        return SaleInfoResource::collection($data)->response()->getData(true);
+        // Devolver los datos
+        return SaleInfoResource::collection($data);
 
     }
 

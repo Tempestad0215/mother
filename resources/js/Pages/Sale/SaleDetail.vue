@@ -7,11 +7,12 @@ import { saleDataI, SaleTypeEnumI } from '@/Interfaces/SaleInterface';
 import { saleKey } from '@/utils/keys';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
 import { getSequenceType } from '@/Global/Helpers';
-import { Dialog, FloatLabel, InputText, Select, ToggleButton } from 'primevue';
+import { Card, Dialog, FloatLabel, InputText, Select, ToggleButton } from 'primevue';
 import FShowProduct from '@/Pages/Products/FShowProduct.vue';
 import { PreciseCalculator } from '@/utils/Decimal';
 import { Grid2X2Plus, ShoppingCart, Undo2 } from '@lucide/vue';
 import { getInfoFromPriceList } from '@/Helpers/ProductHelper';
+import SaleOpenShow from './SaleOpenShow.vue';
 
 //Datos de la ventana
 const page = usePage();
@@ -123,7 +124,10 @@ const getSaleOpen = (item: saleDataI) => {
   setTimeout(() => {
     //Verificar Pasar los datos a la variable
     item.info_sale.map((el, index) => {
-      form.info_sale.push({ ...el });
+      form.info_sale.push({
+        ...el,
+        temp_price: el.price,
+      });
 
       //Calcular el total
       emit('totalAmount', index);
@@ -283,19 +287,17 @@ defineExpose({
   </Dialog>
 
   <!-- Vetana de las ordenes abierta -->
-  <!--	<FloatBox-->
-  <!--		v-model:show="showSaleOpen">-->
-  <!--		<template #header>-->
-  <!--			Cuentas Abiertas-->
-  <!--		</template>-->
-  <!--		<template #body>-->
-  <!--			<SaleOpenShow-->
-  <!--				@sen-data="getSaleOpen"-->
-  <!--				class=" fondo rounded-md px-10 py-5"-->
-  <!--				:sale-open="propsW.saleOpen"/>-->
-  <!--		</template>-->
-
-  <!--	</FloatBox>-->
+  <Dialog header="Cuentas Abiertas" modal v-model:visible="showSaleOpen">
+    <Card>
+      <template #content>
+        <SaleOpenShow
+          @sen-data="getSaleOpen"
+          class="fondo rounded-md px-10 py-5"
+          :sale-open="propsW.saleOpen"
+        />
+      </template>
+    </Card>
+  </Dialog>
 
   <!-- Formulario para la nota de credito-->
   <!--	<FloatBox-->

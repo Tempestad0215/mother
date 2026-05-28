@@ -5,6 +5,8 @@ import { useForm } from '@inertiajs/vue3';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
 import Pagination from '@components/Pagination.vue';
 import { Column, DataTable } from 'primevue';
+import { getMoney } from '@/Global/Helpers';
+import { MousePointerClick } from '@lucide/vue';
 
 /**
  * Propiedades de la ventana
@@ -26,7 +28,7 @@ const form = useForm({
 /**
  * Emitir los datos al padre
  */
-defineEmits<{
+const emit = defineEmits<{
   (e: 'senData', item: saleDataI): void;
 }>();
 
@@ -50,15 +52,24 @@ const submit = () => {
         <FormSearch holder="Buscar" v-model:select-value="form.per_page" v-model="form.search" />
       </form>
     </div>
-
     <DataTable :value="props.saleOpen.data">
-      <Column header="Cliente" />
-      <Column header="Itbis" />
-      <Column header="Total" />
+      <Column header="Codigo" field="code" />
+      <Column header="Cliente" :field="(data: saleDataI) => data.client_name ?? 'N/A'" />
+      <Column header="NCF" :field="(data: saleDataI) => data.ncf ?? 'N/A'" />
+      <Column header="Itbis" :field="(data: saleDataI) => getMoney(data.tax)" />
+      <Column header="Descuento" :field="(data: saleDataI) => getMoney(data.discount_amount)" />
+      <Column header="Total" :field="(data: saleDataI) => getMoney(data.amount)" />
+      <Column header="Fecha" :field="(data: saleDataI) => data.created_at" />
       <Column header="Act">
-        <div>
-          <i class="icon-efect fa-solid fa-circle-check"></i>
-        </div>
+        <template #body="{data}">
+          <div>
+            <!-- dar estilo de hover scale de 125 -->
+            <MousePointerClick
+              @click="emit('senData', data)"
+              class="hover:scale-125 duration-300 hover:text-green-400"
+            />
+          </div>
+        </template>
       </Column>
       <template #footer>
         <Pagination search="" :pag="props.saleOpen" />

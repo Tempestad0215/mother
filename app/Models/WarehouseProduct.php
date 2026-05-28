@@ -22,6 +22,9 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property bool $is_active
  * @property float $reorder_level
  * @property float $purchase_pending
+ * 
+ * 
+ * @property-read Product $product
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property Carbon $deleted_at

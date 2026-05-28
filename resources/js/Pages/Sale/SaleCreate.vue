@@ -28,9 +28,8 @@ import { Dialog, Card, Button, useToast } from 'primevue';
 //Datos de la ventana
 const toast = useToast();
 const route = useRoute();
-/*
-Utilizar el page para los datos de la página
- */
+
+// Datos del back end
 const page = usePage();
 
 //Datos del back end
@@ -146,7 +145,6 @@ const setDataForm = () => {
   }
 };
 
-
 // Enviar los datos para las devoluciones
 const createCreditNotes = () => {
   // Enviar los datos para las devoluciones
@@ -183,7 +181,6 @@ const sendData = async () => {
     }
   }
 };
-
 
 // Crear la venta
 const createSale = () => {
@@ -225,31 +222,49 @@ const createSale = () => {
   // }
 };
 
-
 // Actualizar la venta
 const updateSale = async () => {
-  try {
-    const res = await axios.post(route('sale.create'), form);
+  form.patch(route('sale.update', { sale: form.uuid }), {
+    onSuccess: () => {
+      toast.add({
+        summary: 'Registro Actualizado Correctamente',
+        severity: 'success',
+        life: 3000,
+      });
+      form.reset();
+    },
+    onError: (err) => {
+      const errors = Object.values(err);
+      toast.add({
+        summary: 'Error',
+        detail: errors[0],
+        life: 3500,
+        severity: 'error',
+      });
+    },
+  });
 
-    // La cuenta es cerrada
-    if (form.close_table) {
-      // Imprimir el pdf
-      printPdf(route('invoice.belt.sale', { sale: res.data.pdfUuid }));
-    }
-    //Limpiar el fomulario
-    form.reset();
-    showReturn.value = false;
-    //Recargar los datos
-    router.reload({ only: ['products', 'clients', 'saleOpen', 'invoiceType', 'refund'] });
-  } catch (error) {
-    form.setError('general', 'Problema con esta Peticion');
-  }
+  // try {
+  //   const res = await axios.post(route('sale.create'), form);
+
+  //   // La cuenta es cerrada
+  //   if (form.close_table) {
+  //     // Imprimir el pdf
+  //     printPdf(route('invoice.belt.sale', { sale: res.data.pdfUuid }));
+  //   }
+  //   //Limpiar el fomulario
+  //   form.reset();
+  //   showReturn.value = false;
+  //   //Recargar los datos
+  //   router.reload({ only: ['products', 'clients', 'saleOpen', 'invoiceType', 'refund'] });
+  // } catch (error) {
+  //   console.log(error);
+  //   form.setError('general', 'Problema con esta Peticion');
+  // }
 };
-
 
 // Registrar la venta
 const registerSale = () => {
-
   // Verificar si no hay problema con nada
   if (form.type === 'Cotizacion' || !form.close_table) {
     sendData();

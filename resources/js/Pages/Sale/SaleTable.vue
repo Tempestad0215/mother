@@ -180,8 +180,7 @@ const totalAmount = (index: number) => {
   if (!checkIndex()) return;
   let info: infoSaleI = form.info_sale[index];
 
-  console.log('info', info);
-
+  // Calcular el descuento
   let discountRate = PreciseCalculator.divide(info.discount || 0, 100);
 
   //Para calcular los datos
@@ -212,17 +211,17 @@ const changePrice = () => {
       // precio normal (ya está en item.price)
       // si quisieras usar un campo original:
       // item.price = item.base_price ?? item.price;
-      item.price_temp = item.price ?? 0;
+      item.temp_price = item.price ?? 0;
       break;
 
     case 2:
       // precio mínimo
-      item.price_temp = item.promotional_price ?? 0;
+      item.temp_price = item.promotional_price ?? 0;
       break;
 
     case 3:
       // precio especial
-      item.price_temp = item.min_price ?? 0;
+      item.temp_price = item.min_price ?? 0;
       break;
 
     default:

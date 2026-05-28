@@ -82,7 +82,6 @@ class Sale extends Model implements Auditable
         'returned',
         'status',
         'close_table',
-        'credit_notes',
         'credit_notes_amount',
         'comment'
     ];
@@ -93,7 +92,6 @@ class Sale extends Model implements Auditable
         'close_table' => 'boolean',
         'type' => SaleTypeEnum::class,
         'type_payment' => PaymentTypeEnum::class,
-        'credit_notes' => 'array'
     ];
 
 
@@ -106,7 +104,7 @@ class Sale extends Model implements Auditable
      */
     public function client():BelongsTo
     {
-        return $this->belongsTo(Client::class, 'client_id');
+        return $this->belongsTo(Client::class, 'client_uuid', 'uuid');
     }
 
 
@@ -116,12 +114,12 @@ class Sale extends Model implements Auditable
      */
     public function credit_note():HasMany
     {
-        return $this->hasMany(CreditNote::class, 'sale_id','uuid');
+        return $this->hasMany(CreditNote::class, 'sale_uuid','uuid');
     }
 
     public function items(): HasMany
     {
-        return $this->hasMany(SaleItem::class);
+        return $this->hasMany(SaleItem::class, 'sale_uuid', 'uuid');
     }
 
     /**
@@ -133,14 +131,6 @@ class Sale extends Model implements Auditable
     }
 
 
-    /**
-     * Retorno de valor
-     * @return HasMany
-     */
-    public function infoSale():HasMany
-    {
-        return $this->hasMany(ProductTransaction::class);
-    }
 
 
     /**
@@ -150,8 +140,8 @@ class Sale extends Model implements Auditable
     protected function createdAt ():Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => Carbon::parse($value)->format('d-m-Y H:i:s'),
-            set: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i:s'),
+            get: fn (string $value) => Carbon::parse($value)->format('d/m/Y H:i:s'),
+            set: fn (string $value) => Carbon::parse($value)->format('Y/m/d H:i:s'),
         );
     }
 

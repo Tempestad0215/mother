@@ -15,7 +15,6 @@ use App\Models\Setting;
 use App\Models\User;
 use App\Models\Warehouse;
 use Carbon\Carbon;
-use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -102,12 +101,20 @@ class SaleController extends Controller
     public function update(StoreProductSaleRequest $request, Sale $sale)
     {
 
-       $sale =  DB::transaction(function () use (&$request, &$sale) {
-           //Instancia
-           $saleHelper = new SaleHelper();
-           //Llamar la funcion
-           return $saleHelper->updateSale($request, $sale);
-       });
+        // Evitar que se realicen 2 operaciones al mismo tiempo
+        Cache::lock('sale_warehouse'.auth()->id(), 5)
+           ->block(3, function () use ($request, $sale) {
+        
+                //Actualizar los datos
+               $sale =  DB::transaction(function () use (&$request, &$sale) {
+                //Instancia
+                $saleHelper = new SaleHelper();
+                //Llamar la funcion
+                return $saleHelper->updateSale($request, $sale);
+            });
+           });
+
+       
 
        //DEvolver el id de la venta
        return response()->json(['pdfUuid' => $sale->id]);
@@ -193,7 +200,8 @@ class SaleController extends Controller
         //Obtener los datos
         $products = ProductHelper::get($request, true);
         $clients = $clientHelper->get($request);
-
+    
+        // Obtener las ventas abiertas para mostrar en la ventana de ventas abiertas
         $saleOpen = $saleHelper->getSaleOpen($request);
 
 

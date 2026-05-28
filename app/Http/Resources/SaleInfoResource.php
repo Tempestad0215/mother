@@ -5,86 +5,53 @@ namespace App\Http\Resources;
 use App\Enums\SaleTypeEnum;
 use App\Models\Client;
 use App\Models\Comment;
-use App\Models\ProductTransaction;
+use App\Models\SaleItem;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;
 
 /**
- * @property string id
- * @property string invoice_type
- * @property string ncf
- * @property string ncf_m
- * @property string code
- * @property Client client
- * @property string client_name
- * @property int client_id
- * @property float discount
- * @property float discount_amount
- * @property float tax
- * @property float sub_total
- * @property float amount
- * @property boolean status
- * @property SaleTypeEnum type
- * @property bool close_table
- * @property Carbon created_at,
- * @property Carbon updated_at
- * @property Carbon deleted_at
- * @property ProductTransaction[] infoSale
- * @property Comment comment
+ * @property string $uuid
+ * @property string $invoice_type
+ * @property string $ncf
+ * @property string $ncf_m
+ * @property string $code
+ * @property Client $client
+ * @property string $client_name
+ * @property string $client_uuid
+ * @property float $discount
+ * @property float $discount_amount
+ * @property float $tax
+ * @property float $sub_total
+ * @property float $amount
+ * @property boolean $status
+ * @property SaleTypeEnum $type
+ * @property bool $close_table
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property Carbon $deleted_at
+ * @property SaleItem[] $items
+ * @property Comment $comment
  */
 class SaleInfoResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        //Guardar los datos
-        $infoFinal = [];
+  
 
-        //Convertir a una collection
-        $data = collect($this->infoSale);
-
-        //Recorrer los datos para guardarlos
-        $data->each(function (ProductTransaction $item) use (&$infoFinal) {
-
-
-            //Agregar los datos
-           $infoFinal[] = [
-               'transID' => $item->uuid,
-               'code' => $item->product->code ?? null,
-               'product_id' => $item->product_uuid,
-               'product_name' => $item->product_name,
-               'sale_id' => $item->sale_id,
-               'amount' => $item->amount,
-               'discount' => $item->discount,
-               'discount_amount' => $item->discount_amount,
-               'price' => $item->price,
-               'min_price' => $item->min_price,
-               'promotional_price' => $item->promotional_price,
-               'status' => $item->status,
-               'stock' => $item->quantity,
-               'reserved' => $item->reserved_quantity,
-               'tax' => $item->tax,
-               'tax_rate' => $item->tax_rate,
-               'type' => $item->product->type,
-               'trans_type' => $item->type,
-           ];
-
-        });
 
         $existsClient = (bool)$this->client;
 
-
-
         //DEvolver los datos
         return [
-            'id' => $this->id,
+            'uuid' => $this->uuid,
             'invoice_type' => $this->invoice_type,
             'ncf' => $this->ncf,
             'ncf_m' => $this->ncf_m,
             'code' => $this->code,
             'client_name' => $this->client_name,
-            'client_id' => $this->when($existsClient, $this->client?->id, 0),
-            'client_document' => $this->when($existsClient, $this->client?->personal_id) ,
+            'client_uuid' => $this->when($existsClient, $this->client?->uuid, null),
+            'client_document' => $this->when($existsClient, $this->client?->personal_ide, null) ,
             'discount_amount' => $this->discount_amount,
             'tax' => $this->tax,
             'sub_total' => $this->sub_total,
@@ -92,8 +59,11 @@ class SaleInfoResource extends JsonResource
             'status' => $this->status,
             'type' => $this->type,
             'close_table' => $this->close_table,
-            'info_sale' => $infoFinal,
+            'info_sale' => $this->whenLoaded('items', function() {
+                return SaleItemResource::collection($this->items);
+            }),
             'comment' => $this->comment,
+            'created_at' => $this->created_at,
         ];
     }
 }
