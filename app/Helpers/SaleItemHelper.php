@@ -8,8 +8,6 @@ use App\Enums\OperationTypeEnum;
 use App\Models\InventoryMovement;
 use App\Models\Sale;
 use App\Models\WarehouseProduct;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Collection;
 use Throwable;
 
 class SaleItemHelper
@@ -19,10 +17,11 @@ class SaleItemHelper
     /**
      * @param Sale $sale
      * @param SaleItemDto[] $data
+     * @param bool $update 
      * @return void
      * @throws Throwable
      */
-    public static function multipleInsertWithSale(Sale $sale, array $data):void
+    public static function multipleInsertWithSale(Sale $sale, array $data, bool $update = false):void
     {
 
         // Si no hay datos, no hacemos nada
@@ -31,18 +30,19 @@ class SaleItemHelper
             return;
         }
 
-        // Formatear los datos para la inserción masiva
-        $fomattedData = collect($data)->map(fn(SaleItemDto $item) => $item->toArray())->all();
+        // Recorremos cada item para actualizar o crear el registro correspondiente y ajustar el stock si es necesario
+        collect($data)->each(function(SaleItemDto $item) use ($sale, $update) {
+
+            // Verificar si ya existe un item para este producto y almacén en la venta
+            $oldItem = $sale->items()
+            ->where('product_uuid', $item->product_uuid)
+            ->where('sale_uuid', $sale->uuid)
+            ->first();
+
+            // Si estamos en modo actualización, necesitamos conocer la cantidad que ya se había retenido en la cuenta para este producto antes de esta actualización para calcular correctamente el ajuste en el stock físico
+            $oldQuantity = $oldItem->stock ?? 0;
     
-        // Crear los objetos SaleItemFactory a partir de los datos y convertirlos a array para la inserción masiva
-        $sale->items()->createMany($fomattedData);
-
-
-
-        // Actualizar el stock de los productos en los almacenes correspondientes
-        foreach ($data as $item) {
-            // Crear la clave para acceder al stock actual del producto en el almacén
-
+            // Actualizar el stock físico y registrar el movimiento correspondiente basándonos en la diferencia
             self::updateStockAndMovement(
                 productUuid: $item->product_uuid,
                 warehouseUuid: $item->warehouse_uuid,
@@ -50,45 +50,28 @@ class SaleItemHelper
                 price: $item->price,
                 saleUuid: $sale->uuid,
                 operation: OperationTypeEnum::SUSTRACT,
-                shouldCreateMovement: $sale->close_table // Solo crear movimiento si la venta se cierra
+                shouldCreateMovement: $sale->close_table, // Solo crear movimiento si la venta se cierr
+                update: $update,
+                oldQuantity: $oldQuantity
             );
-        }
+
+            // Actualizar o crear el item de la venta
+            $sale->items()->updateOrCreate([
+                'product_uuid' => $item->product_uuid,
+                'sale_uuid' => $sale->uuid,
+            ], $item->toArray());
+            
+        });
 
     }
 
 
 
-    /**
-     * Summary of getWarehouseInfo
-     * @param SaleItemDto[] $data
-     * @return Collection<string, WarehouseProduct>
-     */
-    private static function getWarehouseInfo(array $data): Collection
-    {
-        // Si no hay datos, retornamos una colección vacía para evitar romper el tipo de retorno
-        if (empty($data)) {
-            return collect();
-        }
-
-        // Obtener el stock actual de los productos en los almacenes correspondientes
-        return WarehouseProduct::with(['product', 'warehouse']) // Eager loading para evitar el problema N+1 más adelante
-            ->where(function(Builder $query) use ($data) {
-                foreach ($data as $item) {
-                    $query->orWhere(function(Builder $q) use ($item) {
-                        $q->where('product_uuid', $item->product_uuid)
-                        ->where('warehouse_uuid', $item->warehouse_uuid);
-                    });
-                }
-            })
-            ->get()
-            ->keyBy(fn(WarehouseProduct $stock) => "{$stock->product_uuid}-{$stock->warehouse_uuid}");
-    }
 
 
         /**
      * Gestiona el stock de un producto en un almacén y registra el movimiento si corresponde.
      * En actualizaciones de cuentas abiertas, calcula la diferencia para ajustar el inventario.
-     *
      * @param string $productUuid
      * @param string $warehouseUuid
      * @param float $quantity Cantidad actual/nueva que se quiere dejar en la cuenta
@@ -97,7 +80,7 @@ class SaleItemHelper
      * @param OperationTypeEnum $operation
      * @param bool $shouldCreateMovement
      * @param bool $update Si es true, calcula la diferencia contra lo que ya se había retenido
-     * @param float $oldQuantity Cantidad que estaba registrada previamente en la cuenta abierta (requerido si $update es true)
+     * @param float $oldQuantity Solo se usa si $update es true, representa la cantidad que ya se había retenido en la cuenta antes de esta actualización
      * @return void
      */
     private static function updateStockAndMovement(
@@ -112,7 +95,7 @@ class SaleItemHelper
         float $oldQuantity = 0.0
     ): void {
         // 1. Obtener el almacén físico actual
-        $warehouse = WarehouseProduct::with(['product', 'warehouse'])
+        $warehouse = WarehouseProduct::with(['products', 'warehouses'])
             ->where('product_uuid', $productUuid)
             ->where('warehouse_uuid', $warehouseUuid)
             ->first();
@@ -121,6 +104,7 @@ class SaleItemHelper
             return; 
         }
 
+        // Almacenamos el stock antes de la actualización para registrar correctamente el movimiento
         $previousStock = (float) $warehouse->stock_quantity;
         
         // Cantidad final que se va a usar para alterar el stock físico y el historial
@@ -163,6 +147,8 @@ class SaleItemHelper
         $query = WarehouseProduct::where('product_uuid', $productUuid)
             ->where('warehouse_uuid', $warehouseUuid);
 
+
+        // Dependiendo de la operación, actualizamos el stock físico
         if ($finalOperation === OperationTypeEnum::ADD) {
             $query->increment('stock_quantity', $finalQuantity);
             $newStock = $previousStock + $finalQuantity;

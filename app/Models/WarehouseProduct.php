@@ -67,7 +67,7 @@ class WarehouseProduct extends Model implements Auditable
      * Summary of warehouse
      * @return BelongsTo<Warehouse, WarehouseProduct>
      */
-    public function warehouse():BelongsTo
+    public function warehouses():BelongsTo
     {
         return $this->belongsTo(Warehouse::class, 'warehouse_uuid', 'uuid');
     }

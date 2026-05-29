@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { router, useForm, usePage } from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
-import { onMounted, onUpdated, provide, Ref, ref } from 'vue';
+import { onMounted, onUpdated, provide, Ref, ref, watch } from 'vue';
 import { ProductTableI } from '@/Interfaces/ProductInterface';
 import { printPdf } from '@/Global/Helpers';
 import { clientBaseI } from '@/Interfaces/ClientInterface';
@@ -123,6 +123,17 @@ onUpdated(() => {
   // Enviar los datos
   setDataForm();
 });
+
+watch(
+  () => page.flash,
+  (newValue) => {
+    if (newValue && 'saleInvoiceUrl' in page.flash) {
+      const url = page.flash.saleInvoiceUrl as string;
+      printPdf(url);
+      // router.visit(route('sale.create'));
+    }
+  }
+);
 
 // Obtener el tipo de venta
 const setDataForm = () => {
@@ -282,7 +293,6 @@ provide(saleKey, form);
   <!--    Contenido general-->
   <AppLayout>
     <Card>
-      <template #title> </template>
       <template #content>
         <form class="">
           <div>

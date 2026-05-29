@@ -32,7 +32,7 @@ class SaleController extends Controller
      * @param Request $request
      * @return RedirectResponse|\Inertia\Response
      */
-    public function index(Request $request):RedirectResponse|Response
+    public function index(Request $request)
     {
 
         //Verificar si existe la configuracion
@@ -75,6 +75,9 @@ class SaleController extends Controller
     {
 
         // Variable para colocar los datos
+        /**
+         * @var Sale|null $data
+         */
         $data = null;
 
         // Evitar que se realicen 2 operaciones al mismo tiempo
@@ -88,7 +91,12 @@ class SaleController extends Controller
 
         });
 
-        return back();
+        $rutaInvoice = route('invoice.sale', [$data->uuid]);
+
+        //DEvolver el id de la venta
+       return Inertia::flash(['saleInvoiceUrl' => $rutaInvoice])->back();
+
+       
 
     }
 
@@ -96,7 +104,7 @@ class SaleController extends Controller
      * 
      * @param StoreProductSaleRequest $request
      * @param Sale $sale
-     * @return \Illuminate\Http\JsonResponse
+     * @return RedirectResponse
      */
     public function update(StoreProductSaleRequest $request, Sale $sale)
     {
@@ -107,17 +115,18 @@ class SaleController extends Controller
         
                 //Actualizar los datos
                $sale =  DB::transaction(function () use (&$request, &$sale) {
-                //Instancia
-                $saleHelper = new SaleHelper();
-                //Llamar la funcion
-                return $saleHelper->updateSale($request, $sale);
-            });
+                    //Instancia
+                    $saleHelper = new SaleHelper();
+                    //Llamar la funcion
+                    return $saleHelper->updateSale($request, $sale);
+                });
            });
 
-       
 
+        $rutaInvoice = route('invoice.sale', [$sale->uuid]);
+    
        //DEvolver el id de la venta
-       return response()->json(['pdfUuid' => $sale->id]);
+        return Inertia::flash(['saleInvoiceUrl' => $rutaInvoice])->back();
 
 
     }

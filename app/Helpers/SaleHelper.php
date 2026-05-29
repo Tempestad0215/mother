@@ -2,25 +2,16 @@
 
 namespace App\Helpers;
 
-use App\Dtos\InventoryMovementDto;
 use App\Dtos\SaleDto;
-use App\Dtos\SaleItemApiDto;
 use App\Dtos\SaleItemDto;
-use App\Enums\InventoryMovementConceptEnum;
-use App\Enums\InventoryMovementTypeEnum;
 use App\Enums\ProductTransactionTypeEnum;
 use App\Enums\SaleTypeEnum;
-use App\Enums\SequenceSaleTypeEnum;
-use App\Factories\SaleFactory;
-use App\Factories\SaleItemApiFactory;
 use App\Http\Requests\StoreProductSaleRequest;
 use App\Http\Resources\SaleInfoResource;
 use App\Models\DeletedSale;
-use App\Models\InventoryMovement;
 use App\Models\Product;
 use App\Models\ProductTransaction;
 use App\Models\Sale;
-use App\Models\Setting;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
@@ -76,7 +67,7 @@ class SaleHelper
             $sale = Sale::create($salePayload->toArray());
 
             //Actualizar los datos de la notas de crédito
-            CreditNoteHelper::updateAvailableFor($salePayload->credit_notes, $salePayload->amount);
+            // CreditNoteHelper::updateAvailableFor($salePayload->credit_notes, $salePayload->amount);
 
             // Obtener los ids de productos
             $productUuids = array_map(fn (SaleItemDto $item) => $item->product_uuid, $salePayload->info_sale);
@@ -226,125 +217,17 @@ class SaleHelper
         //Obtener la info
         $saleDto = SaleDto::fromArray($request->validated());
 
+    
+        // Obtener los ids de productos
+        SaleItemHelper::multipleInsertWithSale(
+            $sale,
+            $saleDto->info_sale,
+            $saleDto->update
+        );
+
         // Actualizar los datos de la venta
         $sale->update($saleDto->toArray());
 
-
-        // Obtner los ids de productos
-        $productUuids = array_map(fn (SaleItemDto $item) => [
-            'product_uuid' => $item->product_uuid,
-            'warehouse_uuid' => $item->warehouse_uuid
-        ], $saleDto->info_sale);
-
-        // Actualizar los datos de los items
-        foreach ($saleDto->info_sale as $itemDto)
-        {
-
-            //Crear la key para buscar los datos
-
-            $saleItem = $sale->items()->where('product_uuid', $itemDto->product_uuid)->first();
-
-            if ($saleItem)
-            {
-                $saleItem->update([
-                    'stock' => $itemDto->stock,
-                    'price' => $itemDto->price,
-                    'discount_amount' => $itemDto->discount_amount,
-                    'tax_amount' => $itemDto->tax_amount,
-                    'total' => $itemDto->total,
-                ]);
-            }else{
-                SaleItemHelper::createSaleItem($sale, $itemDto);
-            }
-        }
-
-        //Recorrer los datos
-        $infoRequest->map(function ($item) use (&$sale, &$closeTable, &$request){
-
-            //convertir la info sale a collection
-            $infoSale = collect($sale->infoSale);
-
-            //Poner la variable en 0
-            $stock = 0;
-
-            //Verificar si el item existe
-            if (count($infoSale) !== 0)
-            {
-                //Econtrar la coincidencia y tomar el stock
-                $stock = $infoSale->firstWhere('product_id', $item['product_id'])['stock'];
-            }
-
-            //Buscar el producto existente
-            $product = Product::find($item['product_id']);
-
-            //Restar la cantidad que llega - la registrada
-            $result = $item['stock'] - $stock;
-
-            //Verificar el resultado
-            if ($result > 0)
-            {
-
-                //Disminuir la stock
-                $product->stock -= abs($result);
-                //Auemntar la reserva
-                $product->reserved += abs($result);
-                //Guardar los datos
-
-            }else{
-
-                //Auemntar el stock
-                $product->stock += abs($result);
-                //Disminuir la reserva
-                $product->reserved -= abs($result);
-                //Guardar los datos
-
-            }
-
-            // Actualizar los cambios realizados
-            $product->save();
-
-            // Tomar los datos de validacion
-            $data = $request->validated();
-
-            //Conseguiir notas de creditos
-            $creditNotes = $request->input('credit_notes');
-
-            //Obtener los ids
-            $ids = array_column($creditNotes, 'id');
-
-            // Agrager los ids de notas de creditos
-            $data['credit_notes'] = $ids;
-
-            //Actualizar los datos de la ventas
-            $sale->update($data);
-
-//            $sale->client_id = $request->input('client_id');
-//            $sale->client_rnc = $request->input('client_rnc');
-//            $sale->client_name = $request->input('client_name');
-//            $sale->discount_amount = $request->input('discount_amount');
-//            $sale->tax = $request->input('tax');
-//            $sale->sub_total = $request->input('sub_total');
-//            $sale->amount = $request->input('amount');
-//            $sale->credit_notes = $ids;
-//            $sale->close_table = $request->input('close_table');
-//            $sale->returned = $request->input('returned');
-//            $sale->received = $request->input('received');
-//            $sale->comment = $request->input('comment');
-//            $sale->save();
-
-            //Reducir las notas de creditos seleccionada
-            CreditNoteHelper::updateAvailableFor($creditNotes, $request->input('amount'));
-
-            if ($closeTable)
-            {
-                //Crear la transacciones
-                TransHelper::store($item, ProductTransactionTypeEnum::SALE, $sale, $product);
-
-            }else{
-                //Crear la transacciones
-                TransHelper::store($item, ProductTransactionTypeEnum::RESERVATION, $sale, $product);
-            }
-        });
 
 
         return $sale;

@@ -195,10 +195,12 @@ Route::middleware([
     Route::get('report/sale', [ReportSaleController::class, 'index'])->name('report-sale.index');
 //    Route::get('report/sale/json', [ReportSaleController::class, 'reportSaleRange'])->name('report-sale.range');
 
+
     /*
      * Facturas
      */
     Route::prefix('invoice')->name('invoice.')->group(function () {
+        Route::get('/sale/{sale}', [InvoiceController::class,'getSaleInvoice'])->name('sale');
         Route::get('/belt/sale/{sale}', [InvoiceController::class, 'beltSale'])->name('belt.sale');
         Route::get('/belt/note/{creditNote}', [InvoiceController::class, 'beltNote'])->name('belt.note');
         Route::get('/getA/{sale}', [InvoiceController::class, 'getA'])->name('getA');

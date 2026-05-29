@@ -6,10 +6,11 @@ use App\Invoices\Ticket80;
 use App\Models\CreditNote;
 use App\Models\Product;
 use App\Models\Sale;
+use App\Models\Setting;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use PDF;
 use Picqer\Barcode\BarcodeGeneratorPNG;
-use Picqer\Barcode\BarcodeGeneratorSVG;
 
 class InvoiceController extends Controller
 {
@@ -26,6 +27,38 @@ class InvoiceController extends Controller
         //llamar el pdf seleccionado
         $pdf->setData();
         $pdf->Output('invoice.pdf');
+    }
+
+
+
+    public function getSaleInvoice(Sale $sale)
+    {
+        $templateData = View('pdfs.sale.cinta', [
+            'sale' => $sale,
+            'setting' => Setting::first()
+        ])->render();
+
+        // Crear la respuestas
+        $response = Http::attach('index.hmtl', $templateData, 'index.html')
+            ->post("http://localhost:3100/forms/chromium/convert/html",[
+                'paperWidth' => '3.14',  // 80mm en pulgadas
+                'marginLeft' => '0.1',
+                'marginRight' => '0.1',
+                'marginTop' => '0.1',    // Espacio para la cabecera fija
+                'marginBottom' => '0.1',
+                'waitDelay' => '600ms',  // Tiempo para que cargue Tailwind 4 por CDN
+            ]);
+
+        // Devolver si es correcto
+        if ($response->successful()){
+            return response($response->body(),200,[
+                'content-type' => 'application/pdf'
+            ]);
+        }
+
+        // Devolver mensaje de error
+        return response()->json(['error' => 'Error al generar ticket'], 500);
+
     }
 
 

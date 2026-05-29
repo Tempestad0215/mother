@@ -52,6 +52,7 @@ class SaleDto extends BaseDto
         public ?array $credit_notes = null,
         public ?string $comment = null,
         public ?bool $status = null,
+        public ?bool $update = null,
 
     )
     {
@@ -87,6 +88,7 @@ class SaleDto extends BaseDto
             credit_notes: $data['credit_notes'] ?? null,
             comment: $data['comment'] ?? null,
             status: $data['status'] ?? null,
+            update: $data['update'] ?? false,
         );
     }
 
