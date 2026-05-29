@@ -45,7 +45,7 @@ const propsW = defineProps<{
   warehouses: WarehouseMapType;
 }>();
 
-//Ventanas
+// Ventanas
 const showReturn: Ref<boolean> = ref(false);
 const showFormReturn: Ref<boolean> = ref(false);
 const paymentBox = ref(false);
@@ -205,6 +205,7 @@ const createSale = () => {
         life: 3000,
       });
       form.reset();
+      paymentBox.value = false;
     },
     onError: (err) => {
       const errors = Object.values(err);
@@ -243,6 +244,7 @@ const updateSale = async () => {
         life: 3000,
       });
       form.reset();
+      paymentBox.value = false;
     },
     onError: (err) => {
       const errors = Object.values(err);
@@ -296,13 +298,14 @@ provide(saleKey, form);
       <template #content>
         <form class="">
           <div>
+            <!-- Informacion de la venta -->
             <SaleInfo
               ref="saleInfoRef"
               :clients="propsW.clients"
               @getSequenceType="(type: string) => saleDetailRef?.getSequenceType(type)"
               :invoice-type="form.invoice_type"
             />
-
+            <!-- Detalle de la venta-->
             <SaleDetail
               :saleTypeEnum="propsW.saleTypeEnum"
               ref="saleDetailRef"
@@ -311,13 +314,17 @@ provide(saleKey, form);
               :invoice-type="propsW.invoiceType"
               :refund="propsW.refund"
               @total-sale=""
+              @total-amount="saleTableRef?.calculateItemRow($event)"
               @totalSale="saleTableRef?.calculateTotals()"
-              @total-amount="(index: number) => saleTableRef?.totalAmount(index)"
             />
 
+            <!-- Tabla de la venta-->
             <SaleTable :warehouses="propsW.warehouses" ref="saleTableRef" />
+
+            <!-- Pie de la venta-->
             <SaleFooter ref="saleFooterRef" />
-            <!--                        Devuelta y demas detos-->
+
+            <!-- Devuelta y demas detos-->
             <div class="text-right mt-5">
               <Button
                 @click="registerSale"

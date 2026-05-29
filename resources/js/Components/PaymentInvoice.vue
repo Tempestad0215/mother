@@ -140,7 +140,7 @@ const returnedBlur = () => {
   returned();
 
   //Verificar el cálculo
-  if (form.returned <= 0) {
+  if (form.returned < 0) {
     //Enviar el mensaje de error
     toast.add({
       severity: 'error',
@@ -229,7 +229,12 @@ defineExpose({
 
     <!-- Boton para cerrar la factura -->
     <div class="mt-3 text-right">
-      <Button @click="returnedBlur" type="button" label="Cerrar Factura" />
+      <Button
+        :disabled="form.processing"
+        @click="returnedBlur"
+        type="button"
+        label="Cerrar Factura"
+      />
     </div>
   </div>
 </template>

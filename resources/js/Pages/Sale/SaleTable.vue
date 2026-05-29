@@ -168,32 +168,47 @@ const calculateTotals = () => {
   form.amount = Number(PreciseCalculator.subtract(subTotalNoTax, discountTotal));
 };
 
-// Formulario para la venta
-const totalAmount = (index: number) => {
-  if (index < 0 || index >= form.info_sale.length) return;
+// Datos del formulario
+watch(
+  () => editItemForm,
+  (newFormState) => {
+    // Si no hay un precio o stock válido, evitamos cálculos vacíos
+    if (!newFormState.stock || !newFormState.price) return;
 
-  setTimeout(() => {
-    deletedItem(index);
-  }, 150);
+    // Sacar la información del producto que se está editando
+    const info = form.info_sale[lastIndex.value];
 
-  // Sacar los datos del produtos
-  if (!checkIndex()) return;
-  let info: infoSaleI = form.info_sale[index];
+    // Si por alguna razón el índice no es válido, salimos
+    if (!info) return;
 
-  // Calcular el descuento
-  let discountRate = PreciseCalculator.divide(info.discount || 0, 100);
+    calculateItemRow(info);
+  },
+  { deep: true } // 🔥 Obligatorio para que escuche cambios dentro de las propiedades del objeto
+);
 
-  //Para calcular los datos
-  info.amount = parseFloat((info.price * info.stock).toFixed(2));
-  //Descuento datos
-  info.discount_amount = parseFloat(
-    PreciseCalculator.multiply(info.amount, discountRate.toString()).toFixed(2)
+// Para eliminar un item de la venta
+const calculateItemRow = (item: infoSaleI) => {
+  if (!item.stock || !item.price) return;
+
+  // Calcular el porcentaje de descuento
+  const discountRate = PreciseCalculator.divide(item.discount || 0, 100);
+
+  // Calcular Importe Bruto (Precio * Stock)
+  item.amount = parseFloat(
+    PreciseCalculator.multiply(item.price.toString(), item.stock.toString()).toFixed(2)
   );
 
-  //Pasar los datos al formulario
-  info.tax_amount = parseFloat(PreciseCalculator.multiply(info.amount, info.tax_rate).toFixed(2));
+  // Calcular monto deducido por el descuento
+  item.discount_amount = parseFloat(
+    PreciseCalculator.multiply(item.amount.toString(), discountRate.toString()).toFixed(2)
+  );
 
-  //Calcular los totales
+  // Calcular ITBIS basado en el importe bruto
+  item.tax_amount = parseFloat(
+    PreciseCalculator.multiply(item.amount.toString(), (item.tax_rate || 0).toString()).toFixed(2)
+  );
+
+  // Recalcular los totales de la factura global
   calculateTotals();
 };
 
@@ -229,12 +244,13 @@ const changePrice = () => {
       return;
   }
 
-  totalAmount(idx);
+  // totalAmount(idx);
 };
 
 // Exponer funciones al componente padre
 defineExpose({
-  totalAmount,
+  // totalAmount,
+  calculateItemRow,
   calculateTotals,
 });
 </script>
@@ -330,7 +346,7 @@ defineExpose({
           </div>
           <div class="flex gap-5">
             <FloatLabel variant="on">
-              <InputNumber @blur="totalAmount(lastIndex)" v-model="editItemForm.stock" />
+              <InputNumber v-model="editItemForm.stock" />
               <label for="stock">Cantidad</label>
             </FloatLabel>
             <FloatLabel variant="on">

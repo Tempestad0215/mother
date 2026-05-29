@@ -3,7 +3,7 @@ import { invoiceTypeI } from '@/Interfaces/SettingInterface';
 import { usePage } from '@inertiajs/vue3';
 import { ProductTableI } from '@/Interfaces/ProductInterface';
 import { computed, inject, ref, watch } from 'vue';
-import { saleDataI, SaleTypeEnumI } from '@/Interfaces/SaleInterface';
+import { infoSaleI, saleDataI, SaleTypeEnumI } from '@/Interfaces/SaleInterface';
 import { saleKey } from '@/utils/keys';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
 import { getSequenceType } from '@/Global/Helpers';
@@ -28,7 +28,7 @@ const propsW = defineProps<{
 //Emitir eventos para el componente de devoluciones
 const emit = defineEmits<{
   (e: 'retunedBlur'): void;
-  (e: 'totalAmount', index: number): void;
+  (e: 'totalAmount', info: infoSaleI): void;
   (e: 'totalSale'): void;
 }>();
 
@@ -127,10 +127,11 @@ const getSaleOpen = (item: saleDataI) => {
       form.info_sale.push({
         ...el,
         temp_price: el.price,
+        tax_amount: parseFloat(PreciseCalculator.multiply(el.price, el.tax_rate).toFixed(2)),
       });
 
       //Calcular el total
-      emit('totalAmount', index);
+      emit('totalAmount', el);
     });
   }, 2);
 
