@@ -6,6 +6,7 @@ import InputError from '@components/InputError.vue';
 import PrimaryButton from '@components/PrimaryButton.vue';
 import { ref } from 'vue';
 import { useRoute } from 'ziggy-js';
+import { Button, FloatLabel, InputText, Select, Tag } from 'primevue';
 
 const route = useRoute();
 /*
@@ -68,44 +69,34 @@ const submit = () => {
 
 <template>
   <div class="fondo p-5 rounded-lg">
-    <h3 class="title">Formulario Para Devolución</h3>
     <form @submit.prevent="submit">
       <!--            Si es consulta o para selccionar-->
-      <div class="mt-5">
+      <div class="">
         <!--                Titulo-->
         <InputLabel class="flex" for="askReturn" value="Tipo de Consulta" />
         <div class="flex justify-center">
-          <select
-            class="inputGeneral py-1 w-full"
+          <Select
+            fluid
             v-model="form.type"
-            name="askReturn"
-            id="askReturn"
-          >
-            <option v-for="(item, index) in options" :key="index" :value="item.value">
-              {{ item.name }}
-            </option>
-          </select>
+            :options="options"
+            option-label="name"
+            option-value="value"
+          />
         </div>
       </div>
 
       <div class="mt-5">
         <!--           Etiqueta de la ventana-->
-        <InputLabel for="invoiceReturn" value="Codigo de Fáctura" />
-        <!--            Entrada de texto-->
-        <TextInput class="w-full" v-model="form.saleCode" />
-
-        <!--         Mensaje de error       -->
-        <InputError :message="form.errors.saleCode" />
-      </div>
-
-      <!--            MEnasje General-->
-      <div>
-        <InputError :message="propsW.error" />
+        <FloatLabel variant="on">
+          <InputText fluid v-model="form.saleCode" />
+          <label for="code">Codigo de Factura</label>
+        </FloatLabel>
+        <Tag v-if="form.errors.saleCode" severity="danger" :value="form.errors.saleCode" />
       </div>
 
       <!--            Boton de enviar-->
       <div class="mt-5 text-right">
-        <PrimaryButton @click="submit"> Buscar </PrimaryButton>
+        <Button>Buscar</Button>
       </div>
     </form>
   </div>

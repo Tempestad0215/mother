@@ -292,7 +292,7 @@ provide(saleKey, form);
 </script>
 
 <template>
-  <!--    Contenido general-->
+  <!-- Contenido general-->
   <AppLayout>
     <Card>
       <template #content>

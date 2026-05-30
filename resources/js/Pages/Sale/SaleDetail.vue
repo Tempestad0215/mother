@@ -13,6 +13,7 @@ import { PreciseCalculator } from '@/utils/Decimal';
 import { Grid2X2Plus, ShoppingCart, Undo2 } from '@lucide/vue';
 import { getInfoFromPriceList } from '@/Helpers/ProductHelper';
 import SaleOpenShow from './SaleOpenShow.vue';
+import ReturnForm from '@components/ReturnForm.vue';
 
 //Datos de la ventana
 const page = usePage();
@@ -301,17 +302,11 @@ defineExpose({
   </Dialog>
 
   <!-- Formulario para la nota de credito-->
-  <!--	<FloatBox-->
-  <!--		v-model:show="showFormReturn">-->
-  <!--		<template #header>-->
-  <!--			Notas de Credito-->
-  <!--		</template>-->
-  <!--		<template #body>-->
-  <!--			<ReturnForm-->
-  <!--				class="w-160 mx-auto"-->
-  <!--				@closeFormReturn="showFormReturn = false"-->
-  <!--				:error="page.props.errors.general"/>-->
-  <!--		</template>-->
-
-  <!--	</FloatBox>-->
+  <Dialog v-model:visible="showFormReturn" header="Nota de Creditos / Devolucion">
+    <ReturnForm
+      class="w-160 mx-auto"
+      @closeFormReturn="showFormReturn = false"
+      :error="page.props.errors.general"
+    />
+  </Dialog>
 </template>
