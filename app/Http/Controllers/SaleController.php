@@ -8,6 +8,7 @@ use App\Helpers\ClientHelper;
 use App\Helpers\ProductHelper;
 use App\Helpers\SaleHelper;
 use App\Http\Requests\StoreProductSaleRequest;
+use App\Http\Resources\SaleItemResource;
 use App\Http\Resources\UserResource;
 use App\Models\Product;
 use App\Models\Sale;
@@ -173,6 +174,9 @@ class SaleController extends Controller
     }
 
 
+
+
+
     /**
      * Eliminar la venta seleccionada
      * @param Request $request
@@ -281,6 +285,17 @@ class SaleController extends Controller
         ]);
 
     }
+
+
+
+    public function refund(string $code)
+    {
+        // Obtener la ventas con los items para la devolucions
+        $data = Sale::with('items')->where('code', $code)->firstOrFail();
+
+        return response()->json(new SaleItemResource($data));
+    }
+
 
     /**
      * @return Response

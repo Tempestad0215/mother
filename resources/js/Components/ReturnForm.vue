@@ -1,13 +1,23 @@
 <script setup lang="ts">
-import TextInput from '@components/TextInput.vue';
-import InputLabel from '@components/InputLabel.vue';
 import { useForm } from '@inertiajs/vue3';
-import InputError from '@components/InputError.vue';
-import PrimaryButton from '@components/PrimaryButton.vue';
 import { ref } from 'vue';
 import { useRoute } from 'ziggy-js';
-import { Button, FloatLabel, InputText, Select, Tag } from 'primevue';
+import {
+  Button,
+  FloatLabel,
+  InputText,
+  RadioButton,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  Tag,
+  useToast,
+} from 'primevue';
+import axios from 'axios';
 
+const toast = useToast();
 const route = useRoute();
 /*
 Propiedades de la ventana
@@ -23,6 +33,10 @@ const form = useForm({
   type: true,
   saleCode: '',
   general: '',
+});
+
+const formGet = useForm({
+  saleCode: '',
 });
 
 /*
@@ -51,6 +65,7 @@ const options = ref([
 Funciones
  */
 const submit = () => {
+  console.log('enviado', form.type);
   if (form.type) {
   } else {
     //Enviar los datos
@@ -65,39 +80,67 @@ const submit = () => {
     });
   }
 };
+
+const saleGet = async () => {
+  try {
+    if (!formGet.saleCode) {
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'El campo no puede estar vacio',
+        life: 3000,
+      });
+      return;
+    }
+
+    const res = await axios.get(route('sale.refund', { code: formGet.saleCode }));
+
+    console.log(res.data);
+  } catch (error) {
+    console.log(error);
+  }
+};
 </script>
 
 <template>
   <div class="fondo p-5 rounded-lg">
-    <form @submit.prevent="submit">
-      <!--            Si es consulta o para selccionar-->
-      <div class="">
-        <!--                Titulo-->
-        <InputLabel class="flex" for="askReturn" value="Tipo de Consulta" />
-        <div class="flex justify-center">
-          <Select
-            fluid
-            v-model="form.type"
-            :options="options"
-            option-label="name"
-            option-value="value"
-          />
-        </div>
-      </div>
-
-      <div class="mt-5">
-        <!--           Etiqueta de la ventana-->
-        <FloatLabel variant="on">
-          <InputText fluid v-model="form.saleCode" />
-          <label for="code">Codigo de Factura</label>
-        </FloatLabel>
-        <Tag v-if="form.errors.saleCode" severity="danger" :value="form.errors.saleCode" />
-      </div>
-
-      <!--            Boton de enviar-->
-      <div class="mt-5 text-right">
-        <Button>Buscar</Button>
-      </div>
-    </form>
+    <Tabs value="0">
+      <TabList>
+        <Tab value="0">Seleccionar</Tab>
+        <Tab value="1">Consultar</Tab>
+      </TabList>
+      <TabPanels>
+        <TabPanel value="0">
+          <form @submit.prevent="saleGet">
+            <div class="mt-5">
+              <!-- Etiqueta de la ventana-->
+              <FloatLabel variant="on">
+                <InputText fluid v-model="formGet.saleCode" />
+                <label for="code">Codigo de Factura</label>
+              </FloatLabel>
+              <Tag v-if="form.errors.saleCode" severity="danger" :value="form.errors.saleCode" />
+            </div>
+            <div class="mt-3 text-right">
+              <Button type="submit">Buscar</Button>
+            </div>
+          </form>
+        </TabPanel>
+        <TabPanel value="1">
+          <form>
+            <div class="mt-5">
+              <!-- Etiqueta de la ventana-->
+              <FloatLabel variant="on">
+                <InputText fluid v-model="form.saleCode" />
+                <label for="code">Codigo de Factura</label>
+              </FloatLabel>
+              <Tag v-if="form.errors.saleCode" severity="danger" :value="form.errors.saleCode" />
+            </div>
+            <div class="mt-3 text-right">
+              <Button type="submit">Buscar</Button>
+            </div>
+          </form>
+        </TabPanel>
+      </TabPanels>
+    </Tabs>
   </div>
 </template>

@@ -154,8 +154,8 @@ class CreditNoteController extends Controller
         //Para la busqueda
 //        $startDate = $request->get('startDate');
 //        $endDate = $request->get('endDate');
-        $search = $request->get('search');
-        $perPage = $request->get('perPage');
+        $search = $request->input('search');
+        $perPage = $request->input('perPage');
 
 
          // Tomar los datos

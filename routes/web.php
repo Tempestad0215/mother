@@ -153,6 +153,7 @@ Route::middleware([
      * Rutas específicas de ventas
      */
     Route::prefix('sale')->name('sale.')->group(function () {
+        Route::get('/refund/{code}', [SaleController::class, 'refund'])->name('refund');
         Route::get('/close', [SaleController::class, 'close'])->name('close');
         Route::post('/close/get', [SaleController::class, 'getClose'])->name('get.close');
         Route::get('/counter', [SaleController::class, 'counter'])->name('counter');
