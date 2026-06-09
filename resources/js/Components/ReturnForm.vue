@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { inject, ref } from 'vue';
 import { useRoute } from 'ziggy-js';
 import {
   Button,
   FloatLabel,
   InputText,
-  RadioButton,
   Tab,
   TabList,
   TabPanel,
@@ -16,25 +15,30 @@ import {
   useToast,
 } from 'primevue';
 import axios from 'axios';
+import { saleDataI } from '@/Interfaces/SaleInterface';
+import { formProductKey } from '@/Injections/InjectionKeys';
+import { saleKey } from '@/utils/keys';
 
 const toast = useToast();
 const route = useRoute();
-/*
-Propiedades de la ventana
- */
+
+// Definir las props del componente
 const propsW = defineProps<{
   error?: string;
 }>();
 
-/*
-fomulario
- */
+// Datos de la ventana
+const formInject = inject(saleKey)!;
+const loadingData = ref(false);
+
+// Formulario
 const form = useForm({
   type: true,
   saleCode: '',
   general: '',
 });
 
+// Enviar el evento para emitir
 const formGet = useForm({
   saleCode: '',
 });
@@ -43,7 +47,7 @@ const formGet = useForm({
 Enviar el evento para emitir
  */
 const emit = defineEmits<{
-  (e: 'closeFormReturn'): void;
+  (e: 'closeFormReturn', isReturn: boolean): void;
   (e: 'hasError'): void;
 }>();
 
@@ -75,14 +79,19 @@ const submit = () => {
         emit('hasError');
       },
       onSuccess: () => {
-        emit('closeFormReturn');
+        emit('closeFormReturn', true);
       },
     });
   }
 };
 
+// Obtener los datos de las cuentas abiertas
 const saleGet = async () => {
   try {
+    // Verificar si el error es el mismo para mostrar la ventana
+    loadingData.value = true;
+
+    // Validar que el campo no este vacio
     if (!formGet.saleCode) {
       toast.add({
         severity: 'error',
@@ -93,11 +102,26 @@ const saleGet = async () => {
       return;
     }
 
+    // Obtener los datos de la venta
     const res = await axios.get(route('sale.refund', { code: formGet.saleCode }));
 
-    console.log(res.data);
+    // Emitir el evento con los datos
+    Object.assign(formInject, {
+      ...res.data,
+      type: 'Devolucion',
+      close_table: true,
+    });
+
+    emit('closeFormReturn', true);
   } catch (error) {
-    console.log(error);
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'No se encontro la venta',
+      life: 3000,
+    });
+  } finally {
+    loadingData.value = false;
   }
 };
 </script>
@@ -121,7 +145,7 @@ const saleGet = async () => {
               <Tag v-if="form.errors.saleCode" severity="danger" :value="form.errors.saleCode" />
             </div>
             <div class="mt-3 text-right">
-              <Button type="submit">Buscar</Button>
+              <Button :disabled="loadingData" type="submit">Buscar</Button>
             </div>
           </form>
         </TabPanel>

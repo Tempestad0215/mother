@@ -176,7 +176,7 @@ Route::middleware([
         Route::get('/show', [CreditNoteController::class, 'show'])->name('show');
         Route::get('/get/balance/{code}', [CreditNoteController::class, 'getBalance'])->name('balance');
         Route::get('/get/{code}', [CreditNoteController::class, 'creditNoteGet'])->name('get');
-        Route::patch('/{sale}', [CreditNoteController::class, 'store'])->name('store');
+        Route::post('/{sale}', [CreditNoteController::class, 'store'])->name('store');
     });
 
     /*

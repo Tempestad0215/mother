@@ -3,7 +3,8 @@
 namespace App\Models;
 
 use App\Enums\PaymentTypeEnum;
-use App\Enums\SequenceSaleTypeEnum;
+use App\Helpers\CodeHelper;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -13,39 +14,46 @@ use Illuminate\Support\Carbon;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
- * @property integer id
- * @property string code
- * @property string ncf
- * @property string ncf_m
- * @property string client_rnc
- * @property string client_name
- * @property int client_id
- * @property float discount_amount
- * @property float tax
- * @property float sub_total
- * @property float amount
- * @property float n_available
- * @property float n_used
- * @property boolean status
- * @property Carbon created_at,
- * @property Carbon updated_at
- * @property Carbon deleted_at
- * @property ProductTransaction[] trans
- * @property Sale sale_id,
- * @property PaymentTypeEnum type_payment,
- * @property float received
- * @property float returned
- * @property string comment
+ * @property integer $uuid
+ * @property string $code
+ * @property string $ncf
+ * @property string $ncf_m
+ * @property string $client_rnc
+ * @property string $client_name
+ * @property int $client_uuid
+ * @property float $discount_amount
+ * @property float $tax
+ * @property float $sub_total
+ * @property float $amount
+ * @property float $n_available
+ * @property float $n_used
+ * @property boolean $status
+ * @property Carbon $created_at,
+ * @property Carbon $updated_at
+ * @property Carbon $deleted_at
+ * @property ProductTransaction[] $trans
+ * @property Sale $sale_id,
+ * @property PaymentTypeEnum $type_payment,
+ * @property float $received
+ * @property float $returned
+ * @property string $comment
  */
 
 class CreditNote extends Model implements Auditable
 {
     use SoftDeletes;
     use \OwenIt\Auditing\Auditable;
+    use HasUuids;
 
 
     // La tabla que se ve a utilizar
     protected $table = 'credit_notes';
+
+
+    protected $primaryKey = 'uuid';
+    protected $keyType = 'string';
+    public $incrementing = false;
+
 
     // Datos para actualizar masivamente
     protected $fillable = [
@@ -56,7 +64,7 @@ class CreditNote extends Model implements Auditable
         'client_name',
         'client_rnc',
         'client_id',
-        'sale_id',
+        'sale_uuid',
         'discount_amount',
         'tax',
         'sub_total',
@@ -71,8 +79,9 @@ class CreditNote extends Model implements Auditable
 
 
 
-    /*
-     * Relaciones
+    /**
+     * Summary of comment
+     * @return MorphOne<Comment, CreditNote>
      */
     public function comment():MorphOne
     {
@@ -80,8 +89,8 @@ class CreditNote extends Model implements Auditable
     }
 
     /**
-     * Relacion de nota de credito
-     * @return HasMany
+     * Summary of trans
+     * @return HasMany<ProductTransaction, CreditNote>
      */
     public function trans():HasMany
     {
@@ -89,6 +98,10 @@ class CreditNote extends Model implements Auditable
 
     }
 
+    /**
+     * Summary of sale
+     * @return BelongsTo<Sale, CreditNote>
+     */
     public function sale():BelongsTo
     {
         return $this->belongsTo(Sale::class);
@@ -97,7 +110,7 @@ class CreditNote extends Model implements Auditable
 
 
     /**
-     * @return void
+     * Summary of boot
      */
     protected static function boot():void
     {
@@ -106,7 +119,7 @@ class CreditNote extends Model implements Auditable
 
         //Generar el codigo los codigos
         static::creating(function ($model) {
-            $model->code = self::generateCode();
+            $model->code = self::generateCode($model);
         });
     }
 
@@ -116,19 +129,12 @@ class CreditNote extends Model implements Auditable
      * @return string
      */
     // funcion para generar el codigo
-    private static function generateCode():string
+    private static function generateCode(Model $model):string
     {
         // Obtener el ultimo registros
-        $total = self::max('id') ?? 0;
+        $nextNumber = self::withTrashed()->count('uuid') + 1;
 
-        // Generar el proximo ID
-        $nextID = $total ? $total + 1 : 1;
-
-        // Devolver los datos
-        $code = config('appconfig.saleRet');
-
-        // craer el codigp
-        return $code.str_pad($nextID, 6,'0', STR_PAD_LEFT);
+        return CodeHelper::generateCode($model, $nextNumber);
     }
 
 

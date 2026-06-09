@@ -41,14 +41,27 @@ const showProducts = ref(false);
 const showSaleOpen = ref(false);
 const showReturn = ref(false);
 const showFormReturn = ref(false);
+const isReturnSale = ref(false);
+const sendReturnInfo = defineModel('sendReturnInfo', {
+  type: Boolean,
+  default: false,
+});
 
 // Obtener el tipo de venta
 const getSaleType = computed(() => {
   return Object.entries(propsW.saleTypeEnum).map(([key, value]) => {
+    let shouldHide = false;
+
+    if (isReturnSale.value) {
+      shouldHide = key !== 'Devolucion';
+    } else {
+      shouldHide = key === 'Devolucion';
+    }
+
     return {
       key: key,
       value: value,
-      hidden: key === 'Devolucion',
+      hidden: shouldHide,
     };
   });
 });
@@ -57,7 +70,7 @@ const getSaleType = computed(() => {
 watch(
   () => form.type,
   (newVal) => {
-    form.close_table = newVal === 'Cotizacion';
+    form.close_table = newVal === 'Cotizacion' || newVal === 'Devolucion';
   }
 );
 
@@ -203,6 +216,26 @@ const getDataProduct = (data: ProductTableI) => {
   emit('totalSale');
 };
 
+// Cerrar el formulario de devoluciones
+const closeFormReturn = (isReturn: boolean) => {
+  // Colocar la variable en nada al principio
+  showFormReturn.value = false;
+
+  // Colocar la variable de devolucion para mostrar o no los datos de la venta
+  isReturnSale.value = isReturn;
+
+  // Enviar el evento para mostrar o no los datos de la venta
+  if (isReturn) {
+    form.type = 'Devolucion';
+  }
+
+  sendReturnInfo.value = isReturn;
+  // Obtener los datos de las cuentas abiertas
+  form.info_sale.forEach((el) => {
+    emit('totalAmount', el);
+  });
+};
+
 // Exponer los datos para el componente de devoluciones
 defineExpose({
   showReturn,
@@ -305,7 +338,7 @@ defineExpose({
   <Dialog v-model:visible="showFormReturn" header="Nota de Creditos / Devolucion">
     <ReturnForm
       class="w-160 mx-auto"
-      @closeFormReturn="showFormReturn = false"
+      @closeFormReturn="closeFormReturn"
       :error="page.props.errors.general"
     />
   </Dialog>

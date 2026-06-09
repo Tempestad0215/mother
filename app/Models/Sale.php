@@ -82,13 +82,18 @@ class Sale extends Model implements Auditable
         'returned',
         'status',
         'close_table',
-        'credit_notes_amount',
         'comment'
     ];
 
     //Formatear los datos
     protected  $casts = [
         'status' => 'boolean',
+        'amount' => 'decimal:4',
+        'sub_total' => 'decimal:4',
+        'discount_amount' => 'decimal:4',
+        'received' => 'decimal:4',
+        'returned' => 'decimal:4',
+        'tax' => 'decimal:4',
         'close_table' => 'boolean',
         'type' => SaleTypeEnum::class,
         'type_payment' => PaymentTypeEnum::class,

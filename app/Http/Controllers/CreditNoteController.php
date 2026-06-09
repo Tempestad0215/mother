@@ -117,7 +117,7 @@ class CreditNoteController extends Controller
         //Devolver el json con él, id para imprimir
         return response()->json([
             'success' => true,
-            'id' => $creditNote->id,
+            'uuid' => $creditNote->uuid,
             'message' => 'Registro Creado Correctamente'
         ]);
 

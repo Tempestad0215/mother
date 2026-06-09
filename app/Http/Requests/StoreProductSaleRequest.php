@@ -12,8 +12,6 @@ use Illuminate\Validation\Rule;
 use Route;
 
 
-
-
 class  StoreProductSaleRequest extends FormRequest
 {
     /**

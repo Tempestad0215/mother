@@ -30,6 +30,7 @@ class SaleDto extends BaseDto
      * @param ?array $credit_notes
      * @param ?string $comment
      * @param ?bool $status
+     * @params ?string $uuid
      */
  
     public function __construct(
@@ -53,6 +54,7 @@ class SaleDto extends BaseDto
         public ?string $comment = null,
         public ?bool $status = null,
         public ?bool $update = null,
+        public ?string $uuid = null,
 
     )
     {
@@ -89,6 +91,7 @@ class SaleDto extends BaseDto
             comment: $data['comment'] ?? null,
             status: $data['status'] ?? null,
             update: $data['update'] ?? false,
+            uuid: $data['uuid'] ?? null,
         );
     }
 

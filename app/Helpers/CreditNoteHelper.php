@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Dtos\SaleCreditNoteDto;
+use App\Dtos\SaleDto;
 use App\Enums\ProductTransactionTypeEnum;
 use App\Enums\ProductTypeEnum;
 use App\Enums\SaleTypeEnum;
@@ -34,36 +35,23 @@ class CreditNoteHelper
          return DB::transaction(function () use ($request, $sale) {
 
             //Convertir a collection
-            $infoCollect = collect($request->get('info_sale'));
+            $data = SaleDto::fromArray($request->validated());
+            $infoCollect = collect($request->input('info_sale'));
             $saleCollect = collect($sale->infoSale);
 
-            //Obtener el tipo de devolucion
-            $type = $request->get('type');
-
             //Verificar si existe para aumentar el contador de la nota de credito
-            if ($type == SaleTypeEnum::Devolucion->value)
+            if ($data->type == SaleTypeEnum::Devolucion->value)
             {
                 //Crear el aumento de los comprobante
                 SequenceHelper::incrementSequence(SequenceSaleTypeEnum::B04);
             }
 
+            $cleanData = collect($data->toArray())->except(['uuid'])->toArray();
+
             //Crear la devolucion
             $creditNote = CreditNote::create([
-                'sale_id' => $sale->id,
-                'invoice_type' => SequenceSaleTypeEnum::B04->value,
-                'client_id' => $request->get('client_id') ?: null,
-                'client_name' => $request->get('client_name'),
-                'client_rnc' => $request->get('client_rnc'),
-                'ncf' => $request->get('ncf'),
-                'ncf_m' => $request->get('ncf_m'),
-                'discount_amount' => $request->get('discount_amount'),
-                'discount' => $request->get('discount'),
-                'tax' => $request->get('tax'),
-                'sub_total' => $request->get('sub_total'),
-                'amount' => $request->get('amount'),
-                'type' => SaleTypeEnum::Devolucion,
-                'n_available' => $request->get('amount'),
-                'comment' => $request->get('comment'),
+                ...$cleanData,
+                'sale_id' => $data->uuid
             ]);
 
             //sumatoria para ver si se cerro la cuenta

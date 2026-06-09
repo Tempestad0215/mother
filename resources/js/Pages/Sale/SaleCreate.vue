@@ -54,6 +54,7 @@ const saleDetailRef = ref<InstanceType<typeof SaleDetail>>()!;
 const saleTableRef = ref<InstanceType<typeof SaleTable>>()!;
 const saleFooterRef = ref<InstanceType<typeof SaleFooter>>()!;
 const salePaymentRef = ref<InstanceType<typeof PaymentInvoice>>()!;
+const returnInfo = ref(false);
 
 // Formulario
 const form = useForm<CreateSaleI>({
@@ -124,6 +125,7 @@ onUpdated(() => {
   setDataForm();
 });
 
+// Obtener los datos de las cuentas abiertas
 watch(
   () => page.flash,
   (newValue) => {
@@ -159,24 +161,46 @@ const setDataForm = () => {
 // Enviar los datos para las devoluciones
 const createCreditNotes = () => {
   // Enviar los datos para las devoluciones
-  axios
-    .patch(route('credit-note.store', { sale: form.uuid }), form)
-    .then((res) => {
-      if (res.data.success) {
-        //Imprimir el pdf
-        printPdf(route('invoice.belt.note', { creditNote: res.data.id }));
-        //Limpiar el pdf
-        // router.get(route('sale.create'));
-        router.visit(route('sale.create'));
-      }
-    })
-    .catch(() => {});
+  form.post(route('credit-note.store', { sale: form.uuid }), {
+    onSuccess: () => {
+      toast.add({
+        summary: 'Registro Creado Correctamente',
+        severity: 'success',
+        life: 3000,
+      });
+      form.reset();
+      paymentBox.value = false;
+    },
+    onError: (err) => {
+      const errors = Object.values(err);
+      toast.add({
+        summary: 'Error',
+        detail: errors[0],
+        life: 3500,
+        severity: 'error',
+      });
+    },
+  });
+  // axios
+  //   .patch(route('credit-note.store', { sale: form.uuid }), form)
+  //   .then((res) => {
+  //     if (res.data.success) {
+  //       //Imprimir el pdf
+  //       printPdf(route('invoice.belt.note', { creditNote: res.data.id }));
+  //       //Limpiar el pdf
+  //       // router.get(route('sale.create'));
+  //       router.visit(route('sale.create'));
+  //     }
+  //   })
+  //   .catch(() => {});
 };
 
 // Obtener el tipo de boleta
 const sendData = async () => {
+  console.log('enviado', returnInfo.value);
   // Verificar si esta el retorno
-  if (propsW.refund) {
+  if (returnInfo.value) {
+    // Enviar los datos para las devoluciones
     createCreditNotes();
   } else {
     //Verificar si no hay problema con nada
@@ -279,7 +303,7 @@ const updateSale = async () => {
 // Registrar la venta
 const registerSale = () => {
   // Verificar si no hay problema con nada
-  if (form.type === 'Cotizacion' || !form.close_table) {
+  if (form.type === 'Cotizacion' || !form.close_table || form.type === 'Devolucion') {
     sendData();
   } else {
     paymentBox.value = true;
@@ -307,6 +331,7 @@ provide(saleKey, form);
             />
             <!-- Detalle de la venta-->
             <SaleDetail
+              v-model:send-return-info="returnInfo"
               :saleTypeEnum="propsW.saleTypeEnum"
               ref="saleDetailRef"
               :products="propsW.products"
