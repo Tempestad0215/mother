@@ -4,17 +4,20 @@ namespace App\Helpers;
 
 use App\Dtos\SaleCreditNoteDto;
 use App\Dtos\SaleDto;
+use App\Dtos\SaleItemDto;
 use App\Enums\ProductTransactionTypeEnum;
 use App\Enums\ProductTypeEnum;
 use App\Enums\SaleTypeEnum;
 use App\Enums\SequenceSaleTypeEnum;
 use App\Http\Requests\StoreProductSaleRequest;
 use App\Models\CreditNote;
+use App\Models\CreditNoteItem;
 use App\Models\Product;
 use App\Models\ProductTransaction;
 use App\Models\Sale;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use JetBrains\PhpStorm\NoReturn;
@@ -45,8 +48,13 @@ class CreditNoteHelper
                 //Crear el aumento de los comprobante
                 SequenceHelper::incrementSequence(SequenceSaleTypeEnum::B04);
             }
+        
+            // Limpiar los datos para crear la nota de credito
+            $cleanData = collect($data->toArray())->except(['uuid','status'])->toArray();
 
-            $cleanData = collect($data->toArray())->except(['uuid'])->toArray();
+            // Colocar el n_available igual al monto de la nota de credito
+            $cleanData['n_available'] = $data->amount;
+
 
             //Crear la devolucion
             $creditNote = CreditNote::create([
@@ -57,8 +65,49 @@ class CreditNoteHelper
             //sumatoria para ver si se cerro la cuenta
             $resultTotal = [];
 
+            // Verificar si existe otra nota de credito relacionada con la venta
+            $existingCreditNotes = CreditNote::where('sale_uuid', $data->uuid)->where('status', true)->get();
 
+            $groupedItems = [];
+
+            // Recorrer las notas de credito existentes para verificar los productos
+            /** @var Collection<int, CreditNoteItem> */
+           $allItems = $existingCreditNotes->flatMap(function( $creditNote) {
+                return $creditNote->items;
+           });
+
+           // Verificar si hay items en las notas de credito existentes
+           if(count($allItems) > 0){
+                // // Agrupar por producto y sumar las cantidades
+                $groupedItems = $allItems->groupBy('product_uuid')->map(function($item) {
+                    return $item->sum('quantity');
+                });
+           }
+
+           
+        
             //Recorrer los datos
+            /** @var SaleItemDto $value */
+            foreach ($data->info_sale as $value) {
+           
+                // Buscar el total de la cantidad del producto en las notas de credito existentes
+                $oldQuantityTotal = $groupedItems->get($value->product_uuid) ?? 0;
+                
+                
+                $newQuantity = bcadd($oldQuantityTotal, $value->quantity);
+
+                dd($newQuantity);
+    
+                // Buscar el producto para verificar el tipo
+                $currentProduct = $sale->items->keyBy('product_uuid');
+
+                // Actual valor 
+                $currentValue = $currentProduct->get($value->product_uuid); 
+
+                dd($currentValue);
+
+
+            }
             $infoCollect->map(callback: function ($item) use (&$saleCollect, &$sale, &$creditNote, &$resultTotal) {
 
                 //buscar los productos

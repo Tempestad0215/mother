@@ -110,6 +110,7 @@ const saleGet = async () => {
       ...res.data,
       type: 'Devolucion',
       close_table: true,
+      comment: '',
     });
 
     emit('closeFormReturn', true);

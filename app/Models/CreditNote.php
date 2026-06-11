@@ -78,6 +78,15 @@ class CreditNote extends Model implements Auditable
 
 
 
+    /**
+     * Summary of credit
+     * @return BelongsTo<CreditNote, CreditNote>
+     */
+    public function credit(): BelongsTo
+    {
+        return $this->belongsTo(CreditNote::class, 'credit_note_uuid', 'uuid');
+    }
+
 
     /**
      * Summary of comment
@@ -111,7 +120,7 @@ class CreditNote extends Model implements Auditable
 
     /**
      * Summary of boot
-     */
+    */
     protected static function boot():void
     {
         // Llamar el metodo principal
