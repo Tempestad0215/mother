@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { router, useForm, usePage } from '@inertiajs/vue3';
+import { useForm, usePage } from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
 import { onMounted, onUpdated, provide, Ref, ref, watch } from 'vue';
 import { ProductTableI } from '@/Interfaces/ProductInterface';
 import { printPdf } from '@/Global/Helpers';
 import { clientBaseI } from '@/Interfaces/ClientInterface';
-import axios from 'axios';
 import {
   CreateSaleI,
   creditNotesSaleI,
@@ -23,7 +22,7 @@ import SaleFooter from '@/Pages/Sale/SaleFooter.vue';
 import SaleTable from '@/Pages/Sale/SaleTable.vue';
 import PaymentInvoice from '@components/PaymentInvoice.vue';
 import { useRoute } from 'ziggy-js';
-import { Dialog, Card, Button, useToast } from 'primevue';
+import { Button, Card, Dialog, useToast } from 'primevue';
 
 //Datos de la ventana
 const toast = useToast();
@@ -197,7 +196,6 @@ const createCreditNotes = () => {
 
 // Obtener el tipo de boleta
 const sendData = async () => {
-  console.log('enviado', returnInfo.value);
   // Verificar si esta el retorno
   if (returnInfo.value) {
     // Enviar los datos para las devoluciones
@@ -241,21 +239,6 @@ const createSale = () => {
       });
     },
   });
-
-  // 	//si esta cerrada se vas a imprimir
-  // 	if (form.close_table) {
-  // 		//Mostrar el pdf de impresion
-  // 		printPdf(route('invoice.belt.sale', {sale: res.data.pdfUuid}));
-  // 	}
-  // 	//Limpiar el fomulario
-  // 	form.reset();
-  // 	showReturn.value = false;
-  // 	//Recargar los datos
-  // 	router.reload({only: ['products', 'clients', 'saleOpen', 'invoiceType', 'refund']});
-  //
-  // } catch (err) {
-  // 	form.setError("general", "Problema con esta Peticion")
-  // }
 };
 
 // Actualizar la venta
@@ -280,24 +263,6 @@ const updateSale = async () => {
       });
     },
   });
-
-  // try {
-  //   const res = await axios.post(route('sale.create'), form);
-
-  //   // La cuenta es cerrada
-  //   if (form.close_table) {
-  //     // Imprimir el pdf
-  //     printPdf(route('invoice.belt.sale', { sale: res.data.pdfUuid }));
-  //   }
-  //   //Limpiar el fomulario
-  //   form.reset();
-  //   showReturn.value = false;
-  //   //Recargar los datos
-  //   router.reload({ only: ['products', 'clients', 'saleOpen', 'invoiceType', 'refund'] });
-  // } catch (error) {
-  //   console.log(error);
-  //   form.setError('general', 'Problema con esta Peticion');
-  // }
 };
 
 // Registrar la venta

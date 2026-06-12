@@ -6,20 +6,24 @@ namespace App\Dtos;
 class SaleItemDto extends BaseDto
 {
     /**
-     * 
-     * 
+     *
+     *
      * @param string $product_uuid
      * @param string $product_name
      * @param float $stock
      * @param float $price
+     * @param float $min_price
+     * @param float $promotional_price
+     * @param float|null $temp_price
      * @param string $tax_uuid
      * @param float $tax_rate
      * @param float $discount
      * @param float $discount_amount
+     * @param string $warehouse_uuid
      * @param float $reserved
      * @param float $amount
      * @param bool $is_service
-     * @param string $uuid
+     * @param string|null $uuid
      */
     public function __construct(
         public string $product_uuid,
@@ -60,8 +64,8 @@ class SaleItemDto extends BaseDto
             tax_uuid: $data['tax_uuid'],
             tax_rate: $data['tax_rate'],
             discount: $data['discount'],
-            warehouse_uuid: $data['warehouse_uuid'],
             discount_amount: $data['discount_amount'],
+            warehouse_uuid: $data['warehouse_uuid'],
             reserved: $data['reserved'] ?? 0,
             amount: $data['amount'],
             is_service: $data['is_service'] ?? false,
@@ -78,6 +82,28 @@ class SaleItemDto extends BaseDto
     {
         return array_map(fn($info) => self::fromArray($info), $data);
     }
-    
+
+
+    /**
+     * @return float
+     */
+    public function getTax():float
+    {
+        $subTotalBruto = bcmul((string) $this->stock, (string)$this->temp_price, 4);
+        $subTotalNetp = bcsub($subTotalBruto, (string)$this->discount_amount, 4);
+        $totalTax = bcmul($subTotalNetp, (string)$this->tax_rate, 4);
+        return (float)$totalTax;
+    }
+
+
+    /**
+     * @return float
+     */
+    public function getAmount():float
+    {
+
+        return (float)bcsub($this->amount, $this->discount_amount, 4);
+    }
+
 
 }

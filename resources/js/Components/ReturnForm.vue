@@ -14,10 +14,11 @@ import {
   Tag,
   useToast,
 } from 'primevue';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { saleDataI } from '@/Interfaces/SaleInterface';
 import { formProductKey } from '@/Injections/InjectionKeys';
 import { saleKey } from '@/utils/keys';
+import { LaravelErrorResponse } from '@/Interfaces/GlobalInterface';
 
 const toast = useToast();
 const route = useRoute();
@@ -69,7 +70,6 @@ const options = ref([
 Funciones
  */
 const submit = () => {
-  console.log('enviado', form.type);
   if (form.type) {
   } else {
     //Enviar los datos
@@ -105,6 +105,7 @@ const saleGet = async () => {
     // Obtener los datos de la venta
     const res = await axios.get(route('sale.refund', { code: formGet.saleCode }));
 
+    console.log(res.data);
     // Emitir el evento con los datos
     Object.assign(formInject, {
       ...res.data,
@@ -115,12 +116,23 @@ const saleGet = async () => {
 
     emit('closeFormReturn', true);
   } catch (error) {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: 'No se encontro la venta',
-      life: 3000,
-    });
+    const err = error as AxiosError<LaravelErrorResponse>;
+
+    if (err.response?.status == 422) {
+      toast.add({
+        severity: 'error',
+        summary: `Error de Validacion ${err.status}`,
+        detail: `Error en Nota de Credito, detalle: ${err.response.data.message}`,
+        life: 5000,
+      });
+    } else {
+      toast.add({
+        severity: 'error',
+        summary: `Error ${err.status}`,
+        detail: `No se encontro la venta`,
+        life: 3000,
+      });
+    }
   } finally {
     loadingData.value = false;
   }

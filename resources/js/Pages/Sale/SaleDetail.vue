@@ -137,7 +137,7 @@ const getSaleOpen = (item: saleDataI) => {
 
   setTimeout(() => {
     //Verificar Pasar los datos a la variable
-    item.info_sale.map((el, index) => {
+    item.info_sale.map((el, _) => {
       form.info_sale.push({
         ...el,
         temp_price: el.price,

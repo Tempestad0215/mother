@@ -34,6 +34,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property ProductTransaction[] $trans
  * @property Sale $sale_id,
  * @property PaymentTypeEnum $type_payment,
+ * @property-read CreditNoteItem $items
  * @property float $received
  * @property float $returned
  * @property string $comment
@@ -105,6 +106,14 @@ class CreditNote extends Model implements Auditable
     {
         return $this->hasMany(ProductTransaction::class,'credit_note_uuid');
 
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function items(): HasMany
+    {
+        return $this->hasMany(CreditNoteItem::class, 'credit_note_uuid', 'uuid');
     }
 
     /**

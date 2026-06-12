@@ -37,8 +37,6 @@ class SaleInfoResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-  
-
 
         $existsClient = (bool)$this->client;
 
@@ -51,7 +49,7 @@ class SaleInfoResource extends JsonResource
             'code' => $this->code,
             'client_name' => $this->client_name,
             'client_uuid' => $this->when($existsClient, $this->client?->uuid, null),
-            'client_document' => $this->when($existsClient, $this->client?->personal_ide, null) ,
+            'client_document' => $this->when($existsClient, $this->client?->personal_id, null) ,
             'discount_amount' => $this->discount_amount,
             'tax' => $this->tax,
             'sub_total' => $this->sub_total,

@@ -2,7 +2,8 @@
 
 return [
     App\Providers\AppServiceProvider::class,
+    App\Providers\ConfigServiceProvider::class,
     App\Providers\FortifyServiceProvider::class,
     App\Providers\JetstreamServiceProvider::class,
-    App\Providers\ConfigServiceProvider::class,
+    App\Providers\TelescopeServiceProvider::class,
 ];

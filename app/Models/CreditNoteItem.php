@@ -20,7 +20,7 @@ class CreditNoteItem extends Model implements Auditable
     protected  $primaryKey = 'uuid';
     protected $keyType = 'string';
     public $incrementing = false;
-    
+
 
     /**
      * Summary of fillable
@@ -28,12 +28,12 @@ class CreditNoteItem extends Model implements Auditable
      */
     protected $fillable = [
         'credit_note_uuid',
-        'product_id',
         'quantity',
         'price',
         'sub_total',
         'tax',
-        'amount'
+        'amount',
+        'product_uuid'
     ];
 
 

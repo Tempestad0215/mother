@@ -12,13 +12,17 @@ use App\Enums\SequenceSaleTypeEnum;
 use App\Http\Requests\StoreProductSaleRequest;
 use App\Models\CreditNote;
 use App\Models\CreditNoteItem;
+use App\Models\InventoryMovement;
 use App\Models\Product;
 use App\Models\ProductTransaction;
 use App\Models\Sale;
+use App\Models\Warehouse;
+use App\Models\WarehouseProduct;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use JetBrains\PhpStorm\NoReturn;
 use Throwable;
@@ -37,180 +41,150 @@ class CreditNoteHelper
         //Asegurar que los procesos se cumplan
          return DB::transaction(function () use ($request, $sale) {
 
-            //Convertir a collection
-            $data = SaleDto::fromArray($request->validated());
-            $infoCollect = collect($request->input('info_sale'));
-            $saleCollect = collect($sale->infoSale);
+             //Convertir a collection
+             $data = SaleDto::fromArray($request->validated());
+             $infoCollect = collect($request->input('info_sale'));
+             $saleCollect = collect($sale->infoSale);
 
-            //Verificar si existe para aumentar el contador de la nota de credito
-            if ($data->type == SaleTypeEnum::Devolucion->value)
-            {
-                //Crear el aumento de los comprobante
-                SequenceHelper::incrementSequence(SequenceSaleTypeEnum::B04);
-            }
-        
-            // Limpiar los datos para crear la nota de credito
-            $cleanData = collect($data->toArray())->except(['uuid','status'])->toArray();
+             //Verificar si existe para aumentar el contador de la nota de credito
+             if ($data->type == SaleTypeEnum::Devolucion->value) {
+                 //Crear el aumento de los comprobante
+                 SequenceHelper::incrementSequence(SequenceSaleTypeEnum::B04);
+             }
+             // Limpiar los datos para crear la nota de credito
+             $cleanData = collect($data->toArray())->except(['uuid', 'status'])->toArray();
+             // Colocar el n_available igual al monto de la nota de credito
+             $cleanData['n_available'] = $data->amount;
 
-            // Colocar el n_available igual al monto de la nota de credito
-            $cleanData['n_available'] = $data->amount;
+             // Verificar si existe otra nota de credito relacionada con la venta
+             $existingCreditNotes = CreditNote::where('sale_uuid', $data->uuid)->where('status', true)->get();
 
+             // Iniciar el item en un collect vacio
+             $groupedItems = collect();
 
-            //Crear la devolucion
-            $creditNote = CreditNote::create([
-                ...$cleanData,
-                'sale_id' => $data->uuid
-            ]);
+             // Recorrer las notas de credito existentes para verificar los productos
+             $allItems = $existingCreditNotes->flatMap(function ($creditNote) {
+                 return $creditNote->items;
+             });
 
-            //sumatoria para ver si se cerro la cuenta
-            $resultTotal = [];
+             //Crear la devolucion
+             $creditNote = CreditNote::create([
+                 ...$cleanData,
+                 'sale_uuid' => $data->uuid
+             ]);
 
-            // Verificar si existe otra nota de credito relacionada con la venta
-            $existingCreditNotes = CreditNote::where('sale_uuid', $data->uuid)->where('status', true)->get();
+             // Verificar si hay items en las notas de credito existentes
+             if ($allItems->isNotEmpty()) {
+                 // // Agrupar por producto y sumar las cantidades
+                 /** @var Collection<string, float> $groupedItems */
+                 $groupedItems = $allItems->groupBy('product_uuid')->map(function (Collection $item) {
+                     return $item->sum('quantity');
+                 });
+             }
 
-            $groupedItems = [];
-
-            // Recorrer las notas de credito existentes para verificar los productos
-            /** @var Collection<int, CreditNoteItem> */
-           $allItems = $existingCreditNotes->flatMap(function( $creditNote) {
-                return $creditNote->items;
-           });
-
-           // Verificar si hay items en las notas de credito existentes
-           if(count($allItems) > 0){
-                // // Agrupar por producto y sumar las cantidades
-                $groupedItems = $allItems->groupBy('product_uuid')->map(function($item) {
-                    return $item->sum('quantity');
-                });
-           }
-
-           
-        
-            //Recorrer los datos
-            /** @var SaleItemDto $value */
-            foreach ($data->info_sale as $value) {
-           
-                // Buscar el total de la cantidad del producto en las notas de credito existentes
-                $oldQuantityTotal = $groupedItems->get($value->product_uuid) ?? 0;
-                
-                
-                $newQuantity = bcadd($oldQuantityTotal, $value->quantity);
-
-                dd($newQuantity);
-    
-                // Buscar el producto para verificar el tipo
-                $currentProduct = $sale->items->keyBy('product_uuid');
-
-                // Actual valor 
-                $currentValue = $currentProduct->get($value->product_uuid); 
-
-                dd($currentValue);
+             // Obtener todos los item de la ventas, para ver las cantidades
+             $saleItems = $sale->items->keyBy('product_uuid');
 
 
-            }
-            $infoCollect->map(callback: function ($item) use (&$saleCollect, &$sale, &$creditNote, &$resultTotal) {
+             // Obtener todos los id de productos
+             $productUuids = array_map(fn(SaleItemDto $item) => $item->product_uuid, $data->info_sale);
 
-                //buscar los productos
-                $product = Product::find($item['product_id']);
+             // Obtenir los productos por uuid
+             $productsDB = Product::whereIn('uuid', $productUuids)->get()->keyBy('uuid');
 
-                //Buscar la concidencia en los datos antiguo
-                $saleInfo = $saleCollect->firstWhere('product_id', $item['product_id']);
-
-                //sacar el resultado
-                $result  =  $saleInfo['stock'] - $item['stock'];
+             $creditNoteItemsSave = [];
+             $stockMovement = [];
+             $productMovements = [];
 
 
-                //Si el producto es de servicio el resultado debe ser 0
-//                if ($product->type == ProductTypeEnum::SERVICIO && $result != 0)
-//                {
-//                    // Devolver error si no coincide
-//                    throw ValidationException::withMessages([
-//                        'general' => "Por Favor, No Puede Modificar La Cantidad Del Item: $product->name"
-//                    ]);
-//
-//                }else
-                if ($result < 0)
-                {
-                    // Devolver error si no coincide
-                    throw  ValidationException::withMessages([
-                        'general' => "Por Favor, El Item: $product->name, La Cantidad Es Mayor Que La Factura"
-                    ]);
-                }
-                else{
+             //Recorrer los datos
+             collect($data->info_sale)->each(function (SaleItemDto $item) use ($groupedItems, $saleItems, &$creditNoteItemsSave, $creditNote, &$stockMovement, $productsDB, &$productMovements) {
+                 // Obtener el valor del item y la cantidad sumana
+                 $oldCurrentQuantity = 0.0;
 
-                    //Crear la transaccion individual
-                    TransHelper::store($item, ProductTransactionTypeEnum::RETURN, $sale,$product, $creditNote);
+                 // Verificar si existe alguna devolucion
+                 if ($groupedItems->isNotEmpty()) {
+                     $oldCurrentQuantity = $groupedItems->get($item->product_uuid) ?? 0;
+                 }
 
-                    // Verificar si la nota de credito y la venta es 0
-                    $amount = $sale->amount - $creditNote->amount;
+                 // Tomar la cantidad de la venta
+                 $saleQuantity = $saleItems->get($item->product_uuid)->stock ?? 0;
 
-                    //si el salgo es igual a 0 se coloca la venta en status 0
-                    if ($amount == 0)
-                    {
-                        $sale->update([
-                            'status' => false
-                        ]);
-                    }
-                    //Verificar que el producto sea el mismo que el de la transation
-                    $productCheck = $product->trans->where('id', $item['id'])->first();
+                 // Calcular la diferencia
+                 $newQuantity = bcadd($item->stock, $oldCurrentQuantity, 4);
 
-                    // Verificar si es productos para actualizar el inventario
-                    if ($product->type === ProductTypeEnum::Producto)
-                    {
-                        //actializar los datos del stock
-                        $product->increment('stock', $item['stock']);
+                 // Verificar si la cantidad es mayor a la cantidad de venta
+                 if ($newQuantity > $saleQuantity) {
+                     // Devolver error si no coincide
+                     throw ValidationException::WithMessages([
+                         'info_sale' => "La cantidad de $item->product_name no puede ser mayor a la cantidad de Venta"
+                     ]);
+                 }
 
-                        //Verificar si es resera o no
-                        if ($productCheck?->type == ProductTransactionTypeEnum::RESERVATION)
-                        {
-                            //Deducir de la reserva
-                            $product->decrement('reserved', $item['stock']);
-                        }
-                    }
+                 /** @var Product $productModel */
+                 $productModel = $productsDB->get($item->product_uuid);
+                 $warehousePivot = $productModel?->warehouses->firstWhere('uuid', $item->warehouse_uuid);
 
+                 // Tomar el stock actual
+                 $currentStock = $warehousePivot?->pivot->available ?? 0.0;
 
-                    //Tomar el total de toda la devoluciones
-                    $stockRet = $product->trans
-                        ->where('type', ProductTransactionTypeEnum::RETURN)
-                        ->where('sale_id', $sale->id)
-                        ->sum('quantity');
+                 // Sumar la cantidad
+                 $finalWarehouseStock = bcadd((string)$currentStock, (string)$item->stock, 4);
 
+                // Guardar el movimiento de producto
+                 $productMovements[] = [
+                     'uuid' => Str::uuid(),
+                     'product_uuid' => $item->product_uuid,
+                     'warehouse_uuid' => $item->warehouse_uuid,
+                     'type' => "IN",
+                     'concept' => "Devolucion en nota de Credito de Producto : $item->product_name en el Almacen: $warehousePivot->name",
+                     'quantity' => $item->stock,
+                     'cost' => $item->price,
+                     'stock_before' => $currentStock,
+                     'stock_after' => $finalWarehouseStock,
+                     'created_at' => now(),
+                     'updated_at' => now(),
+                 ];
 
-                    //Tomar el resultado
-                    $result = $saleInfo->stock - $stockRet;
+                 // Guardar el movimiento de stock
+                 $stockMovement[] = [
+                     'product_uuid' => $item->product_uuid,
+                     'warehouse_uuid' => $item->warehouse_uuid,
+                     'stock_quantity' => (float)$finalWarehouseStock,
+                     'updated_at' => now(),
+                 ];
 
-                    //Agreagr a resultado final
-                    $resultTotal[] = $result;
+                 // Crear el item de la nota de credito
+                 $creditNoteItemsSave[] = new CreditNoteItem([
+                     'credit_note_uuid' => $creditNote->uuid,
+                     'product_uuid' => $item->product_uuid,
+                     'quantity' => $item->stock,
+                     'price' => $item->price,
+                     'tax' => $item->getTax(),
+                     'sub_total' => $item->amount,
+                     'amount' => $item->getAmount(),
+                 ]);
 
-                    //Si el resultado es cero, pues se
-                    if ($result == 0.0)
-                    {
+             });
 
-                        // Actualizar el status del producto
-                        ProductTransaction::where('uuid', $saleInfo->uuid)
-                            ->update([
-                                'status' => false
-                            ]);
-                    }
+             if (!empty($stockMovement)) {
+                 DB::table('warehouse_products')->upsert(
+                     $stockMovement,
+                     ['product_uuid', 'warehouse_uuid'],
+                     ['stock_quantity', 'updated_at'],
+                 );
+             }
 
-                }
-            });
+             // Guardar los items en la nota de credito
+             $creditNote->items()->saveMany($creditNoteItemsSave);
 
-            //Tomar el sale id para actualizar datos
-            $saleId = $saleCollect[0]->sale_id;
+             // Actualizar el stock de los productos
+             InventoryMovement::insert(
+                 $productMovements,
+             );
 
-            //Verificar si es menor o igual a 0
-            if (array_sum($resultTotal) <= 0)
-            {
-
-                Sale::where('id', $saleId)->update([
-                    'close_table' => true
-                ]);
-            }
-
-            //Devolver el dato para el json
-            return $creditNote;
-        });
+             return $creditNote;
+         });
 
     }
 

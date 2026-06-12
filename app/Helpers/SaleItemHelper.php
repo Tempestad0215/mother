@@ -17,7 +17,7 @@ class SaleItemHelper
     /**
      * @param Sale $sale
      * @param SaleItemDto[] $data
-     * @param bool $update 
+     * @param bool $update
      * @return void
      * @throws Throwable
      */
@@ -41,18 +41,16 @@ class SaleItemHelper
 
             // Si estamos en modo actualización, necesitamos conocer la cantidad que ya se había retenido en la cuenta para este producto antes de esta actualización para calcular correctamente el ajuste en el stock físico
             $oldQuantity = $oldItem->stock ?? 0;
-    
+
             // Actualizar el stock físico y registrar el movimiento correspondiente basándonos en la diferencia
             self::updateStockAndMovement(
                 productUuid: $item->product_uuid,
                 warehouseUuid: $item->warehouse_uuid,
                 quantity: $item->stock,
                 price: $item->price,
-                saleUuid: $sale->uuid,
-                operation: OperationTypeEnum::SUSTRACT,
-                shouldCreateMovement: $sale->close_table, // Solo crear movimiento si la venta se cierr
-                update: $update,
-                oldQuantity: $oldQuantity
+                saleUuid: $sale->uuid, // Solo crear movimiento si la venta se cierr
+                shouldCreateMovement: $sale->close_table,
+                update: $update, oldQuantity: $oldQuantity
             );
 
             // Actualizar o crear el item de la venta
@@ -60,7 +58,7 @@ class SaleItemHelper
                 'product_uuid' => $item->product_uuid,
                 'sale_uuid' => $sale->uuid,
             ], $item->toArray());
-            
+
         });
 
     }
@@ -77,8 +75,7 @@ class SaleItemHelper
      * @param float $quantity Cantidad actual/nueva que se quiere dejar en la cuenta
      * @param float $price
      * @param string $saleUuid
-     * @param OperationTypeEnum $operation
-     * @param bool $shouldCreateMovement
+         * * @param bool $shouldCreateMovement
      * @param bool $update Si es true, calcula la diferencia contra lo que ya se había retenido
      * @param float $oldQuantity Solo se usa si $update es true, representa la cantidad que ya se había retenido en la cuenta antes de esta actualización
      * @return void
@@ -89,7 +86,6 @@ class SaleItemHelper
         float $quantity,
         float $price,
         string $saleUuid,
-        OperationTypeEnum $operation = OperationTypeEnum::SUSTRACT,
         bool $shouldCreateMovement = false,
         bool $update = false,
         float $oldQuantity = 0.0
@@ -100,16 +96,17 @@ class SaleItemHelper
             ->where('warehouse_uuid', $warehouseUuid)
             ->first();
 
+        // Verficiar si existe el almacen
         if (!$warehouse) {
-            return; 
+            return;
         }
 
         // Almacenamos el stock antes de la actualización para registrar correctamente el movimiento
         $previousStock = (float) $warehouse->stock_quantity;
-        
+
         // Cantidad final que se va a usar para alterar el stock físico y el historial
-        $finalQuantity = $quantity; 
-        $finalOperation = $operation;
+        $finalQuantity = $quantity;
+        $finalOperation = OperationTypeEnum::SUSTRACT;
 
         // 2. LOGICA CRÍTICA DE ACTUALIZACIÓN (Cuentas Abiertas)
         if ($update) {
@@ -120,7 +117,7 @@ class SaleItemHelper
                 return; // No hubo cambios en la cantidad de este ítem, salimos de una vez
             }
 
-            if ($operation === OperationTypeEnum::SUSTRACT) {
+            if (OperationTypeEnum::SUSTRACT === OperationTypeEnum::SUSTRACT) {
                 // Si es una VENTA abierta:
                 if ($difference > 0) {
                     // Agregaron más piezas a la cuenta -> Hay que RESTAR del stock físico

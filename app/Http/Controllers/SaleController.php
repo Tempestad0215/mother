@@ -8,6 +8,7 @@ use App\Helpers\ClientHelper;
 use App\Helpers\ProductHelper;
 use App\Helpers\SaleHelper;
 use App\Http\Requests\StoreProductSaleRequest;
+use App\Http\Resources\SaleCreditNoteResource;
 use App\Http\Resources\SaleInfoResource;
 use App\Http\Resources\SaleItemResource;
 use App\Http\Resources\UserResource;
@@ -17,6 +18,9 @@ use App\Models\Setting;
 use App\Models\User;
 use App\Models\Warehouse;
 use Carbon\Carbon;
+use Illuminate\Contracts\Cache\LockTimeoutException;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -70,7 +74,8 @@ class SaleController extends Controller
     /**
      * Summary of store
      * @param StoreProductSaleRequest $request
-     * @return RedirectResponse
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @throws LockTimeoutException
      */
 
     public function store(StoreProductSaleRequest $request)
@@ -98,12 +103,12 @@ class SaleController extends Controller
         //DEvolver el id de la venta
        return Inertia::flash(['saleInvoiceUrl' => $rutaInvoice])->back();
 
-       
+
 
     }
 
     /**
-     * 
+     *
      * @param StoreProductSaleRequest $request
      * @param Sale $sale
      * @return RedirectResponse
@@ -114,7 +119,7 @@ class SaleController extends Controller
         // Evitar que se realicen 2 operaciones al mismo tiempo
         Cache::lock('sale_warehouse'.auth()->id(), 5)
            ->block(3, function () use ($request, $sale) {
-        
+
                 //Actualizar los datos
                $sale =  DB::transaction(function () use (&$request, &$sale) {
                     //Instancia
@@ -126,7 +131,7 @@ class SaleController extends Controller
 
 
         $rutaInvoice = route('invoice.sale', [$sale->uuid]);
-    
+
        //DEvolver el id de la venta
         return Inertia::flash(['saleInvoiceUrl' => $rutaInvoice])->back();
 
@@ -214,7 +219,7 @@ class SaleController extends Controller
         //Obtener los datos
         $products = ProductHelper::get($request, true);
         $clients = $clientHelper->get($request);
-    
+
         // Obtener las ventas abiertas para mostrar en la ventana de ventas abiertas
         $saleOpen = $saleHelper->getSaleOpen($request);
 
@@ -246,7 +251,7 @@ class SaleController extends Controller
 
     /**
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function getClose(Request $request)
     {
@@ -288,14 +293,23 @@ class SaleController extends Controller
     }
 
 
-
+    /**
+     * @param string $code
+     * @return JsonResponse
+     */
     public function refund(string $code)
     {
         // Obtener la ventas con los items para la devolucions
-        $data = Sale::with('items')->where('code', $code)->firstOrFail();
+        $data = Sale::with(['items', 'credit_note'])
+            ->where('type', SaleTypeEnum::Ventas)
+            ->where('code', $code)
+            ->firstOrFail();
 
-        return response()->json(new SaleInfoResource($data));
+
+        return response()->json(new SaleCreditNoteResource($data));
+//        return response()->json(new SaleInfoResource($data));
     }
+
 
 
     /**

@@ -6,6 +6,13 @@ export interface TaxI {
   rate: string;
 }
 
+export interface LaravelErrorResponse {
+  message: string;
+  errors?: Record<string, string[]>;
+  exception?: string;
+  code?: number;
+}
+
 export interface MenuItemI extends MenuItem {
   activePath?: string;
 }

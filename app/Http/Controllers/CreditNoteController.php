@@ -102,24 +102,20 @@ class CreditNoteController extends Controller
     /**
      * @param StoreProductSaleRequest $request
      * @param Sale $sale
-     * @return JsonResponse
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      * @throws Throwable
      */
-    public function store(StoreProductSaleRequest $request, Sale $sale):JsonResponse
+    public function store(StoreProductSaleRequest $request, Sale $sale)
     {
 
         //Intancia
         $creditNoteHelper = new CreditNoteHelper();
 
         //Llamar el metodo
-        $creditNote = $creditNoteHelper->creditNoteStore($request, $sale);
+        $data = $creditNoteHelper->creditNoteStore($request, $sale);
 
         //Devolver el json con él, id para imprimir
-        return response()->json([
-            'success' => true,
-            'uuid' => $creditNote->uuid,
-            'message' => 'Registro Creado Correctamente'
-        ]);
+        return Inertia::flash('credit_uuid', $data->uuid)->back();
 
     }
     /**
