@@ -19,6 +19,7 @@ use App\Models\Sale;
 use App\Models\Warehouse;
 use App\Models\WarehouseProduct;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -191,16 +192,34 @@ class CreditNoteHelper
 
     /**
      * @param string $code
-     * @return CreditNote|null
+     * @return JsonResponse|null
      */
-    public static function creditNoteGet(string $code):CreditNote|null
+    public static function creditNoteGet(string $code): ?JsonResponse
     {
-        return CreditNote::where(function (Builder $q) use ($code){
+        // Buscar la nota de credito por codigo o ncf
+        $creditNote = CreditNote::where(function (Builder $q) use ($code){
             $q->where('code', $code)
                 ->orWhere('ncf',$code);
         })->where('n_available','>',0)
-            ->select(['id','ncf','n_available','code'])
-            ->first() ?? null;
+            ->where('created_at','>=',  now()->subDays(15))
+            ->select(['uuid','ncf','n_available','code', 'created_at'])
+            ->first();
+
+        // Verificar si existe
+        if(!$creditNote)
+        {
+            return null;
+        }
+
+        // Calcular el tiempo restante para expirar
+        $dayRemaining = 15 - now()->diffInDays($creditNote->created_at);
+
+        // Devolver la respuesta
+        return response()->json([
+           'data' => $creditNote,
+           'dayRemaining' => $dayRemaining,
+           'expireSoon' => $dayRemaining <= 5,
+        ]);
 
     }
 

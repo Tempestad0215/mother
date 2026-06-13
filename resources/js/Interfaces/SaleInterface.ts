@@ -1,3 +1,5 @@
+import { CreditNoteBalance } from '@/Interfaces/CreditNoteInterface';
+
 export interface SaleTypeEnumI {
   venta: string;
   cotizacion: string;
@@ -60,7 +62,7 @@ export interface CreateSaleI {
   sequence_type: string;
   invoice_type: string;
   credit_notes_value: string;
-  credit_notes: creditNotesSaleI[];
+  credit_notes: CreditNoteBalance[];
   credit_notes_amount: number;
   pending: number;
 }

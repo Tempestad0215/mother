@@ -2,33 +2,36 @@
 import { typePaymentData } from '@/Global/ShareData';
 import { getMoney } from '@/Global/Helpers';
 import axios from 'axios';
-import { inject, onMounted } from 'vue';
+import { inject, onMounted, ref } from 'vue';
 import { saleKey } from '@/utils/keys';
 import { PreciseCalculator } from '@/utils/Decimal';
 import { useRoute } from 'ziggy-js';
 import {
-  Select,
-  InputNumber,
+  Button,
+  Column,
+  DataTable,
   FloatLabel,
   InputGroup,
   InputGroupAddon,
+  InputNumber,
   InputText,
-  DataTable,
-  Column,
-  Button,
+  Select,
   useToast,
 } from 'primevue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { Search } from '@lucide/vue';
+import { CreditNoteBalance } from '@/Interfaces/CreditNoteInterface';
 
 const toast = useToast();
 const route = useRoute();
 const emit = defineEmits<{
   (e: 'senData'): void;
+  (e: 'sendCreditData', data: CreditNoteBalance): void;
 }>();
 
 const form = inject(saleKey)!;
+const loadingCreditNote = ref(false);
 
 const creditNote = defineModel<string>('creditNote', {
   default: '',
@@ -58,7 +61,7 @@ const getCreditNote = async () => {
 
   //Verificar si exsite alguna igual
   const exist: boolean = form.credit_notes.some(
-    (el) => el.code == creditNote.value || el.ncf == creditNote.value
+    (el) => el.data.code == creditNote.value || el.data.ncf == creditNote.value
   );
 
   //Verificar si existe la misma nota de credito
@@ -97,7 +100,7 @@ const deleteCreditNote = (index: number) => {
 const amountCreditNote = () => {
   //REalizar el cálculo de notas de credito
   form.credit_notes_amount = form.credit_notes.reduce(
-    (acc, cur) => acc + Number(cur.n_available),
+    (acc, cur) => acc + Number(cur.data.n_available),
     0
   );
 
@@ -155,6 +158,32 @@ const returnedBlur = () => {
   }
 };
 
+// Obtener los datos de las cuentas abiertas
+const getCreditNoteInfo = async () => {
+  loadingCreditNote.value = true;
+  try {
+    const res = await axios.get(route('credit-note.get', { code: creditNote.value }));
+
+    // Tranformar los datos en un objeto
+    const data = res.data as CreditNoteBalance;
+    // Emitir el evento con los datos
+    emit('sendCreditData', data);
+
+    console.log(data.data);
+    creditNote.value = '';
+  } catch (error) {
+    console.log(error);
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'No se encontro la nota de credito',
+      life: 5000,
+    });
+  } finally {
+    loadingCreditNote.value = false;
+  }
+};
+
 // Exponer los metodos para el componente padre
 defineExpose({
   checkSale,
@@ -179,14 +208,18 @@ defineExpose({
         </FloatLabel>
       </div>
       <div class="flex-1">
-        <FloatLabel variant="on">
-          <InputGroup>
-            <InputText v-model="creditNote" />
-            <InputGroupAddon>
-              <Search />
-            </InputGroupAddon>
-          </InputGroup>
-        </FloatLabel>
+        <form @submit.prevent="getCreditNoteInfo" action="">
+          <FloatLabel variant="on">
+            <InputGroup>
+              <InputText v-model="creditNote" />
+              <InputGroupAddon>
+                <Button @click="getCreditNoteInfo" :loading="loadingCreditNote">
+                  <Search />
+                </Button>
+              </InputGroupAddon>
+            </InputGroup>
+          </FloatLabel>
+        </form>
       </div>
     </div>
 

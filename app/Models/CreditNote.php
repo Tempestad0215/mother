@@ -39,7 +39,6 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property float $returned
  * @property string $comment
  */
-
 class CreditNote extends Model implements Auditable
 {
     use SoftDeletes;
@@ -78,7 +77,6 @@ class CreditNote extends Model implements Auditable
     ];
 
 
-
     /**
      * Summary of credit
      * @return BelongsTo<CreditNote, CreditNote>
@@ -93,7 +91,7 @@ class CreditNote extends Model implements Auditable
      * Summary of comment
      * @return MorphOne<Comment, CreditNote>
      */
-    public function comment():MorphOne
+    public function comment(): MorphOne
     {
         return $this->morphOne(Comment::class, 'commentable');
     }
@@ -102,9 +100,9 @@ class CreditNote extends Model implements Auditable
      * Summary of trans
      * @return HasMany<ProductTransaction, CreditNote>
      */
-    public function trans():HasMany
+    public function trans(): HasMany
     {
-        return $this->hasMany(ProductTransaction::class,'credit_note_uuid');
+        return $this->hasMany(ProductTransaction::class, 'credit_note_uuid');
 
     }
 
@@ -120,17 +118,16 @@ class CreditNote extends Model implements Auditable
      * Summary of sale
      * @return BelongsTo<Sale, CreditNote>
      */
-    public function sale():BelongsTo
+    public function sale(): BelongsTo
     {
         return $this->belongsTo(Sale::class);
     }
 
 
-
     /**
      * Summary of boot
-    */
-    protected static function boot():void
+     */
+    protected static function boot(): void
     {
         // Llamar el metodo principal
         parent::boot();
@@ -147,7 +144,7 @@ class CreditNote extends Model implements Auditable
      * @return string
      */
     // funcion para generar el codigo
-    private static function generateCode(Model $model):string
+    private static function generateCode(Model $model): string
     {
         // Obtener el ultimo registros
         $nextNumber = self::withTrashed()->count('uuid') + 1;

@@ -15,8 +15,6 @@ import {
   useToast,
 } from 'primevue';
 import axios, { AxiosError } from 'axios';
-import { saleDataI } from '@/Interfaces/SaleInterface';
-import { formProductKey } from '@/Injections/InjectionKeys';
 import { saleKey } from '@/utils/keys';
 import { LaravelErrorResponse } from '@/Interfaces/GlobalInterface';
 
@@ -24,7 +22,7 @@ const toast = useToast();
 const route = useRoute();
 
 // Definir las props del componente
-const propsW = defineProps<{
+defineProps<{
   error?: string;
 }>();
 
@@ -51,20 +49,6 @@ const emit = defineEmits<{
   (e: 'closeFormReturn', isReturn: boolean): void;
   (e: 'hasError'): void;
 }>();
-
-/*
-Data de la ventana
- */
-const options = ref([
-  {
-    name: 'Consultar',
-    value: true,
-  },
-  {
-    name: 'Seleccionar',
-    value: false,
-  },
-]);
 
 /*
 Funciones
@@ -105,7 +89,6 @@ const saleGet = async () => {
     // Obtener los datos de la venta
     const res = await axios.get(route('sale.refund', { code: formGet.saleCode }));
 
-    console.log(res.data);
     // Emitir el evento con los datos
     Object.assign(formInject, {
       ...res.data,
@@ -118,10 +101,10 @@ const saleGet = async () => {
   } catch (error) {
     const err = error as AxiosError<LaravelErrorResponse>;
 
-    if (err.response?.status == 422) {
+    if (err.response?.status == 409) {
       toast.add({
         severity: 'error',
-        summary: `Error de Validacion ${err.status}`,
+        summary: `Conflicto en documento, Codigo: ${err.status}`,
         detail: `Error en Nota de Credito, detalle: ${err.response.data.message}`,
         life: 5000,
       });

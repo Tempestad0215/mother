@@ -9,6 +9,7 @@ return  [
     'saleCreditNote' => 30,
     'maxUser' => 10,
 
+    'url_pdf' => env('URL_PDF'),
 
 
 

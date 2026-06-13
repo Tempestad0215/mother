@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -17,7 +18,7 @@ class CreditNoteItem extends Model implements Auditable
     protected $table = 'credit_note_items';
 
     // Datos para actualizar masivamente
-    protected  $primaryKey = 'uuid';
+    protected $primaryKey = 'uuid';
     protected $keyType = 'string';
     public $incrementing = false;
 
@@ -38,12 +39,19 @@ class CreditNoteItem extends Model implements Auditable
 
 
     /**
-     * Summary of items
-     * @return HasMany<CreditNoteItem, CreditNoteItem>
+     * @return BelongsTo
      */
-    public function items(): HasMany
+    public function items(): BelongsTo
     {
-        return $this->hasMany(CreditNoteItem::class, 'credit_note_uuid', 'uuid');
+        return $this->belongsTo(CreditNoteItem::class, 'credit_note_uuid', 'uuid');
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class, 'product_uuid', 'uuid');
     }
 
 }

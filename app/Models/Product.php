@@ -17,33 +17,33 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @property string $uuid
-* @property string $type
-* @property string $code
-* @property string $name
-* @property string $description
-* @property string $unit_uuid
-* @property float $cost
-* @property string $sku
-* @property string $bar_code
-* @property float $weight
-* @property string $dimensions
-* @property string $brand_uuid
-* @property float $discount
-* @property float $discount_amount
-* @property float $benefits
-* @property float $benefits_rate
-* @property string $comment
-* @property string $default_price_list
-* @property bool $inventoried
-* @property bool $status
-* @property bool $has_fraction
-* @property bool $has_special
-* @property bool $has_promotion
-* @property bool $has_tax
-* @property bool $handle_warehouse
-* @property string $supplier_uuid
-* @property string $category_uuid
-* @property Carbon $created_at
+ * @property string $type
+ * @property string $code
+ * @property string $name
+ * @property string $description
+ * @property string $unit_uuid
+ * @property float $cost
+ * @property string $sku
+ * @property string $bar_code
+ * @property float $weight
+ * @property string $dimensions
+ * @property string $brand_uuid
+ * @property float $discount
+ * @property float $discount_amount
+ * @property float $benefits
+ * @property float $benefits_rate
+ * @property string $comment
+ * @property string $default_price_list
+ * @property bool $inventoried
+ * @property bool $status
+ * @property bool $has_fraction
+ * @property bool $has_special
+ * @property bool $has_promotion
+ * @property bool $has_tax
+ * @property bool $handle_warehouse
+ * @property string $supplier_uuid
+ * @property string $category_uuid
+ * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property Carbon|null $deleted_at
  *
@@ -137,7 +137,7 @@ class Product extends Model implements Auditable
     /**
      * @return void
      */
-    protected static function boot():void
+    protected static function boot(): void
     {
         // Llamar el metodo principal
         parent::boot();
@@ -148,9 +148,9 @@ class Product extends Model implements Auditable
     /***
      * @return BelongsToMany
      */
-    public function priceList():BelongsToMany
+    public function priceList(): BelongsToMany
     {
-        return $this->belongsToMany(PriceList::class,'price_list_products')
+        return $this->belongsToMany(PriceList::class, 'price_list_products')
             ->withPivot([
                 'price',
                 'min_price',
@@ -162,7 +162,7 @@ class Product extends Model implements Auditable
     /***
      * @return BelongsToMany
      */
-    public function warehouses():BelongsToMany
+    public function warehouses(): BelongsToMany
     {
         return $this->belongsToMany(Warehouse::class, 'warehouse_products')
             ->withPivot(
@@ -179,7 +179,7 @@ class Product extends Model implements Auditable
     /**
      * @return BelongsTo
      */
-    public function brand():BelongsTo
+    public function brand(): BelongsTo
     {
         return $this->belongsTo(Brand::class);
     }
@@ -198,17 +198,16 @@ class Product extends Model implements Auditable
      */
     public function getTotalAvailableAttribute()
     {
-        return $this->warehouses->sum(function($warehouse) {
+        return $this->warehouses->sum(function ($warehouse) {
             return $warehouse->pivot->stock_quantity - $warehouse->pivot->committed_stock;
         });
     }
 
 
-
     /**
      * @return BelongsTo
      */
-    public function supplier():BelongsTo
+    public function supplier(): BelongsTo
     {
         return $this->belongsTo(Supplier::class);
     }
@@ -216,7 +215,7 @@ class Product extends Model implements Auditable
     /**
      * @return BelongsTo
      */
-    public function tax():BelongsTo
+    public function tax(): BelongsTo
     {
         return $this->belongsTo(Tax::class);
     }
@@ -238,9 +237,17 @@ class Product extends Model implements Auditable
     }
 
     /**
+     * @return HasMany
+     */
+    public function CreditNoteItem(): HasMany
+    {
+        return $this->hasMany(CreditNoteItem::class);
+    }
+
+    /**
      * @return BelongsTo
      */
-    public function category():BelongsTo
+    public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
@@ -249,15 +256,15 @@ class Product extends Model implements Auditable
      * @return HasMany
      */
     //Transacciones
-    public function trans():HasMany
+    public function trans(): HasMany
     {
-        return $this->hasMany(ProductTransaction::class, 'product_uuid','uuid');
+        return $this->hasMany(ProductTransaction::class, 'product_uuid', 'uuid');
     }
 
     /**
      * @return HasOne
      */
-    public function inventory():HasOne
+    public function inventory(): HasOne
     {
         return $this->hasOne(Inventory::class);
     }
@@ -265,7 +272,7 @@ class Product extends Model implements Auditable
     /**
      * @return MorphMany
      */
-    public function movements():MorphMany
+    public function movements(): MorphMany
     {
         return $this->morphMany(InventoryMovement::class, 'movementable');
     }
@@ -274,11 +281,10 @@ class Product extends Model implements Auditable
     /**
      * @return HasMany
      */
-    public function movement():HasMany
+    public function movement(): HasMany
     {
         return $this->hasMany(InventoryMovement::class);
     }
-
 
 
 }

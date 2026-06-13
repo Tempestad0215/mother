@@ -23,6 +23,8 @@ import SaleTable from '@/Pages/Sale/SaleTable.vue';
 import PaymentInvoice from '@components/PaymentInvoice.vue';
 import { useRoute } from 'ziggy-js';
 import { Button, Card, Dialog, useToast } from 'primevue';
+import { CreditNoteBalance } from '@/Interfaces/CreditNoteInterface';
+import { PreciseCalculator } from '@/utils/Decimal';
 
 //Datos de la ventana
 const toast = useToast();
@@ -84,7 +86,7 @@ const form = useForm<CreateSaleI>({
   sequence_type: '',
   invoice_type: 'B02',
   credit_notes_value: '',
-  credit_notes: [] as creditNotesSaleI[],
+  credit_notes: [] as CreditNoteBalance[],
   credit_notes_amount: 0,
   pending: 0,
 });
@@ -136,6 +138,33 @@ watch(
   }
 );
 
+watch(
+  () => form.credit_notes,
+  (newValue) => {
+    form.credit_notes_amount = 0;
+
+    form.credit_notes.forEach((item) => {
+      form.credit_notes_amount = parseFloat(
+        PreciseCalculator.add(form.credit_notes_amount, item.data.n_available || 0).toString()
+      );
+    });
+
+    const result = parseFloat(
+      PreciseCalculator.subtract(form.pending, form.credit_notes_amount).toString()
+    );
+
+    if (result <= 0.0) {
+      form.pending = 0;
+      form.returned = 0;
+    } else {
+      form.pending = result;
+    }
+  },
+  {
+    deep: true,
+  }
+);
+
 // Obtener el tipo de venta
 const setDataForm = () => {
   //Verificar si existe los datos para devoluicion
@@ -163,10 +192,14 @@ const createCreditNotes = () => {
   form.post(route('credit-note.store', { sale: form.uuid }), {
     onSuccess: () => {
       toast.add({
-        summary: 'Registro Creado Correctamente',
+        summary: 'Registro Creado',
+        detail: 'Nota de Credito Creada Correctamente',
         severity: 'success',
         life: 3000,
       });
+      // Imprimir el pdf de la nota de credito
+      printPdf(route('invoice.credit-note', { creditNote: page.flash.credit_uuid }));
+      // Limpiar el formulario
       form.reset();
       paymentBox.value = false;
     },
@@ -180,18 +213,6 @@ const createCreditNotes = () => {
       });
     },
   });
-  // axios
-  //   .patch(route('credit-note.store', { sale: form.uuid }), form)
-  //   .then((res) => {
-  //     if (res.data.success) {
-  //       //Imprimir el pdf
-  //       printPdf(route('invoice.belt.note', { creditNote: res.data.id }));
-  //       //Limpiar el pdf
-  //       // router.get(route('sale.create'));
-  //       router.visit(route('sale.create'));
-  //     }
-  //   })
-  //   .catch(() => {});
 };
 
 // Obtener el tipo de boleta
@@ -276,6 +297,33 @@ const registerSale = () => {
   }
 };
 
+// Tomar la informacion de la nota de credito
+const getInfoCreditNote = (data: CreditNoteBalance): void => {
+  // Verificar si ya existe la nota de credito
+  const exist = form.credit_notes.find((item) => item.uuid === data.uuid);
+
+  // Verificar si ya existe la nota de credito
+  if (exist)
+    // Enviar el mensaje de error
+    return toast.add({
+      summary: 'Error',
+      detail: 'Esta Nota De Credito Ya Fue Registrada',
+      severity: 'error',
+      life: 3500,
+    });
+
+  // Pasar los datos
+  form.credit_notes.push({
+    dayRemaining: data.dayRemaining,
+    expireSoon: data.expireSoon,
+    uuid: data.uuid,
+    code: data.code,
+    n_available: parseFloat(data.n_available.toString()).toFixed(2),
+    ncf: data.ncf,
+    created_at: data.created_at,
+  });
+};
+
 // Proveer el formulario a los componentes hijos
 provide(saleKey, form);
 </script>
@@ -328,7 +376,12 @@ provide(saleKey, form);
     </Card>
     <!-- Ventana de Devuelta-->
     <Dialog v-model:visible="paymentBox" header="Ventana de Pago" modal>
-      <PaymentInvoice @senData="sendData" v-model:show-return="showReturn" ref="salePaymentRef" />
+      <PaymentInvoice
+        @sendCreditData="getInfoCreditNote"
+        @senData="sendData"
+        v-model:show-return="showReturn"
+        ref="salePaymentRef"
+      />
     </Dialog>
   </AppLayout>
 </template>

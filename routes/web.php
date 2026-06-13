@@ -200,13 +200,15 @@ Route::middleware([
     /*
      * Facturas
      */
-    Route::prefix('invoice')->name('invoice.')->group(function () {
-        Route::get('/sale/{sale}', [InvoiceController::class,'getSaleInvoice'])->name('sale');
-        Route::get('/belt/sale/{sale}', [InvoiceController::class, 'beltSale'])->name('belt.sale');
-        Route::get('/belt/note/{creditNote}', [InvoiceController::class, 'beltNote'])->name('belt.note');
-        Route::get('/getA/{sale}', [InvoiceController::class, 'getA'])->name('getA');
-//        Route::get('/getB/{counter}', [InvoiceController::class, 'getB'])->name('getB');
-        Route::get('/label/{product}', [InvoiceController::class, 'label'])->name('label');
+    Route::prefix('invoice')->controller(InvoiceController::class)
+        ->name('invoice.')->group(function () {
+        Route::get('/sale/{sale}', 'getSaleInvoice')->name('sale');
+        Route::get('/credit-note/{creditNote}', 'getCreditNoteInvoice')->name('credit-note');
+        Route::get('/belt/sale/{sale}', 'beltSale')->name('belt.sale');
+        Route::get('/belt/note/{creditNote}',  'beltNote')->name('belt.note');
+        Route::get('/getA/{sale}',  'getA')->name('getA');
+//        Route::get('/getB/{counter}',  'getB'])->name('getB');
+        Route::get('/label/{product}',  'label')->name('label');
     });
 
     /*
