@@ -73,6 +73,7 @@ class ProductTransaction extends Model implements Auditable
         'type',
         'reserved_quantity',
         'product_name',
+        'deleted_at',
     ];
 
     protected $casts = [

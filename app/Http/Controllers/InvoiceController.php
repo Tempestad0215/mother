@@ -49,9 +49,12 @@ class InvoiceController extends Controller
      */
     public function getSaleInvoice(Sale $sale)
     {
+        $sale->with(['creditNoteSale','items']);
+
         $templateData = View('pdfs.sale.cinta', [
             'sale' => $sale,
-            'setting' => Setting::first()
+            'setting' => Setting::first(),
+            'creditNote' => $sale->creditNoteSale
         ])->render();
 
         // Crear la respuestas

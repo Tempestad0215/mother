@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Enums\PaymentTypeEnum;
 use App\Enums\SaleTypeEnum;
+use App\Enums\SequenceSaleTypeEnum;
 use App\Models\Setting;
 use App\Rules\CheckStock;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -73,6 +74,11 @@ class  StoreProductSaleRequest extends FormRequest
             'type_payment' => ['nullable',Rule::requiredIf($this->isTypePaymentRequired()) ,Rule::enum(PaymentTypeEnum::class)],
             'received' => ['required','numeric'],
             'returned' => ['required','numeric'],
+            'credit_notes' => ['nullable','array'],
+            'credit_notes.*.uuid' => ['required','uuid','exists:credit_notes,uuid'],
+            'credit_notes.*.n_available' => ['required','numeric'],
+            'credit_notes.*.ncf' => ['nullable',SequenceSaleTypeEnum::class],
+            'credit_notes.*.code' => ['required','string'],
             'credit_notes_amount' => ['nullable','numeric'],
             'comment' => [Rule::requiredIf(Route::is('credit-note.store')),'max:255'],
             'close_table' => ['required','boolean'],

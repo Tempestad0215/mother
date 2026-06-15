@@ -14,6 +14,7 @@ use App\Models\ProductTransaction;
 use App\Models\Sale;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -33,7 +34,7 @@ class SaleHelper
         $search = $request->input('search');
 
         //Buscar los datos
-        return Sale::whereIn('type', [SaleTypeEnum::Ventas,SaleTypeEnum::Cotizacion])
+        return Sale::whereIn('type', [SaleTypeEnum::Ventas, SaleTypeEnum::Cotizacion])
             ->where(function (Builder $query) use ($search) {
                 $query->where('client_name', 'like', "%$search%")
                     ->orWhere('code', 'like', "%$search%");
@@ -50,7 +51,7 @@ class SaleHelper
      * @throws Throwable
      *
      */
-    public function store(StoreProductSaleRequest $request):Sale|null
+    public function store(StoreProductSaleRequest $request): Sale|null
     {
 
         //Para asegurar que se cumplan los registro
@@ -66,27 +67,24 @@ class SaleHelper
             // Crear la venta
             $sale = Sale::create($salePayload->toArray());
 
-            //Actualizar los datos de la notas de crédito
-            // CreditNoteHelper::updateAvailableFor($salePayload->credit_notes, $salePayload->amount);
+            //Actualizar los datos de las notas de crédito
+            CreditNoteHelper::updateAvailableFor($salePayload->credit_notes, $sale);
 
             // Obtener los ids de productos
-            $productUuids = array_map(fn (SaleItemDto $item) => $item->product_uuid, $salePayload->info_sale);
+            $productUuids = array_map(fn(SaleItemDto $item) => $item->product_uuid, $salePayload->info_sale);
 
-            // Obteenr los productos y colocar el id en el key
+            // Obtener los productos y colocar él, id en el key
             /** @var Collection<string, Product> $products */
             $products = Product::whereIn('uuid', $productUuids)->get()->keyBy('uuid');
 
-            
             //Recorrer la venta para descontar los productos
-            foreach ($salePayload->info_sale as $value)
-            {
-    
+            foreach ($salePayload->info_sale as $value) {
+
                 // Obtener el products
                 $product = $products->get($value->product_uuid);
 
                 // Verificar si el producto existe
-                if(!$product)
-                {
+                if (!$product) {
                     // Si no existe, lanzar un error
                     throw ValidationException::withMessages(['El producto no existe']);
                 }
@@ -118,7 +116,6 @@ class SaleHelper
     // }
 
 
-
     /**
      * @param Request $request
      * @param Product $product
@@ -126,18 +123,16 @@ class SaleHelper
      * @return void
      * @throws Throwable
      */
-    public function deleteItem(Request $request, Product $product, Sale $sale):void
+    public function deleteItem(Request $request, Product $product, Sale $sale): void
     {
 
         //Declarar las variables
-        DB::transaction(function () use ($sale, $product,$request) {
-            $productStock = $request->input('info')['stock'];
-            $transType = $request->input('info')['type'];
+        DB::transaction(function () use ($sale, $product, $request) {
             //Id de transaction producto
             $idTransProduct = $request->input('info')['transID'];
 
 
-            ProductTransaction::where('uuid',$idTransProduct)->update([
+            ProductTransaction::where('uuid', $idTransProduct)->update([
                 'deleted_at' => now(),
                 'reserved_quantity' => 0,
                 'type' => ProductTransactionTypeEnum::CANCELLED,
@@ -167,7 +162,7 @@ class SaleHelper
      * @return void
      * @throws Throwable
      */
-    public function deleteSale(Request $request, Sale $sale, bool $inventoried):void
+    public function deleteSale(Request $request, Sale $sale, bool $inventoried): void
     {
         DB::transaction(function () use ($request, $sale, $inventoried) {
             //Poner los datos en deshabilitado
@@ -176,10 +171,8 @@ class SaleHelper
 
 
             //recorrer los datos de la ventas
-            if ($inventoried)
-            {
-                foreach ($sale->infoSale as $value)
-                {
+            if ($inventoried) {
+                foreach ($sale->infoSale as $value) {
                     //Buscar el producto en la lista
                     $product = Product::find($value['id']);
                     //sumar el producto
@@ -190,7 +183,7 @@ class SaleHelper
             }
             //Crear la venta eliminada
             $deleteSale = DeletedSale::create([
-                'sale_id' => $sale->id,
+                'sale_uuid' => $sale->uuid,
                 'info' => $sale->infoSale,
                 'discount_amount' => $sale->discount_amount,
                 'amount' => $sale->amount,
@@ -210,6 +203,7 @@ class SaleHelper
      * @param StoreProductSaleRequest $request
      * @param Sale $sale
      * @return Sale
+     * @throws Throwable
      */
     public function updateSale(StoreProductSaleRequest $request, Sale $sale): Sale
     {
@@ -217,7 +211,7 @@ class SaleHelper
         //Obtener la info
         $saleDto = SaleDto::fromArray($request->validated());
 
-    
+
         // Obtener los ids de productos
         SaleItemHelper::multipleInsertWithSale(
             $sale,
@@ -229,36 +223,35 @@ class SaleHelper
         $sale->update($saleDto->toArray());
 
 
-
         return $sale;
     }
 
 
     /**
      * @param Request $request
-     * @return mixed
+     * @return AnonymousResourceCollection
      */
-    public function getSaleOpen(Request $request):mixed
+    public function getSaleOpen(Request $request): AnonymousResourceCollection
     {
         //tomar los datos para buscar
         $search = $request->input("search");
 
 
-        //Ralizar la busqueda en la base de datos de Sale cuando el campo close_table sea false
+        //Realizar la búsqueda en la base de datos de Sale cuando el campo close_table sea false
         $data = Sale::where('close_table', false) // Filtrar primero por la mesa/venta abierta
         ->where(function (Builder $query) {
             // Esto asegura que traiga las que tienen status true O las que aún están en NULL (abiertas)
             $query->where('status', true)
-                  ->orWhereNull('status');
+                ->orWhereNull('status');
         })
-        // filled() solo se ejecuta si el buscador tiene texto real escrito
-        ->when($request->filled('search'), function (Builder $query) use ($search) {
-            $query->where('client_name', 'ILIKE', "%{$search}%")
-                  ->orWhere('code', 'ILIKE', "%{$search}%"); // Opcional: buscar también por el código FAC0002
-        })
-        ->with('items')
-        ->latest()
-        ->simplePaginate(15);
+            // filled() solo se ejecuta si el buscador tiene texto real escrito
+            ->when($request->filled('search'), function (Builder $query) use ($search) {
+                $query->where('client_name', 'ILIKE', "%$search%")
+                    ->orWhere('code', 'ILIKE', "%$search%"); // Opcional: buscar también por el código FAC0002
+            })
+            ->with('items')
+            ->latest()
+            ->simplePaginate(15);
 
         // Devolver los datos
         return SaleInfoResource::collection($data);
@@ -283,8 +276,6 @@ class SaleHelper
 //
 //        return $heightTotal;
 //    }
-
-
 
 
 }

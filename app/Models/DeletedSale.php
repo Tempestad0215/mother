@@ -11,7 +11,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 
 /**
- * @property int id
+ * @property string uuid
  * @property string $code
  * @property Sale $sale_id
  * @property array $info
@@ -39,7 +39,7 @@ class DeletedSale extends Model implements Auditable
      */
     protected  $fillable = [
         'code',
-        'sale_id',
+        'sale_uuid',
         'info',
         'discount_amount',
         'tax',

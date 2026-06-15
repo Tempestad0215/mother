@@ -46,47 +46,47 @@ onMounted(() => {
 });
 
 // Obtener los datos de las cuentas abiertas
-const getCreditNote = async () => {
-  //Si no hay suficiente caracateres
-  if (creditNote?.value.length < 5) {
-    form.setError('credit_notes_value', 'Por Favor, Introduzca Valores Valido');
-    return false;
-  }
-
-  //Verificar si ya esta en positivo no puede colocar nota de credito
-  if (form.returned > 0) {
-    form.setError('credit_notes_value', 'Existe Suficiente Balance Para Cerrar La Cuenta');
-    return false;
-  }
-
-  //Verificar si exsite alguna igual
-  const exist: boolean = form.credit_notes.some(
-    (el) => el.data.code == creditNote.value || el.data.ncf == creditNote.value
-  );
-
-  //Verificar si existe la misma nota de credito
-  if (exist) {
-    form.setError('credit_notes_value', 'Esta Nota De Credito, Esta Agregada');
-  } else {
-    //Buscar la nota de credito
-    const { data } = await axios.get(route('credit-note.get', { code: creditNote.value }));
-
-    //Verifciar los datos
-    if (data.hasOwnProperty('code')) {
-      //Pasar los datos al formulario
-      form.credit_notes.push(data);
-      //Calcular los datos
-      amountCreditNote();
-      //Limpiar los errores
-      form.clearErrors('credit_notes_value');
-      //Limpiar el campo para agreagr otros
-      form.reset('credit_notes_value');
-    } else {
-      //Poner el mensaje de error
-      form.setError('credit_notes_value', data.error);
-    }
-  }
-};
+// const getCreditNote = async () => {
+//   //Si no hay suficiente caracateres
+//   if (creditNote?.value.length < 5) {
+//     form.setError('credit_notes_value', 'Por Favor, Introduzca Valores Valido');
+//     return false;
+//   }
+//
+//   //Verificar si ya esta en positivo no puede colocar nota de credito
+//   if (form.returned > 0) {
+//     form.setError('credit_notes_value', 'Existe Suficiente Balance Para Cerrar La Cuenta');
+//     return false;
+//   }
+//
+//   //Verificar si exsite alguna igual
+//   const exist: boolean = form.credit_notes.some(
+//     (el) => el.code == creditNote.value || el.ncf == creditNote.value
+//   );
+//
+//   //Verificar si existe la misma nota de credito
+//   if (exist) {
+//     form.setError('credit_notes_value', 'Esta Nota De Credito, Esta Agregada');
+//   } else {
+//     //Buscar la nota de credito
+//     const { data } = await axios.get(route('credit-note.get', { code: creditNote.value }));
+//
+//     //Verifciar los datos
+//     if (data.hasOwnProperty('code')) {
+//       //Pasar los datos al formulario
+//       form.credit_notes.push(data);
+//       //Calcular los datos
+//       amountCreditNote();
+//       //Limpiar los errores
+//       form.clearErrors('credit_notes_value');
+//       //Limpiar el campo para agreagr otros
+//       form.reset('credit_notes_value');
+//     } else {
+//       //Poner el mensaje de error
+//       form.setError('credit_notes_value', data.error);
+//     }
+//   }
+// };
 
 //  Eliminar una nota de credito
 const deleteCreditNote = (index: number) => {
@@ -100,7 +100,7 @@ const deleteCreditNote = (index: number) => {
 const amountCreditNote = () => {
   //REalizar el cálculo de notas de credito
   form.credit_notes_amount = form.credit_notes.reduce(
-    (acc, cur) => acc + Number(cur.data.n_available),
+    (acc, cur) => acc + Number(cur.n_available),
     0
   );
 
@@ -163,20 +163,16 @@ const getCreditNoteInfo = async () => {
   loadingCreditNote.value = true;
   try {
     const res = await axios.get(route('credit-note.get', { code: creditNote.value }));
-
     // Tranformar los datos en un objeto
     const data = res.data as CreditNoteBalance;
     // Emitir el evento con los datos
     emit('sendCreditData', data);
-
-    console.log(data.data);
     creditNote.value = '';
   } catch (error) {
-    console.log(error);
     toast.add({
       severity: 'error',
       summary: 'Error',
-      detail: 'No se encontro la nota de credito',
+      detail: 'No se encontro la nota de credito1124',
       life: 5000,
     });
   } finally {
@@ -193,7 +189,7 @@ defineExpose({
 
 <template>
   <!--Datos de la ventana-->
-  <div class="fondo p-5 rounded-md min-w-120 max-w-200 h-fit mx-auto">
+  <div class="fondo p-5 rounded-md min-w-120 max-w-300 h-fit mx-auto">
     <div class="flex items-center gap-3 mt-5">
       <!--Tipo de apgo-->
       <div class="flex-1">
@@ -227,7 +223,14 @@ defineExpose({
     <div class="mt-3">
       <DataTable :value="form.credit_notes">
         <Column header="Cod./NCF" field="code" />
-        <Column header="Disponible" field="n_available" />
+        <Column
+          header="B. Inicial"
+          :field="(data: CreditNoteBalance) => `${getMoney(parseFloat(data.n_available))}`"
+        />
+        <Column
+          header="B. Disponible"
+          :field="(data: CreditNoteBalance) => `${getMoney(data.n_available_new)}`"
+        />
         <Column header="Act">
           <template #body="{ index }: { index: number }">
             <FontAwesomeIcon @click="deleteCreditNote(index)" :icon="faTrashAlt" />

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -44,6 +45,10 @@ use OwenIt\Auditing\Models\Audit;
  * @property float $credit_notes_amount
  * @property Audit $audits
  * @property string $comment
+ *
+ *
+ * @property-read CreditNote[] $credit_note
+ * @property-read CreditNoteSale[] $creditNoteSales
  */
 
 
@@ -56,7 +61,7 @@ class Sale extends Model implements Auditable
 
     // La tabla que se ve a utilizar
     protected $table = 'sales';
-    
+
     protected $primaryKey = 'uuid';
     protected  $keyType = 'string';
     public $incrementing = false;
@@ -120,6 +125,14 @@ class Sale extends Model implements Auditable
     public function credit_note():HasMany
     {
         return $this->hasMany(CreditNote::class, 'sale_uuid','uuid');
+    }
+
+    /**
+     * @return BelongsToMany
+     */
+    public function creditNoteSale(): BelongsToMany
+    {
+        return $this->belongsToMany(CreditNote::class);
     }
 
     public function items(): HasMany

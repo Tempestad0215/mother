@@ -7,7 +7,6 @@ import { printPdf } from '@/Global/Helpers';
 import { clientBaseI } from '@/Interfaces/ClientInterface';
 import {
   CreateSaleI,
-  creditNotesSaleI,
   infoSaleI,
   saleDataI,
   SaleTypeEnumI,
@@ -145,7 +144,7 @@ watch(
 
     form.credit_notes.forEach((item) => {
       form.credit_notes_amount = parseFloat(
-        PreciseCalculator.add(form.credit_notes_amount, item.data.n_available || 0).toString()
+        PreciseCalculator.add(form.credit_notes_amount, item.n_available || 0).toString()
       );
     });
 
@@ -312,6 +311,19 @@ const getInfoCreditNote = (data: CreditNoteBalance): void => {
       life: 3500,
     });
 
+  if (form.credit_notes_amount >= form.amount) {
+    return toast.add({
+      summary: 'Advertencia',
+      detail: 'El Monto De La Nota De Credito Supera EL Total De La Venta, Por Favor Verifique',
+      severity: 'warn',
+      life: 3500,
+    });
+  }
+
+  const availableNew = parseFloat(
+    PreciseCalculator.subtract(data.n_available, form.amount).toString()
+  );
+
   // Pasar los datos
   form.credit_notes.push({
     dayRemaining: data.dayRemaining,
@@ -319,6 +331,7 @@ const getInfoCreditNote = (data: CreditNoteBalance): void => {
     uuid: data.uuid,
     code: data.code,
     n_available: parseFloat(data.n_available.toString()).toFixed(2),
+    n_available_new: availableNew,
     ncf: data.ncf,
     created_at: data.created_at,
   });

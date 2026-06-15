@@ -7,7 +7,7 @@ use App\Interfaces\ArrayableDto;
 class SaleCreditNoteDto extends BaseDto
 {
     public function __construct(
-        public int $id,
+        public string $uuid,
         public string $code,
         public string $client_name,
         public float $tax,

@@ -12,8 +12,8 @@ class SaleDto extends BaseDto
     /**
      * Summary of __construct
      * @param float $discount_amount
-     * @param SequenceSaleTypeEnum $invoice_type
      * @param float $tax
+     * @param SequenceSaleTypeEnum $invoice_type
      * @param float $sub_total
      * @param float $amount
      * @param SaleTypeEnum $type
@@ -27,12 +27,14 @@ class SaleDto extends BaseDto
      * @param ?string $client_name
      * @param ?string $client_rnc
      * @param ?string $client_uuid
-     * @param ?array $credit_notes
+     * @param ?CreditNoteInfoSale[] $credit_notes
      * @param ?string $comment
      * @param ?bool $status
+     * @param bool|null $update
+     * @param string|null $uuid
      * @params ?string $uuid
      */
- 
+
     public function __construct(
         public float $discount_amount,
         public float $tax,
@@ -62,7 +64,7 @@ class SaleDto extends BaseDto
 
 
     /**
-     * 
+     *
      * Convertir los datos desde un array
      * @param array $data
      * @return SaleDto
@@ -72,8 +74,8 @@ class SaleDto extends BaseDto
 
         return new SaleDto(
             discount_amount: $data['discount_amount'],
-            invoice_type: SequenceSaleTypeEnum::from($data['invoice_type']),
             tax: $data['tax'],
+            invoice_type: SequenceSaleTypeEnum::from($data['invoice_type']),
             sub_total: $data['sub_total'],
             amount: $data['amount'],
             type: SaleTypeEnum::from($data['type']),
@@ -87,7 +89,7 @@ class SaleDto extends BaseDto
             client_name: $data['client_name'],
             client_rnc: $data['client_rnc'] ?? null,
             client_uuid: $data['client_uuid'] ?? null,
-            credit_notes: $data['credit_notes'] ?? null,
+            credit_notes: CreditNoteInfoSale::formArrayList($data['credit_notes'])  ?? [],
             comment: $data['comment'] ?? null,
             status: $data['status'] ?? null,
             update: $data['update'] ?? false,

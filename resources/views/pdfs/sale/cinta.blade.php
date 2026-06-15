@@ -2,6 +2,11 @@
 <html lang="es">
 
 <head>
+    @php
+        /** @var App\Models\Sale $sale */
+        /** @var App\Models\Setting $setting */
+        /** @var \Ramsey\Collection\Collection<int, \App\Models\CreditNote> $creditNote */
+    @endphp
     <meta charset="UTF-8">
     <title>Factura {{ $sale->code }}</title>
 
@@ -40,10 +45,7 @@
             }
         }
     </script>
-    @php
-        /** @var App\Models\Sale $sale */
-        /** @var App\Models\Setting $setting */
-    @endphp
+
 </head>
 
 <body class="bg-white text-black antialiased px-2 pt-4 pb-0 mx-auto" style="width: 72mm;">
@@ -135,6 +137,17 @@
             <span>RD$ {{ number_format($sale->amount, 2) }}</span>
         </div>
     </div>
+
+    @if(count($creditNote) > 0)
+        <div class="text-10px border-t
+         border-dashed  p-2 mt-3 border-black">
+            <p>Notas De Cre. Aplicadas :</p>
+            @php /** @var \App\Models\CreditNote $item */ @endphp
+            @foreach($creditNote as $item)
+                <p> <strong>*</strong>  {{$item->code}}</p>
+            @endforeach
+        </div>
+    @endif
 
     <div class="border-t border-dashed border-black my-3"></div>
     <div class="flex justify-center w-full my-2">

@@ -131,7 +131,7 @@ class CreditNoteController extends Controller
         if (isset($data))
         {
             //DEvolver el mensaje con los datos
-            return response()->json($data);
+            return $data;
         }
         else{
             //Deolver el mensaje de error

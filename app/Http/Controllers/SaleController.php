@@ -111,9 +111,10 @@ class SaleController extends Controller
      *
      * @param StoreProductSaleRequest $request
      * @param Sale $sale
-     * @return RedirectResponse
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @throws LockTimeoutException
      */
-    public function update(StoreProductSaleRequest $request, Sale $sale)
+    public function update(StoreProductSaleRequest $request, Sale $sale): \Symfony\Component\HttpFoundation\RedirectResponse
     {
 
         // Evitar que se realicen 2 operaciones al mismo tiempo
