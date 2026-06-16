@@ -36,6 +36,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property Sale $sale_id,
  * @property PaymentTypeEnum $type_payment,
  * @property-read CreditNoteItem $items
+ * @property-read Sale $sale
  * @property float $received
  * @property float $returned
  * @property string $comment

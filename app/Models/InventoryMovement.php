@@ -4,13 +4,15 @@ namespace App\Models;
 
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
- * 
+ *
  * @property string $uuid
  * @property string $warehouse_uuid
  * @property string $product_uuid
@@ -25,6 +27,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  */
+#[ObservedBy([InventoryMovementObserver::class])]
 class InventoryMovement extends Model implements  Auditable
 {
     //
@@ -50,7 +53,15 @@ class InventoryMovement extends Model implements  Auditable
         'stock_before',
         'stock_after',
         'description',
+        'inventoryable_type',
+        'inventoryable_uuid',
     ];
+
+
+    public function iventoryable():MorphTo
+    {
+        return $this->morphTo();
+    }
 
 
     /**

@@ -4,10 +4,10 @@ namespace App\Helpers;
 
 use App\Dtos\SaleItemDto;
 use App\Enums\InventoryMovementTypeEnum;
-use App\Enums\OperationTypeEnum;
 use App\Models\InventoryMovement;
 use App\Models\Sale;
 use App\Models\WarehouseProduct;
+use Illuminate\Support\Facades\DB;
 use Throwable;
 
 class SaleItemHelper
@@ -49,7 +49,6 @@ class SaleItemHelper
                 price: $item->price,
                 saleUuid: $sale->uuid, // Solo crear movimiento si la venta se cierr
                 shouldCreateMovement: $sale->close_table,
-                update: $update, oldQuantity: $oldQuantity
             );
 
             // Actualizar o crear el item de la venta
@@ -63,18 +62,6 @@ class SaleItemHelper
     }
 
 
-    private function incrementStock(
-        string $productUuid,
-        string $warehouseUuid,
-        float  $quantity,
-        float  $price,
-        string $saleUuid,
-    )
-    {
-
-    }
-
-
     /**
      * Gestiona el stock de un producto en un almacén y registra el movimiento si corresponde.
      * En actualizaciones de cuentas abiertas, calcula la diferencia para ajustar el inventario.
@@ -83,9 +70,7 @@ class SaleItemHelper
      * @param float $quantity Cantidad actual/nueva que se quiere dejar en la cuenta
      * @param float $price
      * @param string $saleUuid
-     * * @param bool $shouldCreateMovement
-     * @param bool $update Si es true, calcula la diferencia contra lo que ya se había retenido
-     * @param float $oldQuantity Solo se usa si $update es true, representa la cantidad que ya se había retenido en la cuenta antes de esta actualización
+     * @param bool $shouldCreateMovement
      * @return void
      */
     private static function updateStockAndMovement(
@@ -95,95 +80,42 @@ class SaleItemHelper
         float  $price,
         string $saleUuid,
         bool   $shouldCreateMovement = false,
-        bool   $update = false,
-        float  $oldQuantity = 0.0
     ): void
     {
-        // 1. Obtener el almacén físico actual
-        $warehouse = WarehouseProduct::with(['products', 'warehouses'])
-            ->where('product_uuid', $productUuid)
+
+        // Tomar el warehose que exste
+        $warehouseProduct = WarehouseProduct::where('product_uuid', $productUuid)
             ->where('warehouse_uuid', $warehouseUuid)
             ->first();
 
-        // Verficiar si existe el almacen
-        if (!$warehouse) {
+        // Verificar si no existe
+        if (!$warehouseProduct) {
             return;
         }
 
-        // Almacenamos el stock antes de la actualización para registrar correctamente el movimiento
-        $previousStock = (float)$warehouse->stock_quantity;
+        // Tomar los datos de cantidad
+        $oldStock = $warehouseProduct->stock_quantity;
+        $newStock = $oldStock - $quantity;
 
-        // Cantidad final que se va a usar para alterar el stock físico y el historial
-        $finalQuantity = $quantity;
-        $finalOperation = OperationTypeEnum::SUSTRACT;
-
-        // 2. LOGICA CRÍTICA DE ACTUALIZACIÓN (Cuentas Abiertas)
-        if ($update) {
-            // Calculamos la diferencia neta
-            $difference = $quantity - $oldQuantity;
-
-            if ($difference == 0) {
-                return; // No hubo cambios en la cantidad de este ítem, salimos de una vez
-            }
-
-            if (OperationTypeEnum::SUSTRACT === OperationTypeEnum::SUSTRACT) {
-                // Si es una VENTA abierta:
-                if ($difference > 0) {
-                    // Agregaron más piezas a la cuenta -> Hay que RESTAR del stock físico
-                    $finalOperation = OperationTypeEnum::SUSTRACT;
-                    $finalQuantity = $difference;
-                } else {
-                    // Devolvieron piezas de la cuenta -> Hay que SUMAR (devolver) al stock físico
-                    $finalOperation = OperationTypeEnum::ADD;
-                    $finalQuantity = abs($difference); // Pasamos el valor a positivo para el incremento
-                }
-            } else {
-                // Si fuera una COMPRA/NOTA DE CRÉDITO abierta (Inverso):
-                if ($difference > 0) {
-                    $finalOperation = OperationTypeEnum::ADD;
-                    $finalQuantity = $difference;
-                } else {
-                    $finalOperation = OperationTypeEnum::SUSTRACT;
-                    $finalQuantity = abs($difference);
-                }
-            }
-        }
-
-        // 3. Ejecutar la alteración real en la base de datos basándonos en la operación calculada
-        $query = WarehouseProduct::where('product_uuid', $productUuid)
-            ->where('warehouse_uuid', $warehouseUuid);
-
-
-        // Dependiendo de la operación, actualizamos el stock físico
-        if ($finalOperation === OperationTypeEnum::ADD) {
-            $query->increment('stock_quantity', $finalQuantity);
-            $newStock = $previousStock + $finalQuantity;
-            $movementType = InventoryMovementTypeEnum::IN->value;
-            $conceptAction = $update ? "Ajuste por devolución en cuenta abierta" : "Devolución/Ingreso";
-        } else {
-            $query->decrement('stock_quantity', $finalQuantity);
-            $newStock = $previousStock - $finalQuantity;
-            $movementType = InventoryMovementTypeEnum::OUT->value;
-            $conceptAction = $update ? "Ajuste por incremento en cuenta abierta" : "Venta";
-        }
-
-        // 4. Registrar en el historial de movimientos de inventario sólo si se requiere
+        // Para ver si es necesario crear movimiento
         if ($shouldCreateMovement) {
-            $productName = $warehouse->product->name ?? 'Desconocido';
-            $warehouseName = $warehouse->warehouse->name ?? 'Desconocido';
-
             InventoryMovement::create([
                 'product_uuid' => $productUuid,
                 'warehouse_uuid' => $warehouseUuid,
-                'type' => $movementType,
-                'concept' => "{$conceptAction} de Producto {$productName} en el almacén {$warehouseName}, ID de referencia: {$saleUuid}",
-                'quantity' => $finalQuantity,
+                'type' => InventoryMovementTypeEnum::OUT,
+                'concept' => "Esta es una venta con el UUID: $saleUuid, y el producto: $productUuid",
+                'quantity' => $quantity,
                 'cost' => $price,
-                'stock_before' => $previousStock,
+                'stock_before' => $oldStock,
                 'stock_after' => $newStock,
             ]);
-        }
-    }
 
+        } else {
+            DB::table('warehouse_products')->where('product_uuid', $productUuid)
+                ->where('warehouse_uuid', $warehouseUuid)
+                ->increment('stock_quantity', $quantity);
+        }
+
+    }
 
 }

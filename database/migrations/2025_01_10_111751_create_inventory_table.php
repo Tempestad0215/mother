@@ -22,6 +22,7 @@ return new class extends Migration
             $table->decimal('cost', 19, 6);
             $table->decimal('stock_before',19,4);
             $table->decimal('stock_after',19,4);
+            $table->uuidMorphs('inventoryable');
 
             //
             $table->softDeletes();

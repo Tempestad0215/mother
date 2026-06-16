@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\PaymentTypeEnum;
 use App\Enums\SaleTypeEnum;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -52,6 +53,7 @@ use OwenIt\Auditing\Models\Audit;
  */
 
 
+#[ObservedBy([SaleObserver::class])]
 class Sale extends Model implements Auditable
 {
     use HasFactory;

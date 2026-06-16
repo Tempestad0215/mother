@@ -10,10 +10,8 @@ use App\Rules\CheckStock;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Route;
 
-
-class  StoreProductSaleRequest extends FormRequest
+class StoreCreditNoteRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -42,7 +40,6 @@ class  StoreProductSaleRequest extends FormRequest
         $sequence = Setting::pluck('sequence')->first() ??  false;
 
 
-
         // Crear la validacion de los datos
         return [
             'uuid' => ['nullable', 'string','uuid'],
@@ -52,10 +49,7 @@ class  StoreProductSaleRequest extends FormRequest
             'client_name' => ['nullable', 'string','min:3','max:75'],
             'client_id' => ['nullable','integer'],
             'client_rnc' => ['nullable','string','max:20'],
-            'info_sale' => ['required','array',Rule::unless(
-                $this->input('type') === SaleTypeEnum::Devolucion->value,
-                new CheckStock()
-            )],
+            'info_sale' => ['required','array'],
             'info_sale.*.uuid' => ['nullable','uuid','exists:sale_items,uuid'],
             'info_sale.*.product_uuid' => ['required','uuid','exists:products,uuid'],
             'info_sale.*.code' => ['nullable','string','min:4','max:50'],
@@ -87,6 +81,4 @@ class  StoreProductSaleRequest extends FormRequest
             'close_table' => ['required','boolean'],
         ];
     }
-
-
 }

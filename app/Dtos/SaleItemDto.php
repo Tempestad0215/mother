@@ -3,6 +3,8 @@
 namespace App\Dtos;
 
 
+use Illuminate\Database\Eloquent\Relations\HasOne;
+
 class SaleItemDto extends BaseDto
 {
     /**
@@ -24,6 +26,7 @@ class SaleItemDto extends BaseDto
      * @param float $amount
      * @param bool $is_service
      * @param string|null $uuid
+     * @param string|null $sale_uuid
      */
     public function __construct(
         public string $product_uuid,
@@ -41,7 +44,8 @@ class SaleItemDto extends BaseDto
         public float $reserved,
         public float $amount,
         public bool $is_service,
-        public ?string $uuid
+        public ?string $uuid,
+        public ?string $sale_uuid = null,
     ) {}
 
 
@@ -69,7 +73,8 @@ class SaleItemDto extends BaseDto
             reserved: $data['reserved'] ?? 0,
             amount: $data['amount'],
             is_service: $data['is_service'] ?? false,
-            uuid: $data['uuid'] ?? null
+            uuid: $data['uuid'] ?? null,
+            sale_uuid: $data['sale_uuid'] ?? null,
         );
     }
 
@@ -104,6 +109,7 @@ class SaleItemDto extends BaseDto
 
         return (float)bcsub($this->amount, $this->discount_amount, 4);
     }
+
 
 
 }

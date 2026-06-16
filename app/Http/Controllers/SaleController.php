@@ -36,7 +36,7 @@ class SaleController extends Controller
     /**
      * Summary of index
      * @param Request $request
-     * @return RedirectResponse|\Inertia\Response
+     * @return RedirectResponse|Response
      */
     public function index(Request $request)
     {
@@ -45,8 +45,7 @@ class SaleController extends Controller
         $setting = Setting::first();
 
         //Si no existe redirecciona a setting
-        if (!$setting)
-        {
+        if (!$setting) {
             return redirect()->route('setting.index');
         }
 
@@ -56,7 +55,7 @@ class SaleController extends Controller
         $lastRecord = Sale::orderBy('created_at', 'desc')->first();
 
         //
-        $warehouses = Warehouse::pluck('uuid','prefix')->toArray();
+        $warehouses = Warehouse::pluck('uuid', 'prefix')->toArray();
 
         //DEvolver la vista y los datos
         return Inertia::render('Sale/SaleCreate', [
@@ -88,21 +87,20 @@ class SaleController extends Controller
         $data = null;
 
         // Evitar que se realicen 2 operaciones al mismo tiempo
-        Cache::lock('sale_warehouse'.auth()->id(), 5)
+        Cache::lock('sale_warehouse' . auth()->id(), 5)
             ->block(3, function () use (&$request, &$data) {
 
-            //Instancia de los datos
-            $saleHelper = new SaleHelper();
-            //Llamar el servicio
-            $data = $saleHelper->store($request);
+                //Instancia de los datos
+                $saleHelper = new SaleHelper();
+                //Llamar el servicio
+                $data = $saleHelper->store($request);
 
-        });
+            });
 
         $rutaInvoice = route('invoice.sale', [$data->uuid]);
 
         //DEvolver el id de la venta
-       return Inertia::flash(['saleInvoiceUrl' => $rutaInvoice])->back();
-
+        return Inertia::flash(['saleInvoiceUrl' => $rutaInvoice])->back();
 
 
     }
@@ -118,22 +116,23 @@ class SaleController extends Controller
     {
 
         // Evitar que se realicen 2 operaciones al mismo tiempo
-        Cache::lock('sale_warehouse'.auth()->id(), 5)
-           ->block(3, function () use ($request, $sale) {
+        Cache::lock('sale_warehouse' . auth()->id(), 5)
+            ->block(3, function () use ($request, $sale) {
 
                 //Actualizar los datos
-               $sale =  DB::transaction(function () use (&$request, &$sale) {
+                $sale = DB::transaction(function () use (&$request, &$sale) {
                     //Instancia
                     $saleHelper = new SaleHelper();
                     //Llamar la funcion
                     return $saleHelper->updateSale($request, $sale);
                 });
-           });
+            });
 
 
+        // Para poder devolver los datos del pdf
         $rutaInvoice = route('invoice.sale', [$sale->uuid]);
 
-       //DEvolver el id de la venta
+        //DEvolver el id de la venta
         return Inertia::flash(['saleInvoiceUrl' => $rutaInvoice])->back();
 
 
@@ -153,7 +152,7 @@ class SaleController extends Controller
         //Tomar los datos
         $sales = $saleHelper->getSalePagination($request);
 
-        return Inertia::render('Sale/SaleShow',[
+        return Inertia::render('Sale/SaleShow', [
             'sales' => $sales
         ]);
     }
@@ -180,10 +179,6 @@ class SaleController extends Controller
 
     }
 
-
-
-
-
     /**
      * Eliminar la venta seleccionada
      * @param Request $request
@@ -195,8 +190,8 @@ class SaleController extends Controller
     public function destroySale(Request $request, Sale $sale, bool $inventoried)
     {
         //Validar el comentario que llega
-        Validator::make($request->all(),[
-            'comment' => ['required','string','min:5','max:255'],
+        Validator::make($request->all(), [
+            'comment' => ['required', 'string', 'min:5', 'max:255'],
         ])->validate();
 
         //Crear la instancia
@@ -208,11 +203,12 @@ class SaleController extends Controller
         return back();
 
     }
+
     /**
      * @param Request $request
      * @return array
      */
-    public function dataSale(Request $request):array
+    public function dataSale(Request $request): array
     {
         $saleHelper = new SaleHelper();
         $clientHelper = new ClientHelper();
@@ -226,7 +222,7 @@ class SaleController extends Controller
 
 
         // Devolver los datos
-        return  [
+        return [
             'products' => $products,
             'clients' => $clients,
             'saleOpen' => $saleOpen
@@ -243,7 +239,7 @@ class SaleController extends Controller
     public function close(Request $request)
     {
 
-        return Inertia::render('Reports/Sale/Close',[
+        return Inertia::render('Reports/Sale/Close', [
             'users' => UserResource::collection(User::all())
         ]);
 
@@ -256,15 +252,15 @@ class SaleController extends Controller
      */
     public function getClose(Request $request)
     {
-        //Obtner el codigo del usuarios
-        $user = $request->input('user',1);
+        //Obtener el código de los usuarios
+        $user = $request->input('user', 1);
 
         //Obtner la ventas de ese usuarios por el dia
         $sale = Sale::whereHas('audits', function ($query) use ($user) {
             $query->where('user_id', $user);
         })->whereDate('sales.created_at', Carbon::today()->format("Y-m-d"))
-            ->join('pro_trans as tr','sales.id','=','tr.sale_id')
-            ->join('products as p','tr.product_id','=','p.id')
+            ->join('pro_trans as tr', 'sales.id', '=', 'tr.sale_id')
+            ->join('products as p', 'tr.product_id', '=', 'p.id')
             ->select([
                 'tr.tax',
                 'tr.discount_amount',
@@ -276,7 +272,7 @@ class SaleController extends Controller
                 DB::raw('(tr.price - p.cost) as benefits')])
             ->get();
 
-        //Obtner los datos sumado para el resultado de datos
+        //Obtener los datos sumados para el resultado de datos
         $data_final = [
             'tax' => $sale->sum('tax'),
             'sub_total' => $sale->sum('sub_total'),
@@ -310,7 +306,6 @@ class SaleController extends Controller
         return response()->json(new SaleCreditNoteResource($data));
 //        return response()->json(new SaleInfoResource($data));
     }
-
 
 
     /**

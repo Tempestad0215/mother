@@ -84,6 +84,14 @@ class Warehouse extends Model implements Auditable
     }
 
     /**
+     * @return HasMany
+     */
+    public function creditItem():HasMany
+    {
+        return $this->hasMany(CreditNoteItem::class, 'warehouse_uuid', 'uuid');
+    }
+
+    /**
      * Summary of receiptItem
      * @return HasMany<PurchaseReceiptsItem, Warehouse>
      */
