@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
@@ -30,7 +31,6 @@ use OwenIt\Auditing\Contracts\Auditable;
  *
  * @mixin Builder
  */
-
 class SaleItem extends Model implements Auditable
 {
     use SoftDeletes;
@@ -38,17 +38,17 @@ class SaleItem extends Model implements Auditable
     use HasUuids;
 
     // Corregido: Era primaryKey con 'a'
-    protected $primaryKey = 'uuid'; 
-    
+    protected $primaryKey = 'uuid';
+
     protected $keyType = 'string';
-    
+
     public $incrementing = false;
 
 
 
     /**
-     * 
-     * 
+     *
+     *
      * @var array
      */
     protected $fillable = [
@@ -82,11 +82,11 @@ class SaleItem extends Model implements Auditable
         return $this->belongsTo(Product::class, 'product_uuid', 'uuid');
     }
 
-    
+
 
 
     /**
-     * 
+     *
      * @return array{is_service: string}
      */
     protected function casts(): array

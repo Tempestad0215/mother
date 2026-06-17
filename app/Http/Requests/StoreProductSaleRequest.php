@@ -39,8 +39,10 @@ class  StoreProductSaleRequest extends FormRequest
     public function rules(): array
     {
         //datos de configuracion
-        $sequence = Setting::pluck('sequence')->first() ??  false;
+        $setting = $this->attributes->get('global_setting');
 
+        // tomar la secuancia de la setting
+        $sequence = $setting?->sequence ?? false;
 
 
         // Crear la validacion de los datos
@@ -61,6 +63,7 @@ class  StoreProductSaleRequest extends FormRequest
             'info_sale.*.code' => ['nullable','string','min:4','max:50'],
             'info_sale.*.product_name' => ['required','string','min:3','max:75'],
             'info_sale.*.stock' => ['required','numeric'],
+            'info_sale.*.price_type' => ['required','string'],
             'info_sale.*.price' => ['required','numeric'],
             'info_sale.*.temp_price' => ['required','numeric'],
             'info_sale.*.tax_uuid' => ['required','uuid','exists:taxes,uuid'],

@@ -6,12 +6,19 @@ export interface SaleTypeEnumI {
   devolucion: string;
 }
 
+export interface editFormI {
+  stock: number;
+  price: number;
+  discount: number;
+}
+
 export interface infoSaleI {
   transID?: number;
   amount: number;
   deleted_at?: string | null;
   discount?: number;
   discount_amount?: number;
+  price_type: 'price' | 'min_price' | 'promotional_price';
   min_price?: number;
   promotional_price?: number;
   price: number;

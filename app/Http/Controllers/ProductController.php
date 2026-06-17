@@ -85,7 +85,7 @@ class ProductController extends Controller implements HasMiddleware
         $productType = collect(ProductTypeEnum::cases())->mapWithKeys(fn(ProductTypeEnum $item) => [$item->name => $item->value])->toArray();
 
         //Verificar si existe configuración
-        $setting = Setting::first('*');
+        $setting = $request->attributes->get('global_setting');
 
         //si existe la configuración
         if (isset($setting)) {
@@ -132,9 +132,9 @@ class ProductController extends Controller implements HasMiddleware
 
 
             $product = Product::create($product_dto->toArray());
-            // Tomar los datos de warehouseProduct y asinar al productos
+            // Tomar los datos de warehouseProduct y asignar al productos
             WarehouseProductHelper::upSert($product_dto->warehouse_product, $product);
-            // Trasnformar los datos
+            // Transform los datos
             $data_price = new PriceListProductDto(
                 $product->uuid,
                 $product_dto->price_list_uuid,

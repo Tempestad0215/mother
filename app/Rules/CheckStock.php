@@ -55,7 +55,7 @@ class CheckStock implements ValidationRule
             // sumar la cantidad de la venta
             $stockTotal = floatval(bcsub((string)$item->stock, (string)$saleItem->stock, 4));
 
-
+            
             // Buscar el producto en cuestion
             $warehouseProduct = WarehouseProduct::where('product_uuid', $item->product_uuid)
                 ->where('warehouse_uuid', $item->warehouse_uuid)

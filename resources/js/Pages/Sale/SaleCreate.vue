@@ -139,7 +139,7 @@ watch(
 
 watch(
   () => form.credit_notes,
-  (newValue) => {
+  (_) => {
     form.credit_notes_amount = 0;
 
     form.credit_notes.forEach((item) => {
@@ -216,21 +216,30 @@ const createCreditNotes = () => {
 
 // Obtener el tipo de boleta
 const sendData = async () => {
-  // Verificar si esta el retorno
-  if (returnInfo.value) {
-    // Enviar los datos para las devoluciones
-    createCreditNotes();
+  if (form.pending > 0) {
+    toast.add({
+      summary: 'Advertencia',
+      detail: 'Por favor, verifique el monto pendiente antes de continuar.',
+      severity: 'warn',
+      life: 3500,
+    });
   } else {
-    //Verificar si no hay problema con nada
-    // if (!salePaymentRef.value?.returnedBlur() && form.close_table) {
-    // 	return;
-    // }
-
-    //si es para actualizar
-    if (form.update) {
-      await updateSale();
+    // Verificar si está el retorno
+    if (returnInfo.value) {
+      // Enviar los datos para las devoluciones
+      createCreditNotes();
     } else {
-      createSale();
+      //Verificar si no hay problema con nada
+      // if (!salePaymentRef.value?.returnedBlur() && form.close_table) {
+      // 	return;
+      // }
+
+      //si es para actualizar
+      if (form.update) {
+        await updateSale();
+      } else {
+        createSale();
+      }
     }
   }
 };
@@ -296,7 +305,7 @@ const registerSale = () => {
   }
 };
 
-// Tomar la informacion de la nota de credito
+// Tomar la información de la nota de credito
 const getInfoCreditNote = (data: CreditNoteBalance): void => {
   // Verificar si ya existe la nota de credito
   const exist = form.credit_notes.find((item) => item.uuid === data.uuid);

@@ -198,6 +198,7 @@ const getDataProduct = (data: ProductTableI) => {
       product_name: data.name,
       stock: 1,
       price: priceList?.price ?? 0,
+      price_type: 'price',
       min_price: priceList?.min_price ?? 0,
       promotional_price: priceList?.promotional_price ?? 0,
       tax_uuid: data.tax.uuid,

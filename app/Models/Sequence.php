@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\SequenceSaleTypeEnum;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,7 +12,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 
 /**
- * @property int id
+ * @property string $uuid
  * @property string $code
  * @property SequenceSaleTypeEnum $type
  * @property int $from
@@ -31,9 +32,13 @@ class Sequence extends Model implements Auditable
 
     use softDeletes;
     use \OwenIt\Auditing\Auditable;
+    use HasUuids;
 
     //Tabla a utilizar
     protected $table = 'sequences';
+    protected $primaryKey = 'uuid';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
 
     //Datos a llenar masivamente

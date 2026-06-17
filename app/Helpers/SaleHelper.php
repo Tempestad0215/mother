@@ -62,7 +62,7 @@ class SaleHelper
             // $setting = Setting::first();
 
             //Incrementar la secuencia enviada
-            SequenceHelper::incrementSequence($salePayload->invoice_type);
+            SequenceHelper::incrementSequence($salePayload->invoice_type, $request);
 
             // Crear la venta
             $sale = Sale::create($salePayload->toArray());
@@ -211,6 +211,8 @@ class SaleHelper
         //Obtener la info
         $saleDto = SaleDto::fromArray($request->validated());
 
+        // Actualizar los datos de la venta
+        $sale->update($saleDto->toArray());
 
         // Obtener los ids de productos
         SaleItemHelper::multipleInsertWithSale(
@@ -219,8 +221,7 @@ class SaleHelper
             $saleDto->update
         );
 
-        // Actualizar los datos de la venta
-        $sale->update($saleDto->toArray());
+
 
 
         return $sale;

@@ -13,6 +13,7 @@ class SaleItemDto extends BaseDto
      * @param string $product_uuid
      * @param string $product_name
      * @param float $stock
+     * @param string $price_type
      * @param float $price
      * @param float $min_price
      * @param float $promotional_price
@@ -33,6 +34,7 @@ class SaleItemDto extends BaseDto
         public string $product_name,
         public float $stock,
         public float $price,
+        public string $price_type,
         public float $min_price,
         public float $promotional_price,
         public ?float $temp_price,
@@ -62,6 +64,7 @@ class SaleItemDto extends BaseDto
             product_name: $data['product_name'],
             stock: $data['stock'],
             price: $data['price'],
+            price_type: $data['price_type'],
             min_price: $data['min_price'] ?? 0,
             promotional_price: $data['promotional_price'] ?? 0,
             temp_price: $data['temp_price'] ?? 0,

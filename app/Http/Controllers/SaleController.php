@@ -9,8 +9,6 @@ use App\Helpers\ProductHelper;
 use App\Helpers\SaleHelper;
 use App\Http\Requests\StoreProductSaleRequest;
 use App\Http\Resources\SaleCreditNoteResource;
-use App\Http\Resources\SaleInfoResource;
-use App\Http\Resources\SaleItemResource;
 use App\Http\Resources\UserResource;
 use App\Models\Product;
 use App\Models\Sale;
@@ -19,7 +17,6 @@ use App\Models\User;
 use App\Models\Warehouse;
 use Carbon\Carbon;
 use Illuminate\Contracts\Cache\LockTimeoutException;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -42,13 +39,12 @@ class SaleController extends Controller
     {
 
         //Verificar si existe la configuracion
-        $setting = Setting::first();
+        $setting = $request->attributes->get('global_setting');
 
         //Si no existe redirecciona a setting
         if (!$setting) {
             return redirect()->route('setting.index');
         }
-
 
         //Instancia de los datos
         $dataSale = $this->dataSale($request);
@@ -123,7 +119,7 @@ class SaleController extends Controller
                 $sale = DB::transaction(function () use (&$request, &$sale) {
                     //Instancia
                     $saleHelper = new SaleHelper();
-                    //Llamar la funcion
+                    //Llamar la función
                     return $saleHelper->updateSale($request, $sale);
                 });
             });
@@ -132,7 +128,7 @@ class SaleController extends Controller
         // Para poder devolver los datos del pdf
         $rutaInvoice = route('invoice.sale', [$sale->uuid]);
 
-        //DEvolver el id de la venta
+        //Devolver el, id de la venta
         return Inertia::flash(['saleInvoiceUrl' => $rutaInvoice])->back();
 
 

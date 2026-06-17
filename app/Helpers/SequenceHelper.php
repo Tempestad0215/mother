@@ -9,6 +9,7 @@ use App\Models\Setting;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use SplFileObject;
 
 class SequenceHelper
@@ -22,7 +23,7 @@ class SequenceHelper
     public function store(SequenceRequest $request):RedirectResponse
     {
         //Buscar registro existente
-        $exits = Sequence::where('type', $request->get('type'))->latest()->first();
+        $exits = Sequence::where('type', $request->input('type'))->latest()->first();
 
 
 
@@ -40,17 +41,17 @@ class SequenceHelper
         }else{
             //Si existe se acutaliza, en caso contrario se vas a crear
             Sequence::updateOrCreate(
-                ['id' => $request->get('id')],
+                ['uuid' => $request->input('uuid')],
                 [
-                    'type' => $request->get('type'),
-                    'from' => $request->get('from'),
-                    'to' => $request->get('to'),
-                    'next' => $request->get('id') != 0 ? $request->get('next') : $request->get('from'),
-                    'advise' => $request->get('advise'),
-                    'num_authorization' => $request->get('num_authorization'),
-                    'num_request' => $request->get('num_request'),
-                    'date_request' => $request->get('date_request'),
-                    'date_expire' => $request->get('date_expire'),
+                    'type' => $request->input('type'),
+                    'from' => $request->input('from'),
+                    'to' => $request->input('to'),
+                    'next' => $request->input('id') != 0 ? $request->input('next') : $request->input('from'),
+                    'advise' => $request->input('advise'),
+                    'num_authorization' => $request->input('num_authorization'),
+                    'num_request' => $request->input('num_request'),
+                    'date_request' => $request->input('date_request'),
+                    'date_expire' => $request->input('date_expire'),
                 ]);
 
             //devolver hacia atras
@@ -142,12 +143,14 @@ class SequenceHelper
 
     /**
      * @param SequenceSaleTypeEnum $type
+     * @param Request $request
      * @return void
      */
-    public static function incrementSequence(SequenceSaleTypeEnum $type):void
+    public static function incrementSequence(SequenceSaleTypeEnum $type, Request $request):void
     {
+
         //Obtenr la configuracion
-        $setting = Setting::first();
+        $setting = $request->attributes->get('global_setting', null);
 
         //Verificar si la sercuencia existe
         if($setting->sequence)

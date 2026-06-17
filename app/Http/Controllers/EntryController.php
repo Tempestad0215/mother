@@ -95,18 +95,13 @@ class EntryController extends Controller
              * @var WarehouseProduct $pivot
              */
             $pivot = $warehouse->pivot;
-            
+
             /**
              * @var float $oldStock
              */
             $oldStock = $pivot->stock_quantity;
-            $pivot->increment('stock_quantity', $entryDto->quantity);
+            $newStock = bcadd((string)$oldStock, (string)$entryDto->quantity);
 
-            // Actualizar los datos
-            $product->warehouses()->updateExistingPivot($entryDto->warehouse_uuid,[
-                'stock_quantity' => DB::raw("stock_quantity + {$entryDto->quantity}"),
-                'updated_at' => now()
-            ]);
 
             // Crear el movimiento de inventario
             InventoryMovement::create([
@@ -114,8 +109,10 @@ class EntryController extends Controller
                 'warehouse_uuid' => $entryDto->warehouse_uuid,
                 'quantity' => $entryDto->quantity,
                 'stock_before' => $oldStock,
-                'stock_after' => $pivot->stock_quantity,
+                'stock_after' => $newStock,
                 'type' => InventoryMovementTypeEnum::IN,
+                'inventoryable_uuid' => $entryDto->product_uuid,
+                'inventoryable_type' => Product::class,
                 'cost' => $entryDto->cost,
                 'concept' => $entryDto->reference,
             ]);
