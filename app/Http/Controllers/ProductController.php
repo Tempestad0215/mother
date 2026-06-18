@@ -21,7 +21,6 @@ use App\Models\Supplier;
 use App\Models\Tax;
 use App\Models\Unit;
 use App\Models\Warehouse;
-use Exception;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\JsonResponse;
@@ -70,7 +69,7 @@ class ProductController extends Controller implements HasMiddleware
 
         /** @var string|null $search */
         $search = $request->input('search');
-        // Para controlar la cantidad de datos por pagina
+        // Para controlar la cantidad de datos por página
         $perPage = $request->input('per_page', 15);
         // Realizar la busqueda
         $queryProduct = Product::query()->with(['priceList','brand','warehouses','tax'])
@@ -126,7 +125,7 @@ class ProductController extends Controller implements HasMiddleware
 
 
             $product = Product::create($product_dto->toArray());
-            // Tomar los datos de warehouseProduct y asignar al productos
+            // Tomar los datos de warehouseProduct y asignar a los productos
             WarehouseProductHelper::upSert($product_dto->warehouse_product, $product);
             // Transform los datos
             $data_price = new PriceListProductDto(
@@ -204,7 +203,7 @@ class ProductController extends Controller implements HasMiddleware
             $product->update($product_dto->toArray());
 
 //            Actualizar los datos de
-            // Tomar los datos de warehouseProduct y asinar al productos
+            // Tomar los datos de warehouseProduct y asinar a los productos
             WarehouseProductHelper::upSert($product_dto->warehouse_product, $product);
             // Trasnformar los datos
             $data_price = new PriceListProductDto(
@@ -332,7 +331,7 @@ class ProductController extends Controller implements HasMiddleware
     public function createLabel(string $code)
     {
 
-        // Craer el template con los datos
+        // Craer él, template con los datos
         $labelTemplate = view('pdfs.ticket.label',[
             'code' => $code
         ])->render();

@@ -3,23 +3,23 @@ import AppLayout from '@layout/AppLayout.vue';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
 import { categoryBaseI } from '@/Interfaces/CategoriesInterface';
 import {
-  DataTable,
-  Column,
   Button,
+  Column,
+  DataTable,
+  Dialog,
   InputGroup,
   InputGroupAddon,
   InputText,
-  Dialog,
   useConfirm,
   useToast,
 } from 'primevue';
 import { ref } from 'vue';
-import { router, useForm } from '@inertiajs/vue3';
+import { router } from '@inertiajs/vue3';
 import { useRoute } from 'ziggy-js';
 import FRegister from '@/Pages/Categories/FRegister.vue';
 import Pagination from '@components/Pagination.vue';
 import { getSearchTable } from '@/Global/SearchTable';
-import { ListFilterPlus, FilePenLine, Shredder } from '@lucide/vue';
+import { FilePenLine, ListFilterPlus, Shredder } from '@lucide/vue';
 
 const route = useRoute();
 const confirm = useConfirm();
