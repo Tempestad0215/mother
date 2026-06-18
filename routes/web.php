@@ -26,6 +26,7 @@ use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Middleware\IsAdminMiddleware;
+use App\Models\Product;
 use App\Models\PurchaseReceipts;
 use App\Models\Setting;
 use Illuminate\Foundation\Application;
@@ -275,7 +276,7 @@ Route::middleware([
 
     Route::get('/test/2', function (){
 
-        $product = \App\Models\Product::first();
+        $product = Product::first();
 
         $labelTemplate = view('pdfs.ticket.label',[
             'code' => $product->code

@@ -29,6 +29,7 @@ onMounted(() => {
         prefix: warehouse.prefix,
         name: warehouse.name,
         available: 0,
+        stock_quantity: 0,
         committed: 0,
         min_stock: 0,
         max_stock: 0,

@@ -114,10 +114,11 @@ const search = () => {
       :field="formSearch.field"
       :search="formSearch.search"
       :per-page="formSearch.per_page"
-      :current-page="propsW.entries.current_page"
-      :next="propsW.entries.next_page_url || ''"
-      :prev="propsW.entries.prev_page_url || ''"
-      :total-page="propsW.entries.to"
+      :current-page="propsW.entries.meta.current_page"
+      :next="propsW.entries.links.next || ''"
+      :prev="propsW.entries.links.prev || ''"
+      :total-page="propsW.entries.meta.total"
+      :pag="propsW.entries"
     />
   </div>
 </template>

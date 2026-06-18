@@ -67,8 +67,8 @@ const searchData = () => {
   getSearchTable(
     route('client.create', {
       search: searchValue.value,
-      per_page: propsW.clientData.per_page,
-      page: propsW.clientData.current_page,
+      per_page: propsW.clientData.meta.per_page,
+      page: propsW.clientData.meta.current_page,
     })
   );
 };
@@ -138,7 +138,7 @@ const showClientBox = () => {
     <template #content>
       <DataTable
         paginator
-        :rows="propsW.clientData.per_page ?? 0"
+        :rows="propsW.clientData.meta.per_page ?? 0"
         :loading="!propsW.clientData.data"
         :value="propsW.clientData.data"
       >

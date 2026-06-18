@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Enums\InventoryMovementConceptEnum;
 use App\Helpers\ProductHelper;
+use App\Http\Resources\ClientCommentResource;
 use App\Http\Resources\InventoryProductResource;
+use App\Models\Client;
 use App\Models\InventoryMovement;
 use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
@@ -45,11 +47,14 @@ class InventoryMovementController extends Controller implements HasMiddleware
         //Obtner la transaccion de productos
         $productsTrans = $this->getProductsTrans($request);
 
+        $clients = Client::paginate(15);
+
         // DEvolver la vista con el mensaje
         return Inertia::render('Products/Inventory/Register',[
             'products' => Product::take(50)->get(),
             'productTable' => $productTable,
-            'entries' => $productsTrans
+            'entries' => $productsTrans,
+            'client' => fn() => ClientCommentResource::collection($clients),
         ]);
     }
 

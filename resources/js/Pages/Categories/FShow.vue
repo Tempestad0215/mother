@@ -168,10 +168,11 @@ const download = async () => {
       :field="form.field"
       :per-page="form.per_page"
       :search="form.search"
-      :next="propsW.categories.next_page_url"
-      :total-page="propsW.categories.to"
-      :prev="propsW.categories.prev_page_url"
-      :current-page="propsW.categories.current_page"
+      :next="propsW.categories.links.next"
+      :total-page="propsW.categories.meta.to"
+      :prev="propsW.categories.links.prev"
+      :current-page="propsW.categories.meta.current_page"
+      :pag="propsW.categories"
     />
   </div>
 </template>

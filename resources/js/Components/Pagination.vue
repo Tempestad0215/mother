@@ -12,19 +12,19 @@ interface paginationActualI {
 const propsW = defineProps<paginationActualI>();
 
 const first = computed(() => {
-  const currentPage = propsW.pag?.current_page ?? 1;
-  const perPage = propsW.pag?.per_page ?? 10;
+  const currentPage = propsW.pag?.meta.current_page ?? 1;
+  const perPage = propsW.pag?.meta.per_page ?? 10;
   return (currentPage - 1) * perPage;
 });
 
 const onPageChange = (_: number) => {
-  const perPage = propsW.pag.per_page;
+  const perPage = propsW.pag.meta.per_page;
 
-  router.get(`${propsW.pag.path}?search=${propsW.search}&per_page=${perPage}`);
+  router.get(`${propsW.pag?.meta.path}?search=${propsW.search}&per_page=${perPage}`);
 };
 
 const changePerPage = (value: number) => {
-  router.get(`${propsW.pag.path}?search=${propsW.search}&per_page=${value}`);
+  router.get(`${propsW.pag.meta.path}?search=${propsW.search}&per_page=${value}`);
 };
 </script>
 
@@ -34,8 +34,8 @@ const changePerPage = (value: number) => {
     @update:first="onPageChange"
     @update:rows="changePerPage"
     :rowsPerPageOptions="[15, 30, 45, 60, 85, 100]"
-    :rows="propsW.pag?.per_page ?? 0"
-    :totalRecords="propsW.pag?.total ?? 0"
+    :rows="propsW.pag?.meta.per_page ?? 0"
+    :totalRecords="propsW.pag?.meta.total ?? 0"
   >
   </Paginator>
 </template>

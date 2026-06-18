@@ -13,27 +13,27 @@ use Illuminate\Support\Facades\Date;
 
 
 /**
- * @property int id;
- * @property string name
- * @property string phone
- * @property string personal_id
- * @property string email
- * @property ClientDocumentEnum document
- * @property string address
- * @property boolean status
- * @property float limit
- * @property integer due_date
- * @property ClientTypeEnum type
- * @property float late_fee_interest
- * @property float balance
- * @property float consumed
- * @property ClientTypePriceEnum type_price
- * @property boolean receive_email
- * @property Account account
- * @property string comment
- * @property Date deleted_at
- * @property Date created_at
- * @property Date updated_at
+ * @property string $uuid;
+ * @property string $name
+ * @property string $phone
+ * @property string $personal_id
+ * @property string $email
+ * @property ClientDocumentEnum $document
+ * @property string $address
+ * @property boolean $status
+ * @property float $limit
+ * @property integer $due_date
+ * @property ClientTypeEnum $type
+ * @property float $late_fee_interest
+ * @property float $balance
+ * @property float $consumed
+ * @property ClientTypePriceEnum $type_price
+ * @property boolean $receive_email
+ * @property Account $account
+ * @property string $comment
+ * @property Date $deleted_at
+ * @property Date $created_at
+ * @property Date $updated_at
  */
 class ClientCommentResource extends JsonResource
 {
@@ -48,7 +48,7 @@ class ClientCommentResource extends JsonResource
          * Devolver los datos
          */
         return [
-            'id' => $this->id,
+            'uuid' => $this->uuid,
             'name' => $this->name,
             'personal_id' => $this->personal_id,
             'phone' => $this->phone,
