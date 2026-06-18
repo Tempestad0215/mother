@@ -38,8 +38,8 @@ class SaleController extends Controller
     public function index(Request $request)
     {
 
-        //Verificar si existe la configuracion
-        $setting = $request->attributes->get('global_setting');
+        //Verificar si existe la configuración
+        $setting = Setting::getGlobal();
 
         //Si no existe redirecciona a setting
         if (!$setting) {
@@ -48,18 +48,16 @@ class SaleController extends Controller
 
         //Instancia de los datos
         $dataSale = $this->dataSale($request);
-        $lastRecord = Sale::orderBy('created_at', 'desc')->first();
 
-        //
+        // obtener los almacenes
         $warehouses = Warehouse::pluck('uuid', 'prefix')->toArray();
 
-        //DEvolver la vista y los datos
+        //Devolver la vista y los datos
         return Inertia::render('Sale/SaleCreate', [
             'products' => $dataSale['products'],
             'clients' => $dataSale['clients'],
             'saleOpen' => $dataSale['saleOpen'],
             'invoiceType' => config('appconfig.invoiceType'),
-            'lastRecord' => $lastRecord?->id,
             'saleTypeEnum' => GeneralDto::getEnumToArray(SaleTypeEnum::class),
             'warehouses' => $warehouses,
         ]);

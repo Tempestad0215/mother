@@ -150,7 +150,7 @@ class SequenceHelper
     {
 
         //Obtenr la configuracion
-        $setting = $request->attributes->get('global_setting', null);
+        $setting = Setting::getGlobal();
 
         //Verificar si la sercuencia existe
         if($setting->sequence)

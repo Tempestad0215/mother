@@ -26,6 +26,7 @@ return new class extends Migration {
             $table->enum('type_price', ClientTypePriceEnum::cases())->comment('Tipo precio');
             $table->boolean('receive_email')->default(false)->comment('Recibir email');
             $table->string('comment')->nullable()->comment('Comentario');
+            $table->boolean('status')->default(true)->comment('Estado');
             $table->softDeletes();
             $table->timestamps();
 

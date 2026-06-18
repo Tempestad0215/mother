@@ -25,18 +25,39 @@ const toast = useToast();
 /**
  * Propiedades de la ventana
  */
-const propsW = defineProps<{
-  productEdit: ProductTableI | null;
-  update?: boolean;
-  categories: categoryBaseI[];
-  suppliers: SupplierI[];
-  paymentTypes: PaymentTypeEnumI;
-  productType: ProductTypeEnumI;
-  branches: BranchInterfaceI[];
-  units: UnitInterfaceI[];
-  warehouses: WarehouseBaseI[];
-  priceLists: Array<PriceListWTI>;
-}>();
+const propsW = withDefaults(
+  defineProps<{
+    productEdit: ProductTableI | null;
+    update?: boolean;
+    categories: categoryBaseI[];
+    suppliers: SupplierI[];
+    paymentTypes: PaymentTypeEnumI;
+    productType: ProductTypeEnumI;
+    branches: BranchInterfaceI[];
+    units: UnitInterfaceI[];
+    warehouses: WarehouseBaseI[];
+    priceLists: Array<PriceListWTI>;
+  }>(),
+  {
+    // Al ser explícitamente | null, lo inicializamos en null
+    productEdit: null,
+
+    // Booleano por defecto en falso para el formulario de creación
+    update: false,
+
+    // Todos los arrays inicializados correctamente mediante funciones flecha
+    categories: () => [],
+    suppliers: () => [],
+    branches: () => [],
+    units: () => [],
+    warehouses: () => [],
+    priceLists: () => [],
+
+    // Tipado seguro para los objetos de enums/mapeos estructurados
+    paymentTypes: () => ({}) as PaymentTypeEnumI,
+    productType: () => ({}) as ProductTypeEnumI,
+  }
+);
 
 /**
  * Emitir eventos

@@ -40,6 +40,7 @@ class SaleInfoResource extends JsonResource
 
         $existsClient = (bool)$this->client;
 
+
         //DEvolver los datos
         return [
             'uuid' => $this->uuid,

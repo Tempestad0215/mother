@@ -13,9 +13,7 @@ class CheckConfigExitsMiddleware
     public function handle(Request $request, Closure $next)
     {
         // Verificar si existe configuracion registrada
-        $config = Cache::remember('app_settings', 86400, function () {
-            return Setting::first();
-        });
+        $config = Setting::getGlobal();
 
         if(!$config){
             if(!Route::is('setting.*') && !Route::is('login')){

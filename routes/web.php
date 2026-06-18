@@ -102,6 +102,14 @@ Route::middleware([
         Route::patch('/{purchase}/approve', [PurchaseController::class, 'approve'])->name('approve');
     });
 
+
+    /**
+     *
+     */
+    Route::prefix('client')->name('client.')->controller(ClientController::class)->group(function () {
+       Route::get('/get-json', 'getJson')->name('get.json');
+    });
+
     /*
      * Resources principales
      */

@@ -22,6 +22,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property float $discount_amount
  * @property float $reserved
  * @property float $amount
+ * @property string $price_type
  * @property boolean $is_service
  *
  *
@@ -61,6 +62,7 @@ class SaleItem extends Model implements Auditable
         'discount_amount',
         'reserved',
         'amount',
+        'price_type',
         'is_service',
     ];
 

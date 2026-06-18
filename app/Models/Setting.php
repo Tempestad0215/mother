@@ -53,6 +53,10 @@ class Setting extends Model implements Auditable
     protected $keyType = 'string';
     public $incrementing = false;
 
+    private static ?Setting $currentInstance = null;
+
+
+
     /**
      * @var string[]
      */
@@ -95,6 +99,21 @@ class Setting extends Model implements Auditable
     public function image():MorphOne
     {
         return $this->morphOne(Image::class, 'imageable');
+    }
+
+
+    /**
+     * @return Setting|null
+     */
+    public static function getGlobal():?Setting
+    {
+        if(self::$currentInstance !== null) return self::$currentInstance;
+
+        self::$currentInstance = \Cache::remember('app_settings', 86400, function () {
+           return self::first();
+        });
+
+        return self::$currentInstance;
     }
 
 

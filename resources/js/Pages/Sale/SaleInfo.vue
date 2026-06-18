@@ -10,7 +10,16 @@ import { usePage } from '@inertiajs/vue3';
 import axios from 'axios';
 import { sequenceDataI } from '@/Interfaces/SettingInterface';
 import { useRoute } from 'ziggy-js';
-import { FloatLabel, InputText, AutoComplete, InputGroup, InputGroupAddon, Dialog } from 'primevue';
+import {
+  AutoComplete,
+  AutoCompleteCompleteEvent,
+  AutoCompleteOptionSelectEvent,
+  Dialog,
+  FloatLabel,
+  InputGroup,
+  InputGroupAddon,
+  InputText,
+} from 'primevue';
 import FShowClient from '@/Pages/Clients/FShowClient.vue';
 
 const route = useRoute();
@@ -28,7 +37,9 @@ const emit = defineEmits<{
 const form = inject(saleKey)!;
 
 const showClient = ref<boolean>(false);
-// const showClientRnc = ref<boolean>(false)
+const clientFiltered = ref<Array<clientBaseI>>([]);
+const showClientRnc = ref<boolean>(false);
+const client = ref(null);
 
 const sequenceData = defineModel<sequenceDataI | null>('sequenceData', {
   default: null,
@@ -38,26 +49,47 @@ const hasRnc = computed(() => {
   return form.invoice_type.trim().toUpperCase() !== 'B02';
 });
 
-// function getClient(item:clientBaseI){
-// 	//Pasar los datos al formulario
-// 	form.client_name = item.name;
-// 	form.client_id = item.id;
-// 	form.client_rnc = item.type_rnc;
-//
-//
-// 	// Si es diferente a b02, colocar el comprobante
-// 	if (form.invoice_type !== "B02")
-// 	{
-// 		form.client_rnc = item.personal_id || "";
-// 		showClientRnc.value = true;
-// 	}
-// 	// Obtener la secuencia del comprobante
-// 	getSequence(item.type_rnc);
-//
-// 	//
-// 	showClient.value = false;
-//
-// }
+// Conseguir el cliente
+const searchClient = async (event: AutoCompleteCompleteEvent) => {
+  // Tomar el valor del campo
+  const value = event.query as string;
+
+  // Si no tiene mas de in
+  if (value.length <= 0) return;
+
+  try {
+    const response = await axios.get(route('client.get.json', { search: value }));
+    clientFiltered.value = response.data as Array<clientBaseI>;
+
+    if (clientFiltered.value.length <= 0) {
+      form.client_name = value;
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const getClient = (data: AutoCompleteOptionSelectEvent) => {
+  const item = data.value as clientBaseI;
+  //Pasar los datos al formulario
+  form.client_name = item.name;
+  form.client_uuid = item.uuid;
+  form.client_rnc = item.type_rnc;
+  // Si es diferente a b02, colocar el comprobante
+  if (form.invoice_type !== 'B02') {
+    form.client_rnc = item.personal_id || '';
+    showClientRnc.value = true;
+  }
+  // Obtener la secuencia del comprobante
+  getSequence(item.type_rnc);
+
+  //
+  showClient.value = false;
+};
+
+const resetData = () => {
+  client.value = null;
+};
 
 /*
  * Obtener los datos de la sequencia
@@ -138,6 +170,7 @@ async function getRncClient() {
 
 defineExpose({
   getSequence,
+  resetData,
 });
 </script>
 
@@ -149,7 +182,13 @@ defineExpose({
         <div class="relative">
           <InputGroup>
             <FloatLabel variant="on">
-              <AutoComplete />
+              <AutoComplete
+                v-model="client"
+                @option-select="getClient"
+                :suggestions="clientFiltered"
+                optionLabel="name"
+                @complete="searchClient"
+              />
               <label for="client">Cliente</label>
             </FloatLabel>
             <InputGroupAddon>
@@ -161,6 +200,7 @@ defineExpose({
               ></i>
             </InputGroupAddon>
           </InputGroup>
+          {{ form.client_name }}
         </div>
       </div>
 

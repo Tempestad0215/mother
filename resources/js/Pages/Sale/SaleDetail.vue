@@ -140,6 +140,7 @@ const getSaleOpen = (item: saleDataI) => {
     item.info_sale.map((el, _) => {
       form.info_sale.push({
         ...el,
+        price_type: el.price_type ?? 'price',
         temp_price: el.price,
         tax_amount: parseFloat(PreciseCalculator.multiply(el.price, el.tax_rate).toFixed(2)),
       });

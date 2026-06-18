@@ -59,7 +59,6 @@ class SaleHelper
             //obtener notas de crédito
             $salePayload = SaleDto::fromArray($request->validated());
             //Obtener la configuración
-            // $setting = Setting::first();
 
             //Incrementar la secuencia enviada
             SequenceHelper::incrementSequence($salePayload->invoice_type, $request);
@@ -71,25 +70,25 @@ class SaleHelper
             CreditNoteHelper::updateAvailableFor($salePayload->credit_notes, $sale);
 
             // Obtener los ids de productos
-            $productUuids = array_map(fn(SaleItemDto $item) => $item->product_uuid, $salePayload->info_sale);
-
-            // Obtener los productos y colocar él, id en el key
-            /** @var Collection<string, Product> $products */
-            $products = Product::whereIn('uuid', $productUuids)->get()->keyBy('uuid');
-
-            //Recorrer la venta para descontar los productos
-            foreach ($salePayload->info_sale as $value) {
-
-                // Obtener el products
-                $product = $products->get($value->product_uuid);
-
-                // Verificar si el producto existe
-                if (!$product) {
-                    // Si no existe, lanzar un error
-                    throw ValidationException::withMessages(['El producto no existe']);
-                }
-
-            }
+//            $productUuids = array_map(fn(SaleItemDto $item) => $item->product_uuid, $salePayload->info_sale);
+//
+//            // Obtener los productos y colocar él, id en el key
+//            /** @var Collection<string, Product> $products */
+//            $products = Product::whereIn('uuid', $productUuids)->get()->keyBy('uuid');
+//
+//            //Recorrer la venta para descontar los productos
+//            foreach ($salePayload->info_sale as $value) {
+//
+//                // Obtener el products
+//                $product = $products->get($value->product_uuid);
+//
+//                // Verificar si el producto existe
+//                if (!$product) {
+//                    // Si no existe, lanzar un error
+//                    throw ValidationException::withMessages(['El producto no existe']);
+//                }
+//
+//            }
 
             // Crear los movimientos de inventario
             SaleItemHelper::multipleInsertWithSale($sale, $salePayload->info_sale);
@@ -192,6 +191,7 @@ class SaleHelper
                 'close_table' => $sale->close_table,
             ]);
 
+            // Crear el comentario
             $deleteSale->comment()->create([
                 'content' => $request->input('comment'),
             ]);
@@ -237,20 +237,21 @@ class SaleHelper
         //tomar los datos para buscar
         $search = $request->input("search");
 
-
         //Realizar la búsqueda en la base de datos de Sale cuando el campo close_table sea false
-        $data = Sale::where('close_table', false) // Filtrar primero por la mesa/venta abierta
+        $data = Sale::query()
+         ->with(['items.product','items'])
+        ->where('close_table', false) // Filtrar primero por la mesa/venta abierta
         ->where(function (Builder $query) {
             // Esto asegura que traiga las que tienen status true O las que aún están en NULL (abiertas)
             $query->where('status', true)
                 ->orWhereNull('status');
         })
+            ->whereHas('items')
             // filled() solo se ejecuta si el buscador tiene texto real escrito
             ->when($request->filled('search'), function (Builder $query) use ($search) {
                 $query->where('client_name', 'ILIKE', "%$search%")
                     ->orWhere('code', 'ILIKE', "%$search%"); // Opcional: buscar también por el código FAC0002
             })
-            ->with('items')
             ->latest()
             ->simplePaginate(15);
 

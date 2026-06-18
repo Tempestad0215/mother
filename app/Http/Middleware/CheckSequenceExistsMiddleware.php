@@ -14,11 +14,7 @@ class CheckSequenceExistsMiddleware
     public function handle(Request $request, Closure $next)
     {
 //        Tomar la configuracion
-        $setting = Cache::remember('app_settings', 86400, function () {
-            return Setting::first();
-        });
-
-        $request->attributes->set('global_setting', $setting);
+        $setting = Setting::getGlobal();
 
         if($request->isMethod('get')){
             //        Verificar si existe la secuencia

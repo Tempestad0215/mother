@@ -55,6 +55,7 @@ class InventoryMovement extends Model implements  Auditable
         'description',
         'inventoryable_type',
         'inventoryable_uuid',
+        'price',
     ];
 
 

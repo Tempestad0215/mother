@@ -201,6 +201,7 @@ const createCreditNotes = () => {
       // Limpiar el formulario
       form.reset();
       paymentBox.value = false;
+      saleInfoRef.value?.resetData();
     },
     onError: (err) => {
       const errors = Object.values(err);
@@ -257,6 +258,7 @@ const createSale = () => {
       });
       form.reset();
       paymentBox.value = false;
+      saleInfoRef.value?.resetData();
     },
     onError: (err) => {
       const errors = Object.values(err);
@@ -281,6 +283,7 @@ const updateSale = async () => {
       });
       form.reset();
       paymentBox.value = false;
+      saleInfoRef.value?.resetData();
     },
     onError: (err) => {
       const errors = Object.values(err);

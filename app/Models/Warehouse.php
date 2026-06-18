@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
@@ -33,6 +35,8 @@ class Warehouse extends Model implements Auditable
     protected $primaryKey = 'uuid';
     public $incrementing = false;
     protected $keyType = 'string';
+
+    private static ?Collection $currentInstance = null;
 
     /**
      * @var array
@@ -98,5 +102,33 @@ class Warehouse extends Model implements Auditable
     public function receiptItem(): HasMany
     {
         return $this->hasMany(PurchaseReceiptsItem::class);
+    }
+
+
+    public static function getAllCached(): Collection
+    {
+        if(self::$currentInstance !== null) return self::$currentInstance;
+
+        self::$currentInstance = Cache::remember('app_warehouses', 86400, function () {
+           return self::get();
+        });
+
+        return self::$currentInstance;
+    }
+
+
+    /**
+     * @return void
+     */
+    protected static function booted():void
+    {
+        $clearCache = function () {
+            Cache::forget('app_warehouses');
+            self::$currentInstance = null; // Limpiamos también la instancia en memoria por si acaso
+        };
+
+        static::created($clearCache);
+        static::updated($clearCache);
+        static::deleted($clearCache);
     }
 }

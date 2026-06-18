@@ -43,7 +43,7 @@ class HandleInertiaRequests extends Middleware
 
         //Compartir los datos globales
         return array_merge(parent::share($request), [
-            'setting' => fn() => Setting::first(),
+            'setting' => fn() => Setting::getGlobal(),
             'taxes' => fn() => \Cache::rememberForever('taxes', fn() => Tax::all()),
             'isExchange' => fn() => $generalHelper->checkExchange()
         ]);

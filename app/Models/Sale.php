@@ -16,8 +16,10 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Models\Audit;
+use Ramsey\Collection\Collection;
 
 /**
  * @property string $uuid
@@ -48,11 +50,10 @@ use OwenIt\Auditing\Models\Audit;
  * @property string $comment
  *
  *
+ * @property-read Collection<int, SaleItem> $items
  * @property-read CreditNote[] $credit_note
  * @property-read CreditNoteSale[] $creditNoteSales
  */
-
-
 #[ObservedBy([SaleObserver::class])]
 class Sale extends Model implements Auditable
 {
@@ -65,7 +66,7 @@ class Sale extends Model implements Auditable
     protected $table = 'sales';
 
     protected $primaryKey = 'uuid';
-    protected  $keyType = 'string';
+    protected $keyType = 'string';
     public $incrementing = false;
 
     /**
@@ -93,7 +94,7 @@ class Sale extends Model implements Auditable
     ];
 
     //Formatear los datos
-    protected  $casts = [
+    protected $casts = [
         'status' => 'boolean',
         'amount' => 'decimal:4',
         'sub_total' => 'decimal:4',
@@ -114,7 +115,7 @@ class Sale extends Model implements Auditable
     /**
      * @return BelongsTo
      */
-    public function client():BelongsTo
+    public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class, 'client_uuid', 'uuid');
     }
@@ -124,9 +125,9 @@ class Sale extends Model implements Auditable
      * @return HasMany
      *
      */
-    public function credit_note():HasMany
+    public function credit_note(): HasMany
     {
-        return $this->hasMany(CreditNote::class, 'sale_uuid','uuid');
+        return $this->hasMany(CreditNote::class, 'sale_uuid', 'uuid');
     }
 
     /**
@@ -145,23 +146,21 @@ class Sale extends Model implements Auditable
     /**
      * @return HasManyThrough
      */
-    public function credit_trans():HasManyThrough
+    public function credit_trans(): HasManyThrough
     {
-        return $this->hasManyThrough(ProductTransaction::class, CreditNote::class, 'sale_id','credit_note_uuid','uuid');
+        return $this->hasManyThrough(ProductTransaction::class, CreditNote::class, 'sale_uuid', 'credit_note_uuid', 'uuid');
     }
-
-
 
 
     /**
      * Formatear la fehca de creacion
      * @return Attribute
      */
-    protected function createdAt ():Attribute
+    protected function createdAt(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => Carbon::parse($value)->format('d/m/Y H:i:s'),
-            set: fn (string $value) => Carbon::parse($value)->format('Y/m/d H:i:s'),
+            get: fn(string $value) => Carbon::parse($value)->format('d/m/Y H:i:s'),
+            set: fn(string $value) => Carbon::parse($value)->format('Y/m/d H:i:s'),
         );
     }
 
@@ -169,45 +168,49 @@ class Sale extends Model implements Auditable
      * Formataer la fecha de actualizacion
      * @return Attribute
      */
-    protected function updatedAt ():Attribute
+    protected function updatedAt(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => Carbon::parse($value)->format('d/m/Y H:i:s'),
-            set: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i:s'),
+            get: fn(string $value) => Carbon::parse($value)->format('d/m/Y H:i:s'),
+            set: fn(string $value) => Carbon::parse($value)->format('Y-m-d H:i:s'),
         );
     }
 
     /**
      * @return void
      */
-    protected static function boot():void
+    protected static function boot(): void
     {
         // Llamar el metodo principal
         parent::boot();
 
         //Generar el codigo los codigos
         static::creating(function ($model) {
-            $model->code = self::generateCode();
+            $model->code = self::generateCode($model);
         });
     }
 
     /**
+     * @param Sale $model
      * @return string
      */
     // funcion para generar el codigo
-    private static function generateCode():string
+    private static function generateCode(self $model): string
     {
         // Obtener el ultimo registros
-        $total = self::count();
+        $total = self::withTrashed()->where('type',SaleTypeEnum::from($model->type->value))->count();
+
+        if ($model->type === SaleTypeEnum::Cotizacion) {
+            $code = config('appconfig.quoCode');
+        } else {
+            $code = config('appconfig.saleCode');
+        }
 
         // Generar el proximo ID
         $nextID = $total ? $total + 1 : 1;
 
-        // Devolver los datos
-        $code = config('appconfig.saleCode');
-
         // craer el codigp
-        return $code.str_pad($nextID, 6,'0', STR_PAD_LEFT);
+        return Str::upper($code). str_pad($nextID, 6, '0', STR_PAD_LEFT);
     }
 
 

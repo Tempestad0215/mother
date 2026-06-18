@@ -23,6 +23,7 @@ class SaleItemResource extends JsonResource
     {
         return [
             ...parent::toArray($request),
+            'price_type' => $this->price_type,
             'temp_price' => $this->price,
             'product_name' => $this->product?->name,
             'warehouse_uuid' => $this->product?->default_warehouse,

@@ -77,6 +77,7 @@ class ClientController extends Controller implements HasMiddleware
                 ->orWhere('email','like','%'.$search.'%');
 
         $clients = $query->paginate($perPage)->withQueryString();
+
         /*Vista con la pagina*/
         return Inertia::render('Clients/RegisterClient',[
             'clients' => $data,
@@ -92,7 +93,7 @@ class ClientController extends Controller implements HasMiddleware
 
     /**
      * @param StoreClientsRequest $request
-     * @return RedirectResponse
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      * @throws Throwable
      */
     public function store(StoreClientsRequest $request)
@@ -100,9 +101,9 @@ class ClientController extends Controller implements HasMiddleware
         //Guardar los datos
         $this->clientHelper->store($request);
 
-        Inertia::flash("message", "Datos Registrado conExisto");
+
         // Devolver hacia atrás
-        return back();
+        return Inertia::flash("message", "Datos Registrado conExisto")->back();
 
     }
 
@@ -185,16 +186,19 @@ class ClientController extends Controller implements HasMiddleware
     public function getJson(Request $request)
     {
         //Obtener los datos para buscar
-        $search = $request->get('search');
+        $search = $request->input('search');
 
         //Buscar los datos
-        $data = Client::where('status',false)
-            ->where(function ($query) use ($search) {
-                $query->where('name','like','%'. $search .'%')
-                    ->orWhere('phone','like','%'. $search .'%');
+        $data = Client::query()
+            ->where('status', true)
+            ->when($request->filled('search'), function ($query) use ($search) {
+                $query->where(function ($subQuery) use ($search) {
+                    $subQuery->where('name', 'ILIKE', '%' . $search . '%')
+                        ->orWhere('phone', 'ILIKE', '%' . $search . '%');
+                });
             })
             ->latest('created_at')
-            ->limit(5)
+            ->limit(15)
             ->get();
 
         //Devolver los datos en json

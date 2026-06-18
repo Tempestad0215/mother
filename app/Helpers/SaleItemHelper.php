@@ -6,6 +6,7 @@ use App\Dtos\SaleItemDBDto;
 use App\Dtos\SaleItemDto;
 use App\Enums\InventoryMovementTypeEnum;
 use App\Enums\PriceTypeEnum;
+use App\Enums\SaleTypeEnum;
 use App\Models\InventoryMovement;
 use App\Models\Product;
 use App\Models\Sale;
@@ -94,6 +95,8 @@ class SaleItemHelper
             // Calcular la nueva cantidad de stock
             $result = bcsub((string)$item->stock, $oldStock, 4);
 
+
+
             $quantityForInventory = '0';
 
             // Verificar si la cantidad es positiva o negativa
@@ -103,14 +106,16 @@ class SaleItemHelper
                 $quantityForInventory = bcmul($result, '-1', 4);
             }
 
+
+
             // Solo hacer cambio si cambio el resultado
-            if (bccomp($result, '0', 4) !== 0) {
+            if (bccomp($result, '0', 4) !== 0 && $sale->type !== SaleTypeEnum::Cotizacion) {
                 // Actualizar el stock físico y registrar el movimiento correspondiente basándonos en la diferencia
                 self::updateStockAndMovement(
                     productUuid: $item->product_uuid,
                     warehouseUuid: $item->warehouse_uuid,
-                    quantity: $quantityForInventory,
-                    price: $realPrice,
+                    quantity: (float)$quantityForInventory,
+                    price: (float)$realPrice,
                     saleUuid: $sale->uuid, // Solo crear movimiento si la venta se cierre
                 );
             }
@@ -174,7 +179,8 @@ class SaleItemHelper
 
         // Tomar los datos de cantidad
         $oldStock = $warehouseProduct->stock_quantity;
-        $newStock = $oldStock - $quantity;
+        $newStock = bcsub((string)$oldStock, (string)$quantity, 4);
+
 
         // Para ver si es necesario crear movimiento
         InventoryMovement::create([

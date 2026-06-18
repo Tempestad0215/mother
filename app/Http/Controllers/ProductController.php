@@ -59,59 +59,53 @@ class ProductController extends Controller implements HasMiddleware
     public function index(PaginationRequest $request): Response|RedirectResponse
     {
 
+
+        //Verificar si existe configuración
+        $setting = Setting::getGlobal();
+
+        if (!$setting) {
+            Inertia::flash('message', 'Por favor, debe crear la setting primero');
+            return to_route('setting.index');
+        }
+
         /** @var string|null $search */
         $search = $request->input('search');
         // Para controlar la cantidad de datos por pagina
-        $perPage = $request->input('per_page');
+        $perPage = $request->input('per_page', 15);
         // Realizar la busqueda
-        $queryProduct = Product::query()->with(['priceList','brand','warehouses']);
+        $queryProduct = Product::query()->with(['priceList','brand','warehouses','tax'])
+            ->when($request->filled('search', function ($query) use ($search) {
+               $query->where(function($subQuery) use ($search){
+                   $subQuery->where('name', 'ILIKE', '%' . $search . '%')
+                       ->orWhere('description', 'ILIKE', '%' . $search . '%');
+               });
+        }))->latest()
+            ->simplePaginate($perPage)
+            ->withQueryString();
 
-        // Verificar si existe
-        if (!empty($search)) {
-            $queryProduct->where('name', 'like', '%' . $search . '%')
-                ->orWhere('description', 'like', '%' . $search . '%');
-
-        }
-
-        // Tomar los datos paginados
-        $product_paginated = $queryProduct->simplePaginate($perPage);
-
-        // Pasarlo con los query
-        $product_paginated->withQueryString();
         // Transformar los datos
-        $products = ProductResource::collection($product_paginated);
+        $products = ProductResource::collection($queryProduct);
 
         // Tomar los datos de tipo de producto
         $productType = collect(ProductTypeEnum::cases())->mapWithKeys(fn(ProductTypeEnum $item) => [$item->name => $item->value])->toArray();
 
-        //Verificar si existe configuración
-        $setting = $request->attributes->get('global_setting');
 
-        //si existe la configuración
-        if (isset($setting)) {
+        //Devolver correctamente
+        return Inertia::render('Products/Register', [
+            'products' => $products,
+            'paymentTypes' => GeneralHelper::getPaymentTypes(),
+            'productType' => $productType,
 
+            // Estas propiedades solo se cargarán en la primera petición (o si el frontend las pide explícitamente)
+            'categories' => fn () => Category::orderBy('name')->get(),
+            'suppliers'  => fn () => Supplier::orderBy('company_name')->get(),
+            'warehouses'  => fn () => Warehouse::getAllCached(), // 💡 Usando tu caché estática
+            'branches'   => fn () => Brand::all(),
+            'units'      => fn () => Unit::all(),
+            'taxes'      => fn () => Tax::all(),
+            'priceLists' => fn () => PriceList::all(),
+        ]);
 
-            //Devolver correctamente
-            return Inertia::render('Products/Register', [
-                'products' => $products,
-                'categories' => Category::orderBy('name','asc')->get(),
-                'suppliers' => Supplier::orderBy('company_name','asc')->get(),
-                'warehouse' => Warehouse::all(),
-                'paymentTypes' => GeneralHelper::getPaymentTypes(),
-                'productType' => $productType,
-                'branches' => Brand::all(),
-                'units' => Unit::all(),
-                'taxes' => Tax::all(),
-                'warehouses' => Warehouse::all(),
-                'priceLists' => PriceList::all(),
-            ]);
-
-        } else {
-
-            Inertia::flash('message', 'Por favor, debe crear la setting primero');
-            //Redirigir a la ventana de setting
-            return to_route('setting.index');
-        }
 
     }
 
