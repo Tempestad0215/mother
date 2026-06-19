@@ -68,11 +68,15 @@ const getSaleType = computed(() => {
 
 // Obtener el tipo de factura
 watch(
-  () => form.type,
+  () => form.invoice_type,
   (newVal) => {
     form.close_table = newVal === 'Cotizacion' || newVal === 'Devolucion';
   }
 );
+
+const isRefund = computed((): boolean => {
+  return form.type === 'Devolucion';
+});
 
 /**
  * Verificar el tipo de factura
@@ -250,14 +254,14 @@ defineExpose({
   <!-- Datos del formulario-->
   <div class="flex justify-between items-center mt-3">
     <div class="flex mt-2">
-      <form class="" v-if="form.invoice_type !== 'B04'">
+      <form class="" v-if="!isRefund">
         <FloatLabel variant="on">
           <InputText />
           <label for="code">Codigo</label>
         </FloatLabel>
       </form>
       <!-- Buscar los datos necesario -->
-      <div v-if="!propsW.refund" class="ml-3 flex items-center space-x-3">
+      <div v-if="!isRefund" class="ml-3 flex items-center space-x-3">
         <ShoppingCart
           v-tooltip.bottom="'Productos Disponibles'"
           @click="showProducts = !showProducts"
@@ -305,7 +309,7 @@ defineExpose({
       <!--Tipo de cuenta si abierta o cerrada-->
       <div v-if="!propsW.refund" class="ml-2">
         <ToggleButton
-          :disabled="form.type === 'Cotizacion'"
+          :disabled="form.type === 'Cotizacion' || form.type === 'Devolucion'"
           v-model="form.close_table"
           on-label="Cuenta Cerrada"
           off-label="Cuenta Abierta"

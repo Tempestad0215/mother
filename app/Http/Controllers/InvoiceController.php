@@ -54,7 +54,7 @@ class InvoiceController extends Controller
         $templateData = View('pdfs.sale.cinta', [
             'sale' => $sale,
             'setting' => Setting::first(),
-            'creditNote' => $sale->creditNoteSale
+            'creditNote' => $sale->creditNotes
         ])->render();
 
         // Crear la respuestas

@@ -73,12 +73,12 @@ class ProductController extends Controller implements HasMiddleware
         $perPage = $request->input('per_page', 15);
         // Realizar la busqueda
         $queryProduct = Product::query()->with(['priceList','brand','warehouses','tax'])
-            ->when($request->filled('search', function ($query) use ($search) {
+            ->when($request->filled('search'), function ($query) use ($search) {
                $query->where(function($subQuery) use ($search){
                    $subQuery->where('name', 'ILIKE', '%' . $search . '%')
                        ->orWhere('description', 'ILIKE', '%' . $search . '%');
                });
-        }))->latest()
+        })->latest()
             ->simplePaginate($perPage)
             ->withQueryString();
 

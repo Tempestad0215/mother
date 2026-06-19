@@ -66,6 +66,10 @@ watch(
   { deep: true } // 🔥 Obligatorio para que escuche cambios dentro de las propiedades del objeto
 );
 
+const isRefund = computed((): boolean => {
+  return form.type === 'Devolucion';
+});
+
 // Para mostrar el formulario de edición
 type MoveDirection = 'up' | 'down';
 
@@ -173,6 +177,7 @@ const checkIndex = (): boolean => {
         <div v-if="!productIsService" class="flex gap-5">
           <div class="flex items-center gap-2">
             <RadioButton
+              :disabled="isRefund"
               @change="changePrice"
               v-model="typePrice"
               inputId="normal_price"
@@ -183,6 +188,7 @@ const checkIndex = (): boolean => {
           </div>
           <div class="flex items-center gap-2">
             <RadioButton
+              :disabled="isRefund"
               @change="changePrice"
               v-model="typePrice"
               inputId="promotional_price"
@@ -193,6 +199,7 @@ const checkIndex = (): boolean => {
           </div>
           <div class="flex items-center gap-2">
             <RadioButton
+              :disabled="isRefund"
               @change="changePrice"
               v-model="typePrice"
               inputId="min_price"
@@ -209,6 +216,7 @@ const checkIndex = (): boolean => {
           </FloatLabel>
           <FloatLabel variant="on">
             <InputNumber
+              :disabled="isRefund"
               :min="minPrice"
               :readonly="!productIsService"
               v-model="editItemForm.price"
@@ -216,7 +224,7 @@ const checkIndex = (): boolean => {
             <label for="price">Precio</label>
           </FloatLabel>
           <FloatLabel variant="on">
-            <InputNumber v-model="editItemForm.discount" />
+            <InputNumber :disabled="isRefund" v-model="editItemForm.discount" />
             <label for="discount">Descuento</label>
           </FloatLabel>
         </div>

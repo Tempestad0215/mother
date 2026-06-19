@@ -51,8 +51,8 @@ use Ramsey\Collection\Collection;
  *
  *
  * @property-read Collection<int, SaleItem> $items
- * @property-read CreditNote[] $credit_note
- * @property-read CreditNoteSale[] $creditNoteSales
+ * @property-read Collection<int, CreditNote> $creditNotes
+ * @property-read Collection<int, CreditNoteSale> $creditNoteSales
  */
 #[ObservedBy([SaleObserver::class])]
 class Sale extends Model implements Auditable
@@ -125,7 +125,7 @@ class Sale extends Model implements Auditable
      * @return HasMany
      *
      */
-    public function credit_note(): HasMany
+    public function creditNotes(): HasMany
     {
         return $this->hasMany(CreditNote::class, 'sale_uuid', 'uuid');
     }
@@ -133,7 +133,7 @@ class Sale extends Model implements Auditable
     /**
      * @return BelongsToMany
      */
-    public function creditNoteSale(): BelongsToMany
+    public function creditNoteSales(): BelongsToMany
     {
         return $this->belongsToMany(CreditNote::class);
     }
@@ -197,7 +197,7 @@ class Sale extends Model implements Auditable
     // funcion para generar el codigo
     private static function generateCode(self $model): string
     {
-        // Obtener el ultimo registros
+        // Obtener el último registro
         $total = self::withTrashed()->where('type',SaleTypeEnum::from($model->type->value))->count();
 
         if ($model->type === SaleTypeEnum::Cotizacion) {
@@ -205,6 +205,7 @@ class Sale extends Model implements Auditable
         } else {
             $code = config('appconfig.saleCode');
         }
+
 
         // Generar el proximo ID
         $nextID = $total ? $total + 1 : 1;

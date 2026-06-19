@@ -7,6 +7,7 @@ use App\Enums\SaleTypeEnum;
 use App\Models\Comment;
 use App\Models\CreditNote;
 use App\Models\ProductTransaction;
+use App\Models\Sale;
 use App\Models\SaleItem;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -36,6 +37,9 @@ use Illuminate\Validation\ValidationException;
  * @property ProductTransaction[] $trans
  * @property Collection<int, CreditNote> $credit_note
  * @property Comment $comment
+ *
+ *
+ * @mixin Sale
  */
 
 class SaleCreditNoteResource extends JsonResource
@@ -44,12 +48,15 @@ class SaleCreditNoteResource extends JsonResource
     {
 
         /** @var Collection<int, CreditNote> $creditNotes */
-        $creditNotes = $this->whenLoaded('credit_note', $this->credit_note);
+        $creditNotes = $this->whenLoaded('creditNotes', $this->credit_note);
+
 
         // Crear un arreglo para almacenar los items disponibles
         $availableItems = collect();
 
+
         foreach ($this->items as $item){
+
 
             /** @var float $totalReturned */
             $totalReturned = $creditNotes->flatMap(fn(CreditNote $cr) => $cr->items)
@@ -58,6 +65,8 @@ class SaleCreditNoteResource extends JsonResource
 
             // Restar las devoluciones con el stock a realizado
             $availableStock = bcsub((string)$item->stock, (string)$totalReturned);
+
+            logger($availableStock);
 
             // Vericiar si el estock es mayor a cero
             if($availableStock > 0) {
@@ -74,6 +83,7 @@ class SaleCreditNoteResource extends JsonResource
                 );
             }
         }
+
 
         // Verificar si hay items disponibles
         if(count($availableItems) <= 0)

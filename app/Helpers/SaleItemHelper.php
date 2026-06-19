@@ -123,11 +123,13 @@ class SaleItemHelper
             // Actualizar o crear el item de la venta
             $saleItemSave[] = SaleItemDBDto::fromArray([
                 ...$item->toArray(),
+                'tax_uuid' => $currentProduct->tax->uuid,
                 'sale_uuid' => $sale->uuid,
                 'uuid' => $update ? $oldItem->uuid : Str::uuid(),
             ])->toArray();
 
         }
+
 
 
         // Guardar los datos en la tabla
@@ -136,6 +138,8 @@ class SaleItemHelper
             'sale_uuid'
         ], [
             'stock',
+            'tax_uuid',
+            'warehouse_uuid',
             'price',
             'tax_rate',
             'discount',
@@ -188,7 +192,7 @@ class SaleItemHelper
             'warehouse_uuid' => $warehouseUuid,
             'type' => InventoryMovementTypeEnum::OUT,
             'concept' => "Esta es una venta con el UUID: $saleUuid, y el producto: $productUuid",
-            'inventoryable_uuid' => $saleUuid,
+            'inventoryable_id' => $saleUuid,
             'inventoryable_type' => Sale::class,
             'quantity' => $quantity,
             'cost' => $price,

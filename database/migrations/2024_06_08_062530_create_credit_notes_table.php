@@ -12,6 +12,7 @@ return new class extends Migration {
         Schema::create('credit_notes', function (Blueprint $table) {
             DataBaseHElper::saleTable($table);
             //Datos solo de nota de credito
+            $table->foreignUuid('sale_uuid')->comment('Relacion con la venta');
             $table->string('ncf_m',30)->nullable()->comment('ncf modificado');
             $table->decimal('n_available', 19,6)->comment('cantiad nota de credito disponible');
             $table->string('type',20)->default('DEVOLUCION')->comment('Tipo Devolucion');

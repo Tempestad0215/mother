@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import TextInput from '@components/TextInput.vue';
-import { computed, inject, ref } from 'vue';
+import { computed, inject, ref, watch } from 'vue';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
 import { clientBaseI } from '@/Interfaces/ClientInterface';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -47,6 +47,20 @@ const sequenceData = defineModel<sequenceDataI | null>('sequenceData', {
 
 const hasRnc = computed(() => {
   return form.invoice_type.trim().toUpperCase() !== 'B02';
+});
+
+watch(
+  () => form.invoice_type,
+  (newVal) => {
+    console.log(newVal);
+  },
+  {
+    deep: true,
+  }
+);
+
+const isRefund = computed((): boolean => {
+  return form.type === 'Devolucion';
 });
 
 // Conseguir el cliente
@@ -183,6 +197,7 @@ defineExpose({
           <InputGroup>
             <FloatLabel variant="on">
               <AutoComplete
+                :disabled="isRefund"
                 v-model="client"
                 @option-select="getClient"
                 :suggestions="clientFiltered"
@@ -200,7 +215,6 @@ defineExpose({
               ></i>
             </InputGroupAddon>
           </InputGroup>
-          {{ form.client_name }}
         </div>
       </div>
 

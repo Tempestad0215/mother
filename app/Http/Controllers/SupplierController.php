@@ -43,23 +43,20 @@ class SupplierController extends Controller implements HasMiddleware
         $per_page = $request->per_page;
         $page = $request->page;
 
-        $query = Supplier::query();
-
-        if ($search) {
-            $query->where(function ($query) use ($search) {
-                $query->where('company_name', 'ILIKE', '%' . $search . '%')
-                    ->orWhere('contact', 'ILIKE', '%' . $search . '%')
-                    ->orWhere('email', 'ILIKE', '%' . $search . '%');
-            })->orderBy('created_at', 'desc');
-        }
-
-        $suppliers = $query->paginate($per_page)->withQueryString();
+        $suppliers = Supplier::query()
+            ->when($request->filled('search'), function ($query) use ($search) {
+                $query->where('company_name', 'ILIKE', "%$search%")
+                    ->orWhere('contact', 'ILIKE', "%$search%")
+                    ->orWhere('email', 'ILIKE', "%$search%");
+            })->orderBy('created_at', 'desc')
+            ->simplePaginate($per_page)
+            ->withQueryString();
 
         $paymentType = collect(PaymentTypeEnum::cases())->mapWithKeys(fn(paymentTypeEnum $value) => [$value->name => $value->value]);
 
         //Devolver la vista con los datos
         return Inertia::render("Suppliers/Register",[
-            'suppliers' => $suppliers,
+            'suppliers' => SupplierResource::collection($suppliers),
             'paymentTypes' => $paymentType,
         ]);
 

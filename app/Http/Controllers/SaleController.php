@@ -291,10 +291,11 @@ class SaleController extends Controller
     public function refund(string $code)
     {
         // Obtener la ventas con los items para la devolucions
-        $data = Sale::with(['items', 'credit_note'])
+        $data = Sale::with(['items', 'creditNotes'])
             ->where('type', SaleTypeEnum::Ventas)
             ->where('code', $code)
             ->firstOrFail();
+
 
 
         return response()->json(new SaleCreditNoteResource($data));

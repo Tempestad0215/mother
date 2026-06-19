@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->decimal('stock',19,4);
             $table->decimal('price',19,4);
             $table->decimal('tax_rate');
+            $table->string('price_type',50);
             $table->foreignUuid('tax_uuid');
             $table->decimal('discount',19,4)->nullable();
             $table->decimal('discount_amount',19,4)->nullable();

@@ -5,26 +5,14 @@ namespace App\Http\Resources;
 use App\Enums\PaymentTypeEnum;
 use App\Models\Comment;
 use App\Models\Account;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 
 /**
- * @property string uuid
- * @property string|null contact
- * @property string company_name
- * @property string|null phone
- * @property string|null email
- * @property boolean status
- * @property boolean receive_email
- * @property string account_bank
- * @property PaymentTypeEnum type_payment
- * @property Account account
- * @property Comment comment
  *
- * @property string created_at
- * @property string updated_at
- * @property string deleted_at
+ * @mixin Supplier
  */
 class SupplierResource extends JsonResource
 {

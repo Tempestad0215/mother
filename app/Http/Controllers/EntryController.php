@@ -111,7 +111,7 @@ class EntryController extends Controller
                 'stock_before' => $oldStock,
                 'stock_after' => $newStock,
                 'type' => InventoryMovementTypeEnum::IN,
-                'inventoryable_uuid' => $entryDto->product_uuid,
+                'inventoryable_id' => $entryDto->product_uuid,
                 'inventoryable_type' => Product::class,
                 'cost' => $entryDto->cost,
                 'concept' => $entryDto->reference,

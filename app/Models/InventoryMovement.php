@@ -22,6 +22,9 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property float $cost
  * @property float $stock_before
  * @property float $stock_after
+ * @property string $inventoryable_type
+ * @property string $inventoryable_id
+ *
  * @property string|null $description
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -54,7 +57,7 @@ class InventoryMovement extends Model implements  Auditable
         'stock_after',
         'description',
         'inventoryable_type',
-        'inventoryable_uuid',
+        'inventoryable_id',
         'price',
     ];
 

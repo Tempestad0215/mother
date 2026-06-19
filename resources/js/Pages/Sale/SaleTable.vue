@@ -152,6 +152,7 @@ defineExpose({
     <Column class="max-w-20" header="Almacen">
       <template #body="{ index }">
         <Select
+          :disabled="form.type === 'Devolucion'"
           v-model="form.info_sale[index].warehouse_uuid"
           :options="getWarehouses"
           optionLabel="name"
