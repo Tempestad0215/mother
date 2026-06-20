@@ -14,10 +14,12 @@ use App\Models\CreditNoteItem;
 use App\Models\InventoryMovement;
 use App\Models\Product;
 use App\Models\Sale;
+use App\Models\Setting;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -39,11 +41,13 @@ class CreditNoteHelper
         //Asegurar que los procesos se cumplan
         return DB::transaction(function () use ($request, $sale) {
 
+            /** @var Setting|null $setting */
+            $setting = Cache::get('app_settings');
             //Convertir a collection
             $data = SaleDto::fromArray($request->validated());
 
             //Verificar si existe para aumentar el contador de la nota de credito
-            if ($data->type == SaleTypeEnum::Devolucion->value) {
+            if ($data->type == SaleTypeEnum::Devolucion->value && $setting?->sequence) {
                 //Crear el aumento el comprobante
                 SequenceHelper::incrementSequence(SequenceSaleTypeEnum::B04, $request);
             }
@@ -55,7 +59,7 @@ class CreditNoteHelper
             //Crear la devolucion
             $creditNote = CreditNote::create([
                 ...$cleanData,
-                'sale_uuid' => $data->uuid
+                'sale_uuid' => $sale->uuid,
             ]);
 
             // Los datos para insertar
@@ -79,8 +83,7 @@ class CreditNoteHelper
 
             // Guardar los items en la nota de credito
             $creditNote->items()->saveMany($creditNoteItemsSave);
-
-
+            // Devolver los datos
             return $creditNote;
         });
 

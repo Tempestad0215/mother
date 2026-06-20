@@ -47,6 +47,7 @@ Enviar el evento para emitir
  */
 const emit = defineEmits<{
   (e: 'closeFormReturn', isReturn: boolean): void;
+  (e: 'sendClientName', name: string): void;
   (e: 'hasError'): void;
 }>();
 
@@ -98,6 +99,7 @@ const saleGet = async () => {
     });
 
     emit('closeFormReturn', true);
+    emit('sendClientName', res.data.client_name);
   } catch (error) {
     const err = error as AxiosError<LaravelErrorResponse>;
 

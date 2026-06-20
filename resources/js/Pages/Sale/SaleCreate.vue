@@ -39,7 +39,6 @@ const propsW = defineProps<{
   saleOpen: PaginationI<saleDataI>;
   invoiceType: invoiceTypeI[];
   saleInfo?: saleDataI;
-  refund?: boolean;
   pdfUuid?: string;
   saleTypeEnum: SaleTypeEnumI;
   warehouses: WarehouseMapType;
@@ -55,6 +54,7 @@ const saleTableRef = ref<InstanceType<typeof SaleTable>>()!;
 const saleFooterRef = ref<InstanceType<typeof SaleFooter>>()!;
 const salePaymentRef = ref<InstanceType<typeof PaymentInvoice>>()!;
 const returnInfo = ref(false);
+const client = ref('');
 
 // Formulario
 const form = useForm<CreateSaleI>({
@@ -78,7 +78,7 @@ const form = useForm<CreateSaleI>({
   received: 0,
   returned: 0,
   general: '',
-  type: 'Ventas',
+  type: 'Ventas' as 'Ventas' | 'Devolucion' | 'Cotizacion',
   type_payment: 'Contado',
   update: false,
   sequence: '',
@@ -167,7 +167,7 @@ watch(
 // Obtener el tipo de venta
 const setDataForm = () => {
   //Verificar si existe los datos para devoluicion
-  if (propsW.refund && propsW.saleInfo) {
+  if (form.type === 'Devolucion' && propsW.saleInfo) {
     form.uuid = propsW.saleInfo.uuid;
     form.ncf_m = propsW.saleInfo.ncf;
     form.client_name = propsW.saleInfo.client_name;
@@ -175,7 +175,7 @@ const setDataForm = () => {
     form.client_rnc = propsW.saleInfo.client_rnc;
     form.info_sale = propsW.saleInfo.info_sale;
     form.invoice_type = page.props.setting.sequence ? 'B04' : '';
-    form.type = 'devolucion';
+    form.type = 'Devolucion';
 
     //Recorrer los datos
     // form.info_sale.forEach((_, index) => totalAmount(index));
@@ -226,7 +226,7 @@ const sendData = async () => {
     });
   } else {
     // Verificar si está el retorno
-    if (returnInfo.value) {
+    if (form.type === 'Devolucion' && form.info_sale.length > 0) {
       // Enviar los datos para las devoluciones
       createCreditNotes();
     } else {
@@ -332,6 +332,7 @@ const getInfoCreditNote = (data: CreditNoteBalance): void => {
     });
   }
 
+  // Verificar la cantidad nueva
   const availableNew = parseFloat(
     PreciseCalculator.subtract(data.n_available, form.amount).toString()
   );
@@ -349,6 +350,10 @@ const getInfoCreditNote = (data: CreditNoteBalance): void => {
   });
 };
 
+const cleanAllForm = () => {
+  form.reset();
+};
+
 // Proveer el formulario a los componentes hijos
 provide(saleKey, form);
 </script>
@@ -362,6 +367,7 @@ provide(saleKey, form);
           <div>
             <!-- Informacion de la venta -->
             <SaleInfo
+              v-model:client="client"
               ref="saleInfoRef"
               :clients="propsW.clients"
               @getSequenceType="(type: string) => saleDetailRef?.getSequenceType(type)"
@@ -375,7 +381,8 @@ provide(saleKey, form);
               :products="propsW.products"
               :sale-open="propsW.saleOpen"
               :invoice-type="propsW.invoiceType"
-              :refund="propsW.refund"
+              :refund="form.type === 'Devolucion'"
+              @sendClientName="(data) => (client = data)"
               @total-sale=""
               @total-amount="saleTableRef?.calculateItemRow($event)"
               @totalSale="saleTableRef?.calculateTotals()"
@@ -388,7 +395,8 @@ provide(saleKey, form);
             <SaleFooter ref="saleFooterRef" />
 
             <!-- Devuelta y demas detos-->
-            <div class="text-right mt-5">
+            <div class="text-right mt-5 space-x-3">
+              <Button @click="cleanAllForm" severity="warn" label="Limpiar" />
               <Button
                 @click="registerSale"
                 type="button"

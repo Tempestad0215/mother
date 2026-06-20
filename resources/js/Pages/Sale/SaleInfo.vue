@@ -39,7 +39,9 @@ const form = inject(saleKey)!;
 const showClient = ref<boolean>(false);
 const clientFiltered = ref<Array<clientBaseI>>([]);
 const showClientRnc = ref<boolean>(false);
-const client = ref(null);
+const client = defineModel('client', {
+  default: '',
+});
 
 const sequenceData = defineModel<sequenceDataI | null>('sequenceData', {
   default: null,
@@ -102,7 +104,7 @@ const getClient = (data: AutoCompleteOptionSelectEvent) => {
 };
 
 const resetData = () => {
-  client.value = null;
+  client.value = '';
 };
 
 /*
@@ -249,15 +251,13 @@ defineExpose({
       </div>
     </div>
 
-    <fieldset v-else class="field block rounded-md">
-      <legend>
-        {{ form.sequence_type }}
-      </legend>
+    <div v-if="page.props.setting.sequence">
+      <p>{{ form.sequence }}</p>
       <p class=""><strong>NCF :</strong> {{ form.ncf }}</p>
       <p v-if="invoiceType === 'B04'" class="truncate">
         <strong>NCF M. :</strong> {{ form.ncf_m }}
       </p>
-    </fieldset>
+    </div>
 
     <!--Numero de comprobantes-->
     <fieldset v-if="hasRnc" class="field block rounded-md">

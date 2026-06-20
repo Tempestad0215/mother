@@ -31,6 +31,7 @@ const emit = defineEmits<{
   (e: 'retunedBlur'): void;
   (e: 'totalAmount', info: infoSaleI): void;
   (e: 'totalSale'): void;
+  (e: 'sendClientName', name: string): void;
 }>();
 
 //Formulario
@@ -41,7 +42,6 @@ const showProducts = ref(false);
 const showSaleOpen = ref(false);
 const showReturn = ref(false);
 const showFormReturn = ref(false);
-const isReturnSale = ref(false);
 const sendReturnInfo = defineModel('sendReturnInfo', {
   type: Boolean,
   default: false,
@@ -50,12 +50,12 @@ const sendReturnInfo = defineModel('sendReturnInfo', {
 // Obtener el tipo de venta
 const getSaleType = computed(() => {
   return Object.entries(propsW.saleTypeEnum).map(([key, value]) => {
-    let shouldHide = false;
+    let shouldHide: boolean;
 
-    if (isReturnSale.value) {
-      shouldHide = key !== 'Devolucion';
-    } else {
+    if (form.type === 'Ventas') {
       shouldHide = key === 'Devolucion';
+    } else {
+      shouldHide = key !== 'Devolucion';
     }
 
     return {
@@ -64,18 +64,6 @@ const getSaleType = computed(() => {
       hidden: shouldHide,
     };
   });
-});
-
-// Obtener el tipo de factura
-watch(
-  () => form.invoice_type,
-  (newVal) => {
-    form.close_table = newVal === 'Cotizacion' || newVal === 'Devolucion';
-  }
-);
-
-const isRefund = computed((): boolean => {
-  return form.type === 'Devolucion';
 });
 
 /**
@@ -228,8 +216,6 @@ const closeFormReturn = (isReturn: boolean) => {
   showFormReturn.value = false;
 
   // Colocar la variable de devolucion para mostrar o no los datos de la venta
-  isReturnSale.value = isReturn;
-
   // Enviar el evento para mostrar o no los datos de la venta
   if (isReturn) {
     form.type = 'Devolucion';
@@ -254,14 +240,14 @@ defineExpose({
   <!-- Datos del formulario-->
   <div class="flex justify-between items-center mt-3">
     <div class="flex mt-2">
-      <form class="" v-if="!isRefund">
+      <form class="" v-if="!refund">
         <FloatLabel variant="on">
           <InputText />
           <label for="code">Codigo</label>
         </FloatLabel>
       </form>
       <!-- Buscar los datos necesario -->
-      <div v-if="!isRefund" class="ml-3 flex items-center space-x-3">
+      <div v-if="!refund" class="ml-3 flex items-center space-x-3">
         <ShoppingCart
           v-tooltip.bottom="'Productos Disponibles'"
           @click="showProducts = !showProducts"
@@ -287,7 +273,7 @@ defineExpose({
       <!--Tipo de factura-->
       <div v-if="page.props.setting.sequence" class="ml-3">
         <FloatLabel variant="on">
-          <Select :options="propsW.invoiceType" />
+          <Select v-model="form.invoice_type" :options="propsW.invoiceType" />
           <label for="type_sale">Tipo Venta</label>
         </FloatLabel>
       </div>
@@ -297,6 +283,7 @@ defineExpose({
         <FloatLabel variant="on">
           <Select
             fluid
+            :disabled="refund"
             v-model="form.type"
             option-value="value"
             option-label="key"
@@ -309,7 +296,7 @@ defineExpose({
       <!--Tipo de cuenta si abierta o cerrada-->
       <div v-if="!propsW.refund" class="ml-2">
         <ToggleButton
-          :disabled="form.type === 'Cotizacion' || form.type === 'Devolucion'"
+          :disabled="form.type === 'Cotizacion' || refund"
           v-model="form.close_table"
           on-label="Cuenta Cerrada"
           off-label="Cuenta Abierta"
@@ -344,6 +331,7 @@ defineExpose({
   <Dialog v-model:visible="showFormReturn" header="Nota de Creditos / Devolucion">
     <ReturnForm
       class="w-160 mx-auto"
+      @sendClientName="emit('sendClientName', $event)"
       @closeFormReturn="closeFormReturn"
       :error="page.props.errors.general"
     />

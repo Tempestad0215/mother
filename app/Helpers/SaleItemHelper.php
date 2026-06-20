@@ -128,9 +128,8 @@ class SaleItemHelper
                 'uuid' => $update ? $oldItem->uuid : Str::uuid(),
             ])->toArray();
 
+
         }
-
-
 
         // Guardar los datos en la tabla
         SaleItem::upsert($saleItemSave, [
@@ -141,6 +140,7 @@ class SaleItemHelper
             'tax_uuid',
             'warehouse_uuid',
             'price',
+            'price_type',
             'tax_rate',
             'discount',
             'discount_amount',

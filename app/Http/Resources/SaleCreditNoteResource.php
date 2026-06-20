@@ -83,8 +83,6 @@ class SaleCreditNoteResource extends JsonResource
                 );
             }
         }
-
-
         // Verificar si hay items disponibles
         if(count($availableItems) <= 0)
         {

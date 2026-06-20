@@ -12,6 +12,7 @@ class SaleItemDBDto extends BaseDto
      * @param string $warehouse_uuid
      * @param float $stock
      * @param float $price
+     * @param string $price_type
      * @param float $tax_rate
      * @param float $discount
      * @param float $discount_amount
@@ -27,6 +28,7 @@ class SaleItemDBDto extends BaseDto
         public string $warehouse_uuid,
         public float $stock,
         public float $price,
+        public string $price_type,
         public float $tax_rate,
         public float $discount,
         public float $discount_amount,
@@ -51,6 +53,7 @@ class SaleItemDBDto extends BaseDto
             warehouse_uuid: $data['warehouse_uuid'],
             stock: $data['stock'],
             price: $data['price'],
+            price_type: $data['price_type'],
             tax_rate: $data['tax_rate'],
             discount: $data['discount'],
             discount_amount: $data['discount_amount'],

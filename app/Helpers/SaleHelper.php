@@ -60,6 +60,7 @@ class SaleHelper
             $salePayload = SaleDto::fromArray($request->validated());
             //Obtener la configuración
 
+
             //Incrementar la secuencia enviada
             SequenceHelper::incrementSequence($salePayload->invoice_type, $request);
 

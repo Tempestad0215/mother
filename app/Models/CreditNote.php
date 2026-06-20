@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
@@ -32,10 +33,10 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property Carbon $created_at,
  * @property Carbon $updated_at
  * @property Carbon $deleted_at
- * @property ProductTransaction[] $trans
- * @property Sale $sale_id,
+ * @property Collection<int, ProductTransaction> $trans
+ * @property Sale $sale_uuid,
  * @property PaymentTypeEnum $type_payment,
- * @property-read CreditNoteItem $items
+ * @property-read Collection<int, CreditNoteItem> $items
  * @property-read Sale $sale
  * @property float $received
  * @property float $returned
@@ -65,7 +66,7 @@ class CreditNote extends Model implements Auditable
         'invoice_type',
         'client_name',
         'client_rnc',
-        'client_id',
+        'client_uuid',
         'sale_uuid',
         'discount_amount',
         'tax',

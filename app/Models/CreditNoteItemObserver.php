@@ -95,7 +95,7 @@ class CreditNoteItemObserver
             'cost'           => $creditNoteItem->price,
             'stock_before'   => $stockBefore, // 💡 Guardamos el estado anterior
             'stock_after'    => $stockAfter,  // 💡 Guardamos el estado nuevo
-            'inventoryable_uuid'     => $creditNoteItem->credit_note_uuid,
+            'inventoryable_id'     => $creditNoteItem->credit_note_uuid,
             'inventoryable_type'   => CreditNote::class,
         ]);
 

@@ -5,7 +5,9 @@ namespace App\Http\Requests;
 use App\Enums\PaymentTypeEnum;
 use App\Enums\SaleTypeEnum;
 use App\Enums\SequenceSaleTypeEnum;
+use App\Models\Sale;
 use App\Models\Setting;
+use App\Rules\CheckItemCreditNoteRule;
 use App\Rules\CheckStock;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -38,8 +40,16 @@ class  StoreProductSaleRequest extends FormRequest
      */
     public function rules(): array
     {
+
+        $isReturn = $this->input('type') === SaleTypeEnum::Devolucion->value;
+
+
+        /** @var Sale|null| $saleRouteParams */
+        $saleRouteParams = $this->route('sale');
+        
         //datos de configuracion
-        $setting = $this->attributes->get('global_setting');
+        /** @var Setting|null $setting */
+        $setting = $this->attributes->get('app_settings');
 
         // tomar la secuancia de la setting
         $sequence = $setting?->sequence ?? false;
@@ -55,9 +65,9 @@ class  StoreProductSaleRequest extends FormRequest
             'client_id' => ['nullable','integer'],
             'client_rnc' => ['nullable','string','max:20'],
             'info_sale' => ['required','array',Rule::unless(
-                $this->input('type') === SaleTypeEnum::Devolucion->value,
+                $isReturn,
                 new CheckStock()
-            )],
+            ), Rule::when($isReturn, new CheckItemCreditNoteRule($saleRouteParams))],
             'info_sale.*.uuid' => ['nullable','uuid','exists:sale_items,uuid'],
             'info_sale.*.product_uuid' => ['required','uuid','exists:products,uuid'],
             'info_sale.*.code' => ['nullable','string','min:4','max:50'],
@@ -89,6 +99,7 @@ class  StoreProductSaleRequest extends FormRequest
             'comment' => [Rule::requiredIf(Route::is('credit-note.store')),'max:255'],
             'close_table' => ['required','boolean'],
         ];
+
     }
 
 
