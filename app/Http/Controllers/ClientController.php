@@ -5,22 +5,20 @@ namespace App\Http\Controllers;
 use App\Enums\ClientDocumentEnum;
 use App\Enums\ClientTypeEnum;
 use App\Enums\ClientTypePriceEnum;
-use App\Exports\ClientExport;
 use App\Helpers\ClientHelper;
-use App\Http\Resources\ClientCommentResource;
-use App\Models\Client;
 use App\Http\Requests\StoreClientsRequest;
 use App\Http\Requests\UpdateClientsRequest;
-use Illuminate\Contracts\Pagination\Paginator;
+use App\Http\Resources\ClientCommentResource;
+use App\Models\Client;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Inertia\Inertia;
 use Inertia\Response;
-use Maatwebsite\Excel\Facades\Excel;
-use PhpOffice\PhpSpreadsheet\Exception;
 use Throwable;
 
 class ClientController extends Controller implements HasMiddleware
@@ -59,31 +57,18 @@ class ClientController extends Controller implements HasMiddleware
             'search' => ['nullable','string'],
         ]);
 
-        $search = $request->input(['search']);
-        $perPage = $request->input(['per_page']);
-
-
         // Tomar los datos
         $data = $this->getTable($request);
 
+        // Convertir los enums de los datos
         $clientType = collect(ClientTypeEnum::cases())->mapWithKeys(fn(ClientTypeEnum $item) => [$item->name => $item->value]);
         $clientPrice = collect(ClientTypePriceEnum::cases())->mapWithKeys(fn(ClientTypePriceEnum $item) => [$item->name => $item->value]);
         $clientDocument = collect(ClientDocumentEnum::cases())->mapWithKeys(fn(ClientDocumentEnum $item) => [$item->name => $item->value]);
 
-        $query = Client::query();
-
-        if ($search)
-            $query->where('name','like','%'.$search.'%')
-                ->orWhere('email','like','%'.$search.'%');
-
-        $clients = $query->paginate($perPage)->withQueryString();
-
         /*Vista con la pagina*/
         return Inertia::render('Clients/RegisterClient',[
-            'clients' => $data,
-            'search' => $search,
             'typeRNC' => config('appconfig.sequenceSale'),
-            'clientData' => $clients,
+            'clientData' => $data,
             'clientType' => $clientType,
             'clientPrice' => $clientPrice,
             'clientDocument' => $clientDocument,
@@ -193,7 +178,7 @@ class ClientController extends Controller implements HasMiddleware
             ->where('status', true)
             ->when($request->filled('search'), function ($query) use ($search) {
                 $query->where(function ($subQuery) use ($search) {
-                    $subQuery->where('name', 'ILIKE', '%' . $search . '%')
+                    $subQuery->orWhere('name', 'ILIKE', '%' . $search . '%')
                         ->orWhere('phone', 'ILIKE', '%' . $search . '%');
                 });
             })
@@ -208,32 +193,41 @@ class ClientController extends Controller implements HasMiddleware
 
     /**
      * @param Request $request
-     * @return Paginator
+     * @return AnonymousResourceCollection
      */
     private function getTable(Request $request)
     {
         // Tomar los datos
-        $search = trim($request->get('search'));
-        $perPage = $request->get('perPage',30);
+        $search = trim($request->input('search'));
+        $perPage = $request->input('perPage',30);
 
+        $clients = Client::query()
+            ->where('status',true)
+            ->when($request->filled('search'), function ($query) use ($search) {
+                $query->where(function (Builder $subQuery) use ($search) {
+                    $subQuery->where('name','ILIKE','%'.$search.'%')
+                        ->orWhere('email','ILIKE','%'.$search.'%')
+                        ->orWhere('code','ILIKE','%'.$search.'%');
+                });
+
+            })->paginate($perPage)
+            ->withQueryString();
 
         // Buscar en la base de datos
-        return Client::search($search)
-            ->latest('created_at')
-            ->simplePaginate($perPage);
+        return ClientCommentResource::collection($clients);
 
     }
 
 
-    /**
-     * @throws Exception
-     * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
-     */
-    public function exportExcel()
-    {
-
-        return Excel::download(new ClientExport, 'clientes.xlsx');
-    }
+//    /**
+//     * @throws Exception
+//     * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
+//     */
+//    public function exportExcel()
+//    {
+//
+//        return Excel::download(new ClientExport, 'clientes.xlsx');
+//    }
 
 
 

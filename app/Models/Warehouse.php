@@ -14,7 +14,8 @@ use Illuminate\Support\Facades\Cache;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
- * @property int $id
+ * @property string $uuid
+ * @property string $prefix
  * @property string $name
  * @property string $description
  * @property string $location

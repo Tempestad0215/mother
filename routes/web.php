@@ -51,9 +51,7 @@ Route::middleware([
     });
 
     // Dashboard
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard',[\App\Http\Controllers\DashboardController::class,'index'])->name('dashboard');
 
     // Register users list (mantener por ser especial)
     Route::get('/register', function (Request $request) {

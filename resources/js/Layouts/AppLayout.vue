@@ -26,6 +26,12 @@ const isHiddenMenu = ref<boolean>(false);
 // ✅ Menú optimizado para POS
 const menuItems = reactive<MenuItemI[]>([
   {
+    label: 'Dashboard',
+    url: route('dashboard'), // o .create si prefieres
+    activePath: '/dashboard',
+    icon: 'pi pi-user',
+  },
+  {
     label: 'Clientes',
     url: route('client.index'), // o .create si prefieres
     activePath: '/client',

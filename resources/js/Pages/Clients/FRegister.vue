@@ -9,14 +9,14 @@ import {
 import { useForm } from '@inertiajs/vue3';
 import { useRoute } from 'ziggy-js';
 import {
+  Button,
   Card,
+  Divider,
+  FloatLabel,
+  InputMask,
+  InputText,
   Select,
   ToggleSwitch,
-  FloatLabel,
-  InputText,
-  Divider,
-  Button,
-  InputMask,
   useToast,
 } from 'primevue';
 import { Eraser, Forward } from '@lucide/vue';
@@ -155,8 +155,8 @@ const submit = (): void => {
 
         toast.add({
           severity: 'success',
-          summary: 'Actualizado',
-          detail: 'Registro Actualizado Correctamente',
+          summary: 'Registro Creado',
+          detail: 'Registro Creado Correctamente',
           life: 3000,
         });
       },

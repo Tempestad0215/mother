@@ -21,6 +21,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @property string $uuid
+ * @property string $code
  * @property string $name
  * @property SequenceSaleTypeEnum $type_rnc
  * @property string $phone
