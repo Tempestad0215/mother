@@ -51,6 +51,7 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property-read Collection<int, SaleItem> $saleItem
  * @property-read Brand $brand
  * @property-read Tax $tax
+ * @property-read WarehouseProduct $pivot
  * @property-read PurchaseReceiptsItem $receiptsItem
  * @method static create(mixed $validated)
  */

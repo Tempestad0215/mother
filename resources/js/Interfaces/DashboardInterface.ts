@@ -13,11 +13,17 @@ export interface WarehousePivot {
 }
 
 export interface ProductLowStock {
-  uuid: string;
-  code: string;
-  name: string;
-  warehouses: Array<WarehouseI>;
-  total_stock: number;
+  warehouse_uuid: string;
+  warehouse_name: string;
+  critical_products: CriticalProduct[];
+}
+
+export interface CriticalProduct {
+  product_uuid: string;
+  product_code: string;
+  product_name: string;
+  stock_quantity: number;
+  min_stock: number;
 }
 
 interface WarehouseI {

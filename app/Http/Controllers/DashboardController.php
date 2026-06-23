@@ -11,13 +11,14 @@ use App\Models\Warehouse;
 use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class DashboardController extends Controller
 {
 
 
     /**
-     * @return \Inertia\Response
+     * @return Response
      */
     public function index()
     {
@@ -74,7 +75,7 @@ class DashboardController extends Controller
     {
         $hoy = Carbon::today();
 
-        // 1. Métricas clave del día (KPIs)
+        // 1. Métricas clave del día (KPI)
         return [
             'total_sales' => (float) Sale::whereDate('created_at', $hoy)
                 ->where('status', true) // Solo ventas activas
