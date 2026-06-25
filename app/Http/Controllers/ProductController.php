@@ -259,21 +259,29 @@ class ProductController extends Controller implements HasMiddleware
      */
     public function getByCode(Request $request): JsonResponse
     {
-        //conseguir los datos a buscar
         $search = $request->input('search');
 
-
-        //Buscar los datos
-        $data = Product::where('status', true)
-            ->where(function ($query) use ($request, $search) {
-                $query->where('id', $search)
-                    ->orWhere('code', $search)
+        // 1. Buscamos el producto únicamente por su existencia y estado activo
+        $product = Product::with(['warehouses', 'tax', 'priceList'])
+            ->where('status', true)
+            ->where(function ($query) use ($search) {
+                $query->where('code', $search)
                     ->orWhere('bar_code', $search);
-            })->firstOrFail();
+            })
+            ->firstOrFail(); // Si no existe el código de barras en absoluto, tira el 404 real.
 
+        // 2. Evaluamos si el producto cuenta con existencias en sus almacenes cargados
+        // Sumamos la columna de la tabla pivote de las relaciones cargadas en memoria
+        $totalStock = $product->warehouses->sum('pivot.stock_quantity');
 
-        //DEvolver los datos
-        return response()->json($data);
+        if ($totalStock <= 0) {
+            return response()->json([
+                'message' => 'El producto existe pero no cuenta con stock disponible en ningún almacén.'
+            ], 422); // Retornamos un estado unprocesable controlado
+        }
+
+        // 3. Si tiene existencias, devolvemos el recurso formateado con éxito
+        return response()->json(new ProductResource($product));
     }
 
 

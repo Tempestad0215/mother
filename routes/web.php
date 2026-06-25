@@ -6,6 +6,7 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\CreditNoteController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EntryController;
 use App\Http\Controllers\ExchangeController;
 use App\Http\Controllers\InventoryMovementController;
@@ -51,7 +52,7 @@ Route::middleware([
     });
 
     // Dashboard
-    Route::get('/dashboard',[\App\Http\Controllers\DashboardController::class,'index'])->name('dashboard');
+    Route::get('/dashboard',[DashboardController::class,'index'])->name('dashboard');
 
     // Register users list (mantener por ser especial)
     Route::get('/register', function (Request $request) {

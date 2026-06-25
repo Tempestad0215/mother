@@ -62,14 +62,6 @@ const menuItems = reactive<MenuItemI[]>([
     icon: 'pi pi-box',
   },
   {
-    label: 'Nueva Venta',
-    url: route('sale.index'),
-    activePath: '/sale/create',
-    icon: 'pi pi-shopping-cart',
-    // Resaltado especial para POS
-    isPrimary: true,
-  },
-  {
     label: 'Ventas',
     url: route('sale.index'),
     activePath: '/sale',

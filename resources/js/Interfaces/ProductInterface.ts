@@ -81,6 +81,7 @@ export interface ProductTableI {
   inventoried: boolean;
   is_service: boolean;
   name: string;
+  tax_uuid: string;
   price_lists: Array<PriceListProducts>; // O puedes definir una interfaz específica si sabes su estructura
   sku: string | null;
   status: boolean;

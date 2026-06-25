@@ -88,6 +88,7 @@ class ProductResource extends JsonResource
             'unit_uuid'      => $this->unit_uuid ?: null,
             'supplier_uuid'  => $this->supplier_uuid ?: null,
             'category_uuid'  => $this->category_uuid ?: null,
+            'tax_uuid'       => $this->tax_uuid ?: null,
             'tax'       => $this->tax,
 
             // 💰 Valores numéricos e impuestos por lista de precio

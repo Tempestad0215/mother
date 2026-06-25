@@ -2,20 +2,22 @@
 import { invoiceTypeI } from '@/Interfaces/SettingInterface';
 import { usePage } from '@inertiajs/vue3';
 import { ProductTableI } from '@/Interfaces/ProductInterface';
-import { computed, inject, ref, watch } from 'vue';
+import { computed, inject, ref } from 'vue';
 import { infoSaleI, saleDataI, SaleTypeEnumI } from '@/Interfaces/SaleInterface';
 import { saleKey } from '@/utils/keys';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
 import { getSequenceType } from '@/Global/Helpers';
-import { Card, Dialog, FloatLabel, InputText, Select, ToggleButton } from 'primevue';
+import { Card, Dialog, FloatLabel, InputText, Select, ToggleButton, useToast } from 'primevue';
 import FShowProduct from '@/Pages/Products/FShowProduct.vue';
 import { PreciseCalculator } from '@/utils/Decimal';
 import { Grid2X2Plus, ShoppingCart, Undo2 } from '@lucide/vue';
 import { getInfoFromPriceList } from '@/Helpers/ProductHelper';
 import SaleOpenShow from './SaleOpenShow.vue';
 import ReturnForm from '@components/ReturnForm.vue';
+import axios from 'axios';
 
 //Datos de la ventana
+const toast = useToast();
 const page = usePage();
 //Datos del back end
 const propsW = defineProps<{
@@ -52,7 +54,7 @@ const getSaleType = computed(() => {
   return Object.entries(propsW.saleTypeEnum).map(([key, value]) => {
     let shouldHide: boolean;
 
-    if (form.type === 'Ventas') {
+    if (form.type === 'Ventas' || form.type === 'Cotizacion') {
       shouldHide = key === 'Devolucion';
     } else {
       shouldHide = key !== 'Devolucion';
@@ -101,24 +103,65 @@ const getSaleType = computed(() => {
 /**
  * Obtener el producto por codigo
  */
-// const getProductCode =()=> {
-//
-// 	//Verificar que tenga más de 6 caracter
-// 	if (form.code_value.length > 0) {
-// 		//realizar la busqueda en automatico
-// 		axios.get(route('product.get.code', {search: form.code_value}))
-// 			.then((res) => {
-// 				//Formatear los datos
-// 				const product: productFullI = res.data;
-// 				//Pasar los datos al metodo
-// 				//Limpiar campo y errores en caso de tenerlo
-// 			})
-// 			.catch(() => {
-// 				//Mensjae de que no existe en la base de datos
-// 				form.setError('code_value', 'Este Producto no existe en la Base de Datos');
-// 			})
-// 	}
-// }
+const getProductCode = () => {
+  //Verificar que tenga más de 6 caracter
+  if (form.code_value.length > 0) {
+    //realizar la busqueda en automatico
+    axios
+      .get(route('product.get.code', { search: form.code_value }))
+      .then((res) => {
+        //Formatear los datos
+
+        const info = res.data as ProductTableI;
+
+        const getIndex = form.info_sale.findIndex((el) => el.product_uuid === info.uuid);
+        if (getIndex >= 0) {
+          const infoCurrent = form.info_sale[getIndex];
+          infoCurrent.stock += 1.0;
+          emit('totalAmount', infoCurrent);
+          toast.add({
+            severity: 'success',
+            summary: `Producto: ${infoCurrent.product_name}`,
+            detail: `Se Agrego ${infoCurrent.stock} Productos`,
+            life: 3000,
+          });
+        } else {
+          const taxRate = PreciseCalculator.divide(info.tax.rate, 100) ?? 0;
+          const taxAmount = PreciseCalculator.multiply(taxRate.toString(), info.price);
+
+          form.info_sale.push({
+            amount: info.price,
+            price: info.price,
+            price_type: 'price',
+            product_name: info.name,
+            product_uuid: info.uuid,
+            discount: 0,
+            discount_amount: 0,
+            reserved: 0,
+            stock: 1,
+            tax_amount: parseFloat(taxAmount.toString()),
+            tax_rate: parseFloat(taxRate.toString()),
+            tax_uuid: info.tax_uuid,
+            temp_price: 0,
+            warehouse_uuid: info.default_warehouse,
+          });
+        }
+
+        //Pasar los datos al metodo
+        //Limpiar campo y errores en caso de tenerlo
+        form.code_value = '';
+      })
+      .catch(() => {
+        //Mensjae de que no existe en la base de datos
+        toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: `El Codigo: ${form.code_value} No Existe o No Tiene Stock!`,
+          life: 3000,
+        });
+      });
+  }
+};
 
 //Obtener los datos de las cuentas abiertas
 const getSaleOpen = (item: saleDataI) => {
@@ -242,7 +285,7 @@ defineExpose({
     <div class="flex mt-2">
       <form class="" v-if="!refund">
         <FloatLabel variant="on">
-          <InputText />
+          <InputText v-model="form.code_value" @blur="getProductCode" />
           <label for="code">Codigo</label>
         </FloatLabel>
       </form>

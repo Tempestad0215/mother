@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import {
   clientBaseI,
   clientDocumentI,
   clientPriceI,
+  ClientRncI,
   clientTypeI,
 } from '@/Interfaces/ClientInterface';
 import { useForm } from '@inertiajs/vue3';
@@ -17,12 +18,17 @@ import {
   InputText,
   Select,
   ToggleSwitch,
+  useConfirm,
   useToast,
 } from 'primevue';
 import { Eraser, Forward } from '@lucide/vue';
+import axios from 'axios';
 
 const route = useRoute();
 const toast = useToast();
+const confirm = useConfirm();
+
+const rncInvalid = ref(false);
 
 /**
  * propsW de la vantana
@@ -54,11 +60,6 @@ onMounted(() => {
     form.type = propsW.clientEdit.type;
     form.type_price = propsW.clientEdit.type_price;
 
-    //     Informacion de datos de credito
-    // form.amount = propsW.clientEdit.amount ?? 0;
-    // form.due_date = propsW.clientEdit.due_date ?? 0;
-    // form.late_fee = propsW.clientEdit.late_fee ?? 0;
-    // form.balance = propsW.clientEdit.balance ?? 0;
   }
 });
 
@@ -167,46 +168,48 @@ const submit = (): void => {
 // Buscar el RNc si el tipo es diferente a B02
 const searchRNC = async () => {
   // si el rnc es diferete, debe buscar el rnc registrado para cambiar el nombre de la razon socials
-  // if (form.type_rnc !== "B02" && form.personal_id.length > 7)
-  // {
-  //
-  //     // Buscar el rnc
-  //     // const data = await getRncHelper(form.personal_id);
-  //
-  //     // Si el resultado es suspendido
-  //     if (data == "SUSPENDIDO")
-  //     {
-  //         form.setError("type_rnc", "Comprobante suspendido");
-  //         return;
-  //     }
-  //
-  //     // Si el resultado es error
-  //     if (data == "ERROR")
-  //     {
-  //         form.setError("type_rnc", "Error al consultar comprobante, intente nuevamente");
-  //         return;
-  //     }
-  //
-  //
-  //     /*Verificar si es tipo objecto y no es nuelo*/
-  //     if (typeof data === "object" && data !== null)
-  //     {
-  //         Swal.fire({
-  //             title: "Desea Cambiar?",
-  //             text: "RNC Valido, ¿ Prefiere Cambiar El Nombre a la Razon Social ?",
-  //             icon: "question",
-  //             showCancelButton: true,
-  //             confirmButtonColor: "#3085d6",
-  //             cancelButtonColor: "#d33",
-  //             confirmButtonText: "Si, Cambiar!",
-  //             cancelButtonText: "Cancelar",
-  //         }).then((result) => {
-  //             if (result.isConfirmed) {
-  //                 form.name = data.razon_social;
-  //             }
-  //         });
-  //     }
-  // }
+  if (form.personal_id.length > 7) {
+    try {
+      const res = await axios.get(`http://127.0.0.1:8083/api/v1/rnc/${form.personal_id}`);
+
+      const data = res.data as ClientRncI;
+
+      if (data.status === 'SUSPENDIDO') {
+        rncInvalid.value = true;
+        toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'El RNC es inactivo, No Puede Ser Usado.',
+          life: 5000,
+        });
+      } else {
+        confirm.require({
+          message: 'Este Cliente Tiene RNC Disponible, Desea Continuar?',
+          header: 'Confirmation',
+          icon: 'pi pi-exclamation-triangle',
+          rejectProps: {
+            label: 'Cancelar',
+            severity: 'secondary',
+            outlined: true,
+          },
+          acceptProps: {
+            label: 'Utilizar',
+          },
+          accept: () => {
+            rncInvalid.value = false;
+            form.name = data.razon_social;
+          },
+        });
+      }
+    } catch (e) {
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Ha Ocurrido Un Error Al Buscar El RNC, Por Favor Intente Nuevamente.',
+        life: 5000,
+      });
+    }
+  }
 };
 </script>
 
@@ -271,7 +274,10 @@ const searchRNC = async () => {
           </FloatLabel>
           <FloatLabel variant="on">
             <InputMask
+              @blur="searchRNC"
+              :invalid="rncInvalid"
               class="w-full"
+              unmask
               id="personal_id"
               v-model="form.personal_id"
               :mask="selectedMask"
