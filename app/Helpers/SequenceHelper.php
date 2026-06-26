@@ -25,11 +25,8 @@ class SequenceHelper
         //Buscar registro existente
         $exits = Sequence::where('type', $request->input('type'))->latest()->first();
 
-
-
         //Obtner el from nuevo
-        $from =  (int)$request->get('from');
-
+        $from =  (int)$request->input('from');
 
         if ($exits && $from <= $exits->to) {
 

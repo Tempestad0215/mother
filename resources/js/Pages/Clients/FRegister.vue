@@ -23,6 +23,7 @@ import {
 } from 'primevue';
 import { Eraser, Forward } from '@lucide/vue';
 import axios from 'axios';
+import { urlRNC } from '@/Global/Helpers';
 
 const route = useRoute();
 const toast = useToast();
@@ -59,7 +60,6 @@ onMounted(() => {
     form.status = propsW.clientEdit.status;
     form.type = propsW.clientEdit.type;
     form.type_price = propsW.clientEdit.type_price;
-
   }
 });
 
@@ -161,6 +161,14 @@ const submit = (): void => {
           life: 3000,
         });
       },
+      onError: (er) => {
+        toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: `Error, Detalle ${Object.values(er)[0]}`,
+          life: 5000,
+        });
+      },
     });
   }
 };
@@ -170,7 +178,7 @@ const searchRNC = async () => {
   // si el rnc es diferete, debe buscar el rnc registrado para cambiar el nombre de la razon socials
   if (form.personal_id.length > 7) {
     try {
-      const res = await axios.get(`http://127.0.0.1:8083/api/v1/rnc/${form.personal_id}`);
+      const res = await axios.get(`${urlRNC}${form.personal_id}`);
 
       const data = res.data as ClientRncI;
 
@@ -268,10 +276,13 @@ const searchRNC = async () => {
         </div>
         <Divider />
         <div class="grid grid-cols-2 gap-4 items-center justify-center">
-          <FloatLabel variant="on">
-            <InputText id="name" class="w-full" v-model="form.name" />
-            <label for="name">Nombre Completo <span class="text-red-500">*</span></label>
-          </FloatLabel>
+          <div>
+            <FloatLabel variant="on">
+              <InputText id="name" class="w-full" v-model="form.name" />
+              <label for="name">Nombre Completo <span class="text-red-500">*</span></label>
+            </FloatLabel>
+          </div>
+
           <FloatLabel variant="on">
             <InputMask
               @blur="searchRNC"

@@ -350,6 +350,9 @@ const getInfoCreditNote = (data: CreditNoteBalance): void => {
   });
 };
 
+const setName = (name: string) => {
+  client.value = name;
+};
 const cleanAllForm = () => {
   form.reset();
 };
@@ -382,7 +385,7 @@ provide(saleKey, form);
               :sale-open="propsW.saleOpen"
               :invoice-type="propsW.invoiceType"
               :refund="form.type === 'Devolucion'"
-              @sendClientName="(data) => (client = data)"
+              @sendClientName="setName"
               @total-sale=""
               @total-amount="saleTableRef?.calculateItemRow($event)"
               @totalSale="saleTableRef?.calculateTotals()"

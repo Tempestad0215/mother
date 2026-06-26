@@ -1,13 +1,22 @@
 <script setup lang="ts">
-import { invoiceTypeI } from '@/Interfaces/SettingInterface';
+import { invoiceTypeI, sequenceDataI } from '@/Interfaces/SettingInterface';
 import { usePage } from '@inertiajs/vue3';
 import { ProductTableI } from '@/Interfaces/ProductInterface';
 import { computed, inject, ref } from 'vue';
 import { infoSaleI, saleDataI, SaleTypeEnumI } from '@/Interfaces/SaleInterface';
 import { saleKey } from '@/utils/keys';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
-import { getSequenceType } from '@/Global/Helpers';
-import { Card, Dialog, FloatLabel, InputText, Select, ToggleButton, useToast } from 'primevue';
+import { createSequence, getSequenceType } from '@/Global/Helpers';
+import {
+  Card,
+  Dialog,
+  FloatLabel,
+  InputText,
+  Select,
+  SelectChangeEvent,
+  ToggleButton,
+  useToast,
+} from 'primevue';
 import FShowProduct from '@/Pages/Products/FShowProduct.vue';
 import { PreciseCalculator } from '@/utils/Decimal';
 import { Grid2X2Plus, ShoppingCart, Undo2 } from '@lucide/vue';
@@ -44,6 +53,7 @@ const showProducts = ref(false);
 const showSaleOpen = ref(false);
 const showReturn = ref(false);
 const showFormReturn = ref(false);
+const loadingNextSequence = ref(false);
 const sendReturnInfo = defineModel('sendReturnInfo', {
   type: Boolean,
   default: false,
@@ -68,37 +78,55 @@ const getSaleType = computed(() => {
   });
 });
 
+const getSequenceFiltered = computed(() => {
+  const invoiceTypeSelected = form.invoice_type; // El tipo seleccionado en el formulario
+
+  return Object.entries(propsW.invoiceType).map(([_, value]) => {
+    // Definimos si este elemento específico es una Nota de Crédito
+    const isNotaCredito = value.type === 'B04' || value.name?.includes('B04');
+
+    // REGLA: Si este elemento es B04, lo ocultamos SOLO cuando el seleccionado NO sea B04
+    let shouldHide = false;
+    if (isNotaCredito) {
+      shouldHide = invoiceTypeSelected !== 'B04';
+    }
+
+    return {
+      key: value.name,
+      value: value.type,
+      hidden: shouldHide,
+    };
+  });
+});
+
 /**
  * Verificar el tipo de factura
  */
-// const checkInvoiceType = async ()=> {
+// const checkInvoiceType = async () => {
+//   // Verificar si es nota de credito
+//   if (form.invoice_type === 'B04') {
+//     //Resultado de la pregunta
+//     // const result = await Swal.fire({
+//     // 	title: "Desea Colocar Comprobante?",
+//     // 	text: "Registre El Comprobante Del Cliente!",
+//     // 	icon: "question",
+//     // 	showCancelButton: true,
+//     // 	confirmButtonColor: "#3085d6",
+//     // 	cancelButtonColor: "#d33",
+//     // 	confirmButtonText: "Si",
+//     // 	cancelButtonText: "No"
+//     // });
+//     //Verificar la accion
+//     // showClientRnc.value = result.isConfirmed;
+//   }
+//   // else showClientRnc.value = form.invoice_type !== 'B02';
 //
-// 	// Verificar si es nota de credito
-// 	if (form.invoice_type === 'B04') {
-// 		//Resultado de la pregunta
-// 		// const result = await Swal.fire({
-// 		// 	title: "Desea Colocar Comprobante?",
-// 		// 	text: "Registre El Comprobante Del Cliente!",
-// 		// 	icon: "question",
-// 		// 	showCancelButton: true,
-// 		// 	confirmButtonColor: "#3085d6",
-// 		// 	cancelButtonColor: "#d33",
-// 		// 	confirmButtonText: "Si",
-// 		// 	cancelButtonText: "No"
-// 		// });
-//
-// 		//Verificar la accion
-// 		// showClientRnc.value = result.isConfirmed;
-//
-// 	}
-// 	// else showClientRnc.value = form.invoice_type !== 'B02';
-//
-// 	// Solo buscar los datos si es igual a 0 el ID. eso quiere decir que debe generar un comprobante
-// 	if (form.id == 0) {
-// 		//llamar el tipo de boleta
-// 		getSequenceType(form.invoice_type);
-// 	}
-// }
+//   // Solo buscar los datos si es igual a 0 el ID. eso quiere decir que debe generar un comprobante
+//   if (form.uuid == '') {
+//     //llamar el tipo de boleta
+//     getSequenceType(form.invoice_type);
+//   }
+// };
 
 /**
  * Obtener el producto por codigo
@@ -271,6 +299,40 @@ const closeFormReturn = (isReturn: boolean) => {
   });
 };
 
+const getNextSequence = async (event: SelectChangeEvent) => {
+  loadingNextSequence.value = true;
+  const info = event.value as string;
+  try {
+    const res = await axios.get(route('sequence.get', { type: info }));
+
+    const data = res.data as sequenceDataI;
+
+    const restante = parseFloat(PreciseCalculator.subtract(data.to, data.next).toString());
+
+    if (restante <= data.advise) {
+      toast.add({
+        severity: 'warn',
+        summary: 'Advertencia',
+        detail: `El numero de factura se encuentra a ${restante} de los ${data.advise} disponibles!`,
+        life: 3000,
+      });
+    }
+
+    console.log(restante);
+
+    form.ncf = createSequence(data.type, data.next);
+  } catch (err) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'No he posible obtener el siguiente numero de factura!',
+      life: 3000,
+    });
+  } finally {
+    loadingNextSequence.value = false;
+  }
+};
+
 // Exponer los datos para el componente de devoluciones
 defineExpose({
   showReturn,
@@ -314,9 +376,18 @@ defineExpose({
 
     <div class="flex">
       <!--Tipo de factura-->
-      <div v-if="page.props.setting.sequence" class="ml-3">
+      <div v-if="page.props.setting.sequence" class="ml-3 w-40">
         <FloatLabel variant="on">
-          <Select v-model="form.invoice_type" :options="propsW.invoiceType" />
+          <Select
+            fluid
+            option-label="key"
+            option-value="value"
+            @change="getNextSequence"
+            :loading="loadingNextSequence"
+            v-model="form.invoice_type"
+            :option-disabled="(data) => data.hidden"
+            :options="getSequenceFiltered"
+          />
           <label for="type_sale">Tipo Venta</label>
         </FloatLabel>
       </div>

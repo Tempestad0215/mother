@@ -36,7 +36,7 @@ class StoreClientsRequest extends FormRequest
         return [
             'name' => ['required','string','min:4','max:75'],
             'phone' => ['nullable','max:20',Rule::requiredIf($isRequired)],
-            'personal_id' => ['nullable','string','max:50',Rule::requiredIf($isRequired)],
+            'personal_id' => ['nullable','string','max:50',Rule::requiredIf($isRequired),Rule::unique('clients','personal_id')],
             'email'=> ['nullable','string','email','max:150', Rule::unique('clients','email'),Rule::requiredIf($isRequired)],
             'address' => ['nullable','string','max:255',Rule::requiredIf($isRequired)],
             'type_rnc' => ['required',Rule::enum(SequenceSaleTypeEnum::class)],

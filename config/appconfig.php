@@ -10,6 +10,7 @@ return  [
     'maxUser' => 10,
 
     'url_pdf' => env('URL_PDF'),
+    'url_rnc' => env('URL_RNC'),
 
 
 

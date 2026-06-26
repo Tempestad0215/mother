@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import TextInput from '@components/TextInput.vue';
 import { computed, inject, ref, watch } from 'vue';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
-import { clientBaseI } from '@/Interfaces/ClientInterface';
+import { clientBaseI, ClientRncI } from '@/Interfaces/ClientInterface';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faMagnifyingGlass, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { saleKey } from '@/utils/keys';
 import { usePage } from '@inertiajs/vue3';
 import axios from 'axios';
 import { sequenceDataI } from '@/Interfaces/SettingInterface';
 import { useRoute } from 'ziggy-js';
+import { Search } from '@lucide/vue';
 import {
   AutoComplete,
   AutoCompleteCompleteEvent,
@@ -19,11 +19,14 @@ import {
   InputGroup,
   InputGroupAddon,
   InputText,
+  useToast,
 } from 'primevue';
 import FShowClient from '@/Pages/Clients/FShowClient.vue';
+import { urlRNC } from '@/Global/Helpers';
 
 const route = useRoute();
 const page = usePage();
+const toast = useToast();
 
 const propsW = defineProps<{
   invoiceType: string;
@@ -48,7 +51,7 @@ const sequenceData = defineModel<sequenceDataI | null>('sequenceData', {
 });
 
 const hasRnc = computed(() => {
-  return form.invoice_type.trim().toUpperCase() !== 'B02';
+  return form.invoice_type.toUpperCase() !== 'B02';
 });
 
 watch(
@@ -85,12 +88,18 @@ const searchClient = async (event: AutoCompleteCompleteEvent) => {
   }
 };
 
+/**
+ * Obtener el cliente seleccionado
+ * @param data
+ */
 const getClient = (data: AutoCompleteOptionSelectEvent) => {
   const item = data.value as clientBaseI;
   //Pasar los datos al formulario
   form.client_name = item.name;
   form.client_uuid = item.uuid;
   form.client_rnc = item.type_rnc;
+
+  console.log(item);
   // Si es diferente a b02, colocar el comprobante
   if (form.invoice_type !== 'B02') {
     form.client_rnc = item.personal_id || '';
@@ -137,52 +146,80 @@ async function getSequence(type: string) {
         //Crear la secuencia
       } else {
         //Mensaje de error
-        form.setError('sequence', 'Este Comprobante No Puedo Ser');
+        toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error al obtener la secuencia',
+          life: 3000,
+        });
       }
     }
   } catch (err) {
     form.ncf = '';
-    form.setError('ncf', 'No Existe NCF Disponible, Para Esta Serie');
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Error al obtener la secuencia',
+      life: 3000,
+    });
   }
 }
 
 /*
  * Conseguirel RNC del cliente
  */
-async function getRncClient() {
+const getRncClient = async () => {
   //Verificar tis tiene menos de la longitud deseada
   if (form.client_rnc.length < 7) {
     //Poner el mensaje cuando sea menos de la longitud real
-    form.setError('client_rnc', 'El RNC debes contener al menos 8 caracter');
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'El RNC debe tener al menos 7 caracteres',
+      life: 3000,
+    });
   } else {
     //Obtener el resultado de los
-    // const result = await getRncHelper(form.client_rnc);
-    //
-    // //Verificar el estado del RNC
-    // if (result === "SUSPENDIDO")
-    // {
-    // 	form.setError("client_rnc", "Este Contribuyente Esta Suspendido, Por Favor Elegir Otro");
-    //
-    // }else if (result === "ERROR")
-    // {
-    // 	form.setError("client_rnc", "Este Contribuyente No Pudo Ser Encontrado")
-    //
-    // }else if (result === "CANCELLED")
-    // {
-    // 	form.setError("client_rnc", "Este Contribuyente Esta Cancelado");
-    // }else{
-    // 	//Formatear el json
-    // 	const info:rncClientI = result;
-    //
-    // 	//Poner cada dato en su lugar
-    // 	form.client_name = info.razon_social;
-    // 	form.client_rnc_status = info.status;
-    //
-    // 	// Limpiar el formulario
-    // 	form.clearErrors()
-    // }
+    try {
+      const dataClean = form.client_rnc.trim();
+
+      const result = await axios.get(`${urlRNC}${dataClean}`);
+
+      const data = result.data as ClientRncI;
+
+      if (data.status === 'SUSPENDIDO') {
+        toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Este Contribuyente Esta Suspendido, Por Favor Elegir Otro',
+          life: 3000,
+        });
+      } else {
+        client.value = data.razon_social;
+        form.client_name = data.razon_social;
+        form.client_social = data.razon_social;
+        form.client_rnc_status = data.status;
+
+        form.client_rnc = '';
+
+        toast.add({
+          severity: 'success',
+          summary: 'Exito',
+          detail: 'RNC Cargado Correctamente',
+          life: 3000,
+        });
+      }
+    } catch (err) {
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Error al obtener el RNC',
+        life: 3000,
+      });
+      console.log(err);
+    }
   }
-}
+};
 
 defineExpose({
   getSequence,
@@ -221,23 +258,15 @@ defineExpose({
       </div>
 
       <!--RNC del cliente-->
-      <div v-if="hasRnc">
-        <FloatLabel variant="on">
-          <InputText />
-          <label for="rnc">RNC</label>
-        </FloatLabel>
+      <div v-if="hasRnc" class="mt-3">
         <div class="relative">
           <InputGroup>
             <FloatLabel variant="on">
-              <TextInput v-model="form.client_rnc" class="w-full pr-8" type="search" />
+              <InputText v-model="form.client_rnc" class="w-full pr-8" type="search" />
               <label for="client_rnc">RNC</label>
             </FloatLabel>
-            <InputGroupAddon>
-              <FontAwesomeIcon
-                @click="getRncClient"
-                class="absolute flex items-end p-2 top-0 right-0"
-                :icon="faMagnifyingGlass"
-              />
+            <InputGroupAddon @click="getRncClient">
+              <Search />
             </InputGroupAddon>
           </InputGroup>
         </div>
@@ -260,14 +289,14 @@ defineExpose({
     </div>
 
     <!--Numero de comprobantes-->
-    <fieldset v-if="hasRnc" class="field block rounded-md">
-      <legend>Datos Tributario</legend>
+    <div v-if="hasRnc" class="border rounded-lg p-2">
+      <h3 class="font-bold text-center">Datos Tributario</h3>
       <p><strong>RNC :</strong> {{ form.client_rnc }}</p>
       <p class="max-w-75 truncate">
         <strong>Razon Social :</strong>
         {{ form.client_name }}
       </p>
-    </fieldset>
+    </div>
   </div>
   <Dialog class="w-250" header="Listado de Cliente" v-model:visible="showClient" modal>
     <FShowClient :other-component="true" :client-data="propsW.clients" />

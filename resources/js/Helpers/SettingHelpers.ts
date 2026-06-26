@@ -31,4 +31,9 @@ export const itemsSettings: MenuItem[] = [
     url: route('price-list.index'),
     icon: 'pi pi-wallet',
   },
+  {
+    label: 'Secuencia',
+    url: route('sequence.create'),
+    icon: 'pi pi-wallet',
+  },
 ];
