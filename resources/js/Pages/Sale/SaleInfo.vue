@@ -200,8 +200,6 @@ const getRncClient = async () => {
         form.client_social = data.razon_social;
         form.client_rnc_status = data.status;
 
-        form.client_rnc = '';
-
         toast.add({
           severity: 'success',
           summary: 'Exito',

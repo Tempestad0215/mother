@@ -157,6 +157,7 @@ const getProductCode = () => {
           const taxRate = PreciseCalculator.divide(info.tax.rate, 100) ?? 0;
           const taxAmount = PreciseCalculator.multiply(taxRate.toString(), info.price);
 
+          //
           form.info_sale.push({
             amount: info.price,
             price: info.price,
@@ -174,8 +175,6 @@ const getProductCode = () => {
             warehouse_uuid: info.default_warehouse,
           });
         }
-
-        //Pasar los datos al metodo
         //Limpiar campo y errores en caso de tenerlo
         form.code_value = '';
       })
@@ -317,8 +316,6 @@ const getNextSequence = async (event: SelectChangeEvent) => {
         life: 3000,
       });
     }
-
-    console.log(restante);
 
     form.ncf = createSequence(data.type, data.next);
   } catch (err) {
