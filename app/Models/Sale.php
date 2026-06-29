@@ -90,7 +90,8 @@ class Sale extends Model implements Auditable
         'returned',
         'status',
         'close_table',
-        'comment'
+        'comment',
+        'cash_register_uuid'
     ];
 
     //Formatear los datos
@@ -130,6 +131,11 @@ class Sale extends Model implements Auditable
         return $this->hasMany(CreditNote::class, 'sale_uuid', 'uuid');
     }
 
+
+    public function cashRegister(): BelongsTo
+    {
+        return $this->belongsTo(CashRegister::class);
+    }
     /**
      * @return BelongsToMany
      */

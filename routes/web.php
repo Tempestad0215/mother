@@ -3,6 +3,7 @@
 use App\Helpers\UserHelper;
 use App\Http\Controllers\AccontCoController;
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\CashRegisterController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\CreditNoteController;
@@ -27,6 +28,7 @@ use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Middleware\IsAdminMiddleware;
+use App\Models\CashRegister;
 use App\Models\Product;
 use App\Models\PurchaseReceipts;
 use App\Models\Setting;
@@ -127,8 +129,10 @@ Route::middleware([
         'tax' => TaxController::class,
         'branch' => BrandController::class,
         'entry' => EntryController::class,
-        'out' => OutController::class
-    ]);
+        'out' => OutController::class,
+        'cash-register' => CashRegisterController::class
+
+        ]);
 
     Route::get('price-list/product/{product}',[PriceListController::class,'productShow'])
         ->name('price-list.product.show');

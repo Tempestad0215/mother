@@ -10,6 +10,7 @@ use App\Helpers\SaleHelper;
 use App\Http\Requests\StoreProductSaleRequest;
 use App\Http\Resources\SaleCreditNoteResource;
 use App\Http\Resources\UserResource;
+use App\Models\CashRegister;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\Setting;
@@ -37,6 +38,12 @@ class SaleController extends Controller
      */
     public function index(Request $request)
     {
+
+        $exits = CashRegister::checkAvailable();
+
+        if(!$exits){
+            return Inertia::render('CashRegister/OpenView');
+        }
 
         //Verificar si existe la configuración
         $setting = Setting::getGlobal();
