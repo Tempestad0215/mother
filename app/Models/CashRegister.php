@@ -53,6 +53,11 @@ class CashRegister extends Model implements Auditable
         return $this->hasMany(Sale::class);
     }
 
+    public function movements(): HasMany
+    {
+        return $this->hasMany(CashMovement::class);
+    }
+
     /**
      * @return string[]
      */
@@ -67,16 +72,26 @@ class CashRegister extends Model implements Auditable
 
 
     /**
-     * Verifica y retorna la caja activa del usuario para el día de hoy.
-     * * @return bool
+     * Verifica si el usuario tiene una caja activa válida (menos de 12 horas abierta).
+     *
+     * @return bool
      */
-    public static function checkAvailable():bool
+    public static function checkAvailable(): bool
     {
-        // Buscamos una caja donde:
-        return self::where('user_uuid', auth()->user()->uuid) // Sea del usuario actual
-        ->where('status', true)                          // Esté abierta (si true significa activa/abierta)
-        ->whereDate('created_at', Carbon::today())        // Haya sido abierta hoy
-        ->exists();                                       // Retorna el objeto o null si no hay
+        return self::where('user_uuid', auth()->user()->uuid)
+            ->where('status', true)
+            ->where('created_at', '>', now()->subHours(12)) // Abierta hace menos de 12 horas
+            ->exists();
     }
 
+    /**
+     * Retorna el objeto CashRegister si hay una caja que requiere arqueo obligatorio, o null si
+     */
+    public static function hasExpiredRegister(): ?self
+    {
+        return self::where('user_uuid', auth()->user()->uuid)
+            ->where('status', true)
+            ->where('created_at', '<=', now()->subHours(12)) // Superó las 12 horas
+            ->first(); // Nos interesa recuperar la caja específica para poder cerrarla
+    }
 }

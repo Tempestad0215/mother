@@ -39,10 +39,22 @@ class SaleController extends Controller
     public function index(Request $request)
     {
 
-        $exits = CashRegister::checkAvailable();
 
-        if(!$exits){
-            return Inertia::render('CashRegister/OpenView');
+        $hasExpiredCashRegister = CashRegister::hasExpiredRegister();
+
+
+        if($hasExpiredCashRegister){
+            return redirect()->route('cash-register.close',[
+                'cashRegister' => $hasExpiredCashRegister->uuid
+            ]);
+        }
+
+        // 🟢 2. PRIORIDAD MEDIA: ¿No hay caja expirada, pero simplemente no ha abierto caja hoy?
+        $checkAvailable = CashRegister::checkAvailable();
+
+        if (!$checkAvailable) {
+            // Redirigimos a la vista de APERTURA limpia
+            return redirect()->route('cash-register.index');
         }
 
         //Verificar si existe la configuración

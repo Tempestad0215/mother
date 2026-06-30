@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CashRegisterCloseResource;
 use App\Models\CashRegister;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class CashRegisterController extends Controller
 {
@@ -36,6 +39,21 @@ class CashRegisterController extends Controller
 
         // Devolver hacia atras
         return back();
+    }
+
+
+    /**
+     * @param CashRegister $cashRegister
+     * @return Response
+     */
+    public function close(CashRegister $cashRegister)
+    {
+
+        $cashRegister->load(['movements']);
+
+        return Inertia::render('CashRegister/CloseView',[
+            'cashRegister' => new CashRegisterCloseResource($cashRegister),
+        ]);
     }
 
     public function show(CashRegister $cashRegister)

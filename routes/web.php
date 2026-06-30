@@ -112,6 +112,10 @@ Route::middleware([
        Route::get('/get-json', 'getJson')->name('get.json');
     });
 
+    Route::prefix('cash-register')->name('cash-register.')->controller(CashRegisterController::class)->group(function () {
+        Route::get('/close/{cashRegister}', 'close')->name('close');
+    });
+
     /*
      * Resources principales
      */
