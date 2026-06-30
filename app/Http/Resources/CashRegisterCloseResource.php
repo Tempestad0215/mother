@@ -14,7 +14,7 @@ class CashRegisterCloseResource extends JsonResource
     {
 
         $totalExpense = 0;
-        $total
+        $totalVaultDeposit = 0;
         foreach ($this->movements as $movement) {}
 
 
