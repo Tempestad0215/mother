@@ -46,17 +46,17 @@ class ReportSaleHelper
 
             //Para almacenar los datos
             $dataTotal = [
-                'cash' => $data->where('type_payment', PaymentTypeEnum::Contado)->sum('amount'),
+                'cash' => $data->where('type_payment', PaymentTypeEnum::CONTADO)->sum('amount'),
 
-                'credit' => $data->where('type_payment', PaymentTypeEnum::Credito)->sum('amount') ?? 0,
+                'credit' => $data->where('type_payment', PaymentTypeEnum::CREDITO)->sum('amount') ?? 0,
 
                 'check' => $data->where('type_payment', PaymentTypeEnum::Cheque)->sum('amount'),
 
-                'card' => $data->where('type_payment', PaymentTypeEnum::Tarjeta)->sum('amount'),
+                'card' => $data->where('type_payment', PaymentTypeEnum::TARJETA)->sum('amount'),
 
-                'advance' => $data->where('type_payment', PaymentTypeEnum::Anticipo)->sum('amount'),
+                'advance' => $data->where('type_payment', PaymentTypeEnum::ANTICIPO)->sum('amount'),
 
-                'transfer' => $data->where('type_payment', PaymentTypeEnum::Transferencia)->sum('amount'),
+                'transfer' => $data->where('type_payment', PaymentTypeEnum::TRANSFERENCIA)->sum('amount'),
 
                 'tax' => $data->sum('tax'),
 

@@ -13,7 +13,8 @@ class CashRegisterController extends Controller
 {
     public function index()
     {
-        return CashRegister::all();
+
+        return Inertia::render('CashRegister/OpenView');
     }
 
     /**
@@ -38,7 +39,7 @@ class CashRegisterController extends Controller
         ]);
 
         // Devolver hacia atras
-        return back();
+        return redirect()->route('sale.index');
     }
 
 
@@ -54,6 +55,23 @@ class CashRegisterController extends Controller
         return Inertia::render('CashRegister/CloseView',[
             'cashRegister' => new CashRegisterCloseResource($cashRegister),
         ]);
+    }
+
+    public function closeStore(Request $request, CashRegister $cashRegister)
+    {
+        $validate = $request->validate([
+            'physical_cash' => ['required', 'numeric'],
+            'expected_balance' => ['required', 'numeric'],
+        ]);
+
+        $cashRegister->update([
+            'status' => false,
+            'closing_balance' => $validate['physical_cash'],
+            'expected_balance' => $validate['expected_balance'],
+            'closed_at' => now(),
+        ]);
+
+        return redirect()->route('sale.index');
     }
 
     public function show(CashRegister $cashRegister)

@@ -17,7 +17,7 @@ return new class extends Migration
 
             //Datos solo de la ventas
             $table->enum('type', \App\Enums\SaleTypeEnum::cases())->comment('Tipo de Ventas');
-            $table->enum('type_payment',\App\Enums\PaymentTypeEnum::cases())->default(\App\Enums\PaymentTypeEnum::Contado)->comment('Tipo de Pago');
+            $table->enum('type_payment',\App\Enums\PaymentTypeEnum::cases())->default(\App\Enums\PaymentTypeEnum::CONTADO)->comment('Tipo de Pago');
             $table->decimal('received',19,6)->default(0)->comment('Valor Recibido');
             $table->decimal('returned', 19,6)->default(0)->comment('Valor Devuelto');
             $table->boolean('status')->nullable()->default(true)->comment('Estado');

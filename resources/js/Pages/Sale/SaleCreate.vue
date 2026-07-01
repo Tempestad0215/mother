@@ -21,9 +21,10 @@ import SaleFooter from '@/Pages/Sale/SaleFooter.vue';
 import SaleTable from '@/Pages/Sale/SaleTable.vue';
 import PaymentInvoice from '@components/PaymentInvoice.vue';
 import { useRoute } from 'ziggy-js';
-import { Button, Card, Dialog, useToast } from 'primevue';
+import { Breadcrumb, Button, Card, Dialog, useToast } from 'primevue';
 import { CreditNoteBalance } from '@/Interfaces/CreditNoteInterface';
 import { PreciseCalculator } from '@/utils/Decimal';
+import { SaleBreadCrumbs } from '@/Helpers/SaleHelper';
 
 //Datos de la ventana
 const toast = useToast();
@@ -79,7 +80,7 @@ const form = useForm<CreateSaleI>({
   returned: 0,
   general: '',
   type: 'Ventas' as 'Ventas' | 'Devolucion' | 'Cotizacion',
-  type_payment: 'Contado',
+  type_payment: 'CONTADO',
   update: false,
   sequence: '',
   sequence_type: '',
@@ -365,6 +366,9 @@ provide(saleKey, form);
   <!-- Contenido general-->
   <AppLayout>
     <Card>
+      <template #header>
+        <Breadcrumb :model="SaleBreadCrumbs" />
+      </template>
       <template #content>
         <form class="">
           <div>

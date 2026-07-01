@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, ref, watch } from 'vue';
+import { computed, inject, ref } from 'vue';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
 import { clientBaseI, ClientRncI } from '@/Interfaces/ClientInterface';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -54,15 +54,15 @@ const hasRnc = computed(() => {
   return form.invoice_type.toUpperCase() !== 'B02';
 });
 
-watch(
-  () => form.invoice_type,
-  (newVal) => {
-    console.log(newVal);
-  },
-  {
-    deep: true,
-  }
-);
+// watch(
+//   () => form.invoice_type,
+//   (newVal) => {
+//     console.log(newVal);
+//   },
+//   {
+//     deep: true,
+//   }
+// );
 
 const isRefund = computed((): boolean => {
   return form.type === 'Devolucion';
@@ -84,7 +84,12 @@ const searchClient = async (event: AutoCompleteCompleteEvent) => {
       form.client_name = value;
     }
   } catch (err) {
-    console.log(err);
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Error al obtener los datos del cliente',
+      life: 3000,
+    });
   }
 };
 
@@ -214,7 +219,6 @@ const getRncClient = async () => {
         detail: 'Error al obtener el RNC',
         life: 3000,
       });
-      console.log(err);
     }
   }
 };

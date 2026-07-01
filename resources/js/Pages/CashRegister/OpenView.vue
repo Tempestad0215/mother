@@ -3,12 +3,6 @@ import { Card, FloatLabel, InputNumber, Button, Toast, useToast } from 'primevue
 import { useForm, usePage } from '@inertiajs/vue3';
 
 const toast = useToast();
-const page = usePage();
-
-const propsW = defineProps<{
-  cashRegister: any;
-  mustCloseOld: boolean;
-}>();
 
 const form = useForm({
   opening_balance: 0.0,

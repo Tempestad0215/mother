@@ -48,6 +48,7 @@ use Ramsey\Collection\Collection;
  * @property float $credit_notes_amount
  * @property Audit $audits
  * @property string $comment
+ * @property string $cash_register_uuid
  *
  *
  * @property-read Collection<int, SaleItem> $items
