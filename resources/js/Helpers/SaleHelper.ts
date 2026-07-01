@@ -10,5 +10,6 @@ export const SaleBreadCrumbs: MenuItemI[] = [
   },
   {
     label: 'Cierre de Caja',
+    url: route('cash-register.close'),
   },
 ];

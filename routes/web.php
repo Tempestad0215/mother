@@ -113,7 +113,7 @@ Route::middleware([
     });
 
     Route::prefix('cash-register')->name('cash-register.')->controller(CashRegisterController::class)->group(function () {
-        Route::get('/close/{cashRegister}', 'close')->name('close');
+        Route::get('/close', 'close')->name('close');
         Route::patch('/close/store/{cashRegister}', 'closeStore')->name('close.store');
     });
 

@@ -1,14 +1,23 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue';
-import { Button, Card, Divider, FloatLabel, InputNumber, Toast, useToast } from 'primevue';
+import {
+  Breadcrumb,
+  Button,
+  Card,
+  Divider,
+  FloatLabel,
+  InputNumber,
+  Toast,
+  useToast,
+} from 'primevue';
 import { CashRegisterCloseDataI } from '@/Interfaces/CashRegisterInterface';
 import { useForm } from '@inertiajs/vue3';
+import { SaleBreadCrumbs } from '@/Helpers/SaleHelper';
 
 const toast = useToast();
 
 const propsW = defineProps<{
   cashRegister: CashRegisterCloseDataI;
-  mustCloseOld: boolean;
 }>();
 
 const form = useForm({
@@ -59,6 +68,9 @@ const submitClose = () => {
 <template>
   <div class="flex justify-center items-center min-h-screen bg-gray-50 p-4">
     <Card class="w-full max-w-xl shadow-lg">
+      <template #header>
+        <Breadcrumb :model="SaleBreadCrumbs" />
+      </template>
       <template #content>
         <form @submit.prevent="submitClose" class="space-y-5">
           <div class="text-center">

@@ -11,6 +11,9 @@ use Inertia\Response;
 
 class CashRegisterController extends Controller
 {
+    /**
+     * @return Response
+     */
     public function index()
     {
 
@@ -44,13 +47,14 @@ class CashRegisterController extends Controller
 
 
     /**
-     * @param CashRegister $cashRegister
      * @return Response
      */
-    public function close(CashRegister $cashRegister)
+    public function close()
     {
+        $cashRegister = CashRegister::where('user_uuid', auth()->user()->uuid)
+            ->with('movements')
+            ->where('status', true)->first();
 
-        $cashRegister->load(['movements']);
 
         return Inertia::render('CashRegister/CloseView',[
             'cashRegister' => new CashRegisterCloseResource($cashRegister),
