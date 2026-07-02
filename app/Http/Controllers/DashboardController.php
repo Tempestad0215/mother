@@ -40,11 +40,11 @@ class DashboardController extends Controller
         // Consultamos desde los Almacenes
         $warehouses = Warehouse::whereHas('products', function ($query) {
             // Filtramos el stock crítico en la tabla pivote
-            $query->where('warehouse_products.stock_quantity', '<=', 1500);
+            $query->where('warehouse_products.stock_quantity', '<=', 10);
         })
             ->with(['products' => function ($query) {
                 // Cargamos solo los productos que cumplen la condición de stock bajo
-                $query->where('warehouse_products.stock_quantity', '<=', 1500)
+                $query->where('warehouse_products.stock_quantity', '<=', 10)
                     ->where('products.status', true);
             }])
             ->get();

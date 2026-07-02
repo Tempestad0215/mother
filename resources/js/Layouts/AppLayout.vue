@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, reactive, ref } from 'vue';
-import { usePage } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import Divider from '@components/Divider.vue';
 import ImageMenu from '@components/ImageMenu.vue';
 import { useRoute } from 'ziggy-js';
@@ -8,6 +8,15 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faArrowCircleLeft } from '@fortawesome/free-solid-svg-icons';
 import { ConfirmDialog, PanelMenu, ScrollPanel, Toast } from 'primevue';
 import { MenuItemI } from '@/Interfaces/GlobalInterface';
+import {
+  GitBranch,
+  LayoutDashboardIcon,
+  Users,
+  TruckIcon,
+  ShoppingCart,
+  ReceiptIcon,
+  FolderClock,
+} from '@lucide/vue';
 
 // ✅ Elimina: const route = useRoute();
 
@@ -29,31 +38,31 @@ const menuItems = reactive<MenuItemI[]>([
     label: 'Dashboard',
     url: route('dashboard'), // o .create si prefieres
     activePath: '/dashboard',
-    icon: 'pi pi-user',
+    iconComponent: LayoutDashboardIcon,
   },
   {
     label: 'Clientes',
     url: route('client.index'), // o .create si prefieres
     activePath: '/client',
-    icon: 'pi pi-user',
+    iconComponent: Users,
   },
   {
     label: 'Categorías',
     url: route('category.index'),
     activePath: '/category',
-    icon: 'pi pi-sitemap',
+    iconComponent: GitBranch,
   },
   {
     label: 'Proveedores',
     url: route('supplier.index'),
     activePath: '/supplier',
-    icon: 'pi pi-truck',
+    iconComponent: TruckIcon,
   },
   {
     label: 'Compra',
     url: route('purchase.index'),
     activePath: '/product',
-    icon: 'pi pi-shopping-cart',
+    iconComponent: ShoppingCart,
   },
   {
     label: 'Productos',
@@ -65,13 +74,13 @@ const menuItems = reactive<MenuItemI[]>([
     label: 'Ventas',
     url: route('sale.index'),
     activePath: '/sale',
-    icon: 'pi pi-receipt',
+    iconComponent: ReceiptIcon,
   },
   {
     label: 'Reportes',
     url: route('report-sale.index'),
     activePath: '/report',
-    icon: 'pi pi-chart-bar',
+    iconComponent: FolderClock,
   },
 ]);
 
@@ -126,15 +135,31 @@ onUnmounted(() => {
       <Divider />
 
       <PanelMenu orientation="vertical" :model="menuItems">
-        <template #item="{ item }">
-          <a class="block text-xl mx-2" :class="[{ 'text-center': isHiddenMenu }]" :href="item.url">
-            <i class="mr-3 text-center" :class="[item.icon, { 'text-center': isHiddenMenu }]"></i>
-            <span
-              class="ease-in-out transition-[hidden] duration-200"
-              :class="{ hidden: isHiddenMenu }"
-              >{{ item.label }}</span
-            >
-          </a>
+        <template #item="{ item }: { item: MenuItemI }">
+          <Link
+            class="block text-xl mx-2 group"
+            :class="[{ 'text-center': isHiddenMenu }]"
+            :href="item.url"
+          >
+            <div class="flex items-center">
+              <component
+                v-if="item.iconComponent !== undefined"
+                :is="item.iconComponent"
+                class="w-5 h-5 group-hover:text-green-500 duration-300 group-hover:scale-105"
+                :class="{ 'mr-3': !isHiddenMenu }"
+              />
+              <i
+                v-else
+                class="mr-3 text-center group-hover:text-green-500 duration-300 group-hover:scale-105"
+                :class="[item.icon, { 'text-center': isHiddenMenu }]"
+              ></i>
+              <span
+                class="ease-in-out transition-all group-hover:text-green-500 duration-300 group-hover:scale-105"
+                :class="{ hidden: isHiddenMenu }"
+                >{{ item.label }}</span
+              >
+            </div>
+          </Link>
         </template>
       </PanelMenu>
     </aside>

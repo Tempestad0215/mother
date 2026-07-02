@@ -50,3 +50,25 @@ using (
         else 'CONTADO'::sale_type_payment
     end
     );
+
+
+
+-- alter table suppliers drop constraint suppliers_type_payment_check;
+
+alter table suppliers
+alter column type_payment type sale_type_payment
+    using (
+    case
+        when lower(type_payment::text) = 'CONTADO' then 'CONTADO'::sale_type_payment
+        when lower(type_payment::text) = 'CREDITO' then 'CREDITO'::sale_type_payment
+        when lower(type_payment::text) = 'TRANSFERENCIA' then 'TRANSFERENCIA'::sale_type_payment
+        when lower(type_payment::text) = 'ANTICIPO' then 'ANTICIPO'::sale_type_payment
+        when lower(type_payment::text) = 'CHEQUE' then 'CHEQUE'::sale_type_payment
+        else 'CONTADO'::sale_type_payment
+        end
+    );
+
+
+-- alter table clients drop constraint clients_type_check;
+alter table clients alter column type drop default;
+

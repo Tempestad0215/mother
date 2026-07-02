@@ -1,4 +1,5 @@
 import { MenuItem } from 'primevue/menuitem';
+import { Component } from 'vue';
 
 export interface TaxI {
   amount: number;
@@ -14,6 +15,7 @@ export interface LaravelErrorResponse {
 }
 
 export interface MenuItemI extends MenuItem {
+  iconComponent?: Component;
   activePath?: string;
 }
 
@@ -85,7 +87,7 @@ interface MetaI {
   current_page_url: string;
   from: number;
   path: string;
-  per_page: number;
+  per_page: number | string;
   to: number;
   total: number;
 }

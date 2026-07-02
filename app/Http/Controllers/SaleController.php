@@ -44,9 +44,7 @@ class SaleController extends Controller
 
 
         if($hasExpiredCashRegister){
-            return redirect()->route('cash-register.close',[
-                'cashRegister' => $hasExpiredCashRegister->uuid
-            ]);
+            return redirect()->route('cash-register.close');
         }
 
         // 🟢 2. PRIORIDAD MEDIA: ¿No hay caja expirada, pero simplemente no ha abierto caja hoy?

@@ -47,13 +47,18 @@ class CashRegisterController extends Controller
 
 
     /**
-     * @return Response
+     * @return Response|RedirectResponse
      */
-    public function close()
+    public function close(): Response|RedirectResponse
     {
         $cashRegister = CashRegister::where('user_uuid', auth()->user()->uuid)
             ->with('movements')
             ->where('status', true)->first();
+
+        if(!$cashRegister)
+        {
+            return redirect()->route('dashboard');
+        }
 
 
         return Inertia::render('CashRegister/CloseView',[

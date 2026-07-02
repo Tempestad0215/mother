@@ -60,7 +60,21 @@ const createProduct = defineModel<boolean>('createProduct', {
 });
 const isUpdate = ref(false);
 
-const searchData = () => {};
+const searchData = () => {
+  router.get(
+    route('product.index', {
+      search: searchValue.value,
+      per_page: propsW.products.meta.per_page,
+      page: propsW.products.meta.current_page,
+    }),
+    {},
+    {
+      preserveState: true,
+      preserveScroll: true,
+      only: ['products'],
+    }
+  );
+};
 
 const editData = (data: ProductTableI) => {
   selectedProduct.value = data;
@@ -108,35 +122,37 @@ const getPriceFromList = (product: ProductTableI): number => {
 <template>
   <Card>
     <template #title>
-      <div v-if="propsW.isProduct">
-        <Breadcrumb :model="productBreadCrumb" />
-      </div>
-      <div class="flex justify-between items-center">
-        <form @submit.prevent="searchData">
-          <InputGroup class="max-w-60">
-            <InputText v-model="searchValue" placeholder="Buscar" type="search" />
-            <InputGroupAddon @click="searchData">
-              <i class="pi pi-search"></i>
-            </InputGroupAddon>
-          </InputGroup>
-        </form>
-        <Button
-          v-if="component != 'Sale/SaleCreate'"
-          title="Nuevo"
-          class="h-8"
-          label="Producto"
-          @click="createProduct = true"
-        >
-          <template #icon>
-            <SquarePlus />
-          </template>
-        </Button>
+      <div class="m-3">
+        <div v-if="propsW.isProduct">
+          <Breadcrumb :model="productBreadCrumb" />
+        </div>
+        <div class="flex justify-between items-center">
+          <form @submit.prevent="searchData">
+            <InputGroup class="max-w-60">
+              <InputText v-model="searchValue" placeholder="Buscar" type="search" />
+              <InputGroupAddon @click="searchData">
+                <i class="pi pi-search"></i>
+              </InputGroupAddon>
+            </InputGroup>
+          </form>
+          <Button
+            v-if="component != 'Sale/SaleCreate'"
+            title="Nuevo"
+            class="h-8"
+            label="Producto"
+            @click="createProduct = true"
+          >
+            <template #icon>
+              <SquarePlus />
+            </template>
+          </Button>
+        </div>
       </div>
     </template>
     <template #content>
       <DataTable
         paginator
-        :rows="propsW.products.meta.per_page ?? 0"
+        :rows="Number(propsW.products.meta.per_page) ?? 0"
         :loading="!propsW.products.data"
         :value="propsW.products.data"
       >

@@ -11,11 +11,13 @@ class SaleObserver
      */
     public function creating(Sale $sale):void
     {
-        $activeCashRegister = CashRegister::where('user_uuid', auth()->user()->uuid)
-            ->where('status', true)->first();
+        // Obtener la caja activa del usuario
+        $activeCashRegister = CashRegister::getActiveForUser(auth()->user()->uuid);
 
+        // Asignar la caja activa al objeto Sale
         if($activeCashRegister)
         {
+            // Asignar el UUID de la caja activa al campo cash_register_uuid
             $sale->cash_register_uuid = $activeCashRegister->uuid;
         }else{
             // Opción alternativa: Lanzar una excepción si intentan vender sin abrir caja

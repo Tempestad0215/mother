@@ -104,7 +104,7 @@ const form = useForm({
   phone: '',
   email: '',
   address: '',
-  type: propsW.clientEdit ? propsW.clientEdit.type : 'contado',
+  type: propsW.clientEdit ? propsW.clientEdit.type : 'CONTADO',
   document: propsW.clientEdit ? propsW.clientEdit.document : 'cedula',
   amount: 0,
   due_date: 0,

@@ -119,6 +119,7 @@ Route::middleware([
 
     /*
      * Resources principales
+     *
      */
     Route::apiResources([
         'client' => ClientController::class,

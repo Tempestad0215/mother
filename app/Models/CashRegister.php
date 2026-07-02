@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Cache;
 use OwenIt\Auditing\Contracts\Auditable;
 
 
@@ -33,6 +34,7 @@ class CashRegister extends Model implements Auditable
     protected $primaryKey = 'uuid';
     public $incrementing = false;
     protected $keyType = 'string';
+
 
     protected $fillable = [
         'user_uuid',
@@ -93,5 +95,27 @@ class CashRegister extends Model implements Auditable
             ->where('status', true)
             ->where('created_at', '<=', now()->subHours(12)) // Superó las 12 horas
             ->first(); // Nos interesa recuperar la caja específica para poder cerrarla
+    }
+
+
+    /**
+     * Obtiene la caja abierta del usuario desde la caché (o la busca si no existe)
+     */
+    public static function getActiveForUser(string $userUuid): ?self
+    {
+
+        return Cache::remember("user_{$userUuid}_active_cash_register", now()->addHours(12), function () use ($userUuid) {
+            return self::where('user_uuid', $userUuid)
+                ->where('status', 'open')
+                ->first();
+        });
+    }
+
+    /**
+     * Limpia la caché de la caja de un usuario específico
+     */
+    public static function clearCacheForUser(string $userUuid): void
+    {
+        Cache::forget("user_{$userUuid}_active_cash_register");
     }
 }
