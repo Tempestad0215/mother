@@ -19,7 +19,7 @@ const propsW = defineProps<{
 Formulario
  */
 const form = useForm({
-  type_payment: '*',
+  type_payment: null as string | null,
   from: '',
   to: '',
 });
@@ -32,12 +32,12 @@ onMounted(() => {
   if (!propsW.from || !propsW.to) {
     form.from = setHour(1, 0, 0, 0);
     form.to = setHour(23, 59, 0, 0);
-    form.type_payment = '*';
+    form.type_payment = null;
   } else {
     //Colocar los datos de los parametros
     form.from = route().params.from;
     form.to = route().params.to;
-    form.type_payment = route().params.type_payment;
+    form.type_payment = route().params.type_payment ?? null;
   }
 
   //Pasar los datos recolectado
@@ -75,7 +75,7 @@ const infoReport = reactive({
 const typeOption = ref([
   {
     name: 'TODO',
-    value: '*',
+    value: null,
   },
   {
     name: 'CONTADO',
@@ -138,6 +138,7 @@ const submit = () => {
             </FloatLabel>
             <FloatLabel variant="on">
               <Select
+                class="w-40"
                 v-model="form.type_payment"
                 option-value="value"
                 option-label="name"
