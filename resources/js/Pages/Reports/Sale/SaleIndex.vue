@@ -1,16 +1,8 @@
 <script setup lang="ts">
-import AppLayout from '@layout/AppLayout.vue';
-import { Head, useForm } from '@inertiajs/vue3';
-import DateRange from '@components/DateRange.vue';
-import PrimaryButton from '@components/PrimaryButton.vue';
-import InputLabel from '@components/InputLabel.vue';
-import { onMounted, reactive, ref } from 'vue';
-import { getMoney, moneyConfig, setHour } from '@/Global/Helpers';
-import InputError from '@components/InputError.vue';
 import { totalSoldAmountI } from '@/Interfaces/ReportInterface';
 import { saleFullI } from '@/Interfaces/SaleInterface';
-import { route } from 'ziggy-js';
 import { Money } from 'v-money3';
+import { getMoney, moneyConfig } from '@/Global/Helpers';
 
 //Propiedadesd de la ventana
 const propsW = defineProps<{
@@ -81,28 +73,28 @@ const infoReport = reactive({
 // Tipo de pago
 const typeOption = ref([
   {
-    name: 'Todo',
+    name: 'TODO',
     value: '',
   },
   {
-    name: 'cash',
-    value: 'cash',
+    name: 'CONTADO',
+    value: 'CONTADO',
   },
   {
-    name: 'credit',
-    value: 'credit',
+    name: 'CREDITO',
+    value: 'CREDITO',
   },
   {
-    name: 'check',
-    value: 'check',
+    name: 'CHEQUE',
+    value: 'CHEQUE',
   },
   {
-    name: 'transfer',
-    value: 'transfer',
+    name: 'TRANSFERENCIA',
+    value: 'TRANSFERENCIA',
   },
   {
-    name: 'Anticipo',
-    value: 'anticipo',
+    name: 'ANTICIPO',
+    value: 'ANTICIPO',
   },
 ]);
 
@@ -119,11 +111,34 @@ const submit = () => {
 </script>
 
 <template>
-  <!--    Titulo de la ventana-->
-  <Head title="Reporte Ventas" />
-
   <!--    Contenido de la ventana-->
   <AppLayout>
+    <Card>
+      <template #title>
+        <div class="text-center">
+          <h3 class="text-3xl font-bold">Reportes de Ventas</h3>
+          <form action="">
+            <FloatLabel variant="on">
+              <DatePicker />
+              <label for=""></label>
+            </FloatLabel>
+          </form>
+        </div>
+      </template>
+      <template #header> </template>
+      <template #content>
+        <div></div>
+        <Divider />
+        <DataTable>
+          <Column header="CODIGO" />
+          <Column header="NCF" />
+          <Column header="ITBIS" />
+          <Column header="DESCUENTO" />
+          <Column header="TOTAL" />
+          <Column header="TIPO PAGO" />
+        </DataTable>
+      </template>
+    </Card>
     <div class="fondo rounded-md p-5">
       <h3 class="title text-center">Reportes de Ventas</h3>
       <form @submit.prevent="submit" class="mt-5">
