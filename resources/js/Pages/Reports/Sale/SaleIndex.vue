@@ -20,8 +20,8 @@ Formulario
  */
 const form = useForm({
   type_payment: null as string | null,
-  from: '',
-  to: '',
+  from: new Date() as Date | null,
+  to: new Date() as Date | null,
 });
 
 /*
@@ -30,17 +30,21 @@ Al momento de cargar
 onMounted(() => {
   //colocar la fecha del dia
   if (!propsW.from || !propsW.to) {
-    form.from = setHour(1, 0, 0, 0);
-    form.to = setHour(23, 59, 0, 0);
+    console.log(propsW);
+    form.from = new Date();
+    form.to = new Date();
     form.type_payment = null;
   } else {
+    const hasFrom = route().params.hasOwnProperty('from');
+    const hasTo = route().params.hasOwnProperty('to');
+
     //Colocar los datos de los parametros
-    form.from = route().params.from;
-    form.to = route().params.to;
+    form.from = hasFrom ? new Date(route().params.from) : new Date();
+    form.to = hasTo ? new Date(route().params.to) : new Date();
     form.type_payment = route().params.type_payment ?? null;
   }
 
-  //Pasar los datos recolectado
+  //Pasar los datos recolectados
   if (propsW.total) {
     infoReport.totalSold = propsW.totalSold ?? 0;
     infoReport.cash = propsW.total.cash ?? 0;
@@ -123,13 +127,13 @@ const submit = () => {
 
       <template #content>
         <div>
-          <form class="my-3 flex gap-5" action="">
+          <form @submit.prevent="submit()" class="my-3 flex gap-5">
             <FloatLabel variant="on">
-              <DatePicker />
+              <DatePicker v-model="form.from" />
               <label for="date_start">Fecha Inicial</label>
             </FloatLabel>
             <FloatLabel variant="on">
-              <DatePicker />
+              <DatePicker v-model="form.to" />
               <label for="date_start">Fecha Inicial</label>
             </FloatLabel>
             <FloatLabel variant="on">
@@ -147,7 +151,7 @@ const submit = () => {
               <label for="type_payment">Tipo Pago</label>
             </FloatLabel>
             <div class="flex items-center justify-center">
-              <Button>
+              <Button type="submit">
                 Buscar
                 <FileSearchIcon />
               </Button>

@@ -80,7 +80,7 @@ class CashRegisterController extends Controller
             'closed_at' => now(),
         ]);
 
-        return redirect()->route('sale.index');
+        return redirect()->route('dashboard');
     }
 
     public function show(CashRegister $cashRegister)

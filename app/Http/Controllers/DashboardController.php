@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\SaleTypeEnum;
 use App\Http\Resources\DTopProductResource;
 use App\Http\Resources\DWarehouseStockLowResource;
 use App\Models\CreditNote;
@@ -59,6 +60,10 @@ class DashboardController extends Controller
     private function topProduct()
     {
         $data = Product::where('status', true)
+            ->whereHas('saleItem.sale', function ($query) {
+                $query->where('type', '=', SaleTypeEnum::Ventas);
+                // O si manejas estados positivos: ->where('status', 'COMPLETADA');
+            })
             ->withSum('saleItem as total_qty', 'stock')
             ->orderBy('total_qty', 'desc')
             ->take(5)

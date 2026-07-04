@@ -76,12 +76,12 @@ const menuItems = reactive<MenuItemI[]>([
     activePath: '/sale',
     iconComponent: ReceiptIcon,
   },
-  {
-    label: 'Reportes',
-    url: route('report-sale.index'),
-    activePath: '/report',
-    iconComponent: FolderClock,
-  },
+  // {
+  //   label: 'Reportes',
+  //   url: route('report-sale.index'),
+  //   activePath: '/report',
+  //   iconComponent: FolderClock,
+  // },
 ]);
 
 // const isActive = (activePath: string): boolean => {

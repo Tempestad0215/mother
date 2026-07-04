@@ -13,7 +13,7 @@ class EnsureCashRegisterIsOpenMiddleware
 
         $activeCashRegister = CashRegister::getActiveForUser(auth()->user()->uuid);
 
-        if(!$activeCashRegister && $request->routeIs('sale.*'))
+        if(!$activeCashRegister && $request->routeIs('sale.*') && $request->routeIs('cash-register.close'))
         {
             // ...lo rebotamos al dashboard o a una vista segura con un mensaje de alerta
             return redirect()->route('dashboard')

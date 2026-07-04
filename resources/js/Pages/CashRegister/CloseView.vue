@@ -1,18 +1,8 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue';
-import {
-  Breadcrumb,
-  Button,
-  Card,
-  Divider,
-  FloatLabel,
-  InputNumber,
-  Toast,
-  useToast,
-} from 'primevue';
 import { CashRegisterCloseDataI } from '@/Interfaces/CashRegisterInterface';
 import { useForm } from '@inertiajs/vue3';
 import { SaleBreadCrumbs } from '@/Helpers/SaleHelper';
+import { useToast } from 'primevue';
 
 const toast = useToast();
 
@@ -59,9 +49,6 @@ const submitClose = () => {
       });
     },
   });
-
-  // Aquí disparas tu post de Inertia o axios enviando 'physicalCash.value'
-  console.log('Enviando cierre con efectivo físico:', form.physical_cash);
 };
 </script>
 
