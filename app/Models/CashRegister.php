@@ -106,7 +106,7 @@ class CashRegister extends Model implements Auditable
 
         return Cache::remember("user_{$userUuid}_active_cash_register", now()->addHours(12), function () use ($userUuid) {
             return self::where('user_uuid', $userUuid)
-                ->where('status', 'open')
+                ->where('status', true)
                 ->first();
         });
     }

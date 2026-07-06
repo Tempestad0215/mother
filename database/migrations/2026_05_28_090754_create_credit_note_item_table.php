@@ -34,7 +34,7 @@ return new class extends Migration
             // $table->foreign('credit_note_id')->references('id')->on('credit_notes')->onDelete('cascade');
             // $table->foreign('product_uuid')->references('uuid')->on('products'); // Asumiendo que tu tabla es 'products'
 
-            $table->index(['credit_note_id', 'product_uuid']);
+            $table->index(['credit_note_uuid', 'product_uuid']);
         });
     }
 

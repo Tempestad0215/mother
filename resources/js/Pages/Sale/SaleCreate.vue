@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useForm, usePage } from '@inertiajs/vue3';
+import { Link, useForm, usePage } from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
 import { onMounted, onUpdated, provide, Ref, ref, watch } from 'vue';
 import { ProductTableI } from '@/Interfaces/ProductInterface';
@@ -13,7 +13,7 @@ import {
   WarehouseMapType,
 } from '@/Interfaces/SaleInterface';
 import { invoiceTypeI } from '@/Interfaces/SettingInterface';
-import { PaginationI } from '@/Interfaces/GlobalInterface';
+import { MenuItemI, PaginationI } from '@/Interfaces/GlobalInterface';
 import SaleInfo from '@/Pages/Sale/SaleInfo.vue';
 import SaleDetail from '@/Pages/Sale/SaleDetail.vue';
 import { saleKey } from '@/utils/keys';
@@ -25,6 +25,7 @@ import { Breadcrumb, Button, Card, Dialog, useToast } from 'primevue';
 import { CreditNoteBalance } from '@/Interfaces/CreditNoteInterface';
 import { PreciseCalculator } from '@/utils/Decimal';
 import { SaleBreadCrumbs } from '@/Helpers/SaleHelper';
+import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
 
 //Datos de la ventana
 const toast = useToast();
@@ -367,7 +368,7 @@ provide(saleKey, form);
   <AppLayout>
     <Card>
       <template #header>
-        <Breadcrumb :model="SaleBreadCrumbs" />
+        <BreadCrumbComponent :item-options="SaleBreadCrumbs" />
       </template>
       <template #content>
         <form class="">

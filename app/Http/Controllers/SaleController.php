@@ -9,6 +9,7 @@ use App\Helpers\ProductHelper;
 use App\Helpers\SaleHelper;
 use App\Http\Requests\StoreProductSaleRequest;
 use App\Http\Resources\SaleCreditNoteResource;
+use App\Http\Resources\SaleInfoResource;
 use App\Http\Resources\UserResource;
 use App\Models\CashRegister;
 use App\Models\Product;
@@ -39,9 +40,8 @@ class SaleController extends Controller
     public function index(Request $request)
     {
 
-
+        //
         $hasExpiredCashRegister = CashRegister::hasExpiredRegister();
-
 
         if($hasExpiredCashRegister){
             return redirect()->route('cash-register.close');
@@ -326,5 +326,66 @@ class SaleController extends Controller
     public function counter()
     {
         return Inertia::render('Sale/MoneyCounter');
+    }
+
+
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    public function showSold(Request $request): Response
+    {
+        return Inertia::render('Sale/Sold/SaleSold',[
+            'sales' => []
+        ]);
+    }
+
+
+    public function getSold(Request $request)
+    {
+
+        $validate = $request->validate([
+            'from' => ['nullable', 'date'],
+            'to' => ['nullable', 'date'],
+            'type' => ['nullable', 'string'],
+        ]);
+        // 1. Recogemos los filtros del formulario de Vue
+        $from = Carbon::parse($request->input('from'))
+            ->setTimezone('America/Santo_Domingo')
+            ->startOfDay();
+        $to = Carbon::parse($request->input('to'))->setTimezone('America/Santo_Domingo')
+            ->startOfDay();
+
+        $type = $request->input('type');
+
+
+
+        // 2. Construimos la consulta con Eloquent
+        $query = Sale::query()
+            ->with(['items', 'client'])
+            ->where('close_table', true);
+
+        if ($request->filled('from')) {
+            $query->whereDate('created_at', '>=', $from);
+        }
+
+        if ($request->filled('to')) {
+            $query->whereDate('created_at', '<=', $to);
+        }
+
+        if ($request->filled('type')) {
+
+            $query->where('type', $type);
+        }
+
+        // 3. Obtenemos los resultados
+        $sales = $query->latest()->get();
+
+
+        // 4. VOLVEMOS A RENDERIZAR el mismo componente, pasándole los datos de las ventas
+        return Inertia::render('Sale/Sold/SaleSold', [
+            'sales' => SaleInfoResource::collection($sales),
+            'filters' => $request->all(), // Opcional: para mantener los campos llenos tras la búsqueda
+        ]);
     }
 }

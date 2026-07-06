@@ -75,34 +75,6 @@ const infoReport = reactive({
   gross: 0,
 });
 
-// Tipo de pago
-const typeOption = ref([
-  {
-    name: 'TODO',
-    value: null,
-  },
-  {
-    name: 'CONTADO',
-    value: 'CONTADO',
-  },
-  {
-    name: 'CREDITO',
-    value: 'CREDITO',
-  },
-  {
-    name: 'CHEQUE',
-    value: 'CHEQUE',
-  },
-  {
-    name: 'TRANSFERENCIA',
-    value: 'TRANSFERENCIA',
-  },
-  {
-    name: 'ANTICIPO',
-    value: 'ANTICIPO',
-  },
-]);
-
 /*
 Funciones
  */

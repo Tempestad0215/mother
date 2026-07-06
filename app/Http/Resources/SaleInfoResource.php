@@ -5,33 +5,14 @@ namespace App\Http\Resources;
 use App\Enums\SaleTypeEnum;
 use App\Models\Client;
 use App\Models\Comment;
+use App\Models\Sale;
 use App\Models\SaleItem;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;
 
 /**
- * @property string $uuid
- * @property string $invoice_type
- * @property string $ncf
- * @property string $ncf_m
- * @property string $code
- * @property Client $client
- * @property string $client_name
- * @property string $client_uuid
- * @property float $discount
- * @property float $discount_amount
- * @property float $tax
- * @property float $sub_total
- * @property float $amount
- * @property boolean $status
- * @property SaleTypeEnum $type
- * @property bool $close_table
- * @property Carbon $created_at
- * @property Carbon $updated_at
- * @property Carbon $deleted_at
- * @property SaleItem[] $items
- * @property Comment $comment
+* @mixin Sale
  */
 class SaleInfoResource extends JsonResource
 {

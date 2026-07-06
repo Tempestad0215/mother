@@ -28,7 +28,6 @@ use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Middleware\IsAdminMiddleware;
-use App\Models\CashRegister;
 use App\Models\Product;
 use App\Models\PurchaseReceipts;
 use App\Models\Setting;
@@ -170,13 +169,15 @@ Route::middleware([
     /*
      * Rutas específicas de ventas
      */
-    Route::prefix('sale')->name('sale.')->group(function () {
-        Route::get('/refund/{code}', [SaleController::class, 'refund'])->name('refund');
-        Route::get('/close', [SaleController::class, 'close'])->name('close');
-        Route::post('/close/get', [SaleController::class, 'getClose'])->name('get.close');
-        Route::get('/counter', [SaleController::class, 'counter'])->name('counter');
-        Route::patch('/item/destroy/{product}/{sale}', [SaleController::class, 'destroyItem'])->name('destroy.item');
-        Route::patch('/destroy/{sale}/{inventoried}', [SaleController::class, 'destroySale'])->name('destroy-sale');
+    Route::prefix('sale')->controller(SaleController::class)->name('sale.')->group(function () {
+        Route::get('/get/sold', 'showSold')->name('show-sold');
+        Route::post('/get/sold', 'getSold')->name('get-sold');
+        Route::get('/refund/{code}', 'refund')->name('refund');
+        Route::get('/close',  'close')->name('close');
+        Route::post('/close/get',  'getClose')->name('get.close');
+        Route::get('/counter',  'counter')->name('counter');
+        Route::patch('/item/destroy/{product}/{sale}',  'destroyItem')->name('destroy.item');
+        Route::patch('/destroy/{sale}/{inventoried}',  'destroySale')->name('destroy-sale');
     });
 
     /*
