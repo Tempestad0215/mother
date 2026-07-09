@@ -1,9 +1,22 @@
 <script setup lang="ts">
 import { SaleBreadCrumbs, saleTypeOptions } from '@/Helpers/SaleHelper';
-import { useToast } from 'primevue';
+import {
+  useToast,
+  Card,
+  DataTable,
+  Column,
+  Button,
+  Select,
+  DatePicker,
+  FloatLabel,
+  Divider,
+} from 'primevue';
 import { saleDataI } from '@/Interfaces/SaleInterface';
 import { Eye, Printer } from '@lucide/vue';
 import { getMoney, printPdf } from '@/Global/Helpers';
+import { useForm } from '@inertiajs/vue3';
+import AppLayout from '@layout/AppLayout.vue';
+import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
 
 const toast = useToast();
 

@@ -2,7 +2,17 @@
 import { CashRegisterCloseDataI } from '@/Interfaces/CashRegisterInterface';
 import { useForm } from '@inertiajs/vue3';
 import { SaleBreadCrumbs } from '@/Helpers/SaleHelper';
-import { useToast } from 'primevue';
+import {
+  Card,
+  useToast,
+  Button,
+  Toast,
+  InputNumber,
+  Divider,
+  Breadcrumb,
+  FloatLabel,
+} from 'primevue';
+import { computed, onMounted } from 'vue';
 
 const toast = useToast();
 

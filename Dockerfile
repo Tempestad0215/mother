@@ -1,79 +1,47 @@
 # ==========================================
-# ETAPA 1: Compilar el Frontend (Vue + TS + Vite)
+# ETAPA 1: Compilar el Frontend (Vue + TS)
 # ==========================================
-FROM node:22-alpine AS frontend-builder
+FROM node:20-alpine AS frontend-builder
 WORKDIR /app
-
-# Copiar archivos de dependencias de Node
-COPY package.json pnpm-lock.yaml* package-lock.json* ./
-
-# Instalar pnpm de forma global e instalar dependencias del proyecto
+COPY package.json pnpm-lock.yaml* ./
 RUN npm install -g pnpm && pnpm install --frozen-lockfile
-
-# Copiar el resto del código para la compilación de la interfaz
 COPY . .
-
-# Compilar los assets de producción (Vite procesa Vue y TS aquí)
-RUN pnpm build
-
+RUN pnpm run build
 
 # ==========================================
-# ETAPA 2: Aplicación de Producción (PHP 8.4 + Nginx)
+# ETAPA 2: Imagen de Producción (PHP + Composer)
 # ==========================================
-FROM php:8.4-fpm-alpine AS backend
+FROM php:8.4-fpm-alpine
 
-# Instalar dependencias del sistema (Agregamos Nginx y Supervisor)
-RUN apk add --no-cache \
-    nginx \
-    supervisor \
-    bash \
-    libpq-dev \
-    libzip-dev \
-    zip \
-    unzip \
-    git \
-    curl \
-    icu-dev
+# 1. Instalar dependencias del sistema, herramientas de compresión y extensiones PHP
+# 1. Instalar dependencias esenciales (evitando LLVM pesado)
+RUN apk add --no-cache libpq-dev postgresql-client zip unzip git \
+    && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS postgresql-dev \
+    && docker-php-ext-install pdo_pgsql pgsql opcache \
+    && apk del .build-deps
 
-# Instalar y habilitar las extensiones nativas de PHP indispensables (Tus librerías de Postgres)
-RUN docker-php-ext-install \
-    pdo_pgsql \
-    pgsql \
-    zip \
-    bcmath \
-    intl \
-    opcache
+# 2. Instalar Composer de forma oficial copiándolo desde su imagen interna
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Copiar Composer globalmente desde su imagen oficial
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+WORKDIR /var/www/html
 
-# Configurar el directorio de trabajo dentro del contenedor
-WORKDIR /var/www
+# 3. Copiar archivos de dependencias de PHP primero (Optimiza la caché de Docker)
+COPY composer.json composer.lock* ./
 
-# Copiar los archivos de dependencias primero (Aprovechamiento de caché de capas)
-COPY composer.json composer.lock ./
+# 4. Instalar dependencias de Laravel para producción (Sin dev-dependencies, optimizado)
+RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist
 
-# Tu corrección de phpspreadsheet para ignorar ext-gd
-RUN composer install --no-scripts --no-autoloader --no-dev --prefer-dist --ignore-platform-req=ext-gd
-
-# Copiar todo el código fuente de tu aplicación Laravel al contenedor
+# 5. Copiar el resto del código fuente del proyecto
 COPY . .
 
-# 🟢 LA MAGIA: Traer los assets compilados por Node en la ETAPA 1 a la carpeta pública de Laravel
+# 6. Copiar los assets compilados de Vue desde la Etapa 1
 COPY --from=frontend-builder /app/public/build ./public/build
 
-# Generar el autoloader optimizado de Composer
-RUN composer dump-autoload --optimize --classmap-authoritative
+# 7. Generar el autoloader optimizado de Composer una vez que todo el código está copiado
+RUN composer dump-autoload --optimize
 
-# Asegurar los permisos correctos para las carpetas de almacenamiento y caché de Laravel
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+# 8. Configurar los permisos correctos para Laravel
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Copiar configuraciones para que Nginx y Supervisor controlen los procesos
-COPY ./docker/nginx.conf /etc/nginx/nginx.conf
-COPY ./docker/supervisord.conf /etc/supervisord.conf
-
-# 🟢 Cambiamos el puerto expuesto al 80, que es el que Nginx usará para servir la web
-EXPOSE 80
-
-# Supervisor se encargará de encender Nginx y PHP-FPM en simultáneo
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+EXPOSE 9000
+CMD ["php-fpm", "-F"]

@@ -23,7 +23,7 @@ export const SaleBreadCrumbs: MenuItemI[] = [
   },
 ];
 
-export const saleTypeOptions = ref([
+export const saleTypeOptions = [
   {
     name: 'TODO',
     value: null,
@@ -48,4 +48,4 @@ export const saleTypeOptions = ref([
     name: 'ANTICIPO',
     value: 'ANTICIPO',
   },
-]);
+];
