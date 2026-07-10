@@ -13,34 +13,57 @@ RUN pnpm run build
 # ==========================================
 FROM php:8.4-fpm-alpine
 
-# 1. Instalar dependencias del sistema, herramientas de compresión y extensiones PHP
-# 1. Instalar dependencias esenciales (evitando LLVM pesado)
-RUN apk add --no-cache libpq-dev postgresql-client zip unzip git \
-    && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS postgresql-dev \
-    && docker-php-ext-install pdo_pgsql pgsql opcache \
-    && apk del .build-deps
+# 1. Instalar dependencias del sistema + todas las librerías necesarias
+RUN apk add --no-cache \
+    postgresql-client \
+    libpq-dev \
+    zip \
+    unzip \
+    git \
+    freetype-dev \
+    libjpeg-turbo-dev \
+    libpng-dev \
+    libwebp-dev \
+    libzip-dev \
+    icu-dev \
+    libxml2-dev
 
-# 2. Instalar Composer de forma oficial copiándolo desde su imagen interna
+# 2. Instalar TODAS las extensiones PHP necesarias
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-install -j$(nproc) \
+        pdo_pgsql \
+        pgsql \
+        opcache \
+        gd \
+        bcmath \
+        intl \
+        zip \
+        exif \
+        soap \
+        sockets \
+        pcntl
+
+# 3. Instalar Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# 3. Copiar archivos de dependencias de PHP primero (Optimiza la caché de Docker)
+# 4. Copiar composer.json primero (para caché)
 COPY composer.json composer.lock* ./
 
-# 4. Instalar dependencias de Laravel para producción (Sin dev-dependencies, optimizado)
+# 5. Instalar dependencias de Laravel
 RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist
 
-# 5. Copiar el resto del código fuente del proyecto
+# 6. Copiar el resto del código
 COPY . .
 
-# 6. Copiar los assets compilados de Vue desde la Etapa 1
+# 7. Copiar assets de Vue
 COPY --from=frontend-builder /app/public/build ./public/build
 
-# 7. Generar el autoloader optimizado de Composer una vez que todo el código está copiado
+# 8. Generar autoloader optimizado
 RUN composer dump-autoload --optimize
 
-# 8. Configurar los permisos correctos para Laravel
+# 9. Configurar permisos
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
 EXPOSE 9000
