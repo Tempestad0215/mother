@@ -1,10 +1,40 @@
-name: laravel-mother
-services:
-    nginx:
-        image: nginx:1.27.3-alpine-slim
-        restart: unless-stopped
-        container_name: webserver
-        volumes:
-            - ./docker/nginx.conf:/etc/nginx/nginx.conf
-            - ./docker
+version: '3.8'
 
+services:
+    # ==========================================
+    # Backend PHP-FPM (Imagen Real Autocontenida)
+    # ==========================================
+    laravel.app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: mother-app
+        restart: always
+        env_file:
+            - .env
+        expose:
+            - "9000"
+        networks:
+            - api-net
+
+    # ==========================================
+    # Servidor Web Nginx
+    # ==========================================
+    nginx:
+        image: nginx:alpine
+        container_name: mother-nginx
+        restart: always
+        ports:
+            - "8090:8090"
+        volumes:
+            # 🟢 Quitamos el "." y mapeamos SOLO tu archivo de configuración de Nginx
+            - ./docker/default.conf:/etc/nginx/conf.d/default.conf
+        # 🟢 IMPORTANTE: Le dice a Nginx que comparta las carpetas internas de laravel.app (donde SÍ existe vendor)
+        depends_on:
+            - laravel.app
+        networks:
+            - api-net
+
+networks:
+    api-net:
+        external: true

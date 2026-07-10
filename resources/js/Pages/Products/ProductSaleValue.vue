@@ -173,10 +173,10 @@ const getInfoFromPriceList = async () => {
           locale="en-US"
           :max-fraction-digits="2"
           fluid
-          id="sale_special_price"
+          id="sale_promotional_price"
           v-model="form.promotional_price"
         />
-        <label for="sale_special_price">Precio Especial</label>
+        <label for="sale_promotional_price">Precio Promocional</label>
       </FloatLabel>
     </div>
     <div

@@ -14,16 +14,19 @@ import money from 'v-money';
 
 import { createVfm } from 'vue-final-modal';
 import { ConfirmationService, ToastService } from 'primevue';
+import { Tooltip } from 'primevue';
 import { createPinia } from 'pinia';
+import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 
 const vfm = createVfm();
 const pinia = createPinia();
 
 createInertiaApp({
-  resolve: (name) => {
-    const pages = import.meta.glob<DefineComponent>('./Pages/**/*.vue', { eager: true });
-    return pages[`./Pages/${name}.vue`];
-  },
+  resolve: (name) =>
+    resolvePageComponent(
+      `./Pages/${name}.vue`,
+      import.meta.glob<DefineComponent>('./Pages/**/*.vue')
+    ),
   setup({ el, App, props, plugin }) {
     createApp({ render: () => h(App, props) })
       .use(plugin)
@@ -39,6 +42,7 @@ createInertiaApp({
       })
       .use(ConfirmationService)
       .use(ToastService)
+      .directive('tooltip', Tooltip)
       .mount(el);
   },
 }).then(() => {});

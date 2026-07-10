@@ -6,15 +6,16 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Str;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
- * @property int $id
+ * @property string $uuid
+ * @property string $prefix
  * @property string $name
  * @property string $description
  * @property string $location
@@ -36,6 +37,8 @@ class Warehouse extends Model implements Auditable
     public $incrementing = false;
     protected $keyType = 'string';
 
+    private static ?Collection $currentInstance = null;
+
     /**
      * @var array
      */
@@ -46,6 +49,10 @@ class Warehouse extends Model implements Auditable
         'location'
     ];
 
+    /**
+     * Summary of hidden
+     * @var array
+     */
     protected $hidden = [
         'created_at',
         'updated_at',
@@ -53,12 +60,16 @@ class Warehouse extends Model implements Auditable
     ];
 
 
+    /**
+     * Summary of products
+     * @return BelongsToMany<Product, Warehouse, \Illuminate\Database\Eloquent\Relations\Pivot>
+     */
     public function products():BelongsToMany
     {
         return $this->belongsToMany(Product::class,'warehouse_products')
             ->withPivot(
                 'stock_quantity',
-                'committed_stock',
+                'committed',
                 'min_stock',
                 'max_stock',
                 'reorder_level',
@@ -68,13 +79,57 @@ class Warehouse extends Model implements Auditable
     }
 
 
+    /**
+     * Summary of purchaseItem
+     * @return HasMany<PurchaseItem, Warehouse>
+     */
     public function purchaseItem(): HasMany
     {
-        return $this->hasMany(PurchaseItem::class);
+        return $this->hasMany(PurchaseItem::class, 'warehouse_uuid', 'uuid');
     }
 
+    /**
+     * @return HasMany
+     */
+    public function creditItem():HasMany
+    {
+        return $this->hasMany(CreditNoteItem::class, 'warehouse_uuid', 'uuid');
+    }
+
+    /**
+     * Summary of receiptItem
+     * @return HasMany<PurchaseReceiptsItem, Warehouse>
+     */
     public function receiptItem(): HasMany
     {
         return $this->hasMany(PurchaseReceiptsItem::class);
+    }
+
+
+    public static function getAllCached(): Collection
+    {
+        if(self::$currentInstance !== null) return self::$currentInstance;
+
+        self::$currentInstance = Cache::remember('app_warehouses', 86400, function () {
+           return self::get();
+        });
+
+        return self::$currentInstance;
+    }
+
+
+    /**
+     * @return void
+     */
+    protected static function booted():void
+    {
+        $clearCache = function () {
+            Cache::forget('app_warehouses');
+            self::$currentInstance = null; // Limpiamos también la instancia en memoria por si acaso
+        };
+
+        static::created($clearCache);
+        static::updated($clearCache);
+        static::deleted($clearCache);
     }
 }

@@ -28,8 +28,9 @@ onMounted(() => {
         warehouse_uuid: warehouse.uuid,
         prefix: warehouse.prefix,
         name: warehouse.name,
+        available: 0,
         stock_quantity: 0,
-        committed_stock: 0,
+        committed: 0,
         min_stock: 0,
         max_stock: 0,
         reorder_level: 0,
@@ -84,22 +85,21 @@ const checkReorderLevel = computed(() => {
       </div>
     </div>
     <DataTable :value="form.warehouse_product">
-      <Column header="PREFIX" field="prefix">
-      </Column>
+      <Column header="PREFIX" field="prefix"> </Column>
       <Column header="NOMBRE" field="name"></Column>
       <Column header="STOCK" class="w-30">
         <template #body="{ data }: { data: WarehouseProductI }">
-          <InputNumber fluid v-model="data.stock_quantity" />
+          <InputNumber fluid v-model="data.available" />
         </template>
       </Column>
       <Column header="COMPREMITIDO" class="w-20">
         <template #body="{ data }: { data: WarehouseProductI }">
-          <InputNumber readonly fluid v-model="data.committed_stock" />
+          <InputNumber readonly fluid v-model="data.committed" />
         </template>
       </Column>
       <Column header="PEDIDO" class="w-25">
         <template #body="{ data }: { data: WarehouseProductI }">
-          <InputNumber fluid v-model="data.stock_quantity" />
+          <InputNumber fluid v-model="data.available" />
         </template>
       </Column>
       <Column header="STOCK MINIMO" class="w-30">

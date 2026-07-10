@@ -3,12 +3,16 @@
 use App\Helpers\UserHelper;
 use App\Http\Controllers\AccontCoController;
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\CashRegisterController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\CreditNoteController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EntryController;
 use App\Http\Controllers\ExchangeController;
 use App\Http\Controllers\InventoryMovementController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\OutController;
 use App\Http\Controllers\PriceListController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
@@ -24,6 +28,7 @@ use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Middleware\IsAdminMiddleware;
+use App\Models\Product;
 use App\Models\PurchaseReceipts;
 use App\Models\Setting;
 use Illuminate\Foundation\Application;
@@ -48,9 +53,7 @@ Route::middleware([
     });
 
     // Dashboard
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard',[DashboardController::class,'index'])->name('dashboard');
 
     // Register users list (mantener por ser especial)
     Route::get('/register', function (Request $request) {
@@ -90,7 +93,32 @@ Route::middleware([
     });
 
     /*
+     * Rutas adicionales de compras (no estándar)
+     */
+    Route::prefix('purchase')->name('purchase.')->group(function () {
+        Route::get('/show', [PurchaseController::class, 'show'])->name('show');
+        Route::get('/receive', [PurchaseController::class, 'receive'])->name('receive');
+        Route::get('/output', [PurchaseController::class, 'output'])->name('output');
+        Route::patch('/{purchase}/cancel', [PurchaseController::class, 'cancel'])->name('cancel');
+        Route::patch('/{purchase}/approve', [PurchaseController::class, 'approve'])->name('approve');
+    });
+
+
+    /**
+     *
+     */
+    Route::prefix('client')->name('client.')->controller(ClientController::class)->group(function () {
+       Route::get('/get-json', 'getJson')->name('get.json');
+    });
+
+    Route::prefix('cash-register')->name('cash-register.')->controller(CashRegisterController::class)->group(function () {
+        Route::get('/close', 'close')->name('close');
+        Route::patch('/close/store/{cashRegister}', 'closeStore')->name('close.store');
+    });
+
+    /*
      * Resources principales
+     *
      */
     Route::apiResources([
         'client' => ClientController::class,
@@ -104,8 +132,12 @@ Route::middleware([
         'aco' => AccontCoController::class,
         'unit' => UnitController::class,
         'tax' => TaxController::class,
-        'branch' => BrandController::class
-    ]);
+        'branch' => BrandController::class,
+        'entry' => EntryController::class,
+        'out' => OutController::class,
+        'cash-register' => CashRegisterController::class
+
+        ]);
 
     Route::get('price-list/product/{product}',[PriceListController::class,'productShow'])
         ->name('price-list.product.show');
@@ -129,7 +161,6 @@ Route::middleware([
     Route::prefix('product')->name('product.')->group(function () {
         Route::get('/get-label/{code}', [ProductController::class, 'createLabel'])->name('get-label');
         Route::get('/get', [ProductController::class, 'get'])->name('get');
-        Route::get('/in', [ProductController::class, 'in'])->name('in');
         Route::get('/get/json', [ProductController::class, 'getJson'])->name('get.json');
         Route::get('/get/code', [ProductController::class, 'getByCode'])->name('get.code');
         Route::patch('/delete/{product}', [ProductController::class, 'destroy'])->name('destroy');
@@ -138,12 +169,15 @@ Route::middleware([
     /*
      * Rutas específicas de ventas
      */
-    Route::prefix('sale')->name('sale.')->group(function () {
-        Route::get('/close', [SaleController::class, 'close'])->name('close');
-        Route::post('/close/get', [SaleController::class, 'getClose'])->name('get.close');
-        Route::get('/counter', [SaleController::class, 'counter'])->name('counter');
-        Route::patch('/item/destroy/{product}/{sale}', [SaleController::class, 'destroyItem'])->name('destroy.item');
-        Route::patch('/destroy/{sale}/{inventoried}', [SaleController::class, 'destroySale'])->name('destroy-sale');
+    Route::prefix('sale')->controller(SaleController::class)->name('sale.')->group(function () {
+        Route::get('/get/sold', 'showSold')->name('show-sold');
+        Route::post('/get/sold', 'getSold')->name('get-sold');
+        Route::get('/refund/{code}', 'refund')->name('refund');
+        Route::get('/close',  'close')->name('close');
+        Route::post('/close/get',  'getClose')->name('get.close');
+        Route::get('/counter',  'counter')->name('counter');
+        Route::patch('/item/destroy/{product}/{sale}',  'destroyItem')->name('destroy.item');
+        Route::patch('/destroy/{sale}/{inventoried}',  'destroySale')->name('destroy-sale');
     });
 
     /*
@@ -161,7 +195,7 @@ Route::middleware([
         Route::get('/show', [CreditNoteController::class, 'show'])->name('show');
         Route::get('/get/balance/{code}', [CreditNoteController::class, 'getBalance'])->name('balance');
         Route::get('/get/{code}', [CreditNoteController::class, 'creditNoteGet'])->name('get');
-        Route::patch('/{sale}', [CreditNoteController::class, 'store'])->name('store');
+        Route::post('/{sale}', [CreditNoteController::class, 'store'])->name('store');
     });
 
     /*
@@ -181,15 +215,19 @@ Route::middleware([
     Route::get('report/sale', [ReportSaleController::class, 'index'])->name('report-sale.index');
 //    Route::get('report/sale/json', [ReportSaleController::class, 'reportSaleRange'])->name('report-sale.range');
 
+
     /*
      * Facturas
      */
-    Route::prefix('invoice')->name('invoice.')->group(function () {
-        Route::get('/belt/sale/{sale}', [InvoiceController::class, 'beltSale'])->name('belt.sale');
-        Route::get('/belt/note/{creditNote}', [InvoiceController::class, 'beltNote'])->name('belt.note');
-        Route::get('/getA/{sale}', [InvoiceController::class, 'getA'])->name('getA');
-//        Route::get('/getB/{counter}', [InvoiceController::class, 'getB'])->name('getB');
-        Route::get('/label/{product}', [InvoiceController::class, 'label'])->name('label');
+    Route::prefix('invoice')->controller(InvoiceController::class)
+        ->name('invoice.')->group(function () {
+        Route::get('/sale/{sale}', 'getSaleInvoice')->name('sale');
+        Route::get('/credit-note/{creditNote}', 'getCreditNoteInvoice')->name('credit-note');
+        Route::get('/belt/sale/{sale}', 'beltSale')->name('belt.sale');
+        Route::get('/belt/note/{creditNote}',  'beltNote')->name('belt.note');
+        Route::get('/getA/{sale}',  'getA')->name('getA');
+//        Route::get('/getB/{counter}',  'getB'])->name('getB');
+        Route::get('/label/{product}',  'label')->name('label');
     });
 
     /*
@@ -217,16 +255,7 @@ Route::middleware([
         Route::post('/', [ReceivingController::class, 'store'])->name('store');
     });
 
-    /*
-     * Rutas adicionales de compras (no estándar)
-     */
-    Route::prefix('purchase')->name('purchase.')->group(function () {
-        Route::get('/show', [PurchaseController::class, 'show'])->name('show');
-        Route::get('/receive', [PurchaseController::class, 'receive'])->name('receive');
-        Route::get('/output', [PurchaseController::class, 'output'])->name('output');
-        Route::patch('/{purchase}/cancel', [PurchaseController::class, 'cancel'])->name('cancel');
-        Route::patch('/{purchase}/approve', [PurchaseController::class, 'approve'])->name('approve');
-    });
+
 
     // Test route
     Route::get('/test', function () {
@@ -253,4 +282,33 @@ Route::middleware([
             ])
             ->name('test.pdf');
     })->name('printTest');
+
+
+    Route::get('/test/2', function (){
+
+        $product = Product::first();
+
+        $labelTemplate = view('pdfs.ticket.label',[
+            'code' => $product->code
+        ])->render();
+
+        $response = \Illuminate\Support\Facades\Http::attach('index.hmtl', $labelTemplate, 'index.html')
+            ->post("http://localhost:3100/forms/chromium/convert/html",[
+                'paperWidth' => '3.14',  // 80mm en pulgadas
+                'paperHeight' => '1.5',   // Alto estimado de página corta
+                'marginLeft' => '0.1',
+                'marginRight' => '0.1',
+                'marginTop' => '0.1',    // Espacio para la cabecera fija
+                'marginBottom' => '0.1',
+                'waitDelay' => '600ms',  // Tiempo para que cargue Tailwind 4 por CDN
+            ]);
+
+        if ($response->successful()){
+            return response($response->body(),200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="ticket.pdf"',
+            ]);
+        }
+        return response()->json(['error' => 'No se pudo conectar con Gotenberg'], 500);
+    });
 });

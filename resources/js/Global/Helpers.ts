@@ -1,4 +1,15 @@
 import axios from 'axios';
+import { string } from 'fast-glob/out/utils';
+
+export const urlRNC = 'http://localhost:8083/api/v1/rnc/';
+
+export const createSequence = (type: string, next: number) => {
+  const cleanType = type.trim().toUpperCase();
+
+  const paddedNext = next.toString().padStart(8, '0');
+
+  return `${cleanType}${paddedNext}`;
+};
 
 /**
  *

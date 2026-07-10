@@ -17,39 +17,41 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @property string $uuid
-* @property string $type
-* @property string $code
-* @property string $name
-* @property string $description
-* @property string $unit_uuid
-* @property float $cost
-* @property string $sku
-* @property string $bar_code
-* @property float $weight
-* @property string $dimensions
-* @property string $brand_uuid
-* @property float $discount
-* @property float $discount_amount
-* @property float $benefits
-* @property float $benefits_rate
-* @property string $comment
-* @property string $default_price_list
-* @property bool $inventoried
-* @property bool $status
-* @property bool $has_fraction
-* @property bool $has_special
-* @property bool $has_promotion
-* @property bool $has_tax
-* @property bool $handle_warehouse
-* @property string $supplier_uuid
-* @property string $category_uuid
-* @property Carbon $created_at
+ * @property string $type
+ * @property string $code
+ * @property string $name
+ * @property string $description
+ * @property string $unit_uuid
+ * @property float $cost
+ * @property string $sku
+ * @property string $bar_code
+ * @property float $weight
+ * @property string $dimensions
+ * @property string $brand_uuid
+ * @property float $discount
+ * @property float $discount_amount
+ * @property float $benefits
+ * @property float $benefits_rate
+ * @property string $comment
+ * @property string $default_price_list
+ * @property bool $inventoried
+ * @property bool $status
+ * @property bool $has_fraction
+ * @property bool $has_special
+ * @property bool $has_promotion
+ * @property bool $has_tax
+ * @property bool $handle_warehouse
+ * @property string $supplier_uuid
+ * @property string $category_uuid
+ * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property Carbon|null $deleted_at
  *
- * @property-read Collection<int, PriceList[] $price_list>
+ * @property-read Collection<int, PriceList> $price_list
+ * @property-read Collection<int, SaleItem> $saleItem
  * @property-read Brand $brand
  * @property-read Tax $tax
+ * @property-read WarehouseProduct $pivot
  * @property-read PurchaseReceiptsItem $receiptsItem
  * @method static create(mixed $validated)
  */
@@ -137,7 +139,7 @@ class Product extends Model implements Auditable
     /**
      * @return void
      */
-    protected static function boot():void
+    protected static function boot(): void
     {
         // Llamar el metodo principal
         parent::boot();
@@ -145,9 +147,12 @@ class Product extends Model implements Auditable
     }
 
 
-    public function price_list():BelongsToMany
+    /***
+     * @return BelongsToMany
+     */
+    public function priceList(): BelongsToMany
     {
-        return $this->belongsToMany(PriceList::class,'price_list_products')
+        return $this->belongsToMany(PriceList::class, 'price_list_products')
             ->withPivot([
                 'price',
                 'min_price',
@@ -155,13 +160,16 @@ class Product extends Model implements Auditable
             ]);
     }
 
-//    Relacion para el stock
-    public function warehouses():BelongsToMany
+
+    /***
+     * @return BelongsToMany
+     */
+    public function warehouses(): BelongsToMany
     {
         return $this->belongsToMany(Warehouse::class, 'warehouse_products')
             ->withPivot(
                 'stock_quantity',
-                'committed_stock',
+                'committed',
                 'min_stock',
                 'max_stock',
                 'reorder_level',
@@ -170,68 +178,103 @@ class Product extends Model implements Auditable
             )->withTimestamps();
     }
 
-    public function brand():BelongsTo
+    /**
+     * @return BelongsTo
+     */
+    public function brand(): BelongsTo
     {
         return $this->belongsTo(Brand::class);
     }
 
 
-
+    /**
+     * @return mixed
+     */
     public function getTotalAttribute()
     {
         return $this->warehouses->sum('pivot.stock_quantity');
     }
 
-    // Stock disponible total
+    /**
+     * @return mixed
+     */
     public function getTotalAvailableAttribute()
     {
-        return $this->warehouses->sum(function($warehouse) {
+        return $this->warehouses->sum(function ($warehouse) {
             return $warehouse->pivot->stock_quantity - $warehouse->pivot->committed_stock;
         });
     }
 
 
-
     /**
      * @return BelongsTo
      */
-    public function supplier():BelongsTo
+    public function supplier(): BelongsTo
     {
         return $this->belongsTo(Supplier::class);
     }
 
-
-    public function tax():BelongsTo
+    /**
+     * @return BelongsTo
+     */
+    public function tax(): BelongsTo
     {
         return $this->belongsTo(Tax::class);
     }
+
+    /**
+     * @return HasMany
+     */
     public function receiptsItem(): HasMany
     {
         return $this->hasMany(PurchaseReceiptsItem::class);
     }
 
-    public function SaleItem(): HasMany
+    /**
+     * @return HasMany
+     */
+    public function saleItem(): HasMany
     {
         return $this->hasMany(SaleItem::class);
     }
 
-    public function category():BelongsTo
+    /**
+     * @return HasMany
+     */
+    public function CreditNoteItem(): HasMany
+    {
+        return $this->hasMany(CreditNoteItem::class);
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
+    /**
+     * @return HasMany
+     */
     //Transacciones
-    public function trans():HasMany
+    public function trans(): HasMany
     {
-        return $this->hasMany(ProTrans::class, 'product_id','uuid');
+        return $this->hasMany(ProductTransaction::class, 'product_uuid', 'uuid');
     }
 
-    public function inventory():HasOne
+    /**
+     * @return HasOne
+     */
+    public function inventory(): HasOne
     {
         return $this->hasOne(Inventory::class);
     }
 
-    public function movements():MorphMany
+    /**
+     * @return MorphMany
+     */
+    public function movements(): MorphMany
     {
         return $this->morphMany(InventoryMovement::class, 'movementable');
     }
@@ -240,11 +283,10 @@ class Product extends Model implements Auditable
     /**
      * @return HasMany
      */
-    public function movement():HasMany
+    public function movement(): HasMany
     {
         return $this->hasMany(InventoryMovement::class);
     }
-
 
 
 }

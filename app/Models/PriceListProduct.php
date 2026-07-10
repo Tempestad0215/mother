@@ -5,11 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class PriceListProduct extends Model
+class PriceListProduct extends Model implements Auditable
 {
     use SoftDeletes;
+    use \OwenIt\Auditing\Auditable;
 
+    /**
+     * @var string[]
+     */
     protected $fillable = [
         'product_uuid',
         'price_list_uuid',
@@ -18,16 +23,25 @@ class PriceListProduct extends Model
         'promotional_price'
     ];
 
+    /**
+     * @return BelongsTo
+     */
     public function productUuid(): BelongsTo
     {
         return $this->belongsTo(Product::class, 'product_uuid');
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function priceListUuid(): BelongsTo
     {
         return $this->belongsTo(PriceList::class, 'price_list_uuid');
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function warehouseUuid(): BelongsTo
     {
         return $this->belongsTo(Warehouse::class, 'warehouse_uuid');

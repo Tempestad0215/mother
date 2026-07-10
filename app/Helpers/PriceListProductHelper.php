@@ -9,7 +9,7 @@ class PriceListProductHelper
 {
     public static function upSert(PriceListProductDto $data, Product $product):void
     {
-        $product->price_list()->syncWithoutDetaching([
+        $product->priceList()->syncWithoutDetaching([
            $data->price_list_uuid => [
                'price' => $data->price,
                'min_price' => $data->min_price,

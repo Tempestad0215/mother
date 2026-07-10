@@ -4,7 +4,7 @@ import TextInput from '@components/TextInput.vue';
 import PrimaryButton from '@components/PrimaryButton.vue';
 import InputError from '@components/InputError.vue';
 import { Money } from 'v-money3';
-import { ProductBaseI, productI } from '@/Interfaces/ProductInterface';
+import { ProductBaseI, productI, ProductTableI } from '@/Interfaces/ProductInterface';
 import { ref, watch } from 'vue';
 import axios from 'axios';
 import { useForm } from '@inertiajs/vue3';
@@ -21,7 +21,7 @@ const route = useRoute();
 // Propiedades
 const propsW = defineProps<{
   products: ProductBaseI[];
-  productTable: productI;
+  productTable: PaginationI<ProductTableI>;
   entryEdit?: entryBaseI;
   entries: PaginationI<entryBaseI>;
   editDataFloat?: entryProductI;
@@ -34,8 +34,8 @@ const products = ref<ProductBaseI[] | null>(null);
 
 // Formularios
 const form = useForm({
-  id: 0,
-  product_id: 0,
+  uuid: '',
+  product_uuid: '',
   quantity: 0,
   cost: 0,
   description: '',
@@ -64,8 +64,8 @@ watch(productName, (newValue) => {
 watch(
   () => propsW.editDataFloat,
   (newValue) => {
-    form.id = newValue?.id || 0;
-    form.product_id = newValue?.product.id || 0;
+    form.uuid = newValue?.uuid || '';
+    form.product_uuid = newValue?.product.uuid || '';
     productName.value = newValue?.product.name || '';
     form.quantity = newValue?.quantity || 0;
     form.cost = newValue?.cost || 0;
@@ -80,7 +80,7 @@ Funciones
  */
 const submit = () => {
   if (form.update) {
-    form.patch(route('entry.update', { entry: form.id }));
+    form.patch(route('entry.update', { entry: form.uuid }));
   } else {
     form.post(route('entry.store'), {
       onSuccess: () => {
@@ -96,7 +96,7 @@ const submit = () => {
  * @param item
  */
 const getProduct = (item: ProductBaseI) => {
-  form.product_id = item.id;
+  form.product_uuid = item.uuid;
   productName.value = item.name;
   form.cost = item.cost;
 };
@@ -106,7 +106,7 @@ const getProduct = (item: ProductBaseI) => {
  * @param item
  */
 const getProductTable = (item: ProductBaseI) => {
-  form.product_id = item.id;
+  form.product_uuid = item.uuid;
   productName.value = item.name;
   form.cost = item.cost;
   //Para cerrar la ventana

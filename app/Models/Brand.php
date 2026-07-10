@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ModelStatusEnum;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -22,6 +23,8 @@ class Brand extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
     use softDeletes;
+    use HasUuids;
+
 
     protected $table = 'brands';
 

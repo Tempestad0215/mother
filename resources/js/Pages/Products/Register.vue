@@ -16,20 +16,38 @@ import FShowProduct from '@/Pages/Products/FShowProduct.vue';
 import { PriceListWTI } from '@/Interfaces/PriceListInterface';
 
 //Propiedades de la ventana
-const propsW = defineProps<{
-  products: PaginationI<ProductTableI>;
-  productEdit?: ProductTableI;
-  update?: boolean;
-  categories: categoryBaseI[];
-  suppliers: SupplierI[];
-  warehouses: WarehouseBaseI[];
-  paymentTypes: PaymentTypeEnumI;
-  productType: ProductTypeEnumI;
-  branches: BranchInterfaceI[];
-  units: UnitInterfaceI[];
-  taxes: TaxBaseI[];
-  priceLists: Array<PriceListWTI>;
-}>();
+const propsW = withDefaults(
+  defineProps<{
+    products: PaginationI<ProductTableI>;
+    productEdit?: ProductTableI;
+    update?: boolean;
+    categories: categoryBaseI[];
+    suppliers: SupplierI[];
+    warehouses: WarehouseBaseI[];
+    paymentTypes: PaymentTypeEnumI;
+    productType: ProductTypeEnumI;
+    branches: BranchInterfaceI[];
+    units: UnitInterfaceI[];
+    taxes: TaxBaseI[];
+    priceLists: Array<PriceListWTI>;
+  }>(),
+  {
+    update: false,
+    // ⚠️ CRÍTICO: En TypeScript/Vue, los arrays u objetos por defecto
+    // SIEMPRE deben ser retornados por una función flecha () => []
+    categories: () => [],
+    suppliers: () => [],
+    warehouses: () => [],
+    branches: () => [],
+    units: () => [],
+    taxes: () => [],
+    priceLists: () => [],
+
+    // Si son objetos complejos o enums vacíos por defecto:
+    paymentTypes: () => ({}) as PaymentTypeEnumI,
+    productType: () => ({}) as ProductTypeEnumI,
+  }
+);
 
 //
 const taxCurrentValue = ref(0);

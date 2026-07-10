@@ -2,11 +2,33 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
+
+/**
+ * Summary of WarehouseProduct
+ * @property string $uuid
+ * @property string $product_uuid
+ * @property string $warehouse_uuid
+ * @property float $stock_quantity
+ * @property float $commited
+ * @property float $min_stock
+ * @property float $max_stock
+ * @property bool $is_active
+ * @property float $reorder_level
+ * @property float $purchase_pending
+ * 
+ * 
+ * @property-read Product $product
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property Carbon $deleted_at
+ */
 class WarehouseProduct extends Model implements Auditable
 {
     use SoftDeletes;
@@ -27,6 +49,10 @@ class WarehouseProduct extends Model implements Auditable
         'warehouse_uuid',
     ];
 
+    /**
+     * Summary of casts
+     * @return array{is_active: string, product_uuid: string, warehouse_uuid: string}
+     */
     protected function casts(): array
     {
         return [
@@ -36,15 +62,37 @@ class WarehouseProduct extends Model implements Auditable
         ];
     }
 
+
     /**
-     * @return int
+     * Summary of warehouse
+     * @return BelongsTo<Warehouse, WarehouseProduct>
      */
-    public function getAvailableStockAttribute(): int
+    public function warehouses():BelongsTo
     {
-        return $this->stock_quantity - ($this->committed_stock ?? 0);
+        return $this->belongsTo(Warehouse::class, 'warehouse_uuid', 'uuid');
+    }
+
+
+    /**
+     * Summary of products
+     * @return BelongsTo<Product, WarehouseProduct>
+     */
+    public function products():BelongsTo
+    {
+        return $this->belongsTo(Product::class, 'product_uuid', 'uuid');
+    }
+    
+    /**
+     * Summary of getAvailableStockAttribute
+     * @return float
+     */
+    public function getAvailableStockAttribute(): float
+    {
+        return $this->stock_quantity - ($this->commited ?? 0);
     }
 
     /**
+     * Summary of needsReorder
      * @return bool
      */
     public function needsReorder(): bool

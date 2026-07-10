@@ -4,6 +4,14 @@ export interface clientTypeI {
   anticipo: string;
 }
 
+export interface ClientRncI {
+  rnc: string;
+  razon_social: string;
+  actividad: string;
+  status: 'ACTIVO' | 'SUSPENDIDO';
+  type: string;
+}
+
 export interface clientPriceI {
   normal: number;
   minimo: number;

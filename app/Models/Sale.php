@@ -4,57 +4,71 @@ namespace App\Models;
 
 use App\Enums\PaymentTypeEnum;
 use App\Enums\SaleTypeEnum;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Models\Audit;
+use Ramsey\Collection\Collection;
 
 /**
- * @property int id
- * @property string code
- * @property string invoice_type
- * @property string ncf
- * @property string ncf_m
- * @property string client_rnc
- * @property string client_name
- * @property int client_id
- * @property float discount_amount
- * @property float tax
- * @property float sub_total
- * @property float amount
- * @property boolean status
- * @property SaleTypeEnum type
- * @property bool close_table
- * @property Carbon created_at
- * @property Carbon updated_at
- * @property Carbon deleted_at
- * @property ProTrans[] infoSale
- * @property PaymentTypeEnum type_payment
- * @property float received
- * @property float returned
- * @property string[] credit_notes
- * @property float credit_notes_amount
- * @property Audit audits
- * @property string comment
+ * @property string $uuid
+ * @property string $code
+ * @property string $invoice_type
+ * @property string $ncf
+ * @property string $ncf_m
+ * @property string $client_rnc
+ * @property string $client_name
+ * @property string $client_uuid
+ * @property float $discount_amount
+ * @property float $tax
+ * @property float $sub_total
+ * @property float $amount
+ * @property boolean $status
+ * @property SaleTypeEnum $type
+ * @property bool $close_table
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property Carbon $deleted_at
+ * @property ProductTransaction[] $infoSale
+ * @property PaymentTypeEnum $type_payment
+ * @property float $received
+ * @property float $returned
+ * @property string[] $credit_notes
+ * @property float $credit_notes_amount
+ * @property Audit $audits
+ * @property string $comment
+ * @property string $cash_register_uuid
+ *
+ *
+ * @property-read Collection<int, SaleItem> $items
+ * @property-read Collection<int, CreditNote> $creditNotes
+ * @property-read Collection<int, CreditNoteSale> $creditNoteSales
  */
-
-
+#[ObservedBy([SaleObserver::class])]
 class Sale extends Model implements Auditable
 {
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
     use softDeletes;
+    use HasUuids;
 
     // La tabla que se ve a utilizar
     protected $table = 'sales';
 
+    protected $primaryKey = 'uuid';
+    protected $keyType = 'string';
+    public $incrementing = false;
 
     /**
      * Guardar los datos
@@ -77,18 +91,22 @@ class Sale extends Model implements Auditable
         'returned',
         'status',
         'close_table',
-        'credit_notes',
-        'credit_notes_amount',
-        'comment'
+        'comment',
+        'cash_register_uuid'
     ];
 
     //Formatear los datos
-    protected  $casts = [
+    protected $casts = [
         'status' => 'boolean',
+        'amount' => 'decimal:4',
+        'sub_total' => 'decimal:4',
+        'discount_amount' => 'decimal:4',
+        'received' => 'decimal:4',
+        'returned' => 'decimal:4',
+        'tax' => 'decimal:4',
         'close_table' => 'boolean',
         'type' => SaleTypeEnum::class,
         'type_payment' => PaymentTypeEnum::class,
-        'credit_notes' => 'array'
     ];
 
 
@@ -99,9 +117,9 @@ class Sale extends Model implements Auditable
     /**
      * @return BelongsTo
      */
-    public function client():BelongsTo
+    public function client(): BelongsTo
     {
-        return $this->belongsTo(Client::class, 'client_id');
+        return $this->belongsTo(Client::class, 'client_uuid', 'uuid');
     }
 
 
@@ -109,32 +127,35 @@ class Sale extends Model implements Auditable
      * @return HasMany
      *
      */
-    public function credit_note():HasMany
+    public function creditNotes(): HasMany
     {
-        return $this->hasMany(CreditNote::class, 'sale_id','uuid');
+        return $this->hasMany(CreditNote::class, 'sale_uuid', 'uuid');
     }
 
-    public function Item(): HasMany
+
+    public function cashRegister(): BelongsTo
     {
-        return $this->hasMany(SaleItem::class);
+        return $this->belongsTo(CashRegister::class);
+    }
+    /**
+     * @return BelongsToMany
+     */
+    public function creditNoteSales(): BelongsToMany
+    {
+        return $this->belongsToMany(CreditNote::class);
+    }
+
+    public function items(): HasMany
+    {
+        return $this->hasMany(SaleItem::class, 'sale_uuid', 'uuid');
     }
 
     /**
      * @return HasManyThrough
      */
-    public function credit_trans():HasManyThrough
+    public function credit_trans(): HasManyThrough
     {
-        return $this->hasManyThrough(ProTrans::class, CreditNote::class, 'sale_id','credit_note_id','uuid');
-    }
-
-
-    /**
-     * Retorno de valor
-     * @return HasMany
-     */
-    public function infoSale():HasMany
-    {
-        return $this->hasMany(ProTrans::class);
+        return $this->hasManyThrough(ProductTransaction::class, CreditNote::class, 'sale_uuid', 'credit_note_uuid', 'uuid');
     }
 
 
@@ -142,11 +163,11 @@ class Sale extends Model implements Auditable
      * Formatear la fehca de creacion
      * @return Attribute
      */
-    protected function createdAt ():Attribute
+    protected function createdAt(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => Carbon::parse($value)->format('d-m-Y H:i:s'),
-            set: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i:s'),
+            get: fn(string $value) => Carbon::parse($value)->format('d/m/Y H:i:s'),
+            set: fn(string $value) => Carbon::parse($value)->format('Y/m/d H:i:s'),
         );
     }
 
@@ -154,45 +175,50 @@ class Sale extends Model implements Auditable
      * Formataer la fecha de actualizacion
      * @return Attribute
      */
-    protected function updatedAt ():Attribute
+    protected function updatedAt(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => Carbon::parse($value)->format('d/m/Y H:i:s'),
-            set: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i:s'),
+            get: fn(string $value) => Carbon::parse($value)->format('d/m/Y H:i:s'),
+            set: fn(string $value) => Carbon::parse($value)->format('Y-m-d H:i:s'),
         );
     }
 
     /**
      * @return void
      */
-    protected static function boot():void
+    protected static function boot(): void
     {
         // Llamar el metodo principal
         parent::boot();
 
         //Generar el codigo los codigos
         static::creating(function ($model) {
-            $model->code = self::generateCode();
+            $model->code = self::generateCode($model);
         });
     }
 
     /**
+     * @param Sale $model
      * @return string
      */
     // funcion para generar el codigo
-    private static function generateCode():string
+    private static function generateCode(self $model): string
     {
-        // Obtener el ultimo registros
-        $total = self::count();
+        // Obtener el último registro
+        $total = self::withTrashed()->where('type',SaleTypeEnum::from($model->type->value))->count();
+
+        if ($model->type === SaleTypeEnum::Cotizacion) {
+            $code = config('appconfig.quoCode');
+        } else {
+            $code = config('appconfig.saleCode');
+        }
+
 
         // Generar el proximo ID
         $nextID = $total ? $total + 1 : 1;
 
-        // Devolver los datos
-        $code = config('appconfig.saleCode');
-
         // craer el codigp
-        return $code.str_pad($nextID, 6,'0', STR_PAD_LEFT);
+        return Str::upper($code). str_pad($nextID, 6, '0', STR_PAD_LEFT);
     }
 
 

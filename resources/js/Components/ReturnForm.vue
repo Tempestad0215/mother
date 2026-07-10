@@ -1,50 +1,55 @@
 <script setup lang="ts">
-import TextInput from '@components/TextInput.vue';
-import InputLabel from '@components/InputLabel.vue';
 import { useForm } from '@inertiajs/vue3';
-import InputError from '@components/InputError.vue';
-import PrimaryButton from '@components/PrimaryButton.vue';
-import { ref } from 'vue';
+import { inject, ref } from 'vue';
 import { useRoute } from 'ziggy-js';
+import {
+  Button,
+  FloatLabel,
+  InputText,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  Tag,
+  useToast,
+} from 'primevue';
+import axios, { AxiosError } from 'axios';
+import { saleKey } from '@/utils/keys';
+import { LaravelErrorResponse } from '@/Interfaces/GlobalInterface';
 
+const toast = useToast();
 const route = useRoute();
-/*
-Propiedades de la ventana
- */
-const propsW = defineProps<{
+
+// Definir las props del componente
+defineProps<{
   error?: string;
 }>();
 
-/*
-fomulario
- */
+// Datos de la ventana
+const formInject = inject(saleKey)!;
+const loadingData = ref(false);
+
+// Formulario
 const form = useForm({
   type: true,
   saleCode: '',
   general: '',
 });
 
+// Enviar el evento para emitir
+const formGet = useForm({
+  saleCode: '',
+});
+
 /*
 Enviar el evento para emitir
  */
 const emit = defineEmits<{
-  (e: 'closeFormReturn'): void;
+  (e: 'closeFormReturn', isReturn: boolean): void;
+  (e: 'sendClientName', name: string): void;
   (e: 'hasError'): void;
 }>();
-
-/*
-Data de la ventana
- */
-const options = ref([
-  {
-    name: 'Consultar',
-    value: true,
-  },
-  {
-    name: 'Seleccionar',
-    value: false,
-  },
-]);
 
 /*
 Funciones
@@ -59,54 +64,105 @@ const submit = () => {
         emit('hasError');
       },
       onSuccess: () => {
-        emit('closeFormReturn');
+        emit('closeFormReturn', true);
       },
     });
+  }
+};
+
+// Obtener los datos de las cuentas abiertas
+const saleGet = async () => {
+  try {
+    // Verificar si el error es el mismo para mostrar la ventana
+    loadingData.value = true;
+
+    // Validar que el campo no este vacio
+    if (!formGet.saleCode) {
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'El campo no puede estar vacio',
+        life: 3000,
+      });
+      return;
+    }
+
+    // Obtener los datos de la venta
+    const res = await axios.get(route('sale.refund', { code: formGet.saleCode }));
+
+    // Emitir el evento con los datos
+    Object.assign(formInject, {
+      ...res.data,
+      type: 'Devolucion',
+      close_table: true,
+      comment: '',
+    });
+
+    emit('closeFormReturn', true);
+    emit('sendClientName', res.data.client_name);
+  } catch (error) {
+    const err = error as AxiosError<LaravelErrorResponse>;
+
+    if (err.response?.status == 409) {
+      toast.add({
+        severity: 'error',
+        summary: `Conflicto en documento, Codigo: ${err.status}`,
+        detail: `Error en Nota de Credito, detalle: ${err.response.data.message}`,
+        life: 5000,
+      });
+    } else {
+      toast.add({
+        severity: 'error',
+        summary: `Error ${err.status}`,
+        detail: `No se encontro la venta`,
+        life: 3000,
+      });
+    }
+  } finally {
+    loadingData.value = false;
   }
 };
 </script>
 
 <template>
   <div class="fondo p-5 rounded-lg">
-    <h3 class="title">Formulario Para Devolución</h3>
-    <form @submit.prevent="submit">
-      <!--            Si es consulta o para selccionar-->
-      <div class="mt-5">
-        <!--                Titulo-->
-        <InputLabel class="flex" for="askReturn" value="Tipo de Consulta" />
-        <div class="flex justify-center">
-          <select
-            class="inputGeneral py-1 w-full"
-            v-model="form.type"
-            name="askReturn"
-            id="askReturn"
-          >
-            <option v-for="(item, index) in options" :key="index" :value="item.value">
-              {{ item.name }}
-            </option>
-          </select>
-        </div>
-      </div>
-
-      <div class="mt-5">
-        <!--           Etiqueta de la ventana-->
-        <InputLabel for="invoiceReturn" value="Codigo de Fáctura" />
-        <!--            Entrada de texto-->
-        <TextInput class="w-full" v-model="form.saleCode" />
-
-        <!--         Mensaje de error       -->
-        <InputError :message="form.errors.saleCode" />
-      </div>
-
-      <!--            MEnasje General-->
-      <div>
-        <InputError :message="propsW.error" />
-      </div>
-
-      <!--            Boton de enviar-->
-      <div class="mt-5 text-right">
-        <PrimaryButton @click="submit"> Buscar </PrimaryButton>
-      </div>
-    </form>
+    <Tabs value="0">
+      <TabList>
+        <Tab value="0">Seleccionar</Tab>
+        <Tab value="1">Consultar</Tab>
+      </TabList>
+      <TabPanels>
+        <TabPanel value="0">
+          <form @submit.prevent="saleGet">
+            <div class="mt-5">
+              <!-- Etiqueta de la ventana-->
+              <FloatLabel variant="on">
+                <InputText fluid v-model="formGet.saleCode" />
+                <label for="code">Codigo de Factura</label>
+              </FloatLabel>
+              <Tag v-if="form.errors.saleCode" severity="danger" :value="form.errors.saleCode" />
+            </div>
+            <div class="mt-3 text-right">
+              <Button :disabled="loadingData" type="submit">Buscar</Button>
+            </div>
+          </form>
+        </TabPanel>
+        <TabPanel value="1">
+          <form>
+            <div class="mt-5">
+              <!-- Etiqueta de la ventana-->
+              <FloatLabel variant="on">
+                <InputText fluid v-model="form.saleCode" />
+                <label for="code">Codigo de Factura</label>
+              </FloatLabel>
+              <Tag v-if="form.errors.saleCode" severity="danger" :value="form.errors.saleCode" />
+            </div>
+            <div class="mt-3 text-right">
+              <Button type="submit">Buscar</Button>
+            </div>
+          </form>
+        </TabPanel>
+      </TabPanels>
+    </Tabs>
   </div>
 </template>

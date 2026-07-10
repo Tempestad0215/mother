@@ -26,6 +26,7 @@ const propsW = defineProps<{
   productTable: productI;
   entry_edit?: entryBaseI;
   entries: PaginationI<entryProductI>;
+  clientData: PaginationI<clientBaseI>;
 }>();
 //datos de la ventana
 const productName = ref<string>();
@@ -60,21 +61,21 @@ const edit = (item: entryProductI) => {
   <AppLayout>
     <DataTable
       paginator
-      :rows="propsW.clientData.per_page ?? 0"
+      :rows="propsW.clientData.meta.per_page ?? 0"
       :loading="!propsW.clientData.data"
       :value="propsW.clientData.data"
     >
       <template #header>
         <div class="flex justify-between items-center">
-          <form @submit.prevent="searchData">
+          <form>
             <InputGroup class="max-w-60">
-              <InputText v-model="searchValue" placeholder="Buscar" type="search" />
-              <InputGroupAddon @click="searchData">
+              <InputText placeholder="Buscar" type="search" />
+              <InputGroupAddon>
                 <i class="pi pi-search"></i>
               </InputGroupAddon>
             </InputGroup>
           </form>
-          <Button class="h-8" @click="createClient = true"> Crear Cliente </Button>
+          <Button class="h-8"> Crear Cliente </Button>
         </div>
       </template>
       <Column field="code" header="Codigo" />
@@ -85,35 +86,24 @@ const edit = (item: entryProductI) => {
       <Column header="Act">
         <template #body="{ data }: { data: clientBaseI }">
           <div class="space-x-2">
-            <Button
-              @click="editData(data)"
-              class="pt-1 h-8"
-              title="Editar"
-              icon="pi pi-file-edit"
-            />
-            <Button
-              @click="deleteData(data, $event)"
-              class="pt-1 h-8"
-              title="Eliminar"
-              severity="danger"
-              icon="pi pi-trash"
-            />
+            <Button class="pt-1 h-8" title="Editar" icon="pi pi-file-edit" />
+            <Button class="pt-1 h-8" title="Eliminar" severity="danger" icon="pi pi-trash" />
           </div>
         </template>
       </Column>
       <template #paginatorcontainer>
-        <Pagination :search="searchValue" :pag="propsW.clientData" />
+        <!--        <Pagination :pag="propsW.clientData" />-->
       </template>
     </DataTable>
-    <Dialog modal @hide="selectedClient = null" v-model:visible="createClient">
-      <FRegister
-        :clientDocument="clientDocument"
-        :clientPrice="clientPrice"
-        :clientType="clientType"
-        :typeRNC="typeRNC"
-        :update="isUpdate"
-        :client-edit="selectedClient"
-      />
-    </Dialog>
+    <!--    <Dialog modal @hide="selectedClient = null" v-model:visible="createClient">-->
+    <!--      <FRegister-->
+    <!--        :clientDocument="clientDocument"-->
+    <!--        :clientPrice="clientPrice"-->
+    <!--        :clientType="clientType"-->
+    <!--        :typeRNC="typeRNC"-->
+    <!--        :update="isUpdate"-->
+    <!--        :client-edit="selectedClient"-->
+    <!--      />-->
+    <!--    </Dialog>-->
   </AppLayout>
 </template>

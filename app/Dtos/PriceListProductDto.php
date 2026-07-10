@@ -21,7 +21,7 @@ class PriceListProductDto extends BaseDto
             price_list_uuid: $data['price_list_uuid'],
             price: $data['price'],
             min_price: $data['min_price'],
-            promotional_price: $data['special_price']
+            promotional_price: $data['promotional_price']
         );
     }
 }

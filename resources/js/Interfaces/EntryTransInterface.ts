@@ -1,7 +1,7 @@
 import { ProductBaseI } from '@/Interfaces/ProductInterface';
 
 export interface entryBaseI {
-  id: number;
+  uuid: string;
   quantity: number;
   cost: number;
   description?: string;

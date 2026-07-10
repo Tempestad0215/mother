@@ -3,12 +3,19 @@
 namespace App\Rules;
 
 use App\Dtos\SaleItemApiDto;
+use App\Dtos\SaleItemDto;
 use App\Factories\SaleItemApiFactory;
 use App\Helpers\GeneralHelper;
 use App\Helpers\InventoryHelper;
 use App\Models\Inventory;
+use App\Models\Product;
+use App\Models\Sale;
+use App\Models\SaleItem;
+use App\Models\WarehouseProduct;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Translation\PotentiallyTranslatedString;
 
 class CheckStock implements ValidationRule
@@ -23,38 +30,46 @@ class CheckStock implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
+
+        // Convetir los datos a dto
+        $saleItemDto = SaleItemDto::fromLArrayList($value);
+
+        // Variable para verificar si existe un error de stock
         $existsError = false;
+        // Variable para almacenar el mensaje de error
         $errorMessage = '';
 
-        $saleItemDto = [];
 
 
-        foreach ($value as $item) {
-            $saleItemDto[] = SaleItemApiFactory::fromArray($item);
-        }
-
-        $infoProducts = GeneralHelper::getProductWarehouseArray($value);
-
-        $inventories = InventoryHelper::getInventoryProductWarehouse($infoProducts);
-
-        /** @var SaleItemApiDto $item */
+        // Recorrer los datos
         foreach ($saleItemDto as $item)
         {
-            $indexFind = $item->product_id.'-'.$item->warehouse_id;
+            // Tomar la ventas
+            $saleItem = SaleItem::where("sale_uuid", $item->sale_uuid)
+                ->where("product_uuid", $item->product_uuid)
+                ->first();
 
-            /**@var Inventory $inventory */
-            $inventory = $inventories[$indexFind];
+            // si el item no existe, continuar
+            if(!$saleItem) continue;
 
-            if(!$item->is_service)
+            // sumar la cantidad de la venta
+            $stockTotal = floatval(bcsub((string)$item->stock, (string)$saleItem->stock, 4));
+
+            
+            // Buscar el producto en cuestion
+            $warehouseProduct = WarehouseProduct::where('product_uuid', $item->product_uuid)
+                ->where('warehouse_uuid', $item->warehouse_uuid)
+                ->first();
+
+
+            // Verificar si existe
+            if($stockTotal >  $warehouseProduct->stock_quantity)
             {
-                if($inventory->qty_on_hand <= 0 || $item->stock > $inventory->qty_on_hand)
-                {
-                    $existsError = true;
-                    $errorMessage = 'El Producto "' . $inventory->product->name. '" no tiene suficiente stock.';
-                    break;
-                }
+                // Enviar los datos
+                $existsError = true;
+                $errorMessage = "El Item Code: {$saleItem->product->code}, Nombre: {$saleItem->product->name} no tiene stock suficiente";
+                break;
             }
-
         }
 
 

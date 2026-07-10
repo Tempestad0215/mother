@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\CategoryExport;
+use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Http\JsonResponse;
@@ -39,21 +40,17 @@ class CategoryController extends Controller implements HasMiddleware
             'page'=> 'nullable|numeric|min:1',
         ]);
 
+        $categories = Category::query()
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $query->where('name', 'ILIKE', "%$request->search%")
+                    ->orWhere('description', 'ILIKE', "%$request->search%");
+            })->paginate($request->per_page)
+            ->withQueryString();
 
-        $search = $request->search;
-        $query = Category::query();
-
-        if ($search)
-        {
-            $query->where('name', 'ILIKE', "%$search%")
-                ->orWhere('description', 'ILIKE', "%$search%");
-        }
-
-        $categories = $query->paginate($request->per_page)->withQueryString();
 
         //Devolver la vista con los datos
         return Inertia::render('Categories/Register',[
-            'categories' => $categories,
+            'categories' => CategoryResource::collection($categories),
             ]);
 
     }

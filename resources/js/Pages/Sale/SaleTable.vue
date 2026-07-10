@@ -1,57 +1,31 @@
 <script setup lang="ts">
 import { saleKey } from '@/utils/keys';
-import { computed, inject, reactive, ref, watch } from 'vue';
-import { infoSaleI, WarehouseMapType } from '@/Interfaces/SaleInterface';
+import { computed, inject, ref } from 'vue';
+import { editFormI, infoSaleI, WarehouseMapType } from '@/Interfaces/SaleInterface';
 import { PreciseCalculator } from '@/utils/Decimal';
-import {
-  Button,
-  Column,
-  DataTable,
-  Dialog,
-  FloatLabel,
-  InputNumber,
-  RadioButton,
-  Select,
-} from 'primevue';
+import { Column, DataTable, Dialog, Select } from 'primevue';
 import { getMoney } from '@/Global/Helpers';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faArrowAltCircleDown, faArrowAltCircleUp } from '@fortawesome/free-solid-svg-icons';
+import { FilePenLine } from '@lucide/vue';
+import SaleEditItem from '@/Pages/Sale/SaleEditItem.vue';
 
+// Para eliminar un item de la venta
 const propsW = defineProps<{
   refund?: boolean;
   warehouses?: WarehouseMapType;
 }>();
 
+// Para eliminar un item de la venta
 const form = inject(saleKey)!;
 const lastIndex = ref<number>(0);
+const minIndex = ref<number>(0);
 const showEdit = ref(false);
-const typePrice = ref(1);
-const minIndex = computed(() => 0);
-const maxIndex = computed(() => (form.info_sale.length > 0 ? form.info_sale.length - 1 : 0));
-interface editFormI {
-  stock: number;
-  price: number;
-  discount: number;
-}
-const editItemForm = reactive<editFormI>({
-  stock: 0,
+const formEditInfo = ref<editFormI>({
   price: 0,
+  stock: 1,
   discount: 0,
 });
 
-const minPrice = computed((): number => {
-  if (!checkIndex()) return 0;
-  return Number(form.info_sale[lastIndex.value].min_price);
-});
-const productEditingName = computed((): string => {
-  if (!checkIndex()) return '';
-  return form.info_sale[lastIndex.value].product_name;
-});
-const productIsService = computed(() => {
-  const item = form.info_sale[lastIndex.value];
-  return !!item?.is_service;
-});
-
+// Obtener los almacenes para el select
 const getWarehouses = computed(() => {
   if (propsW.warehouses) {
     return Object.entries(propsW.warehouses).map(([key, value]) => {
@@ -65,62 +39,7 @@ const getWarehouses = computed(() => {
   }
 });
 
-watch(
-  () => editItemForm,
-  (newVal) => {
-    if (!checkIndex()) return;
-    const item = form.info_sale[lastIndex.value];
-    item.price = newVal.price;
-    item.stock = newVal.stock;
-    item.discount = newVal.discount;
-  },
-  { deep: true }
-);
-
-const checkIndex = (): boolean => {
-  return !(lastIndex.value < minIndex.value || lastIndex.value > maxIndex.value);
-};
-
-const deletedItem = (index: number) => {
-  if (form.info_sale[index].stock === 0) {
-    form.info_sale.splice(index, 1);
-    calculateTotals();
-
-    if (form.info_sale.length === 0) {
-      showEdit.value = false;
-    }
-    return;
-  }
-};
-
-const getLastIndex = () => {
-  if (form.info_sale.length <= 0) return;
-
-  lastIndex.value = form.info_sale.length - 1;
-  showEdit.value = true;
-
-  // asingDataToEditItemForm()
-  Object.assign(editItemForm, form.info_sale[lastIndex.value]);
-};
-
-type MoveDirection = 'up' | 'down';
-const moveEdit = (direction: MoveDirection) => {
-  const current = lastIndex.value;
-
-  if (direction === 'up') {
-    // no bajar de 0
-    if (current <= minIndex.value) return;
-    lastIndex.value = current - 1;
-  }
-
-  if (direction === 'down') {
-    // no subir del último índice
-    if (current >= maxIndex.value) return;
-    lastIndex.value = current + 1;
-  }
-  Object.assign(editItemForm, form.info_sale[lastIndex.value]);
-};
-
+// Para calcular los totales de la venta
 const calculateTotals = () => {
   // 1) Totales base
   const subTotal = form.info_sale.reduce(
@@ -129,12 +48,14 @@ const calculateTotals = () => {
     0
   );
 
+  // 1.1) Totales de impuestos y descuentos
   const taxTotal = form.info_sale.reduce(
     (acc: number, currentValue: infoSaleI): number =>
-      Number(PreciseCalculator.add(acc, currentValue.tax_rate)),
+      Number(PreciseCalculator.add(acc, currentValue.tax_amount)),
     0
   );
 
+  // 1.2) Totales de descuentos
   const discountTotal = form.info_sale.reduce(
     (acc: number, currentValue: infoSaleI): number =>
       Number(PreciseCalculator.add(acc, currentValue.discount_amount || 0)),
@@ -154,70 +75,52 @@ const calculateTotals = () => {
   form.amount = Number(PreciseCalculator.subtract(subTotalNoTax, discountTotal));
 };
 
-const totalAmount = (index: number) => {
-  if (index < 0 || index >= form.info_sale.length) return;
+// Para eliminar un item de la venta
+const calculateItemRow = (item: infoSaleI) => {
+  if (!item.stock || !item.price) return;
 
-  setTimeout(() => {
-    deletedItem(index);
-  }, 150);
+  // Calcular el porcentaje de descuento
+  const discountRate = PreciseCalculator.divide(item.discount || 0, 100);
 
-  // Sacar los datos del produtos
-  if (!checkIndex()) return;
-  let info: infoSaleI = form.info_sale[index];
-
-  let discountRate = PreciseCalculator.divide(info.discount || 0, 100);
-
-  //Para calcular los datos
-  info.amount = parseFloat((info.price * info.stock).toFixed(2));
-  //Descuento datos
-  info.discount_amount = parseFloat(
-    PreciseCalculator.multiply(info.amount, discountRate.toString()).toFixed(2)
+  // Calcular Importe Bruto (Precio * Stock)
+  item.amount = parseFloat(
+    PreciseCalculator.multiply(item.price.toString(), item.stock.toString()).toFixed(2)
   );
-  //Pasar los datos al formulario
-  info.tax_uuid = parseFloat(PreciseCalculator.multiply(info.amount, info.tax_rate).toFixed(2));
 
-  console.log(info.tax_uuid);
+  // Calcular monto deducido por el descuento
+  item.discount_amount = parseFloat(
+    PreciseCalculator.multiply(item.amount.toString(), discountRate.toString()).toFixed(2)
+  );
 
-  //Calcular los totales
+  // Calcular ITBIS basado en el importe bruto
+  item.tax_amount = parseFloat(
+    PreciseCalculator.multiply(item.amount.toString(), (item.tax_rate || 0).toString()).toFixed(2)
+  );
+
+  // Recalcular los totales de la factura global
   calculateTotals();
 };
 
-const changePrice = () => {
+// Tomar la info
+const showEditInfo = () => {
+  // Verificar si hay al menos un item en la venta
   if (form.info_sale.length <= 0) return;
-  const idx = lastIndex.value;
-  // proteger índice inválido
-  if (idx < 0 || idx >= form.info_sale.length) return;
+  showEdit.value = true;
+  // Tomar el ultimo indice
+  const maxIndex = form.info_sale.length - 1;
 
-  const item = form.info_sale[idx];
-
-  switch (typePrice.value) {
-    case 1:
-      // precio normal (ya está en item.price)
-      // si quisieras usar un campo original:
-      // item.price = item.base_price ?? item.price;
-      item.price_temp = item.price ?? 0;
-      break;
-
-    case 2:
-      // precio mínimo
-      item.price_temp = item.special_price ?? 0;
-      break;
-
-    case 3:
-      // precio especial
-      item.price_temp = item.min_price ?? 0;
-      break;
-
-    default:
-      // opcional: si no hay tipo válido, no hacer nada
-      return;
-  }
-
-  totalAmount(idx);
+  // Tomar los datos por el index
+  const info = form.info_sale[maxIndex];
+  // Para los datos para editar
+  formEditInfo.value.price = info.price;
+  formEditInfo.value.stock = info.stock;
+  formEditInfo.value.discount = info.discount ?? 0;
 };
 
+// Exponer funciones al componente padre
 defineExpose({
-  totalAmount,
+  // totalAmount,
+  calculateItemRow,
   calculateTotals,
 });
 </script>
@@ -240,7 +143,7 @@ defineExpose({
       header="Precio"
       :field="(data: infoSaleI) => `${getMoney(data.price)}`"
     />
-    <Column header="Itbis" :field="(data: infoSaleI) => `${data.tax_rate}`" />
+    <Column header="Itbis" :field="(data: infoSaleI) => `${getMoney(data.tax_amount)}`" />
     <Column
       class="max-w-20"
       header="Descuento"
@@ -249,6 +152,7 @@ defineExpose({
     <Column class="max-w-20" header="Almacen">
       <template #body="{ index }">
         <Select
+          :disabled="form.type === 'Devolucion'"
           v-model="form.info_sale[index].warehouse_uuid"
           :options="getWarehouses"
           optionLabel="name"
@@ -259,79 +163,25 @@ defineExpose({
     <Column header="Importe" :field="(data: infoSaleI) => `${getMoney(data.amount)}`" />
     <template #footer>
       <div class="text-center">
-        <Button
+        <button
+          type="button"
           v-if="form.info_sale.length > 0"
-          title="Editar"
-          @click="getLastIndex"
-          icon="pi pi-pencil"
-        />
+          @click="showEditInfo"
+          v-tooltip.bottom="'Editar Item'"
+          class="bg-green-300 p-1 rounded-md"
+        >
+          <FilePenLine :size="30" />
+        </button>
       </div>
     </template>
   </DataTable>
   <Dialog v-model:visible="showEdit" modal>
-    <div class="flex flex-col gap-5 items-center">
-      <div v-if="form.info_sale.length > 0" class="text-2xl font-bold">
-        Editando el Item : {{ productEditingName }}, es un:
-        {{ productIsService ? 'Servicios' : 'Producto' }}
-      </div>
-      <div class="flex gap-5">
-        <div class="flex flex-col gap-5 mt-5">
-          <div class="flex gap-5">
-            <div class="flex items-center gap-2">
-              <RadioButton
-                @change="changePrice"
-                v-model="typePrice"
-                inputId="normal_price"
-                name="normal_price"
-                :value="1"
-              />
-              <label for="normal_price"> Precio Normal </label>
-            </div>
-            <div class="flex items-center gap-2">
-              <RadioButton
-                @change="changePrice"
-                v-model="typePrice"
-                inputId="special_price"
-                name="special_price"
-                :value="2"
-              />
-              <label for="special_price"> Precio Especial </label>
-            </div>
-            <div class="flex items-center gap-2">
-              <RadioButton
-                @change="changePrice"
-                v-model="typePrice"
-                inputId="min_price"
-                name="min_price"
-                :value="3"
-              />
-              <label for="min_price"> Precio Minimo </label>
-            </div>
-          </div>
-          <div class="flex gap-5">
-            <FloatLabel variant="on">
-              <InputNumber @blur="totalAmount(lastIndex)" v-model="editItemForm.stock" />
-              <label for="stock">Cantidad</label>
-            </FloatLabel>
-            <FloatLabel variant="on">
-              <InputNumber
-                :min="minPrice"
-                :readonly="productIsService"
-                v-model="editItemForm.price"
-              />
-              <label for="price">Precio</label>
-            </FloatLabel>
-            <FloatLabel variant="on">
-              <InputNumber v-model="editItemForm.discount" />
-              <label for="discount">Descuento</label>
-            </FloatLabel>
-          </div>
-        </div>
-        <div class="mt-5 text-3xl space-x-3">
-          <FontAwesomeIcon @click="moveEdit('up')" :icon="faArrowAltCircleUp" />
-          <FontAwesomeIcon @click="moveEdit('down')" :icon="faArrowAltCircleDown" />
-        </div>
-      </div>
-    </div>
+    <SaleEditItem
+      @calculate-totals="calculateTotals"
+      @calculate-item-row="calculateItemRow"
+      v-model:editItemForm="formEditInfo"
+      v-model:lastIndex="lastIndex"
+      v-model:minIndex="minIndex"
+    />
   </Dialog>
 </template>

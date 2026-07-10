@@ -2,21 +2,29 @@
 
 namespace App\Helpers;
 
+use App\Dtos\CreditNoteInfoSale;
 use App\Dtos\SaleCreditNoteDto;
-use App\Enums\TransTypeEnum;
-use App\Enums\ProductTypeEnum;
+use App\Dtos\SaleDto;
+use App\Dtos\SaleItemDto;
 use App\Enums\SaleTypeEnum;
 use App\Enums\SequenceSaleTypeEnum;
 use App\Http\Requests\StoreProductSaleRequest;
 use App\Models\CreditNote;
+use App\Models\CreditNoteItem;
+use App\Models\InventoryMovement;
 use App\Models\Product;
-use App\Models\ProTrans;
 use App\Models\Sale;
+use App\Models\Setting;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use JetBrains\PhpStorm\NoReturn;
+use Laravel\Octane\Exceptions\DdException;
 use Throwable;
 
 class CreditNoteHelper
@@ -31,147 +39,51 @@ class CreditNoteHelper
     public function creditNoteStore(StoreProductSaleRequest $request, Sale $sale): CreditNote
     {
         //Asegurar que los procesos se cumplan
-         return DB::transaction(function () use ($request, $sale) {
+        return DB::transaction(function () use ($request, $sale) {
 
+            /** @var Setting|null $setting */
+            $setting = Cache::get('app_settings');
             //Convertir a collection
-            $infoCollect = collect($request->get('info_sale'));
-            $saleCollect = collect($sale->infoSale);
-
-            //Obtener el tipo de devolucion
-            $type = $request->get('type');
+            $data = SaleDto::fromArray($request->validated());
 
             //Verificar si existe para aumentar el contador de la nota de credito
-            if ($type == SaleTypeEnum::Devolucion->value)
-            {
-                //Crear el aumento de los comprobante
-                SequenceHelper::incrementSequence(SequenceSaleTypeEnum::B04);
+            if ($data->type == SaleTypeEnum::Devolucion->value && $setting?->sequence) {
+                //Crear el aumento el comprobante
+                SequenceHelper::incrementSequence(SequenceSaleTypeEnum::B04, $request);
             }
+            // Limpiar los datos para crear la nota de credito
+            $cleanData = collect($data->toArray())->except(['uuid', 'status'])->toArray();
+            // Colocar el n_available igual al monto de la nota de credito
+            $cleanData['n_available'] = $data->amount;
 
             //Crear la devolucion
             $creditNote = CreditNote::create([
-                'sale_id' => $sale->id,
-                'invoice_type' => SequenceSaleTypeEnum::B04->value,
-                'client_id' => $request->get('client_id') ?: null,
-                'client_name' => $request->get('client_name'),
-                'client_rnc' => $request->get('client_rnc'),
-                'ncf' => $request->get('ncf'),
-                'ncf_m' => $request->get('ncf_m'),
-                'discount_amount' => $request->get('discount_amount'),
-                'discount' => $request->get('discount'),
-                'tax' => $request->get('tax'),
-                'sub_total' => $request->get('sub_total'),
-                'amount' => $request->get('amount'),
-                'type' => SaleTypeEnum::Devolucion,
-                'n_available' => $request->get('amount'),
-                'comment' => $request->get('comment'),
+                ...$cleanData,
+                'sale_uuid' => $sale->uuid,
             ]);
 
-            //sumatoria para ver si se cerro la cuenta
-            $resultTotal = [];
-
+            // Los datos para insertar
+            $creditNoteItemsSave = [];
 
             //Recorrer los datos
-            $infoCollect->map(callback: function ($item) use (&$saleCollect, &$sale, &$creditNote, &$resultTotal) {
+            collect($data->info_sale)->each(function (SaleItemDto $item) use (&$creditNoteItemsSave, $creditNote) {
+                // Crear el item de la nota de credito
+                $creditNoteItemsSave[] = new CreditNoteItem([
+                    'credit_note_uuid' => $creditNote->uuid,
+                    'product_uuid' => $item->product_uuid,
+                    'warehouse_uuid' => $item->warehouse_uuid,
+                    'quantity' => $item->stock,
+                    'price' => $item->price,
+                    'tax' => $item->getTax(),
+                    'sub_total' => $item->amount,
+                    'amount' => $item->getAmount(),
+                ]);
 
-                //buscar los productos
-                $product = Product::find($item['product_id']);
-
-                //Buscar la concidencia en los datos antiguo
-                $saleInfo = $saleCollect->firstWhere('product_id', $item['product_id']);
-
-                //sacar el resultado
-                $result  =  $saleInfo['stock'] - $item['stock'];
-
-
-                //Si el producto es de servicio el resultado debe ser 0
-//                if ($product->type == ProductTypeEnum::SERVICIO && $result != 0)
-//                {
-//                    // Devolver error si no coincide
-//                    throw ValidationException::withMessages([
-//                        'general' => "Por Favor, No Puede Modificar La Cantidad Del Item: $product->name"
-//                    ]);
-//
-//                }else
-                if ($result < 0)
-                {
-                    // Devolver error si no coincide
-                    throw  ValidationException::withMessages([
-                        'general' => "Por Favor, El Item: $product->name, La Cantidad Es Mayor Que La Factura"
-                    ]);
-                }
-                else{
-
-                    //Crear la transaccion individual
-                    TransHelper::store($item, TransTypeEnum::DEVOLUCION, $sale,$product, $creditNote);
-
-                    // Verificar si la nota de credito y la venta es 0
-                    $amount = $sale->amount - $creditNote->amount;
-
-                    //si el salgo es igual a 0 se coloca la venta en status 0
-                    if ($amount == 0)
-                    {
-                        $sale->update([
-                            'status' => false
-                        ]);
-                    }
-                    //Verificar que el producto sea el mismo que el de la transation
-                    $productCheck = $product->trans->where('id', $item['id'])->first();
-
-                    // Verificar si es productos para actualizar el inventario
-                    if ($product->type === ProductTypeEnum::Producto)
-                    {
-                        //actializar los datos del stock
-                        $product->increment('stock', $item['stock']);
-
-                        //Verificar si es resera o no
-                        if ($productCheck?->type == TransTypeEnum::RESERVA)
-                        {
-                            //Deducir de la reserva
-                            $product->decrement('reserved', $item['stock']);
-                        }
-                    }
-
-
-                    //Tomar el total de toda la devoluciones
-                    $stockRet = $product->trans
-                        ->where('type', TransTypeEnum::DEVOLUCION)
-                        ->where('sale_id', $sale->id)
-                        ->sum('stock');
-
-
-                    //Tomar el resultado
-                    $result = $saleInfo->stock - $stockRet;
-
-                    //Agreagr a resultado final
-                    $resultTotal[] = $result;
-
-                    //Si el resultado es cero, pues se
-                    if ($result == 0.0)
-                    {
-
-                        // Actualizar el status del producto
-                        ProTrans::where('id', $saleInfo->id)
-                            ->update([
-                                'status' => false
-                            ]);
-                    }
-
-                }
             });
 
-            //Tomar el sale id para actualizar datos
-            $saleId = $saleCollect[0]->sale_id;
-
-            //Verificar si es menor o igual a 0
-            if (array_sum($resultTotal) <= 0)
-            {
-
-                Sale::where('id', $saleId)->update([
-                    'close_table' => true
-                ]);
-            }
-
-            //Devolver el dato para el json
+            // Guardar los items en la nota de credito
+            $creditNote->items()->saveMany($creditNoteItemsSave);
+            // Devolver los datos
             return $creditNote;
         });
 
@@ -180,111 +92,155 @@ class CreditNoteHelper
 
     /**
      * @param string $code
-     * @return CreditNote|null
+     * @return JsonResponse|null
      */
-    public static function creditNoteGet(string $code):CreditNote|null
+    public static function creditNoteGet(string $code): ?JsonResponse
     {
-        return CreditNote::where(function (Builder $q) use ($code){
+        // Buscar la nota de credito por codigo o ncf
+        $creditNote = CreditNote::where(function (Builder $q) use ($code) {
             $q->where('code', $code)
-                ->orWhere('ncf',$code);
-        })->where('n_available','>',0)
-            ->select(['id','ncf','n_available','code'])
-            ->first() ?? null;
+                ->orWhere('ncf', $code);
+        })->where('n_available', '>', 0)
+            ->where('created_at', '>=', now()->subDays(15))
+            ->select(['uuid', 'ncf', 'n_available', 'code', 'created_at'])
+            ->first();
+
+        // Verificar si existe
+        if (!$creditNote) {
+            return null;
+        }
+
+        // Calcular el tiempo restante para expirar
+        $dayRemaining = 15 - now()->diffInDays($creditNote->created_at);
+
+        // Devolver la respuesta
+        return response()->json([
+            'uuid' => $creditNote->uuid,
+            'ncf' => $creditNote->ncf,
+            'n_available' => $creditNote->n_available,
+            'n_available_new' => 0,
+            'code' => $creditNote->code,
+            'created_at' => $creditNote->created_at,
+            'dayRemaining' => $dayRemaining,
+            'expireSoon' => $dayRemaining <= 5,
+
+        ]);
 
     }
 
 
     /**
      * Verificar la notas de credito
-     * @param SaleCreditNoteDto[] $info
-     * @param float $amount
+     * @param CreditNoteInfoSale[] $info
+     * @param Sale $sale
      * @return void
      */
-    public static function updateAvailableFor(array $info = [], float $amount = 0):void
+    public static function updateAvailableFor(array $info, Sale $sale): void
     {
-        if (empty($info) || $amount <= 0) {
+        // Verificar si hay datos
+        if (empty($info)) {
             return;
         }
 
-        //Total de nota de credito
-        $totalCredit = array_sum(
-            Arr::map(
-                $info,
-                fn(SaleCreditNoteDto $dto) => $dto->n_available
-            ));
-        //Scar el resultado de la nota de credito y la venta total
-        $result =  $totalCredit - $amount;
 
-        //Verificar si es mayor a cero
-        if ($result < 0)
-        {
-            //Recorrar los datos para actualizar
-            foreach ($info as $item)
-            {
-                //colocar en 0 las notas de credito
-                CreditNote::where('id', $item['id'])
-                    ->update([
-                       'n_available' => 0,
-                        'status' => false
-                    ]);
+        // Obtener los uuids de las notas de credito
+        $uuids = collect($info)->pluck('uuid')->toArray();
+
+        // Obtener las notas de credito por uuid
+        $creditNoteFromDB = CreditNote::whereIn('uuid', $uuids)
+            ->where('status', true)
+            ->where('n_available', '>', 0)
+            ->orderBy('created_at', 'asc')
+            ->get()
+            ->keyBy('uuid');
+
+        // Varlidar si existen todas la notas de creditos
+        foreach ($info as $item) {
+            if (!$creditNoteFromDB->has($item->uuid)) {
+                throw ValidationException::withMessages([
+                    'credit_note' => "Nota de crédito {$item->code} no está disponible"
+                ]);
+            }
+        }
+
+        // Ordernar las notas de creditos
+        /** @var Collection<string, CreditNote> $sortedCreditNotes */
+        $sortedCreditNotes = $creditNoteFromDB->sortBy('created_at');
+
+        // Tomar los que queda
+        $remainingAmount = $sale->amount;
+        $notedToUpdated = [];
+        $creditNoteSale = [];
+
+        // Recorrer las notas de creditos
+        foreach ($sortedCreditNotes as $creditNote) {
+            // Verificar si el monto es mayor a 0c
+            if ($remainingAmount <= 0) {
+                break;
             }
 
-        //Si el balance de la nota de credito es mayor
-        }else{
+            // Tomar el monto de la nota de credito
+            $availableAmount = (float)$creditNote->n_available;
 
-            //Convertir a collecion
-            $infoCollect = collect($info);
-            //Buscar la que tenga el balance mas alto
-            $maxData = $infoCollect->sortByDesc('n_available')->first();
+            $appliedAmount = min($remainingAmount, $availableAmount);
 
+            // Calcular el nuevo monto disponible
+            $newAvailable = bcsub((string)$availableAmount, (string)$remainingAmount, 4);
 
+            // Verificar si el monto es mayor al monto restante
+            if ($availableAmount >= $remainingAmount) {
+                // Actualizar el monto de la nota de credito
 
-            $infoCollect->map(function ($item) use ($maxData, $result){
-                //tomar los datos de la nota de credito maxima
-                $maxId = $maxData['id'];
-                $maxAve = $maxData['n_available'];
+                // Actualizar el array
+                $notedToUpdated[$creditNote->uuid] = [
+                    'n_available' => $newAvailable,
+                    'status' => bccomp($newAvailable, '0', 4) > 0,
+                ];
+                // Actualizar el monto restante
+                $remainingAmount = 0;
+            } else {
+                // Actualizar el monto de la nota de credito
+                $notedToUpdated[$creditNote->uuid] = [
+                    'n_available' => '0',
+                    'status' => false
+                ];
+                // Actualizar el monto restante
+                $remainingAmount = bcsub((string)$remainingAmount, (string)$availableAmount, 4);
+            }
 
-
-                //Buscar la nota de credito
-                $credit = CreditNote::find($item['id']);
-
-                //Evitar que esta se actualize
-                if ($item['n_available'] == $maxAve && $maxId == $item['id'])
-                {
-
-                    //Reducir el resultado el cual es positivo
-                    $credit->update([
-                        'n_available' => $result
-                    ]);
-
-                }else{
-
-                    //Ponerla en 0 y Quitarle el status
-                    $credit->update([
-                        'n_available' => 0,
-                        'status' => false
-                    ]);
-                }
-            });
-
+            $creditNoteSale[] = [
+                'sale_uuid' => $sale->uuid,
+                'credit_note_uuid' => $creditNote->uuid,
+                'applied_amount' => $appliedAmount, // ← Aquí va el monto aplicado, no el newAvailable
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
         }
-    }
 
+
+        // Actualizar los datos de la nota de credito
+        foreach ($notedToUpdated as $uuid => $data) {
+            CreditNote::where('uuid', $uuid)->update($data);
+        }
+
+        if(!empty($creditNoteSale))
+        {
+            DB::table('credit_note_sale')->insert($creditNoteSale);
+        }
+
+
+    }
 
 
     //Buscar el balance de la nota de credito
     #[NoReturn]
-    public static function getBalance (string $code):void
+    public static function getBalance(string $code): void
     {
 
         $creditNote = self::creditNoteGet($code);
 
 
-        dd($creditNote);
-
-
     }
-
 
 
 }

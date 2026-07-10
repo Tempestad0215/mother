@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\CheckConfigExitsMiddleware;
 use App\Http\Middleware\CheckSequenceExistsMiddleware;
+use App\Http\Middleware\EnsureCashRegisterIsOpenMiddleware;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -31,6 +32,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,
             'role_or_permission' => RoleOrPermissionMiddleware::class,
+            'ensure_cash_register' => EnsureCashRegisterIsOpenMiddleware::class,
         ]);
 
         //

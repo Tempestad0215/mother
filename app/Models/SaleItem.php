@@ -2,16 +2,19 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
 
 /**
- * @property int $id
- * @property int $product_id
- * @property int $tax_id
+ * @property string $uuid
+ * @property string $product_uuid
+ * @property string $tax_uuid
  * @property float $stock
  * @property float $price
  * @property float $tax_rate
@@ -19,6 +22,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property float $discount_amount
  * @property float $reserved
  * @property float $amount
+ * @property string $price_type
  * @property boolean $is_service
  *
  *
@@ -28,40 +32,65 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @mixin Builder
  */
-
-class SaleItem extends Model
+class SaleItem extends Model implements Auditable
 {
     use SoftDeletes;
+    use \OwenIt\Auditing\Auditable;
+    use HasUuids;
 
+    // Corregido: Era primaryKey con 'a'
+    protected $primaryKey = 'uuid';
+
+    protected $keyType = 'string';
+
+    public $incrementing = false;
+
+
+
+    /**
+     *
+     *
+     * @var array
+     */
     protected $fillable = [
-        'sale_id',
-        'product_id',
+        'sale_uuid',
+        'product_uuid',
         'stock',
         'price',
         'tax_rate',
-        'tax_id',
         'discount',
         'discount_amount',
         'reserved',
         'amount',
+        'price_type',
         'is_service',
     ];
 
+    /**
+     * Summary of Sale
+     * @return BelongsTo<Sale, SaleItem>
+     */
     public function Sale(): BelongsTo
     {
-        return $this->belongsTo(Sale::class);
+        return $this->belongsTo(Sale::class, 'sale_uuid', 'uuid');
     }
 
+    /**
+     * Summary of product
+     * @return BelongsTo<Product, SaleItem>
+     */
     public function product(): BelongsTo
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class, 'product_uuid', 'uuid');
     }
 
-    public function tax(): BelongsTo
-    {
-        return $this->belongsTo(Tax::class);
-    }
 
+
+
+    /**
+     *
+     * @return array{is_service: string}
+     */
     protected function casts(): array
     {
         return [

@@ -4,7 +4,7 @@ namespace App\Helpers;
 
 use App\Models\Category;
 use App\Models\Client;
-use App\Models\Product;
+use App\Models\CreditNote;
 use App\Models\Purchase;
 use App\Models\Supplier;
 use Illuminate\Database\Eloquent\Model;
@@ -12,6 +12,12 @@ use Illuminate\Database\Eloquent\Model;
 class CodeHelper
 {
 
+    /**
+     * Summary of generateCode
+     * @param Model $model
+     * @param int $nextNumber
+     * @return string
+     */
     public static function generateCode(Model $model, int $nextNumber):string
     {
 //        Obtener los datos
@@ -34,6 +40,11 @@ class CodeHelper
     }
 
 
+
+    /**
+     * Summary of getState
+     * @return array
+     */
     private static function getState():array
     {
         return [
@@ -41,6 +52,7 @@ class CodeHelper
             Category::class => config('appconfig.category'),
             Supplier::class => config('appconfig.supplier'),
             Purchase::class => config('appconfig.purchase'),
+            CreditNote::class => config('appconfig.creditNote')
 
         ];
     }

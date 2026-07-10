@@ -26,7 +26,7 @@ class ProductDto extends BaseDto
         public string  $tax_uuid,
         public float   $price,
         public float   $min_price,
-        public float   $special_price,
+        public float   $promotional_price,
         public float   $cost,
         public float   $benefits,
         public float   $benefits_rate,
@@ -80,7 +80,7 @@ class ProductDto extends BaseDto
             tax_uuid: $data['tax_uuid'] ?? '',
             price: (float) ($data['price'] ?? 0),
             min_price: (float) ($data['min_price'] ?? 0),
-            special_price: (float) ($data['special_price'] ?? 0),
+            promotional_price: (float) ($data['promotional_price'] ?? 0),
             cost: (float) ($data['cost'] ?? 0),
             benefits: (float) ($data['benefits'] ?? 0),
             benefits_rate: (float) ($data['benefits_rate'] ?? 0),
@@ -131,7 +131,7 @@ class ProductDto extends BaseDto
             'tax_uuid' => $this->tax_uuid,
             'price' => $this->price,
             'min_price' => $this->min_price,
-            'special_price' => $this->special_price,
+            'promotional_price' => $this->promotional_price,
             'cost' => $this->cost,
             'benefits' => $this->benefits,
             'benefits_rate' => $this->benefits_rate,
@@ -149,6 +149,8 @@ class ProductDto extends BaseDto
             // Propiedades calculadas
             'tax_rate' => $this->getTaxRate(),
             'tax' => $this->getTotalWithTax(),
+            'default_warehouse' => $this->getDefaultWarehouse(),
+            'default_price_list' => $this->getDefaultPriceList(),
         ];
     }
 

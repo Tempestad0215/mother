@@ -2,28 +2,23 @@
 
 namespace App\Helpers;
 
-use App\Dtos\InventoryMovementDto;
-use App\Dtos\SaleItemApiDto;
+use App\Dtos\SaleDto;
 use App\Dtos\SaleItemDto;
-use App\Enums\InventoryMovementConceptEnum;
-use App\Enums\TransTypeEnum;
-use App\Enums\ProductTypeEnum;
+use App\Enums\ProductTransactionTypeEnum;
 use App\Enums\SaleTypeEnum;
-use App\Enums\SequenceSaleTypeEnum;
-use App\Factories\SaleFactory;
-use App\Factories\SaleItemApiFactory;
-use App\Factories\SaleItemFactory;
 use App\Http\Requests\StoreProductSaleRequest;
 use App\Http\Resources\SaleInfoResource;
 use App\Models\DeletedSale;
 use App\Models\Product;
-use App\Models\ProTrans;
+use App\Models\ProductTransaction;
 use App\Models\Sale;
-use App\Models\Setting;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use LaravelIdea\Helper\App\Models\_IH_Sale_C;
 use Throwable;
 
@@ -39,7 +34,7 @@ class SaleHelper
         $search = $request->input('search');
 
         //Buscar los datos
-        return Sale::whereIn('type', [SaleTypeEnum::Ventas,SaleTypeEnum::Cotizacion])
+        return Sale::whereIn('type', [SaleTypeEnum::Ventas, SaleTypeEnum::Cotizacion])
             ->where(function (Builder $query) use ($search) {
                 $query->where('client_name', 'like', "%$search%")
                     ->orWhere('code', 'like', "%$search%");
@@ -56,89 +51,69 @@ class SaleHelper
      * @throws Throwable
      *
      */
-    public function store(StoreProductSaleRequest $request):Sale|null
+    public function store(StoreProductSaleRequest $request): Sale|null
     {
 
         //Para asegurar que se cumplan los registro
-         return DB::transaction(function () use ($request) {
+        return DB::transaction(function () use ($request) {
+            //obtener notas de crédito
+            $salePayload = SaleDto::fromArray($request->validated());
             //Obtener la configuración
-             $setting = Setting::first();
+
 
             //Incrementar la secuencia enviada
-            SequenceHelper::incrementSequence(SequenceSaleTypeEnum::from($request->invoice_type));
-
-            //obtener notas de crédito
-            $salePayload = SaleFactory::fromRequest($request, $setting);
+            SequenceHelper::incrementSequence($salePayload->invoice_type, $request);
 
             // Crear la venta
             $sale = Sale::create($salePayload->toArray());
 
-            //Actualizar los datos de la notas de crédito
-            CreditNoteHelper::updateAvailableFor($salePayload->credit_notes, $salePayload->amount);
+            //Actualizar los datos de las notas de crédito
+            CreditNoteHelper::updateAvailableFor($salePayload->credit_notes, $sale);
 
-            $rawInfoSale = $request->input('info_sale',[]);
+            // Obtener los ids de productos
+//            $productUuids = array_map(fn(SaleItemDto $item) => $item->product_uuid, $salePayload->info_sale);
+//
+//            // Obtener los productos y colocar él, id en el key
+//            /** @var Collection<string, Product> $products */
+//            $products = Product::whereIn('uuid', $productUuids)->get()->keyBy('uuid');
+//
+//            //Recorrer la venta para descontar los productos
+//            foreach ($salePayload->info_sale as $value) {
+//
+//                // Obtener el products
+//                $product = $products->get($value->product_uuid);
+//
+//                // Verificar si el producto existe
+//                if (!$product) {
+//                    // Si no existe, lanzar un error
+//                    throw ValidationException::withMessages(['El producto no existe']);
+//                }
+//
+//            }
 
-             $infoSale = SaleItemApiFactory::fromListArray($rawInfoSale);
+            // Crear los movimientos de inventario
+            SaleItemHelper::multipleInsertWithSale($sale, $salePayload->info_sale);
 
-             $movementsInfos = [];
-             $itemsInfos = [];
-             //Recorrer la venta para descontar los productos
-             foreach ($infoSale as $value)
-             {
-
-                $typeMovement = $this->movementType($salePayload->type);
-
-                $movementsInfos[] = new InventoryMovementDto(
-                    type: $typeMovement,
-                    product_id: $value->product_id,
-                    quantity: $value->stock,
-                    warehouse_id: $value->warehouse_id,
-                    price: $value->price,
-                )->toArray();
-
-                $itemsInfos[] = new SaleItemApiDto(
-                    product_id: $value->product_id,
-                    product_name: $value->product_name,
-                    stock: $value->stock,
-                    price: $value->price,
-                    min_price: $value->min_price,
-                    special_price: $value->special_price,
-                    warehouse_id: $value->warehouse_id,
-                    tax_rate: $value->tax_rate,
-                    tax_id: $value->tax_id,
-                    price_temp: $value->price_temp,
-                    discount: $value->discount,
-                    discount_amount: $value->discount_amount,
-                    reserved: $value->reserved,
-                    amount: $value->amount,
-                    is_service: $value->is_service,
-                )->toArray();
-
-             }
-
-             SaleItemHelper::multipleInsertWithSale($sale, $itemsInfos);
-             InventoryMovementHelper::multipleInsertWithSale($sale, $movementsInfos);
-
+            // Crear las transacciones de productos
             return $sale;
         });
     }
 
 
-    /**
-     * @param SaleTypeEnum $saleType
-     * @return InventoryMovementConceptEnum
-     */
-    public function movementType(SaleTypeEnum $saleType): InventoryMovementConceptEnum
-    {
-        if($saleType == SaleTypeEnum::Ventas){
-            return InventoryMovementConceptEnum::Venta;
-        }else if($saleType == SaleTypeEnum::Devolucion){
-            return InventoryMovementConceptEnum::Devolucion;
-        }else{
-            return InventoryMovementConceptEnum::Cotizacion;
-        }
-    }
-
+    // /**
+    //  * @param SaleTypeEnum $saleType
+    //  * @return InventoryMovementConceptEnum
+    //  */
+    // public function movementType(SaleTypeEnum $saleType): InventoryMovementConceptEnum
+    // {
+    //     if($saleType == SaleTypeEnum::Ventas){
+    //         return InventoryMovementConceptEnum::Venta;
+    //     }else if($saleType == SaleTypeEnum::Devolucion){
+    //         return InventoryMovementConceptEnum::Devolucion;
+    //     }else{
+    //         return InventoryMovementConceptEnum::TransferenciaSalida;
+    //     }
+    // }
 
 
     /**
@@ -148,21 +123,19 @@ class SaleHelper
      * @return void
      * @throws Throwable
      */
-    public function deleteItem(Request $request, Product $product, Sale $sale):void
+    public function deleteItem(Request $request, Product $product, Sale $sale): void
     {
 
         //Declarar las variables
-        DB::transaction(function () use ($sale, $product,$request) {
-            $productStock = $request->input('info')['stock'];
-            $transType = $request->input('info')['type'];
+        DB::transaction(function () use ($sale, $product, $request) {
             //Id de transaction producto
             $idTransProduct = $request->input('info')['transID'];
 
 
-            ProTrans::where('id',$idTransProduct)->update([
+            ProductTransaction::where('uuid', $idTransProduct)->update([
                 'deleted_at' => now(),
-                'reserved' => 0,
-                'type' => TransTypeEnum::ELIMINADO,
+                'reserved_quantity' => 0,
+                'type' => ProductTransactionTypeEnum::CANCELLED,
             ]);
 
             // si tiene reserva, pues se descuenta ese monto
@@ -189,7 +162,7 @@ class SaleHelper
      * @return void
      * @throws Throwable
      */
-    public function deleteSale(Request $request, Sale $sale, bool $inventoried):void
+    public function deleteSale(Request $request, Sale $sale, bool $inventoried): void
     {
         DB::transaction(function () use ($request, $sale, $inventoried) {
             //Poner los datos en deshabilitado
@@ -198,10 +171,8 @@ class SaleHelper
 
 
             //recorrer los datos de la ventas
-            if ($inventoried)
-            {
-                foreach ($sale->infoSale as $value)
-                {
+            if ($inventoried) {
+                foreach ($sale->infoSale as $value) {
                     //Buscar el producto en la lista
                     $product = Product::find($value['id']);
                     //sumar el producto
@@ -212,7 +183,7 @@ class SaleHelper
             }
             //Crear la venta eliminada
             $deleteSale = DeletedSale::create([
-                'sale_id' => $sale->id,
+                'sale_uuid' => $sale->uuid,
                 'info' => $sale->infoSale,
                 'discount_amount' => $sale->discount_amount,
                 'amount' => $sale->amount,
@@ -221,6 +192,7 @@ class SaleHelper
                 'close_table' => $sale->close_table,
             ]);
 
+            // Crear el comentario
             $deleteSale->comment()->create([
                 'content' => $request->input('comment'),
             ]);
@@ -232,101 +204,25 @@ class SaleHelper
      * @param StoreProductSaleRequest $request
      * @param Sale $sale
      * @return Sale
+     * @throws Throwable
      */
     public function updateSale(StoreProductSaleRequest $request, Sale $sale): Sale
     {
 
         //Obtener la info
-        $infoRequest = collect($request->input('info_sale'));
-        //Verificar si esta cerrada
-        $closeTable = $request->input('close_table');
+        $saleDto = SaleDto::fromArray($request->validated());
 
-        //Recorrer los datos
-        $infoRequest->map(callback: function ($item) use (&$sale, &$closeTable, &$request){
+        // Actualizar los datos de la venta
+        $sale->update($saleDto->toArray());
 
-            //convertir la info sale a collection
-            $infoSale = collect($sale->infoSale);
-
-            //Poner la variable en 0
-            $stock = 0;
-
-
-            //Verificar si el item existe
-            if (count($infoSale) !== 0)
-            {
-                //Econtrar la coincidencia y tomar el stock
-                $stock = $infoSale->firstWhere('product_id', $item['product_id'])['stock'];
-            }
-
-            //Buscar el producto existente
-            $product = Product::find($item['product_id']);
-
-            //Restar la cantidad que llega - la registrada
-            $result = $item['stock'] - $stock;
+        // Obtener los ids de productos
+        SaleItemHelper::multipleInsertWithSale(
+            $sale,
+            $saleDto->info_sale,
+            $saleDto->update
+        );
 
 
-            //Verificar el resultado
-            if ($result > 0)
-            {
-
-                //Disminuir la stock
-                $product->stock -= abs($result);
-                //Auemntar la reserva
-                $product->reserved += abs($result);
-                //Guardar los datos
-
-            }else{
-
-                //Auemntar el stock
-                $product->stock += abs($result);
-                //Disminuir la reserva
-                $product->reserved -= abs($result);
-                //Guardar los datos
-
-            }
-
-            // Actualizar los cambios realizados
-            $product->save();
-
-
-            // Tomar los datos de validacion
-            $data = $request->validated();
-            //Conseguiir notas de creditos
-            $creditNotes = $request->input('credit_notes');
-            //Obtener los ids
-            $ids = array_column($creditNotes, 'id');
-//            Agrager los ids de notas de creditos
-            $data['credit_notes'] = $ids;
-            //Actualizar los datos de la ventas
-            $sale->update($data);
-
-//            $sale->client_id = $request->input('client_id');
-//            $sale->client_rnc = $request->input('client_rnc');
-//            $sale->client_name = $request->input('client_name');
-//            $sale->discount_amount = $request->input('discount_amount');
-//            $sale->tax = $request->input('tax');
-//            $sale->sub_total = $request->input('sub_total');
-//            $sale->amount = $request->input('amount');
-//            $sale->credit_notes = $ids;
-//            $sale->close_table = $request->input('close_table');
-//            $sale->returned = $request->input('returned');
-//            $sale->received = $request->input('received');
-//            $sale->comment = $request->input('comment');
-//            $sale->save();
-
-            //Reducir las notas de creditos seleccionada
-            CreditNoteHelper::updateAvailableFor($creditNotes, $request->input('amount'));
-
-            if ($closeTable)
-            {
-                //Crear la transacciones
-                TransHelper::store($item, TransTypeEnum::VENTAS, $sale, $product);
-
-            }else{
-                //Crear la transacciones
-                TransHelper::store($item, TransTypeEnum::RESERVA, $sale, $product);
-            }
-        });
 
 
         return $sale;
@@ -335,25 +231,33 @@ class SaleHelper
 
     /**
      * @param Request $request
-     * @return mixed
+     * @return AnonymousResourceCollection
      */
-    public function getSaleOpen(Request $request):mixed
+    public function getSaleOpen(Request $request): AnonymousResourceCollection
     {
         //tomar los datos para buscar
         $search = $request->input("search");
 
-
-        //Ralizar la busqueda en la base de datos de Sale cuando el campo close_table sea false
-        $data = Sale::where(function (Builder $query) {
+        //Realizar la búsqueda en la base de datos de Sale cuando el campo close_table sea false
+        $data = Sale::query()
+         ->with(['items.product','items'])
+        ->where('close_table', false) // Filtrar primero por la mesa/venta abierta
+        ->where(function (Builder $query) {
+            // Esto asegura que traiga las que tienen status true O las que aún están en NULL (abiertas)
             $query->where('status', true)
-                ->where('close_table', false);
-        })->when($search != null ,function (Builder $query) use ($search) {
-            $query->where('client_name', 'LIKE', "%$search%") ;
-        })->with('infoSale')
+                ->orWhereNull('status');
+        })
+            ->whereHas('items')
+            // filled() solo se ejecuta si el buscador tiene texto real escrito
+            ->when($request->filled('search'), function (Builder $query) use ($search) {
+                $query->where('client_name', 'ILIKE', "%$search%")
+                    ->orWhere('code', 'ILIKE', "%$search%"); // Opcional: buscar también por el código FAC0002
+            })
             ->latest()
             ->simplePaginate(15);
 
-        return SaleInfoResource::collection($data)->response()->getData(true);
+        // Devolver los datos
+        return SaleInfoResource::collection($data);
 
     }
 
@@ -375,8 +279,6 @@ class SaleHelper
 //
 //        return $heightTotal;
 //    }
-
-
 
 
 }

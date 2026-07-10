@@ -3,15 +3,17 @@
 namespace App\Models;
 
 use App\Enums\SequenceSaleTypeEnum;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Str;
 use OwenIt\Auditing\Contracts\Auditable;
 
 
 /**
- * @property int id
+ * @property string $uuid
  * @property string $code
  * @property SequenceSaleTypeEnum $type
  * @property int $from
@@ -31,9 +33,13 @@ class Sequence extends Model implements Auditable
 
     use softDeletes;
     use \OwenIt\Auditing\Auditable;
+    use HasUuids;
 
     //Tabla a utilizar
     protected $table = 'sequences';
+    protected $primaryKey = 'uuid';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
 
     //Datos a llenar masivamente
@@ -49,7 +55,8 @@ class Sequence extends Model implements Auditable
         'date_request',
         'date_expire',
         'status',
-        'deleted_at'
+        'deleted_at',
+        'uuid'
     ];
 
     /**
@@ -82,14 +89,14 @@ class Sequence extends Model implements Auditable
     private static function generateCode():string
     {
         // Obtener el ultimo registros
-        $total = self::withTrashed()->latest('id')->value('id');
+        $total = self::withTrashed()->where('status', true)->count();
 
 
         // Generar el proximo ID
         $nextID = $total ? $total + 1 : 1;
 
         // Devolver los datos
-        $code = config('appconfig.seqCode');
+        $code = Str::upper(config('appconfig.seqCode'));
 
 
         // craer el codigp

@@ -11,7 +11,5 @@ export const getSearchTable = (urlName: RouteUrl): void => {
         preserveScroll: true,
       }
     );
-  } catch (e) {
-    console.log(e);
-  }
+  } catch (_) {}
 };

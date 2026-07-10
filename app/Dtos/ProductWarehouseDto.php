@@ -13,7 +13,7 @@ class ProductWarehouseDto extends BaseDto
         public float $min_stock,
         public float $max_stock,
         public float $reorder_level,
-        public float $committed_stock,
+        public float $committed,
     )
     {
 
@@ -29,7 +29,7 @@ class ProductWarehouseDto extends BaseDto
             min_stock: $data['min_stock'] ?? 0,
             max_stock: $data['max_stock'] ?? 0,
             reorder_level: $data['reorder_level'] ?? 0,
-            committed_stock: $data['committed_stock'] ?? 0,
+            committed: $data['committed'] ?? 0,
         );
     }
 

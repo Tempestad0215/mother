@@ -4,6 +4,6 @@ namespace App\Enums;
 
 enum InventoryMovementTypeEnum: string
 {
-    case Entrada = 'Entrada';
-    case Salida = 'Salida';
+    case IN = 'IN';   // Suma al inventario
+    case OUT = 'OUT'; // Resta al inventario
 }

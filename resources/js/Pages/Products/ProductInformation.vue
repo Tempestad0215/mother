@@ -4,26 +4,42 @@ import { categoryBaseI } from '@/Interfaces/CategoriesInterface';
 import { SupplierI } from '@/Interfaces/SupplierInterface';
 import { useRoute } from 'ziggy-js';
 import { formProductKey, productDataKey } from '@/Injections/InjectionKeys';
-import { AutoComplete, Button, Dialog, FloatLabel, InputText, Select } from 'primevue';
+import { AutoComplete, Button, Dialog, FloatLabel, InputText, Select, useToast } from 'primevue';
 import { router } from '@inertiajs/vue3';
 import FRegisterCategory from '@/Pages/Categories/FRegister.vue';
 import FRegisterSupplier from '@/Pages/Suppliers/FRegister.vue';
 import { PaymentTypeEnumI } from '@/Interfaces/GlobalInterface';
-import { CirclePlus } from '@lucide/vue';
+import { CirclePlus, Printer } from '@lucide/vue';
+import axios from 'axios';
 
+/**
+ *
+ */
 const route = useRoute();
+const toast = useToast();
 
-defineProps<{
+/**
+ *
+ */
+const propsW = defineProps<{
   categories: categoryBaseI[];
   suppliers: SupplierI[];
   paymentTypes: PaymentTypeEnumI;
+  code?: string;
 }>();
 
+/**
+ *
+ */
 const form = inject(formProductKey)!!;
 const productDataOption = inject(productDataKey);
 const createCategory = ref(false);
 const createSupplier = ref(false);
+const loadingLabel = ref(false);
 
+/**
+ *
+ */
 const searchProduct = () => {
   router.get(
     route('product.index', { search: form.name }),
@@ -34,6 +50,53 @@ const searchProduct = () => {
       replace: true,
     }
   );
+};
+
+/**
+ *
+ */
+const printLabel = async () => {
+  // Verificar si existe el codigo
+  if (propsW.code) {
+    loadingLabel.value = true;
+    try {
+      //
+      const response = await axios.get(route('product.get-label', { code: propsW.code }), {
+        responseType: 'blob',
+      });
+
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+
+      const url = window.URL.createObjectURL(blob);
+
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = url;
+
+      document.body.appendChild(iframe);
+
+      // 4. Esperamos a que el iframe cargue el PDF y disparamos la ventana de impresión
+      iframe.onload = () => {
+        iframe.contentWindow?.focus();
+        iframe.contentWindow?.print();
+
+        // 5. Limpieza: Removemos el iframe y liberamos la memoria del Blob un momento después
+        setTimeout(() => {
+          window.URL.revokeObjectURL(url);
+          document.body.removeChild(iframe);
+        }, 3000);
+      };
+    } catch (_) {
+      toast.add({
+        summary: 'Error en la peticion',
+        detail: 'No se ha podido imprimir el label del producto',
+        severity: 'error',
+        life: 500,
+      });
+    } finally {
+      loadingLabel.value = false;
+    }
+  }
 };
 
 // const printLabel = async (code:string | null) => {
@@ -87,7 +150,7 @@ const searchProduct = () => {
 
 <template>
   <div class="">
-    <div class="flex justify-between items-center mt-5">
+    <div class="">
       <!--                <div class="flex items-center gap-3">-->
       <!--                    <p>ID Siguiente : {{productStore.nextCode}}</p>-->
       <!--                    <Button title="Imprimir" :disabled="loadingUrlLabel" @click="printLabel(productStore.nextCode)"  >-->
@@ -96,17 +159,30 @@ const searchProduct = () => {
       <!--                        </template>-->
       <!--                    </Button>-->
       <!--                </div>-->
-      <div class="text-right space-x-3">
-        <Button @click="createCategory = true" label="Crear Categoria">
-          <template #icon>
-            <CirclePlus />
-          </template>
-        </Button>
-        <Button @click="createSupplier = true" label="Crear Suplidor">
-          <template #icon>
-            <CirclePlus />
-          </template>
-        </Button>
+      <div class="grid grid-cols-2">
+        <div>
+          <Button
+            :loading="loadingLabel"
+            type="button"
+            @click="printLabel()"
+            class="bg-green-300 p-2 rounded-md"
+          >
+            <Printer />
+          </Button>
+        </div>
+
+        <div class="text-right space-x-3">
+          <Button @click="createCategory = true" label="Crear Categoria">
+            <template #icon>
+              <CirclePlus />
+            </template>
+          </Button>
+          <Button @click="createSupplier = true" label="Crear Suplidor">
+            <template #icon>
+              <CirclePlus />
+            </template>
+          </Button>
+        </div>
       </div>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">

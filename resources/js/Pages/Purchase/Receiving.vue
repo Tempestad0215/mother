@@ -59,17 +59,17 @@ const propsW = withDefaults(defineProps<PropsI>(), {
 
 const searchSupplier = ref('');
 const showPurchaseAvailable = ref(false);
-const purchaseAvailable = ref<PurchaseBaseI | null>(null);
+const purchaseAvailable = ref<Array<PurchaseBaseI> | null>([]);
 const docDate = ref<Date | null>(new Date());
 const editItem = ref(false);
 const itemToEdit = ref<PurchaseItemI | null>(null);
 const lastIndex = ref(0);
 
 const form = useForm<PurchaseFormI>({
-  id: 0,
+  uuid: '',
   code: '',
-  supplier_id: 0,
-  user_id: 0,
+  supplier_uuid: '',
+  user_uuid: '',
   supplier_name: '',
   items: [],
   doc_date: '',
@@ -85,7 +85,7 @@ onMounted(() => {
   getDate(new Date());
 
   if (propsW.purchaseAvailable && propsW.purchaseAvailable?.length > 1) {
-    console.log('Existe mas de uno, por favor elije');
+    return;
   } else {
     //Verifica que exista el available
     if (!propsW.purchaseAvailable) return;

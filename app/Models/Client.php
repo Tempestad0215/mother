@@ -20,27 +20,28 @@ use OwenIt\Auditing\Contracts\Auditable;
 
 
 /**
- * @property integer id;
- * @property string name
- * @property SequenceSaleTypeEnum type_rnc
- * @property string phone
- * @property string personal_id
- * @property string email
- * @property ClientDocumentEnum document
- * @property string address
- * @property boolean status
- * @property float limit
- * @property integer due_date
- * @property ClientTypeEnum type
- * @property float late_fee_interest
- * @property float balance
- * @property float consumed
- * @property ClientTypePriceEnum type_price
- * @property boolean receive_email
- * @property string comment
- * @property Date deleted_at
- * @property Date created_at
- * @property Date updated_at
+ * @property string $uuid
+ * @property string $code
+ * @property string $name
+ * @property SequenceSaleTypeEnum $type_rnc
+ * @property string $phone
+ * @property string $personal_id
+ * @property string $email
+ * @property ClientDocumentEnum $document
+ * @property string $address
+ * @property boolean $status
+ * @property float $limit
+ * @property integer $due_date
+ * @property ClientTypeEnum $type
+ * @property float $late_fee_interest
+ * @property float $balance
+ * @property float $consumed
+ * @property ClientTypePriceEnum $type_price
+ * @property boolean $receive_email
+ * @property string $comment
+ * @property Date $deleted_at
+ * @property Date $created_at
+ * @property Date $updated_at
  */
 
 class Client extends Model implements Auditable
@@ -51,7 +52,9 @@ class Client extends Model implements Auditable
     use softDeletes;
     use HasUuids;
 
-
+    /**
+     * @var string
+     */
     protected $primaryKey = 'uuid';
     protected $keyType = 'string';
     public $incrementing = false;
@@ -75,6 +78,9 @@ class Client extends Model implements Auditable
     ];
 
 
+    /**
+     * @var string[]
+     */
     protected $casts = [
         'type' => ClientTypeEnum::class,
         'type_rnc' => SequenceSaleTypeEnum::class,
@@ -83,6 +89,9 @@ class Client extends Model implements Auditable
     ];
 
 
+    /**
+     * @return Attribute
+     */
     public function email():Attribute
     {
         return Attribute::make(
@@ -91,12 +100,17 @@ class Client extends Model implements Auditable
         );
     }
 
+    /**
+     * @return MorphOne
+     */
     public function image():MorphOne
     {
         return $this->morphOne(Image::class, 'imageable');
     }
 
-
+    /**
+     * @return MorphOne
+     */
     public function account():MorphOne
     {
         return $this->morphOne(Account::class, 'accountable');
@@ -126,6 +140,10 @@ class Client extends Model implements Auditable
         });
     }
 
+    /**
+     * @param Model $model
+     * @return string
+     */
     private static function generateCode(Model $model):string
     {
 //        Contar los nuemros totales

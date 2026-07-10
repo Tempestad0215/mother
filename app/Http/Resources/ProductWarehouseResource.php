@@ -65,8 +65,8 @@ class ProductWarehouseResource extends JsonResource
            return [
                'warehouse_uuid' => $warehouse->uuid,
                'stock_quantity' => (float)$quantity,
-               'committed_stock' => (float)$committed ?? 0,
-               'available_stock' => (float)bcsub($quantity, $committed,2) ?? 0,
+               'committed' => (float)$committed ?? 0,
+               'available' => (float)bcsub($quantity, $committed,2) ?? 0,
                'min_stock' => (float)$warehouse->pivot->min_stock ?? 0,
                'max_stock' => (float)$warehouse->pivot->max_stock ?? 0,
                'reorder_leve' => (float)$warehouse->pivot->reorder_leve ?? 0,

@@ -3,18 +3,16 @@
 namespace App\Helpers;
 
 use App\Dtos\InventoryMovementDto;
-use App\Enums\InventoryMovementConceptEnum;
+use App\Http\Resources\ProductResource;
 use App\Models\Inventory;
 use App\Models\Product;
 use App\Models\Warehouse;
 use DB;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
-use LaravelIdea\Helper\App\Models\_IH_Product_C;
-use RuntimeException;
 use Throwable;
 
 
@@ -50,7 +48,7 @@ class ProductHelper
         }
 
         DB::transaction(function () use ($product, $warehouse, $quantity, $cost) {
-            $oldStock = Inventory::where('product_id', $product->uuid)
+            $oldStock = Inventory::where('product_uuid', $product->uuid)
                 ->latest('created_at')
                 ->first();
 
@@ -63,10 +61,10 @@ class ProductHelper
             }
 
             Inventory::updateOrInsert(
-                ['product_id' => $product->uuid, 'warehouse_id' => $warehouse->uuid ?? null],
+                ['product_uuid' => $product->uuid, 'warehouse_uuid' => $warehouse->uuid ?? null],
                 [
-                'product_id'   => $product->uuid,
-                'warehouse_id' => $warehouse->id ?? null,
+                'product_uuid'   => $product->uuid,
+                'warehouse_uuid' => $warehouse->id ?? null,
                 'qty_on_hand'  => $newOnHand,
                 'avg_cost'     => $newAvg,
             ]);
@@ -92,22 +90,22 @@ class ProductHelper
 
         DB::transaction(function () use ($data, $qt){
 
-            $product = Product::find($data->product_id);
+            $product = Product::find($data->product_uuid);
 
             if(!$product){
                 throw ValidationException::withMessages([
-                    'product_id' => 'No Existe Registro Con Este ID'
+                    'product_uuid' => 'No Existe Registro Con Este ID'
                 ]);
             }
 
-            $oldStock = Inventory::where('product_id', $data->product_id)
-                ->where('warehouse_id', $data->warehouse_id)
+            $oldStock = Inventory::where('product_uuid', $data->product_uuid)
+                ->where('warehouse_uuid', $data->warehouse_uuid)
                 ->latest('created_at')
                 ->first();
 
             if (!$oldStock || ($oldStock->qty_on_hand ?? 0) < $qt) {
                 throw ValidationException::withMessages([
-                    'warehouse_id' => "No Existen Registro Con Este id :".$data->product_id,
+                    'warehouse_uuid' => "No Existen Registro Con Este id :".$data->product_uuid,
                 ]);
             }
 
@@ -117,13 +115,13 @@ class ProductHelper
             Inventory::upsert(
                 [
                     [
-                        'product_id'   => $data->product_id,
-                        'warehouse_id' => $data->warehouse_id ?? null,
+                        'product_uuid'   => $data->product_uuid,
+                        'warehouse_uuid' => $data->warehouse_uuid ?? null,
                         'qty_on_hand'  => $newOnHand,
                         'avg_cost'     => $avg,
                     ],
                 ],
-                ['product_id', 'warehouse_id'], // columnas que definen el conflicto (unique by)
+                ['product_uuid', 'warehouse_uuid'], // columnas que definen el conflicto (unique by)
                 ['qty_on_hand', 'avg_cost', 'updated_at'] // columnas a actualizar en conflicto
             );
 
@@ -136,12 +134,12 @@ class ProductHelper
 //            }
 
 
-//            Crear el movimiento de inventario
+            // Crear el movimiento de inventario
             $product->movements()->create([
                 'type' => $data->type,
-                'warehouse_id' => $data->warehouse_id,
+                'warehouse_uuid' => $data->warehouse_uuid,
                 'quantity' => $data->quantity,
-                'price' => $data->price,
+                'price' => $data->cost,
                 'cost' => $data->cost ?? $product->cost,
                 'description' => $data->description,
             ]);
@@ -159,7 +157,7 @@ class ProductHelper
     public static function getAvgCost(Product $product, float $quantity, float $cost):float
     {
         //Obtener los datos de oldStock
-        $oldStock = Inventory::where('product_id', $product->uuid)
+        $oldStock = Inventory::where('product_uuid', $product->uuid)
             ->latest('created_at')
             ->first();
 
@@ -176,32 +174,38 @@ class ProductHelper
     /**
      * @param Request $request
      * @param bool $stock
-     * @return _IH_Product_C|LengthAwarePaginator|Product[]
+     * @return AnonymousResourceCollection
      */
-
-    public static function get(Request $request, bool $stock = false): _IH_Product_C|LengthAwarePaginator|array
+    public static function get(Request $request, bool $stock = false): AnonymousResourceCollection
     {
         $search  = trim((string) $request->input('search', ''));
         $perPage = (int) $request->input('perPage', 15);
 
         $query = Product::query()
+            ->with(['priceList', 'warehouses'])
             ->where('status', true)
             ->when($search !== '', function (Builder $q) use ($search) {
                 $q->where(function (Builder $qq) use ($search) {
-                    $qq->where('name', 'LIKE', "%$search%")
-                        ->orWhere('description', 'LIKE', "%$search%")
-                        ->orWhere('sku', 'LIKE', "%$search%");
+                    $qq->where('name', 'ILIKE', "%$search%")
+                        ->orWhere('description', 'ILIKE', "%$search%")
+                        ->orWhere('sku', 'ILIKE', "%$search%");
                 });
             })
             ->when($stock, function (Builder $q) {
                 // si stock=true: excluir servicios y exigir stock > 0
                 $q->where('is_service', '=',0)
-                    ->whereHas('inventory', function ($query) {
-                        $query->where('qty_on_hand', '>', 0);
+                    ->whereHas('warehouses', function (Builder $qq) {
+                        $qq->where('warehouse_products.stock_quantity','>',0)
+                            ->where('warehouse_products.is_active', true);
                     });
+
             });
 
-        return $query->paginate($perPage);
+        $paginatedData = $query->simplePaginate($perPage);
+
+
+
+        return ProductResource::collection($paginatedData);
     }
 
 
@@ -217,9 +221,9 @@ class ProductHelper
 
     public static function getProductWithWarehouse(array $data)
     {
-        return Product::whereIn('id', $data['product_id'])
+        return Product::whereIn('id', $data['product_uuid'])
             ->whereHas('inventory', function ($q1) use ($data) {
-                $q1->whereIn('warehouse_id', $data['warehouse_id']);
+                $q1->whereIn('warehouse_uuid', $data['warehouse_uuid']);
             })
             ->get()->keyBy('id');
     }

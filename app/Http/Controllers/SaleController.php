@@ -8,7 +8,10 @@ use App\Helpers\ClientHelper;
 use App\Helpers\ProductHelper;
 use App\Helpers\SaleHelper;
 use App\Http\Requests\StoreProductSaleRequest;
+use App\Http\Resources\SaleCreditNoteResource;
+use App\Http\Resources\SaleInfoResource;
 use App\Http\Resources\UserResource;
+use App\Models\CashRegister;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\Setting;
@@ -16,6 +19,7 @@ use App\Models\User;
 use App\Models\Warehouse;
 use Carbon\Carbon;
 use Illuminate\Contracts\Cache\LockTimeoutException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -29,36 +33,48 @@ class SaleController extends Controller
 {
 
     /**
+     * Summary of index
      * @param Request $request
      * @return RedirectResponse|Response
      */
-    public function create(Request $request):RedirectResponse|Response
+    public function index(Request $request)
     {
 
-        //Verificar si existe la configuracion
-        $setting = Setting::first();
+        //
+        $hasExpiredCashRegister = CashRegister::hasExpiredRegister();
+
+        if($hasExpiredCashRegister){
+            return redirect()->route('cash-register.close');
+        }
+
+        // 🟢 2. PRIORIDAD MEDIA: ¿No hay caja expirada, pero simplemente no ha abierto caja hoy?
+        $checkAvailable = CashRegister::checkAvailable();
+
+        if (!$checkAvailable) {
+            // Redirigimos a la vista de APERTURA limpia
+            return redirect()->route('cash-register.index');
+        }
+
+        //Verificar si existe la configuración
+        $setting = Setting::getGlobal();
 
         //Si no existe redirecciona a setting
-        if (!$setting)
-        {
+        if (!$setting) {
             return redirect()->route('setting.index');
         }
+
         //Instancia de los datos
         $dataSale = $this->dataSale($request);
-        $lastRecord = Sale::orderBy('created_at', 'desc')->first();
 
-        $warehouses = Warehouse::pluck('id','name')->toArray();
+        // obtener los almacenes
+        $warehouses = Warehouse::pluck('uuid', 'prefix')->toArray();
 
-
-
-
-        //DEvolver la vista y los datos
+        //Devolver la vista y los datos
         return Inertia::render('Sale/SaleCreate', [
             'products' => $dataSale['products'],
             'clients' => $dataSale['clients'],
             'saleOpen' => $dataSale['saleOpen'],
             'invoiceType' => config('appconfig.invoiceType'),
-            'lastRecord' => $lastRecord?->id,
             'saleTypeEnum' => GeneralDto::getEnumToArray(SaleTypeEnum::class),
             'warehouses' => $warehouses,
         ]);
@@ -66,44 +82,69 @@ class SaleController extends Controller
 
 
     /**
+     * Summary of store
+     * @param StoreProductSaleRequest $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      * @throws LockTimeoutException
      */
+
     public function store(StoreProductSaleRequest $request)
     {
 
         // Variable para colocar los datos
+        /**
+         * @var Sale|null $data
+         */
         $data = null;
 
         // Evitar que se realicen 2 operaciones al mismo tiempo
-        Cache::lock('sale_warehouse'.auth()->id(), 5)
+        Cache::lock('sale_warehouse' . auth()->id(), 5)
             ->block(3, function () use (&$request, &$data) {
 
-            //Instancia de los datos
-            $saleHelper = new SaleHelper();
-            //Llamar el servicio
-            $data = $saleHelper->store($request);
+                //Instancia de los datos
+                $saleHelper = new SaleHelper();
+                //Llamar el servicio
+                $data = $saleHelper->store($request);
 
-        });
+            });
 
-        return back();
+        $rutaInvoice = route('invoice.sale', [$data->uuid]);
+
+        //DEvolver el id de la venta
+        return Inertia::flash(['saleInvoiceUrl' => $rutaInvoice])->back();
+
 
     }
 
     /**
-     * @throws Throwable
+     *
+     * @param StoreProductSaleRequest $request
+     * @param Sale $sale
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @throws LockTimeoutException
      */
-    public function update(StoreProductSaleRequest $request, Sale $sale)
+    public function update(StoreProductSaleRequest $request, Sale $sale): \Symfony\Component\HttpFoundation\RedirectResponse
     {
 
-       $sale =  DB::transaction(function () use (&$request, &$sale) {
-           //Instancia
-           $saleHelper = new SaleHelper();
-           //Llamar la funcion
-           return $saleHelper->updateSale($request, $sale);
-       });
+        // Evitar que se realicen 2 operaciones al mismo tiempo
+        Cache::lock('sale_warehouse' . auth()->id(), 5)
+            ->block(3, function () use ($request, $sale) {
 
-       //DEvolver el id de la venta
-       return response()->json(['pdfUuid' => $sale->id]);
+                //Actualizar los datos
+                $sale = DB::transaction(function () use (&$request, &$sale) {
+                    //Instancia
+                    $saleHelper = new SaleHelper();
+                    //Llamar la función
+                    return $saleHelper->updateSale($request, $sale);
+                });
+            });
+
+
+        // Para poder devolver los datos del pdf
+        $rutaInvoice = route('invoice.sale', [$sale->uuid]);
+
+        //Devolver el, id de la venta
+        return Inertia::flash(['saleInvoiceUrl' => $rutaInvoice])->back();
 
 
     }
@@ -122,7 +163,7 @@ class SaleController extends Controller
         //Tomar los datos
         $sales = $saleHelper->getSalePagination($request);
 
-        return Inertia::render('Sale/SaleShow',[
+        return Inertia::render('Sale/SaleShow', [
             'sales' => $sales
         ]);
     }
@@ -149,7 +190,6 @@ class SaleController extends Controller
 
     }
 
-
     /**
      * Eliminar la venta seleccionada
      * @param Request $request
@@ -161,8 +201,8 @@ class SaleController extends Controller
     public function destroySale(Request $request, Sale $sale, bool $inventoried)
     {
         //Validar el comentario que llega
-        Validator::make($request->all(),[
-            'comment' => ['required','string','min:5','max:255'],
+        Validator::make($request->all(), [
+            'comment' => ['required', 'string', 'min:5', 'max:255'],
         ])->validate();
 
         //Crear la instancia
@@ -174,11 +214,12 @@ class SaleController extends Controller
         return back();
 
     }
+
     /**
      * @param Request $request
      * @return array
      */
-    public function dataSale(Request $request):array
+    public function dataSale(Request $request): array
     {
         $saleHelper = new SaleHelper();
         $clientHelper = new ClientHelper();
@@ -186,9 +227,13 @@ class SaleController extends Controller
         //Obtener los datos
         $products = ProductHelper::get($request, true);
         $clients = $clientHelper->get($request);
+
+        // Obtener las ventas abiertas para mostrar en la ventana de ventas abiertas
         $saleOpen = $saleHelper->getSaleOpen($request);
 
-        return  [
+
+        // Devolver los datos
+        return [
             'products' => $products,
             'clients' => $clients,
             'saleOpen' => $saleOpen
@@ -205,26 +250,28 @@ class SaleController extends Controller
     public function close(Request $request)
     {
 
-        return Inertia::render('Reports/Sale/Close',[
+        return Inertia::render('Reports/Sale/Close', [
             'users' => UserResource::collection(User::all())
         ]);
 
     }
 
 
-
-
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function getClose(Request $request)
     {
-        //Obtner el codigo del usuarios
-        $user = $request->get('user',1);
+        //Obtener el código de los usuarios
+        $user = $request->input('user', 1);
 
         //Obtner la ventas de ese usuarios por el dia
         $sale = Sale::whereHas('audits', function ($query) use ($user) {
             $query->where('user_id', $user);
         })->whereDate('sales.created_at', Carbon::today()->format("Y-m-d"))
-            ->join('pro_trans as tr','sales.id','=','tr.sale_id')
-            ->join('products as p','tr.product_id','=','p.id')
+            ->join('pro_trans as tr', 'sales.id', '=', 'tr.sale_id')
+            ->join('products as p', 'tr.product_id', '=', 'p.id')
             ->select([
                 'tr.tax',
                 'tr.discount_amount',
@@ -236,7 +283,7 @@ class SaleController extends Controller
                 DB::raw('(tr.price - p.cost) as benefits')])
             ->get();
 
-        //Obtner los datos sumado para el resultado de datos
+        //Obtener los datos sumados para el resultado de datos
         $data_final = [
             'tax' => $sale->sum('tax'),
             'sub_total' => $sale->sum('sub_total'),
@@ -253,8 +300,92 @@ class SaleController extends Controller
 
     }
 
+
+    /**
+     * @param string $code
+     * @return JsonResponse
+     */
+    public function refund(string $code)
+    {
+        // Obtener la ventas con los items para la devolucions
+        $data = Sale::with(['items', 'creditNotes'])
+            ->where('type', SaleTypeEnum::Ventas)
+            ->where('code', $code)
+            ->firstOrFail();
+
+
+
+        return response()->json(new SaleCreditNoteResource($data));
+//        return response()->json(new SaleInfoResource($data));
+    }
+
+
+    /**
+     * @return Response
+     */
     public function counter()
     {
         return Inertia::render('Sale/MoneyCounter');
+    }
+
+
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    public function showSold(Request $request): Response
+    {
+        return Inertia::render('Sale/Sold/SaleSold',[
+            'sales' => []
+        ]);
+    }
+
+
+    public function getSold(Request $request)
+    {
+
+        $validate = $request->validate([
+            'from' => ['nullable', 'date'],
+            'to' => ['nullable', 'date'],
+            'type' => ['nullable', 'string'],
+        ]);
+        // 1. Recogemos los filtros del formulario de Vue
+        $from = Carbon::parse($request->input('from'))
+            ->setTimezone('America/Santo_Domingo')
+            ->startOfDay();
+        $to = Carbon::parse($request->input('to'))->setTimezone('America/Santo_Domingo')
+            ->startOfDay();
+
+        $type = $request->input('type');
+
+
+
+        // 2. Construimos la consulta con Eloquent
+        $query = Sale::query()
+            ->with(['items', 'client'])
+            ->where('close_table', true);
+
+        if ($request->filled('from')) {
+            $query->whereDate('created_at', '>=', $from);
+        }
+
+        if ($request->filled('to')) {
+            $query->whereDate('created_at', '<=', $to);
+        }
+
+        if ($request->filled('type')) {
+
+            $query->where('type', $type);
+        }
+
+        // 3. Obtenemos los resultados
+        $sales = $query->latest()->get();
+
+
+        // 4. VOLVEMOS A RENDERIZAR el mismo componente, pasándole los datos de las ventas
+        return Inertia::render('Sale/Sold/SaleSold', [
+            'sales' => SaleInfoResource::collection($sales),
+            'filters' => $request->all(), // Opcional: para mantener los campos llenos tras la búsqueda
+        ]);
     }
 }

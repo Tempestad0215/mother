@@ -2,48 +2,70 @@
 
 namespace App\Models;
 
-use App\Enums\InventoryMovementConceptEnum;
+
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
- * @property int id
- * @property InventoryMovementConceptEnum type
- * @property float quantity
- * @property float cost
- * @property string description
- * @property Carbon date
- * @property boolean status
- * @property boolean was_updated
- * @property Product product
- * @property Carbon deleted_at
- * @property Carbon created_at
- * @property Carbon updated_at
+ *
+ * @property string $uuid
+ * @property string $warehouse_uuid
+ * @property string $product_uuid
+ * @property string $type
+ * @property string $concept
+ * @property int $quantity
+ * @property float $cost
+ * @property float $stock_before
+ * @property float $stock_after
+ * @property string $inventoryable_type
+ * @property string $inventoryable_id
+ *
+ * @property string|null $description
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
  */
+#[ObservedBy([InventoryMovementObserver::class])]
 class InventoryMovement extends Model implements  Auditable
 {
     //
 
     use \OwenIt\Auditing\Auditable;
     use softDeletes;
+    use HasUuids;
+
+
+    protected $primaryKey = 'uuid';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     //  Almacenar los datos
     protected $fillable = [
         'type',
-        'warehouse_id',
-        'movementable_id',
-        'movementable_type',
-        'movementable_line_id',
-        'movementable_code',
+        'warehouse_uuid',
+        'product_uuid',
+        'type',
+        'concept',
         'quantity',
         'cost',
-        'price',
+        'stock_before',
+        'stock_after',
         'description',
+        'inventoryable_type',
+        'inventoryable_id',
+        'price',
     ];
+
+
+    public function iventoryable():MorphTo
+    {
+        return $this->morphTo();
+    }
 
 
     /**
@@ -59,10 +81,6 @@ class InventoryMovement extends Model implements  Auditable
     }
 
 
-    public function movementable():MorphTo
-    {
-        return $this->morphTo();
-    }
 
 
 

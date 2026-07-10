@@ -10,6 +10,7 @@ use App\Models\Setting;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -22,7 +23,7 @@ class SequenceController extends Controller
     public function create()
     {
         //Tomar la configuracion
-        $setting = Setting::first();
+        $setting = Cache::get('app_settings');
 
         //Verificar si existe
         if ($setting && $setting->sequence)
@@ -91,9 +92,7 @@ class SequenceController extends Controller
     {
 
         //Colocar la secuencia en elimionada
-        $sequence->update([
-            'deleted_at' => Carbon::now()
-        ]);
+        $sequence->delete();
 
         //Retornar hacia atras
         return back();

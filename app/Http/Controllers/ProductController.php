@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Dtos\InventoryDto;
 use App\Dtos\PriceListProductDto;
 use App\Dtos\ProductDto;
 use App\Enums\ProductTypeEnum;
 use App\Helpers\GeneralHelper;
 use App\Helpers\PriceListProductHelper;
-use App\Helpers\ProductInventoryHelper;
-use App\Helpers\TaxHelper;
 use App\Helpers\WarehouseProductHelper;
 use App\Http\Requests\PaginationRequest;
 use App\Http\Requests\StoreProductRequest;
@@ -17,7 +14,6 @@ use App\Http\Resources\ProductResource;
 use App\Http\Resources\ProductSupplierResource;
 use App\Models\Brand;
 use App\Models\Category;
-use App\Models\Inventory;
 use App\Models\PriceList;
 use App\Models\Product;
 use App\Models\Setting;
@@ -25,15 +21,16 @@ use App\Models\Supplier;
 use App\Models\Tax;
 use App\Models\Unit;
 use App\Models\Warehouse;
-use App\Pdfs\ProductLabelV1;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 use Throwable;
@@ -61,55 +58,58 @@ class ProductController extends Controller implements HasMiddleware
     public function index(PaginationRequest $request): Response|RedirectResponse
     {
 
-        $search = $request->input('search');
-        $perPage = $request->input('per_page');
-        $queryProduct = Product::query()->with(['price_list','brand','warehouses']);
-        if (!empty($search)) {
-            $queryProduct->where('name', 'like', '%' . $search . '%')
-                ->orWhere('description', 'like', '%' . $search . '%');
-
-        }
-
-        $product_paginated = $queryProduct->simplePaginate($perPage);
-        $product_paginated->withQueryString();
-        $products = ProductResource::collection($product_paginated);
-
-
-        $productType = collect(ProductTypeEnum::cases())->mapWithKeys(fn(ProductTypeEnum $item) => [$item->name => $item->value])->toArray();
 
         //Verificar si existe configuración
-        $setting = Setting::first();
+        $setting = Setting::getGlobal();
 
-        //si existe la configuración
-        if (isset($setting)) {
-
-
-            //Devolver correctamente
-            return Inertia::render('Products/Register', [
-                'products' => $products,
-                'categories' => Category::orderBy('name')->get(),
-                'suppliers' => Supplier::orderBy('company_name')->get(),
-                'warehouse' => Warehouse::all(),
-                'paymentTypes' => GeneralHelper::getPaymentTypes(),
-                'productType' => $productType,
-                'branches' => Brand::all(),
-                'units' => Unit::all(),
-                'taxes' => Tax::all(),
-                'warehouses' => Warehouse::all(),
-                'priceLists' => PriceList::all(),
-            ]);
-
-        } else {
-
+        if (!$setting) {
             Inertia::flash('message', 'Por favor, debe crear la setting primero');
-            //Redirigir a la ventana de setting
             return to_route('setting.index');
         }
+
+        /** @var string|null $search */
+        $search = $request->input('search');
+        // Para controlar la cantidad de datos por página
+        $perPage = $request->input('per_page', 15);
+        // Realizar la busqueda
+        $queryProduct = Product::query()->with(['priceList','brand','warehouses','tax'])
+            ->when($request->filled('search'), function ($query) use ($search) {
+               $query->where(function($subQuery) use ($search){
+                   $subQuery->where('name', 'ILIKE', '%' . $search . '%')
+                       ->orWhere('description', 'ILIKE', '%' . $search . '%');
+               });
+        })->latest()
+            ->simplePaginate($perPage)
+            ->withQueryString();
+
+        // Transformar los datos
+        $products = ProductResource::collection($queryProduct);
+
+        // Tomar los datos de tipo de producto
+        $productType = collect(ProductTypeEnum::cases())->mapWithKeys(fn(ProductTypeEnum $item) => [$item->name => $item->value])->toArray();
+
+
+        //Devolver correctamente
+        return Inertia::render('Products/Register', [
+            'products' => $products,
+            'paymentTypes' => GeneralHelper::getPaymentTypes(),
+            'productType' => $productType,
+
+            // Estas propiedades solo se cargarán en la primera petición (o si el frontend las pide explícitamente)
+            'categories' => fn () => Category::orderBy('name')->get(),
+            'suppliers'  => fn () => Supplier::orderBy('company_name')->get(),
+            'warehouses'  => fn () => Warehouse::getAllCached(), // 💡 Usando tu caché estática
+            'branches'   => fn () => Brand::all(),
+            'units'      => fn () => Unit::all(),
+            'taxes'      => fn () => Tax::all(),
+            'priceLists' => fn () => PriceList::all(),
+        ]);
+
 
     }
 
     /**
-     * Summary of store
+     * Summary of the store
      * @param StoreProductRequest $request
      * @return RedirectResponse
      * @throws Throwable
@@ -122,16 +122,18 @@ class ProductController extends Controller implements HasMiddleware
             // Transformar los datos
             $product_dto = ProductDto::fromArray($request->validated());
             // Crear los datos de productos
+
+
             $product = Product::create($product_dto->toArray());
-            // Tomar los datos de warehouseProduct y asinar al productos
+            // Tomar los datos de warehouseProduct y asignar a los productos
             WarehouseProductHelper::upSert($product_dto->warehouse_product, $product);
-            // Trasnformar los datos
+            // Transform los datos
             $data_price = new PriceListProductDto(
                 $product->uuid,
                 $product_dto->price_list_uuid,
                 $product_dto->price,
                 $product_dto->min_price,
-                $product_dto->special_price
+                $product_dto->promotional_price
 
             );
 
@@ -145,7 +147,7 @@ class ProductController extends Controller implements HasMiddleware
     }
 
     /**
-     * Summary of show
+     * Summary of the show
      * @param Request $request
      * @return Response
      */
@@ -201,7 +203,7 @@ class ProductController extends Controller implements HasMiddleware
             $product->update($product_dto->toArray());
 
 //            Actualizar los datos de
-            // Tomar los datos de warehouseProduct y asinar al productos
+            // Tomar los datos de warehouseProduct y asinar a los productos
             WarehouseProductHelper::upSert($product_dto->warehouse_product, $product);
             // Trasnformar los datos
             $data_price = new PriceListProductDto(
@@ -209,7 +211,7 @@ class ProductController extends Controller implements HasMiddleware
                 $product_dto->price_list_uuid,
                 $product_dto->price,
                 $product_dto->min_price,
-                $product_dto->special_price
+                $product_dto->promotional_price
 
             );
 
@@ -230,8 +232,6 @@ class ProductController extends Controller implements HasMiddleware
     public function destroy(Product $product): RedirectResponse
     {
 
-
-
        //Actualizer los datos
         DB::transaction(function () use ($product) {
             // Tomar la varible de verificacion
@@ -239,7 +239,9 @@ class ProductController extends Controller implements HasMiddleware
 
             // Verificar si tien stock disponible
             if($hasStock){
-                throw new \Exception("No se puede eliminar el producto, ya que tiene stock disponible.");
+                throw ValidationException::withMessages([
+                    'product_uuid'=> "No se puede eliminar el producto, ya que tiene stock disponible.",
+                ]);
             }
 
             // Elimianr el producto
@@ -257,21 +259,29 @@ class ProductController extends Controller implements HasMiddleware
      */
     public function getByCode(Request $request): JsonResponse
     {
-        //conseguir los datos a buscar
         $search = $request->input('search');
 
-
-        //Buscar los datos
-        $data = Product::where('status', true)
-            ->where(function ($query) use ($request, $search) {
-                $query->where('id', $search)
-                    ->orWhere('code', $search)
+        // 1. Buscamos el producto únicamente por su existencia y estado activo
+        $product = Product::with(['warehouses', 'tax', 'priceList'])
+            ->where('status', true)
+            ->where(function ($query) use ($search) {
+                $query->where('code', $search)
                     ->orWhere('bar_code', $search);
-            })->firstOrFail();
+            })
+            ->firstOrFail(); // Si no existe el código de barras en absoluto, tira el 404 real.
 
+        // 2. Evaluamos si el producto cuenta con existencias en sus almacenes cargados
+        // Sumamos la columna de la tabla pivote de las relaciones cargadas en memoria
+        $totalStock = $product->warehouses->sum('pivot.stock_quantity');
 
-        //DEvolver los datos
-        return response()->json($data);
+        if ($totalStock <= 0) {
+            return response()->json([
+                'message' => 'El producto existe pero no cuenta con stock disponible en ningún almacén.'
+            ], 422); // Retornamos un estado unprocesable controlado
+        }
+
+        // 3. Si tiene existencias, devolvemos el recurso formateado con éxito
+        return response()->json(new ProductResource($product));
     }
 
 
@@ -322,24 +332,39 @@ class ProductController extends Controller implements HasMiddleware
     }
 
 
+    /**
+     * @throws Throwable
+     * @throws ConnectionException
+     */
     public function createLabel(string $code)
     {
-        $fileName = "$code-label.pdf";
-        $filePath = \Storage::disk('labels')->path($fileName);
-        $pdf = new ProductLabelV1();
-        $pdf->createInfo($code);
-        $pdf->Output($filePath, 'F');
 
+        // Craer él, template con los datos
+        $labelTemplate = view('pdfs.ticket.label',[
+            'code' => $code
+        ])->render();
 
-        $url = asset("storage/pdfs/labels/$fileName");
+        // Crear la respuestas
+        $response = Http::attach('index.hmtl', $labelTemplate, 'index.html')
+            ->post("http://localhost:3100/forms/chromium/convert/html",[
+                'paperWidth' => '3.14',  // 80mm en pulgadas
+                'paperHeight' => '1.5',   // Alto estimado de página corta
+                'marginLeft' => '0.1',
+                'marginRight' => '0.1',
+                'marginTop' => '0.1',    // Espacio para la cabecera fija
+                'marginBottom' => '0.1',
+                'waitDelay' => '600ms',  // Tiempo para que cargue Tailwind 4 por CDN
+            ]);
 
-        if (!Storage::disk('labels')->exists($fileName)) {
-            abort(404, 'No existe el label');
+        // Devolver si es correcto
+        if ($response->successful()){
+            return response($response->body(),200,[
+                'content-type' => 'application/pdf'
+            ]);
         }
 
-        return \response()->json([
-            'url' => $url,
-        ]);
+        // Devolver mensaje de error
+        return response()->json(['error' => 'Error al generar ticket'], 500);
 
     }
 
@@ -359,7 +384,8 @@ class ProductController extends Controller implements HasMiddleware
 
 
         // Tomar los datos
-        $products = Product::where(function ($query) use (&$search) {
+        $products = Product::with(['warehouses','priceList'])
+        ->where(function ($query) use (&$search) {
             $query->orWhere("name", "ILIKE", "%$search%")
                 ->orWhere("description", "ILIKE", "%$search%");
         })->where("status", true)
@@ -367,8 +393,10 @@ class ProductController extends Controller implements HasMiddleware
             ->take(15)
             ->get();
 
+        $productResource = ProductResource::collection($products);
+
         //tomar los datos
-        return response()->json($products);
+        return response()->json($productResource);
     }
 
 

@@ -42,7 +42,7 @@ export interface ProductBaseI {
   cost: number;
   price: number;
   min_price?: number;
-  special_price?: number;
+  promotional_price?: number;
   is_service: 1 | 0;
   supplier_uuid: string;
   category_uuid: string;
@@ -68,6 +68,7 @@ export interface ProductTableI {
   category_uuid: string | null;
   code: string;
   cost: number;
+  price: number;
   default_price_list: string;
   default_warehouse: string;
   description: string | null;
@@ -80,6 +81,7 @@ export interface ProductTableI {
   inventoried: boolean;
   is_service: boolean;
   name: string;
+  tax_uuid: string;
   price_lists: Array<PriceListProducts>; // O puedes definir una interfaz específica si sabes su estructura
   sku: string | null;
   status: boolean;
@@ -97,7 +99,7 @@ export interface ProductTableI {
 export interface productFullI extends ProductBaseI {
   reserved: number;
   min_price: number;
-  special_price: number;
+  promotional_price: number;
   price: number;
   discount: number;
   tax: number;
@@ -113,7 +115,7 @@ export interface productTransI extends ProductBaseI {
   discount_amount: number;
   price: number;
   min_price: number;
-  special_price: number;
+  promotional_price: number;
   product_code: string;
   product_id: number;
   product_name: string;
@@ -162,11 +164,14 @@ export interface WarehouseProductI {
   prefix: string;
   name: string;
   stock_quantity: number;
-  committed_stock?: number;
+  available: number;
+  committed?: number;
   min_stock?: number;
   max_stock?: number;
   reorder_level?: number;
-  status?: boolean;
+  last_counted_at?: string;
+  purchase_pending?: number;
+  is_active?: boolean;
 }
 
 /**

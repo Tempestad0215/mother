@@ -9,6 +9,8 @@ return  [
     'saleCreditNote' => 30,
     'maxUser' => 10,
 
+    'url_pdf' => env('URL_PDF'),
+    'url_rnc' => env('URL_RNC'),
 
 
 
@@ -69,7 +71,7 @@ return  [
     'exchange' => 'CAM',
     'counter' => 'MON',
     'purchase' => 'COM',
-
+    'creditNote' => 'NCR',
 
 
     'msjInvoice' => 'Para devoluciones, traer su factura. Las piezas eléctricas no tienen garantía y la garantía no aplica si la pieza ha sido instalada fuera de nuestro taller.'

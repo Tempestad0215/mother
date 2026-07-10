@@ -3,6 +3,7 @@ import { router } from '@inertiajs/vue3';
 import { Ref, ref } from 'vue';
 import { useRoute } from 'ziggy-js';
 import { Avatar, Popover, Menu } from 'primevue';
+import { MenuItemI } from '@/Interfaces/GlobalInterface';
 
 const route = useRoute();
 defineProps<{
@@ -12,10 +13,10 @@ defineProps<{
 const op = ref();
 //Par mostar la ventana
 const show: Ref<boolean> = ref(false);
-const items = ref([
-  { label: 'Perfil', icon: 'pi pi-user-edit' },
-  { label: 'Ajustes', icon: 'pi pi-cog' },
-  { label: 'salir', icon: 'pi pi-sign-out' },
+const items = ref<MenuItemI[]>([
+  { label: 'Perfil', icon: 'pi pi-user-edit', url: route('profile.show') },
+  { label: 'Ajustes', icon: 'pi pi-cog', url: route('setting.index') },
+  { label: 'salir', icon: 'pi pi-sign-out', command: () => logOut() },
 ]);
 
 /**

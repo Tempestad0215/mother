@@ -50,7 +50,7 @@ const clearAll = () => {
 
 const approve = () => {
   router.patch(
-    route('purchase.approve', { purchase: purchaseSelected.value?.id }),
+    route('purchase.approve', { purchase: purchaseSelected.value?.uuid }),
     {},
     {
       onSuccess: () => {
@@ -95,7 +95,7 @@ const approveOrder = (event: Event) => {
 
 const cancel = () => {
   router.patch(
-    route('purchase.cancel', { purchase: purchaseSelected.value?.id }),
+    route('purchase.cancel', { purchase: purchaseSelected.value?.uuid }),
     {},
     {
       onSuccess: () => {
@@ -140,7 +140,7 @@ const cancelOrder = (event: Event) => {
 };
 
 const createReception = (data: PurchaseSupplierI) => {
-  router.get(route('purchase.receiving.index', { supplier: data.supplier_id }));
+  router.get(route('purchase.receiving.index', { supplier: data.supplier_uuid }));
 };
 </script>
 
@@ -154,8 +154,11 @@ const createReception = (data: PurchaseSupplierI) => {
       <template #content>
         <DataTable :value="propsW.purchases">
           <Column header="ID" field="id" />
-          <Column header="Name" field="supplier.company_name" />
-          <Column header="Item #" :field="(data: PurchaseSupplierI) => `${data.items.length}`" />
+          <Column header="Proveedor" field="supplier.company_name" />
+          <Column
+            header="Cantidad Item #"
+            :field="(data: PurchaseSupplierI) => `${data.items.length}`"
+          />
           <Column
             header="Descuento"
             :field="(data: PurchaseSupplierI) => `${getMoney(data.discount)}`"
@@ -177,8 +180,7 @@ const createReception = (data: PurchaseSupplierI) => {
                 <Button
                   v-if="
                     data.status !== PurchaseStatusEnum.Borrador &&
-                    data.status !== PurchaseStatusEnum.Completada &&
-                    data.status !== PurchaseStatusEnum.Parcial
+                    data.status !== PurchaseStatusEnum.Completada
                   "
                   title="Entrada"
                   severity="info"

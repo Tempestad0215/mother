@@ -25,7 +25,7 @@ export interface settingsDataI {
 }
 
 export interface sequenceDataI {
-  id: number;
+  uuid: string;
   code: string;
   type: string;
   from: number;
@@ -34,8 +34,8 @@ export interface sequenceDataI {
   advise: number;
   num_request: string;
   num_authorization: string;
-  date_request: string;
-  date_expire: string;
+  date_request: Date;
+  date_expire: Date;
   status: boolean;
   deleted_at: string;
   created_at: string;

@@ -38,7 +38,10 @@ const isUpdate = ref(false);
 
 const searchData = () => {
   getSearchTable(
-    route('supplier.create', { search: searchValue.value, per_page: propsW.suppliers.per_page })
+    route('supplier.create', {
+      search: searchValue.value,
+      per_page: propsW.suppliers.meta.per_page,
+    })
   );
 };
 
@@ -80,7 +83,7 @@ const deleteData = (data: SupplierI, event: Event) => {
 
 <template>
   <AppLayout>
-    <DataTable :rows="propsW.suppliers.per_page" paginator :value="propsW.suppliers.data">
+    <DataTable :rows="propsW.suppliers.meta.per_page" paginator :value="propsW.suppliers.data">
       <template #header>
         <div class="flex justify-between items-center">
           <form @submit.prevent="searchData">

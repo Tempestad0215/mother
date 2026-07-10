@@ -1,7 +1,15 @@
+import { CreditNoteBalance } from '@/Interfaces/CreditNoteInterface';
+
 export interface SaleTypeEnumI {
   venta: string;
   cotizacion: string;
   devolucion: string;
+}
+
+export interface editFormI {
+  stock: number;
+  price: number;
+  discount: number;
 }
 
 export interface infoSaleI {
@@ -10,33 +18,36 @@ export interface infoSaleI {
   deleted_at?: string | null;
   discount?: number;
   discount_amount?: number;
+  price_type: 'price' | 'min_price' | 'promotional_price';
   min_price?: number;
-  special_price?: number;
+  promotional_price?: number;
   price: number;
-  warehouse_uuid: number;
-  price_temp: number;
+  warehouse_uuid: string;
+  temp_price: number;
   product_uuid: string;
   product_name: string;
   is_service?: boolean;
-  sale_id?: number;
+  sale_uuid?: string;
   status?: boolean;
   stock: number;
   reserved: number;
-  tax_uuid: number;
+  tax_uuid: string;
+  tax_amount: number;
   tax_rate: number;
   type?: string;
   trans_type?: string;
   updated_at?: string;
   created_at?: string;
+  uuid?: string;
 }
 
 export interface CreateSaleI {
-  id: number;
+  uuid: string;
   code_value: string;
   ncf: string;
   ncf_m: string;
   client_name: string;
-  client_id: number;
+  client_uuid: string;
   client_rnc: string;
   client_rnc_status: string;
   client_social: string;
@@ -46,7 +57,7 @@ export interface CreateSaleI {
   amount: number;
   sub_total: number;
   comment: string;
-  comment_id: number;
+  comment_uuid: string;
   close_table: boolean;
   received: number;
   returned: number;
@@ -58,7 +69,7 @@ export interface CreateSaleI {
   sequence_type: string;
   invoice_type: string;
   credit_notes_value: string;
-  credit_notes: creditNotesSaleI[];
+  credit_notes: CreditNoteBalance[];
   credit_notes_amount: number;
   pending: number;
 }
@@ -76,7 +87,7 @@ export interface saleI {
 }
 
 export interface saleDataI {
-  client_id: number;
+  client_uuid: string;
   client_name: string;
   client_document: string | null;
   client_rnc: string;
@@ -86,8 +97,8 @@ export interface saleDataI {
   ncf_m: string;
   comment: '' | null;
   created_at: string;
-  discount: number;
-  id: number;
+  discount_amount: number;
+  uuid: string;
   info_sale: infoSaleI[];
   status: boolean;
   sub_total: number;

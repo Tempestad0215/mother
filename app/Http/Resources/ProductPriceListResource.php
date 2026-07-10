@@ -44,7 +44,7 @@ use Illuminate\Support\Collection;
  * @property Carbon $updated_at
  * @property Carbon|null $deleted_at
  *
- * @property-read Collection<int, PriceList $price_list>
+ * @property-read Collection<int, PriceList $priceList>
  * @property-read Brand $brand
  * @property-read Tax $tax
  * @property-read PurchaseReceiptsItem $receiptsItem
@@ -69,10 +69,11 @@ class ProductPriceListResource extends JsonResource
         $tax_rate = (string)$tax_rate_value;
         // Calculamos porcentaje y multiplicador
         $tax_percent = bcdiv($tax_rate, '100', 2);
+        // Multiplicador de impuesto
         $tax_multiplier = bcadd($tax_percent, '1', 2);
 
 
-        $info = $this->price_list->map(function (PriceList $item) use($tax_percent, $tax_multiplier, $tax_rate) {
+        $info = $this->priceList->map(function (PriceList $item) use($tax_percent, $tax_multiplier, $tax_rate) {
             $price = (string)($item->pivot->price ?? '0.00');
             $min_price = (string)($item->pivot->min_price ?? '0.00');
             $promotional_price = (string)($item->pivot->promotional_price ?? '0.00');

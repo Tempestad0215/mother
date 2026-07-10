@@ -8,35 +8,35 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @property int id
- * @property string type
- * @property boolean inventoried
- * @property boolean status
- * @property string code
- * @property string name
- * @property null|string description
- * @property string unit
- * @property float stock
- * @property float reserved
- * @property float cost
- * @property float price
- * @property float min_price
- * @property float special_price
- * @property string sku
- * @property string bar_code
- * @property float weight
- * @property string dimensions
- * @property string brand
- * @property float discount
- * @property float tax_rate
- * @property string comment
- * @property bool close_table
- * @property  int supplier_id
- * @property int category_id
- * @property string created_at
- * @property string updated_at
- * @property Category category
- * @property Supplier supplier
+ * @property string $id
+ * @property string $type
+ * @property boolean $inventoried
+ * @property boolean $status
+ * @property string $code
+ * @property string $name
+ * @property null|string $description
+ * @property string $unit
+ * @property float $stock
+ * @property float $reserved
+ * @property float $cost
+ * @property float $price
+ * @property float $min_price
+ * @property float $promotional_price
+ * @property string $sku
+ * @property string $bar_code
+ * @property float $weight
+ * @property string $dimensions
+ * @property string $brand
+ * @property float $discount
+ * @property float $tax_rate
+ * @property string $comment
+ * @property bool $close_table
+ * @property  int $supplier_id
+ * @property int $category_id
+ * @property string $created_at
+ * @property string $updated_at
+ * @property Category $category
+ * @property Supplier $supplier
  *
  * @method static create(mixed $validated)
  */
@@ -69,7 +69,7 @@ class ProductSupplierResource extends JsonResource
             'brand' => $this->brand,
             'price' => $this->price,
             'min_price' => $this->min_price,
-            'special_price' => $this->special_price,
+            'promotional_price' => $this->promotional_price,
             'tax_rate' => $this->tax_rate,
             'category_id' => $this->category_id,
             'supplier_id' => $this->supplier_id,

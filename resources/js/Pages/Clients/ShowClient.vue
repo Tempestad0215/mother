@@ -28,7 +28,7 @@ const props = defineProps<{
 
     <!-- Contenido principal -->
     <div>
-      <FShowClient :clients="props.clients" />
+      <FShowClient :clientData="props.clients" />
     </div>
   </AppLayout>
 </template>

@@ -3,23 +3,23 @@ import AppLayout from '@layout/AppLayout.vue';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
 import { categoryBaseI } from '@/Interfaces/CategoriesInterface';
 import {
-  DataTable,
-  Column,
   Button,
+  Column,
+  DataTable,
+  Dialog,
   InputGroup,
   InputGroupAddon,
   InputText,
-  Dialog,
   useConfirm,
   useToast,
 } from 'primevue';
 import { ref } from 'vue';
-import { router, useForm } from '@inertiajs/vue3';
+import { router } from '@inertiajs/vue3';
 import { useRoute } from 'ziggy-js';
 import FRegister from '@/Pages/Categories/FRegister.vue';
 import Pagination from '@components/Pagination.vue';
 import { getSearchTable } from '@/Global/SearchTable';
-import { ListFilterPlus, FilePenLine, Shredder } from '@lucide/vue';
+import { FilePenLine, ListFilterPlus, Shredder } from '@lucide/vue';
 
 const route = useRoute();
 const confirm = useConfirm();
@@ -33,31 +33,35 @@ const searchValue = ref('');
 const createCategory = ref(false);
 const categorySelected = ref<categoryBaseI | null>(null);
 const isUpdate = ref<boolean>(false);
-const form = useForm({
-  name: '',
-  description: '',
-  status: true,
-});
 
+/**
+ * Executes a search for categories based on the search input and current pagination.
+ */
 const searchData = () => {
   getSearchTable(
     route('category.create', {
       search: searchValue.value,
-      per_page: propsW.categories.per_page,
-      page: propsW.categories.current_page,
+      per_page: propsW.categories.meta.per_page,
+      page: propsW.categories.meta.current_page,
     })
   );
 };
-const submit = () => {
-  console.log('submit');
-};
 
+/**
+ * Opens the edit dialog for a specific category.
+ * @param {categoryBaseI} data - The category data to edit.
+ */
 const editData = (data: categoryBaseI) => {
   categorySelected.value = data;
   createCategory.value = true;
   isUpdate.value = true;
 };
 
+/**
+ * Shows a confirmation dialog to delete a category.
+ * @param {categoryBaseI} data - The category to delete.
+ * @param {Event} event - The DOM event used for positioning the confirmation.
+ */
 const deleteData = (data: categoryBaseI, event: Event) => {
   confirm.require({
     target: event.currentTarget as HTMLElement,
@@ -102,7 +106,7 @@ const resetForm = () => {
   <AppLayout>
     <DataTable
       paginator
-      :rows="propsW.categories.per_page ?? 0"
+      :rows="propsW.categories.meta.per_page ?? 0"
       :loading="!propsW.categories.data"
       :value="propsW.categories.data"
     >

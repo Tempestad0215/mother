@@ -75,6 +75,7 @@ class PurchaseController extends Controller
         // Proteger la transaction
         DB::transaction(function () use ($purchaseDto) {
             // Crear la compra
+
             $purchase = Purchase::create($purchaseDto->toArray());
 
             // Almacenar los modelos en el array
@@ -98,6 +99,8 @@ class PurchaseController extends Controller
                     'discount' => $item->discount,
                     'amount' => $item->amount,
                     'tax' => $item->tax,
+                    'tax_uuid' => $item->tax_uuid,
+                    'warehouse_uuid' => $item->warehouse_uuid
                 ]);
 
                 // Guardar los datos en productos
@@ -124,7 +127,7 @@ class PurchaseController extends Controller
                 }
 
             }
-
+            
             // Guardar todos los los datos
             $purchase->items()->saveMany($purchaseItemsModels);
 

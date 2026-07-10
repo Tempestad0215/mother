@@ -25,18 +25,39 @@ const toast = useToast();
 /**
  * Propiedades de la ventana
  */
-const propsW = defineProps<{
-  productEdit: ProductTableI | null;
-  update?: boolean;
-  categories: categoryBaseI[];
-  suppliers: SupplierI[];
-  paymentTypes: PaymentTypeEnumI;
-  productType: ProductTypeEnumI;
-  branches: BranchInterfaceI[];
-  units: UnitInterfaceI[];
-  warehouses: WarehouseBaseI[];
-  priceLists: Array<PriceListWTI>;
-}>();
+const propsW = withDefaults(
+  defineProps<{
+    productEdit: ProductTableI | null;
+    update?: boolean;
+    categories: categoryBaseI[];
+    suppliers: SupplierI[];
+    paymentTypes: PaymentTypeEnumI;
+    productType: ProductTypeEnumI;
+    branches: BranchInterfaceI[];
+    units: UnitInterfaceI[];
+    warehouses: WarehouseBaseI[];
+    priceLists: Array<PriceListWTI>;
+  }>(),
+  {
+    // Al ser explícitamente | null, lo inicializamos en null
+    productEdit: null,
+
+    // Booleano por defecto en falso para el formulario de creación
+    update: false,
+
+    // Todos los arrays inicializados correctamente mediante funciones flecha
+    categories: () => [],
+    suppliers: () => [],
+    branches: () => [],
+    units: () => [],
+    warehouses: () => [],
+    priceLists: () => [],
+
+    // Tipado seguro para los objetos de enums/mapeos estructurados
+    paymentTypes: () => ({}) as PaymentTypeEnumI,
+    productType: () => ({}) as ProductTypeEnumI,
+  }
+);
 
 /**
  * Emitir eventos
@@ -164,27 +185,27 @@ watch(
   (_) => {}
 );
 
-const getInfoFromPriceList = () => {
-  if (
-    propsW.productEdit &&
-    propsW.productEdit.price_lists &&
-    propsW.productEdit.price_lists.length > 0
-  ) {
-    const info = propsW.productEdit.price_lists.find((el) => el.uuid === form.price_list_uuid);
-
-    if (info) {
-      console.log(info);
-      form.price = info.price;
-      form.min_price = info.min_price;
-      form.promotional_price = info.promotional_price;
-    }
-  }
-};
+// const getInfoFromPriceList = () => {
+//   if (
+//     propsW.productEdit &&
+//     propsW.productEdit.price_lists &&
+//     propsW.productEdit.price_lists.length > 0
+//   ) {
+//     const info = propsW.productEdit.price_lists.find((el) => el.uuid === form.price_list_uuid);
+//
+//     if (info) {
+//       form.price = info.price;
+//       form.min_price = info.min_price;
+//       form.promotional_price = info.promotional_price;
+//     }
+//   }
+// };
 </script>
 
 <template>
   <form @submit.prevent="submit">
     <ProductInformation
+      :code="propsW.productEdit?.code"
       :paymentTypes="propsW.paymentTypes"
       :categories="propsW.categories"
       :suppliers="propsW.suppliers"
@@ -230,7 +251,7 @@ const getInfoFromPriceList = () => {
     </Tabs>
     <!-- Botones -->
     <div class="mt-4 space-x-3 text-right">
-      <Button label="Limpiar" severity="warn" @click="form.reset()" />
+      <Button v-if="!propsW.update" label="Limpiar" severity="warn" @click="form.reset()" />
       <Button
         :disabled="form.processing"
         type="submit"

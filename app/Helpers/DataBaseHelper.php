@@ -3,7 +3,6 @@
 namespace App\Helpers;
 
 use App\Models\Client;
-use App\Models\Sale;
 use Illuminate\Database\Schema\Blueprint;
 
 class DataBaseHelper
@@ -14,7 +13,7 @@ class DataBaseHelper
      */
     public static function saleTable(Blueprint $table):void
     {
-        $table->uuid('id');
+        $table->uuid();
         $table->string("code", 30)->unique()->comment('codigo');
         $table->string('ncf',30)->nullable()->unique()->comment('ncf');
         $table->string('invoice_type',30)->nullable()->comment('tipo de factura');

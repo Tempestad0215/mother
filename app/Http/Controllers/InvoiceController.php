@@ -1,24 +1,37 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Invoices\SaleInvoiceA;
 use App\Invoices\Ticket80;
 use App\Models\CreditNote;
 use App\Models\Product;
 use App\Models\Sale;
+use App\Models\Setting;
+use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use PDF;
 use Picqer\Barcode\BarcodeGeneratorPNG;
-use Picqer\Barcode\BarcodeGeneratorSVG;
 
 class InvoiceController extends Controller
 {
+
+    protected string $pdfGeneratorUrl;
+
+    public function __construct()
+    {
+        $this->pdfGeneratorUrl = config('appconfig.url_pdf');
+    }
 
     /**
      * @param Sale $sale
      * @return void
      */
-    public function getA(Sale $sale):void
+    public function getA(Sale $sale): void
     {
         //Instancia del pdf
         $pdf = new SaleInvoiceA($sale);
@@ -28,6 +41,50 @@ class InvoiceController extends Controller
         $pdf->Output('invoice.pdf');
     }
 
+
+    /**
+     * @param Sale $sale
+     * @return ResponseFactory|JsonResponse|Response
+     * @throws ConnectionException
+     */
+    public function getSaleInvoice(Sale $sale)
+    {
+        $sale->with(['creditNoteSale','items']);
+
+        $templateData = View('pdfs.sale.cinta', [
+            'sale' => $sale,
+            'setting' => Setting::first(),
+            'creditNote' => $sale->creditNotes
+        ])->render();
+
+        // Crear la respuestas
+        return $this->facturaCinta($templateData);
+
+    }
+
+
+    /**
+     * @param CreditNote $creditNote
+     * @return ResponseFactory|JsonResponse|Response
+     * @throws ConnectionException
+     */
+    public function getCreditNoteInvoice(CreditNote $creditNote)
+    {
+
+        // Obtener los items de la nota de credito
+        $creditNote->with('items.product');
+
+        // Obtener los datos de la nota de credito
+        $template = View('pdfs.credit_note.cinta', [
+            'cr' => $creditNote,
+            'setting' => Setting::first()
+        ])->render();
+
+
+        // Crear la respuestas
+        return $this->facturaCinta($template);
+
+    }
 
 
     public function beltSale(Sale $sale)
@@ -56,10 +113,10 @@ class InvoiceController extends Controller
 
         $code = $product->bar_code ?: $product->code;
         $generator = new BarcodeGeneratorPNG();
-        $barCode = base64_encode($generator->getBarcode($code, $generator::TYPE_CODE_128,2,55));
+        $barCode = base64_encode($generator->getBarcode($code, $generator::TYPE_CODE_128, 2, 55));
         $barcodeUrl = "data:image/png;base64," . $barCode;
 
-        $pdf = PDF::loadView('pdfs.ticket.zebra',[
+        $pdf = PDF::loadView('pdfs.ticket.zebra', [
             'name' => 'Repuesto Camboya',
             'ref' => $product->sku,
             'code_bar' => $barcodeUrl
@@ -73,7 +130,7 @@ class InvoiceController extends Controller
 
         $end = microtime(true);
         $report = $end - $start;
-        Log::info('el timpo transcurrido es '. $report);
+        Log::info('el timpo transcurrido es ' . $report);
 
         return $pdf->inline('ticket.pdf');
     }
@@ -166,5 +223,32 @@ class InvoiceController extends Controller
 //        }
 //
 //    }
+    /**
+     * @param string $template
+     * @return ResponseFactory|JsonResponse|Response
+     * @throws ConnectionException
+     */
+    public function facturaCinta(string $template): ResponseFactory|JsonResponse|Response
+    {
+        $response = Http::attach('index.hmtl', $template, 'index.html')
+            ->post($this->pdfGeneratorUrl, [
+                'paperWidth' => '3.14',  // 80mm en pulgadas
+                'marginLeft' => '0.1',
+                'marginRight' => '0.1',
+                'marginTop' => '0.1',    // Espacio para la cabecera fija
+                'marginBottom' => '0.1',
+                'waitDelay' => '600ms',  // Tiempo para que cargue Tailwind 4 por CDN
+            ]);
+
+        // Devolver si es correcto
+        if ($response->successful()) {
+            return response($response->body(), 200, [
+                'content-type' => 'application/pdf'
+            ]);
+        }
+
+        // Devolver mensaje de error
+        return response()->json(['error' => 'Error al generar ticket'], 500);
+    }
 
 }

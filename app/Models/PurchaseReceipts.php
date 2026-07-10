@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @property-read InventoryMovement[] $itemMovements
@@ -14,17 +16,27 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read PurchaseReceiptsItem[] $items
  */
 
-
-
-class PurchaseReceipts extends Model
+class PurchaseReceipts extends Model implements Auditable
 {
     use SoftDeletes;
+    use \OwenIt\Auditing\Auditable;
+    use HasUuids;
+
+    /**
+     * @var string
+     */
+    protected $primaryKey = 'uuid';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
 
+    /**
+     * @var string[]
+     */
     protected $fillable = [
-        'purchase_id',
-        'supplier_id',
-        'user_id',
+        'purchase_uuid',
+        'supplier_uuid',
+        'user_uuid',
         'doc_date',
         'tax',
         'discount',
@@ -35,16 +47,25 @@ class PurchaseReceipts extends Model
     ];
 
 
+    /**
+     * @return BelongsTo
+     */
     public function supplier(): BelongsTo
     {
-        return $this->belongsTo(Supplier::class);
+        return $this->belongsTo(Supplier::class, 'supplier_uuid', 'uuid');
     }
 
+    /**
+     * @return HasMany
+     */
     public function items(): HasMany
     {
-        return $this->hasMany(PurchaseReceiptsItem::class);
+        return $this->hasMany(PurchaseReceiptsItem::class, 'purchase_receipt_uuid', 'uuid');
     }
 
+    /**
+     * @return MorphMany
+     */
     public function itemMovements(): MorphMany
     {
         return $this->morphMany(InventoryMovement::class, 'movementable');

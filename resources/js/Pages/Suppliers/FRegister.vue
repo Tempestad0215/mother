@@ -49,7 +49,7 @@ const form = useForm({
   company_name: '',
   phone: '',
   email: '',
-  type_payment: 'Contado',
+  type_payment: 'CONTADO',
   receive_email: false,
   is_recurring: false,
   payment_day: null,

@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\Brand;
 use App\Models\PriceList;
+use App\Models\PriceListProduct;
 use App\Models\PurchaseReceiptsItem;
 use App\Models\Tax;
 use App\Models\Warehouse;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;
+
 /**
  * @property string $uuid
  * @property string $type
@@ -38,6 +40,7 @@ use Illuminate\Support\Carbon;
  * @property bool $has_promotion
  * @property bool $has_tax
  * @property bool $is_service
+ * @property string $default_price_list
  * @property bool $handle_warehouse
  * @property string $supplier_uuid
  * @property string $category_uuid
@@ -47,6 +50,7 @@ use Illuminate\Support\Carbon;
  *
  *
  * @property-read Brand $brand
+ * @property-read PriceList[] $priceList
  * @property-read Tax $tax
  * @property-read Collection<int, PriceList $price_list>
  * @property-read Collection<int, Warehouse $warehouses>
@@ -58,6 +62,16 @@ class ProductResource extends JsonResource
 
     public function toArray(Request $request): array
     {
+        /** @var PriceList[] $priceLists */
+        $priceLists = $this->whenLoaded('priceList');
+        //Tomar la primera
+        /** @var PriceList $priceListCurrent */
+        $priceListCurrent = collect($priceLists)->firstWhere('uuid', $this->default_price_list);
+        // Pivot
+        /** @var PriceListProduct $pivotPrice */
+        $pivotPrice = $priceListCurrent->pivot;
+
+
         return [
             // 🆔 Identificadores
             'uuid'           =>  $this->uuid,
@@ -74,16 +88,18 @@ class ProductResource extends JsonResource
             'unit_uuid'      => $this->unit_uuid ?: null,
             'supplier_uuid'  => $this->supplier_uuid ?: null,
             'category_uuid'  => $this->category_uuid ?: null,
+            'tax_uuid'       => $this->tax_uuid ?: null,
             'tax'       => $this->tax,
 
             // 💰 Valores numéricos e impuestos por lista de precio
-            'price_lists' => $this->whenLoaded('price_list', function () {
+            'price_lists' => $this->whenLoaded('priceList', function () {
                 return new ProductPriceListResource($this);
             }),
             'warehouses' => $this->whenLoaded('warehouses', function (){
                 return new ProductWarehouseResource($this);
             }),
             'cost'           => (float) number_format($this->cost, 2),
+            'price' => (float) $pivotPrice->price,
             'benefits'       => (float) number_format($this->benefits, 2),
             'benefits_rate'  => (float) number_format($this->benefits_rate, 2),
 

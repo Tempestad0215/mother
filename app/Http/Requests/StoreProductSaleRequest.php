@@ -4,14 +4,15 @@ namespace App\Http\Requests;
 
 use App\Enums\PaymentTypeEnum;
 use App\Enums\SaleTypeEnum;
+use App\Enums\SequenceSaleTypeEnum;
+use App\Models\Sale;
 use App\Models\Setting;
+use App\Rules\CheckItemCreditNoteRule;
 use App\Rules\CheckStock;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Route;
-
-
 
 
 class  StoreProductSaleRequest extends FormRequest
@@ -39,27 +40,44 @@ class  StoreProductSaleRequest extends FormRequest
      */
     public function rules(): array
     {
-        //datos de configuracion
-        $sequence = Setting::pluck('sequence')->first() ??  false;
 
+        $isReturn = $this->input('type') === SaleTypeEnum::Devolucion->value;
+
+
+        /** @var Sale|null| $saleRouteParams */
+        $saleRouteParams = $this->route('sale');
+        
+        //datos de configuracion
+        /** @var Setting|null $setting */
+        $setting = $this->attributes->get('app_settings');
+
+        // tomar la secuancia de la setting
+        $sequence = $setting?->sequence ?? false;
 
 
         // Crear la validacion de los datos
         return [
-            'id' => ['nullable', 'integer'],
+            'uuid' => ['nullable', 'string','uuid'],
+            'update' => ['nullable','boolean'],
             'ncf' => ['nullable','string','max:30',Rule::requiredIf($sequence)],
             'invoice_type' => ['nullable','max:6','string', Rule::requiredIf($sequence)],
             'client_name' => ['nullable', 'string','min:3','max:75'],
             'client_id' => ['nullable','integer'],
             'client_rnc' => ['nullable','string','max:20'],
-            'info_sale' => ['required','array', new CheckStock()],
-            'info_sale.*.product_id' => ['required','integer','exists:products,id'],
+            'info_sale' => ['required','array',Rule::unless(
+                $isReturn,
+                new CheckStock()
+            ), Rule::when($isReturn, new CheckItemCreditNoteRule($saleRouteParams))],
+            'info_sale.*.uuid' => ['nullable','uuid','exists:sale_items,uuid'],
+            'info_sale.*.product_uuid' => ['required','uuid','exists:products,uuid'],
             'info_sale.*.code' => ['nullable','string','min:4','max:50'],
             'info_sale.*.product_name' => ['required','string','min:3','max:75'],
             'info_sale.*.stock' => ['required','numeric'],
+            'info_sale.*.price_type' => ['required','string'],
             'info_sale.*.price' => ['required','numeric'],
-            'info_sale.*.tax_id' => ['required','numeric','exists:taxes,id'],
-            'info_sale.*.warehouse_id' => ['required','integer','exists:warehouses,id'],
+            'info_sale.*.temp_price' => ['required','numeric'],
+            'info_sale.*.tax_uuid' => ['required','uuid','exists:taxes,uuid'],
+            'info_sale.*.warehouse_uuid' => ['required','uuid','exists:warehouses,uuid'],
             'info_sale.*.tax_rate' => ['required','numeric'],
             'info_sale.*.amount' => ['required','numeric'],
             'info_sale.*.discount' => ['required','numeric'],
@@ -73,11 +91,15 @@ class  StoreProductSaleRequest extends FormRequest
             'received' => ['required','numeric'],
             'returned' => ['required','numeric'],
             'credit_notes' => ['nullable','array'],
-            'credit_notes.*.id' => ['nullable','integer'],
+            'credit_notes.*.uuid' => ['required','uuid','exists:credit_notes,uuid'],
+            'credit_notes.*.n_available' => ['required','numeric'],
+            'credit_notes.*.ncf' => ['nullable',SequenceSaleTypeEnum::class],
+            'credit_notes.*.code' => ['required','string'],
             'credit_notes_amount' => ['nullable','numeric'],
             'comment' => [Rule::requiredIf(Route::is('credit-note.store')),'max:255'],
             'close_table' => ['required','boolean'],
         ];
+
     }
 
 
