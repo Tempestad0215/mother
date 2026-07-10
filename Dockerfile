@@ -13,7 +13,7 @@ RUN pnpm run build
 # ==========================================
 FROM php:8.4-fpm-alpine
 
-# 1. Instalar dependencias del sistema + todas las librerías necesarias
+# 1. Instalar dependencias del sistema (solo lo necesario)
 RUN apk add --no-cache \
     postgresql-client \
     libpq-dev \
@@ -25,10 +25,9 @@ RUN apk add --no-cache \
     libpng-dev \
     libwebp-dev \
     libzip-dev \
-    icu-dev \
-    libxml2-dev
+    icu-dev
 
-# 2. Instalar TODAS las extensiones PHP necesarias
+# 2. Instalar SOLO las extensiones que Laravel necesita
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install -j$(nproc) \
         pdo_pgsql \
@@ -38,10 +37,7 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
         bcmath \
         intl \
         zip \
-        exif \
-        soap \
-        sockets \
-        pcntl
+        exif
 
 # 3. Instalar Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
