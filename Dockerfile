@@ -8,6 +8,7 @@ RUN npm install -g pnpm && pnpm install --frozen-lockfile
 COPY . .
 RUN pnpm run build
 
+
 # ==========================================
 # ETAPA 2: Imagen de Producción (PHP + Composer)
 # ==========================================
