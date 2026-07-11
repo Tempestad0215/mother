@@ -57,6 +57,8 @@ COPY . .
 # 7. Copiar assets de Vue
 COPY --from=frontend-builder /app/public/build ./public/build
 
+RUN git config --global --add safe.directory /var/www/html
+
 # 8. Generar autoloader optimizado
 RUN composer dump-autoload --optimize
 
