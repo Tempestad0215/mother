@@ -27,7 +27,7 @@ services:
         container_name: mother-nginx
         restart: always
         ports:
-            -   "8080:80"
+            -   "8085:80"
         volumes:
             # Configuración de Nginx
             - ./docker/default.conf:/etc/nginx/conf.d/default.conf
