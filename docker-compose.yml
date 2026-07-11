@@ -11,7 +11,7 @@ services:
         container_name: mother-app
         restart: always
         volumes:
-            - ./public:/var/www/html/public  # Montar public para desarrollo
+#            - ./public:/var/www/html/public  # Montar public para desarrollo
             - ./storage:/var/www/html/storage
             - ./bootstrap/cache:/var/www/html/bootstrap/cache
         env_file:
