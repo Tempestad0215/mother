@@ -18,8 +18,6 @@ services:
             - .env
         expose:
             - "9000"
-        networks:
-            - api-net
 
     # ==========================================
     # Servidor Web Nginx
@@ -39,9 +37,3 @@ services:
             - ./bootstrap/cache:/var/www/html/bootstrap/cache
         depends_on:
             - laravel.app
-        networks:
-            - api-net
-
-networks:
-    api-net:
-        external: true
