@@ -8,14 +8,14 @@ RUN npm install -g pnpm && pnpm install --frozen-lockfile
 COPY . .
 RUN pnpm run build
 
-
 # ==========================================
-# ETAPA 2: Imagen de Producción (PHP + Composer)
+# ETAPA 2: Imagen de Producción (PHP + Nginx)
 # ==========================================
 FROM php:8.4-fpm-alpine
 
-# 1. Instalar dependencias del sistema (solo lo necesario)
+# 1. Instalar dependencias del sistema incluyendo Nginx
 RUN apk add --no-cache \
+    nginx \
     postgresql-client \
     libpq-dev \
     zip \
@@ -26,9 +26,10 @@ RUN apk add --no-cache \
     libpng-dev \
     libwebp-dev \
     libzip-dev \
-    icu-dev
+    icu-dev \
+    supervisor
 
-# 2. Instalar SOLO las extensiones que Laravel necesita
+# 2. Instalar extensiones PHP
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install -j$(nproc) \
         pdo_pgsql \
@@ -57,13 +58,32 @@ COPY . .
 # 7. Copiar assets de Vue
 COPY --from=frontend-builder /app/public/build ./public/build
 
+# 8. Configurar Git
 RUN git config --global --add safe.directory /var/www/html
 
-# 8. Generar autoloader optimizado
+# 9. Generar autoloader optimizado
 RUN composer dump-autoload --optimize
 
-# 9. Configurar permisos
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# 10. Configurar Nginx
+COPY docker/nginx.conf /etc/nginx/http.d/default.conf
 
-EXPOSE 9000
-CMD ["php-fpm", "-F"]
+# 11. Crear directorio para logs de Nginx
+RUN mkdir -p /var/log/nginx && \
+    chown -R www-data:www-data /var/log/nginx
+
+# 12. Configurar permisos
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html/storage \
+    && chmod -R 755 /var/www/html/bootstrap/cache \
+    && chmod -R 755 /var/www/html/public
+
+# 13. Configurar Supervisor
+COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# 14. Script de inicio
+#COPY docker/entrypoint.sh /entrypoint.sh
+#RUN chmod +x /entrypoint.sh
+
+EXPOSE 80
+
+ENTRYPOINT ["/entrypoint.sh"]
