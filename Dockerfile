@@ -32,14 +32,14 @@ RUN apk add --no-cache \
 # 2. Instalar extensiones PHP
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install -j$(nproc) \
-        pdo_pgsql \
-        pgsql \
-        opcache \
-        gd \
-        bcmath \
-        intl \
-        zip \
-        exif
+    pdo_pgsql \
+    pgsql \
+    opcache \
+    gd \
+    bcmath \
+    intl \
+    zip \
+    exif
 
 # 3. Instalar Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
@@ -65,7 +65,7 @@ RUN git config --global --add safe.directory /var/www/html
 RUN composer dump-autoload --optimize
 
 # 10. Configurar Nginx
-COPY docker/nginx.conf /etc/nginx/http.d/default.conf
+COPY docker/default.conf /etc/nginx/http.d/default.conf
 
 # 11. Crear directorio para logs de Nginx
 RUN mkdir -p /var/log/nginx && \
@@ -86,4 +86,5 @@ COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 EXPOSE 80
 
-ENTRYPOINT ["/entrypoint.sh"]
+
+# ENTRYPOINT ["/entrypoint.sh"]
