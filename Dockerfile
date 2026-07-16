@@ -7,7 +7,9 @@ RUN install-php-extensions \
     redis \
     intl \
     zip \
-        opcache
+    opcache \
+    bcmath \
+    gd
     # Add other PHP extensions here...
 
 # Instala Composer
