@@ -23,4 +23,6 @@ COPY . /app
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 
+ENV OCTANE_BINARY=/usr/local/bin/frankenphp
+
 ENTRYPOINT ["php", "artisan", "octane:frankenphp", "--host=0.0.0.0", "--port=8000"]
