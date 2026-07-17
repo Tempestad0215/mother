@@ -12,6 +12,11 @@ RUN install-php-extensions \
     gd
     # Add other PHP extensions here...
 
+# 2. Instalar Node.js, npm y pnpm para compilar los assets de Vite
+# Usamos el gestor de paquetes de Alpine (apk)
+RUN apk add --no-cache nodejs npm \
+    && npm install -g pnpm
+
 # Instala Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
@@ -22,6 +27,11 @@ COPY . /app
 
 # 3. Instalar las dependencias de Composer para producción
 RUN composer install --no-dev --optimize-autoloader --no-interaction
+
+# 4. Instalar dependencias de Node y compilar los recursos de Frontend con Vite
+RUN pnpm install --frozen-lockfile \
+    && pnpm build \
+    && rm -rf node_modules # Limpiamos node_modules para mantener la imagen ligera
 
 RUN ln -sf /usr/local/bin/frankenphp /usr/bin/frankenphp \
     && ln -sf /usr/local/bin/frankenphp /app/frankenphp
