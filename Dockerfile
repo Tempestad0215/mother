@@ -19,9 +19,12 @@ WORKDIR /app
 
 COPY . /app
 
+
 # 3. Instalar las dependencias de Composer para producción
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
+RUN ln -sf /usr/local/bin/frankenphp /usr/bin/frankenphp \
+    && ln -sf /usr/local/bin/frankenphp /app/frankenphp
 
 ENV OCTANE_BINARY=/usr/local/bin/frankenphp
 
