@@ -26,6 +26,7 @@ const propsW = defineProps<{
   suppliers: SupplierI[];
   paymentTypes: PaymentTypeEnumI;
   code?: string;
+  update: boolean;
 }>();
 
 /**
@@ -162,6 +163,7 @@ const printLabel = async () => {
       <div class="grid grid-cols-2">
         <div>
           <Button
+            v-if="propsW.update"
             :loading="loadingLabel"
             type="button"
             @click="printLabel()"

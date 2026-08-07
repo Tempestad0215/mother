@@ -205,6 +205,7 @@ watch(
 <template>
   <form @submit.prevent="submit">
     <ProductInformation
+      :update="propsW.update"
       :code="propsW.productEdit?.code"
       :paymentTypes="propsW.paymentTypes"
       :categories="propsW.categories"

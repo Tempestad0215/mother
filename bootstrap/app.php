@@ -28,6 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
 //            \App\Http\Middleware\ShareSettingData::class,
 
         ]);
+        $middleware->trustProxies(at: '*');
         $middleware->alias([
             'role' => RoleMiddleware::class,
             'permission' => PermissionMiddleware::class,
