@@ -12,15 +12,9 @@ import { PaymentTypeEnumI } from '@/Interfaces/GlobalInterface';
 import { CirclePlus, Printer } from '@lucide/vue';
 import axios from 'axios';
 
-/**
- *
- */
 const route = useRoute();
 const toast = useToast();
 
-/**
- *
- */
 const propsW = defineProps<{
   categories: categoryBaseI[];
   suppliers: SupplierI[];
@@ -29,18 +23,12 @@ const propsW = defineProps<{
   update: boolean;
 }>();
 
-/**
- *
- */
 const form = inject(formProductKey)!!;
 const productDataOption = inject(productDataKey);
 const createCategory = ref(false);
 const createSupplier = ref(false);
 const loadingLabel = ref(false);
 
-/**
- *
- */
 const searchProduct = () => {
   router.get(
     route('product.index', { search: form.name }),
@@ -53,35 +41,23 @@ const searchProduct = () => {
   );
 };
 
-/**
- *
- */
 const printLabel = async () => {
-  // Verificar si existe el codigo
   if (propsW.code) {
     loadingLabel.value = true;
     try {
-      //
       const response = await axios.get(route('product.get-label', { code: propsW.code }), {
         responseType: 'blob',
       });
-
       const blob = new Blob([response.data], { type: 'application/pdf' });
-
       const url = window.URL.createObjectURL(blob);
-
       const iframe = document.createElement('iframe');
       iframe.style.display = 'none';
       iframe.src = url;
-
       document.body.appendChild(iframe);
 
-      // 4. Esperamos a que el iframe cargue el PDF y disparamos la ventana de impresión
       iframe.onload = () => {
         iframe.contentWindow?.focus();
         iframe.contentWindow?.print();
-
-        // 5. Limpieza: Removemos el iframe y liberamos la memoria del Blob un momento después
         setTimeout(() => {
           window.URL.revokeObjectURL(url);
           document.body.removeChild(iframe);
@@ -89,106 +65,72 @@ const printLabel = async () => {
       };
     } catch (_) {
       toast.add({
-        summary: 'Error en la peticion',
-        detail: 'No se ha podido imprimir el label del producto',
+        summary: 'Error',
+        detail: 'No se pudo imprimir el label del producto',
         severity: 'error',
-        life: 500,
+        life: 3000,
       });
     } finally {
       loadingLabel.value = false;
     }
   }
 };
-
-// const printLabel = async (code:string | null) => {
-//     if (code !== null) {
-//         try {
-//             loadingUrlLabel.value = true;
-//             const {data} = await axios.get(route(`product.get-label`, {code: code}))
-//
-//
-//             // 2) Crear iframe oculto
-//             const iframe = document.createElement('iframe')
-//             iframe.style.position = 'fixed'
-//             iframe.style.right = '0'
-//             iframe.style.bottom = '0'
-//             iframe.style.width = '0'
-//             iframe.style.height = '0'
-//             iframe.style.border = '0'
-//             iframe.style.zIndex = '999999'
-//             iframe.src = data.url
-//
-//
-// // 3) Cuando cargue, imprimir y luego eliminar
-//             iframe.onload = () => {
-//                 try {
-//                     iframe.contentWindow?.focus()
-//                     iframe.contentWindow?.print()
-//                 } finally {
-//                     // A veces conviene esperar un poco para que el print se dispare
-//                     // setTimeout(() => iframe.remove(), 500)
-//                 }
-//             }
-//
-//             document.body.appendChild(iframe)
-//
-//             // urlLabel.value = data.url;
-//             // openPrintDialog.value = true;
-//         }catch(error) {
-//             toast.add({
-//                 severity: 'warn',
-//                 summary: 'Error',
-//                 detail: "Erro al Intentar Obtener El Label",
-//                 life: 5000
-//             });
-//         }finally {
-//             loadingUrlLabel.value = false;
-//         }
-//
-//     }
-// }
 </script>
 
 <template>
-  <div class="">
-    <div class="">
-      <!--                <div class="flex items-center gap-3">-->
-      <!--                    <p>ID Siguiente : {{productStore.nextCode}}</p>-->
-      <!--                    <Button title="Imprimir" :disabled="loadingUrlLabel" @click="printLabel(productStore.nextCode)"  >-->
-      <!--                        <template #icon>-->
-      <!--                            <Printer />-->
-      <!--                        </template>-->
-      <!--                    </Button>-->
-      <!--                </div>-->
-      <div class="grid grid-cols-2">
-        <div>
-          <Button
-            v-if="propsW.update"
-            :loading="loadingLabel"
-            type="button"
-            @click="printLabel()"
-            class="bg-green-300 p-2 rounded-md"
-          >
-            <Printer />
-          </Button>
-        </div>
+  <div class="space-y-4">
+    <!-- Barra Superior de Acciones (Botones Crear / Imprimir) -->
+    <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
+      <div>
+        <Button
+          v-if="propsW.update"
+          :loading="loadingLabel"
+          type="button"
+          @click="printLabel()"
+          severity="secondary"
+          outlined
+          class="h-9"
+          title="Imprimir Label"
+        >
+          <template #icon>
+            <Printer class="w-4 h-4 mr-1 text-slate-700" />
+          </template>
+          <span>Etiqueta</span>
+        </Button>
+      </div>
 
-        <div class="text-right space-x-3">
-          <Button @click="createCategory = true" label="Crear Categoria">
-            <template #icon>
-              <CirclePlus />
-            </template>
-          </Button>
-          <Button @click="createSupplier = true" label="Crear Suplidor">
-            <template #icon>
-              <CirclePlus />
-            </template>
-          </Button>
-        </div>
+      <div class="flex flex-col sm:flex-row gap-2">
+        <Button
+          type="button"
+          @click="createCategory = true"
+          label="Nueva Categoría"
+          severity="success"
+          outlined
+          class="h-9 text-xs sm:text-sm"
+        >
+          <template #icon>
+            <CirclePlus class="w-4 h-4 mr-1" />
+          </template>
+        </Button>
+
+        <Button
+          type="button"
+          @click="createSupplier = true"
+          label="Nuevo Proveedor"
+          severity="info"
+          outlined
+          class="h-9 text-xs sm:text-sm"
+        >
+          <template #icon>
+            <CirclePlus class="w-4 h-4 mr-1" />
+          </template>
+        </Button>
       </div>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
-      <FloatLabel variant="on">
+
+    <!-- Campos de Texto y Selects -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+      <FloatLabel variant="on" class="w-full">
         <AutoComplete
           fluid
           :suggestions="productDataOption"
@@ -196,14 +138,17 @@ const printLabel = async () => {
           @valueChange="searchProduct"
           id="name"
           v-model="form.name"
+          required
         />
-        <label for="name">Nombre</label>
+        <label for="name">Nombre del Producto <span class="text-red-500">*</span></label>
       </FloatLabel>
-      <FloatLabel variant="on">
+
+      <FloatLabel variant="on" class="w-full">
         <InputText fluid id="description" v-model="form.description" />
-        <label for="description">Descripcion</label>
+        <label for="description">Descripción</label>
       </FloatLabel>
-      <FloatLabel variant="on">
+
+      <FloatLabel variant="on" class="w-full">
         <Select
           fluid
           v-model="form.category_uuid"
@@ -212,9 +157,10 @@ const printLabel = async () => {
           option-label="name"
           :options="categories"
         />
-        <label for="category">Categoria</label>
+        <label for="category">Categoría</label>
       </FloatLabel>
-      <FloatLabel variant="on">
+
+      <FloatLabel variant="on" class="w-full">
         <Select
           fluid
           v-model="form.supplier_uuid"
@@ -223,15 +169,36 @@ const printLabel = async () => {
           option-label="company_name"
           :options="suppliers"
         />
-        <label for="supplier">Suplidor</label>
+        <label for="supplier">Proveedor</label>
       </FloatLabel>
     </div>
   </div>
 
-  <Dialog v-model:visible="createCategory" modal header="Crear Categoria">
-    <FRegisterCategory :category-edit="null" />
+  <!-- Diálogos Auxiliares -->
+  <Dialog
+    v-model:visible="createCategory"
+    modal
+    dismissableMask
+    header="Nueva Categoría"
+    :breakpoints="{ '960px': '75vw', '641px': '95vw' }"
+    :style="{ width: '40vw' }"
+  >
+    <FRegisterCategory :category-edit="null" @close="createCategory = false" />
   </Dialog>
-  <Dialog v-model:visible="createSupplier" modal header="Crear Suplidor">
-    <FRegisterSupplier :paymentTypes="paymentTypes" :update="false" :supplierEdit="null" /> />
+
+  <Dialog
+    v-model:visible="createSupplier"
+    modal
+    dismissableMask
+    header="Nuevo Proveedor"
+    :breakpoints="{ '960px': '75vw', '641px': '95vw' }"
+    :style="{ width: '45vw' }"
+  >
+    <FRegisterSupplier
+      :paymentTypes="paymentTypes"
+      :update="false"
+      :supplierEdit="null"
+      @close="createSupplier = false"
+    />
   </Dialog>
 </template>

@@ -30,13 +30,6 @@ onMounted(() => {
   }
 });
 
-/*
-Propiedades computada
- */
-/**
- * Precio sin impuesto
- */
-
 watch(
   () => [form.tax_uuid, form.cost, form.price, form.tax_uuid],
   () => {
@@ -49,9 +42,7 @@ watch(
     }
 
     form.benefits = Number(PreciseCalculator.subtract(form.price, form.cost));
-
     const benefitsRate = PreciseCalculator.divide(Number(form.benefits), form.price || 1);
-
     form.benefits_rate = Number(
       Number(PreciseCalculator.multiply(String(benefitsRate), 100)).toFixed(2)
     );
@@ -60,19 +51,15 @@ watch(
 
 const getInfoFromPriceList = async () => {
   try {
-    //   Tomar la respuesta
     const res = await axios.get(route('price-list.product.show', form.uuid));
-    // Tranformar los datos con tipos
     const data = res.data as Array<PriceListProducts>;
-    // Tomar los datos de la respuesta
     const infoPriceList = data.find((el) => el.uuid === form.price_list_uuid);
-    // Verificar si existe
+
     if (infoPriceList) {
       form.price = infoPriceList.price;
       form.min_price = infoPriceList.min_price;
       form.promotional_price = infoPriceList.promotional_price;
     } else {
-      //   Si no existe los valores a 0
       form.price = 0;
       form.min_price = 0;
       form.promotional_price = 0;
@@ -80,7 +67,7 @@ const getInfoFromPriceList = async () => {
   } catch (error) {
     toast.add({
       severity: 'error',
-      detail: 'Error al obtener la lista de precio',
+      detail: 'Error al obtener la lista de precios',
       life: 3000,
     });
   }
@@ -88,22 +75,21 @@ const getInfoFromPriceList = async () => {
 </script>
 
 <template>
-  <div>
-    <div class="grid grid-cols-3 gap-3">
-      <div>
-        <FloatLabel variant="on">
-          <Select
-            :options="propsW.warehouses"
-            v-model="form.warehouse_uuid"
-            option-label="name"
-            option-value="uuid"
-            fluid
-          />
-          <label for="warehouse">Almacen</label>
-        </FloatLabel>
-      </div>
-      <!--      Lista de precio-->
-      <FloatLabel variant="on">
+  <div class="space-y-5">
+    <!-- Selección de Almacén, Lista de Precio y Unidad -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <FloatLabel variant="on" class="w-full">
+        <Select
+          :options="propsW.warehouses"
+          v-model="form.warehouse_uuid"
+          option-label="name"
+          option-value="uuid"
+          fluid
+        />
+        <label for="warehouse">Almacén Predeterminado</label>
+      </FloatLabel>
+
+      <FloatLabel variant="on" class="w-full">
         <Select
           @change="getInfoFromPriceList"
           fluid
@@ -112,27 +98,26 @@ const getInfoFromPriceList = async () => {
           :optionLabel="(item: PriceListWTI) => `${item.name} | ${item.currency}`"
           :options="propsW.priceLists"
           v-model="form.price_list_uuid"
-        >
-        </Select>
-        <label for="tax">Lista de Precio</label>
+        />
+        <label for="price_list">Lista de Precios</label>
       </FloatLabel>
-      <div>
-        <FloatLabel variant="on">
-          <Select
-            fluid
-            id="unit"
-            optionValue="uuid"
-            optionLabel="name"
-            :options="propsW.units"
-            v-model="form.unit_uuid"
-          />
-          <label for="tax">Unidad</label>
-        </FloatLabel>
-      </div>
+
+      <FloatLabel variant="on" class="w-full">
+        <Select
+          fluid
+          id="unit"
+          optionValue="uuid"
+          optionLabel="name"
+          :options="propsW.units"
+          v-model="form.unit_uuid"
+        />
+        <label for="unit">Unidad de Medida</label>
+      </FloatLabel>
     </div>
 
-    <div class="grid grid-cols-4 gap-3 mt-5">
-      <FloatLabel variant="on">
+    <!-- Valores de Costo y Precios -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <FloatLabel variant="on" class="w-full">
         <InputNumber
           currency="DOP"
           locale="en-US"
@@ -143,7 +128,8 @@ const getInfoFromPriceList = async () => {
         />
         <label for="sale_cost">Costo</label>
       </FloatLabel>
-      <FloatLabel variant="on">
+
+      <FloatLabel variant="on" class="w-full">
         <InputNumber
           currency="DOP"
           locale="en-US"
@@ -152,9 +138,10 @@ const getInfoFromPriceList = async () => {
           id="sale_price"
           v-model="form.price"
         />
-        <label for="sale_price">Precio</label>
+        <label for="sale_price">Precio Venta</label>
       </FloatLabel>
-      <FloatLabel variant="on">
+
+      <FloatLabel variant="on" class="w-full">
         <InputNumber
           :min="form.cost"
           currency="DOP"
@@ -164,9 +151,10 @@ const getInfoFromPriceList = async () => {
           id="sale_min_price"
           v-model="form.min_price"
         />
-        <label for="sale_min_price">Precio Minimo</label>
+        <label for="sale_min_price">Precio Mínimo</label>
       </FloatLabel>
-      <FloatLabel variant="on">
+
+      <FloatLabel variant="on" class="w-full">
         <InputNumber
           :min="form.min_price"
           currency="DOP"
@@ -179,25 +167,37 @@ const getInfoFromPriceList = async () => {
         <label for="sale_promotional_price">Precio Promocional</label>
       </FloatLabel>
     </div>
+
+    <!-- Resumen Calculado -->
     <div
-      class="flex flex-col md:flex-row justify-between mt-5 border-2 rounded-md p-2 border-gray-200"
+      class="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200 text-sm"
     >
-      <p>
-        <strong>Precio - Itbis</strong>
-        <span class="inline-block px-3 rounded-md ml-3">{{
-          PreciseCalculator.formatCurrency(form.product_no_tax)
-        }}</span>
-      </p>
-      <p>
-        <strong>Beneficio</strong>
-        <span class="inline-block px-3 rounded-md ml-3">{{
-          PreciseCalculator.formatCurrency(form.benefits)
-        }}</span>
-      </p>
-      <p>
-        <strong>Beneficios Margen </strong>
-        <span class="inline-block px-3 rounded-md ml-3">{{ form.benefits_rate }} %</span>
-      </p>
+      <div class="flex justify-between sm:justify-start items-center gap-2">
+        <strong class="text-slate-700">Precio sin ITBIS:</strong>
+        <span
+          class="font-semibold text-slate-900 bg-white px-2 py-0.5 rounded border border-slate-200"
+        >
+          {{ PreciseCalculator.formatCurrency(form.product_no_tax) }}
+        </span>
+      </div>
+
+      <div class="flex justify-between sm:justify-start items-center gap-2">
+        <strong class="text-slate-700">Beneficio Neto:</strong>
+        <span
+          class="font-semibold text-emerald-600 bg-white px-2 py-0.5 rounded border border-slate-200"
+        >
+          {{ PreciseCalculator.formatCurrency(form.benefits) }}
+        </span>
+      </div>
+
+      <div class="flex justify-between sm:justify-start items-center gap-2">
+        <strong class="text-slate-700">Margen Beneficio:</strong>
+        <span
+          class="font-semibold text-blue-600 bg-white px-2 py-0.5 rounded border border-slate-200"
+        >
+          {{ form.benefits_rate }} %
+        </span>
+      </div>
     </div>
   </div>
 </template>

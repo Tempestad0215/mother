@@ -2,7 +2,7 @@
 import { ProductFormI, ProductTableI, ProductTypeEnumI } from '@/Interfaces/ProductInterface';
 import { SupplierI } from '@/Interfaces/SupplierInterface';
 import { useForm } from '@inertiajs/vue3';
-import { onMounted, provide, watch } from 'vue';
+import { onMounted, provide } from 'vue';
 import { categoryBaseI } from '@/Interfaces/CategoriesInterface';
 import { PaymentTypeEnumI } from '@/Interfaces/GlobalInterface';
 import ProductExtra from '@/Pages/Products/ProductExtra.vue';
@@ -13,18 +13,16 @@ import { useRoute } from 'ziggy-js';
 import { formProductKey } from '@/Injections/InjectionKeys';
 import { BranchInterfaceI } from '@/Interfaces/BranchInterface';
 import { UnitInterfaceI } from '@/Interfaces/UnitInterface';
-import { Button, Tab, TabList, TabPanel, TabPanels, Tabs, useToast } from 'primevue';
+import { Button, Tab, TabList, TabPanel, TabPanels, Tabs, useToast, Card, Divider } from 'primevue';
 import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
 import ProductSaleValue from '@/Pages/Products/ProductSaleValue.vue';
 import { PriceListWTI } from '@/Interfaces/PriceListInterface';
 import InventoryDetail from '@/Pages/Products/Inventory/InventoryDetail.vue';
+import { Eraser, Send } from '@lucide/vue';
 
 const route = useRoute();
 const toast = useToast();
 
-/**
- * Propiedades de la ventana
- */
 const propsW = withDefaults(
   defineProps<{
     productEdit: ProductTableI | null;
@@ -39,34 +37,21 @@ const propsW = withDefaults(
     priceLists: Array<PriceListWTI>;
   }>(),
   {
-    // Al ser explícitamente | null, lo inicializamos en null
     productEdit: null,
-
-    // Booleano por defecto en falso para el formulario de creación
     update: false,
-
-    // Todos los arrays inicializados correctamente mediante funciones flecha
     categories: () => [],
     suppliers: () => [],
     branches: () => [],
     units: () => [],
     warehouses: () => [],
     priceLists: () => [],
-
-    // Tipado seguro para los objetos de enums/mapeos estructurados
     paymentTypes: () => ({}) as PaymentTypeEnumI,
     productType: () => ({}) as ProductTypeEnumI,
   }
 );
 
-/**
- * Emitir eventos
- */
-const emit = defineEmits(['showSupplier']);
+const emit = defineEmits(['showSupplier', 'close']);
 
-/**
- * Datos del formulario
- */
 const form = useForm<ProductFormI>({
   uuid: '',
   name: '',
@@ -104,17 +89,13 @@ const form = useForm<ProductFormI>({
 
 provide(formProductKey, form);
 
-/**
- * Al momento de cargar
- */
 onMounted(() => {
-  // Pasar los datos a editar
   if (propsW.productEdit) {
     form.uuid = propsW.productEdit.uuid;
     form.name = propsW.productEdit.name;
     form.is_service = propsW.productEdit.is_service;
-    form.description = propsW.productEdit.description ? propsW.productEdit.description : '';
-    form.bar_code = propsW.productEdit.bar_code ? propsW.productEdit.bar_code : '';
+    form.description = propsW.productEdit.description || '';
+    form.bar_code = propsW.productEdit.bar_code || '';
     form.category_uuid = propsW.productEdit.category_uuid!!;
     form.supplier_uuid = propsW.productEdit.supplier_uuid;
     form.tax_uuid = propsW.productEdit.tax.uuid;
@@ -129,9 +110,6 @@ onMounted(() => {
   }
 });
 
-/**
- * Funcion para enviar los datos
- */
 const submit = () => {
   if (propsW.update || form.update) {
     form.patch(route('product.update', form.uuid), {
@@ -139,34 +117,37 @@ const submit = () => {
         toast.add({
           severity: 'success',
           summary: 'Registro Actualizado',
+          detail: 'Producto actualizado correctamente.',
           life: 3000,
         });
+        emit('close');
       },
       onError: (err) => {
         toast.add({
           severity: 'error',
           summary: 'Error',
-          detail: `Error en esta peticion. Detalle : ${Object.values(err)[0]}`,
+          detail: `Error en la petición: ${Object.values(err)[0]}`,
           life: 3000,
         });
       },
     });
   } else {
-    // Formulario para guardar los productos
     form.post(route('product.store'), {
       onSuccess: () => {
         form.reset();
         toast.add({
           severity: 'success',
-          summary: 'Registro Actualizado',
+          summary: 'Registro Creado',
+          detail: 'Producto creado correctamente.',
           life: 3000,
         });
+        emit('close');
       },
       onError: (err) => {
         toast.add({
           severity: 'error',
           summary: 'Error',
-          detail: `Error en esta peticion. Detalle : ${Object.values(err)[0]}`,
+          detail: `Error en la petición: ${Object.values(err)[0]}`,
           life: 3000,
         });
       },
@@ -179,86 +160,100 @@ function setCalculateData(productNoTax: string, benefits: string, benefitsMargin
   form.benefits = Number(benefits);
   form.benefits_rate = Number(benefitsMargin);
 }
-
-watch(
-  () => form.warehouse_uuid,
-  (_) => {}
-);
-
-// const getInfoFromPriceList = () => {
-//   if (
-//     propsW.productEdit &&
-//     propsW.productEdit.price_lists &&
-//     propsW.productEdit.price_lists.length > 0
-//   ) {
-//     const info = propsW.productEdit.price_lists.find((el) => el.uuid === form.price_list_uuid);
-//
-//     if (info) {
-//       form.price = info.price;
-//       form.min_price = info.min_price;
-//       form.promotional_price = info.promotional_price;
-//     }
-//   }
-// };
 </script>
 
 <template>
-  <form @submit.prevent="submit">
-    <ProductInformation
-      :update="propsW.update"
-      :code="propsW.productEdit?.code"
-      :paymentTypes="propsW.paymentTypes"
-      :categories="propsW.categories"
-      :suppliers="propsW.suppliers"
-    />
-    <Tabs value="0" class="h-110">
-      <TabList>
-        <Tab value="0">General</Tab>
-        <Tab v-if="form.name && form.name.length > 3" value="1">Ventas</Tab>
-        <Tab v-if="form.name && form.name.length > 3" value="2">Inventario</Tab>
-      </TabList>
-      <TabPanels>
-        <TabPanel value="0">
-          <!--Informacion General-->
-          <div class="">
-            <div class="flex flex-col md:flex-row flex-wrap gap-3">
-              <ProductExtra class="flex-1" :productType="propsW.productType" />
+  <Card class="w-full border-none shadow-none p-0">
+    <template #content>
+      <form @submit.prevent="submit" class="space-y-4">
+        <!-- Información Principal -->
+        <ProductInformation
+          :update="propsW.update"
+          :code="propsW.productEdit?.code"
+          :paymentTypes="propsW.paymentTypes"
+          :categories="propsW.categories"
+          :suppliers="propsW.suppliers"
+        />
 
-              <ProductGeneral class="" />
-            </div>
+        <Divider class="my-3" />
 
-            <!--Detalle del producto-->
-            <ProductDetail
-              :priceLists="propsW.priceLists"
-              :warehouses="propsW.warehouses"
-              :units="propsW.units"
-              :branches="propsW.branches"
-            />
+        <!-- Tabs Adaptativos -->
+        <Tabs value="0" class="w-full">
+          <div class="overflow-x-auto">
+            <TabList class="flex whitespace-nowrap min-w-full">
+              <Tab value="0">General</Tab>
+              <Tab v-if="form.name && form.name.length > 3" value="1">Ventas</Tab>
+              <Tab v-if="form.name && form.name.length > 3" value="2">Inventario</Tab>
+            </TabList>
           </div>
-        </TabPanel>
-        <TabPanel value="1">
-          <ProductSaleValue
-            :isUpdate="propsW.update"
-            :units="propsW.units"
-            :priceLists="propsW.priceLists"
-            :warehouses="propsW.warehouses"
-            @calculate="setCalculateData"
-          />
-        </TabPanel>
-        <TabPanel value="2">
-          <InventoryDetail :warehouses="propsW.warehouses" />
-        </TabPanel>
-      </TabPanels>
-    </Tabs>
-    <!-- Botones -->
-    <div class="mt-4 space-x-3 text-right">
-      <Button v-if="!propsW.update" label="Limpiar" severity="warn" @click="form.reset()" />
-      <Button
-        :disabled="form.processing"
-        type="submit"
-        icon="pi pi-send"
-        :label="propsW.update ? 'Actualizar' : 'Registrar'"
-      />
-    </div>
-  </form>
+
+          <TabPanels class="pt-4 px-0">
+            <TabPanel value="0">
+              <div class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <ProductExtra :productType="propsW.productType" />
+                  <ProductGeneral />
+                </div>
+
+                <ProductDetail
+                  :priceLists="propsW.priceLists"
+                  :warehouses="propsW.warehouses"
+                  :units="propsW.units"
+                  :branches="propsW.branches"
+                />
+              </div>
+            </TabPanel>
+
+            <TabPanel value="1">
+              <ProductSaleValue
+                :isUpdate="propsW.update"
+                :units="propsW.units"
+                :priceLists="propsW.priceLists"
+                :warehouses="propsW.warehouses"
+                @calculate="setCalculateData"
+              />
+            </TabPanel>
+
+            <TabPanel value="2">
+              <InventoryDetail :warehouses="propsW.warehouses" />
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+
+        <!-- Botones de Acción Adaptativos -->
+        <div class="pt-4 flex flex-col-reverse sm:flex-row justify-end gap-3">
+          <Button
+            v-if="!propsW.update"
+            label="Limpiar"
+            severity="warn"
+            type="button"
+            @click="form.reset()"
+            class="w-full sm:w-auto h-10"
+            outlined
+          >
+            <template #icon>
+              <Eraser class="w-4 h-4 mr-1" />
+            </template>
+          </Button>
+
+          <Button
+            :disabled="form.processing"
+            type="submit"
+            :label="propsW.update ? 'Actualizar' : 'Registrar'"
+            class="w-full sm:w-auto h-10 bg-emerald-600 hover:bg-emerald-700 border-none"
+          >
+            <template #icon>
+              <Send class="w-4 h-4 mr-1" />
+            </template>
+          </Button>
+        </div>
+      </form>
+    </template>
+  </Card>
 </template>
+
+<style scoped>
+:deep(.p-card-body) {
+  padding: 0 !important;
+}
+</style>

@@ -158,7 +158,7 @@ onUnmounted(() => {
 
     <!-- 3. Sidebar Responsive (Móvil Drawer / Desktop Collapsible) -->
     <aside
-      class="bg-slate-900 text-slate-100 flex flex-col z-50 shadow-2xl transition-all duration-300 fixed md:static top-0 bottom-0 left-0 h-full"
+      class="bg-slate-900 flex flex-col z-50 shadow-2xl transition-all duration-300 fixed md:static top-0 bottom-0 left-0 h-full"
       :class="[
         // Comportamiento en Móvil
         isMobileOpen ? 'translate-x-0 w-64' : '-translate-x-full md:translate-x-0',
@@ -201,7 +201,8 @@ onUnmounted(() => {
         <PanelMenu orientation="vertical" :model="menuItems" class="w-full">
           <template #item="{ item }: { item: MenuItemI }">
             <Link
-              class="flex items-center py-3 px-4 mx-2 rounded-lg text-sm font-medium transition-all duration-200 group text-slate-300 hover:bg-slate-800 hover:text-emerald-400"
+              preserveState
+              class="flex items-center p-1 rounded-lg text-sm font-medium transition-all duration-200 group hover:bg-slate-800 hover:text-emerald-400"
               :class="{ 'justify-center px-0': isHiddenMenu && !isMobileOpen }"
               :href="item.url"
               @click="closeMobileMenu"

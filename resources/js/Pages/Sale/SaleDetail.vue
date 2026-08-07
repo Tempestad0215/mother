@@ -25,10 +25,11 @@ import SaleOpenShow from './SaleOpenShow.vue';
 import ReturnForm from '@components/ReturnForm.vue';
 import axios from 'axios';
 
-//Datos de la ventana
+// Datos de la ventana
 const toast = useToast();
 const page = usePage();
-//Datos del back end
+
+// Datos del back end
 const propsW = defineProps<{
   invoiceType: invoiceTypeI[];
   refund?: boolean;
@@ -37,7 +38,7 @@ const propsW = defineProps<{
   saleTypeEnum: SaleTypeEnumI;
 }>();
 
-//Emitir eventos para el componente de devoluciones
+// Emitir eventos para el componente de devoluciones
 const emit = defineEmits<{
   (e: 'retunedBlur'): void;
   (e: 'totalAmount', info: infoSaleI): void;
@@ -45,10 +46,10 @@ const emit = defineEmits<{
   (e: 'sendClientName', name: string): void;
 }>();
 
-//Formulario
+// Formulario
 const form = inject(saleKey)!;
 
-//Ventanas
+// Ventanas
 const showProducts = ref(false);
 const showSaleOpen = ref(false);
 const showReturn = ref(false);
@@ -79,13 +80,10 @@ const getSaleType = computed(() => {
 });
 
 const getSequenceFiltered = computed(() => {
-  const invoiceTypeSelected = form.invoice_type; // El tipo seleccionado en el formulario
+  const invoiceTypeSelected = form.invoice_type;
 
   return Object.entries(propsW.invoiceType).map(([_, value]) => {
-    // Definimos si este elemento específico es una Nota de Crédito
     const isNotaCredito = value.type === 'B04' || value.name?.includes('B04');
-
-    // REGLA: Si este elemento es B04, lo ocultamos SOLO cuando el seleccionado NO sea B04
     let shouldHide = false;
     if (isNotaCredito) {
       shouldHide = invoiceTypeSelected !== 'B04';
@@ -100,49 +98,16 @@ const getSequenceFiltered = computed(() => {
 });
 
 /**
- * Verificar el tipo de factura
- */
-// const checkInvoiceType = async () => {
-//   // Verificar si es nota de credito
-//   if (form.invoice_type === 'B04') {
-//     //Resultado de la pregunta
-//     // const result = await Swal.fire({
-//     // 	title: "Desea Colocar Comprobante?",
-//     // 	text: "Registre El Comprobante Del Cliente!",
-//     // 	icon: "question",
-//     // 	showCancelButton: true,
-//     // 	confirmButtonColor: "#3085d6",
-//     // 	cancelButtonColor: "#d33",
-//     // 	confirmButtonText: "Si",
-//     // 	cancelButtonText: "No"
-//     // });
-//     //Verificar la accion
-//     // showClientRnc.value = result.isConfirmed;
-//   }
-//   // else showClientRnc.value = form.invoice_type !== 'B02';
-//
-//   // Solo buscar los datos si es igual a 0 el ID. eso quiere decir que debe generar un comprobante
-//   if (form.uuid == '') {
-//     //llamar el tipo de boleta
-//     getSequenceType(form.invoice_type);
-//   }
-// };
-
-/**
- * Obtener el producto por codigo
+ * Obtener el producto por código
  */
 const getProductCode = () => {
-  //Verificar que tenga más de 6 caracter
   if (form.code_value.length > 0) {
-    //realizar la busqueda en automatico
     axios
       .get(route('product.get.code', { search: form.code_value }))
       .then((res) => {
-        //Formatear los datos
-
         const info = res.data as ProductTableI;
-
         const getIndex = form.info_sale.findIndex((el) => el.product_uuid === info.uuid);
+
         if (getIndex >= 0) {
           const infoCurrent = form.info_sale[getIndex];
           infoCurrent.stock += 1.0;
@@ -150,14 +115,13 @@ const getProductCode = () => {
           toast.add({
             severity: 'success',
             summary: `Producto: ${infoCurrent.product_name}`,
-            detail: `Se Agrego ${infoCurrent.stock} Productos`,
+            detail: `Se agregó ${infoCurrent.stock} unidad(es)`,
             life: 3000,
           });
         } else {
           const taxRate = PreciseCalculator.divide(info.tax.rate, 100) ?? 0;
           const taxAmount = PreciseCalculator.multiply(taxRate.toString(), info.price);
 
-          //
           form.info_sale.push({
             amount: info.price,
             price: info.price,
@@ -175,30 +139,26 @@ const getProductCode = () => {
             warehouse_uuid: info.default_warehouse,
           });
         }
-        //Limpiar campo y errores en caso de tenerlo
         form.code_value = '';
       })
       .catch(() => {
-        //Mensjae de que no existe en la base de datos
         toast.add({
           severity: 'error',
           summary: 'Error',
-          detail: `El Codigo: ${form.code_value} No Existe o No Tiene Stock!`,
+          detail: `El código: ${form.code_value} no existe o no tiene stock.`,
           life: 3000,
         });
       });
   }
 };
 
-//Obtener los datos de las cuentas abiertas
+// Obtener los datos de las cuentas abiertas
 const getSaleOpen = (item: saleDataI) => {
-  //Colocar la variable en nada al principio
   form.info_sale = [];
   form.uuid = item.uuid;
   form.update = true;
 
   setTimeout(() => {
-    //Verificar Pasar los datos a la variable
     item.info_sale.map((el, _) => {
       form.info_sale.push({
         ...el,
@@ -207,15 +167,12 @@ const getSaleOpen = (item: saleDataI) => {
         tax_amount: parseFloat(PreciseCalculator.multiply(el.price, el.tax_rate).toFixed(2)),
       });
 
-      //Calcular el total
       emit('totalAmount', el);
     });
   }, 2);
 
-  //calcular el total de las ventas
   emit('totalSale');
 
-  //colocar los datos en el formulario
   form.client_uuid = item.client_uuid;
   form.client_rnc = item.client_document ?? '';
   form.ncf = item.ncf;
@@ -224,16 +181,13 @@ const getSaleOpen = (item: saleDataI) => {
   form.close_table = item.close_table;
   form.comment = item.comment ?? '';
 
-  //Cerra la ventana
   showSaleOpen.value = false;
 };
 
-// Abrir el formulario para las devoluciones
 const openReturn = () => {
   showReturn.value = !showReturn.value;
 };
 
-// Abrir el formulario para las devoluciones
 const getDataProduct = (data: ProductTableI) => {
   showProducts.value = false;
   const getIndex = form.info_sale.findIndex((el) => el.product_uuid === data.uuid);
@@ -242,7 +196,6 @@ const getDataProduct = (data: ProductTableI) => {
     form.info_sale[getIndex].stock += 1.0;
   } else {
     const taxRate = PreciseCalculator.divide(data.tax.rate, 100) ?? 0;
-
     const taxPlus = Number(PreciseCalculator.multiply(taxRate.toString(), data.price));
 
     let taxForProduct: number;
@@ -253,7 +206,6 @@ const getDataProduct = (data: ProductTableI) => {
       taxForProduct = Number(PreciseCalculator.multiply(taxPlus, 1));
     }
 
-    // Tomar la info de la price list
     const priceList = getInfoFromPriceList(data.price_lists, data.default_price_list);
 
     form.info_sale.push({
@@ -276,23 +228,17 @@ const getDataProduct = (data: ProductTableI) => {
       temp_price: data.price,
     });
   }
-  //calcular el total de las ventas
   emit('totalSale');
 };
 
-// Cerrar el formulario de devoluciones
 const closeFormReturn = (isReturn: boolean) => {
-  // Colocar la variable en nada al principio
   showFormReturn.value = false;
 
-  // Colocar la variable de devolucion para mostrar o no los datos de la venta
-  // Enviar el evento para mostrar o no los datos de la venta
   if (isReturn) {
     form.type = 'Devolucion';
   }
 
   sendReturnInfo.value = isReturn;
-  // Obtener los datos de las cuentas abiertas
   form.info_sale.forEach((el) => {
     emit('totalAmount', el);
   });
@@ -303,16 +249,14 @@ const getNextSequence = async (event: SelectChangeEvent) => {
   const info = event.value as string;
   try {
     const res = await axios.get(route('sequence.get', { type: info }));
-
     const data = res.data as sequenceDataI;
-
     const restante = parseFloat(PreciseCalculator.subtract(data.to, data.next).toString());
 
     if (restante <= data.advise) {
       toast.add({
         severity: 'warn',
         summary: 'Advertencia',
-        detail: `El numero de factura se encuentra a ${restante} de los ${data.advise} disponibles!`,
+        detail: `El número de factura se encuentra a ${restante} de los ${data.advise} disponibles.`,
         life: 3000,
       });
     }
@@ -322,7 +266,7 @@ const getNextSequence = async (event: SelectChangeEvent) => {
     toast.add({
       severity: 'error',
       summary: 'Error',
-      detail: 'No he posible obtener el siguiente numero de factura!',
+      detail: 'No fue posible obtener el siguiente número de factura.',
       life: 3000,
     });
   } finally {
@@ -330,7 +274,6 @@ const getNextSequence = async (event: SelectChangeEvent) => {
   }
 };
 
-// Exponer los datos para el componente de devoluciones
 defineExpose({
   showReturn,
   getSequenceType,
@@ -339,42 +282,47 @@ defineExpose({
 </script>
 
 <template>
-  <!-- Datos del formulario-->
-  <div class="flex justify-between items-center mt-3">
-    <div class="flex mt-2">
-      <form class="" v-if="!refund">
-        <FloatLabel variant="on">
-          <InputText v-model="form.code_value" @blur="getProductCode" />
-          <label for="code">Codigo</label>
+  <div class="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4 mt-3">
+    <!-- Entrada de Código de Barras y Accesos Rápidos -->
+    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
+      <form v-if="!refund" class="w-full sm:w-60" @submit.prevent>
+        <FloatLabel variant="on" class="w-full">
+          <InputText v-model="form.code_value" @blur="getProductCode" class="w-full" />
+          <label for="code">Código de Barra</label>
         </FloatLabel>
       </form>
-      <!-- Buscar los datos necesario -->
-      <div v-if="!refund" class="ml-3 flex items-center space-x-3">
+
+      <!-- Botones de Acción Rápida -->
+      <div
+        v-if="!refund"
+        class="flex items-center justify-around sm:justify-start gap-4 bg-slate-50 p-2 rounded-lg border border-slate-200"
+      >
         <ShoppingCart
           v-tooltip.bottom="'Productos Disponibles'"
           @click="showProducts = !showProducts"
-          class="hover:scale-125 duration-300"
-          :size="30"
+          class="cursor-pointer hover:scale-110 transition text-slate-700 hover:text-emerald-600"
+          :size="26"
         />
         <Grid2X2Plus
           v-tooltip.bottom="'Cuentas Abiertas'"
           @click="showSaleOpen = !showSaleOpen"
-          class="hover:scale-125 duration-300"
-          :size="30"
+          class="cursor-pointer hover:scale-110 transition text-slate-700 hover:text-blue-600"
+          :size="26"
         />
         <Undo2
           v-tooltip.bottom="'Devoluciones'"
           @click="showFormReturn = !showFormReturn"
-          class="hover:scale-125 duration-300"
-          :size="30"
+          class="cursor-pointer hover:scale-110 transition text-slate-700 hover:text-amber-600"
+          :size="26"
         />
       </div>
     </div>
 
-    <div class="flex">
-      <!--Tipo de factura-->
-      <div v-if="page.props.setting.sequence" class="ml-3 w-40">
-        <FloatLabel variant="on">
+    <!-- Opciones de Facturación (Comprobantes / Tipo Venta / Estado) -->
+    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
+      <!-- Tipo de Comprobante Fiscal (NCF) -->
+      <div v-if="page.props.setting.sequence" class="w-full sm:w-44">
+        <FloatLabel variant="on" class="w-full">
           <Select
             fluid
             option-label="key"
@@ -384,14 +332,15 @@ defineExpose({
             v-model="form.invoice_type"
             :option-disabled="(data) => data.hidden"
             :options="getSequenceFiltered"
+            class="w-full"
           />
-          <label for="type_sale">Tipo Venta</label>
+          <label for="invoice_type">Comprobante</label>
         </FloatLabel>
       </div>
 
-      <!--Tipo de factura-->
-      <div class="ml-2 w-40">
-        <FloatLabel variant="on">
+      <!-- Tipo de Operación/Venta -->
+      <div class="w-full sm:w-40">
+        <FloatLabel variant="on" class="w-full">
           <Select
             fluid
             :disabled="refund"
@@ -400,51 +349,100 @@ defineExpose({
             option-label="key"
             :option-disabled="(data) => data.hidden"
             :options="getSaleType"
+            class="w-full"
           />
           <label for="type_sale">Tipo Venta</label>
         </FloatLabel>
       </div>
-      <!--Tipo de cuenta si abierta o cerrada-->
-      <div v-if="!propsW.refund" class="ml-2">
+
+      <!-- Conmutador Cuenta Abierta / Cerrada -->
+      <div v-if="!propsW.refund" class="w-full sm:w-auto">
         <ToggleButton
           :disabled="form.type === 'Cotizacion' || refund"
           v-model="form.close_table"
           on-label="Cuenta Cerrada"
           off-label="Cuenta Abierta"
+          class="w-full sm:w-auto h-10 font-semibold"
         />
       </div>
     </div>
   </div>
 
-  <Dialog class="w-300" header="Productos" v-model:visible="showProducts" modal>
-    <FShowProduct
-      @select-data="getDataProduct"
-      :stock="true"
-      :isProduct="false"
-      :products="propsW.products"
-    />
+  <!-- Diálogo Catálogo de Productos -->
+  <Dialog
+    v-model:visible="showProducts"
+    modal
+    dismissableMask
+    header="Catálogo de Productos"
+    :breakpoints="{ '960px': '85vw', '641px': '95vw' }"
+    :style="{ width: '65vw' }"
+    class="p-dialog-responsive mx-2 sm:mx-0"
+  >
+    <div class="py-2">
+      <FShowProduct
+        @select-data="getDataProduct"
+        :stock="true"
+        :isProduct="false"
+        :products="propsW.products"
+      />
+    </div>
   </Dialog>
 
-  <!-- Vetana de las ordenes abierta -->
-  <Dialog header="Cuentas Abiertas" modal v-model:visible="showSaleOpen">
-    <Card>
-      <template #content>
-        <SaleOpenShow
-          @sen-data="getSaleOpen"
-          class="fondo rounded-md px-10 py-5"
-          :sale-open="propsW.saleOpen"
-        />
-      </template>
-    </Card>
+  <!-- Diálogo Cuentas Abiertas -->
+  <Dialog
+    v-model:visible="showSaleOpen"
+    modal
+    dismissableMask
+    header="Cuentas Abiertas"
+    :breakpoints="{ '960px': '85vw', '641px': '95vw' }"
+    :style="{ width: '50vw' }"
+    class="p-dialog-responsive mx-2 sm:mx-0"
+  >
+    <div class="py-2">
+      <Card class="border-none shadow-none">
+        <template #content>
+          <SaleOpenShow
+            @sen-data="getSaleOpen"
+            class="rounded-md p-2 sm:p-4"
+            :sale-open="propsW.saleOpen"
+          />
+        </template>
+      </Card>
+    </div>
   </Dialog>
 
-  <!-- Formulario para la nota de credito-->
-  <Dialog v-model:visible="showFormReturn" header="Nota de Creditos / Devolucion">
-    <ReturnForm
-      class="w-160 mx-auto"
-      @sendClientName="emit('sendClientName', $event)"
-      @closeFormReturn="closeFormReturn"
-      :error="page.props.errors.general"
-    />
+  <!-- Diálogo Nota de Crédito / Devoluciones -->
+  <Dialog
+    v-model:visible="showFormReturn"
+    modal
+    dismissableMask
+    header="Nota de Crédito / Devolución"
+    :breakpoints="{ '960px': '85vw', '641px': '95vw' }"
+    :style="{ width: '45vw' }"
+    class="p-dialog-responsive mx-2 sm:mx-0"
+  >
+    <div class="py-2">
+      <ReturnForm
+        class="w-full mx-auto"
+        @sendClientName="emit('sendClientName', $event)"
+        @closeFormReturn="closeFormReturn"
+        :error="page.props.errors.general"
+      />
+    </div>
   </Dialog>
 </template>
+
+<style scoped>
+:deep(.p-dialog-content) {
+  padding: 1rem;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+@media (max-width: 640px) {
+  :deep(.p-dialog-content) {
+    padding: 0.75rem;
+    max-height: 85vh;
+  }
+}
+</style>

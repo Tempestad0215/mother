@@ -31,9 +31,6 @@ const confirm = useConfirm();
 
 const rncInvalid = ref(false);
 
-/**
- * propsW de la vantana
- */
 const propsW = defineProps<{
   clientEdit: clientBaseI | null;
   update: boolean;
@@ -43,11 +40,9 @@ const propsW = defineProps<{
   clientDocument: clientDocumentI;
 }>();
 
-/**
- * Al momento de cargar
- */
+const emit = defineEmits(['close']);
+
 onMounted(() => {
-  //Verificar si existe datos para poner en el formulario
   if (propsW.clientEdit) {
     form.uuid = propsW.clientEdit.uuid;
     form.name = propsW.clientEdit.name;
@@ -63,7 +58,6 @@ onMounted(() => {
   }
 });
 
-//Posibles máscara para documents
 const masks = reactive<Record<string, string>>({
   cedula: '999-9999999-9',
   pasaporte: 'A99999999',
@@ -76,12 +70,14 @@ const getClientType = computed(() => {
     value: value,
   }));
 });
+
 const getClientPrice = computed(() => {
   return Object.entries(propsW.clientPrice).map(([key, value]) => ({
     label: key,
     value: value,
   }));
 });
+
 const getClientDocument = computed(() => {
   return Object.entries(propsW.clientDocument).map(([key, value]) => ({
     label: key,
@@ -93,9 +89,6 @@ const selectedMask = computed(() => {
   return masks[form.document] || '';
 });
 
-/**
- * DAtos del formulario
- */
 const form = useForm({
   uuid: '',
   type_rnc: 'B02',
@@ -118,15 +111,7 @@ const form = useForm({
   image: '',
 });
 
-/*
-Funciones
- */
-
-/**
- * Enviar los datos
- */
 const submit = (): void => {
-  // Si es actualziar
   if (propsW.update) {
     form.patch(route('client.update', form.uuid), {
       onSuccess: () => {
@@ -136,6 +121,7 @@ const submit = (): void => {
           detail: 'Registro Actualizado Correctamente',
           life: 3000,
         });
+        emit('close');
       },
       onError: (er) => {
         toast.add({
@@ -146,20 +132,17 @@ const submit = (): void => {
         });
       },
     });
-
-    //Enviar los datos por post
   } else {
-    // Enviar los datos
     form.post(route('client.store'), {
       onSuccess: () => {
         form.reset();
-
         toast.add({
           severity: 'success',
           summary: 'Registro Creado',
           detail: 'Registro Creado Correctamente',
           life: 3000,
         });
+        emit('close');
       },
       onError: (er) => {
         toast.add({
@@ -173,13 +156,10 @@ const submit = (): void => {
   }
 };
 
-// Buscar el RNc si el tipo es diferente a B02
 const searchRNC = async () => {
-  // si el rnc es diferete, debe buscar el rnc registrado para cambiar el nombre de la razon socials
   if (form.personal_id.length > 7) {
     try {
       const res = await axios.get(`${urlRNC}${form.personal_id}`);
-
       const data = res.data as ClientRncI;
 
       if (data.status === 'SUSPENDIDO') {
@@ -193,7 +173,7 @@ const searchRNC = async () => {
       } else {
         confirm.require({
           message: 'Este Cliente Tiene RNC Disponible, Desea Continuar?',
-          header: 'Confirmation',
+          header: 'Confirmación',
           icon: 'pi pi-exclamation-triangle',
           rejectProps: {
             label: 'Cancelar',
@@ -222,19 +202,22 @@ const searchRNC = async () => {
 </script>
 
 <template>
-  <Card class="max-w-250">
+  <Card class="w-full max-w-4xl mx-auto border-none shadow-none sm:shadow-sm">
     <template #header>
-      <h3 class="text-2xl font-bold text-center">
+      <h3 class="text-xl sm:text-2xl font-bold text-center text-slate-800">
         {{ propsW.update ? 'Actualizar' : 'Crear' }} Cliente
       </h3>
-      <Divider />
+      <Divider class="my-3" />
     </template>
+
     <template #content>
-      <form @submit.prevent="submit">
-        <div class="flex flex-wrap gap-4 justify-center">
-          <FloatLabel variant="on">
+      <form @submit.prevent="submit" class="space-y-4">
+        <!-- Controles Superiores: Selects y Switches Adaptativos -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-center">
+          <FloatLabel variant="on" class="w-full">
             <Select
-              class="w-40"
+              id="type"
+              class="w-full"
               placeholder="Tipo de Cliente"
               v-model="form.type"
               :options="getClientType"
@@ -243,47 +226,60 @@ const searchRNC = async () => {
             />
             <label for="type">Tipo Cliente</label>
           </FloatLabel>
-          <FloatLabel variant="on">
+
+          <FloatLabel variant="on" class="w-full">
             <Select
-              class="w-40"
+              id="type_price"
+              class="w-full"
               placeholder="Precio de Ventas"
               v-model="form.type_price"
               :options="getClientPrice"
               option-label="label"
               option-value="value"
             />
-            <label for="">Precio</label>
+            <label for="type_price">Precio</label>
           </FloatLabel>
-          <FloatLabel variant="on">
+
+          <FloatLabel variant="on" class="w-full">
             <Select
-              class="w-50"
+              id="document"
+              class="w-full"
               placeholder="Documento"
               v-model="form.document"
               :options="getClientDocument"
               option-label="label"
               option-value="value"
             />
-            <label for="">Documento</label>
+            <label for="document">Documento</label>
           </FloatLabel>
+        </div>
+
+        <!-- Switches de estado y email -->
+        <div class="flex flex-wrap items-center justify-start sm:justify-end gap-6 pt-2 px-1">
           <div class="flex items-center gap-2">
-            <ToggleSwitch v-model="form.receive_email" />
-            <label for="">Recibir Email</label>
+            <ToggleSwitch inputId="receive_email" v-model="form.receive_email" />
+            <label for="receive_email" class="text-sm font-medium text-slate-700 cursor-pointer">
+              Recibir Email
+            </label>
           </div>
           <div class="flex items-center gap-2">
-            <ToggleSwitch v-model="form.status" />
-            <label for="">Estado</label>
+            <ToggleSwitch inputId="status" v-model="form.status" />
+            <label for="status" class="text-sm font-medium text-slate-700 cursor-pointer">
+              Estado Activo
+            </label>
           </div>
         </div>
-        <Divider />
-        <div class="grid grid-cols-2 gap-4 items-center justify-center">
-          <div>
-            <FloatLabel variant="on">
-              <InputText id="name" class="w-full" v-model="form.name" />
-              <label for="name">Nombre Completo <span class="text-red-500">*</span></label>
-            </FloatLabel>
-          </div>
 
-          <FloatLabel variant="on">
+        <Divider class="my-4" />
+
+        <!-- Campos de Texto: 1 columna en móvil / 2 columnas en pantallas medianas -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FloatLabel variant="on" class="w-full">
+            <InputText id="name" class="w-full" v-model="form.name" required />
+            <label for="name">Nombre Completo <span class="text-red-500">*</span></label>
+          </FloatLabel>
+
+          <FloatLabel variant="on" class="w-full">
             <InputMask
               @blur="searchRNC"
               :invalid="rncInvalid"
@@ -293,35 +289,46 @@ const searchRNC = async () => {
               v-model="form.personal_id"
               :mask="selectedMask"
             />
-            <label for="personal_id">Identificación</label>
+            <label for="personal_id">Identificación / RNC</label>
           </FloatLabel>
-          <FloatLabel variant="on">
+
+          <FloatLabel variant="on" class="w-full">
             <InputText id="phone" class="w-full" v-model="form.phone" />
-            <label for="phone">Teléfono </label>
+            <label for="phone">Teléfono</label>
           </FloatLabel>
-          <FloatLabel variant="on">
+
+          <FloatLabel variant="on" class="w-full">
             <InputText type="email" id="email" class="w-full" v-model="form.email" />
-            <label for="email">Correo Electrónico </label>
+            <label for="email">Correo Electrónico</label>
           </FloatLabel>
-          <FloatLabel variant="on">
+
+          <FloatLabel variant="on" class="w-full md:col-span-2">
             <InputText id="address" class="w-full" v-model="form.address" />
             <label for="address">Dirección</label>
           </FloatLabel>
-          <FloatLabel variant="on">
+
+          <FloatLabel variant="on" class="w-full md:col-span-2">
             <InputText id="comment" class="w-full" v-model="form.comment" />
-            <label for="comment">Comentario </label>
+            <label for="comment">Comentario</label>
           </FloatLabel>
         </div>
 
-        <div class="mt-5 text-right space-x-3">
-          <Button severity="warn" type="reset" label="limpiar">
+        <!-- Botones de Acción -->
+        <div class="mt-6 flex flex-col-reverse sm:flex-row justify-end gap-3 pt-2">
+          <Button severity="warn" type="reset" label="Limpiar" class="w-full sm:w-auto" outlined>
             <template #icon>
-              <Eraser />
+              <Eraser class="w-4 h-4 mr-1" />
             </template>
           </Button>
-          <Button :label="propsW.update ? 'Actualizar' : 'Registrar'" type="submit">
+
+          <Button
+            :label="propsW.update ? 'Actualizar' : 'Registrar'"
+            type="submit"
+            :loading="form.processing"
+            class="w-full sm:w-auto"
+          >
             <template #icon>
-              <Forward />
+              <Forward class="w-4 h-4 mr-1" />
             </template>
           </Button>
         </div>

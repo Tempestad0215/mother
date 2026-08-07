@@ -260,27 +260,7 @@ Route::middleware([
     // Test route
     Route::get('/test', function () {
 
-        $purchase_receipts = PurchaseReceipts::first('*');
-        $setting = Setting::latest('created_at')->first();
-
-        if (!file_exists(storage_path('app/public/pdfs/receptions'))) {
-            mkdir(storage_path('app/public/pdfs/receptions'), 0777, true);
-        }
-
-        return \Spatie\LaravelPdf\Facades\Pdf::view('pdfs.purchase.reception.v1',[
-            'receipts' => $purchase_receipts,
-            'setting' => $setting
-        ])
-            ->format('letter')
-            ->headerView('pdfs.headers.header-reception-v1',[
-                'receipts'=> $purchase_receipts,
-                'setting' => $setting
-            ])
-            ->footerView('pdfs.footers.footer-reception-v1',[
-                'receipts' => $purchase_receipts,
-                'setting' => $setting
-            ])
-            ->name('test.pdf');
+        return Inertia::render('Reports/Index');
     })->name('printTest');
 
 

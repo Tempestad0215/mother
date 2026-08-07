@@ -24,6 +24,7 @@ import { FilePenLine, ListFilterPlus, Shredder } from '@lucide/vue';
 const route = useRoute();
 const confirm = useConfirm();
 const toast = useToast();
+
 const propsW = defineProps<{
   categories: PaginationI<categoryBaseI>;
   categoryEdit?: categoryBaseI;
@@ -34,9 +35,6 @@ const createCategory = ref(false);
 const categorySelected = ref<categoryBaseI | null>(null);
 const isUpdate = ref<boolean>(false);
 
-/**
- * Executes a search for categories based on the search input and current pagination.
- */
 const searchData = () => {
   getSearchTable(
     route('category.create', {
@@ -47,25 +45,18 @@ const searchData = () => {
   );
 };
 
-/**
- * Opens the edit dialog for a specific category.
- * @param {categoryBaseI} data - The category data to edit.
- */
 const editData = (data: categoryBaseI) => {
   categorySelected.value = data;
   createCategory.value = true;
   isUpdate.value = true;
 };
 
-/**
- * Shows a confirmation dialog to delete a category.
- * @param {categoryBaseI} data - The category to delete.
- * @param {Event} event - The DOM event used for positioning the confirmation.
- */
 const deleteData = (data: categoryBaseI, event: Event) => {
   confirm.require({
     target: event.currentTarget as HTMLElement,
-    message: 'Desea Eliminar Este Registro',
+    message: '¿Desea eliminar este registro?',
+    header: 'Confirmar Eliminación',
+    icon: 'pi pi-exclamation-triangle',
     rejectProps: {
       label: 'Cancelar',
       outlined: true,
@@ -80,6 +71,7 @@ const deleteData = (data: categoryBaseI, event: Event) => {
           toast.add({
             severity: 'success',
             summary: 'Registro Eliminado',
+            detail: 'La categoría fue eliminada correctamente.',
             life: 3000,
           });
         },
@@ -87,8 +79,8 @@ const deleteData = (data: categoryBaseI, event: Event) => {
           toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: `Error al intentar eliminar los datos. Detalle : ${Object.values(err)[0]}`,
-            life: 500,
+            detail: `Error al intentar eliminar los datos: ${Object.values(err)[0]}`,
+            life: 5000,
           });
         },
       });
@@ -104,61 +96,131 @@ const resetForm = () => {
 
 <template>
   <AppLayout>
-    <DataTable
-      paginator
-      :rows="propsW.categories.meta.per_page ?? 0"
-      :loading="!propsW.categories.data"
-      :value="propsW.categories.data"
-    >
-      <template #header>
-        <div class="flex justify-between items-center">
-          <form @submit.prevent="searchData">
-            <InputGroup class="max-w-60">
-              <InputText v-model="searchValue" placeholder="Buscar" type="search" />
-              <InputGroupAddon @click="searchData">
-                <i class="pi pi-search"></i>
-              </InputGroupAddon>
-            </InputGroup>
-          </form>
-          <Button class="h-8" @click="createCategory = true">
-            <template #icon>
-              <ListFilterPlus />
-            </template>
-          </Button>
-        </div>
-      </template>
-      <Column field="code" header="Código" />
-      <Column field="name" header="Nombre" />
-      <Column field="description" header="Description" />
-      <Column header="Act">
-        <template #body="{ data }: { data: categoryBaseI }">
-          <div class="space-x-3">
-            <Button @click="editData(data)" class="pt-1 h-8" title="Editar">
-              <template #icon>
-                <FilePenLine />
-              </template>
-            </Button>
+    <div class="w-full px-2 sm:px-4 py-4 max-w-7xl mx-auto">
+      <DataTable
+        paginator
+        responsiveLayout="stack"
+        breakpoint="768px"
+        :rows="parseFloat(propsW.categories.meta.per_page.toString())"
+        :loading="!propsW.categories.data"
+        :value="propsW.categories.data"
+        class="shadow-sm rounded-lg overflow-hidden border border-slate-200"
+      >
+        <!-- Encabezado de la Tabla Adaptativo -->
+        <template #header>
+          <div
+            class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 p-1"
+          >
+            <form @submit.prevent="searchData" class="w-full sm:w-auto">
+              <InputGroup class="w-full sm:w-72">
+                <InputText
+                  v-model="searchValue"
+                  placeholder="Buscar categoría..."
+                  type="search"
+                  class="w-full"
+                />
+                <InputGroupAddon
+                  @click="searchData"
+                  class="cursor-pointer hover:bg-slate-100 transition"
+                >
+                  <i class="pi pi-search"></i>
+                </InputGroupAddon>
+              </InputGroup>
+            </form>
+
             <Button
-              @click="deleteData(data, $event)"
-              class="pt-1 h-8"
-              title="Eliminar"
-              severity="danger"
+              class="w-full sm:w-auto justify-center h-10 px-4"
+              @click="createCategory = true"
+              label="Nueva Categoría"
             >
               <template #icon>
-                <Shredder />
+                <ListFilterPlus class="w-5 h-5 mr-1" />
               </template>
             </Button>
           </div>
         </template>
-      </Column>
-      <template #paginatorcontainer>
-        <Pagination :search="searchValue" :pag="propsW.categories" />
-      </template>
-    </DataTable>
-    <Dialog @hide="resetForm" v-model:visible="createCategory" modal>
-      <FRegister :update="isUpdate" :categoryEdit="categorySelected" />
-    </Dialog>
+
+        <!-- Columnas de Datos -->
+        <Column field="code" header="Código" class="font-semibold text-slate-700" />
+        <Column field="name" header="Nombre" />
+        <Column field="description" header="Descripción">
+          <template #body="{ data }">
+            <span class="text-slate-600">
+              {{ data.description || 'Sin descripción' }}
+            </span>
+          </template>
+        </Column>
+
+        <Column header="Acciones">
+          <template #body="{ data }: { data: categoryBaseI }">
+            <div class="flex items-center gap-2 pt-1 sm:pt-0">
+              <Button
+                @click="editData(data)"
+                class="p-button-outlined p-button-sm h-9 w-9 p-0 flex items-center justify-center"
+                title="Editar"
+              >
+                <template #icon>
+                  <FilePenLine class="w-4 h-4 text-blue-600" />
+                </template>
+              </Button>
+
+              <Button
+                @click="deleteData(data, $event)"
+                class="p-button-outlined p-button-sm h-9 w-9 p-0 flex items-center justify-center"
+                title="Eliminar"
+                severity="danger"
+              >
+                <template #icon>
+                  <Shredder class="w-4 h-4 text-red-600" />
+                </template>
+              </Button>
+            </div>
+          </template>
+        </Column>
+
+        <!-- Paginador -->
+        <template #paginatorcontainer>
+          <div class="p-2 border-t border-slate-200">
+            <Pagination :search="searchValue" :pag="propsW.categories" />
+          </div>
+        </template>
+      </DataTable>
+
+      <!-- Modal de Registro / Edición -->
+      <Dialog
+        v-model:visible="createCategory"
+        modal
+        dismissableMask
+        :header="isUpdate ? 'Editar Categoría' : 'Nueva Categoría'"
+        :breakpoints="{ '960px': '75vw', '641px': '95vw' }"
+        :style="{ width: '40vw' }"
+        class="p-dialog-responsive mx-2 sm:mx-0"
+        @hide="resetForm"
+      >
+        <div class="py-2">
+          <FRegister
+            :update="isUpdate"
+            :categoryEdit="categorySelected"
+            @close="createCategory = false"
+          />
+        </div>
+      </Dialog>
+    </div>
   </AppLayout>
 </template>
 
-<style scoped></style>
+<style scoped>
+/* Ajustes finos para PrimeVue DataTable responsive stack */
+:deep(.p-datatable-tbody > tr > td) {
+  padding: 0.75rem 1rem;
+}
+
+@media (max-width: 768px) {
+  :deep(.p-datatable-stacked .p-datatable-tbody > tr > td) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e2e8f0;
+  }
+}
+</style>

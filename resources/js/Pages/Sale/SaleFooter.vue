@@ -8,34 +8,45 @@ const form = inject(saleKey)!;
 </script>
 
 <template>
-  <!--                        Dato de la ventas-->
-  <div class="flex items-center justify-between">
-    <div class="flex-1 mt-3">
-      <FloatLabel variant="on">
-        <Textarea class="max-w-60 max-h-26" :rows="3" :cols="30" v-model.trim="form.comment" />
-        <label for="comment">Comentario</label>
+  <div class="flex flex-col md:flex-row items-stretch md:items-end justify-between gap-4 pt-2">
+    <!-- Campo de Comentarios / Observaciones -->
+    <div class="w-full md:w-80">
+      <FloatLabel variant="on" class="w-full">
+        <Textarea
+          id="comment"
+          class="w-full min-h-[80px] max-h-[120px]"
+          rows="3"
+          v-model.trim="form.comment"
+          autoResize
+        />
+        <label for="comment">Comentario u Observaciones</label>
       </FloatLabel>
     </div>
-    <!--                            Mensaje generales-->
-    <div class="w-full max-w-sm ml-auto space-y-2 text-sm mt-3">
-      <div class="flex justify-between">
-        <span class="text-gray-600">Sub Total</span>
-        <span class="font-medium">{{ getMoney(form.sub_total) }}</span>
+
+    <!-- Desglose de Totales -->
+    <div
+      class="w-full md:w-80 bg-slate-50 text-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 text-sm space-y-2"
+    >
+      <div class="flex justify-between items-center">
+        <span class="text-slate-600 font-medium">Sub Total:</span>
+        <span class="font-semibold text-slate-700">{{ getMoney(form.sub_total) }}</span>
       </div>
-      <div class="flex justify-between">
-        <span class="text-gray-600">ITBIS</span>
-        <span class="font-medium">{{ getMoney(form.tax) }}</span>
+
+      <div class="flex justify-between items-center">
+        <span class="text-slate-600 font-medium">ITBIS:</span>
+        <span class="font-semibold text-blue-600">{{ getMoney(form.tax) }}</span>
       </div>
-      <div class="flex justify-between">
-        <span class="text-gray-600">Descuento</span>
-        <span class="font-medium text-emerald-600">-{{ getMoney(form.discount_amount) }}</span>
+
+      <div class="flex justify-between items-center">
+        <span class="text-slate-600 font-medium">Descuento:</span>
+        <span class="font-semibold text-emerald-600">-{{ getMoney(form.discount_amount) }}</span>
       </div>
-      <div class="border-t pt-2 mt-2 flex justify-between text-base">
-        <span class="font-semibold">Total</span>
-        <span class="font-semibold text-primary-600">{{ getMoney(form.amount) }}</span>
+
+      <div class="border-t border-slate-200 pt-2 mt-2 flex justify-between items-center text-base">
+        <span class="font-bold text-slate-900">Total:</span>
+        <span class="font-bold text-lg text-emerald-700">{{ getMoney(form.amount) }}</span>
       </div>
     </div>
-    <div class="clear-both"></div>
   </div>
 </template>
 

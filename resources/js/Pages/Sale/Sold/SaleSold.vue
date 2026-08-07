@@ -12,7 +12,7 @@ import {
   Divider,
 } from 'primevue';
 import { saleDataI } from '@/Interfaces/SaleInterface';
-import { Eye, Printer } from '@lucide/vue';
+import { Printer, Search } from '@lucide/vue';
 import { getMoney, printPdf } from '@/Global/Helpers';
 import { useForm } from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
@@ -33,11 +33,11 @@ const form = useForm({
 
 const submit = () => {
   form.post(route('sale.get-sold'), {
-    onError: (err) => {
+    onError: () => {
       toast.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'No se pudo obtener la informacion',
+        detail: 'No se pudo obtener la información de las ventas.',
         life: 5000,
       });
     },
@@ -47,74 +47,139 @@ const submit = () => {
 
 <template>
   <AppLayout>
-    <Card>
-      <template #title>
-        <h3 class="text-2xl font-bold text-center">Ventas</h3>
-        <Divider />
-      </template>
-      <template #header>
-        <BreadCrumbComponent :itemOptions="SaleBreadCrumbs" />
-      </template>
-      <template #content>
-        <DataTable :value="propsW.sales">
-          <template #header>
-            <form @submit.prevent="submit()" class="flex items-center gap-3" action="">
-              <FloatLabel variant="on">
-                <DatePicker v-model="form.from" />
-                <label for="from">Desde</label>
-              </FloatLabel>
-              <FloatLabel variant="on">
-                <DatePicker v-model="form.to" />
-                <label for="to">Hasta</label>
-              </FloatLabel>
-              <FloatLabel variant="on">
-                <Select
-                  v-model="form.type"
-                  class="w-40"
-                  option-label="name"
-                  option-value="value"
-                  :options="saleTypeOptions"
-                />
-                <label for="type">Tipo</label>
-              </FloatLabel>
-              <Button type="submit" label="Buscar" />
-            </form>
-          </template>
-          <Column class="w-5" header="#">
-            <template #body="{ index }: { index: number }">
-              {{ index + 1 }}
+    <div class="w-full px-2 sm:px-4 py-4 max-w-7xl mx-auto">
+      <Card class="shadow-sm rounded-lg border border-slate-200">
+        <template #header>
+          <div class="p-3 pb-0">
+            <BreadCrumbComponent :itemOptions="SaleBreadCrumbs" />
+          </div>
+          <Divider class="my-2" />
+        </template>
+
+        <template #title>
+          <h3 class="text-xl sm:text-2xl font-bold text-center text-slate-800">
+            Ventas Realizadas
+          </h3>
+          <Divider class="my-3" />
+        </template>
+
+        <template #content>
+          <DataTable
+            :value="propsW.sales"
+            responsiveLayout="stack"
+            breakpoint="768px"
+            paginator
+            :rows="15"
+            striped-rows
+            class="shadow-sm rounded-lg overflow-hidden border border-slate-200"
+          >
+            <!-- Formulario de Filtros en Cabecera -->
+            <template #header>
+              <form
+                @submit.prevent="submit"
+                class="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 p-1"
+              >
+                <FloatLabel variant="on" class="w-full sm:w-auto flex-1">
+                  <DatePicker id="from" v-model="form.from" dateFormat="yy-mm-dd" class="w-full" />
+                  <label for="from">Desde</label>
+                </FloatLabel>
+
+                <FloatLabel variant="on" class="w-full sm:w-auto flex-1">
+                  <DatePicker id="to" v-model="form.to" dateFormat="yy-mm-dd" class="w-full" />
+                  <label for="to">Hasta</label>
+                </FloatLabel>
+
+                <FloatLabel variant="on" class="w-full sm:w-48">
+                  <Select
+                    id="type"
+                    v-model="form.type"
+                    class="w-full"
+                    option-label="name"
+                    option-value="value"
+                    :options="saleTypeOptions"
+                  />
+                  <label for="type">Tipo Venta</label>
+                </FloatLabel>
+
+                <Button
+                  type="submit"
+                  label="Buscar"
+                  :loading="form.processing"
+                  class="w-full sm:w-auto h-10 px-6 bg-emerald-600 hover:bg-emerald-700 border-none"
+                >
+                  <template #icon>
+                    <Search class="w-4 h-4 mr-1" />
+                  </template>
+                </Button>
+              </form>
             </template>
-          </Column>
-          <Column header="N° Factura" field="code" />
-          <Column header="Cliente" field="client_name" />
-          <Column header="Itbis" field="tax">
-            <template #body="{ data }: { data: saleDataI }">
-              {{ getMoney(data.tax) }}
-            </template>
-          </Column>
-          <Column header="Sub Total" field="sub_total">
-            <template #body="{ data }: { data: saleDataI }">
-              {{ getMoney(data.sub_total) }}
-            </template>
-          </Column>
-          <Column header="Total" field="amount">
-            <template #body="{ data }: { data: saleDataI }">
-              {{ getMoney(data.sub_total) }}
-            </template>
-          </Column>
-          <Column header="F. Creacion" field="created_at" />
-          <Column header="ACT">
-            <template #body="{ data }: { data: saleDataI }">
-              <div class="flex items-center gap-3">
-                <!--                <Eye />-->
-                <Printer @click="printPdf(route('invoice.sale', { sale: data.uuid }))" />
-              </div>
-            </template>
-          </Column>
-        </DataTable>
-      </template>
-    </Card>
+
+            <!-- Columnas -->
+            <Column header="#" class="w-12 text-center">
+              <template #body="{ index }: { index: number }">
+                <span class="font-medium text-slate-500">{{ index + 1 }}</span>
+              </template>
+            </Column>
+
+            <Column header="N° Factura" field="code" class="font-semibold text-slate-700" />
+
+            <Column header="Cliente" field="client_name" />
+
+            <Column header="ITBIS">
+              <template #body="{ data }: { data: saleDataI }">
+                <span class="text-blue-600 font-medium">{{ getMoney(data.tax) }}</span>
+              </template>
+            </Column>
+
+            <Column header="Sub Total">
+              <template #body="{ data }: { data: saleDataI }">
+                <span>{{ getMoney(data.sub_total) }}</span>
+              </template>
+            </Column>
+
+            <Column header="Total">
+              <template #body="{ data }: { data: saleDataI }">
+                <span class="font-bold text-slate-900">{{ getMoney(data.amount) }}</span>
+              </template>
+            </Column>
+
+            <Column header="F. Creación" field="created_at" />
+
+            <Column header="Acciones">
+              <template #body="{ data }: { data: saleDataI }">
+                <div class="flex items-center gap-2 pt-1 sm:pt-0">
+                  <Button
+                    @click="printPdf(route('invoice.sale', { sale: data.uuid }))"
+                    severity="secondary"
+                    outlined
+                    class="h-9 w-9 p-0 flex items-center justify-center"
+                    title="Imprimir Factura"
+                  >
+                    <template #icon>
+                      <Printer class="w-4 h-4 text-slate-700" />
+                    </template>
+                  </Button>
+                </div>
+              </template>
+            </Column>
+          </DataTable>
+        </template>
+      </Card>
+    </div>
   </AppLayout>
 </template>
 
-<style scoped></style>
+<style scoped>
+:deep(.p-datatable-tbody > tr > td) {
+  padding: 0.75rem 1rem;
+}
+
+@media (max-width: 768px) {
+  :deep(.p-datatable-stacked .p-datatable-tbody > tr > td) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e2e8f0;
+  }
+}
+</style>

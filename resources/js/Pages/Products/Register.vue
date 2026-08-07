@@ -15,7 +15,7 @@ import { TaxBaseI } from '@/Interfaces/TaxInterface';
 import FShowProduct from '@/Pages/Products/FShowProduct.vue';
 import { PriceListWTI } from '@/Interfaces/PriceListInterface';
 
-//Propiedades de la ventana
+// Propiedades de la ventana
 const propsW = withDefaults(
   defineProps<{
     products: PaginationI<ProductTableI>;
@@ -33,8 +33,6 @@ const propsW = withDefaults(
   }>(),
   {
     update: false,
-    // ⚠️ CRÍTICO: En TypeScript/Vue, los arrays u objetos por defecto
-    // SIEMPRE deben ser retornados por una función flecha () => []
     categories: () => [],
     suppliers: () => [],
     warehouses: () => [],
@@ -42,17 +40,13 @@ const propsW = withDefaults(
     units: () => [],
     taxes: () => [],
     priceLists: () => [],
-
-    // Si son objetos complejos o enums vacíos por defecto:
     paymentTypes: () => ({}) as PaymentTypeEnumI,
     productType: () => ({}) as ProductTypeEnumI,
   }
 );
 
-//
 const taxCurrentValue = ref(0);
 
-//Mostrar la ventana de suplidores
 const selectedProduct = ref<ProductTableI | null>(null);
 const createProduct = ref(false);
 const isUpdate = ref(false);
@@ -76,33 +70,59 @@ watch(
 </script>
 
 <template>
-  <!-- Contenido de la ventana -->
   <AppLayout>
-    <FShowProduct
-      v-model:createProduct="createProduct"
-      v-model:selectedProduct="selectedProduct"
-      :products="propsW.products"
-    />
+    <div class="w-full px-2 sm:px-4 py-4 max-w-7xl mx-auto">
+      <!-- Tabla / Vista Principal de Productos -->
+      <div class="shadow-sm rounded-lg overflow-hidden border border-slate-200 bg-white">
+        <FShowProduct
+          v-model:createProduct="createProduct"
+          v-model:selectedProduct="selectedProduct"
+          :products="propsW.products"
+        />
+      </div>
 
-    <Dialog
-      class="max-w-4/5"
-      modal
-      @hide="clearCreate"
-      v-model:visible="createProduct"
-      header="Registro de Producto"
-    >
-      <FRegister
-        :priceLists="propsW.priceLists"
-        :warehouses="propsW.warehouses"
-        :units="propsW.units"
-        :branches="propsW.branches"
-        :productType="propsW.productType"
-        :paymentTypes="paymentTypes"
-        :categories="propsW.categories"
-        :suppliers="propsW.suppliers"
-        :productEdit="selectedProduct"
-        :update="isUpdate"
-      />
-    </Dialog>
+      <!-- Modal de Registro / Edición Adaptativo -->
+      <Dialog
+        v-model:visible="createProduct"
+        modal
+        dismissableMask
+        :header="isUpdate ? 'Editar Producto' : 'Registro de Producto'"
+        :breakpoints="{ '960px': '85vw', '641px': '95vw' }"
+        :style="{ width: '60vw' }"
+        class="p-dialog-responsive mx-2 sm:mx-0"
+        @hide="clearCreate"
+      >
+        <div class="py-2">
+          <FRegister
+            :priceLists="propsW.priceLists"
+            :warehouses="propsW.warehouses"
+            :units="propsW.units"
+            :branches="propsW.branches"
+            :productType="propsW.productType"
+            :paymentTypes="paymentTypes"
+            :categories="propsW.categories"
+            :suppliers="propsW.suppliers"
+            :productEdit="selectedProduct"
+            :update="isUpdate"
+            @close="createProduct = false"
+          />
+        </div>
+      </Dialog>
+    </div>
   </AppLayout>
 </template>
+
+<style scoped>
+:deep(.p-dialog-content) {
+  padding: 1rem;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+@media (max-width: 640px) {
+  :deep(.p-dialog-content) {
+    padding: 0.75rem;
+    max-height: 85vh;
+  }
+}
+</style>
