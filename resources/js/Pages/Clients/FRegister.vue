@@ -1,12 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue';
-import {
-  clientBaseI,
-  clientDocumentI,
-  clientPriceI,
-  ClientRncI,
-  clientTypeI,
-} from '@/Interfaces/ClientInterface';
+import { clientBaseI, ClientRncI } from '@/Interfaces/ClientInterface';
 import { useForm } from '@inertiajs/vue3';
 import { useRoute } from 'ziggy-js';
 import {
@@ -24,6 +18,7 @@ import {
 import { Eraser, Forward } from '@lucide/vue';
 import axios from 'axios';
 import { urlRNC } from '@/Global/Helpers';
+import { EnumValueI } from '@/Interfaces/GeneralInterface';
 
 const route = useRoute();
 const toast = useToast();
@@ -32,12 +27,12 @@ const confirm = useConfirm();
 const rncInvalid = ref(false);
 
 const propsW = defineProps<{
-  clientEdit: clientBaseI | null;
+  clientEdit?: clientBaseI | null;
   update: boolean;
   typeRNC: string[];
-  clientType: clientTypeI;
-  clientPrice: clientPriceI;
-  clientDocument: clientDocumentI;
+  clientType: EnumValueI[];
+  clientPrice: EnumValueI[];
+  clientDocument: EnumValueI[];
 }>();
 
 const emit = defineEmits(['close']);
@@ -62,27 +57,6 @@ const masks = reactive<Record<string, string>>({
   cedula: '999-9999999-9',
   pasaporte: 'A99999999',
   rnc: '999-999999',
-});
-
-const getClientType = computed(() => {
-  return Object.entries(propsW.clientType).map(([key, value]) => ({
-    label: key,
-    value: value,
-  }));
-});
-
-const getClientPrice = computed(() => {
-  return Object.entries(propsW.clientPrice).map(([key, value]) => ({
-    label: key,
-    value: value,
-  }));
-});
-
-const getClientDocument = computed(() => {
-  return Object.entries(propsW.clientDocument).map(([key, value]) => ({
-    label: key,
-    value: value,
-  }));
 });
 
 const selectedMask = computed(() => {
@@ -220,7 +194,7 @@ const searchRNC = async () => {
               class="w-full"
               placeholder="Tipo de Cliente"
               v-model="form.type"
-              :options="getClientType"
+              :options="propsW.clientType"
               option-label="label"
               option-value="value"
             />
@@ -233,7 +207,7 @@ const searchRNC = async () => {
               class="w-full"
               placeholder="Precio de Ventas"
               v-model="form.type_price"
-              :options="getClientPrice"
+              :options="propsW.clientPrice"
               option-label="label"
               option-value="value"
             />
@@ -246,7 +220,7 @@ const searchRNC = async () => {
               class="w-full"
               placeholder="Documento"
               v-model="form.document"
-              :options="getClientDocument"
+              :options="propsW.clientDocument"
               option-label="label"
               option-value="value"
             />

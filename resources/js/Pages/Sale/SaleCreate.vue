@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, useForm, usePage } from '@inertiajs/vue3';
+import { useForm, usePage } from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
 import { onMounted, onUpdated, provide, Ref, ref, watch } from 'vue';
 import { ProductTableI } from '@/Interfaces/ProductInterface';
@@ -13,7 +13,7 @@ import {
   WarehouseMapType,
 } from '@/Interfaces/SaleInterface';
 import { invoiceTypeI } from '@/Interfaces/SettingInterface';
-import { MenuItemI, PaginationI } from '@/Interfaces/GlobalInterface';
+import { PaginationI } from '@/Interfaces/GlobalInterface';
 import SaleInfo from '@/Pages/Sale/SaleInfo.vue';
 import SaleDetail from '@/Pages/Sale/SaleDetail.vue';
 import { saleKey } from '@/utils/keys';
@@ -21,12 +21,12 @@ import SaleFooter from '@/Pages/Sale/SaleFooter.vue';
 import SaleTable from '@/Pages/Sale/SaleTable.vue';
 import PaymentInvoice from '@components/PaymentInvoice.vue';
 import { useRoute } from 'ziggy-js';
-import { Breadcrumb, Button, Card, Dialog, Divider, useToast } from 'primevue';
+import { Button, Card, Dialog, Divider, useToast } from 'primevue';
 import { CreditNoteBalance } from '@/Interfaces/CreditNoteInterface';
 import { PreciseCalculator } from '@/utils/Decimal';
 import { SaleBreadCrumbs } from '@/Helpers/SaleHelper';
 import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
-import { Eraser, Send, CreditCard } from '@lucide/vue';
+import { CreditCard, Eraser, Send } from '@lucide/vue';
 
 // Datos de la ventana
 const toast = useToast();

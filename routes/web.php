@@ -222,6 +222,7 @@ Route::middleware([
     Route::prefix('invoice')->controller(InvoiceController::class)
         ->name('invoice.')->group(function () {
         Route::get('/sale/{sale}', 'getSaleInvoice')->name('sale');
+        Route::get('/quote/{sale}','getQuoteInvoice')->name('quote');
         Route::get('/credit-note/{creditNote}', 'getCreditNoteInvoice')->name('credit-note');
         Route::get('/belt/sale/{sale}', 'beltSale')->name('belt.sale');
         Route::get('/belt/note/{creditNote}',  'beltNote')->name('belt.note');

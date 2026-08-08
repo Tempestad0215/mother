@@ -60,36 +60,15 @@ class SaleHelper
             $salePayload = SaleDto::fromArray($request->validated());
             //Obtener la configuración
 
-
+            $saleType = SaleTypeEnum::from($request->input('type'));
             //Incrementar la secuencia enviada
-            SequenceHelper::incrementSequence($salePayload->invoice_type, $request);
+            SequenceHelper::incrementSequence($salePayload->invoice_type, $saleType);
 
             // Crear la venta
             $sale = Sale::create($salePayload->toArray());
 
             //Actualizar los datos de las notas de crédito
             CreditNoteHelper::updateAvailableFor($salePayload->credit_notes, $sale);
-
-            // Obtener los ids de productos
-//            $productUuids = array_map(fn(SaleItemDto $item) => $item->product_uuid, $salePayload->info_sale);
-//
-//            // Obtener los productos y colocar él, id en el key
-//            /** @var Collection<string, Product> $products */
-//            $products = Product::whereIn('uuid', $productUuids)->get()->keyBy('uuid');
-//
-//            //Recorrer la venta para descontar los productos
-//            foreach ($salePayload->info_sale as $value) {
-//
-//                // Obtener el products
-//                $product = $products->get($value->product_uuid);
-//
-//                // Verificar si el producto existe
-//                if (!$product) {
-//                    // Si no existe, lanzar un error
-//                    throw ValidationException::withMessages(['El producto no existe']);
-//                }
-//
-//            }
 
             // Crear los movimientos de inventario
             SaleItemHelper::multipleInsertWithSale($sale, $salePayload->info_sale);
@@ -99,21 +78,6 @@ class SaleHelper
         });
     }
 
-
-    // /**
-    //  * @param SaleTypeEnum $saleType
-    //  * @return InventoryMovementConceptEnum
-    //  */
-    // public function movementType(SaleTypeEnum $saleType): InventoryMovementConceptEnum
-    // {
-    //     if($saleType == SaleTypeEnum::Ventas){
-    //         return InventoryMovementConceptEnum::Venta;
-    //     }else if($saleType == SaleTypeEnum::Devolucion){
-    //         return InventoryMovementConceptEnum::Devolucion;
-    //     }else{
-    //         return InventoryMovementConceptEnum::TransferenciaSalida;
-    //     }
-    // }
 
 
     /**
@@ -138,17 +102,6 @@ class SaleHelper
                 'type' => ProductTransactionTypeEnum::CANCELLED,
             ]);
 
-            // si tiene reserva, pues se descuenta ese monto
-//            if ($product->reserved > 0 && $transType == TransTypeEnum::RESERVA->value )
-//            {
-//                $product->reserved -= $productStock;
-//            }
-
-            //Solo actualizar si es producto
-//            if($product->type === ProductTypeEnum::Producto->value )
-//            {
-//                $product->stock += $productStock;
-//            }
             //Guardar los datos
             $product->save();
         });
@@ -260,25 +213,6 @@ class SaleHelper
         return SaleInfoResource::collection($data);
 
     }
-
-    /**
-     * Verificar la altura total
-     * @param Sale $sale
-     * @return int
-     */
-//    private function getHeigtPdf(Sale $sale):int
-//    {
-//        //Tonmar Los Gatos para verificar la altura
-//        $checkHeight = $sale->infoSale->where('type',TransTypeEnum::VENTAS);
-//        //Altura total
-//        $heightTotal = 200;
-//        //Verificar si la altura correcta
-//        $checkHeight->map(callback: function ($item, $index) use (&$heightTotal) {
-//            if ($index > 4) $heightTotal += 15;
-//        });
-//
-//        return $heightTotal;
-//    }
 
 
 }

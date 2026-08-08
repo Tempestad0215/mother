@@ -61,9 +61,9 @@ class ClientController extends Controller implements HasMiddleware
         $data = $this->getTable($request);
 
         // Convertir los enums de los datos
-        $clientType = collect(ClientTypeEnum::cases())->mapWithKeys(fn(ClientTypeEnum $item) => [$item->name => $item->value]);
-        $clientPrice = collect(ClientTypePriceEnum::cases())->mapWithKeys(fn(ClientTypePriceEnum $item) => [$item->name => $item->value]);
-        $clientDocument = collect(ClientDocumentEnum::cases())->mapWithKeys(fn(ClientDocumentEnum $item) => [$item->name => $item->value]);
+        $clientType = ClientTypeEnum::options();
+        $clientPrice = ClientTypePriceEnum::options();
+        $clientDocument = ClientDocumentEnum::options();
 
         /*Vista con la pagina*/
         return Inertia::render('Clients/RegisterClient',[

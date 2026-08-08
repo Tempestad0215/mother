@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PrintFormatEnum;
 use App\Invoices\SaleInvoiceA;
 use App\Invoices\Ticket80;
 use App\Models\CreditNote;
@@ -41,25 +42,53 @@ class InvoiceController extends Controller
         $pdf->Output('invoice.pdf');
     }
 
+    /**
+     * @throws \Throwable
+     */
+    public function getQuoteInvoice(Sale $sale)
+    {
+        $sale->load(['items.product', 'customer', 'user']);
+
+        $templateData = view('pdfs.quote.letter', [
+            'sale' => $sale,
+            'setting' => Setting::first()
+        ])->render();
+
+        // Invoca Gotenberg con las dimensiones de Carta (8.5in x 11in)
+        return $this->facturaCarta($templateData);
+    }
+
 
     /**
-     * @param Sale $sale
-     * @return ResponseFactory|JsonResponse|Response
-     * @throws ConnectionException
+     * Venta en formato Cinta (80mm)
+     * @throws \Throwable
      */
     public function getSaleInvoice(Sale $sale)
     {
-        $sale->with(['creditNoteSale','items']);
+        $sale->load(['creditNoteSale', 'items']);
 
-        $templateData = View('pdfs.sale.cinta', [
+        $templateData = view('pdfs.sale.cinta', [
             'sale' => $sale,
             'setting' => Setting::first(),
             'creditNote' => $sale->creditNotes
         ])->render();
 
-        // Crear la respuestas
         return $this->facturaCinta($templateData);
+    }
 
+    /**
+     * Cotización en formato Carta
+     */
+    public function getQuoteInvoice(Sale $sale)
+    {
+        $sale->load(['items.product', 'customer']);
+
+        $templateData = view('pdfs.quote.letter', [
+            'sale' => $sale,
+            'setting' => Setting::first()
+        ])->render();
+
+        return $this->facturaCarta($templateData);
     }
 
 
@@ -228,27 +257,85 @@ class InvoiceController extends Controller
      * @return ResponseFactory|JsonResponse|Response
      * @throws ConnectionException
      */
-    public function facturaCinta(string $template): ResponseFactory|JsonResponse|Response
-    {
-        $response = Http::attach('index.hmtl', $template, 'index.html')
-            ->post($this->pdfGeneratorUrl, [
-                'paperWidth' => '3.14',  // 80mm en pulgadas
-                'marginLeft' => '0.1',
-                'marginRight' => '0.1',
-                'marginTop' => '0.1',    // Espacio para la cabecera fija
-                'marginBottom' => '0.1',
-                'waitDelay' => '600ms',  // Tiempo para que cargue Tailwind 4 por CDN
-            ]);
+//    public function facturaCinta(string $template): ResponseFactory|JsonResponse|Response
+//    {
+//        $response = Http::attach('index.hmtl', $template, 'index.html')
+//            ->post($this->pdfGeneratorUrl, [
+//                'paperWidth' => '3.14',  // 80mm en pulgadas
+//                'marginLeft' => '0.1',
+//                'marginRight' => '0.1',
+//                'marginTop' => '0.1',    // Espacio para la cabecera fija
+//                'marginBottom' => '0.1',
+//                'waitDelay' => '600ms',  // Tiempo para que cargue Tailwind 4 por CDN
+//            ]);
+//
+//        // Devolver si es correcto
+//        if ($response->successful()) {
+//            return response($response->body(), 200, [
+//                'content-type' => 'application/pdf'
+//            ]);
+//        }
+//
+//        // Devolver mensaje de error
+//        return response()->json(['error' => 'Error al generar ticket'], 500);
+//    }
 
-        // Devolver si es correcto
+    /**
+     * Método base para interactuar con Gotenberg de forma dinámica.
+     *
+     * @throws ConnectionException
+     */
+    public function generatePdf(
+        string $template,
+        PrintFormatEnum $format = PrintFormatEnum::Ticket80mm
+    ): ResponseFactory|JsonResponse|Response {
+
+        $payload = array_merge($format->dimensions(), [
+            'waitDelay' => '600ms', // Espera para cargar Tailwind 4 por CDN
+        ]);
+
+        $response = Http::attach('index.html', $template, 'index.html')
+            ->post($this->pdfGeneratorUrl, $payload);
+
         if ($response->successful()) {
             return response($response->body(), 200, [
-                'content-type' => 'application/pdf'
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="documento.pdf"'
             ]);
         }
 
-        // Devolver mensaje de error
-        return response()->json(['error' => 'Error al generar ticket'], 500);
+        return response()->json(['error' => 'Error al generar el PDF'], 500);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* MÉTODOS HELPER POR FORMATO                         */
+    /* -------------------------------------------------------------------------- */
+
+    /**
+     * Helper para formato de cinta (POS 80mm)
+     * @throws ConnectionException
+     */
+    public function facturaCinta(string $template): ResponseFactory|JsonResponse|Response
+    {
+        return $this->generatePdf($template, PrintFormatEnum::Ticket80mm);
+    }
+
+    /**
+     * Helper para formato Carta (Cotizaciones, Facturas A, etc.)
+     * @throws ConnectionException
+     */
+    public function facturaCarta(string $template): ResponseFactory|JsonResponse|Response
+    {
+        return $this->generatePdf($template, PrintFormatEnum::Letter);
+    }
+
+    /**
+     * Helper para formato A4 (Órdenes de Compra)
+     * @throws ConnectionException
+     */
+    public function facturaA4(string $template): ResponseFactory|JsonResponse|Response
+    {
+        return $this->generatePdf($template, PrintFormatEnum::A4);
     }
 
 }

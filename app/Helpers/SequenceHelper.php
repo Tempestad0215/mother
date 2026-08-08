@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Enums\SaleTypeEnum;
 use App\Enums\SequenceSaleTypeEnum;
 use App\Http\Requests\SequenceRequest;
 use App\Models\Sequence;
@@ -9,8 +10,9 @@ use App\Models\Setting;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use SplFileObject;
+use Throwable;
 
 class SequenceHelper
 {
@@ -140,35 +142,47 @@ class SequenceHelper
 
     /**
      * @param SequenceSaleTypeEnum $type
-     * @param Request $request
+     * @param SaleTypeEnum $saleType
      * @return void
+     * @throws Throwable
      */
-    public static function incrementSequence(SequenceSaleTypeEnum $type, Request $request):void
+    public static function incrementSequence(SequenceSaleTypeEnum $type, SaleTypeEnum $saleType):void
     {
+
+        if($saleType === SaleTypeEnum::Cotizacion)
+        {
+            return;
+        }
 
         //Obtenr la configuracion
         $setting = Setting::getGlobal();
 
-        //Verificar si la sercuencia existe
-        if($setting->sequence)
-        {
-            //Obtener el primer registro del tipo seleccionado
-            $sequence = Sequence::where('type', $type)
-                ->where('status', true)
-                ->first();
+        if(!$setting?->sequence){
+            return;
+        }
 
-            //Incrementar la secuencia a 10
+        DB::transaction(function () use ($type, $saleType) {
+           $sequence = Sequence::where('type', $type)
+               ->where('status', true)
+               ->lockForUpdate()
+               ->first();
+
+            // 4. Protección contra nulos
+            if (!$sequence) {
+                throw new \Exception("No hay una secuencia activa disponible para el tipo: {$type->value}");
+            }
+
+            // 5. Incrementar
             $sequence->increment('next');
 
-            //Verificar si ya llego al final
-            if ($sequence->to == $sequence->next)
-            {
-                //Desetimar este sequencia
+            // 6. Verificar si alcanzó o superó el límite
+            if ($sequence->next >= $sequence->to) {
                 $sequence->update([
-                    'status' => 0
+                    'status' => false // Usar booleano directo
                 ]);
             }
-        }
+
+        });
     }
 
 }

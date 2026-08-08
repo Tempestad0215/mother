@@ -4,6 +4,7 @@ import {
   Button,
   Column,
   DataTable,
+  Dialog,
   InputGroup,
   InputGroupAddon,
   InputText,
@@ -18,6 +19,8 @@ import { clientBaseI } from '@/Interfaces/ClientInterface';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
 import { FilePenLine, Shredder, UserPlus } from '@lucide/vue';
 import AppLayout from '@layout/AppLayout.vue';
+import FRegister from '@/Pages/Clients/FRegister.vue';
+import { EnumValueI } from '@/Interfaces/GeneralInterface';
 
 const route = useRoute();
 const confirm = useConfirm();
@@ -25,11 +28,15 @@ const toast = useToast();
 
 const props = defineProps<{
   clientData: PaginationI<clientBaseI>;
+  typeRNC: string[];
+  clientType: EnumValueI[];
+  clientPrice: EnumValueI[];
+  clientDocument: EnumValueI[];
 }>();
 
 // v-models para controlar modal y edición desde el padre
 const showClient = defineModel<boolean>('showClient');
-const clientSelected = defineModel<clientBaseI | null>('clientSelected');
+const clientSelected = defineModel<clientBaseI | null | undefined>('clientSelected');
 const updateClient = defineModel<boolean>('updateClient');
 
 const searchValue = ref('');
@@ -86,6 +93,11 @@ const deleteData = (data: clientBaseI, event: Event) => {
     },
   });
 };
+
+const createNewClient = () => {
+  clientSelected.value = null;
+  showClient.value = true;
+};
 </script>
 
 <template>
@@ -125,7 +137,7 @@ const deleteData = (data: clientBaseI, event: Event) => {
           <!-- Botón Nuevo Cliente (En celular ocupa el 100% como Categorías) -->
           <Button
             class="w-full sm:w-auto justify-center h-10 px-4 bg-emerald-600 hover:bg-emerald-700 border-none"
-            @click="showClient = true"
+            @click="createNewClient"
             label="Nuevo Cliente"
           >
             <template #icon>
@@ -185,6 +197,28 @@ const deleteData = (data: clientBaseI, event: Event) => {
       </template>
     </DataTable>
   </AppLayout>
+  <!-- Modal Adaptativo de Registro / Edición de Cliente -->
+  <Dialog
+    v-model:visible="showClient"
+    modal
+    dismissableMask
+    :header="updateClient ? 'Editar Cliente' : 'Nuevo Cliente'"
+    :breakpoints="{ '960px': '75vw', '641px': '95vw' }"
+    :style="{ width: '50vw' }"
+    class="p-dialog-responsive mx-2 sm:mx-0"
+  >
+    <div class="py-2">
+      <FRegister
+        :clientEdit="clientSelected"
+        :update="updateClient ?? false"
+        :typeRNC="props.typeRNC"
+        :clientType="props.clientType"
+        :clientPrice="props.clientPrice"
+        :clientDocument="props.clientDocument"
+        @close="showClient = false"
+      />
+    </div>
+  </Dialog>
 </template>
 
 <style scoped>

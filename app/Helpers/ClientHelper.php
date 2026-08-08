@@ -90,18 +90,18 @@ class ClientHelper
             $client->update($request->validated());
 
             //Verificar el tipo de pago
-            if ($type != 'contado') {
-                $client->account()->updateOrInsert(
-                    ['accountable_id' => $client->uuid],
-                    [
-                        'type' => AccountTypeEnum::COBRAR,
-                        'amount' => $request->get('amount'),
-                        'due_date' => $request->get('due_date'),
-                        'balance' => $request->get('amount'),
-                        'late_fee' => $request->get('late_fee'),
-                    ]);
-
-            }
+//            if ($type != 'contado') {
+//                $client->account()->updateOrInsert(
+//                    ['accountable_id' => $client->uuid],
+//                    [
+//                        'type' => AccountTypeEnum::COBRAR,
+//                        'amount' => $request->get('amount'),
+//                        'due_date' => $request->get('due_date'),
+//                        'balance' => $request->get('amount'),
+//                        'late_fee' => $request->get('late_fee'),
+//                    ]);
+//
+//            }
         });
 
     }
