@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
-use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
 /**
  * @property integer id
@@ -29,6 +29,7 @@ class Category extends Model
     use HasFactory;
     use softDeletes;
     use HasUuids;
+    use LogsActivity;
 
     protected $primaryKey = 'uuid';
     public $incrementing = false;

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
 /**
  * @property string $uuid
@@ -42,6 +43,7 @@ class ProductTransaction extends Model
 {
     use HasFactory;
     use SoftDeletes;
+    use LogsActivity;
 
     protected $table = 'product_transactions';
 

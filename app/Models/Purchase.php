@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
 
 /**
@@ -34,6 +35,7 @@ class Purchase extends Model
 {
     use HasFactory, SoftDeletes;
     use HasUuids;
+    use LogsActivity;
 
     protected $primaryKey = "uuid";
     protected $keyType = 'string';

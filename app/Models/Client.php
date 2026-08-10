@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Date;
 use Laravel\Scout\Searchable;
-use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
 
 /**
@@ -50,6 +50,7 @@ class Client extends Model
     use HasFactory;
     use softDeletes;
     use HasUuids;
+    use LogsActivity;
 
     /**
      * @var string

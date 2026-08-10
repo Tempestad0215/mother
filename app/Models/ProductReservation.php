@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
 
 /**
@@ -28,6 +29,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class ProductReservation extends Model
 {
     use SoftDeletes;
+    use LogsActivity;
 
     protected $fillable = [
         'product_id',

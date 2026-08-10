@@ -4,13 +4,12 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Date;
-use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
 
 /**
@@ -26,6 +25,7 @@ class Comment extends Model
 {
     use HasFactory;
     use softDeletes;
+    use LogsActivity;
 
     /**
      * @var string[]

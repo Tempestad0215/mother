@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Ramsey\Collection\Collection;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
 /**
  * @property string $uuid
@@ -56,6 +57,7 @@ class Sale extends Model
     use HasFactory;
     use softDeletes;
     use HasUuids;
+    use LogsActivity;
 
     // La tabla que se ve a utilizar
     protected $table = 'sales';

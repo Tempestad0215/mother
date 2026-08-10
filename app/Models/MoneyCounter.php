@@ -2,13 +2,10 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Scout\Searchable;
-use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
 
 /**
@@ -46,6 +43,7 @@ class MoneyCounter extends Model
 {
     use Searchable;
     use HasFactory;
+    use LogsActivity;
 
 
     //table

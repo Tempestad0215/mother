@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
 
 /**
@@ -41,6 +42,7 @@ class Supplier extends Model
     use HasFactory;
     use softDeletes;
     use HasUuids;
+    use LogsActivity;
 
     protected $primaryKey = 'uuid';
     public $incrementing = false;

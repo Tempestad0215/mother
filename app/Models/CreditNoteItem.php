@@ -6,9 +6,8 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
 
 /**
@@ -29,6 +28,7 @@ class CreditNoteItem extends Model
 {
     use SoftDeletes;
     use HasUuids;
+    use LogsActivity;
 
     protected $table = 'credit_note_items';
 

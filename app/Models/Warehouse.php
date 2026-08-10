@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
 /**
  * @property string $uuid
@@ -30,6 +31,7 @@ class Warehouse extends Model
 {
     use HasFactory, SoftDeletes;
     use HasUuids;
+    use LogsActivity;
 
     protected $primaryKey = 'uuid';
     public $incrementing = false;

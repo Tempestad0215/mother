@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
 /**
  * @property integer id;
@@ -27,6 +28,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 class Account extends Model
 {
     use SoftDeletes;
+    use LogsActivity;
 
     /**
      * @var string[]

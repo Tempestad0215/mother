@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
 /**
  * @property int id
@@ -19,6 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class ExchangeRate extends Model
 {
     use SoftDeletes;
+    use LogsActivity;
 
     /**
      * Datos para almacenar

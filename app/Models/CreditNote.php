@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
 /**
  * @property integer $uuid
@@ -46,6 +46,7 @@ class CreditNote extends Model{
 
     use SoftDeletes;
     use HasUuids;
+    use LogsActivity;
 
 
     // La tabla que se ve a utilizar

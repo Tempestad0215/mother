@@ -6,6 +6,7 @@ use App\Enums\TransCountEnum;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
 
 /**
@@ -22,6 +23,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class TransCo extends Model
 {
     use SoftDeletes;
+    use LogsActivity;
 
     /**
      * @var string[]

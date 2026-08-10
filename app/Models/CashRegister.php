@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
-use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
 
 /**
@@ -29,6 +29,7 @@ class CashRegister extends Model
 {
     use SoftDeletes;
     use HasUuids;
+    use LogsActivity;
 
     protected $primaryKey = 'uuid';
     public $incrementing = false;

@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Facades\Date;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
 
 /**
@@ -45,6 +46,7 @@ class Setting extends Model
     use softDeletes;
     use HasFactory;
     use HasUuids;
+    use LogsActivity;
 
     protected $primaryKey = 'uuid';
     protected $keyType = 'string';

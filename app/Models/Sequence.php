@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
 
 /**
@@ -31,6 +32,7 @@ class Sequence extends Model
 
     use softDeletes;
     use HasUuids;
+    use LogsActivity;
 
     //Tabla a utilizar
     protected $table = 'sequences';

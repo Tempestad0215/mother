@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Date;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -34,6 +35,7 @@ class User extends Authenticatable
     use softDeletes;
     use HasRoles;
     use HasUuids;
+    use LogsActivity;
 
     protected $primaryKey = 'uuid';
     protected $keyType = 'string';

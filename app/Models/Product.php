@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
 /**
  * @property string $uuid
@@ -60,6 +60,7 @@ class Product extends Model
     use HasFactory;
     use softDeletes;
     use HasUuids;
+    use LogsActivity;
 
 
     /**
