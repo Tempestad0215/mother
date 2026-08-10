@@ -42,11 +42,11 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property float total_neto
  *
  */
-class MoneyCounter extends Model implements Auditable
+class MoneyCounter extends Model
 {
     use Searchable;
     use HasFactory;
-    use \OwenIt\Auditing\Auditable;
+
 
     //table
     protected $table = 'money_counter';

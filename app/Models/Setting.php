@@ -3,17 +3,15 @@
 namespace App\Models;
 
 use App\Enums\CompanyTypeEnum;
-use Illuminate\Database\Eloquent\Casts\AsArrayObject;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Date;
-use OwenIt\Auditing\Contracts\Auditable;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\Facades\Date;
 
 
 /**
@@ -41,10 +39,9 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 
 
 
-class Setting extends Model implements Auditable
+class Setting extends Model
 {
     use HasFactory;
-    use \OwenIt\Auditing\Auditable;
     use softDeletes;
     use HasFactory;
     use HasUuids;

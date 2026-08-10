@@ -44,11 +44,10 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property Date $updated_at
  */
 
-class Client extends Model implements Auditable
+class Client extends Model
 {
     use Searchable;
     use HasFactory;
-    use \OwenIt\Auditing\Auditable;
     use softDeletes;
     use HasUuids;
 

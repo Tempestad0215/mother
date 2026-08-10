@@ -12,11 +12,11 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property-read PriceListProduct $pivot
  */
 
-class PriceList extends Model implements Auditable
+class PriceList extends Model
 {
     use SoftDeletes;
     use HasUuids;
-    use \OwenIt\Auditing\Auditable;
+
 
     protected $primaryKey = 'uuid';
     public $incrementing = false;

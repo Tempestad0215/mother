@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @property-read InventoryMovement[] $itemMovements
@@ -16,10 +15,9 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property-read PurchaseReceiptsItem[] $items
  */
 
-class PurchaseReceipts extends Model implements Auditable
+class PurchaseReceipts extends Model
 {
     use SoftDeletes;
-    use \OwenIt\Auditing\Auditable;
     use HasUuids;
 
     /**

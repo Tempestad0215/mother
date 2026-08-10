@@ -19,10 +19,9 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property Carbon created_at
  * @property Carbon updated_at
  */
-class ACO extends Model implements Auditable
+class ACO extends Model
 {
     use SoftDeletes;
-    use \OwenIt\Auditing\Auditable;
 
     /**
      * @var string

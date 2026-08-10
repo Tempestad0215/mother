@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @property int id
@@ -17,10 +16,9 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property string deleted_at
  *
  */
-class ExchangeRate extends Model implements Auditable
+class ExchangeRate extends Model
 {
     use SoftDeletes;
-    use \OwenIt\Auditing\Auditable;
 
     /**
      * Datos para almacenar

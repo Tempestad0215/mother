@@ -23,11 +23,10 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property Carbon updated_at
  * @property Carbon created_at
 */
-class Category extends Model implements Auditable
+class Category extends Model
 {
     use Searchable;
     use HasFactory;
-    use \OwenIt\Auditing\Auditable;
     use softDeletes;
     use HasUuids;
 

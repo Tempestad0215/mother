@@ -19,9 +19,8 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property string $created_at
  */
 
-class Brand extends Model implements Auditable
+class Brand extends Model
 {
-    use \OwenIt\Auditing\Auditable;
     use softDeletes;
     use HasUuids;
 

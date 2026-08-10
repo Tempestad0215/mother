@@ -25,10 +25,9 @@ use OwenIt\Auditing\Contracts\Auditable;
  */
 
 #[ObservedBy([CreditNoteItemObserver::class])]
-class CreditNoteItem extends Model implements Auditable
+class CreditNoteItem extends Model
 {
     use SoftDeletes;
-    use \OwenIt\Auditing\Auditable;
     use HasUuids;
 
     protected $table = 'credit_note_items';

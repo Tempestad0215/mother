@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
@@ -32,10 +31,9 @@ use OwenIt\Auditing\Contracts\Auditable;
  *
  * @mixin Builder
  */
-class SaleItem extends Model implements Auditable
+class SaleItem extends Model
 {
     use SoftDeletes;
-    use \OwenIt\Auditing\Auditable;
     use HasUuids;
 
     // Corregido: Era primaryKey con 'a'

@@ -5,13 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
 
-class PurchaseItem extends Model implements Auditable
+class PurchaseItem extends Model
 {
-    use \OwenIt\Auditing\Auditable;
+
     use SoftDeletes;
     use HasUuids;
 

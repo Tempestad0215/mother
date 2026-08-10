@@ -55,10 +55,9 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property-read PurchaseReceiptsItem $receiptsItem
  * @method static create(mixed $validated)
  */
-class Product extends Model implements Auditable
+class Product extends Model
 {
     use HasFactory;
-    use \OwenIt\Auditing\Auditable;
     use softDeletes;
     use HasUuids;
 

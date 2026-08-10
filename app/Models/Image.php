@@ -5,12 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
 
-class Image extends Model implements Auditable
+class Image extends Model
 {
     use SoftDeletes;
-    use \OwenIt\Auditing\Auditable;
 
 
     /**

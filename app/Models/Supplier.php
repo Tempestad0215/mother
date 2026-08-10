@@ -7,13 +7,10 @@ use App\Helpers\CodeHelper;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
-use OwenIt\Auditing\Contracts\Auditable;
 
 
 /**
@@ -38,11 +35,10 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property-read Product[] product
 */
 
-class Supplier extends Model implements Auditable
+class Supplier extends Model
 {
     use Searchable;
     use HasFactory;
-    use \OwenIt\Auditing\Auditable;
     use softDeletes;
     use HasUuids;
 

@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
-use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @property string $uuid
@@ -27,10 +26,9 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property-read WarehouseProduct $pivot
  * @property-read PurchaseReceiptsItem $receiptsItem
  */
-class Warehouse extends Model implements Auditable
+class Warehouse extends Model
 {
     use HasFactory, SoftDeletes;
-    use \OwenIt\Auditing\Auditable;
     use HasUuids;
 
     protected $primaryKey = 'uuid';

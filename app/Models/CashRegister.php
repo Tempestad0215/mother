@@ -25,11 +25,10 @@ use OwenIt\Auditing\Contracts\Auditable;
  *
  * @property-read Sale[] $sales
  */
-class CashRegister extends Model implements Auditable
+class CashRegister extends Model
 {
     use SoftDeletes;
     use HasUuids;
-    use \OwenIt\Auditing\Auditable;
 
     protected $primaryKey = 'uuid';
     public $incrementing = false;

@@ -6,10 +6,8 @@ use App\Enums\ModelStatusEnum;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @property int $id
@@ -24,12 +22,11 @@ use OwenIt\Auditing\Contracts\Auditable;
  *
  */
 
-class Tax extends Model implements Auditable
+class Tax extends Model
 {
 
     use SoftDeletes;
     use HasUuids;
-    use \OwenIt\Auditing\Auditable;
 
     /**
      * @var string

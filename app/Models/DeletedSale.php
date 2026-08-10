@@ -2,12 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Date;
-use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
 
 /**
@@ -23,10 +22,11 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property bool $close_table
  * @property Date $deleted_at
  */
-class DeletedSale extends Model implements Auditable
+class DeletedSale extends Model
 {
-    use \OwenIt\Auditing\Auditable;
+
     use softDeletes;
+    use LogsActivity;
 
     /**
      * @var string

@@ -22,10 +22,9 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property string $updated_at
  * @property Date $deleted_at
  */
-class Comment extends Model implements Auditable
+class Comment extends Model
 {
     use HasFactory;
-    use \OwenIt\Auditing\Auditable;
     use softDeletes;
 
     /**

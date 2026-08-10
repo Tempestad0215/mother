@@ -31,11 +31,10 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property Carbon|null $deleted_at
  */
 #[ObservedBy([InventoryMovementObserver::class])]
-class InventoryMovement extends Model implements  Auditable
+class InventoryMovement extends Model
 {
     //
 
-    use \OwenIt\Auditing\Auditable;
     use softDeletes;
     use HasUuids;
 

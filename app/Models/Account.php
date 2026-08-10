@@ -24,10 +24,9 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property string deleted_at;
  *
  */
-class Account extends Model implements Auditable
+class Account extends Model
 {
     use SoftDeletes;
-    use \OwenIt\Auditing\Auditable;
 
     /**
      * @var string[]

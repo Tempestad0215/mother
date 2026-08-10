@@ -38,10 +38,9 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property-read Sale $sale
  * @property-read CreditNote $creditNote
  */
-class ProductTransaction extends Model implements Auditable
+class ProductTransaction extends Model
 {
     use HasFactory;
-    use \OwenIt\Auditing\Auditable;
     use SoftDeletes;
 
     protected $table = 'product_transactions';

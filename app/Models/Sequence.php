@@ -5,11 +5,9 @@ namespace App\Models;
 use App\Enums\SequenceSaleTypeEnum;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
-use OwenIt\Auditing\Contracts\Auditable;
 
 
 /**
@@ -28,11 +26,10 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property Date $deleted_at
  */
 
-class Sequence extends Model implements Auditable
+class Sequence extends Model
 {
 
     use softDeletes;
-    use \OwenIt\Auditing\Auditable;
     use HasUuids;
 
     //Tabla a utilizar

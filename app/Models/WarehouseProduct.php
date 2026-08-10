@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
 
 
 /**
@@ -22,17 +21,16 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property bool $is_active
  * @property float $reorder_level
  * @property float $purchase_pending
- * 
- * 
+ *
+ *
  * @property-read Product $product
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property Carbon $deleted_at
  */
-class WarehouseProduct extends Model implements Auditable
+class WarehouseProduct extends Model
 {
     use SoftDeletes;
-    use \OwenIt\Auditing\Auditable;
     use HasUuids;
 
 
@@ -81,7 +79,7 @@ class WarehouseProduct extends Model implements Auditable
     {
         return $this->belongsTo(Product::class, 'product_uuid', 'uuid');
     }
-    
+
     /**
      * Summary of getAvailableStockAttribute
      * @return float

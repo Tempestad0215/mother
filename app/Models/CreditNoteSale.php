@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
-class CreditNoteSale extends Model implements Auditable
+class CreditNoteSale extends Model
 {
     use SoftDeletes;
-    use \OwenIt\Auditing\Auditable;
+
 
     protected $table = 'credit_note_sale';
 

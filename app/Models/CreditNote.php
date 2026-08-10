@@ -42,10 +42,9 @@ use OwenIt\Auditing\Contracts\Auditable;
  * @property float $returned
  * @property string $comment
  */
-class CreditNote extends Model implements Auditable
-{
+class CreditNote extends Model{
+
     use SoftDeletes;
-    use \OwenIt\Auditing\Auditable;
     use HasUuids;
 
 

@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Date;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
-use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -25,14 +24,13 @@ use Spatie\Permission\Traits\HasRoles;
  * @property Date $deleted_at
  */
 
-class User extends Authenticatable implements Auditable
+class User extends Authenticatable
 {
     use HasApiTokens;
     use HasFactory;
     use HasProfilePhoto;
     use Notifiable;
     use TwoFactorAuthenticatable;
-    use \OwenIt\Auditing\Auditable;
     use softDeletes;
     use HasRoles;
     use HasUuids;

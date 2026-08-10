@@ -5,12 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
 
-class PriceListProduct extends Model implements Auditable
+class PriceListProduct extends Model
 {
     use SoftDeletes;
-    use \OwenIt\Auditing\Auditable;
+
 
     /**
      * @var string[]
