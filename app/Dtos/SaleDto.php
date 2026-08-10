@@ -72,6 +72,11 @@ class SaleDto extends BaseDto
     public static function fromArray(array $data): SaleDto
     {
 
+        $saleType = SaleTypeEnum::from($data['type']);
+
+        $isQuote = $saleType === SaleTypeEnum::Cotizacion;
+
+
         return new SaleDto(
             discount_amount: $data['discount_amount'],
             tax: $data['tax'],
@@ -85,7 +90,7 @@ class SaleDto extends BaseDto
             returned: $data['returned'],
             close_table: $data['close_table'],
             credit_note_amount: $data['credit_note_amount'] ?? 0,
-            ncf: $data['ncf'] ?? null,
+            ncf: $isQuote ? null : ($data['ncf'] ?? null),
             client_name: $data['client_name'],
             client_rnc: $data['client_rnc'] ?? null,
             client_uuid: $data['client_uuid'] ?? null,

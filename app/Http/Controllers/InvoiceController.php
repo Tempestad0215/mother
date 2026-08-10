@@ -47,11 +47,12 @@ class InvoiceController extends Controller
      */
     public function getQuoteInvoice(Sale $sale)
     {
-        $sale->load(['items.product', 'customer', 'user']);
+        $sale->load(['items.product', 'client']);
 
         $templateData = view('pdfs.quote.letter', [
             'sale' => $sale,
-            'setting' => Setting::first()
+            'setting' => Setting::first(),
+            'userName' => \Auth::user()->name
         ])->render();
 
         // Invoca Gotenberg con las dimensiones de Carta (8.5in x 11in)
@@ -65,7 +66,7 @@ class InvoiceController extends Controller
      */
     public function getSaleInvoice(Sale $sale)
     {
-        $sale->load(['creditNoteSale', 'items']);
+        $sale->load(['creditNotes', 'items']);
 
         $templateData = view('pdfs.sale.cinta', [
             'sale' => $sale,
@@ -76,20 +77,6 @@ class InvoiceController extends Controller
         return $this->facturaCinta($templateData);
     }
 
-    /**
-     * Cotización en formato Carta
-     */
-    public function getQuoteInvoice(Sale $sale)
-    {
-        $sale->load(['items.product', 'customer']);
-
-        $templateData = view('pdfs.quote.letter', [
-            'sale' => $sale,
-            'setting' => Setting::first()
-        ])->render();
-
-        return $this->facturaCarta($templateData);
-    }
 
 
     /**

@@ -137,13 +137,6 @@ class Sale extends Model implements Auditable
     {
         return $this->belongsTo(CashRegister::class);
     }
-    /**
-     * @return BelongsToMany
-     */
-    public function creditNoteSales(): BelongsToMany
-    {
-        return $this->belongsToMany(CreditNote::class);
-    }
 
     public function items(): HasMany
     {

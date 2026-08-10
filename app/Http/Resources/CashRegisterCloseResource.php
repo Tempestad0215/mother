@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Enums\CashMovementType;
 use App\Enums\PaymentTypeEnum;
+use App\Enums\SaleTypeEnum;
 use App\Models\CashMovement;
 use App\Models\CashRegister;
 use App\Models\Sale;
@@ -51,14 +52,22 @@ class CashRegisterCloseResource extends JsonResource
 
         // Para poder calcular el dinero esperado en la gaveta, necesitamos sumar las ventas
         foreach ($this->sales as $sale) {
-            match ($sale->type_payment){
-                PaymentTypeEnum::CONTADO => $totalContado = bcadd($totalContado, (string)$sale->amount, 4),
-                PaymentTypeEnum::CREDITO => $totalCredito = bcadd($totalCredito, (string)$sale->amount, 4),
-                PaymentTypeEnum::TRANSFERENCIA => $totalTransferencia = bcadd($totalTransferencia, (string)$sale->amount, 4),
-                PaymentTypeEnum::Cheque => $totalCheque = bcadd($totalCheque, (string)$sale->amount, 4),
-                PaymentTypeEnum::ANTICIPO => $totalAnticipo = bcadd($totalAnticipo, (string)$sale->amount, 4),
-                PaymentTypeEnum::TARJETA => $totalTarjeta = bcadd($totalTarjeta, (string)$sale->amount, 4)
-            };
+
+            // 1. Si el tipo de venta es Cotización, saltamos esta iteración
+            if ($sale->type === SaleTypeEnum::Cotizacion) {
+                continue; // Continúa con la siguiente venta del foreach
+            }else{
+                match ($sale->type_payment){
+                    PaymentTypeEnum::CONTADO => $totalContado = bcadd($totalContado, (string)$sale->amount, 4),
+                    PaymentTypeEnum::CREDITO => $totalCredito = bcadd($totalCredito, (string)$sale->amount, 4),
+                    PaymentTypeEnum::TRANSFERENCIA => $totalTransferencia = bcadd($totalTransferencia, (string)$sale->amount, 4),
+                    PaymentTypeEnum::Cheque => $totalCheque = bcadd($totalCheque, (string)$sale->amount, 4),
+                    PaymentTypeEnum::ANTICIPO => $totalAnticipo = bcadd($totalAnticipo, (string)$sale->amount, 4),
+                    PaymentTypeEnum::TARJETA => $totalTarjeta = bcadd($totalTarjeta, (string)$sale->amount, 4)
+                };
+            }
+
+
         }
 
         // 🧮 Operación Matemática Corregida para el Dinero Esperado en Gaveta:

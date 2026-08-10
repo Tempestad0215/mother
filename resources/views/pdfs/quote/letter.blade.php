@@ -157,7 +157,7 @@
         <div class="info-box-title">Detalles de la Oferta</div>
         <p><strong>Fecha de Emisión:</strong> {{ \Carbon\Carbon::parse($sale->created_at)->format('d/m/Y') }}</p>
         <p><strong>Válida hasta:</strong> {{ \Carbon\Carbon::parse($sale->created_at)->addDays(15)->format('d/m/Y') }}</p>
-        <p><strong>Atendido por:</strong> {{ $sale->user?->name ?? 'Ventas' }}</p>
+        <p><strong>Atendido por:</strong> {{ $userName ?? 'Ventas' }}</p>
     </div>
 </div>
 

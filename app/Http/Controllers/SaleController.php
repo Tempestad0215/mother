@@ -108,7 +108,17 @@ class SaleController extends Controller
 
             });
 
-        $rutaInvoice = route('invoice.sale', [$data->uuid]);
+        $saleType = SaleTypeEnum::from($request->input('type'));
+
+        if($saleType == SaleTypeEnum::Cotizacion)
+        {
+            $rutaInvoice = route('invoice.quote', [$data
+            ->uuid]);
+        }else{
+            $rutaInvoice = route('invoice.sale', [$data->uuid]);
+        }
+
+
 
         //DEvolver el id de la venta
         return Inertia::flash(['saleInvoiceUrl' => $rutaInvoice])->back();
