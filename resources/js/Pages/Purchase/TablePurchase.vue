@@ -279,7 +279,7 @@ const createReception = (data: PurchaseSupplierI) => {
             :value="purchaseSelected?.items"
             size="small"
             striped-rows
-            class="min-w-[700px] w-full text-xs sm:text-sm"
+            class="min-w-175 w-full text-xs sm:text-sm"
           >
             <Column header="#" class="w-10 text-center">
               <template #body="{ index }">
