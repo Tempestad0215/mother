@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Enums\CacheKeyEnum;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -62,7 +64,7 @@ class Warehouse extends Model
 
     /**
      * Summary of products
-     * @return BelongsToMany<Product, Warehouse, \Illuminate\Database\Eloquent\Relations\Pivot>
+     * @return BelongsToMany<Product, Warehouse, Pivot>
      */
     public function products():BelongsToMany
     {
@@ -110,7 +112,8 @@ class Warehouse extends Model
     {
         if(self::$currentInstance !== null) return self::$currentInstance;
 
-        self::$currentInstance = Cache::remember('app_warehouses', 86400, function () {
+
+        self::$currentInstance = Cache::remember(CacheKeyEnum::Warehouses->value, 86400, function () {
            return self::get();
         });
 

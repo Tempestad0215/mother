@@ -274,7 +274,7 @@ const createReception = (data: PurchaseSupplierI) => {
         </Fieldset>
 
         <!-- Tabla de Ítems (Con Scroll Horizontal para Móvil) -->
-        <div class="overflow-x-auto rounded-lg border border-slate-200">
+        <div class="overflow-x-auto rounded-lg border border-slate-200 mt-5">
           <DataTable
             :value="purchaseSelected?.items"
             size="small"
@@ -297,7 +297,7 @@ const createReception = (data: PurchaseSupplierI) => {
 
             <Column header="Cant.">
               <template #body="{ data }: { data: PurchaseItemI }">
-                {{ data.quantity }}
+                {{ parseFloat(data.quantity.toString()).toFixed(2) }}
               </template>
             </Column>
 

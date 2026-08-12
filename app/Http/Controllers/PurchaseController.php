@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Dtos\PurchaseDto;
 use App\Dtos\PurchaseRequestItemDto;
+use App\Enums\CacheKeyEnum;
 use App\Enums\InventoryMovementConceptEnum;
 use App\Enums\PurchaseStatusEnum;
 use App\Http\Requests\PaginationRequest;
@@ -19,6 +20,7 @@ use App\Models\WarehouseProduct;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -127,7 +129,7 @@ class PurchaseController extends Controller
                 }
 
             }
-            
+
             // Guardar todos los los datos
             $purchase->items()->saveMany($purchaseItemsModels);
 
@@ -179,7 +181,11 @@ class PurchaseController extends Controller
      */
     public function receive()
     {
-        return Inertia::render('Purchase/Receive');
+
+        return Inertia::render('Purchase/Receive',[
+            'warehouses' => Warehouse::getAllCached(),
+            'taxes' => Tax::getAllCached()
+        ]);
     }
 
     /**
@@ -191,22 +197,22 @@ class PurchaseController extends Controller
     }
 
 
-    /**
-     * @param Purchase $purchase
-     * @param int $warehouseID
-     * @param float $quantity
-     * @param float $cost
-     * @param string $description
-     * @return void
-     */
-    private function createInventoryMovement(Purchase $purchase, int $warehouseID, float $quantity,float $cost, string $description = ""):void
-    {
-        $purchase->itemMovements()->create([
-            'type' => InventoryMovementConceptEnum::Entrada,
-            'warehouse_id' => $warehouseID,
-            'quantity' => $quantity,
-            'cost' => $cost,
-            'description' => $description,
-        ]);
-    }
+//    /**
+//     * @param Purchase $purchase
+//     * @param int $warehouseID
+//     * @param float $quantity
+//     * @param float $cost
+//     * @param string $description
+//     * @return void
+//     */
+//    private function createInventoryMovement(Purchase $purchase, int $warehouseID, float $quantity,float $cost, string $description = ""):void
+//    {
+//        $purchase->itemMovements()->create([
+//            'type' => InventoryMovementConceptEnum::Entrada,
+//            'warehouse_id' => $warehouseID,
+//            'quantity' => $quantity,
+//            'cost' => $cost,
+//            'description' => $description,
+//        ]);
+//    }
 }

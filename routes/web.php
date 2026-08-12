@@ -103,6 +103,10 @@ Route::middleware([
         Route::patch('/{purchase}/approve', [PurchaseController::class, 'approve'])->name('approve');
     });
 
+    Route::prefix('supplier')->name('supplier.')->controller(SupplierController::class)->group(function () {
+        Route::get('/json', 'getJson')->name('json');
+    });
+
 
     /**
      *
@@ -138,6 +142,9 @@ Route::middleware([
         'cash-register' => CashRegisterController::class
 
         ]);
+
+
+
 
     Route::get('price-list/product/{product}',[PriceListController::class,'productShow'])
         ->name('price-list.product.show');

@@ -46,7 +46,7 @@ class  StoreProductSaleRequest extends FormRequest
 
         /** @var Sale|null| $saleRouteParams */
         $saleRouteParams = $this->route('sale');
-        
+
         //datos de configuracion
         /** @var Setting|null $setting */
         $setting = $this->attributes->get('app_settings');
@@ -88,7 +88,7 @@ class  StoreProductSaleRequest extends FormRequest
             'discount_amount' => ['required','numeric'],
             'type' => ['required',Rule::enum(SaleTypeEnum::class)],
             'type_payment' => ['nullable',Rule::requiredIf($this->isTypePaymentRequired()) ,Rule::enum(PaymentTypeEnum::class)],
-            'received' => ['required','numeric'],
+            'd' => ['required','numeric'],
             'returned' => ['required','numeric'],
             'credit_notes' => ['nullable','array'],
             'credit_notes.*.uuid' => ['required','uuid','exists:credit_notes,uuid'],

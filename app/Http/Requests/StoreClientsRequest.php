@@ -42,7 +42,7 @@ class StoreClientsRequest extends FormRequest
             'type_rnc' => ['required',Rule::enum(SequenceSaleTypeEnum::class)],
             'type' => ['required', Rule::enum(ClientTypeEnum::class),'string'],
             'type_price' => [Rule::enum(ClientTypePriceEnum::class),'numeric','required'],
-            'receive_email' => ['required','boolean'],
+            '_email' => ['required','boolean'],
             'status' => ['required','boolean'],
             'document' =>  ['required', Rule::enum(ClientDocumentEnum::class)],
             'file' => ['nullable','file','mimes:png,jpg,jpeg','max:2048'],

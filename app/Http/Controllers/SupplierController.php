@@ -158,8 +158,8 @@ class SupplierController extends Controller implements HasMiddleware
     {
 
         //Tomar los datos de busqueda
-        $search = trim($request->get('search'));
-        $per_page = $request->get('per_page', 30);
+        $search = trim($request->input('search'));
+        $per_page = $request->input('per_page', 30);
 
 
         //Devolver los datos paginado a 15
@@ -180,7 +180,7 @@ class SupplierController extends Controller implements HasMiddleware
     public static function getJson(Request $request)
     {
         //Tomar los datos de busqueda
-        $search = trim($request->get('search', ''));
+        $search = trim($request->input('search', ''));
 
 
         //Devolver los datos paginado a 15

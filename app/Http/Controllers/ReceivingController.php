@@ -28,7 +28,7 @@ class ReceivingController extends Controller
     public function index(Request $request, Supplier $supplier)
     {
 
-        // Obtener los datos de la recepcion
+        // Obtener los datos de la recepción
         $purchaseAvailable = PurchaseReceiptResource::collection(
             $supplier->purchase()
                 ->whereIn('status', [PurchaseStatusEnum::Pendiente, PurchaseStatusEnum::Parcial])
@@ -110,7 +110,7 @@ class ReceivingController extends Controller
                     'product_uuid' => $item->product_uuid,
                     'cost' => $oldItemCurrent->cost,
                     'quantity_expected' => $oldItemCurrent->quantity,
-                    'quantity_received' => $item->quantity,
+                    'quantity_d' => $item->quantity,
                     'tax_uuid' => $item->tax_uuid,
                     'warehouse_uuid' =>$item->warehouse_uuid,
                     'tax_rate' => $item->tax_rate,

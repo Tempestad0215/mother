@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Enums\CacheKeyEnum;
 use App\Enums\ModelStatusEnum;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
 /**
@@ -36,6 +39,8 @@ class Tax extends Model
     protected $primaryKey = 'uuid';
     protected $keyType = 'string';
     public $incrementing = false;
+
+    private static ?Collection $currentInstances = null;
 
 
     /**
@@ -110,5 +115,29 @@ class Tax extends Model
         return [
             'model_status' => ModelStatusEnum::class,
         ];
+    }
+
+
+    public static function getAllCached(): Collection
+    {
+        if(self::$currentInstances !== null) return self::$currentInstances;
+
+        self::$currentInstances = Cache::remember(CacheKeyEnum::Tax->value, 86400, function () {
+           return self::get();
+        });
+
+        return self::$currentInstances;
+    }
+
+    protected static function booted(): void
+    {
+        $clearCache = function () {
+            Cache::forget(CacheKeyEnum::Tax->value);
+            self::$currentInstances = null;
+        };
+
+        static::created($clearCache);
+        static::updated($clearCache);
+        static::deleted($clearCache);
     }
 }
