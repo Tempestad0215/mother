@@ -26,7 +26,7 @@ export interface ValidationErrors {
 }
 
 export interface AppSettingI {
-  id: number;
+  uuid: number;
   name: string;
   email: string;
   phone: string | null;
@@ -35,6 +35,7 @@ export interface AppSettingI {
   website: string | null;
   company_id: string | null;
   tax: TaxI[] | [];
+  add_tax: boolean;
   unit: string[] | [];
   fiscal_year: string | null;
   company_type: string | null;

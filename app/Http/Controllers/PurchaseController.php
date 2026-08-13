@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Dtos\EntranceDto;
 use App\Dtos\PurchaseDto;
 use App\Dtos\PurchaseRequestItemDto;
-use App\Enums\CacheKeyEnum;
-use App\Enums\InventoryMovementConceptEnum;
 use App\Enums\PurchaseStatusEnum;
+use App\Http\Requests\EntranceStoreRequest;
 use App\Http\Requests\PaginationRequest;
 use App\Http\Requests\PurchaseRequest;
 use App\Http\Resources\PurchaseSupplierResource;
+use App\Models\PaProduct;
 use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\PurchaseItem;
@@ -19,8 +20,6 @@ use App\Models\Warehouse;
 use App\Models\WarehouseProduct;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -175,7 +174,6 @@ class PurchaseController extends Controller
         return back();
     }
 
-
     /**
      * @return Response
      */
@@ -186,6 +184,19 @@ class PurchaseController extends Controller
             'warehouses' => Warehouse::getAllCached(),
             'taxes' => Tax::getAllCached()
         ]);
+    }
+
+
+    /**
+     * @throws Throwable
+     */
+    public function receiveStore(EntranceStoreRequest $request):void
+    {
+        $entranceDto = EntranceDto::fromRequest($request->validated());
+
+        DB::transaction(function () use ($entranceDto) {
+            PaProduct::create($entranceDto->toArray());
+        });
     }
 
     /**

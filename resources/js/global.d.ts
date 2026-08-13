@@ -53,6 +53,7 @@ export interface appSettingI {
   sequence: boolean;
   created_at: string;
   updated_at: string;
+  add_tax: boolean;
 }
 
 export interface AppPageProps {

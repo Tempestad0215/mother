@@ -12,16 +12,6 @@ export const purchaseBreadCrumb: MenuItem[] = [
     icon: 'pi pi-shopping-card',
     url: route('purchase.show'),
   },
-  {
-    label: 'Entrada de Mercancias',
-    icon: 'pi pi-shopping-card',
-    url: route('purchase.receive'),
-  },
-  {
-    label: 'Salida de Mercancia',
-    icon: 'pi pi-shopping-card',
-    url: route('purchase.index'),
-  },
 ];
 
 export const PurchaseStatusSeverity: Record<PurchaseStatusEnum, TagSeverity> = {

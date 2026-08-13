@@ -39,4 +39,13 @@ enum InventoryMovementConceptEnum: string
             self::TransferenciaEntrada => 'Transferencia (Entrada)',
         };
     }
+
+
+    public static function options():array
+    {
+        return array_map(fn (self $item) => [
+            'label' => $item->name,
+            'value' => $item->value,
+        ], self::cases());
+    }
 }

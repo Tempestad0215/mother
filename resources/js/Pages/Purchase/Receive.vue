@@ -20,17 +20,19 @@ import {
 } from 'primevue';
 import { purchaseBreadCrumb } from '@/Helpers/PurchaseHelper';
 import { Eraser, Plus, Send, Trash2 } from 'lucide-vue-next';
-import { useForm } from '@inertiajs/vue3';
+import { useForm, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 import axios from 'axios';
 import { FormReceiveItemI } from '@/Interfaces/ReceiveInterface';
 import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
 import { ProductBaseI } from '@/Interfaces/ProductInterface';
 import { TaxBaseI } from '@/Interfaces/TaxInterface';
-import { SupplierBaseI, SupplierI } from '@/Interfaces/SupplierInterface';
+import { SupplierBaseI } from '@/Interfaces/SupplierInterface';
+import { getMoney } from '@/Global/Helpers';
 
 // Interfaces
 const toast = useToast();
+const page = usePage();
 
 // Props que vienen desde el Controller de Laravel
 const props = defineProps<{
@@ -54,8 +56,9 @@ const form = useForm({
       quantity: 1,
       warehouse_uuid: props.warehouses?.[0]?.uuid || '',
       discount: 0,
-      tax: 0,
+      tax_uuid: '',
       amount: 0,
+      tax: 0,
     },
   ] as FormReceiveItemI[],
 });
@@ -63,10 +66,26 @@ const form = useForm({
 // Función para calcular el importe neto de una fila individual
 const calculateRowAmount = (index: number) => {
   const item = form.items[index];
+
+  // 1. Buscar el objeto de impuesto correspondiente al tax_uuid del producto
+  let taxValue: TaxBaseI | undefined = undefined;
+
+  if (props.taxes && props.taxes.length > 0 && item.tax_uuid) {
+    taxValue = props.taxes.find((el) => el.uuid === item.tax_uuid);
+  }
+
+  const taxRate = taxValue ? Number(taxValue.rate) : 0;
+
   const subtotal = item.cost * item.quantity;
   const discountAmount = (subtotal * item.discount) / 100;
   const subtotalWithDiscount = subtotal - discountAmount;
-  const taxAmount = (subtotalWithDiscount * item.tax) / 100;
+
+  // 4. Calcular el monto del impuesto
+  let taxAmount = 0;
+
+  if (page.props.setting.add_tax) {
+    taxAmount = (subtotalWithDiscount * taxRate) / 100;
+  }
 
   const finalAmount = subtotalWithDiscount + taxAmount;
   form.items[index].amount = Number(finalAmount.toFixed(2));
@@ -101,8 +120,9 @@ const addRow = () => {
     quantity: 1,
     warehouse_uuid: props.warehouses?.[0]?.uuid || '',
     discount: 0,
-    tax: 0,
+    tax_uuid: '',
     amount: 0,
+    tax: 0,
   });
 };
 
@@ -118,17 +138,9 @@ const totalReceive = computed(() => {
   return form.items.reduce((acc, item) => acc + (item.amount || 0), 0);
 });
 
-// Helper de formato de moneda
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('es-DO', {
-    style: 'currency',
-    currency: 'DOP',
-  }).format(value || 0);
-};
-
 // Enviar formulario al backend
 const submit = () => {
-  form.post(route('receives.store'), {
+  form.post(route('purchase.receiveStore'), {
     preserveScroll: true,
     onSuccess: () => form.reset(),
   });
@@ -166,7 +178,11 @@ const searchSupplier = async (event: AutoCompleteCompleteEvent) => {
   const value = event.query as string;
 
   try {
-    const res = await axios.get(route('supplier.json'));
+    const res = await axios.get(route('supplier.json'), {
+      params: {
+        search: value,
+      },
+    });
 
     if (res.data && Array.isArray(res.data)) {
       supplierSuggestions.value = res.data as SupplierBaseI[];
@@ -179,6 +195,40 @@ const searchSupplier = async (event: AutoCompleteCompleteEvent) => {
 const selectSupplier = (event: AutoCompleteOptionSelectEvent) => {
   const dataInfo = event.value as SupplierBaseI;
   form.supplier_uuid = dataInfo.uuid;
+};
+
+const searchByCode = async (index: number) => {
+  const item = form.items[index];
+
+  // Si el código está vacío o ya tiene un nombre asignado, no hace la petición
+  if (!item.code || item.code.trim() === '' || item.product_name !== '') {
+    return;
+  }
+
+  try {
+    const res = await axios.get(route('product.get.code'), {
+      params: {
+        search: item.code,
+      },
+    });
+
+    if (res.data && res.data.uuid) {
+      const infoData = res.data as ProductBaseI;
+
+      item.product_name = infoData.name;
+      item.tax_uuid = infoData.tax_uuid;
+      item.cost = Number(infoData.cost) || 0;
+
+      calculateRowAmount(index);
+    }
+  } catch (error) {
+    toast.add({
+      severity: 'warn',
+      summary: 'Aviso',
+      detail: 'No es posible encontrar este código',
+      life: 300,
+    });
+  }
 };
 </script>
 
@@ -240,9 +290,11 @@ const selectSupplier = (event: AutoCompleteOptionSelectEvent) => {
                 <Column header="Código" class="w-32">
                   <template #body="{ index }">
                     <InputText
+                      fluid
+                      @blur="searchByCode(index)"
                       v-model="form.items[index].code"
                       placeholder="SKU / Código"
-                      class="w-full p-inputtext-sm font-mono"
+                      class="w-full p-inputtext-sm font-mono h-10"
                     />
                   </template>
                 </Column>
@@ -250,6 +302,8 @@ const selectSupplier = (event: AutoCompleteOptionSelectEvent) => {
                 <Column header="Nombre / Descripción" class="min-w-45">
                   <template #body="{ index }">
                     <AutoComplete
+                      fluid
+                      :modelValue="form.items[index].product_name"
                       :suggestions="productSuggestions"
                       @option-select="selectProduct($event, index)"
                       :option-label="(data: ProductBaseI) => `${data.code} | ${data.name}`"
@@ -266,9 +320,10 @@ const selectSupplier = (event: AutoCompleteOptionSelectEvent) => {
                         v-model="form.items[index].warehouse_uuid"
                         :options="warehouses"
                         optionLabel="name"
+                        size="small"
                         optionValue="uuid"
                         placeholder="Seleccionar"
-                        class="w-full p-inputtext-sm text-xs"
+                        class="w-full p-inputtext-sm"
                       />
                     </div>
                   </template>
@@ -280,11 +335,11 @@ const selectSupplier = (event: AutoCompleteOptionSelectEvent) => {
                       <InputNumber
                         fluid
                         v-model="form.items[index].cost"
-                        mode="currency"
-                        currency="DOP"
-                        locale="es-DO"
+                        mode="decimal"
+                        :min-fraction-digits="2"
+                        :max-fraction-digits="2"
                         class="w-45 p-inputtext-sm"
-                        @input="calculateRowAmount(index)"
+                        @blur="calculateRowAmount(index)"
                       />
                     </div>
                   </template>
@@ -298,7 +353,7 @@ const selectSupplier = (event: AutoCompleteOptionSelectEvent) => {
                         v-model="form.items[index].quantity"
                         :min="1"
                         class="w-full p-inputtext-sm"
-                        @input="calculateRowAmount(index)"
+                        @blur="calculateRowAmount(index)"
                       />
                     </div>
                   </template>
@@ -308,7 +363,7 @@ const selectSupplier = (event: AutoCompleteOptionSelectEvent) => {
                     <div class="w-30 max-w-40">
                       <Select
                         fluid
-                        v-model="form.items[index].warehouse_uuid"
+                        v-model="form.items[index].tax_uuid"
                         :options="props.taxes"
                         :optionLabel="(data: TaxBaseI) => `${data.name} | ${data.rate}`"
                         option-value="uuid"
@@ -320,7 +375,7 @@ const selectSupplier = (event: AutoCompleteOptionSelectEvent) => {
                 <Column header="Importe" class="w-32 text-right">
                   <template #body="{ data }">
                     <span class="font-bold text-slate-800">
-                      {{ formatCurrency(data.amount) }}
+                      {{ getMoney(data.amount) }}
                     </span>
                   </template>
                 </Column>
@@ -356,12 +411,36 @@ const selectSupplier = (event: AutoCompleteOptionSelectEvent) => {
                 </template>
               </Button>
 
-              <div class="bg-slate-50 border border-slate-200 rounded-lg px-4 py-2 text-right">
-                <span class="text-xs text-slate-500 uppercase font-bold block">Total Entrada</span>
-                <span class="text-xl font-black text-emerald-600">{{
-                  formatCurrency(totalReceive)
-                }}</span>
-              </div>
+              <!--              &lt;!&ndash; Desglose de Totales &ndash;&gt;-->
+              <!--              <div-->
+              <!--                class="w-full md:w-80 bg-slate-50 text-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 text-sm space-y-2"-->
+              <!--              >-->
+              <!--                <div class="flex justify-between items-center">-->
+              <!--                  <span class="text-slate-600 font-medium">Sub Total:</span>-->
+              <!--                  <span class="font-semibold text-slate-700">{{ getMoney(form.sub_total) }}</span>-->
+              <!--                </div>-->
+
+              <!--                <div class="flex justify-between items-center">-->
+              <!--                  <span class="text-slate-600 font-medium">ITBIS:</span>-->
+              <!--                  <span class="font-semibold text-blue-600">{{ getMoney(form.tax) }}</span>-->
+              <!--                </div>-->
+
+              <!--                <div class="flex justify-between items-center">-->
+              <!--                  <span class="text-slate-600 font-medium">Descuento:</span>-->
+              <!--                  <span class="font-semibold text-emerald-600"-->
+              <!--                    >-{{ getMoney(form.discount_amount) }}</span-->
+              <!--                  >-->
+              <!--                </div>-->
+
+              <!--                <div-->
+              <!--                  class="border-t border-slate-200 pt-2 mt-2 flex justify-between items-center text-base"-->
+              <!--                >-->
+              <!--                  <span class="font-bold text-slate-900">Total:</span>-->
+              <!--                  <span class="font-bold text-lg text-emerald-700">{{-->
+              <!--                    getMoney(form.amount)-->
+              <!--                  }}</span>-->
+              <!--                </div>-->
+              <!--              </div>-->
             </div>
 
             <FloatLabel variant="on" class="w-full">

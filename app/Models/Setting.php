@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\CacheKeyEnum;
 use App\Enums\CompanyTypeEnum;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -70,7 +71,8 @@ class Setting extends Model
         'fiscal_year',
         'status',
         'save_cost',
-        'sequence'
+        'sequence',
+        'add_tax'
     ];
 
     /**
@@ -80,6 +82,7 @@ class Setting extends Model
         'status' => 'boolean',
         'save_cost' => 'boolean',
         'sequence' => 'boolean',
+        'add_tax' => 'boolean',
     ];
 
 
@@ -108,7 +111,7 @@ class Setting extends Model
     {
         if(self::$currentInstance !== null) return self::$currentInstance;
 
-        self::$currentInstance = \Cache::remember('app_settings', 86400, function () {
+        self::$currentInstance = \Cache::remember(CacheKeyEnum::Settings->value, 86400, function () {
            return self::first();
         });
 

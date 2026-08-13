@@ -70,4 +70,10 @@ return [
         'log_activity' => LogActivityAction::class,
         'clean_log' => CleanActivityLogAction::class,
     ],
+
+    'causer' => [
+        'model' => App\Models\User::class,
+        'foreign_key' => 'causer_id',
+        'key_type' => 'string',
+    ]
 ];

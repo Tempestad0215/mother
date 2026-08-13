@@ -93,10 +93,9 @@ export const formatNumber = (val: string | number): number => {
  */
 export const getMoney = (value: number = 0) => {
   return new Intl.NumberFormat('es-DO', {
-    style: 'currency',
+    style: 'decimal',
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-    currency: 'DOP',
   }).format(value);
 };
 

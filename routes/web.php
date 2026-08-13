@@ -95,18 +95,18 @@ Route::middleware([
     /*
      * Rutas adicionales de compras (no estándar)
      */
-    Route::prefix('purchase')->name('purchase.')->group(function () {
-        Route::get('/show', [PurchaseController::class, 'show'])->name('show');
-        Route::get('/receive', [PurchaseController::class, 'receive'])->name('receive');
-        Route::get('/output', [PurchaseController::class, 'output'])->name('output');
-        Route::patch('/{purchase}/cancel', [PurchaseController::class, 'cancel'])->name('cancel');
-        Route::patch('/{purchase}/approve', [PurchaseController::class, 'approve'])->name('approve');
+    Route::prefix('purchase')->name('purchase.')->controller(PurchaseController::class)->group(function () {
+        Route::get('/show', 'show')->name('show');
+        Route::get('/receive', 'receive')->name('receive');
+        Route::post('/receive', 'receiveStore')->name('receiveStore');
+        Route::get('/output', 'output')->name('output');
+        Route::patch('/{purchase}/cancel', 'cancel')->name('cancel');
+        Route::patch('/{purchase}/approve', 'approve')->name('approve');
     });
 
     Route::prefix('supplier')->name('supplier.')->controller(SupplierController::class)->group(function () {
         Route::get('/json', 'getJson')->name('json');
     });
-
 
     /**
      *
@@ -144,8 +144,9 @@ Route::middleware([
         ]);
 
 
-
-
+    /**
+     * Lista de precios
+     */
     Route::get('price-list/product/{product}',[PriceListController::class,'productShow'])
         ->name('price-list.product.show');
 
@@ -264,8 +265,9 @@ Route::middleware([
     });
 
 
-
-    // Test route
+    /**
+     *
+     */
     Route::get('/test', function () {
 
         return Inertia::render('Reports/Index');
