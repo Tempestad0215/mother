@@ -5,19 +5,9 @@ import { ref, watch } from 'vue';
 import { entryBaseI, entryProductI } from '@/Interfaces/EntryTransInterface';
 import axios from 'axios';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
-import FRegister from '@/Pages/Products/Inventory/FRegister.vue';
 import { useRoute } from 'ziggy-js';
-import {
-  Button,
-  Column,
-  DataTable,
-  Dialog,
-  InputGroup,
-  InputGroupAddon,
-  InputText,
-} from 'primevue';
+import { Button, Column, DataTable, InputGroup, InputGroupAddon, InputText } from 'primevue';
 import { clientBaseI } from '@/Interfaces/ClientInterface';
-import Pagination from '@components/Pagination.vue';
 
 const route = useRoute();
 // Propiedades
@@ -61,7 +51,7 @@ const edit = (item: entryProductI) => {
   <AppLayout>
     <DataTable
       paginator
-      :rows="propsW.clientData.meta.per_page ?? 0"
+      :rows="Number(propsW.clientData.meta.per_page) ?? 0"
       :loading="!propsW.clientData.data"
       :value="propsW.clientData.data"
     >

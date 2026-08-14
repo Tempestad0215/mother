@@ -1,31 +1,30 @@
 {
-    "compilerOptions":{
-        "allowJs":true,
-        "module":"ESNext",
-        "moduleResolution":"Bundler",
-        "target":"esnext",
-        "jsx":"preserve",
-        "strict":true,
-        "esModuleInterop":true,
-        "skipLibCheck":true,
-        "forceConsistentCasingInFileNames":true,
-        "noEmit":true,
-        "isolatedModules":true,
-        "lib": ["Es2020", "DOM"],
-        "types": ["vite/client","vue-sweetalert2"],
-        "baseUrl": ".",
-        "paths": {
-            "@components/*" : ["resources/js/Components/*"],
-            "@layout/*" : ["resources/js/Layouts/*"],
-            "@/*" : ["resources/js/*"],
-        }
-    },
-    "include":[
-        "resources/js/**/*.ts",
-        "resources/js/**/*.d.ts",
-        "resources/js/**/*.vue",
-        "env.d.ts",          // ← añade tu archivo de shims aquí
-        "global.d.ts"
-
-    ]
+  "compilerOptions": {
+    "allowJs": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "target": "esnext",
+    "jsx": "preserve",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "isolatedModules": true,
+    "lib": ["Es2020", "DOM"],
+    "types": ["vite/client"],
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": ["resources/js/Components/*"],
+      "@layout/*": ["resources/js/Layouts/*"],
+      "@/*": ["resources/js/*"]
+    }
+  },
+  "include": [
+    "resources/js/**/*.ts",
+    "resources/js/**/*.d.ts",
+    "resources/js/**/*.vue",
+    "env.d.ts", // ← añade tu archivo de shims aquí
+    "global.d.ts"
+  ]
 }

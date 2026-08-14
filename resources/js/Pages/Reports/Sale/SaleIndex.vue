@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { totalSoldAmountI } from '@/Interfaces/ReportInterface';
 import { saleFullI } from '@/Interfaces/SaleInterface';
-import { Money } from 'v-money3';
-import { getMoney, moneyConfig } from '@/Global/Helpers';
 import { FileSearchIcon } from '@lucide/vue';
+import { useForm } from '@inertiajs/vue3';
+import { onMounted, reactive } from 'vue';
+import { saleTypeOptions } from '@/Helpers/SaleHelper';
+import AppLayout from '@layout/AppLayout.vue';
 
 //Propiedadesd de la ventana
 const propsW = defineProps<{
@@ -118,7 +120,7 @@ const submit = () => {
                 v-model="form.type_payment"
                 option-value="value"
                 option-label="name"
-                :options="typeOption"
+                :options="saleTypeOptions"
               />
               <label for="type_payment">Tipo Pago</label>
             </FloatLabel>

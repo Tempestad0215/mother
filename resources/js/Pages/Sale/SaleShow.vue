@@ -4,7 +4,6 @@ import AppLayout from '@layout/AppLayout.vue';
 import FormSearch from '@components/FormSearch.vue';
 import { saleI, salePaginationI } from '@/Interfaces/SaleInterface';
 import { getMoney, printPdf } from '@/Global/Helpers';
-import Pagination from '@components/Pagination.vue';
 import InputError from '@components/InputError.vue';
 import TabLink from '@components/TabLink.vue';
 import { useRoute } from 'ziggy-js';
@@ -113,15 +112,16 @@ const printFact = (item: saleI) => {
       </div>
 
       <!--            PAginacion de la ventana-->
-      <Pagination
-        :field="form.field"
-        :per-page="form.per_page"
-        :search="form.search"
-        :current-page="propsW.sales.current_page"
-        :total-page="propsW.sales.to"
-        :prev="propsW.sales.prev_page_url"
-        :next="propsW.sales.prev_page_url"
-      />
+      <!--      <Pagination-->
+      <!--        :pag=""-->
+      <!--        :field="form.field"-->
+      <!--        :per-page="form.per_page"-->
+      <!--        :search="form.search"-->
+      <!--        :current-page="propsW.sales.current_page"-->
+      <!--        :total-page="propsW.sales.to"-->
+      <!--        :prev="propsW.sales.prev_page_url"-->
+      <!--        :next="propsW.sales.prev_page_url"-->
+      <!--      />-->
 
       <!--           Mensajke de error-->
       <InputError :message="page.props.errors.comment" />

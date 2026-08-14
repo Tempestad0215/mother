@@ -138,7 +138,7 @@ const showClientBox = () => {
     <template #content>
       <DataTable
         paginator
-        :rows="propsW.clientData.meta.per_page ?? 0"
+        :rows="Number(propsW.clientData.meta.per_page) ?? 0"
         :loading="!propsW.clientData.data"
         :value="propsW.clientData.data"
       >
