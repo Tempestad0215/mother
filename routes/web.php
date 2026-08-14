@@ -29,8 +29,6 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Middleware\IsAdminMiddleware;
 use App\Models\Product;
-use App\Models\PurchaseReceipts;
-use App\Models\Setting;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;

@@ -7,7 +7,7 @@ import { onMounted, reactive } from 'vue';
 import { saleTypeOptions } from '@/Helpers/SaleHelper';
 import AppLayout from '@layout/AppLayout.vue';
 
-//Propiedadesd de la ventana
+//Propiedades de la ventana
 const propsW = defineProps<{
   data: saleFullI[];
   total: totalSoldAmountI;
@@ -30,7 +30,7 @@ const form = useForm({
 Al momento de cargar
  */
 onMounted(() => {
-  //colocar la fecha del dia
+  //colocar la fecha del día
   if (!propsW.from || !propsW.to) {
     console.log(propsW);
     form.from = new Date();
@@ -40,7 +40,7 @@ onMounted(() => {
     const hasFrom = route().params.hasOwnProperty('from');
     const hasTo = route().params.hasOwnProperty('to');
 
-    //Colocar los datos de los parametros
+    //Colocar los datos de los parámetros
     form.from = hasFrom ? new Date(route().params.from) : new Date();
     form.to = hasTo ? new Date(route().params.to) : new Date();
     form.type_payment = route().params.type_payment ?? null;
