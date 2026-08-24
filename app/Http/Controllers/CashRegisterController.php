@@ -32,11 +32,13 @@ class CashRegisterController extends Controller
             'opening_balance' => ['required', 'numeric'],
         ]);
 
-        // Crear los datos
+        // Crear los dates
         CashRegister::create([
             'user_uuid' => Auth()->user()->uuid,
             'opening_balance' => $request->input('opening_balance'),
             'closing_balance' => 0.00,
+            'opened_at' => now(),
+            'closed_at' => null,
             'status' => true,
             'expected_balance' => 0.00,
         ]);

@@ -17,7 +17,7 @@ use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
- * @property int id
+ * @property string $uuid
  * @property string $name
  * @property string $email
  * @property UserRoleEnum $role
@@ -48,6 +48,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'uuid',
         'name',
         'email',
         'password',

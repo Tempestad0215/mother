@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->decimal('expected_balance');
             $table->boolean('status');
             $table->timestamp('opened_at');
-            $table->timestamp('closed_at');
+            $table->timestamp('closed_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
