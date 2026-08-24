@@ -8,6 +8,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('cash_registers', function (Blueprint $table) {
+            $table->uuid()->primary();
             $table->string('user_uuid');
             $table->decimal('opening_balance');
             $table->decimal('closing_balance');

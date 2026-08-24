@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('suppliers', function (Blueprint $table) {
-            $table->uuid();
+            $table->uuid()->primary();
             $table->string('code',30)->unique()->comment('codigo unido para cada registro');
             $table->string('contact',75)->nullable()->comment('Nombre del representante');
             $table->string('company_name',150)->unique()->comment('nombre completo');
