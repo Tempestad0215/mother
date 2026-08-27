@@ -9,4 +9,16 @@ enum SaleTypeEnum:string
 
     case Devolucion = 'Devolucion';
 
+
+    /**
+     * @return array
+     */
+    public static function options():array
+    {
+        return array_map(fn($case) => [
+            'label' => $case->value,
+            'value' => $case->name
+        ], self::cases());
+    }
+
 }

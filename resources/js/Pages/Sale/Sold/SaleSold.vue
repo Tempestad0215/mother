@@ -17,22 +17,28 @@ import { getMoney, printPdf } from '@/Global/Helpers';
 import { useForm } from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
 import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
+import { EnumValueI } from '@/Interfaces/GeneralInterface';
 
 const toast = useToast();
 
 const propsW = defineProps<{
   filters?: any;
+  saleTypes: EnumValueI[];
+  paymentTypes: EnumValueI[];
   sales: saleDataI[];
 }>();
 
 const form = useForm({
   from: new Date() as Date | null,
   to: new Date() as Date | null,
-  type: null,
+  sale_type: 'Ventas',
+  payment_type: 'TODO',
 });
 
 const submit = () => {
   form.post(route('sale.get-sold'), {
+    preserveScroll: true,
+    preserveState: true,
     onError: () => {
       toast.add({
         severity: 'error',
@@ -89,14 +95,24 @@ const submit = () => {
                   <label for="to">Hasta</label>
                 </FloatLabel>
 
+                <FloatLabel variant="on">
+                  <Select
+                    v-model="form.sale_type"
+                    :options="propsW.saleTypes"
+                    optionLabel="label"
+                    optionValue="value"
+                  />
+                  <label for="type_sale">Tipo Venta</label>
+                </FloatLabel>
+
                 <FloatLabel variant="on" class="w-full sm:w-48">
                   <Select
                     id="type"
-                    v-model="form.type"
+                    v-model="form.payment_type"
                     class="w-full"
-                    option-label="name"
+                    option-label="label"
                     option-value="value"
-                    :options="saleTypeOptions"
+                    :options="propsW.paymentTypes"
                   />
                   <label for="type">Tipo Venta</label>
                 </FloatLabel>

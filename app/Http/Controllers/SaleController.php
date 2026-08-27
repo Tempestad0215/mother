@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Dtos\GeneralDto;
+use App\Enums\PaymentTypeEnum;
 use App\Enums\SaleTypeEnum;
 use App\Helpers\ClientHelper;
 use App\Helpers\ProductHelper;
@@ -117,8 +118,6 @@ class SaleController extends Controller
         }else{
             $rutaInvoice = route('invoice.sale', [$data->uuid]);
         }
-
-
 
         //DEvolver el id de la venta
         return Inertia::flash(['saleInvoiceUrl' => $rutaInvoice])->back();
@@ -346,7 +345,9 @@ class SaleController extends Controller
     public function showSold(Request $request): Response
     {
         return Inertia::render('Sale/Sold/SaleSold',[
-            'sales' => []
+            'sales' => [],
+            'saleTypes' => SaleTypeEnum::options(),
+            'paymentTypes' => PaymentTypeEnum::options()
         ]);
     }
 
