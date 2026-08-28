@@ -23,7 +23,7 @@ class SaleFactory extends Factory
             'amount' => $this->faker->randomFloat(),
             'status' => $this->faker->boolean(),
             'comment' => $this->faker->word(),
-            'type' => $this->faker->randomNumber([SaleTypeEnum::Ventas, SaleTypeEnum::Cotizacion]),
+            'type' => $this->faker->randomNumber([SaleTypeEnum::VENTAS, SaleTypeEnum::COTIZACION]),
             'close_table' => $this->faker->boolean(),
         ];
     }

@@ -4,10 +4,11 @@ namespace App\Enums;
 
 enum SaleTypeEnum:string
 {
-    case Ventas = 'Ventas';
-    case Cotizacion = 'Cotizacion';
+    case VENTAS = 'VENTAS';
+    case COTIZACION = 'COTIZACION';
 
-    case Devolucion = 'Devolucion';
+    case DEVOLUCION = 'DEVOLUCION';
+    case TODO = 'TODO';
 
 
     /**

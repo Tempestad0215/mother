@@ -25,8 +25,8 @@ class StoreCreditNoteRequest extends FormRequest
     {
         $type = $this->input('type'); // o $this->type
 
-        return $type !== SaleTypeEnum::Devolucion->value
-            && $type !== SaleTypeEnum::Cotizacion->value;
+        return $type !== SaleTypeEnum::DEVOLUCION->value
+            && $type !== SaleTypeEnum::COTIZACION->value;
     }
 
     /**

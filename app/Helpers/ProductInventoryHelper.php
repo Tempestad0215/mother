@@ -54,7 +54,7 @@ class ProductInventoryHelper
             $inventory = $inventories[$findIndex];
 
 
-            if($sale !== null && $sale->type !== SaleTypeEnum::Cotizacion)
+            if($sale !== null && $sale->type !== SaleTypeEnum::COTIZACION)
             {
                 $inventory->qty_on_hand -= $item->qty_on_hand;
                 if (!$sale->close_table) {

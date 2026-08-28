@@ -119,6 +119,28 @@ Route::middleware([
     });
 
     /*
+     * Rutas específicas de ventas
+     */
+    Route::prefix('sale')->controller(SaleController::class)->name('sale.')->group(function () {
+
+        Route::get('/get/sold', 'showSold')->name('show-sold');
+        Route::post('/get/sold', 'getSold')->name('get-sold');
+        Route::get('/refund/{code}', 'refund')->name('refund');
+        Route::get('/close',  'close')->name('close');
+        Route::post('/close/get',  'getClose')->name('get.close');
+        Route::get('/counter',  'counter')->name('counter');
+        Route::patch('/item/destroy/{product}/{sale}',  'destroyItem')->name('destroy.item');
+        Route::patch('/destroy/{sale}/{inventoried}',  'destroySale')->name('destroy-sale');
+
+
+        Route::get('/convert/{sale}','convert')->name('convert');
+    });
+
+//    Route::prefix('sale')->name('sale.')->controller(SaleController::class)->group(function () {
+//        Route::get('/convert/{sale}', 'convert')->name('convert');
+//    });
+
+    /*
      * Resources principales
      *
      */
@@ -172,19 +194,7 @@ Route::middleware([
         Route::patch('/delete/{product}', [ProductController::class, 'destroy'])->name('destroy');
     });
 
-    /*
-     * Rutas específicas de ventas
-     */
-    Route::prefix('sale')->controller(SaleController::class)->name('sale.')->group(function () {
-        Route::get('/get/sold', 'showSold')->name('show-sold');
-        Route::post('/get/sold', 'getSold')->name('get-sold');
-        Route::get('/refund/{code}', 'refund')->name('refund');
-        Route::get('/close',  'close')->name('close');
-        Route::post('/close/get',  'getClose')->name('get.close');
-        Route::get('/counter',  'counter')->name('counter');
-        Route::patch('/item/destroy/{product}/{sale}',  'destroyItem')->name('destroy.item');
-        Route::patch('/destroy/{sale}/{inventoried}',  'destroySale')->name('destroy-sale');
-    });
+
 
     /*
      * Reportes de ventas/Exchange

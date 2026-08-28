@@ -29,8 +29,8 @@ class  StoreProductSaleRequest extends FormRequest
     {
         $type = $this->input('type'); // o $this->type
 
-        return $type !== SaleTypeEnum::Devolucion->value
-            && $type !== SaleTypeEnum::Cotizacion->value;
+        return $type !== SaleTypeEnum::DEVOLUCION->value
+            && $type !== SaleTypeEnum::COTIZACION->value;
     }
 
     /**
@@ -41,7 +41,7 @@ class  StoreProductSaleRequest extends FormRequest
     public function rules(): array
     {
 
-        $isReturn = $this->input('type') === SaleTypeEnum::Devolucion->value;
+        $isReturn = $this->input('type') === SaleTypeEnum::DEVOLUCION->value;
 
 
         /** @var Sale|null| $saleRouteParams */

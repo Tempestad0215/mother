@@ -26,8 +26,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
 use Inertia\Inertia;
 use Inertia\Response;
+use JetBrains\PhpStorm\NoReturn;
 use Throwable;
 
 class SaleController extends Controller
@@ -40,7 +43,13 @@ class SaleController extends Controller
      */
     public function index(Request $request)
     {
+        return $this->showSalePage($request);
 
+    }
+
+
+    private function showSalePage(Request $request, ?SaleInfoResource $saleForConvert = null)
+    {
         //
         $hasExpiredCashRegister = CashRegister::hasExpiredRegister();
 
@@ -78,6 +87,8 @@ class SaleController extends Controller
             'invoiceType' => config('appconfig.invoiceType'),
             'saleTypeEnum' => GeneralDto::getEnumToArray(SaleTypeEnum::class),
             'warehouses' => $warehouses,
+            'saleTypes' => SaleTypeEnum::options(),
+            'saleInfo' => $saleForConvert ?? null,
         ]);
     }
 
@@ -111,7 +122,7 @@ class SaleController extends Controller
 
         $saleType = SaleTypeEnum::from($request->input('type'));
 
-        if($saleType == SaleTypeEnum::Cotizacion)
+        if($saleType == SaleTypeEnum::COTIZACION)
         {
             $rutaInvoice = route('invoice.quote', [$data
             ->uuid]);
@@ -158,6 +169,23 @@ class SaleController extends Controller
 
     }
 
+
+    /**
+     * @param Sale $sale
+     * @param Request $request
+     * @return RedirectResponse|Response
+     */
+    public function convert(Sale $sale, Request $request)
+    {
+
+      
+        $sale->load(['item','client']);
+
+
+        $saleForConvert = new SaleInfoResource($sale);
+
+        return $this->showSalePage($request, $saleForConvert);
+    }
 
     /**
      * Devolver la vista con los datos
@@ -318,7 +346,7 @@ class SaleController extends Controller
     {
         // Obtener la ventas con los items para la devolucions
         $data = Sale::with(['items', 'creditNotes'])
-            ->where('type', SaleTypeEnum::Ventas)
+            ->where('type', SaleTypeEnum::VENTAS)
             ->where('code', $code)
             ->firstOrFail();
 
@@ -342,7 +370,7 @@ class SaleController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function showSold(Request $request): Response
+    public function showSold(Request $request):Response
     {
         return Inertia::render('Sale/Sold/SaleSold',[
             'sales' => [],
@@ -352,41 +380,47 @@ class SaleController extends Controller
     }
 
 
-    public function getSold(Request $request)
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    public function getSold(Request $request):Response
     {
 
         $validate = $request->validate([
             'from' => ['nullable', 'date'],
             'to' => ['nullable', 'date'],
-            'type' => ['nullable', 'string'],
+            'type_payment' => [Rule::enum(PaymentTypeEnum::class)],
+            'type_sale' => [Rule::enum(SaleTypeEnum::class)],
         ]);
-        // 1. Recogemos los filtros del formulario de Vue
-        $from = Carbon::parse($request->input('from'))
-            ->setTimezone('America/Santo_Domingo')
-            ->startOfDay();
-        $to = Carbon::parse($request->input('to'))->setTimezone('America/Santo_Domingo')
-            ->startOfDay();
-
-        $type = $request->input('type');
 
 
-
-        // 2. Construimos la consulta con Eloquent
+// 2. Construir la consulta
         $query = Sale::query()
             ->with(['items', 'client'])
             ->where('close_table', true);
 
-        if ($request->filled('from')) {
+        // 3. Aplicar filtros (usando $validate, no $request)
+        if (!empty($validate['from'])) {
+            $from = Carbon::parse($validate['from'])
+                ->setTimezone('America/Santo_Domingo')
+                ->startOfDay();
             $query->whereDate('created_at', '>=', $from);
         }
 
-        if ($request->filled('to')) {
+        if (!empty($validate['to'])) {
+            $to = Carbon::parse($validate['to'])
+                ->setTimezone('America/Santo_Domingo')
+                ->endOfDay(); // 👈 Importante: endOfDay para incluir
             $query->whereDate('created_at', '<=', $to);
         }
 
-        if ($request->filled('type')) {
+        if (!empty($validate['type_sale']) && $validate['type_sale'] !== SaleTypeEnum::TODO->value ) {
+            $query->where('type', $validate['type_sale']);
+        }
 
-            $query->where('type', $type);
+        if (!empty($validate['type_payment']) && $validate['type_payment'] !== PaymentTypeEnum::TODO->value) {
+            $query->where('type_payment', $validate['type_payment']);
         }
 
         // 3. Obtenemos los resultados
@@ -397,6 +431,8 @@ class SaleController extends Controller
         return Inertia::render('Sale/Sold/SaleSold', [
             'sales' => SaleInfoResource::collection($sales),
             'filters' => $request->all(), // Opcional: para mantener los campos llenos tras la búsqueda
+            'saleTypes' => SaleTypeEnum::options(),
+            'paymentTypes' => PaymentTypeEnum::options()
         ]);
     }
 }

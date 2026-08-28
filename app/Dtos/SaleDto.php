@@ -74,7 +74,7 @@ class SaleDto extends BaseDto
 
         $saleType = SaleTypeEnum::from($data['type']);
 
-        $isQuote = $saleType === SaleTypeEnum::Cotizacion;
+        $isQuote = $saleType === SaleTypeEnum::COTIZACION;
 
 
         return new SaleDto(

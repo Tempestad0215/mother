@@ -34,7 +34,7 @@ class SaleHelper
         $search = $request->input('search');
 
         //Buscar los datos
-        return Sale::whereIn('type', [SaleTypeEnum::Ventas, SaleTypeEnum::Cotizacion])
+        return Sale::whereIn('type', [SaleTypeEnum::VENTAS, SaleTypeEnum::COTIZACION])
             ->where(function (Builder $query) use ($search) {
                 $query->where('client_name', 'like', "%$search%")
                     ->orWhere('code', 'like', "%$search%");

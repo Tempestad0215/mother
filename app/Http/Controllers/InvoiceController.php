@@ -22,10 +22,15 @@ class InvoiceController extends Controller
 {
 
     protected string $pdfGeneratorUrl;
+    private string $userName;
+    private string $password;
+
 
     public function __construct()
     {
-        $this->pdfGeneratorUrl = config('appconfig.url_pdf');
+        $this->pdfGeneratorUrl = config('appconfig.url_pdf').'/forms/chromium/convert/html';
+        $this->userName = config('appconfig.user_name_pdf');
+        $this->password = config('appconfig.user_password_pdf');
     }
 
     /**
@@ -270,28 +275,45 @@ class InvoiceController extends Controller
     /**
      * Método base para interactuar con Gotenberg de forma dinámica.
      *
-     * @throws ConnectionException
+     * @throws ConnectionException|\Laravel\Octane\Exceptions\DdException
      */
     public function generatePdf(
         string $template,
         PrintFormatEnum $format = PrintFormatEnum::Ticket80mm
-    ): ResponseFactory|JsonResponse|Response {
+    ): ResponseFactory|JsonResponse|Response
+    {
 
-        $payload = array_merge($format->dimensions(), [
-            'waitDelay' => '600ms', // Espera para cargar Tailwind 4 por CDN
-        ]);
-
-        $response = Http::attach('index.html', $template, 'index.html')
-            ->post($this->pdfGeneratorUrl, $payload);
-
-        if ($response->successful()) {
-            return response($response->body(), 200, [
-                'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'inline; filename="documento.pdf"'
+        try {
+            $payload = array_merge($format->dimensions(), [
+                'waitDelay' => '600ms', // Espera para cargar Tailwind 4 por CDN
             ]);
+
+            $response = Http::attach('index.html', $template, 'index.html')
+                ->withBasicAuth($this->userName, $this->password)
+                ->withOptions([
+                    'verify' => false
+                ])
+                ->post($this->pdfGeneratorUrl, $payload);
+
+            if ($response->successful()) {
+                return response($response->body(), 200, [
+                    'Content-Type' => 'application/pdf',
+                    'Content-Disposition' => 'inline; filename="documento.pdf"'
+                ]);
+            }
+
+
+            Log::error($response->getStatusCode());
+
+            return response()->json(['error' => 'Error al generar el PDF'], 500);
+
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+
         }
 
-        return response()->json(['error' => 'Error al generar el PDF'], 500);
+
+
     }
 
     /* -------------------------------------------------------------------------- */

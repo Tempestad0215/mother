@@ -149,7 +149,7 @@ class SequenceHelper
     public static function incrementSequence(SequenceSaleTypeEnum $type, SaleTypeEnum $saleType):void
     {
 
-        if($saleType === SaleTypeEnum::Cotizacion)
+        if($saleType === SaleTypeEnum::COTIZACION)
         {
             return;
         }

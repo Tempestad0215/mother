@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\SaleTypeEnum;
+
 class SaleObserver
 {
 
@@ -22,6 +24,13 @@ class SaleObserver
         }else{
             // Opción alternativa: Lanzar una excepción si intentan vender sin abrir caja
             abort(403, 'No puedes realizar ventas sin tener una caja abierta.');
+        }
+
+
+        // Verificar si es cotizacion
+        if($sale->type === SaleTypeEnum::COTIZACION)
+        {
+            $sale->close_table = true;
         }
     }
 

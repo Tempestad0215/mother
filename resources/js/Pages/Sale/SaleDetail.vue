@@ -3,7 +3,7 @@ import { invoiceTypeI, sequenceDataI } from '@/Interfaces/SettingInterface';
 import { usePage } from '@inertiajs/vue3';
 import { ProductTableI } from '@/Interfaces/ProductInterface';
 import { computed, inject, ref } from 'vue';
-import { infoSaleI, saleDataI, SaleTypeEnumI } from '@/Interfaces/SaleInterface';
+import { infoSaleI, saleDataI } from '@/Interfaces/SaleInterface';
 import { saleKey } from '@/utils/keys';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
 import { createSequence, getSequenceType } from '@/Global/Helpers';
@@ -24,6 +24,7 @@ import { getInfoFromPriceList } from '@/Helpers/ProductHelper';
 import SaleOpenShow from './SaleOpenShow.vue';
 import ReturnForm from '@components/ReturnForm.vue';
 import axios from 'axios';
+import { EnumValueI } from '@/Interfaces/GeneralInterface';
 
 // Datos de la ventana
 const toast = useToast();
@@ -35,7 +36,7 @@ const propsW = defineProps<{
   refund?: boolean;
   saleOpen: PaginationI<saleDataI>;
   products: PaginationI<ProductTableI>;
-  saleTypeEnum: SaleTypeEnumI;
+  saleTypes: EnumValueI[];
 }>();
 
 // Emitir eventos para el componente de devoluciones
@@ -62,21 +63,24 @@ const sendReturnInfo = defineModel('sendReturnInfo', {
 
 // Obtener el tipo de venta
 const getSaleType = computed(() => {
-  return Object.entries(propsW.saleTypeEnum).map(([key, value]) => {
-    let shouldHide: boolean;
+  return Object.entries(propsW.saleTypes)
+    .map(([key, value]) => {
+      let shouldHide: boolean;
+      const item: EnumValueI = value as EnumValueI;
 
-    if (form.type === 'Ventas' || form.type === 'Cotizacion') {
-      shouldHide = key === 'Devolucion';
-    } else {
-      shouldHide = key !== 'Devolucion';
-    }
+      if (form.type === 'VENTAS' || form.type === 'COTIZACION') {
+        shouldHide = item.label === 'DEVOLUCION';
+      } else {
+        shouldHide = item.label !== 'DEVOLUCION';
+      }
 
-    return {
-      key: key,
-      value: value,
-      hidden: shouldHide,
-    };
-  });
+      return {
+        key: item.label,
+        value: item.value,
+        hidden: shouldHide,
+      };
+    })
+    .filter((option) => option.value !== 'TODO');
 });
 
 const getSequenceFiltered = computed(() => {

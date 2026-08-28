@@ -54,7 +54,7 @@ class CashRegisterCloseResource extends JsonResource
         foreach ($this->sales as $sale) {
 
             // 1. Si el tipo de venta es Cotización, saltamos esta iteración
-            if ($sale->type === SaleTypeEnum::Cotizacion) {
+            if ($sale->type === SaleTypeEnum::COTIZACION) {
                 continue; // Continúa con la siguiente venta del foreach
             }else{
                 match ($sale->type_payment){
