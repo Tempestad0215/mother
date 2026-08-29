@@ -7,6 +7,7 @@ use App\Models\Client;
 use App\Models\Comment;
 use App\Models\Sale;
 use App\Models\SaleItem;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;
@@ -19,10 +20,14 @@ class SaleInfoResource extends JsonResource
     public function toArray(Request $request): array
     {
 
+        // Verificar si existe el clinete
         $existsClient = (bool)$this->client;
 
+        // Tomar los items de la ventas
+        $saleItems = SaleItemResource::collection($this->items);
 
-        //DEvolver los datos
+
+        //Devolver los datos
         return [
             'uuid' => $this->uuid,
             'invoice_type' => $this->invoice_type,
@@ -39,8 +44,8 @@ class SaleInfoResource extends JsonResource
             'status' => $this->status,
             'type' => $this->type,
             'close_table' => $this->close_table,
-            'info_sale' => $this->whenLoaded('items', function() {
-                return SaleItemResource::collection($this->items);
+            'info_sale' => $this->whenLoaded('items', function() use ($saleItems) {
+                return $saleItems;
             }),
             'comment' => $this->comment,
             'created_at' => $this->created_at,

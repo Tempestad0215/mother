@@ -105,6 +105,18 @@ onMounted(() => {
   if (page.props.errors.general === msjError) {
     showFormReturn.value = true;
   }
+
+  if (propsW.saleInfo && Object.keys(propsW.saleInfo).length > 0) {
+    const data = propsW.saleInfo;
+    client.value = data.client_name;
+    form.client_name = data.client_name;
+    form.info_sale = data.info_sale;
+    form.tax = data.tax;
+    form.sub_total = data.sub_total;
+    form.discount_amount = data.discount_amount;
+    form.amount = data.amount;
+    form.comment = data.comment;
+  }
 });
 
 // Obtener los datos de las cuentas abiertas

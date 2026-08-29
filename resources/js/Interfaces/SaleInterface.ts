@@ -58,7 +58,7 @@ export interface CreateSaleI {
   discount_amount: number;
   amount: number;
   sub_total: number;
-  comment: string;
+  comment: string | null;
   comment_uuid: string;
   close_table: boolean;
   received: number;

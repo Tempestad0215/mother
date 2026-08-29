@@ -64,7 +64,7 @@ const sendReturnInfo = defineModel('sendReturnInfo', {
 // Obtener el tipo de venta
 const getSaleType = computed(() => {
   return Object.entries(propsW.saleTypes)
-    .map(([key, value]) => {
+    .map(([_, value]) => {
       let shouldHide: boolean;
       const item: EnumValueI = value as EnumValueI;
 

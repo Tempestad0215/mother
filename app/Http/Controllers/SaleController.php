@@ -178,8 +178,8 @@ class SaleController extends Controller
     public function convert(Sale $sale, Request $request)
     {
 
-      
-        $sale->load(['item','client']);
+
+        $sale->load(['items','client']);
 
 
         $saleForConvert = new SaleInfoResource($sale);

@@ -36,6 +36,7 @@ use Spatie\Activitylog\Models\Concerns\LogsActivity;
  * @property boolean $status
  * @property boolean $save_cost
  * @property boolean $sequence
+ * @property boolean $add_tax
  * @property Date $deleted_at
  */
 

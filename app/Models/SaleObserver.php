@@ -31,6 +31,8 @@ class SaleObserver
         if($sale->type === SaleTypeEnum::COTIZACION)
         {
             $sale->close_table = true;
+            $sale->ncf = null;
+            $sale->invoice_type = 'COT';
         }
     }
 
