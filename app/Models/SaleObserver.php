@@ -27,6 +27,12 @@ class SaleObserver
         }
 
 
+        // Si la ventas esta abierta se debe quitar el NCF
+        if(!$sale->close_table){
+            $sale->ncf = null;
+
+        }
+
         // Verificar si es cotizacion
         if($sale->type === SaleTypeEnum::COTIZACION)
         {
