@@ -73,16 +73,19 @@ class SequenceHelper
      * Conseguir el rnc
      * @param SequenceSaleTypeEnum $type
      * @return JsonResponse
+     * @throws Throwable
      */
     public function get(SequenceSaleTypeEnum $type):JsonResponse
     {
         //retonar el primer elemento solicitado
         $sequence = Sequence::where('type', $type)
             ->where('status', true)
+            ->lockForUpdate()
             ->first();
 
        //Verificar si la secuancia existe
         if (!$sequence) {
+            DB::rollBack();
             return response()->json([
                 'error' => 'El tipo de Secuancia no existe en lo registro.'
             ],404);
