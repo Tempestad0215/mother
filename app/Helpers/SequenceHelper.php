@@ -7,6 +7,7 @@ use App\Enums\SequenceSaleTypeEnum;
 use App\Http\Requests\SequenceRequest;
 use App\Models\Sequence;
 use App\Models\Setting;
+use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -172,7 +173,7 @@ class SequenceHelper
 
             // 4. Protección contra nulos
             if (!$sequence) {
-                throw new \Exception("No hay una secuencia activa disponible para el tipo: {$type->value}");
+                throw new Exception("No hay una secuencia activa disponible para el tipo: $type->value");
             }
 
             // 5. Incrementar
