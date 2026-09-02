@@ -9,7 +9,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('taxes', function (Blueprint $table) {
-            $table->uuid();
+            $table->uuid()->primary();
             $table->string('name')->unique();
             $table->string('description')->nullable();
             $table->decimal('rate', 5);
