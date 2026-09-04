@@ -11,6 +11,8 @@ export const createSequence = (type: string, next: number) => {
   return `${cleanType}${paddedNext}`;
 };
 
+export const paginationOptions = [15, 25, 45, 60, 75, 100];
+
 /**
  *
  * Configuracionde dinero

@@ -67,6 +67,7 @@ class ProductController extends Controller implements HasMiddleware
             return to_route('setting.index');
         }
 
+
         /** @var string|null $search */
         $search = $request->input('search');
         // Para controlar la cantidad de datos por página
@@ -79,7 +80,7 @@ class ProductController extends Controller implements HasMiddleware
                        ->orWhere('description', 'ILIKE', '%' . $search . '%');
                });
         })->latest()
-            ->simplePaginate($perPage)
+            ->paginate($perPage)
             ->withQueryString();
 
         // Transformar los datos
@@ -339,6 +340,10 @@ class ProductController extends Controller implements HasMiddleware
     public function createLabel(string $code)
     {
 
+        $pdfGeneratorUrl = config('appconfig.url_pdf').'/forms/chromium/convert/html';
+        $userName = config('appconfig.user_name_pdf');
+        $password = config('appconfig.user_password_pdf');
+
         // Craer él, template con los datos
         $labelTemplate = view('pdfs.ticket.label',[
             'code' => $code
@@ -346,7 +351,8 @@ class ProductController extends Controller implements HasMiddleware
 
         // Crear la respuestas
         $response = Http::attach('index.hmtl', $labelTemplate, 'index.html')
-            ->post("http://localhost:3100/forms/chromium/convert/html",[
+            ->withBasicAuth($userName, $password)
+            ->post($pdfGeneratorUrl,[
                 'paperWidth' => '3.14',  // 80mm en pulgadas
                 'paperHeight' => '1.5',   // Alto estimado de página corta
                 'marginLeft' => '0.1',

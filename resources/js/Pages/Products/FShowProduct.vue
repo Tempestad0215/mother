@@ -9,6 +9,7 @@ import {
   Button,
   Column,
   DataTable,
+  DataTablePageEvent,
   InputGroup,
   InputGroupAddon,
   InputText,
@@ -19,6 +20,7 @@ import { getInfoFromWarehouse, productBreadCrumb } from '@/Helpers/ProductHelper
 import { PreciseCalculator } from '@/utils/Decimal';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
 import { FilePenLine, PackagePlus, Shredder, CheckCircle } from '@lucide/vue';
+import { paginationOptions } from '@/Global/Helpers';
 
 const toast = useToast();
 const confirm = useConfirm();
@@ -101,13 +103,40 @@ const deleteData = (data: ProductTableI, event: Event) => {
     },
   });
 };
+
+const onPageChange = (event: DataTablePageEvent) => {
+  console.log(event);
+
+  const perPage = paginationOptions.includes(event.rows) ? event.rows : paginationOptions[0];
+  const page = event.page + 1;
+
+  console.log(perPage);
+
+  router.get(
+    route('product.index'),
+    {
+      page: page,
+      per_page: perPage,
+    },
+    {
+      preserveState: true,
+      preserveScroll: true,
+      only: ['products'],
+    }
+  );
+};
 </script>
 
 <template>
   <DataTable
+    lazy
+    @page="onPageChange"
     paginator
     responsiveLayout="stack"
     breakpoint="768px"
+    :rowsPerPageOptions="paginationOptions"
+    :total-records="Number(propsW.products.meta.total)"
+    :first="(propsW.products.meta.current_page - 1) * Number(propsW.products.meta.per_page)"
     :rows="Number(propsW.products.meta.per_page) ?? 0"
     :loading="!propsW.products.data"
     :value="propsW.products.data"
@@ -230,11 +259,11 @@ const deleteData = (data: ProductTableI, event: Event) => {
     </Column>
 
     <!-- Paginador -->
-    <template #paginatorcontainer>
-      <div class="p-2 border-t border-slate-200">
-        <Pagination :search="searchValue" :pag="propsW.products" />
-      </div>
-    </template>
+    <!--    <template #paginatorcontainer>-->
+    <!--      <div class="p-2 border-t border-slate-200">-->
+    <!--        <Pagination :search="searchValue" :pag="propsW.products" />-->
+    <!--      </div>-->
+    <!--    </template>-->
   </DataTable>
 </template>
 
