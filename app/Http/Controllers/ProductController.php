@@ -353,8 +353,8 @@ class ProductController extends Controller implements HasMiddleware
         $response = Http::attach('index.hmtl', $labelTemplate, 'index.html')
             ->withBasicAuth($userName, $password)
             ->post($pdfGeneratorUrl,[
-                'paperWidth' => '3.14',  // 80mm en pulgadas
-                'paperHeight' => '1.5',   // Alto estimado de página corta
+                'paperWidth' => '2',  // 80mm en pulgadas
+                'paperHeight' => '2',   // Alto estimado de página corta
                 'marginLeft' => '0.1',
                 'marginRight' => '0.1',
                 'marginTop' => '0.1',    // Espacio para la cabecera fija
