@@ -4,6 +4,7 @@ import {
   Button,
   Column,
   DataTable,
+  DataTablePageEvent,
   Dialog,
   InputGroup,
   InputGroupAddon,
@@ -21,6 +22,7 @@ import { FilePenLine, Shredder, UserPlus } from '@lucide/vue';
 import AppLayout from '@layout/AppLayout.vue';
 import FRegister from '@/Pages/Clients/FRegister.vue';
 import { EnumValueI } from '@/Interfaces/GeneralInterface';
+import { paginationOptions } from '@/Global/Helpers';
 
 const route = useRoute();
 const confirm = useConfirm();
@@ -98,15 +100,35 @@ const createNewClient = () => {
   clientSelected.value = null;
   showClient.value = true;
 };
+
+const onPageChange = (event: DataTablePageEvent) => {
+  const page = event.page + 1;
+  const perPage = paginationOptions.includes(event.rows) ? event.rows : paginationOptions[0];
+  router.get(
+    route('client.index'),
+    {
+      per_page: perPage,
+      page: page,
+    },
+    {
+      preserveState: true,
+      preserveScroll: false,
+    }
+  );
+};
 </script>
 
 <template>
   <AppLayout>
     <DataTable
+      @page="onPageChange"
+      lazy
       paginator
       responsiveLayout="stack"
       breakpoint="768px"
+      :rowsPerPageOptions="paginationOptions"
       :rows="parseFloat(props.clientData.meta.per_page.toString())"
+      :totalRecords="parseFloat(props.clientData.meta.total.toString())"
       :loading="!props.clientData.data"
       :value="props.clientData.data"
       class="shadow-sm rounded-lg overflow-hidden border border-slate-200"
@@ -188,13 +210,6 @@ const createNewClient = () => {
           </div>
         </template>
       </Column>
-
-      <!-- Paginador -->
-      <template #paginatorcontainer>
-        <div class="p-2 border-t border-slate-200">
-          <Pagination :search="searchValue" :pag="props.clientData" />
-        </div>
-      </template>
     </DataTable>
   </AppLayout>
   <!-- Modal Adaptativo de Registro / Edición de Cliente -->

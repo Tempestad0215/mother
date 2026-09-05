@@ -20,6 +20,7 @@ import Pagination from '@components/Pagination.vue';
 import { getSearchTable } from '@/Global/SearchTable';
 import { router } from '@inertiajs/vue3';
 import { PackagePlus, FilePenLine, Shredder } from '@lucide/vue';
+import { onPageChange, paginationOptions } from '@/Global/Helpers';
 
 const route = useRoute();
 const confirm = useConfirm();
@@ -101,9 +102,13 @@ const resetForm = () => {
   <AppLayout>
     <div class="w-full px-2 sm:px-4 py-4 max-w-7xl mx-auto">
       <DataTable
+        @page="onPageChange($event, route('supplier.index'), ['suppliers'])"
+        lazy
         paginator
         responsiveLayout="stack"
         breakpoint="768px"
+        :rowsPerPageOptions="paginationOptions"
+        :totalRecords="propsW.suppliers.meta.total"
         :rows="parseFloat(propsW.suppliers.meta.per_page.toString())"
         :loading="!propsW.suppliers.data"
         :value="propsW.suppliers.data"
@@ -191,13 +196,6 @@ const resetForm = () => {
             </div>
           </template>
         </Column>
-
-        <!-- Paginador -->
-        <template #paginatorcontainer>
-          <div class="p-2 border-t border-slate-200">
-            <Pagination :search="searchValue" :pag="propsW.suppliers" />
-          </div>
-        </template>
       </DataTable>
 
       <!-- Modal de Registro / Edición -->

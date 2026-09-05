@@ -199,7 +199,7 @@ class ClientController extends Controller implements HasMiddleware
     {
         // Tomar los datos
         $search = trim($request->input('search'));
-        $perPage = $request->input('perPage',30);
+        $perPage = $request->input('perPage',15);
 
         $clients = Client::query()
             ->where('status',true)

@@ -20,7 +20,7 @@ import { getInfoFromWarehouse, productBreadCrumb } from '@/Helpers/ProductHelper
 import { PreciseCalculator } from '@/utils/Decimal';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
 import { FilePenLine, PackagePlus, Shredder, CheckCircle } from '@lucide/vue';
-import { paginationOptions } from '@/Global/Helpers';
+import { onPageChange, paginationOptions } from '@/Global/Helpers';
 
 const toast = useToast();
 const confirm = useConfirm();
@@ -104,33 +104,31 @@ const deleteData = (data: ProductTableI, event: Event) => {
   });
 };
 
-const onPageChange = (event: DataTablePageEvent) => {
-  console.log(event);
-
-  const perPage = paginationOptions.includes(event.rows) ? event.rows : paginationOptions[0];
-  const page = event.page + 1;
-
-  console.log(perPage);
-
-  router.get(
-    route('product.index'),
-    {
-      page: page,
-      per_page: perPage,
-    },
-    {
-      preserveState: true,
-      preserveScroll: true,
-      only: ['products'],
-    }
-  );
-};
+// const onPageChange = (event: DataTablePageEvent) => {
+//   console.log(event);
+//
+//   const perPage = paginationOptions.includes(event.rows) ? event.rows : paginationOptions[0];
+//   const page = event.page + 1;
+//
+//   router.get(
+//     route('product.index'),
+//     {
+//       page: page,
+//       per_page: perPage,
+//     },
+//     {
+//       preserveState: true,
+//       preserveScroll: true,
+//       only: ['products'],
+//     }
+//   );
+// };
 </script>
 
 <template>
   <DataTable
     lazy
-    @page="onPageChange"
+    @page="onPageChange($event, route('product.index'), ['products'])"
     paginator
     responsiveLayout="stack"
     breakpoint="768px"

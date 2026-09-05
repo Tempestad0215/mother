@@ -146,8 +146,17 @@ class PurchaseController extends Controller
      */
     public function show(PaginationRequest $request)
     {
+        $validate = $request->validate([
+           'per_page' => ['nullable','integer','min:15','max:100'],
+           'page' => ['nullable','integer','min:1'],
+           'search' => ['nullable','string'],
+        ]);
+
+
+        $data = Purchase::with(['supplier','items'])->paginate($validate['per_page'] ?? 15);
+
         return Inertia::render('Purchase/TablePurchase',[
-            'purchases' =>  PurchaseSupplierResource::collection(Purchase::with(['supplier','items'])->get())
+            'purchases' =>  PurchaseSupplierResource::collection($data)
         ]);
     }
 

@@ -51,7 +51,6 @@ class ClientHelper
             //Instancia
             $general = new General();
             //Obtener el tipo
-            //Guardar los datos validados
             $client = Client::create($request->validated());
 
             //Guardar la imagen y quedarse con el nombre

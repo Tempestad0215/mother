@@ -98,6 +98,7 @@ const submit = (): void => {
         emit('close');
       },
       onError: (er) => {
+        console.log(er);
         toast.add({
           severity: 'error',
           summary: 'Error',
@@ -119,6 +120,7 @@ const submit = (): void => {
         emit('close');
       },
       onError: (er) => {
+        console.log(er);
         toast.add({
           severity: 'error',
           summary: 'Error',

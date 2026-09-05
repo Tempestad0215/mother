@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { string } from 'fast-glob/out/utils';
+import { DataTablePageEvent } from 'primevue';
+import { router } from '@inertiajs/vue3';
 
 export const urlRNC = 'http://localhost:8083/api/v1/rnc/';
 
@@ -296,4 +298,23 @@ export const exportExcel = async (path: string, fielName: string) => {
   } catch (error) {
     // errorHttp("Error al intentar descargar el docuemento")
   }
+};
+
+// Para la paginacion
+export const onPageChange = (event: DataTablePageEvent, url: string, only: string[]) => {
+  const page = event.page + 1;
+  const perPage = paginationOptions.includes(event.rows) ? event.rows : paginationOptions[0];
+
+  router.get(
+    url,
+    {
+      page: page,
+      per_page: perPage,
+    },
+    {
+      preserveScroll: true,
+      preserveState: true,
+      only: only,
+    }
+  );
 };
