@@ -47,7 +47,7 @@
 
     <!-- SVG del código de barras -->
     <div class="barcode-wrapper">
-        {!! \Milon\Barcode\Facades\DNS1DFacade::getBarcodeSVG($code, 'C128', 3.2, 110, 'black', false) !!}
+        {!! \Milon\Barcode\Facades\DNS1DFacade::getBarcodeSVG($code, 'C128', 1.1, 80, 'black', false) !!}
     </div>
 
     <!-- Texto inferior con el código aumentado y estilizado -->
