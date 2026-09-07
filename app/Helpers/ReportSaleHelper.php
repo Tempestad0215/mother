@@ -20,7 +20,7 @@ class ReportSaleHelper
 
         //buscar los datos de la venta
         $data = Sale::whereBetween('created_at', [$reportDto->from, $reportDto->to])
-            ->where('type',SaleTypeEnum::Ventas)
+            ->where('type',SaleTypeEnum::VENTAS)
             ->where('status', true)
             ->when($reportDto->type_payment != null, function ($query) use ($reportDto) {
                 $query->where('type_payment', $reportDto->type_payment);

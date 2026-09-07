@@ -59,7 +59,7 @@ class CashRegisterController extends Controller
 
         if(!$cashRegister)
         {
-            return redirect()->route('dashboard');
+            return redirect()->route('cash-register.index');
         }
 
 

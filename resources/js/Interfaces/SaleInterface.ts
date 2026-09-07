@@ -6,6 +6,8 @@ export interface SaleTypeEnumI {
   devolucion: string;
 }
 
+export type SaleTypeEnum = 'VENTAS' | 'COTIZACION' | 'DEVOLUCION';
+
 export interface editFormI {
   stock: number;
   price: number;
@@ -56,7 +58,7 @@ export interface CreateSaleI {
   discount_amount: number;
   amount: number;
   sub_total: number;
-  comment: string;
+  comment: string | null;
   comment_uuid: string;
   close_table: boolean;
   received: number;
@@ -88,6 +90,7 @@ export interface saleI {
 
 export interface saleDataI {
   client_uuid: string;
+  type: SaleTypeEnum;
   client_name: string;
   client_document: string | null;
   client_rnc: string;
@@ -173,4 +176,11 @@ export interface creditPaginationI {
 export interface creditNotesSaleI extends saleI {
   ncf: string;
   n_available: number;
+}
+
+export interface SaleSoldFilterI {
+  from: Date;
+  to: Date;
+  sale_type: string;
+  payment_type: string;
 }

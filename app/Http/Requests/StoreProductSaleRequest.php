@@ -29,8 +29,8 @@ class  StoreProductSaleRequest extends FormRequest
     {
         $type = $this->input('type'); // o $this->type
 
-        return $type !== SaleTypeEnum::Devolucion->value
-            && $type !== SaleTypeEnum::Cotizacion->value;
+        return $type !== SaleTypeEnum::DEVOLUCION->value
+            && $type !== SaleTypeEnum::COTIZACION->value;
     }
 
     /**
@@ -41,7 +41,7 @@ class  StoreProductSaleRequest extends FormRequest
     public function rules(): array
     {
 
-        $isReturn = $this->input('type') === SaleTypeEnum::Devolucion->value;
+        $isReturn = $this->input('type') === SaleTypeEnum::DEVOLUCION->value;
 
 
         /** @var Sale|null| $saleRouteParams */
@@ -88,8 +88,8 @@ class  StoreProductSaleRequest extends FormRequest
             'discount_amount' => ['required','numeric'],
             'type' => ['required',Rule::enum(SaleTypeEnum::class)],
             'type_payment' => ['nullable',Rule::requiredIf($this->isTypePaymentRequired()) ,Rule::enum(PaymentTypeEnum::class)],
-            'd' => ['required','numeric'],
             'returned' => ['required','numeric'],
+            'received' => ['nullable','numeric'],
             'credit_notes' => ['nullable','array'],
             'credit_notes.*.uuid' => ['required','uuid','exists:credit_notes,uuid'],
             'credit_notes.*.n_available' => ['required','numeric'],

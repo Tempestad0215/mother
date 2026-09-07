@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\SaleTypeEnum;
+
 class SaleObserver
 {
 
@@ -22,6 +24,21 @@ class SaleObserver
         }else{
             // Opción alternativa: Lanzar una excepción si intentan vender sin abrir caja
             abort(403, 'No puedes realizar ventas sin tener una caja abierta.');
+        }
+
+
+        // Si la ventas esta abierta se debe quitar el NCF
+        if(!$sale->close_table){
+            $sale->ncf = null;
+
+        }
+
+        // Verificar si es cotizacion
+        if($sale->type === SaleTypeEnum::COTIZACION)
+        {
+            $sale->close_table = true;
+            $sale->ncf = null;
+            $sale->invoice_type = 'COT';
         }
     }
 

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\PaymentTypeEnum;
 use App\Enums\SaleTypeEnum;
+use App\Traits\HasCode;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -58,6 +59,7 @@ class Sale extends Model
     use softDeletes;
     use HasUuids;
     use LogsActivity;
+    use HasCode;
 
     // La tabla que se ve a utilizar
     protected $table = 'sales';
@@ -65,6 +67,9 @@ class Sale extends Model
     protected $primaryKey = 'uuid';
     protected $keyType = 'string';
     public $incrementing = false;
+
+
+    protected string $codePrefix = 'FACT';
 
     /**
      * Guardar los datos
@@ -170,44 +175,6 @@ class Sale extends Model
             get: fn(string $value) => Carbon::parse($value)->format('d/m/Y H:i:s'),
             set: fn(string $value) => Carbon::parse($value)->format('Y-m-d H:i:s'),
         );
-    }
-
-    /**
-     * @return void
-     */
-    protected static function boot(): void
-    {
-        // Llamar el metodo principal
-        parent::boot();
-
-        //Generar el codigo los codigos
-        static::creating(function ($model) {
-            $model->code = self::generateCode($model);
-        });
-    }
-
-    /**
-     * @param Sale $model
-     * @return string
-     */
-    // funcion para generar el codigo
-    private static function generateCode(self $model): string
-    {
-        // Obtener el último registro
-        $total = self::withTrashed()->where('type',SaleTypeEnum::from($model->type->value))->count();
-
-        if ($model->type === SaleTypeEnum::Cotizacion) {
-            $code = config('appconfig.quoCode');
-        } else {
-            $code = config('appconfig.saleCode');
-        }
-
-
-        // Generar el proximo ID
-        $nextID = $total ? $total + 1 : 1;
-
-        // craer el codigp
-        return Str::upper($code). str_pad($nextID, 6, '0', STR_PAD_LEFT);
     }
 
 

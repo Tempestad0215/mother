@@ -109,7 +109,7 @@ class SaleItemHelper
 
 
             // Solo hacer cambio si cambio el resultado
-            if (bccomp($result, '0', 4) !== 0 && $sale->type !== SaleTypeEnum::Cotizacion) {
+            if (bccomp($result, '0', 4) !== 0 && $sale->type !== SaleTypeEnum::COTIZACION) {
                 // Actualizar el stock físico y registrar el movimiento correspondiente basándonos en la diferencia
                 self::updateStockAndMovement(
                     productUuid: $item->product_uuid,

@@ -9,6 +9,7 @@ import {
   CreateSaleI,
   infoSaleI,
   saleDataI,
+  SaleTypeEnum,
   SaleTypeEnumI,
   WarehouseMapType,
 } from '@/Interfaces/SaleInterface';
@@ -27,6 +28,7 @@ import { PreciseCalculator } from '@/utils/Decimal';
 import { SaleBreadCrumbs } from '@/Helpers/SaleHelper';
 import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
 import { CreditCard, Eraser, Send } from '@lucide/vue';
+import { EnumValueI } from '@/Interfaces/GeneralInterface';
 
 // Datos de la ventana
 const toast = useToast();
@@ -43,6 +45,7 @@ const propsW = defineProps<{
   invoiceType: invoiceTypeI[];
   saleInfo?: saleDataI;
   pdfUuid?: string;
+  saleTypes: EnumValueI[];
   saleTypeEnum: SaleTypeEnumI;
   warehouses: WarehouseMapType;
 }>();
@@ -81,7 +84,7 @@ const form = useForm<CreateSaleI>({
   received: 0,
   returned: 0,
   general: '',
-  type: 'Ventas' as 'Ventas' | 'Devolucion' | 'Cotizacion',
+  type: 'VENTAS' as SaleTypeEnum,
   type_payment: 'CONTADO',
   update: false,
   sequence: '',
@@ -101,6 +104,18 @@ onMounted(() => {
   let msjError = 'Este Codigo No es Validos, Introduzca Uno Validado';
   if (page.props.errors.general === msjError) {
     showFormReturn.value = true;
+  }
+
+  if (propsW.saleInfo && Object.keys(propsW.saleInfo).length > 0) {
+    const data = propsW.saleInfo;
+    client.value = data.client_name;
+    form.client_name = data.client_name;
+    form.info_sale = data.info_sale;
+    form.tax = data.tax;
+    form.sub_total = data.sub_total;
+    form.discount_amount = data.discount_amount;
+    form.amount = data.amount;
+    form.comment = data.comment;
   }
 });
 
@@ -157,7 +172,7 @@ watch(
 );
 
 const setDataForm = () => {
-  if (form.type === 'Devolucion' && propsW.saleInfo) {
+  if (form.type === 'DEVOLUCION' && propsW.saleInfo) {
     form.uuid = propsW.saleInfo.uuid;
     form.ncf_m = propsW.saleInfo.ncf;
     form.client_name = propsW.saleInfo.client_name;
@@ -165,7 +180,7 @@ const setDataForm = () => {
     form.client_rnc = propsW.saleInfo.client_rnc;
     form.info_sale = propsW.saleInfo.info_sale;
     form.invoice_type = page.props.setting.sequence ? 'B04' : '';
-    form.type = 'Devolucion';
+    form.type = 'DEVOLUCION';
   }
 };
 
@@ -204,7 +219,7 @@ const sendData = async () => {
       life: 3500,
     });
   } else {
-    if (form.type === 'Devolucion' && form.info_sale.length > 0) {
+    if (form.type === 'DEVOLUCION' && form.info_sale.length > 0) {
       createCreditNotes();
     } else {
       if (form.update) {
@@ -267,7 +282,7 @@ const updateSale = async () => {
 };
 
 const registerSale = () => {
-  if (form.type === 'Cotizacion' || !form.close_table || form.type === 'Devolucion') {
+  if (form.type === 'Cotizacion' || !form.close_table || form.type === 'DEVOLUCION') {
     sendData();
   } else {
     paymentBox.value = true;
@@ -347,12 +362,12 @@ provide(saleKey, form);
             <!-- Búsqueda y Selección de Productos -->
             <SaleDetail
               v-model:send-return-info="returnInfo"
-              :saleTypeEnum="propsW.saleTypeEnum"
+              :saleTypes="propsW.saleTypes"
               ref="saleDetailRef"
               :products="propsW.products"
               :sale-open="propsW.saleOpen"
               :invoice-type="propsW.invoiceType"
-              :refund="form.type === 'Devolucion'"
+              :refund="form.type === 'DEVOLUCION'"
               @sendClientName="setName"
               @total-sale=""
               @total-amount="saleTableRef?.calculateItemRow($event)"

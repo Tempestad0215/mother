@@ -2,12 +2,12 @@
 
 namespace App\Helpers;
 
-use App\Enums\AccountTypeEnum;
 use App\Http\Requests\StoreClientsRequest;
 use App\Http\Requests\UpdateClientsRequest;
 use App\Models\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class ClientHelper
 {
@@ -22,7 +22,6 @@ class ClientHelper
 
         $search = $request->input('search');
         $perPage = $request->input('perPage', 15);
-        $field = $request->input('field', 'name');
 
 
         $fieldAllowed = ['name', 'document', 'phone', 'personal_id', 'email'];
@@ -41,7 +40,7 @@ class ClientHelper
     /**
      * @param StoreClientsRequest $request
      * @return void
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function store(StoreClientsRequest $request): void
     {
@@ -52,7 +51,6 @@ class ClientHelper
             //Instancia
             $general = new General();
             //Obtener el tipo
-            //Guardar los datos validados
             $client = Client::create($request->validated());
 
             //Guardar la imagen y quedarse con el nombre
@@ -77,14 +75,13 @@ class ClientHelper
      * @param UpdateClientsRequest $request
      * @param Client $client
      * @return void
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function update(UpdateClientsRequest $request, Client $client): void
     {
         //Asegurar que se cumpla la transaccion
         DB::transaction(function () use ($request, $client) {
             //Obtener el tipo
-            $type = $request->get('type');
 
             //Actualizar el cliente
             $client->update($request->validated());

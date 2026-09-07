@@ -12,7 +12,8 @@ return  [
     'url_pdf' => env('URL_PDF'),
     'url_rnc' => env('URL_RNC'),
 
-
+    'user_name_pdf' => env('GOTENBERG_API_BASIC_AUTH_USERNAME'),
+    'user_password_pdf' => env('GOTENBERG_API_BASIC_AUTH_PASSWORD'),
 
     /*
      * Datos de la emprsa

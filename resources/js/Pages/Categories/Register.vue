@@ -17,9 +17,9 @@ import { ref } from 'vue';
 import { router } from '@inertiajs/vue3';
 import { useRoute } from 'ziggy-js';
 import FRegister from '@/Pages/Categories/FRegister.vue';
-import Pagination from '@components/Pagination.vue';
 import { getSearchTable } from '@/Global/SearchTable';
 import { FilePenLine, ListFilterPlus, Shredder } from '@lucide/vue';
+import { onPageChange, paginationOptions } from '@/Global/Helpers';
 
 const route = useRoute();
 const confirm = useConfirm();
@@ -98,9 +98,13 @@ const resetForm = () => {
   <AppLayout>
     <div class="w-full px-2 sm:px-4 py-4 max-w-7xl mx-auto">
       <DataTable
+        @page="onPageChange($event, route('category.index'), ['categories'])"
+        lazy
         paginator
         responsiveLayout="stack"
         breakpoint="768px"
+        :rowsPerPageOptions="paginationOptions"
+        :totalRecords="parseInt(propsW.categories.meta.total.toString())"
         :rows="parseFloat(propsW.categories.meta.per_page.toString())"
         :loading="!propsW.categories.data"
         :value="propsW.categories.data"
@@ -177,13 +181,6 @@ const resetForm = () => {
             </div>
           </template>
         </Column>
-
-        <!-- Paginador -->
-        <template #paginatorcontainer>
-          <div class="p-2 border-t border-slate-200">
-            <Pagination :search="searchValue" :pag="propsW.categories" />
-          </div>
-        </template>
       </DataTable>
 
       <!-- Modal de Registro / Edición -->

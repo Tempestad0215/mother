@@ -83,6 +83,10 @@ class SaleItem extends Model
         return $this->belongsTo(Product::class, 'product_uuid', 'uuid');
     }
 
+    public function warehouse(): BelongsTo
+    {
+        return $this->belongsTo(Warehouse::class, 'warehouse_uuid', 'uuid');
+    }
 
 
 

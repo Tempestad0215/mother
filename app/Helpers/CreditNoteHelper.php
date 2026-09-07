@@ -47,7 +47,7 @@ class CreditNoteHelper
             $data = SaleDto::fromArray($request->validated());
 
             //Verificar si existe para aumentar el contador de la nota de credito
-            if ($data->type == SaleTypeEnum::Devolucion->value && $setting?->sequence) {
+            if ($data->type == SaleTypeEnum::DEVOLUCION->value && $setting?->sequence) {
                 //Crear el aumento el comprobante
                 SequenceHelper::incrementSequence(SequenceSaleTypeEnum::B04, $request);
             }

@@ -61,7 +61,7 @@ class DashboardController extends Controller
     {
         $data = Product::where('status', true)
             ->whereHas('saleItem.sale', function ($query) {
-                $query->where('type', '=', SaleTypeEnum::Ventas);
+                $query->where('type', '=', SaleTypeEnum::VENTAS);
                 // O si manejas estados positivos: ->where('status', 'COMPLETADA');
             })
             ->withSum('saleItem as total_qty', 'stock')

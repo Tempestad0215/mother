@@ -81,7 +81,7 @@ const printLabel = async () => {
   <div class="space-y-4">
     <!-- Barra Superior de Acciones (Botones Crear / Imprimir) -->
     <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
-      <div>
+      <div class="flex w-30">
         <Button
           v-if="propsW.update"
           :loading="loadingLabel"
@@ -89,13 +89,10 @@ const printLabel = async () => {
           @click="printLabel()"
           severity="secondary"
           outlined
-          class="h-9"
+          class="w-20! px-5 xs sm:text-sm"
           title="Imprimir Label"
         >
-          <template #icon>
-            <Printer class="w-4 h-4 mr-1 text-slate-700" />
-          </template>
-          <span>Etiqueta</span>
+          <span class="w-30">Etiqueta</span>
         </Button>
       </div>
 

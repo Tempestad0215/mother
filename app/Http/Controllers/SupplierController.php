@@ -48,8 +48,8 @@ class SupplierController extends Controller implements HasMiddleware
                 $query->where('company_name', 'ILIKE', "%$search%")
                     ->orWhere('contact', 'ILIKE', "%$search%")
                     ->orWhere('email', 'ILIKE', "%$search%");
-            })->orderBy('created_at', 'desc')
-            ->simplePaginate($per_page)
+            })->orderByDesc('created_at')
+            ->paginate($per_page)
             ->withQueryString();
 
         $paymentType = collect(PaymentTypeEnum::cases())->mapWithKeys(fn(paymentTypeEnum $value) => [$value->name => $value->value]);

@@ -4,9 +4,22 @@ namespace App\Enums;
 
 enum SaleTypeEnum:string
 {
-    case Ventas = 'Ventas';
-    case Cotizacion = 'Cotizacion';
+    case VENTAS = 'VENTAS';
+    case COTIZACION = 'COTIZACION';
 
-    case Devolucion = 'Devolucion';
+    case DEVOLUCION = 'DEVOLUCION';
+    case TODO = 'TODO';
+
+
+    /**
+     * @return array
+     */
+    public static function options():array
+    {
+        return array_map(fn($case) => [
+            'label' => $case->value,
+            'value' => $case->name
+        ], self::cases());
+    }
 
 }

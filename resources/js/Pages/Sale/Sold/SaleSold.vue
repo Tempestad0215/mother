@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SaleBreadCrumbs, saleTypeOptions } from '@/Helpers/SaleHelper';
+import { SaleBreadCrumbs } from '@/Helpers/SaleHelper';
 import {
   useToast,
   Card,
@@ -11,28 +11,42 @@ import {
   FloatLabel,
   Divider,
 } from 'primevue';
-import { saleDataI } from '@/Interfaces/SaleInterface';
-import { Printer, Search } from '@lucide/vue';
+import { saleDataI, SaleSoldFilterI, SaleTypeEnum } from '@/Interfaces/SaleInterface';
+import { Printer, Search, ReceiptText } from '@lucide/vue';
 import { getMoney, printPdf } from '@/Global/Helpers';
-import { useForm } from '@inertiajs/vue3';
+import { router, useForm } from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
 import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
+import { EnumValueI } from '@/Interfaces/GeneralInterface';
+import { onMounted } from 'vue';
+import { useRoute } from 'ziggy-js';
 
 const toast = useToast();
 
 const propsW = defineProps<{
-  filters?: any;
+  filters?: SaleSoldFilterI;
+  saleTypes: EnumValueI[];
+  paymentTypes: EnumValueI[];
   sales: saleDataI[];
 }>();
 
 const form = useForm({
   from: new Date() as Date | null,
   to: new Date() as Date | null,
-  type: null,
+  type_sale: 'VENTAS' as SaleTypeEnum,
+  type_payment: 'TODO',
+});
+
+onMounted(() => {
+  if (propsW.filters && Object.keys(propsW.filters).length > 0) {
+    Object.assign(form, propsW.filters);
+  }
 });
 
 const submit = () => {
   form.post(route('sale.get-sold'), {
+    preserveScroll: true,
+    preserveState: true,
     onError: () => {
       toast.add({
         severity: 'error',
@@ -42,6 +56,10 @@ const submit = () => {
       });
     },
   });
+};
+
+const convert = (uuid: string) => {
+  router.get(route('sale.convert', uuid));
 };
 </script>
 
@@ -89,14 +107,24 @@ const submit = () => {
                   <label for="to">Hasta</label>
                 </FloatLabel>
 
+                <FloatLabel variant="on">
+                  <Select
+                    v-model="form.type_sale"
+                    :options="propsW.saleTypes"
+                    optionLabel="label"
+                    optionValue="value"
+                  />
+                  <label for="type_sale">Tipo Venta</label>
+                </FloatLabel>
+
                 <FloatLabel variant="on" class="w-full sm:w-48">
                   <Select
                     id="type"
-                    v-model="form.type"
+                    v-model="form.type_payment"
                     class="w-full"
-                    option-label="name"
+                    option-label="label"
                     option-value="value"
-                    :options="saleTypeOptions"
+                    :options="propsW.paymentTypes"
                   />
                   <label for="type">Tipo Venta</label>
                 </FloatLabel>
@@ -124,6 +152,7 @@ const submit = () => {
             <Column header="N° Factura" field="code" class="font-semibold text-slate-700" />
 
             <Column header="Cliente" field="client_name" />
+            <Column header="Tipo" field="type" />
 
             <Column header="ITBIS">
               <template #body="{ data }: { data: saleDataI }">
@@ -148,6 +177,18 @@ const submit = () => {
             <Column header="Acciones">
               <template #body="{ data }: { data: saleDataI }">
                 <div class="flex items-center gap-2 pt-1 sm:pt-0">
+                  <Button
+                    v-if="data.type === 'COTIZACION'"
+                    @click="convert(data.uuid)"
+                    severity="secondary"
+                    outlined
+                    class="h-9 w-9 p-0 flex items-center justify-center"
+                    title="Convertir a Factura"
+                  >
+                    <template #icon>
+                      <ReceiptText class="w-4 h-4 text-slate-700" />
+                    </template>
+                  </Button>
                   <Button
                     @click="printPdf(route('invoice.sale', { sale: data.uuid }))"
                     severity="secondary"

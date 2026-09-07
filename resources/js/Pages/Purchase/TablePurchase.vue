@@ -16,16 +16,17 @@ import {
 } from 'primevue';
 import { PurchaseItemI, PurchaseSupplierI } from '@/Interfaces/PurchaseInterface';
 import { purchaseBreadCrumb, PurchaseStatusSeverity } from '@/Helpers/PurchaseHelper';
-import { getMoney } from '@/Global/Helpers';
+import { getMoney, onPageChange, paginationOptions } from '@/Global/Helpers';
 import { PurchaseStatusEnum } from '@/Enums/PurchaseEnum';
 import { router } from '@inertiajs/vue3';
 import { Eye, ShoppingBag, CheckCircle, XCircle } from '@lucide/vue';
+import { PaginationI } from '@/Interfaces/GlobalInterface';
 
 const confirm = useConfirm();
 const toast = useToast();
 
 const propsW = defineProps<{
-  purchases: PurchaseSupplierI[];
+  purchases: PaginationI<PurchaseSupplierI>;
 }>();
 
 const showPurchase = ref<boolean>(false);
@@ -159,11 +160,15 @@ const createReception = (data: PurchaseSupplierI) => {
 
         <template #content>
           <DataTable
-            :value="propsW.purchases"
+            lazy
+            @page="onPageChange($event, route('purchase.show'), ['purchases'])"
+            :value="propsW.purchases.data"
+            :rowsPerPageOptions="paginationOptions"
             responsiveLayout="stack"
             breakpoint="768px"
             paginator
-            :rows="15"
+            :totalRecords="parseInt(propsW.purchases.meta.total.toString())"
+            :rows="parseInt(propsW.purchases.meta.per_page.toString())"
             class="shadow-sm rounded-lg overflow-hidden border border-slate-200"
           >
             <Column header="ID" field="id" class="font-semibold text-slate-700" />

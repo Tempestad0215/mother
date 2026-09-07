@@ -107,6 +107,11 @@ class Warehouse extends Model
         return $this->hasMany(PurchaseReceiptsItem::class);
     }
 
+    public function saleItem(): HasMany
+    {
+        return $this->hasMany(SaleItem::class, 'warehouse_uuid', 'uuid');
+    }
+
 
     public static function getAllCached(): Collection
     {
