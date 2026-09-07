@@ -40,6 +40,8 @@ const submit = () => {
             <InputNumber
               :minFractionDigits="2"
               :maxFractionDigits="2"
+              mode="currency"
+              locale="en-US"
               v-model="form.opening_balance"
               fluid
             />

@@ -353,13 +353,12 @@ class ProductController extends Controller implements HasMiddleware
         $response = Http::attach('index.hmtl', $labelTemplate, 'index.html')
             ->withBasicAuth($userName, $password)
             ->post($pdfGeneratorUrl,[
-                'paperWidth' => '2',  // 80mm en pulgadas
-                'paperHeight' => '2',   // Alto estimado de página corta
-                'marginLeft' => '0.1',
-                'marginRight' => '0.1',
-                'marginTop' => '0.1',    // Espacio para la cabecera fija
-                'marginBottom' => '0.1',
-                'waitDelay' => '600ms',  // Tiempo para que cargue Tailwind 4 por CDN
+                'paperWidth' => '1.2',  // 80mm en pulgadas
+                'paperHeight' => '1',   // Alto estimado de página corta
+                'marginLeft' => '0',
+                'marginRight' => '0',
+                'marginTop' => '0',    // Espacio para la cabecera fija
+                'marginBottom' => '0',// Tiempo para que cargue Tailwind 4 por CDN
             ]);
 
         // Devolver si es correcto
