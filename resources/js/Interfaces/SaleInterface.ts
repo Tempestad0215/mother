@@ -41,6 +41,7 @@ export interface infoSaleI {
   updated_at?: string;
   created_at?: string;
   uuid?: string;
+  code?: string;
 }
 
 export interface CreateSaleI {

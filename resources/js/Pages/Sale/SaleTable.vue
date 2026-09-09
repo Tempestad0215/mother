@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { saleKey } from '@/utils/keys';
-import { computed, inject, ref } from 'vue';
+import { inject, ref } from 'vue';
 import { editFormI, infoSaleI, WarehouseMapType } from '@/Interfaces/SaleInterface';
 import { PreciseCalculator } from '@/utils/Decimal';
-import { Column, DataTable, Dialog, Select } from 'primevue';
-import { getMoney } from '@/Global/Helpers';
-import { FilePenLine } from '@lucide/vue';
-import SaleEditItem from '@/Pages/Sale/SaleEditItem.vue';
+import { Column, DataTable, DataTableCellEditCompleteEvent, InputNumber, Select } from 'primevue';
+import { getMoney, truncateText } from '@/Global/Helpers';
+import { EnumValueI } from '@/Interfaces/GeneralInterface';
 
 // Para eliminar un item de la venta
 const propsW = defineProps<{
@@ -16,8 +15,6 @@ const propsW = defineProps<{
 
 // Para eliminar un item de la venta
 const form = inject(saleKey)!;
-const lastIndex = ref<number>(0);
-const minIndex = ref<number>(0);
 const showEdit = ref(false);
 const formEditInfo = ref<editFormI>({
   price: 0,
@@ -26,18 +23,18 @@ const formEditInfo = ref<editFormI>({
 });
 
 // Obtener los almacenes para el select
-const getWarehouses = computed(() => {
+const getWarehouses = (): EnumValueI[] | [] => {
   if (propsW.warehouses) {
     return Object.entries(propsW.warehouses).map(([key, value]) => {
       return {
-        name: key,
+        label: key,
         value: value,
       };
     });
   } else {
     return [];
   }
-});
+};
 
 // Para calcular los totales de la venta
 const calculateTotals = () => {
@@ -111,6 +108,7 @@ const showEditInfo = () => {
 
   // Tomar los datos por el index
   const info = form.info_sale[maxIndex];
+
   // Para los datos para editar
   formEditInfo.value.price = info.price;
   formEditInfo.value.stock = info.stock;
@@ -123,65 +121,117 @@ defineExpose({
   calculateItemRow,
   calculateTotals,
 });
+
+const onCellEditComplete = (event: DataTableCellEditCompleteEvent) => {
+  const index = event.index;
+  const info = event.newData;
+  calculateItemRow(info);
+  Object.assign(form.info_sale[index], info);
+};
+
+const getLabelName = (uuid: string): string => {
+  const warehouseName = getWarehouses().find((el) => el.value === uuid);
+  if (warehouseName) return warehouseName.label;
+  return 'Almacen no encontrado';
+};
 </script>
 
 <template>
-  <DataTable :value="form.info_sale">
-    <Column header="#">
+  <DataTable @cellEditComplete="onCellEditComplete" editMode="cell" :value="form.info_sale">
+    <Column style="width: 2%" header="#">
       <template #body="{ index }">
         {{ index + 1 }}
       </template>
     </Column>
-    <Column header="Producto/Servicio" field="product_name" />
+    <Column header="Producto/Servicio">
+      <template #body="{ data }: { data: infoSaleI }">
+        <p>{{ data.code }}</p>
+        <p>{{ truncateText(data.product_name) }}</p>
+      </template>
+    </Column>
     <Column
-      class="max-w-20"
+      style="width: 10%"
+      class="max-w-15.9"
       header="Cantidad"
       :field="(data: infoSaleI) => `${getMoney(data.stock)}`"
-    />
+    >
+      <template #body="{ data }: { data: infoSaleI }">
+        {{ data.stock }}
+      </template>
+      <template #editor="{ data }: { data: infoSaleI }">
+        <InputNumber :min-fraction-digits="2" :max-fraction-digits="2" fluid v-model="data.stock" />
+      </template>
+    </Column>
     <Column
-      class="max-w-20"
+      style="width: 15%"
       header="Precio"
       :field="(data: infoSaleI) => `${getMoney(data.price)}`"
-    />
+    >
+      <template #body="{ data }: { data: infoSaleI }">
+        {{ getMoney(data.price) }}
+      </template>
+      <template #editor="{ data }: { data: infoSaleI }">
+        <InputNumber fluid :minFractionDigits="2" :maxFractionDigits="2" v-model="data.price" />
+      </template>
+    </Column>
     <Column header="Itbis" :field="(data: infoSaleI) => `${getMoney(data.tax_amount)}`" />
     <Column
-      class="max-w-20"
+      style="width: 10%"
       header="Descuento"
       :field="(data: infoSaleI) => `${getMoney(data.discount_amount)}`"
-    />
-    <Column class="max-w-20" header="Almacen">
-      <template #body="{ index }">
+    >
+      <template #body="{ data }: { data: infoSaleI }">
+        {{ data.discount }}
+      </template>
+      <template #editor="{ data }: { data: infoSaleI }">
+        <InputNumber
+          :max-fraction-digits="2"
+          :min-fraction-digits="2"
+          fluid
+          v-model="data.discount"
+        />
+      </template>
+    </Column>
+    <Column style="width: 15%" class="" header="Almacen">
+      <template #body="{ data }: { data: infoSaleI }">
+        {{ getLabelName(data.warehouse_uuid) }}
+      </template>
+      <template #editor="{ data, index }: { data: infoSaleI; index: number }">
         <Select
           :disabled="form.type === 'Devolucion'"
           v-model="form.info_sale[index].warehouse_uuid"
-          :options="getWarehouses"
-          optionLabel="name"
+          :options="getWarehouses()"
+          optionLabel="label"
           optionValue="value"
         />
       </template>
     </Column>
-    <Column header="Importe" :field="(data: infoSaleI) => `${getMoney(data.amount)}`" />
-    <template #footer>
-      <div class="text-center">
-        <button
-          type="button"
-          v-if="form.info_sale.length > 0"
-          @click="showEditInfo"
-          v-tooltip.bottom="'Editar Item'"
-          class="bg-green-300 p-1 rounded-md"
-        >
-          <FilePenLine :size="30" />
-        </button>
-      </div>
-    </template>
-  </DataTable>
-  <Dialog v-model:visible="showEdit" modal>
-    <SaleEditItem
-      @calculate-totals="calculateTotals"
-      @calculate-item-row="calculateItemRow"
-      v-model:editItemForm="formEditInfo"
-      v-model:lastIndex="lastIndex"
-      v-model:minIndex="minIndex"
+    <Column
+      style="width: 12%"
+      header="Importe"
+      :field="(data: infoSaleI) => `${getMoney(data.amount)}`"
     />
-  </Dialog>
+    <!--    <template #footer>-->
+    <!--      <div class="text-center">-->
+    <!--        <button-->
+    <!--          type="button"-->
+    <!--          v-if="form.info_sale.length > 0"-->
+    <!--          @click="showEditInfo"-->
+    <!--          v-tooltip.bottom="'Editar Item'"-->
+    <!--          class="bg-green-300 p-1 rounded-md"-->
+    <!--        >-->
+    <!--          <FilePenLine :size="30" />-->
+    <!--        </button>-->
+    <!--      </div>-->
+    <!--    </template>-->
+  </DataTable>
+  <!--  <Dialog v-model:visible="showEdit" modal>-->
+  <!--    <SaleEditItem-->
+  <!--      @calculate-totals="calculateTotals"-->
+  <!--      @calculate-item-row="calculateItemRow"-->
+  <!--      v-model:editItemForm="formEditInfo"-->
+  <!--      v-model:lastIndex="lastIndex"-->
+  <!--      v-model:minIndex="minIndex"-->
+  <!--    />-->
+  <!--  </Dialog>-->
 </template>

@@ -5,6 +5,7 @@ import { computed, inject, onMounted, ref, watch } from 'vue';
 import { saleKey } from '@/utils/keys';
 import { faArrowAltCircleDown, faArrowAltCircleUp } from '@fortawesome/free-solid-svg-icons';
 import { editFormI, infoSaleI } from '@/Interfaces/SaleInterface';
+import { truncateText } from '@/Global/Helpers';
 
 // Datos para el fomrularios
 const form = inject(saleKey)!;
@@ -40,7 +41,9 @@ watch(
   () => editItemForm,
   (newVal) => {
     if (!checkIndex()) return;
+
     const item = form.info_sale[maxIndex.value];
+
     item.price = newVal.value.price;
     item.stock = newVal.value.stock;
     item.discount = newVal.value.discount;
@@ -80,6 +83,7 @@ const moveEdit = (direction: MoveDirection) => {
   if (direction === 'up') {
     // no bajar de 0
     if (current <= minIndex.value) return;
+
     maxIndex.value = current - 1;
   }
 
@@ -88,6 +92,8 @@ const moveEdit = (direction: MoveDirection) => {
     if (current >= maxIndex.value) return;
     maxIndex.value = current + 1;
   }
+  console.log(current, maxIndex.value);
+
   Object.assign(editItemForm, form.info_sale[maxIndex.value]);
 };
 
@@ -169,7 +175,7 @@ const checkIndex = (): boolean => {
 <template>
   <div class="flex flex-col gap-5 items-center">
     <div v-if="form.info_sale.length > 0" class="text-2xl font-bold">
-      Editando el Item : {{ productEditingName }}, es un:
+      Editando el Item : {{ truncateText(productEditingName) }}, es un:
       {{ productIsService ? 'Servicios' : 'Producto' }}
     </div>
     <div class="flex gap-5">

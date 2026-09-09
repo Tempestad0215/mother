@@ -215,6 +215,7 @@ const getDataProduct = (data: ProductTableI) => {
     form.info_sale.push({
       product_uuid: data.uuid,
       product_name: data.name,
+      code: data.code,
       stock: 1,
       price: priceList?.price ?? 0,
       price_type: 'price',

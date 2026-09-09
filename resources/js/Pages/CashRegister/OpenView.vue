@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Card, FloatLabel, InputNumber, Button, Toast, useToast } from 'primevue';
-import { useForm, usePage } from '@inertiajs/vue3';
+import { Button, Card, FloatLabel, InputNumber, Toast, useToast } from 'primevue';
+import { useForm } from '@inertiajs/vue3';
 
 const toast = useToast();
 
@@ -42,6 +42,7 @@ const submit = () => {
               :maxFractionDigits="2"
               mode="currency"
               locale="en-US"
+              currency="USD"
               v-model="form.opening_balance"
               fluid
             />

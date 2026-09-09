@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import Pagination from '@components/Pagination.vue';
-import { ProductBaseI, ProductTableI } from '@/Interfaces/ProductInterface';
+import { ProductTableI } from '@/Interfaces/ProductInterface';
 import { router, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { useRoute } from 'ziggy-js';
@@ -9,7 +8,6 @@ import {
   Button,
   Column,
   DataTable,
-  DataTablePageEvent,
   InputGroup,
   InputGroupAddon,
   InputText,
@@ -19,7 +17,7 @@ import {
 import { getInfoFromWarehouse, productBreadCrumb } from '@/Helpers/ProductHelper';
 import { PreciseCalculator } from '@/utils/Decimal';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
-import { FilePenLine, PackagePlus, Shredder, CheckCircle } from '@lucide/vue';
+import { CheckCircle, FilePenLine, PackagePlus, Shredder } from '@lucide/vue';
 import { onPageChange, paginationOptions } from '@/Global/Helpers';
 
 const toast = useToast();
@@ -128,7 +126,7 @@ const deleteData = (data: ProductTableI, event: Event) => {
 <template>
   <DataTable
     lazy
-    @page="onPageChange($event, route('product.index'), ['products'])"
+    @page="onPageChange($event, '', ['products'])"
     paginator
     responsiveLayout="stack"
     breakpoint="768px"

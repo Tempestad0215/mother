@@ -141,7 +141,7 @@ class ProductHelper
                 'quantity' => $data->quantity,
                 'price' => $data->cost,
                 'cost' => $data->cost ?? $product->cost,
-                'description' => $data->description,
+                'description' => '',
             ]);
         });
     }
@@ -183,27 +183,32 @@ class ProductHelper
 
         $query = Product::query()
             ->with(['priceList', 'warehouses'])
-            ->where('status', true)
-            ->when($search !== '', function (Builder $q) use ($search) {
-                $q->where(function (Builder $qq) use ($search) {
-                    $qq->where('name', 'ILIKE', "%$search%")
-                        ->orWhere('description', 'ILIKE', "%$search%")
-                        ->orWhere('sku', 'ILIKE', "%$search%");
-                });
-            })
-            ->when($stock, function (Builder $q) {
-                // si stock=true: excluir servicios y exigir stock > 0
-                $q->where('is_service', '=',0)
+            ->where('status', true);
+
+        // Filtro de búsqueda
+        if ($search !== '') {
+            $query->where(function (Builder $q) use ($search) {
+                $q->where('name', 'ILIKE', "%$search%")
+                    ->orWhere('description', 'ILIKE', "%$search%")
+                    ->orWhere('sku', 'ILIKE', "%$search%");
+            });
+        }
+
+        // Filtro de stock: SOLO para productos, los servicios se muestran todos
+        if ($stock) {
+            $query->where(function (Builder $q) {
+                $q->where('is_service', '=', 1) // Servicios: siempre incluidos
+                ->orWhere(function (Builder $subQuery) {
+                    $subQuery->where('is_service', '=', 0) // Productos: con stock
                     ->whereHas('warehouses', function (Builder $qq) {
-                        $qq->where('warehouse_products.stock_quantity','>',0)
+                        $qq->where('warehouse_products.stock_quantity', '>', 0)
                             ->where('warehouse_products.is_active', true);
                     });
-
+                });
             });
+        }
 
-        $paginatedData = $query->simplePaginate($perPage);
-
-
+        $paginatedData = $query->paginate($perPage);
 
         return ProductResource::collection($paginatedData);
     }

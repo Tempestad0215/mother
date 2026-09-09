@@ -37,6 +37,7 @@ class CashRegister extends Model
 
 
     protected $fillable = [
+        'uuid',
         'user_uuid',
         'opening_balance',
         'closing_balance',
