@@ -21,6 +21,7 @@ import { PurchaseStatusEnum } from '@/Enums/PurchaseEnum';
 import { router } from '@inertiajs/vue3';
 import { Eye, ShoppingBag, CheckCircle, XCircle } from '@lucide/vue';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
+import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
 
 const confirm = useConfirm();
 const toast = useToast();
@@ -150,7 +151,10 @@ const createReception = (data: PurchaseSupplierI) => {
       <Card class="shadow-sm rounded-lg border border-slate-200">
         <template #title>
           <div class="space-y-2">
-            <Breadcrumb :model="purchaseBreadCrumb" class="text-xs sm:text-sm p-0 bg-transparent" />
+            <BreadCrumbComponent
+              :itemOptions="purchaseBreadCrumb"
+              class="text-xs sm:text-sm p-0 bg-transparent"
+            />
             <h3 class="text-xl sm:text-2xl font-bold text-center text-slate-800">
               Órdenes de Compra
             </h3>

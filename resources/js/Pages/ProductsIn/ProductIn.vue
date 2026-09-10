@@ -21,6 +21,7 @@ import {
 import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
 import axios from 'axios';
 import { ref } from 'vue';
+import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
 
 const toast = useToast();
 const route = useRoute();
@@ -135,7 +136,7 @@ const getProductUuid = (event: AutoCompleteOptionSelectEvent) => {
     <Card>
       <template #header>
         <div>
-          <Breadcrumb :model="productBreadCrumb" />
+          <BreadCrumbComponent :itemOptions="productBreadCrumb" />
         </div>
       </template>
       <template #content>

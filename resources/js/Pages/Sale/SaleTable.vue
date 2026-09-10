@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { saleKey } from '@/utils/keys';
-import { inject, ref } from 'vue';
-import { editFormI, infoSaleI, WarehouseMapType } from '@/Interfaces/SaleInterface';
+import { inject } from 'vue';
+import { infoSaleI, WarehouseMapType } from '@/Interfaces/SaleInterface';
 import { PreciseCalculator } from '@/utils/Decimal';
 import { Column, DataTable, DataTableCellEditCompleteEvent, InputNumber, Select } from 'primevue';
 import { getMoney, truncateText } from '@/Global/Helpers';
@@ -15,12 +15,6 @@ const propsW = defineProps<{
 
 // Para eliminar un item de la venta
 const form = inject(saleKey)!;
-const showEdit = ref(false);
-const formEditInfo = ref<editFormI>({
-  price: 0,
-  stock: 1,
-  discount: 0,
-});
 
 // Obtener los almacenes para el select
 const getWarehouses = (): EnumValueI[] | [] => {
@@ -96,23 +90,6 @@ const calculateItemRow = (item: infoSaleI) => {
 
   // Recalcular los totales de la factura global
   calculateTotals();
-};
-
-// Tomar la info
-const showEditInfo = () => {
-  // Verificar si hay al menos un item en la venta
-  if (form.info_sale.length <= 0) return;
-  showEdit.value = true;
-  // Tomar el ultimo indice
-  const maxIndex = form.info_sale.length - 1;
-
-  // Tomar los datos por el index
-  const info = form.info_sale[maxIndex];
-
-  // Para los datos para editar
-  formEditInfo.value.price = info.price;
-  formEditInfo.value.stock = info.stock;
-  formEditInfo.value.discount = info.discount ?? 0;
 };
 
 // Exponer funciones al componente padre

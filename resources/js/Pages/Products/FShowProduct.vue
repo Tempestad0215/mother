@@ -19,6 +19,7 @@ import { PreciseCalculator } from '@/utils/Decimal';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
 import { CheckCircle, FilePenLine, PackagePlus, Shredder } from '@lucide/vue';
 import { onPageChange, paginationOptions } from '@/Global/Helpers';
+import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
 
 const toast = useToast();
 const confirm = useConfirm();
@@ -143,7 +144,10 @@ const deleteData = (data: ProductTableI, event: Event) => {
       <div class="space-y-3 p-1">
         <!-- Breadcrumb opcional -->
         <div v-if="propsW.isProduct" class="overflow-x-auto">
-          <Breadcrumb :model="productBreadCrumb" class="text-xs sm:text-sm p-0 bg-transparent" />
+          <BreadCrumbComponent
+            :itemOptions="productBreadCrumb"
+            class="text-xs sm:text-sm p-0 bg-transparent"
+          />
         </div>
 
         <!-- Buscador y Botón Nuevo -->

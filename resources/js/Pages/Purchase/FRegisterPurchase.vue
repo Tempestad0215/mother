@@ -12,21 +12,28 @@ import {
   InputNumber,
   Select,
   SelectChangeEvent,
+  InputText,
   useConfirm,
   useToast,
   Divider,
+  DataTableCellEditCompleteEvent,
+  AutoCompleteCompleteEvent,
 } from 'primevue';
 import { router, useForm } from '@inertiajs/vue3';
 import { purchaseInfoI } from '@/Interfaces/PurchaseInterface';
 import { SupplierI } from '@/Interfaces/SupplierInterface';
 import AppLayout from '@layout/AppLayout.vue';
 import { PreciseCalculator } from '@/utils/Decimal';
-import { ProductBaseI } from '@/Interfaces/ProductInterface';
+import { ProductBaseI, ProductTableI } from '@/Interfaces/ProductInterface';
 import { TaxBaseI } from '@/Interfaces/TaxInterface';
 import { useProductStore } from '@/stores/ProductStore';
 import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
 import { purchaseBreadCrumb } from '@/Helpers/PurchaseHelper';
 import { Plus, Trash2, Send } from '@lucide/vue';
+import axios from 'axios';
+import { computed, ref } from 'vue';
+import { getDataFromArray, getMoney, truncateText } from '@/Global/Helpers';
+import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
 
 const toast = useToast();
 const confirm = useConfirm();
@@ -39,6 +46,7 @@ const propsW = defineProps<{
 }>();
 
 const productStore = useProductStore();
+const productOptions = ref<ProductTableI[]>([]);
 
 /*
    Formulario
@@ -69,26 +77,39 @@ const form = useForm({
   comment: '',
 });
 
-const searchProduct = (index: number) => {
-  const productSearch = form.info[index].name;
-  router.get(
-    route('purchase.index', { productSearch }),
-    {},
-    {
-      preserveScroll: true,
-      preserveState: true,
+const searchProduct = async (event: AutoCompleteCompleteEvent) => {
+  try {
+    const search = event.query.toString().trim().toUpperCase();
+
+    const res = await axios.get(
+      route('product.get.json', {
+        search: search,
+      })
+    );
+
+    if (res.status === 200 && res.data) {
+      productOptions.value = res.data;
     }
-  );
+  } catch (err) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error al intentar obtener producto',
+      life: 3000,
+    });
+  }
 };
 
 const getInfoName = (event: AutoCompleteOptionSelectEvent, index: number) => {
   const info = event.value as purchaseInfoI;
+  const currentLine = form.info[index];
   const existsIndex = form.info.findIndex((el) => el.code === info.code);
 
   if (existsIndex === -1) {
-    form.info[index].uuid = info.uuid;
-    form.info[index].code = info.code;
-    form.info[index].name = info.name;
+    currentLine.uuid = info.uuid;
+    currentLine.code = info.code;
+    currentLine.name = info.name;
+    currentLine.quantity += 1;
+    currentLine.cost = info.cost;
     return;
   } else {
     form.info[existsIndex].quantity += 1;
@@ -116,12 +137,6 @@ const submit = () => {
       });
     },
   });
-};
-
-const getTaxInfo = (event: SelectChangeEvent, index: number) => {
-  const taxInfo: TaxBaseI | undefined = propsW.taxes.find((el) => el.uuid === event.value);
-  form.info[index].tax_uuid = taxInfo?.uuid ?? '';
-  productStore.setTaxRateFromPercent(Number(taxInfo?.rate) ?? 0);
 };
 
 const sumSubTotalByLine = () => {
@@ -218,6 +233,12 @@ const destroy = (event: Event, index: number) => {
     });
   }
 };
+
+const onCellEditComplete = async (event: DataTableCellEditCompleteEvent) => {
+  const info = event.newData as purchaseInfoI;
+
+  calculateAmount(event.index);
+};
 </script>
 
 <template>
@@ -226,7 +247,10 @@ const destroy = (event: Event, index: number) => {
       <Card class="shadow-sm rounded-lg border border-slate-200">
         <template #title>
           <div class="space-y-2">
-            <Breadcrumb :model="purchaseBreadCrumb" class="text-xs sm:text-sm p-0 bg-transparent" />
+            <BreadCrumbComponent
+              :itemOptions="purchaseBreadCrumb"
+              class="text-xs sm:text-sm p-0 bg-transparent"
+            />
             <h3 class="text-xl sm:text-2xl font-bold text-center text-slate-800">
               Orden de Compra
             </h3>
@@ -265,11 +289,13 @@ const destroy = (event: Event, index: number) => {
             <!-- Tabla de Ítems (Con Scroll Horizontal Suave en Móviles) -->
             <div class="overflow-x-auto rounded-lg border border-slate-200 shadow-sm">
               <DataTable
+                @cellEditComplete="onCellEditComplete"
+                edit-mode="cell"
                 size="small"
                 striped-rows
                 show-gridlines
                 :value="form.info"
-                class="min-w-[850px] w-full"
+                class="min-w-212.5 w-full"
               >
                 <Column header="#" class="w-12 text-center">
                   <template #body="{ index }">
@@ -277,22 +303,24 @@ const destroy = (event: Event, index: number) => {
                   </template>
                 </Column>
 
-                <Column header="Código" class="w-24">
-                  <template #body="{ index }">
+                <Column header="Código" style="width: 10%">
+                  <template #body="{ data }: { data: purchaseInfoI }">
                     <span class="text-xs font-semibold text-slate-700">
-                      {{ form.info[index].code || '-' }}
+                      {{ data.code || '-' }}
                     </span>
                   </template>
                 </Column>
 
-                <Column header="Producto/Servicio" class="min-w-[220px]">
-                  <template #body="{ index }">
+                <Column header="Producto/Servicio" style="width: 15%">
+                  <template #body="{ data }: { data: purchaseInfoI }">
+                    {{ truncateText(data.name, 15) }}
+                  </template>
+                  <template #editor="{ data, index }: { data: purchaseInfoI; index: number }">
                     <AutoComplete
                       @option-select="getInfoName($event, index)"
-                      @complete="searchProduct(index)"
+                      @complete="searchProduct"
                       option-label="name"
-                      :suggestions="products"
-                      v-model="form.info[index].name"
+                      :suggestions="productOptions"
                       fluid
                       placeholder="Buscar producto..."
                     />
@@ -300,25 +328,29 @@ const destroy = (event: Event, index: number) => {
                 </Column>
 
                 <Column header="Cant." class="w-24">
-                  <template #body="{ index }">
+                  <template #body="{ data }: { data: purchaseInfoI }">
+                    {{ data.quantity }}
+                  </template>
+                  <template #editor="{ data }: { data: purchaseInfoI }">
                     <InputNumber
                       locale="en-US"
                       :max-fraction-digits="2"
                       :min-fraction-digits="0"
-                      @blur="calculateAmount(index)"
-                      v-model="form.info[index].quantity"
+                      v-model="data.quantity"
                       fluid
                     />
                   </template>
                 </Column>
 
                 <Column header="Costo" class="w-28">
-                  <template #body="{ index }">
+                  <template #body="{ data }: { data: purchaseInfoI }">
+                    {{ getMoney(data.cost) }}
+                  </template>
+                  <template #editor="{ index }: { index: number }">
                     <InputNumber
                       locale="en-US"
                       :max-fraction-digits="2"
-                      :min-fraction-digits="2"
-                      @blur="calculateAmount(index)"
+                      :min-fraction-digits="0"
                       v-model="form.info[index].cost"
                       fluid
                     />
@@ -326,25 +358,32 @@ const destroy = (event: Event, index: number) => {
                 </Column>
 
                 <Column header="Desc." class="w-20">
-                  <template #body="{ index }">
+                  <template #body="{ data }: { data: purchaseInfoI }">
+                    {{ getMoney(data.discount_rate) }}
+                  </template>
+                  <template #editor="{ data }: { data: purchaseInfoI }">
                     <InputNumber
                       suffix="%"
+                      locale="en-US"
                       :min="0"
-                      :max="100"
-                      @blur="calculateAmount(index)"
-                      v-model="form.info[index].discount_rate"
+                      :max="99"
+                      :max-fraction-digits="2"
+                      :min-fraction-digits="0"
+                      v-model="data.discount_rate"
                       fluid
                     />
                   </template>
                 </Column>
 
-                <Column header="Impuesto" class="w-28">
-                  <template #body="{ index }">
+                <Column header="Impuesto" style="width: 10%">
+                  <template #body="{ data }: { data: purchaseInfoI }">
+                    {{ getDataFromArray(propsW.taxes, data.tax_uuid)?.rate || 'No Encontrado' }}
+                  </template>
+                  <template #editor="{ data, index }: { data: purchaseInfoI; index: number }">
                     <Select
-                      @blur="calculateAmount(index)"
                       placeholder="Itbis"
-                      :options="taxes"
-                      @change="getTaxInfo($event, index)"
+                      :options="propsW.taxes"
+                      v-model="form.info[index].tax_uuid"
                       option-value="uuid"
                       option-label="name"
                       fluid
@@ -352,8 +391,14 @@ const destroy = (event: Event, index: number) => {
                   </template>
                 </Column>
 
-                <Column header="Almacén" class="w-28">
-                  <template #body="{ index }">
+                <Column header="Almacén" style="width: 10%">
+                  <template #body="{ data }: { data: purchaseInfoI }">
+                    {{
+                      getDataFromArray(propsW.warehouses, data.warehouse_uuid)?.prefix ||
+                      'No Encontrado'
+                    }}
+                  </template>
+                  <template #editor="{ index }: { index: number }">
                     <Select
                       placeholder="Alm."
                       :options="warehouses"
@@ -365,16 +410,9 @@ const destroy = (event: Event, index: number) => {
                   </template>
                 </Column>
 
-                <Column header="Importe" class="w-28">
-                  <template #body="{ index }">
-                    <InputNumber
-                      locale="en-US"
-                      :max-fraction-digits="2"
-                      :min-fraction-digits="2"
-                      v-model="form.info[index].amount"
-                      readonly
-                      fluid
-                    />
+                <Column header="Importe" style="width: 12%">
+                  <template #body="{ data }: { data: purchaseInfoI }">
+                    {{ getMoney(data.amount) }}
                   </template>
                 </Column>
 

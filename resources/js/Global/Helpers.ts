@@ -322,3 +322,12 @@ export const truncateText = (text: string, maxLength: number = 20): string => {
   if (!text) return '';
   return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
 };
+
+export const getDataFromArray = <T extends { uuid?: string | number; id?: string | number }>(
+  array: T[],
+  identifier: string | number
+): T | undefined => {
+  if (!Array.isArray(array) || !identifier) return undefined;
+
+  return array.find((item) => item.uuid === identifier || item.id === identifier);
+};

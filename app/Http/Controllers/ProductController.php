@@ -388,11 +388,15 @@ class ProductController extends Controller implements HasMiddleware
         $search = $request->input('search');
 
 
+        \Log::info($search);
+
+
         // Tomar los datos
         $products = Product::with(['warehouses','priceList'])
         ->where(function ($query) use (&$search) {
             $query->orWhere("name", "ILIKE", "%$search%")
-                ->orWhere("description", "ILIKE", "%$search%");
+                ->orWhere("description", "ILIKE", "%$search%")
+            ->orWhere('code', $search);
         })->where("status", true)
             ->orderBy("name")
             ->take(15)

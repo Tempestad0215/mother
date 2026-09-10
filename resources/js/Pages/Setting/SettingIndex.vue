@@ -15,6 +15,7 @@ import {
 } from 'primevue';
 import { onMounted, onUpdated, ref } from 'vue';
 import { itemsSettings } from '@/Helpers/SettingHelpers';
+import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
 
 const route = useRoute();
 const toast = useToast();
@@ -122,7 +123,7 @@ const getFileInfo = (event: FileUploadSelectEvent) => {
     <Card>
       <template #title>
         <div>
-          <Breadcrumb :model="itemsSettings" />
+          <BreadCrumbComponent :itemOptions="itemsSettings" />
         </div>
         <div>
           <h3 class="text-2xl font-bold text-center">Configuración</h3>
