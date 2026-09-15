@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\UserRoleEnum;
+use App\Models\Role;
 use App\Models\User;
 use App\Rules\CheckMaxUser;
 use Illuminate\Http\RedirectResponse;
@@ -12,6 +13,8 @@ use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class UserController extends Controller implements HasMiddleware
 {
@@ -98,6 +101,31 @@ class UserController extends Controller implements HasMiddleware
 
         //Devolver hacia atras
         return back();
+    }
+
+
+    /**
+     * @return Response
+     */
+    public function assingRoleIndex()
+    {
+
+        return Inertia::render('Auth/AssingRole',[
+            'users' => fn() =>  User::with('roles')->get(),
+            'roles' => fn() => Role::all()
+        ]);
+
+    }
+
+    /**
+     * @param Request $request
+     * @param User $user
+     * @return void
+     */
+    public function assingRole(Request $request, User $user)
+    {
+
+
     }
 
 

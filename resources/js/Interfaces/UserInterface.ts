@@ -1,10 +1,14 @@
-export interface userI {
+export interface UserI {
   email: string;
-  id: number;
+  uuid: string;
   name: string;
   profile_photo_url: string;
   role: string;
   status: boolean;
+}
+
+export interface UserRoleI extends UserI {
+  roles: RoleI[];
 }
 
 export interface userPaginationI {
@@ -20,5 +24,10 @@ export interface userPaginationI {
     to: number;
     per_page: number;
   };
-  data: userI[];
+  data: UserI[];
+}
+
+export interface RoleI {
+  uuid: string;
+  name: string;
 }

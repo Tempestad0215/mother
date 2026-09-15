@@ -15,6 +15,7 @@ import { router } from '@inertiajs/vue3';
 import { itemsSettings } from '@/Helpers/SettingHelpers';
 import { BranchInterfaceI } from '@/Interfaces/BranchInterface';
 import FRegisterBranch from '@/Pages/Setting/Brand/FRegisterBranch.vue';
+import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
 
 const confirm = useConfirm();
 const toast = useToast();
@@ -70,7 +71,7 @@ const deleteData = (data: BranchInterfaceI, event: Event) => {
   <AppLayout>
     <Card>
       <template #title>
-        <Breadcrumb :model="itemsSettings" />
+        <BreadCrumbComponent :itemOptions="itemsSettings" />
       </template>
       <template #content>
         <DataTable :value="branches">

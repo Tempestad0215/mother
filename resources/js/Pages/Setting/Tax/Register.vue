@@ -18,6 +18,7 @@ import { router, useForm } from '@inertiajs/vue3';
 import { itemsSettings } from '@/Helpers/SettingHelpers';
 import { TaxBaseI } from '@/Interfaces/TaxInterface';
 import { SquarePlus, Forward } from '@lucide/vue';
+import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
 
 const confirm = useConfirm();
 const toast = useToast();
@@ -124,7 +125,7 @@ const deleteData = (data: TaxBaseI, event: Event) => {
     <Card>
       <template #title>
         <div>
-          <Breadcrumb :model="itemsSettings" />
+          <BreadCrumbComponent :itemOptions="itemsSettings" />
         </div>
         <div class="text-right">
           <Button @click="createTax = true" title="Nuevo">

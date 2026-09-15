@@ -11,6 +11,7 @@ import FRegisterSupplier from '@/Pages/Suppliers/FRegister.vue';
 import { PaymentTypeEnumI } from '@/Interfaces/GlobalInterface';
 import { CirclePlus, Printer } from '@lucide/vue';
 import axios from 'axios';
+import { printPdf } from '@/Global/Helpers';
 
 const route = useRoute();
 const toast = useToast();
@@ -50,19 +51,8 @@ const printLabel = async () => {
       });
       const blob = new Blob([response.data], { type: 'application/pdf' });
       const url = window.URL.createObjectURL(blob);
-      const iframe = document.createElement('iframe');
-      iframe.style.display = 'none';
-      iframe.src = url;
-      document.body.appendChild(iframe);
 
-      iframe.onload = () => {
-        iframe.contentWindow?.focus();
-        iframe.contentWindow?.print();
-        setTimeout(() => {
-          window.URL.revokeObjectURL(url);
-          document.body.removeChild(iframe);
-        }, 3000);
-      };
+      printPdf(url);
     } catch (_) {
       toast.add({
         summary: 'Error',

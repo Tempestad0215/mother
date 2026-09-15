@@ -84,10 +84,12 @@ Route::middleware([
     /*
      * Usuarios - Custom porque no sigue completamente REST
      */
-    Route::prefix('user')->name('user.')->group(function () {
-        Route::post('/', [UserController::class, 'store'])->name('store');
-        Route::patch('/{user}', [UserController::class, 'update'])->name('update');
-        Route::patch('/destroy/{user}', [UserController::class, 'destroy'])->name('destroy');
+    Route::prefix('user')->controller(UserController::class)->name('user.')->group(function () {
+        Route::post('/', 'store')->name('store');
+        Route::patch('/{user}', 'update')->name('update');
+        Route::patch('/destroy/{user}', 'destroy')->name('destroy');
+        Route::get('/role','assingRoleIndex' )->name('assing.role.index');
+        Route::post('/role/{user}','assingRole' )->name('assing.role.post');
     });
 
     /*

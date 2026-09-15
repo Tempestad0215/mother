@@ -270,10 +270,10 @@ export const printPdf = (urlName: string) => {
   }
 
   // Al momento de cargar la ventana
-  printWindow.onload = () => {
-    //Imprimir la ventana
-    printWindow.print();
-  };
+  // printWindow.onload = () => {
+  //   //Imprimir la ventana
+  //   printWindow.print();
+  // };
 };
 
 // Para la exportanciones de excel

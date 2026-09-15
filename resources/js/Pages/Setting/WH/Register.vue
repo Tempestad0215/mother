@@ -17,6 +17,7 @@ import {
 import { itemsSettings } from '@/Helpers/SettingHelpers';
 import { router } from '@inertiajs/vue3';
 import { HousePlus, FilePenLine, Shredder } from '@lucide/vue';
+import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
 
 const route = useRoute();
 const confirm = useConfirm();
@@ -81,7 +82,7 @@ const hideCreate = () => {
     <Card>
       <template #title>
         <div>
-          <Breadcrumb :model="itemsSettings" />
+          <BreadCrumbComponent :itemOptions="itemsSettings" />
         </div>
         <div class="flex justify-end items-center">
           <Button class="h-8" @click="createWarehouse = true">

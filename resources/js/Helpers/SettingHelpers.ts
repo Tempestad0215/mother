@@ -1,4 +1,5 @@
 import type { MenuItem } from 'primevue/menuitem';
+import { UserRoundKey } from '@lucide/vue';
 
 export const itemsSettings: MenuItem[] = [
   {
@@ -30,6 +31,11 @@ export const itemsSettings: MenuItem[] = [
     label: 'Lista Precio',
     url: route('price-list.index'),
     icon: 'pi pi-wallet',
+  },
+  {
+    label: 'Roles',
+    url: route('user.assing.role.index'),
+    iconComponent: UserRoundKey,
   },
   {
     label: 'Secuencia',

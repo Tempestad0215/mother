@@ -14,8 +14,8 @@ const op = ref();
 //Par mostar la ventana
 const show: Ref<boolean> = ref(false);
 const items = ref<MenuItemI[]>([
-  { label: 'Perfil', icon: 'pi pi-user-edit', url: route('profile.show') },
-  { label: 'Ajustes', icon: 'pi pi-cog', url: route('setting.index') },
+  { label: 'Perfil', icon: 'pi pi-user-edit', command: () => router.visit(route('profile.show')) },
+  { label: 'Ajustes', icon: 'pi pi-cog', command: () => router.visit(route('setting.index')) },
   { label: 'salir', icon: 'pi pi-sign-out', command: () => logOut() },
 ]);
 
@@ -36,7 +36,7 @@ const toggle = (event: Event) => {
     <Avatar @click="toggle" size="large" :image="url" shape="circle" />
 
     <Popover ref="op" class="p-0!">
-      <Menu :model="items" />
+      <Menu :model="items"> </Menu>
     </Popover>
   </div>
 </template>

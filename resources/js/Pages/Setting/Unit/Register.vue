@@ -15,6 +15,7 @@ import { ref } from 'vue';
 import { router } from '@inertiajs/vue3';
 import { itemsSettings } from '@/Helpers/SettingHelpers';
 import FRegisterUnit from '@/Pages/Setting/Unit/FRegisterUnit.vue';
+import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
 
 const confirm = useConfirm();
 const toast = useToast();
@@ -66,7 +67,7 @@ const deleteData = (data: UnitInterfaceI, event: Event) => {
     <Card>
       <template #title>
         <div>
-          <Breadcrumb :model="itemsSettings" />
+          <BreadCrumbComponent :itemOptions="itemsSettings" />
         </div>
         <div class="text-right">
           <Button @click="createUnit = true" icon="pi pi-plus" label="Crear Unidad" />

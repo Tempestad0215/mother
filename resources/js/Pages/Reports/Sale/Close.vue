@@ -3,7 +3,7 @@ import { Head, useForm } from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
 import TabLink from '@components/TabLink.vue';
 import PrimaryButton from '@components/PrimaryButton.vue';
-import { userI } from '@/Interfaces/UserInterface';
+import { UserI } from '@/Interfaces/UserInterface';
 import { totalSaleAmountI } from '@/Interfaces/ReportInterface';
 import axios from 'axios';
 import { ref } from 'vue';
@@ -16,7 +16,7 @@ const route = useRoute();
  * Propiedades
  */
 const propsW = defineProps<{
-  users: userI[];
+  users: UserI[];
   reports?: totalSaleAmountI;
 }>();
 

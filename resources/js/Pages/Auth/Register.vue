@@ -6,7 +6,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import ActionMessage from '@/Components/ActionMessage.vue';
-import { userI, userPaginationI } from '@/Interfaces/UserInterface';
+import { UserI, userPaginationI } from '@/Interfaces/UserInterface';
 import { computed } from 'vue';
 import FormSearch from '@components/FormSearch.vue';
 import ToggleButton from '@components/ToggleButton.vue';
@@ -74,7 +74,7 @@ const submit = () => {
 };
 
 // editar los datos
-const edit = (item: userI) => {
+const edit = (item: UserI) => {
   //Pasar los datos al formulario
   form.id = item.id;
   form.name = item.name;
@@ -85,7 +85,7 @@ const edit = (item: userI) => {
 };
 
 // Eliminar los datos
-const destroy = (_: userI) => {
+const destroy = (_: UserI) => {
   // Swal.fire({
   //     title: "Desea eliminar este registro?",
   //     text: "Los cambios realizados son irreversible!",

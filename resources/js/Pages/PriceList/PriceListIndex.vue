@@ -17,6 +17,7 @@ import { itemsSettings } from '@/Helpers/SettingHelpers';
 import { useForm } from '@inertiajs/vue3';
 import { FilePenLine, Eraser } from '@lucide/vue';
 import { ref } from 'vue';
+import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
 
 const toast = useToast();
 
@@ -61,7 +62,7 @@ const submit = () => {
     <Card>
       <template #title>
         <div>
-          <Breadcrumb :model="itemsSettings" />
+          <BreadCrumbComponent :itemOptions="itemsSettings" />
         </div>
       </template>
       <template #content>
