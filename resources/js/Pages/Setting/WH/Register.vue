@@ -4,19 +4,10 @@ import FRegister from '@/Pages/Setting/WH/FRegister.vue';
 import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
 import { reactive, ref } from 'vue';
 import { useRoute } from 'ziggy-js';
-import {
-  Button,
-  Column,
-  DataTable,
-  Dialog,
-  Breadcrumb,
-  useConfirm,
-  useToast,
-  Card,
-} from 'primevue';
+import { Button, Card, Column, DataTable, Dialog, useConfirm, useToast } from 'primevue';
 import { itemsSettings } from '@/Helpers/SettingHelpers';
 import { router } from '@inertiajs/vue3';
-import { HousePlus, FilePenLine, Shredder } from '@lucide/vue';
+import { FilePenLine, HousePlus, Shredder } from '@lucide/vue';
 import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
 
 const route = useRoute();

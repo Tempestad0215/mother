@@ -117,14 +117,21 @@ class UserController extends Controller implements HasMiddleware
 
     }
 
-    /**
-     * @param Request $request
-     * @param User $user
-     * @return void
-     */
     public function assingRole(Request $request, User $user)
     {
+      $validated = $request->validate([
+          'roles' => ['present','array'],
+          'roles.*' => 'uuid|exists:roles,uuid'
+      ]);
 
+
+      $user->syncRoles($validated['roles']);
+
+      Inertia::flash([
+          'success' => 'Roles Actualizado Correctamente'
+      ]);
+
+      return back();
 
     }
 

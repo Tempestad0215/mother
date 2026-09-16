@@ -1,15 +1,6 @@
 <script setup lang="ts">
 import AppLayout from '@layout/AppLayout.vue';
-import {
-  DataTable,
-  Column,
-  Button,
-  Dialog,
-  useToast,
-  useConfirm,
-  Breadcrumb,
-  Card,
-} from 'primevue';
+import { Button, Card, Column, DataTable, Dialog, useConfirm, useToast } from 'primevue';
 import { ref } from 'vue';
 import { router } from '@inertiajs/vue3';
 import { itemsSettings } from '@/Helpers/SettingHelpers';

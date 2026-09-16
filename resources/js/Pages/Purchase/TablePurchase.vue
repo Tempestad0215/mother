@@ -2,7 +2,6 @@
 import AppLayout from '@layout/AppLayout.vue';
 import { ref } from 'vue';
 import {
-  Breadcrumb,
   Button,
   Card,
   Column,
@@ -19,7 +18,7 @@ import { purchaseBreadCrumb, PurchaseStatusSeverity } from '@/Helpers/PurchaseHe
 import { getMoney, onPageChange, paginationOptions } from '@/Global/Helpers';
 import { PurchaseStatusEnum } from '@/Enums/PurchaseEnum';
 import { router } from '@inertiajs/vue3';
-import { Eye, ShoppingBag, CheckCircle, XCircle } from '@lucide/vue';
+import { CheckCircle, Eye, ShoppingBag, XCircle } from '@lucide/vue';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
 import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
 
@@ -397,19 +396,6 @@ const createReception = (data: PurchaseSupplierI) => {
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid #e2e8f0;
-  }
-}
-
-:deep(.p-dialog-content) {
-  padding: 1rem;
-  max-height: 80vh;
-  overflow-y: auto;
-}
-
-@media (max-width: 640px) {
-  :deep(.p-dialog-content) {
-    padding: 0.75rem;
-    max-height: 85vh;
   }
 }
 </style>

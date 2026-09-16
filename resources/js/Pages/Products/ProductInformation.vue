@@ -9,7 +9,7 @@ import { router } from '@inertiajs/vue3';
 import FRegisterCategory from '@/Pages/Categories/FRegister.vue';
 import FRegisterSupplier from '@/Pages/Suppliers/FRegister.vue';
 import { PaymentTypeEnumI } from '@/Interfaces/GlobalInterface';
-import { CirclePlus, Printer } from '@lucide/vue';
+import { CirclePlus } from '@lucide/vue';
 import axios from 'axios';
 import { printPdf } from '@/Global/Helpers';
 

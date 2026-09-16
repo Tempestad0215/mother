@@ -77,7 +77,7 @@ class StoreCreditNoteRequest extends FormRequest
             'credit_notes.*.ncf' => ['nullable',SequenceSaleTypeEnum::class],
             'credit_notes.*.code' => ['required','string'],
             'credit_notes_amount' => ['nullable','numeric'],
-            'comment' => [Rule::requiredIf(Route::is('credit-note.store')),'max:255'],
+            'comment' => [Rule::requiredIf(\Route::is('credit-note.store')),'max:255'],
             'close_table' => ['required','boolean'],
         ];
     }

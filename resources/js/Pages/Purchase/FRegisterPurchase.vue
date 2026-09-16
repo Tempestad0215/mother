@@ -1,25 +1,22 @@
 <script setup lang="ts">
 import {
   AutoComplete,
+  AutoCompleteCompleteEvent,
   AutoCompleteOptionSelectEvent,
-  Breadcrumb,
   Button,
   Card,
   Column,
   DataTable,
+  DataTableCellEditCompleteEvent,
   DatePicker,
+  Divider,
   FloatLabel,
   InputNumber,
   Select,
-  SelectChangeEvent,
-  InputText,
   useConfirm,
   useToast,
-  Divider,
-  DataTableCellEditCompleteEvent,
-  AutoCompleteCompleteEvent,
 } from 'primevue';
-import { router, useForm } from '@inertiajs/vue3';
+import { useForm } from '@inertiajs/vue3';
 import { purchaseInfoI } from '@/Interfaces/PurchaseInterface';
 import { SupplierI } from '@/Interfaces/SupplierInterface';
 import AppLayout from '@layout/AppLayout.vue';
@@ -29,9 +26,9 @@ import { TaxBaseI } from '@/Interfaces/TaxInterface';
 import { useProductStore } from '@/stores/ProductStore';
 import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
 import { purchaseBreadCrumb } from '@/Helpers/PurchaseHelper';
-import { Plus, Trash2, Send } from '@lucide/vue';
+import { Plus, Send, Trash2 } from '@lucide/vue';
 import axios from 'axios';
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import { getDataFromArray, getMoney, truncateText } from '@/Global/Helpers';
 import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
 
@@ -235,8 +232,6 @@ const destroy = (event: Event, index: number) => {
 };
 
 const onCellEditComplete = async (event: DataTableCellEditCompleteEvent) => {
-  const info = event.newData as purchaseInfoI;
-
   calculateAmount(event.index);
 };
 </script>

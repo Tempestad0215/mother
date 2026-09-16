@@ -9,13 +9,12 @@ import { MenuItemI } from '@/Interfaces/GlobalInterface';
 import {
   GitBranch,
   LayoutDashboardIcon,
-  Users,
-  TruckIcon,
-  ShoppingCart,
-  ReceiptIcon,
   Menu,
+  ReceiptIcon,
+  ShoppingCart,
+  TruckIcon,
+  Users,
   X,
-  FileText, // Icono sugerido para Cotizaciones
 } from '@lucide/vue';
 
 const route = useRoute();
@@ -251,7 +250,4 @@ onUnmounted(() => {
 
 <style scoped>
 /* Opcional: Ajuste para ScrollPanel de PrimeVue */
-:deep(.p-scrollpanel-content) {
-  padding: 0 !important;
-}
 </style>

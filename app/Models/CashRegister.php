@@ -5,10 +5,12 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 
 /**
@@ -17,6 +19,7 @@ use Spatie\Activitylog\Models\Concerns\LogsActivity;
  * @property float $opening_balance
  * @property float $closing_balance
  * @property float $expected_balance
+ * @property array $summary
  * @property bool $status
  * @property Carbon $opened_at
  * @property Carbon $closed_at
@@ -24,6 +27,7 @@ use Spatie\Activitylog\Models\Concerns\LogsActivity;
  * @property Carbon $updated_at
  *
  * @property-read Sale[] $sales
+ * @property-read User $user
  */
 class CashRegister extends Model
 {
@@ -31,6 +35,9 @@ class CashRegister extends Model
     use HasUuids;
     use LogsActivity;
 
+    /**
+     * @var \Illuminate\Support\HigherOrderCollectionProxy|mixed
+     */
     protected $primaryKey = 'uuid';
     public $incrementing = false;
     protected $keyType = 'string';
@@ -42,10 +49,20 @@ class CashRegister extends Model
         'opening_balance',
         'closing_balance',
         'expected_balance',
+        'summary',
         'status',
         'opened_at',
         'closed_at',
     ];
+
+
+    public function getActivitylogOptions():LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable()
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges();
+    }
 
 
     /**
@@ -70,6 +87,7 @@ class CashRegister extends Model
             'status' => 'boolean',
             'opened_at' => 'timestamp',
             'closed_at' => 'timestamp',
+            'summary' => 'array'
         ];
     }
 
@@ -118,5 +136,12 @@ class CashRegister extends Model
     public static function clearCacheForUser(string $userUuid): void
     {
         Cache::forget("user_{$userUuid}_active_cash_register");
+    }
+
+
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_uuid', 'uuid');
     }
 }

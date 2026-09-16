@@ -5,16 +5,19 @@ namespace App\Http\Controllers;
 use App\Enums\PrintFormatEnum;
 use App\Invoices\SaleInvoiceA;
 use App\Invoices\Ticket80;
+use App\Models\CashRegister;
 use App\Models\CreditNote;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\Setting;
+use App\View\Components\Close;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Laravel\Octane\Exceptions\DdException;
 use PDF;
 use Picqer\Barcode\BarcodeGeneratorPNG;
 
@@ -87,7 +90,7 @@ class InvoiceController extends Controller
     /**
      * @param CreditNote $creditNote
      * @return ResponseFactory|JsonResponse|Response
-     * @throws ConnectionException
+     * @throws ConnectionException|DdException
      */
     public function getCreditNoteInvoice(CreditNote $creditNote)
     {
@@ -103,6 +106,29 @@ class InvoiceController extends Controller
 
 
         // Crear la respuestas
+        return $this->facturaCinta($template);
+
+    }
+
+    /**
+     * @param CashRegister $cashRegister
+     * @return ResponseFactory|JsonResponse|Response
+     * @throws ConnectionException
+     * @throws DdException
+     */
+    public function getCashRegisterClose(CashRegister $cashRegister)
+    {
+        $cashRegister->load(['user']);
+        $setting = Setting::getGlobal();
+
+
+        $component = new Close(
+            setting: $setting,
+            cashRegister: $cashRegister,
+        );
+
+        $template = $component->render()->with($component->data())->render();
+
         return $this->facturaCinta($template);
 
     }
@@ -157,125 +183,10 @@ class InvoiceController extends Controller
     }
 
 
-//    public function beltNote(CreditNote $creditNote)
-//    {
-//
-//        //Para aumentar la altura de la pagina
-//        $height = 140;
-//
-//        //Para manejar de forma sencilla los datos
-//        $infoSale = collect($creditNote->trans);
-//
-//        //Incrementar el tamaño
-//        $infoSale->each(function () use (&$height) {
-//            $height += 13;
-//        });
-//
-//        return Pdf::view('pdfs.belt.CreditNote',[
-//            'setting' => Setting::first(),
-//            'creditNote' => $creditNote,
-//            'datePrint' => Carbon::now()->format('d/m/y H:i:s')
-//        ])->paperSize(80, $height)
-//            ->margins(2,2,2,2);
-//    }
-
-
-//    /**
-//     * @param MoneyCounter $counter
-//     * @return Pdf
-//     */
-//    public function getB(MoneyCounter $counter)
-//    {
-//        return pdf::view('pdfs.InvoiceCounterB5', [
-//            'setting' => Setting::first(),
-//            'counter' => $counter,
-//        ])->paperSize(80,240)
-//            ->margins(2,2,2,2);
-//    }
-//
-//    /**
-//     * Generar el PDF
-//     * @param Model $model
-//     * @param string $pdfClass
-//     * @param string $fileName
-//     * @return JsonResponse
-//     */
-//    public function generatePDF (
-//        Model $model,
-//        string $pdfClass,
-//        string $fileName
-//    ){
-//        try {
-//            //Buscar el registro existente
-////            $record = $modelClass::find($id);
-//
-//            // Verificar si no existe el registro.
-//
-//            // Eliminar el PDF si ya existe.
-//            if (Storage::disk('pdfs')->exists($fileName)) {
-//                Storage::disk('pdfs')->delete($fileName);
-//            }
-//
-//            // Crear el PDF.
-//            $pdf = new $pdfClass($model);
-//            $pdfContent = $pdf->setData();
-//
-//            // Guardar el PDF en el almacenamiento.
-//            Storage::disk('pdfs')->put($fileName, $pdfContent);
-//
-//            // Generar la URL del archivo.
-//            $url = config('app.url') . '/storage/pdfs/' . $fileName;
-//
-//
-//            // Devolver respuesta JSON con la URL.
-//            return response()->json([
-//                'msj' => 'PDF Generado y Guardado Temporalmente',
-//                'url' => $url,
-//            ]);
-//
-//        //Verificar si se puede generar el pdf
-//        }catch (Exception $e){
-//
-//
-//            return response()->json([
-//                'Error' => 'No Es Posible Generar PDF',
-//                'Info' => 'Error'.$e->getMessage(),
-//            ]);
-//        }
-//
-//    }
     /**
      * @param string $template
+     * @param PrintFormatEnum $format
      * @return ResponseFactory|JsonResponse|Response
-     * @throws ConnectionException
-     */
-//    public function facturaCinta(string $template): ResponseFactory|JsonResponse|Response
-//    {
-//        $response = Http::attach('index.hmtl', $template, 'index.html')
-//            ->post($this->pdfGeneratorUrl, [
-//                'paperWidth' => '3.14',  // 80mm en pulgadas
-//                'marginLeft' => '0.1',
-//                'marginRight' => '0.1',
-//                'marginTop' => '0.1',    // Espacio para la cabecera fija
-//                'marginBottom' => '0.1',
-//                'waitDelay' => '600ms',  // Tiempo para que cargue Tailwind 4 por CDN
-//            ]);
-//
-//        // Devolver si es correcto
-//        if ($response->successful()) {
-//            return response($response->body(), 200, [
-//                'content-type' => 'application/pdf'
-//            ]);
-//        }
-//
-//        // Devolver mensaje de error
-//        return response()->json(['error' => 'Error al generar ticket'], 500);
-//    }
-
-    /**
-     * Método base para interactuar con Gotenberg de forma dinámica.
-     *
-     * @throws ConnectionException|\Laravel\Octane\Exceptions\DdException
      */
     public function generatePdf(
         string $template,
@@ -284,35 +195,28 @@ class InvoiceController extends Controller
     {
 
         try {
-            $payload = array_merge($format->dimensions(), [
-                'waitDelay' => '600ms', // Espera para cargar Tailwind 4 por CDN
-            ]);
-
             $response = Http::attach('index.html', $template, 'index.html')
                 ->withBasicAuth($this->userName, $this->password)
                 ->withOptions([
                     'verify' => false
                 ])
-                ->post($this->pdfGeneratorUrl, $payload);
+                ->post($this->pdfGeneratorUrl, $format->dimensions());
 
             if ($response->successful()) {
                 return response($response->body(), 200, [
                     'Content-Type' => 'application/pdf',
                     'Content-Disposition' => 'inline; filename="documento.pdf"'
                 ]);
+            }else{
+                Log::error($response->getStatusCode());
+                return response()->json(['error' => 'Error al generar el PDF'], 500);
             }
 
-
-            Log::error($response->getStatusCode());
-
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
             return response()->json(['error' => 'Error al generar el PDF'], 500);
 
-        } catch (\Exception $e) {
-            dd($e->getMessage());
-
         }
-
-
 
     }
 
@@ -323,15 +227,18 @@ class InvoiceController extends Controller
     /**
      * Helper para formato de cinta (POS 80mm)
      * @throws ConnectionException
+     * @throws DdException
      */
     public function facturaCinta(string $template): ResponseFactory|JsonResponse|Response
     {
         return $this->generatePdf($template, PrintFormatEnum::Ticket80mm);
     }
 
+
+
     /**
      * Helper para formato Carta (Cotizaciones, Facturas A, etc.)
-     * @throws ConnectionException
+     * @throws ConnectionException|DdException
      */
     public function facturaCarta(string $template): ResponseFactory|JsonResponse|Response
     {
@@ -340,7 +247,7 @@ class InvoiceController extends Controller
 
     /**
      * Helper para formato A4 (Órdenes de Compra)
-     * @throws ConnectionException
+     * @throws ConnectionException|DdException
      */
     public function facturaA4(string $template): ResponseFactory|JsonResponse|Response
     {

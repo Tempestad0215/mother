@@ -16,8 +16,7 @@ class SaleItemDto extends BaseDto
      * @param string $price_type
      * @param float $price
      * @param float $min_price
-     * @param float $promotional_price
-     * @param float|null $temp_price
+     * @param ?float $promotional_price
      * @param string $tax_uuid
      * @param float $tax_rate
      * @param float $discount
@@ -36,8 +35,7 @@ class SaleItemDto extends BaseDto
         public float $price,
         public string $price_type,
         public float $min_price,
-        public float $promotional_price,
-        public ?float $temp_price,
+        public ?float $promotional_price,
         public string $tax_uuid,
         public float $tax_rate,
         public float $discount,
@@ -46,7 +44,7 @@ class SaleItemDto extends BaseDto
         public float $reserved,
         public float $amount,
         public bool $is_service,
-        public ?string $uuid,
+        public ?string $uuid = null,
         public ?string $sale_uuid = null,
     ) {}
 
@@ -67,7 +65,6 @@ class SaleItemDto extends BaseDto
             price_type: $data['price_type'],
             min_price: $data['min_price'] ?? 0,
             promotional_price: $data['promotional_price'] ?? 0,
-            temp_price: $data['temp_price'] ?? 0,
             tax_uuid: $data['tax_uuid'],
             tax_rate: $data['tax_rate'],
             discount: $data['discount'],
@@ -97,9 +94,9 @@ class SaleItemDto extends BaseDto
      */
     public function getTax():float
     {
-        $subTotalBruto = bcmul((string) $this->stock, (string)$this->temp_price, 4);
-        $subTotalNetp = bcsub($subTotalBruto, (string)$this->discount_amount, 4);
-        $totalTax = bcmul($subTotalNetp, (string)$this->tax_rate, 4);
+        $subTotalBruto = bcmul((string) $this->stock, (string)$this->promotional_price, 4);
+        $subTotalNeto = bcsub($subTotalBruto, (string)$this->discount_amount, 4);
+        $totalTax = bcmul($subTotalNeto, (string)$this->tax_rate, 4);
         return (float)$totalTax;
     }
 

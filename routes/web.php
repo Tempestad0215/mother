@@ -28,6 +28,7 @@ use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Middleware\IsAdminMiddleware;
+use App\Models\CashRegister;
 use App\Models\Product;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
@@ -89,7 +90,7 @@ Route::middleware([
         Route::patch('/{user}', 'update')->name('update');
         Route::patch('/destroy/{user}', 'destroy')->name('destroy');
         Route::get('/role','assingRoleIndex' )->name('assing.role.index');
-        Route::post('/role/{user}','assingRole' )->name('assing.role.post');
+        Route::patch('/role/{user}','assingRole' )->name('assing.role.post');
     });
 
     /*
@@ -247,6 +248,7 @@ Route::middleware([
         Route::get('/getA/{sale}',  'getA')->name('getA');
 //        Route::get('/getB/{counter}',  'getB'])->name('getB');
         Route::get('/label/{product}',  'label')->name('label');
+        Route::get('/cashregister/close/{cashRegister}','getCashRegisterClose')->name('cashregister.close');
     });
 
     /*
@@ -284,31 +286,12 @@ Route::middleware([
     })->name('printTest');
 
 
-    Route::get('/test/2', function (){
-
-        $product = Product::first();
-
-        $labelTemplate = view('pdfs.ticket.label',[
-            'code' => $product->code
-        ])->render();
-
-        $response = \Illuminate\Support\Facades\Http::attach('index.hmtl', $labelTemplate, 'index.html')
-            ->post("http://localhost:3100/forms/chromium/convert/html",[
-                'paperWidth' => '3.14',  // 80mm en pulgadas
-                'paperHeight' => '1.5',   // Alto estimado de página corta
-                'marginLeft' => '0.1',
-                'marginRight' => '0.1',
-                'marginTop' => '0.1',    // Espacio para la cabecera fija
-                'marginBottom' => '0.1',
-                'waitDelay' => '600ms',  // Tiempo para que cargue Tailwind 4 por CDN
-            ]);
-
-        if ($response->successful()){
-            return response($response->body(),200, [
-                'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'inline; filename="ticket.pdf"',
-            ]);
-        }
-        return response()->json(['error' => 'No se pudo conectar con Gotenberg'], 500);
-    });
+//    Route::get('/test/2', function (){
+//        $cashRegister = CashRegister::find('01a0abbf-3bfd-734f-80ef-a7bd4248330f');
+//
+//
+//
+//        return redirect('')
+//
+//    });
 });

@@ -3,7 +3,6 @@ import { Head, useForm, usePage } from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
 import { useRoute } from 'ziggy-js';
 import {
-  Breadcrumb,
   Button,
   Card,
   FileUpload,

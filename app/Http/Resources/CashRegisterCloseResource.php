@@ -63,7 +63,8 @@ class CashRegisterCloseResource extends JsonResource
                     PaymentTypeEnum::TRANSFERENCIA => $totalTransferencia = bcadd($totalTransferencia, (string)$sale->amount, 4),
                     PaymentTypeEnum::Cheque => $totalCheque = bcadd($totalCheque, (string)$sale->amount, 4),
                     PaymentTypeEnum::ANTICIPO => $totalAnticipo = bcadd($totalAnticipo, (string)$sale->amount, 4),
-                    PaymentTypeEnum::TARJETA => $totalTarjeta = bcadd($totalTarjeta, (string)$sale->amount, 4)
+                    PaymentTypeEnum::TARJETA => $totalTarjeta = bcadd($totalTarjeta, (string)$sale->amount, 4),
+                    PaymentTypeEnum::TODO => $totalIncome = bcadd($totalIncome, (string)$sale->amount, 4),
                 };
             }
 

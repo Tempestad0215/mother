@@ -1,25 +1,24 @@
 <script setup lang="ts">
 import { SaleBreadCrumbs } from '@/Helpers/SaleHelper';
 import {
-  useToast,
-  Card,
-  DataTable,
-  Column,
   Button,
-  Select,
+  Card,
+  Column,
+  DataTable,
   DatePicker,
-  FloatLabel,
   Divider,
+  FloatLabel,
+  Select,
+  useToast,
 } from 'primevue';
 import { saleDataI, SaleSoldFilterI, SaleTypeEnum } from '@/Interfaces/SaleInterface';
-import { Printer, Search, ReceiptText } from '@lucide/vue';
+import { Printer, ReceiptText, Search } from '@lucide/vue';
 import { getMoney, printPdf } from '@/Global/Helpers';
 import { router, useForm } from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
 import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
 import { EnumValueI } from '@/Interfaces/GeneralInterface';
 import { onMounted } from 'vue';
-import { useRoute } from 'ziggy-js';
 
 const toast = useToast();
 

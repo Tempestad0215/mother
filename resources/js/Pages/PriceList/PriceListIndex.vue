@@ -1,21 +1,20 @@
 <script setup lang="ts">
 import AppLayout from '@layout/AppLayout.vue';
 import {
-  Breadcrumb,
   Button,
   Card,
+  Checkbox,
+  Column,
+  DataTable,
+  Dialog,
   FloatLabel,
   InputText,
-  Checkbox,
   Tag,
   useToast,
-  DataTable,
-  Column,
-  Dialog,
 } from 'primevue';
 import { itemsSettings } from '@/Helpers/SettingHelpers';
 import { useForm } from '@inertiajs/vue3';
-import { FilePenLine, Eraser } from '@lucide/vue';
+import { Eraser, FilePenLine } from '@lucide/vue';
 import { ref } from 'vue';
 import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
 

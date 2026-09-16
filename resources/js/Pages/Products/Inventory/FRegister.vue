@@ -4,7 +4,7 @@ import TextInput from '@components/TextInput.vue';
 import PrimaryButton from '@components/PrimaryButton.vue';
 import InputError from '@components/InputError.vue';
 import { Money } from 'v-money3';
-import { ProductBaseI, productI, ProductTableI } from '@/Interfaces/ProductInterface';
+import { ProductBaseI, ProductTableI } from '@/Interfaces/ProductInterface';
 import { ref, watch } from 'vue';
 import axios from 'axios';
 import { useForm } from '@inertiajs/vue3';

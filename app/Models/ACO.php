@@ -4,10 +4,8 @@ namespace App\Models;
 
 use App\Enums\AccountCountEnum;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 
 

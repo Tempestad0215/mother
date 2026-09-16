@@ -15,17 +15,22 @@ class SaleItemFactory extends BaseFactory
     public static function fromArray(array $data): SaleItemDto
     {
         return new SaleItemDto(
-            product_id: (int) $data['product_id'],
-            sale_id: (int) $data['sale_id'],
+            product_uuid: (int) $data['product_uuid'],
+            product_name: (string) $data['product_name'],
             stock: (float) $data['stock'],
             price: (float) $data['price'],
-            tax_id: (int) $data['tax_id'],
+            price_type: (string) $data['price_type'],
+            min_price: (float) $data['min_price'],
+            promotional_price: (float) $data['promotional_price'],
+            tax_uuid: (int) $data['tax_uuid'],
             tax_rate: (float) $data['tax_rate'],
             discount: (float) $data['discount'],
             discount_amount: (float) $data['discount_amount'],
+            warehouse_uuid: (string) $data['warehouse_uuid'],
             reserved: (float) $data['reserved'],
             amount: (float) $data['amount'],
             is_service: (bool) $data['is_service'],
+            sale_uuid: (int) $data['sale_uuid'],
         );
     }
 
@@ -38,7 +43,7 @@ class SaleItemFactory extends BaseFactory
     public static function arrayWithSale(array $data, Sale $sale): array
     {
         $baseData = self::fromArray($data)->toArray();
-        $baseData['sale_id'] = $sale->id;
+        $baseData['sale_uuid'] = $sale->uuid;
 
         return $baseData;
     }

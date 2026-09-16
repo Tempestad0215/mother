@@ -6,7 +6,7 @@ import { Card, useToast, Button, Toast, InputNumber, Divider, FloatLabel } from 
 import { computed, onMounted } from 'vue';
 import AppLayout from '@layout/AppLayout.vue';
 import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
-import { getMoney } from '@/Global/Helpers';
+import { getMoney, printPdf } from '@/Global/Helpers';
 import { Lock, CheckCircle2, AlertTriangle, AlertCircle } from '@lucide/vue';
 
 const toast = useToast();
@@ -38,13 +38,17 @@ const submitClose = () => {
   if (form.physical_cash === 0.0) return;
 
   form.patch(route('cash-register.close.store', { cashRegister: propsW.cashRegister.uuid }), {
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast.add({
         severity: 'success',
         summary: 'Caja Cerrada Exitosamente',
         detail: 'El arqueo de caja fue registrado correctamente.',
         life: 3000,
       });
+
+      const uuid: string = data.flash.cashRegisterUuid as string;
+
+      printPdf(route('invoice.cashregister.close', { cashRegister: uuid }));
     },
     onError: (err) => {
       toast.add({

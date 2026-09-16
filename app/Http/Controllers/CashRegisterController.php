@@ -75,11 +75,42 @@ class CashRegisterController extends Controller
             'expected_balance' => ['required', 'numeric'],
         ]);
 
+        // 1. Obtener totales de ventas agrupados por método de pago para esta caja
+        $salesByMethod = $cashRegister->sales()
+            ->selectRaw('type_payment, SUM(amount) as total')
+            ->groupBy('type_payment')
+            ->pluck('total', 'type_payment');
+
+        // 2. Obtener movimientos manuales
+        $manualIncomes = $cashRegister->movements()->where('type', 'income')->sum('amount');
+        $cashExpenses = $cashRegister->movements()->where('type', 'expense')->sum('amount');
+        $vaultDeliveries = $cashRegister->movements()->where('type', 'vault_transfer')->sum('amount');
+
+        // 3. Estructurar el snapshot para auditoría e impresión rápida
+
+        $summary = [
+            'opening_fund'     => $cashRegister->opening_balance,
+            'cash_sales'       => $salesByMethod->get('cash', 0),
+            'manual_incomes'   => $manualIncomes,
+            'cash_expenses'    => $cashExpenses,
+            'vault_deliveries' => $vaultDeliveries,
+            'card_total'       => $salesByMethod->get('card', 0),
+            'transfer_total'   => $salesByMethod->get('transfer', 0),
+            'credit_total'     => $salesByMethod->get('credit', 0),
+            'cheque_total'     => $salesByMethod->get('cheque', 0),
+        ];
+
         $cashRegister->update([
             'status' => false,
             'closing_balance' => $validate['physical_cash'],
             'expected_balance' => $validate['expected_balance'],
+            'summary' => $summary,
             'closed_at' => now(),
+        ]);
+
+
+        Inertia::flash([
+            'cashRegisterUuid' => $cashRegister->uuid,
         ]);
 
         return redirect()->route('dashboard');

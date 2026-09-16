@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\Storage;
 class SettingHelper
 {
 
+    /**
+     * @throws \Throwable
+     */
     public function store(StoreSettingRequest $request):void
     {
 

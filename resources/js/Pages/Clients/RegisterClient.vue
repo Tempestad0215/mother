@@ -14,7 +14,6 @@ import {
 } from 'primevue';
 import { router } from '@inertiajs/vue3';
 import { useRoute } from 'ziggy-js';
-import Pagination from '@components/Pagination.vue';
 import { getSearchTable } from '@/Global/SearchTable';
 import { clientBaseI } from '@/Interfaces/ClientInterface';
 import { PaginationI } from '@/Interfaces/GlobalInterface';

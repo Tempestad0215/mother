@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\PaymentTypeEnum;
 use App\Helpers\CodeHelper;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -47,6 +48,7 @@ class CreditNote extends Model{
     use SoftDeletes;
     use HasUuids;
     use LogsActivity;
+    use HasFactory;
 
 
     // La tabla que se ve a utilizar

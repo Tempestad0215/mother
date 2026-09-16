@@ -6,6 +6,7 @@ namespace App\Models;
 use App\Enums\UserRoleEnum;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -63,6 +64,7 @@ class User extends Authenticatable
         'deleted_at',
         'created_at',
         'updated_at',
+        'role',
     ];
 
     /**
@@ -99,6 +101,12 @@ class User extends Authenticatable
             'password' => 'hashed',
             'status' => 'boolean',
         ];
+    }
+
+
+    public function cashRegister(): HasMany
+    {
+        return $this->hasMany(CashRegister::class, 'user_uuid','uuid');
     }
 
 

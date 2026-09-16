@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { SaleBreadCrumbs } from '@/Helpers/SaleHelper';
 import { MenuItemI } from '@/Interfaces/GlobalInterface';
 import { Link } from '@inertiajs/vue3';
 import { Breadcrumb } from 'primevue';

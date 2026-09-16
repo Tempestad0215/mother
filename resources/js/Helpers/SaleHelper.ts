@@ -1,5 +1,5 @@
 import { MenuItemI } from '@/Interfaces/GlobalInterface';
-import { FileChartLine, ShoppingBasket, FileChartColumn, DoorClosedLocked } from '@lucide/vue';
+import { DoorClosedLocked, FileChartLine, ShoppingBasket } from '@lucide/vue';
 
 export const SaleBreadCrumbs: MenuItemI[] = [
   {

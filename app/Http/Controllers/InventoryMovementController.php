@@ -111,11 +111,11 @@ class InventoryMovementController extends Controller implements HasMiddleware
         $productTable = $productHelper->get($request);
 
         // DEvolver la vista con el mensaje
-        return Inertia::render('Products/Inventory/EntryCreate',[
-            'products' => Product::take(50)->get(),
-            'productTable' => $productTable,
-            'entry_edit' => new InventoryProductResource($entry),
-        ]);
+//        return Inertia::render('Products/Inventory/EntryCreate',[
+//            'products' => Product::take(50)->get(),
+//            'productTable' => $productTable,
+//            'entry_edit' => new InventoryProductResource($entry),
+//        ]);
     }
 
     /**

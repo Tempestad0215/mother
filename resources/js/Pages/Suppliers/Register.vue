@@ -3,23 +3,22 @@ import AppLayout from '@layout/AppLayout.vue';
 import { SupplierI } from '@/Interfaces/SupplierInterface';
 import { useRoute } from 'ziggy-js';
 import {
-  DataTable,
-  Column,
-  InputText,
   Button,
-  InputGroupAddon,
-  InputGroup,
+  Column,
+  DataTable,
   Dialog,
+  InputGroup,
+  InputGroupAddon,
+  InputText,
   useConfirm,
   useToast,
 } from 'primevue';
 import { ref } from 'vue';
 import FRegister from '@/Pages/Suppliers/FRegister.vue';
 import { PaginationI, PaymentTypeEnumI } from '@/Interfaces/GlobalInterface';
-import Pagination from '@components/Pagination.vue';
 import { getSearchTable } from '@/Global/SearchTable';
 import { router } from '@inertiajs/vue3';
-import { PackagePlus, FilePenLine, Shredder } from '@lucide/vue';
+import { FilePenLine, PackagePlus, Shredder } from '@lucide/vue';
 import { onPageChange, paginationOptions } from '@/Global/Helpers';
 
 const route = useRoute();
@@ -236,16 +235,6 @@ const resetForm = () => {
   }
 }
 
-:deep(.p-dialog-content) {
-  padding: 1rem;
-  max-height: 80vh;
-  overflow-y: auto;
-}
-
 @media (max-width: 640px) {
-  :deep(.p-dialog-content) {
-    padding: 0.75rem;
-    max-height: 85vh;
-  }
 }
 </style>

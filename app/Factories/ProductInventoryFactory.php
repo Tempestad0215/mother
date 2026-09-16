@@ -29,7 +29,7 @@ class ProductInventoryFactory extends BaseFactory
     {
 
         return new ProductInventoryDto(
-            product_id: $saleItem->product_id,
+            product_id: $saleItem->product_uuid,
             warehouse_id:  $warehouse_id,
             qty_on_hand: $saleItem->stock,
             committed: $saleItem->reserved,

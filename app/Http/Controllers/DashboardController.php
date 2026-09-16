@@ -65,7 +65,7 @@ class DashboardController extends Controller
                 // O si manejas estados positivos: ->where('status', 'COMPLETADA');
             })
             ->withSum('saleItem as total_qty', 'stock')
-            ->orderBy('total_qty', 'desc')
+            ->orderByDesc('total_qty')
             ->take(5)
             ->get();
 

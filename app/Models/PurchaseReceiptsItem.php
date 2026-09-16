@@ -60,7 +60,8 @@ class PurchaseReceiptsItem extends Model
         'tax_amount',
         'discount',
         'amount',
-        'purchase_receipt_uuid'
+        'purchase_receipt_uuid',
+        'quantity_d'
     ];
 
     /**

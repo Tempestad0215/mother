@@ -4,7 +4,6 @@ import { router, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { useRoute } from 'ziggy-js';
 import {
-  Breadcrumb,
   Button,
   Column,
   DataTable,

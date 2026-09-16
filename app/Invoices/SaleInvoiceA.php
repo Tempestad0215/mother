@@ -253,11 +253,11 @@ class SaleInvoiceA extends TCPDF
         $this->Line($this->GetX(),$this->GetY(),$this->GetX()+$this->line,$this->GetY());
 
         //Tomar la auditoria de creacion
-        $audit = $this->sale->audits()->firstWhere('event','created');
+//        $audit = $this->sale->audits()->firstWhere('event','created');
 
         //Quien Creo la orden
         $this->Cell(30,5, 'Le Atendió :', 0, 0, 'L', false, '', '', false,'');
-        $this->Cell(0, 5, $audit->user->name  , 0, 1, 'L', 0, '', 0, false, '' );
+//        $this->Cell(0, 5, $audit->user->name  , 0, 1, 'L', 0, '', 0, false, '' );
 
         //Tipo de pago de la factura
         $this->Cell(30,5, 'Tipo Pago :', 0, 0, 'L', false, '', '', false,'');

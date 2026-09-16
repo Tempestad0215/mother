@@ -73,7 +73,9 @@ class Setting extends Model
         'status',
         'save_cost',
         'sequence',
-        'add_tax'
+        'add_tax',
+        'tax',
+        'unit'
     ];
 
     /**

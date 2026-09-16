@@ -26,13 +26,13 @@ export interface CriticalProduct {
   min_stock: number;
 }
 
-interface WarehouseI {
-  warehouse_uuid: string;
-  warehouse_code: string;
-  warehouse_name: string;
-  stock_quantity: number;
-  min_stock: number;
-}
+// interface WarehouseI {
+//   warehouse_uuid: string;
+//   warehouse_code: string;
+//   warehouse_name: string;
+//   stock_quantity: number;
+//   min_stock: number;
+// }
 export interface TopProduct {
   uuid: string;
   code: string;

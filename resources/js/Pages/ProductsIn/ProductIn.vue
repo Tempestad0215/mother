@@ -6,17 +6,16 @@ import { useRoute } from 'ziggy-js';
 import { productBreadCrumb } from '@/Helpers/ProductHelper';
 import {
   AutoComplete,
-  Breadcrumb,
+  AutoCompleteCompleteEvent,
+  AutoCompleteOptionSelectEvent,
   Button,
   Card,
   FloatLabel,
-  InputText,
   InputNumber,
+  InputText,
   Select,
   Tag,
   useToast,
-  AutoCompleteOptionSelectEvent,
-  AutoCompleteCompleteEvent,
 } from 'primevue';
 import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
 import axios from 'axios';

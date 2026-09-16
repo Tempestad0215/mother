@@ -23,10 +23,11 @@
             color: #000000;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
-            padding-left: 8px;   /* px-2 */
-            padding-right: 8px;  /* px-2 */
-            padding-top: 16px;   /* pt-4 */
-            padding-bottom: 0px; /* pb-0 */
+            /* px-2 */
+            /* px-2 */
+            /* pt-4 */
+            /* pb-0 */
+            padding: 16px 8px 0;
             margin-left: auto;   /* mx-auto */
             margin-right: auto;  /* mx-auto */
             width: 72mm;
@@ -44,7 +45,6 @@
         .text-left { text-align: left; }
         .text-right { text-align: right; }
 
-        .text-xl { font-size: 20px; }
         .text-sm { font-size: 14px; }
         .text-xs { font-size: 12px; }
         .text-10px { font-size: 10px; }
@@ -54,9 +54,6 @@
         .font-black { font-weight: 900; }
 
         .uppercase { text-transform: uppercase; }
-        .tracking-wide { letter-spacing: 0.025em; }
-        .leading-relaxed { line-height: 1.625; }
-        .break-words { word-wrap: break-word; word-break: break-all; }
 
         /* 3. Colores específicos */
         .text-gray-600 { color: #4b5563; }
@@ -76,10 +73,7 @@
         /* 6. Márgenes y Rellenos (Spacings) */
         .my-2 { margin-top: 8px; margin-bottom: 8px; }
         .my-3 { margin-top: 12px; margin-bottom: 12px; }
-        .mb-2 { margin-bottom: 8px; }
         .mb-4 { margin-bottom: 16px; }
-
-        .mt-1 { margin-top: 4px; }
         .mt-2 { margin-top: 8px; }
         .mt-3 { margin-top: 12px; }
 
@@ -113,36 +107,19 @@
 <body>
 
 <div class="text-center mb-4">
-    <h1 class="text-xl font-black tracking-wide uppercase">{{ $setting->name }}</h1>
-    <p class="text-xs leading-relaxed mt-1">
-        RNC: {{ $setting->company_id }}<br>
-        Tel: {{ $setting->phone }}<br>
-        Puerto Plata, Rep. Dominicana
-    </p>
+    <x-ticket-header
+        :setting="$setting"
+        :document-type="'Ventas'"
+        :document-code="$sale->code"
+        :document-ncf="$sale->ncf"
+        :document-date="$sale->created_at"/>
 </div>
 
-<div class="border-t-dashed-black my-2"></div>
 
-<div class="text-xs space-y-0.5 mb-2">
-    <div class="flex justify-between">
-        <span class="font-bold">FACTURA:</span>
-        <span>{{ $sale->code }}</span>
-    </div>
-    @if ($sale->ncf)
-        <div class="flex justify-between">
-            <span class="font-bold">NCF:</span>
-            <span>{{ $sale->ncf ?? 'N/A' }}</span>
-        </div>
-    @endif
 
-    <div class="flex justify-between">
-        <span class="font-bold">FECHA:</span>
-        <span>{{ $sale->created_at }}</span>
-    </div>
-    <div class="flex justify-between">
-        <span class="font-bold">CLIENTE:</span>
-        <span class="text-right truncate" style="max-width: 45mm;">{{ $sale->client_name }}</span>
-    </div>
+<div class="flex justify-between">
+    <span class="font-bold">CLIENTE:</span>
+    <span class="text-right truncate" style="max-width: 45mm;">{{ $sale->client_name }}</span>
 </div>
 
 <div class="border-t-dashed-black my-2"></div>
@@ -158,7 +135,7 @@
     <tbody>
     @foreach($sale->items as $item)
         <tr class="font-bold">
-            <td class="pt-2 text-left uppercase break-words">
+            <td class="pt-2 text-left uppercase wrap-break-word">
                 <p>{{ $item->product->code }}</p>
                 <p>{{ Str::limit($item->product->name, 15) }}</p>
             </td>

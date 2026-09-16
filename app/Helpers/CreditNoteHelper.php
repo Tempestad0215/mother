@@ -49,7 +49,7 @@ class CreditNoteHelper
             //Verificar si existe para aumentar el contador de la nota de credito
             if ($data->type == SaleTypeEnum::DEVOLUCION->value && $setting?->sequence) {
                 //Crear el aumento el comprobante
-                SequenceHelper::incrementSequence(SequenceSaleTypeEnum::B04, $request);
+                SequenceHelper::incrementSequence(SequenceSaleTypeEnum::B04, SaleTypeEnum::from($request->type));
             }
             // Limpiar los datos para crear la nota de credito
             $cleanData = collect($data->toArray())->except(['uuid', 'status'])->toArray();
@@ -150,7 +150,7 @@ class CreditNoteHelper
         $creditNoteFromDB = CreditNote::whereIn('uuid', $uuids)
             ->where('status', true)
             ->where('n_available', '>', 0)
-            ->orderBy('created_at', 'asc')
+            ->oldest('created_at')
             ->get()
             ->keyBy('uuid');
 
