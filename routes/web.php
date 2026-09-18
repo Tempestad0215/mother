@@ -162,7 +162,7 @@ Route::middleware([
         'out' => OutController::class,
         'cash-register' => CashRegisterController::class
 
-        ]);
+    ]);
 
 
     /**
