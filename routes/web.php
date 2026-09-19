@@ -137,10 +137,6 @@ Route::middleware([
         Route::get('/convert/{sale}','convert')->name('convert');
     });
 
-//    Route::prefix('sale')->name('sale.')->controller(SaleController::class)->group(function () {
-//        Route::get('/convert/{sale}', 'convert')->name('convert');
-//    });
-
     /*
      * Resources principales
      *
@@ -163,7 +159,6 @@ Route::middleware([
         'cash-register' => CashRegisterController::class
 
     ]);
-
 
     /**
      * Lista de precios
@@ -194,8 +189,6 @@ Route::middleware([
         Route::get('/get/code', [ProductController::class, 'getByCode'])->name('get.code');
         Route::patch('/delete/{product}', [ProductController::class, 'destroy'])->name('destroy');
     });
-
-
 
     /*
      * Reportes de ventas/Exchange
@@ -283,13 +276,4 @@ Route::middleware([
         return Inertia::render('Reports/Index');
     })->name('printTest');
 
-
-//    Route::get('/test/2', function (){
-//        $cashRegister = CashRegister::find('01a0abbf-3bfd-734f-80ef-a7bd4248330f');
-//
-//
-//
-//        return redirect('')
-//
-//    });
 });
