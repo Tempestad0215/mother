@@ -240,7 +240,7 @@ const closeFormReturn = (isReturn: boolean) => {
   showFormReturn.value = false;
 
   if (isReturn) {
-    form.type = 'Devolucion';
+    form.type = 'DEVOLUCION';
   }
 
   sendReturnInfo.value = isReturn;

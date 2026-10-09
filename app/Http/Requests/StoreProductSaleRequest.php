@@ -62,7 +62,7 @@ class  StoreProductSaleRequest extends FormRequest
             'ncf' => ['nullable','string','max:30',Rule::requiredIf($sequence)],
             'invoice_type' => ['nullable','max:6','string', Rule::requiredIf($sequence)],
             'client_name' => ['nullable', 'string','min:3','max:75'],
-            'client_id' => ['nullable','integer'],
+            'client_uuid' => ['nullable','string','exists:clients,uuid'],
             'client_rnc' => ['nullable','string','max:20'],
             'info_sale' => ['required','array',Rule::unless(
                 $isReturn,
@@ -75,7 +75,7 @@ class  StoreProductSaleRequest extends FormRequest
             'info_sale.*.stock' => ['required','numeric'],
             'info_sale.*.price_type' => ['required','string'],
             'info_sale.*.price' => ['required','numeric'],
-            'info_sale.*.temp_price' => ['required','numeric'],
+            'info_sale.*.promotional_price' => ['required','numeric'],
             'info_sale.*.tax_uuid' => ['required','uuid','exists:taxes,uuid'],
             'info_sale.*.warehouse_uuid' => ['required','uuid','exists:warehouses,uuid'],
             'info_sale.*.tax_rate' => ['required','numeric'],

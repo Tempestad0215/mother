@@ -89,14 +89,15 @@ const saleGet = async () => {
 
     // Obtener los datos de la venta
     const res = await axios.get(route('sale.refund', { code: formGet.saleCode }));
-
     // Emitir el evento con los datos
     Object.assign(formInject, {
       ...res.data,
-      type: 'Devolucion',
+      type: 'DEVOLUCION',
       close_table: true,
       comment: '',
     });
+
+    formInject.client_uuid = res.data.client_uuid;
 
     emit('closeFormReturn', true);
     emit('sendClientName', res.data.client_name);

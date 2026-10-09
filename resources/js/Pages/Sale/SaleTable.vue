@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { saleKey } from '@/utils/keys';
-import { inject } from 'vue';
+import { computed, inject } from 'vue';
 import { infoSaleI, WarehouseMapType } from '@/Interfaces/SaleInterface';
 import { PreciseCalculator } from '@/utils/Decimal';
 import { Column, DataTable, DataTableCellEditCompleteEvent, InputNumber, Select } from 'primevue';
 import { getMoney, truncateText } from '@/Global/Helpers';
 import { EnumValueI } from '@/Interfaces/GeneralInterface';
+import { SaleTypeEnum } from '@/Helpers/SaleHelper';
 
 // Para eliminar un item de la venta
 const propsW = defineProps<{
@@ -15,6 +16,10 @@ const propsW = defineProps<{
 
 // Para eliminar un item de la venta
 const form = inject(saleKey)!;
+
+const isReturn = computed(() => {
+  return form.type === SaleTypeEnum.DEVOLUCION;
+});
 
 // Obtener los almacenes para el select
 const getWarehouses = (): EnumValueI[] | [] => {
@@ -136,7 +141,13 @@ const getLabelName = (uuid: string): string => {
         {{ data.stock }}
       </template>
       <template #editor="{ data }: { data: infoSaleI }">
-        <InputNumber :min-fraction-digits="2" :max-fraction-digits="2" fluid v-model="data.stock" />
+        <InputNumber
+          :readonly="isReturn && data.is_service"
+          :min-fraction-digits="2"
+          :max-fraction-digits="2"
+          fluid
+          v-model="data.stock"
+        />
       </template>
     </Column>
     <Column
@@ -148,7 +159,13 @@ const getLabelName = (uuid: string): string => {
         {{ getMoney(data.price) }}
       </template>
       <template #editor="{ data }: { data: infoSaleI }">
-        <InputNumber fluid :minFractionDigits="2" :maxFractionDigits="2" v-model="data.price" />
+        <InputNumber
+          :readonly="isReturn"
+          fluid
+          :minFractionDigits="2"
+          :maxFractionDigits="2"
+          v-model="data.price"
+        />
       </template>
     </Column>
     <Column header="Itbis" :field="(data: infoSaleI) => `${getMoney(data.tax_amount)}`" />
@@ -162,6 +179,8 @@ const getLabelName = (uuid: string): string => {
       </template>
       <template #editor="{ data }: { data: infoSaleI }">
         <InputNumber
+          :readonly="isReturn"
+          :class="[{ 'text-red-500': isReturn }]"
           :max-fraction-digits="2"
           :min-fraction-digits="2"
           fluid
@@ -188,27 +207,5 @@ const getLabelName = (uuid: string): string => {
       header="Importe"
       :field="(data: infoSaleI) => `${getMoney(data.amount)}`"
     />
-    <!--    <template #footer>-->
-    <!--      <div class="text-center">-->
-    <!--        <button-->
-    <!--          type="button"-->
-    <!--          v-if="form.info_sale.length > 0"-->
-    <!--          @click="showEditInfo"-->
-    <!--          v-tooltip.bottom="'Editar Item'"-->
-    <!--          class="bg-green-300 p-1 rounded-md"-->
-    <!--        >-->
-    <!--          <FilePenLine :size="30" />-->
-    <!--        </button>-->
-    <!--      </div>-->
-    <!--    </template>-->
   </DataTable>
-  <!--  <Dialog v-model:visible="showEdit" modal>-->
-  <!--    <SaleEditItem-->
-  <!--      @calculate-totals="calculateTotals"-->
-  <!--      @calculate-item-row="calculateItemRow"-->
-  <!--      v-model:editItemForm="formEditInfo"-->
-  <!--      v-model:lastIndex="lastIndex"-->
-  <!--      v-model:minIndex="minIndex"-->
-  <!--    />-->
-  <!--  </Dialog>-->
 </template>

@@ -350,10 +350,8 @@ class SaleController extends Controller
             ->where('code', $code)
             ->firstOrFail();
 
-
-
+        // Devolver los datos
         return response()->json(new SaleCreditNoteResource($data));
-//        return response()->json(new SaleInfoResource($data));
     }
 
 
@@ -362,7 +360,9 @@ class SaleController extends Controller
      */
     public function counter()
     {
-        return Inertia::render('Sale/MoneyCounter');
+        return Inertia::render('Sale/MoneyCounter',[
+
+        ]);
     }
 
 
@@ -395,7 +395,7 @@ class SaleController extends Controller
         ]);
 
 
-// 2. Construir la consulta
+        // 2. Construir la consulta
         $query = Sale::query()
             ->with(['items', 'client'])
             ->where('close_table', true);

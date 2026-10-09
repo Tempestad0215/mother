@@ -66,6 +66,7 @@ class SaleCreditNoteResource extends JsonResource
             // Restar las devoluciones con el stock a realizado
             $availableStock = bcsub((string)$item->stock, (string)$totalReturned);
 
+            // Para almacenar los errores de stock
             logger($availableStock);
 
             // Vericiar si el estock es mayor a cero
@@ -76,6 +77,8 @@ class SaleCreditNoteResource extends JsonResource
                 $saleItemArray['tax_uuid'] = $item->product->tax_uuid;
                 $saleItemArray['warehouse_uuid'] = $item->product->default_warehouse;
                 $saleItemArray['stock'] = $availableStock;
+                $saleItemArray['is_service'] = $item->product->is_service;
+
 
                 // Agregar el item al arreglo
                 $availableItems->push(
@@ -83,6 +86,8 @@ class SaleCreditNoteResource extends JsonResource
                 );
             }
         }
+
+
         // Verificar si hay items disponibles
         if(count($availableItems) <= 0)
         {
@@ -92,10 +97,12 @@ class SaleCreditNoteResource extends JsonResource
             ])->status(409);
         }
 
+
         // Devolver los datos
         return [
             ...parent::toArray($request),
             'info_sale' => $availableItems,
+            'items' => []
         ];
 
     }

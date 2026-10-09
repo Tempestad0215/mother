@@ -57,7 +57,6 @@ const paymentBox = ref(false);
 const saleInfoRef = ref<InstanceType<typeof SaleInfo>>()!;
 const saleDetailRef = ref<InstanceType<typeof SaleDetail>>()!;
 const saleTableRef = ref<InstanceType<typeof SaleTable>>()!;
-const saleFooterRef = ref<InstanceType<typeof SaleFooter>>()!;
 const salePaymentRef = ref<InstanceType<typeof PaymentInvoice>>()!;
 const returnInfo = ref(false);
 const client = ref('');

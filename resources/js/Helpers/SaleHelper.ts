@@ -49,3 +49,10 @@ export const saleTypeOptions = [
     value: 'ANTICIPO',
   },
 ];
+
+//Enum de ventas
+export enum SaleTypeEnum {
+  VENTAS = 'VENTAS',
+  COTIZACION = 'COTIZACION',
+  DEVOLUCION = 'DEVOLUCION',
+}

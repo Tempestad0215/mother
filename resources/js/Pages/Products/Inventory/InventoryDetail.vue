@@ -90,10 +90,10 @@ const checkReorderLevel = computed(() => {
         :value="form.warehouse_product"
         size="small"
         striped-rows
-        class="min-w-[700px] w-full text-xs sm:text-sm"
+        class="min-w-175 w-full text-xs sm:text-sm"
       >
         <Column header="CÓDIGO" field="prefix" class="w-20 font-semibold" />
-        <Column header="ALMACÉN" field="name" class="min-w-[140px]" />
+        <Column header="ALMACÉN" field="name" class="min-w-35" />
 
         <Column header="STOCK DISP." class="w-28">
           <template #body="{ data }: { data: WarehouseProductI }">

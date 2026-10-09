@@ -17,7 +17,6 @@ return new class extends Migration {
             $table->decimal('n_available', 19,6)->comment('cantiad nota de credito disponible');
             $table->string('type',20)->default('DEVOLUCION')->comment('Tipo Devolucion');
             $table->boolean('status')->default(true)->comment('Estado');
-            $table->foreignIdFor(Sale::class, 'sale_id')->comment('relacion de ventas');
             $table->string('comment')->nullable()->comment('Comentario');
             //Full text
             $table->fullText('ncf');

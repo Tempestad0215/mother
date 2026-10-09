@@ -23,6 +23,7 @@ import {
 } from 'primevue';
 import FShowClient from '@/Pages/Clients/FShowClient.vue';
 import { urlRNC } from '@/Global/Helpers';
+import { SaleTypeEnum } from '@/Helpers/SaleHelper';
 
 const route = useRoute();
 const page = usePage();
@@ -42,7 +43,7 @@ const form = inject(saleKey)!;
 const showClient = ref<boolean>(false);
 const clientFiltered = ref<Array<clientBaseI>>([]);
 const showClientRnc = ref<boolean>(false);
-const client = defineModel('client', {
+const client = defineModel<string>('client', {
   default: '',
 });
 
@@ -55,7 +56,7 @@ const hasRnc = computed(() => {
 });
 
 const isRefund = computed((): boolean => {
-  return form.type === 'Devolucion';
+  return form.type === SaleTypeEnum.DEVOLUCION;
 });
 
 // Conseguir el cliente
@@ -164,7 +165,7 @@ const getRncClient = async () => {
           life: 3000,
         });
       } else {
-        client.value = data.razon_social;
+        client.value = data.razon_social ?? '';
         form.client_name = data.razon_social;
         form.client_social = data.razon_social;
         form.client_rnc_status = data.status;
@@ -242,12 +243,10 @@ defineExpose({
 
     <!-- Columna 2: Estado de Carga y Comprobante Fiscal NCF -->
     <div
+      v-if="!form.invoice_type"
       class="flex flex-col justify-center space-y-1 bg-slate-50 p-3 rounded-lg border border-slate-200 text-sm"
     >
-      <div
-        v-if="!form.invoice_type"
-        class="flex items-center justify-center gap-2 py-2 text-slate-500 animate-pulse"
-      >
+      <div class="flex items-center justify-center gap-2 py-2 text-slate-500 animate-pulse">
         <span>Cargando...</span>
         <FontAwesomeIcon class="animate-spin" :icon="faSpinner" />
       </div>

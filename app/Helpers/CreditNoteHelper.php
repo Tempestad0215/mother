@@ -43,20 +43,24 @@ class CreditNoteHelper
 
             /** @var Setting|null $setting */
             $setting = Cache::get('app_settings');
+
             //Convertir a collection
             $data = SaleDto::fromArray($request->validated());
 
-            //Verificar si existe para aumentar el contador de la nota de credito
+            //Verificar si existe para aumentar el contador de la nota de crédito
             if ($data->type == SaleTypeEnum::DEVOLUCION->value && $setting?->sequence) {
+
                 //Crear el aumento el comprobante
                 SequenceHelper::incrementSequence(SequenceSaleTypeEnum::B04, SaleTypeEnum::from($request->type));
             }
             // Limpiar los datos para crear la nota de credito
-            $cleanData = collect($data->toArray())->except(['uuid', 'status'])->toArray();
+            $cleanData = collect($data->toArray())->except(['uuid', 'status','client_uuid'])->toArray();
+
+
             // Colocar el n_available igual al monto de la nota de credito
             $cleanData['n_available'] = $data->amount;
 
-            //Crear la devolucion
+            //Crear la devolución
             $creditNote = CreditNote::create([
                 ...$cleanData,
                 'sale_uuid' => $sale->uuid,
@@ -67,7 +71,8 @@ class CreditNoteHelper
 
             //Recorrer los datos
             collect($data->info_sale)->each(function (SaleItemDto $item) use (&$creditNoteItemsSave, $creditNote) {
-                // Crear el item de la nota de credito
+
+                // Crear el item de la nota de crédito
                 $creditNoteItemsSave[] = new CreditNoteItem([
                     'credit_note_uuid' => $creditNote->uuid,
                     'product_uuid' => $item->product_uuid,
@@ -81,7 +86,7 @@ class CreditNoteHelper
 
             });
 
-            // Guardar los items en la nota de credito
+            // Guardar los items en la nota de crédito
             $creditNote->items()->saveMany($creditNoteItemsSave);
             // Devolver los datos
             return $creditNote;

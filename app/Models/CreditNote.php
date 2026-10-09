@@ -54,7 +54,7 @@ class CreditNote extends Model{
     // La tabla que se ve a utilizar
     protected $table = 'credit_notes';
 
-
+    // Los datos
     protected $primaryKey = 'uuid';
     protected $keyType = 'string';
     public $incrementing = false;
@@ -133,7 +133,7 @@ class CreditNote extends Model{
      */
     public function sale(): BelongsTo
     {
-        return $this->belongsTo(Sale::class);
+        return $this->belongsTo(Sale::class,'sale_uuid','uuid');
     }
 
 
