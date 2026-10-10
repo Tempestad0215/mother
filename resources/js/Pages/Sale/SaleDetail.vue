@@ -385,6 +385,8 @@ defineExpose({
   >
     <div class="py-2">
       <FShowProduct
+        searchRoute="sale.index"
+        :searchOnly="['products']"
         @select-data="getDataProduct"
         :stock="true"
         :isProduct="false"

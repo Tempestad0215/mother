@@ -107,11 +107,11 @@ const checkReorderLevel = computed(() => {
           </template>
         </Column>
 
-        <Column header="PEDIDO" class="w-28">
-          <template #body="{ data }: { data: WarehouseProductI }">
-            <InputNumber fluid v-model="data.available" size="small" />
-          </template>
-        </Column>
+        <!--        <Column header="PEDIDO" class="w-28">-->
+        <!--          <template #body="{ data }: { data: WarehouseProductI }">-->
+        <!--            <InputNumber fluid v-model="data.available" size="small" />-->
+        <!--          </template>-->
+        <!--        </Column>-->
 
         <Column header="MÍNIMO" class="w-28">
           <template #body="{ data }: { data: WarehouseProductI }">

@@ -27,7 +27,7 @@ class StoreProductRequest extends FormRequest
         return [
             'name' => ['required','string','min:3','max:75'],
             'description' => ['nullable','string','max:150'],
-            'unit_uuid' => ['nullable','uuid:','exists:units,uuid'],
+            'unit_uuid' => ['nullable','string','exists:units,uuid'],
             'price_list_uuid' => ['uuid','exists:price_lists,uuid'],
             'supplier_uuid' => ['required','uuid','exists:suppliers,uuid'],
             'category_uuid' => ['required','uuid','exists:categories,uuid'],

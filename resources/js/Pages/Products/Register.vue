@@ -70,12 +70,13 @@ watch(
 </script>
 
 <template>
-
   <AppLayout>
     <div class="w-full px-2 sm:px-4 py-4 max-w-7xl mx-auto">
       <!-- Tabla / Vista Principal de Productos -->
       <div class="shadow-sm rounded-lg overflow-hidden border border-slate-200 bg-white">
         <FShowProduct
+          search-route="product.index"
+          :searchOnly="['products']"
           v-model:createProduct="createProduct"
           v-model:selectedProduct="selectedProduct"
           :products="propsW.products"

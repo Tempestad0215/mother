@@ -30,11 +30,18 @@ interface PropsI {
   products: PaginationI<ProductTableI>;
   stock?: boolean;
   isProduct?: boolean;
+
+  searchRoute?: string; // nombre de la ruta Ziggy a la que buscar
+  searchRouteParams?: Record<string, unknown>; // params extra opcionales
+  searchOnly?: string[];
 }
 
 const propsW = withDefaults(defineProps<PropsI>(), {
   stock: false,
   isProduct: true,
+  searchRoute: undefined,
+  searchRouteParams: () => ({}),
+  searchOnly: () => ['products'],
 });
 
 defineEmits<{
@@ -51,17 +58,27 @@ const createProduct = defineModel<boolean>('createProduct', {
 const isUpdate = ref(false);
 
 const searchData = () => {
+  if (!propsW.searchRoute) {
+    toast.add({
+      severity: 'warn',
+      summary: 'Please enter a valid search route',
+      life: 3500,
+    });
+    return;
+  }
+
   router.get(
-    route('product.index', {
+    route(propsW.searchRoute, {
+      ...propsW.searchRouteParams,
       search: searchValue.value,
       per_page: propsW.products.meta.per_page,
-      page: propsW.products.meta.current_page,
+      page: 1, // 🔑 al buscar, volver siempre a la página 1
     }),
     {},
     {
       preserveState: true,
       preserveScroll: true,
-      only: ['products'],
+      only: propsW.searchOnly,
     }
   );
 };
@@ -101,26 +118,6 @@ const deleteData = (data: ProductTableI, event: Event) => {
     },
   });
 };
-
-// const onPageChange = (event: DataTablePageEvent) => {
-//   console.log(event);
-//
-//   const perPage = paginationOptions.includes(event.rows) ? event.rows : paginationOptions[0];
-//   const page = event.page + 1;
-//
-//   router.get(
-//     route('product.index'),
-//     {
-//       page: page,
-//       per_page: perPage,
-//     },
-//     {
-//       preserveState: true,
-//       preserveScroll: true,
-//       only: ['products'],
-//     }
-//   );
-// };
 </script>
 
 <template>
