@@ -49,10 +49,17 @@ use Illuminate\Support\Collection;
  * @property-read Tax $tax
  * @property-read PurchaseReceiptsItem $receiptsItem
  * @method static create(mixed $validated)
+ *
  */
 class ProductPriceListResource extends JsonResource
 {
+    protected float $taxRate = 0;
 
+    public function withTaxRate(float $taxRate):static
+    {
+        $this->taxRate = $taxRate;
+        return $this;
+    }
 
     /**
      * Transform the resource into an array.
@@ -62,11 +69,9 @@ class ProductPriceListResource extends JsonResource
     public function toArray(Request $request): array
     {
 
-        // 👇 TOMAMOS LA TASA DE IMPUESTO CORRECTAMENTE
-        // Verificamos que la relación tax esté cargada, si no, usamos 0
-        $tax_rate_value = $this->whenLoaded('tax', $this->tax->rate ?? 0, 0);
+
         // Convertimos a cadena para que bcmath funcione bien
-        $tax_rate = (string)$tax_rate_value;
+        $tax_rate = (string) $this->taxRate;;
         // Calculamos porcentaje y multiplicador
         $tax_percent = bcdiv($tax_rate, '100', 2);
         // Multiplicador de impuesto

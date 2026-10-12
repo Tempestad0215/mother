@@ -6,3 +6,11 @@ export const taxCurrentValueKey = Symbol('Valor de impuesto seleccionado') as In
   Ref<number>
 >;
 export const productDataKey = Symbol() as InjectionKey<ProductTableI[]>;
+
+export const productEditKey = Symbol(
+  'Para editar los datos de productos seleccionado'
+) as InjectionKey<Ref<ProductTableI | null>>;
+
+export const createProductKey = Symbol(
+  'Abrir la ventana emergente de crear productos'
+) as InjectionKey<Ref<boolean>>;

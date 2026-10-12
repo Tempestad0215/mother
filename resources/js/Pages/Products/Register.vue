@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { onMounted, provide, ref, watch } from 'vue';
+import { computed, inject, onMounted, provide, ref, watch } from 'vue';
 import { SupplierI } from '@/Interfaces/SupplierInterface';
 import { ProductTableI, ProductTypeEnumI } from '@/Interfaces/ProductInterface';
 import { categoryBaseI } from '@/Interfaces/CategoriesInterface';
@@ -8,7 +8,12 @@ import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
 import { Dialog } from 'primevue';
 import { PaginationI, PaymentTypeEnumI } from '@/Interfaces/GlobalInterface';
 import FRegister from '@/Pages/Products/FRegister.vue';
-import { productDataKey, taxCurrentValueKey } from '@/Injections/InjectionKeys';
+import {
+  createProductKey,
+  productDataKey,
+  productEditKey,
+  taxCurrentValueKey,
+} from '@/Injections/InjectionKeys';
 import { BranchInterfaceI } from '@/Interfaces/BranchInterface';
 import { UnitInterfaceI } from '@/Interfaces/UnitInterface';
 import { TaxBaseI } from '@/Interfaces/TaxInterface';
@@ -48,25 +53,21 @@ const propsW = withDefaults(
 const taxCurrentValue = ref(0);
 
 const selectedProduct = ref<ProductTableI | null>(null);
-const createProduct = ref(false);
-const isUpdate = ref(false);
+const createProduct = ref<boolean>(false);
 
 provide(productDataKey, propsW.products.data ?? []);
 provide(taxCurrentValueKey, taxCurrentValue);
+provide(productEditKey, selectedProduct);
+provide(createProductKey, createProduct);
 
 onMounted(() => {});
 
 const clearCreate = () => {
   selectedProduct.value = null;
-  isUpdate.value = false;
+  createProduct.value = false;
 };
 
-watch(
-  () => selectedProduct.value,
-  (newValue) => {
-    isUpdate.value = !!newValue;
-  }
-);
+const isUpdate = computed(() => !!selectedProduct.value);
 </script>
 
 <template>
@@ -77,8 +78,6 @@ watch(
         <FShowProduct
           search-route="product.index"
           :searchOnly="['products']"
-          v-model:createProduct="createProduct"
-          v-model:selectedProduct="selectedProduct"
           :products="propsW.products"
         />
       </div>

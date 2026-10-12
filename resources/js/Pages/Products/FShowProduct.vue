@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ProductTableI } from '@/Interfaces/ProductInterface';
 import { router, usePage } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { inject, provide, ref } from 'vue';
 import { useRoute } from 'ziggy-js';
 import {
   Button,
@@ -19,12 +19,15 @@ import { PaginationI } from '@/Interfaces/GlobalInterface';
 import { CheckCircle, FilePenLine, PackagePlus, Shredder } from '@lucide/vue';
 import { onPageChange, paginationOptions } from '@/Global/Helpers';
 import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
+import { createProductKey, productEditKey } from '@/Injections/InjectionKeys';
+import { useProductDialog } from '@/Composable/useProductDialog';
 
 const toast = useToast();
 const confirm = useConfirm();
 const route = useRoute();
 
 const { component } = usePage();
+const { openEdit, openCreate } = useProductDialog();
 
 interface PropsI {
   products: PaginationI<ProductTableI>;
@@ -48,14 +51,7 @@ defineEmits<{
   (e: 'selectData', data: ProductTableI): void;
 }>();
 
-const selectedProduct = defineModel<ProductTableI | null>('selectedProduct', {
-  default: null,
-});
 const searchValue = ref('');
-const createProduct = defineModel<boolean>('createProduct', {
-  default: false,
-});
-const isUpdate = ref(false);
 
 const searchData = () => {
   if (!propsW.searchRoute) {
@@ -81,12 +77,6 @@ const searchData = () => {
       only: propsW.searchOnly,
     }
   );
-};
-
-const editData = (data: ProductTableI) => {
-  selectedProduct.value = data;
-  isUpdate.value = true;
-  createProduct.value = true;
 };
 
 const deleteData = (data: ProductTableI, event: Event) => {
@@ -169,7 +159,7 @@ const deleteData = (data: ProductTableI, event: Event) => {
             v-if="component != 'Sale/SaleCreate'"
             class="w-full sm:w-auto justify-center h-10 px-4 bg-emerald-600 hover:bg-emerald-700 border-none"
             label="Nuevo Producto"
-            @click="createProduct = true"
+            @click="openCreate"
           >
             <template #icon>
               <PackagePlus class="w-5 h-5 mr-1" />
@@ -217,7 +207,7 @@ const deleteData = (data: ProductTableI, event: Event) => {
         <div class="flex items-center gap-2 pt-1 sm:pt-0">
           <Button
             v-if="component != 'Sale/SaleCreate'"
-            @click="editData(data)"
+            @click="openEdit(data)"
             class="p-button-outlined p-button-sm h-9 w-9 p-0 flex items-center justify-center"
             title="Editar"
           >

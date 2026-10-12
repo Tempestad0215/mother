@@ -18,22 +18,19 @@ const handleStockValue = reactive({
 });
 
 onMounted(() => {
-  if (propsW.warehouses && propsW.warehouses.length > 0) {
-    propsW.warehouses.forEach((warehouse: WarehouseBaseI) => {
-      form.warehouse_product = [];
-      form.warehouse_product?.push({
-        warehouse_uuid: warehouse.uuid,
-        prefix: warehouse.prefix,
-        name: warehouse.name,
-        available: 0,
-        stock_quantity: 0,
-        committed: 0,
-        min_stock: 0,
-        max_stock: 0,
-        reorder_level: 0,
-      });
-    });
-  }
+  if (!propsW.warehouses?.length) return;
+
+  form.warehouse_product = propsW.warehouses.map((warehouse) => ({
+    warehouse_uuid: warehouse.uuid,
+    prefix: warehouse.prefix,
+    name: warehouse.name,
+    available: 0,
+    stock_quantity: 0,
+    committed: 0,
+    min_stock: 0,
+    max_stock: 0,
+    reorder_level: 0,
+  }));
 });
 
 watch(
@@ -87,6 +84,7 @@ const checkReorderLevel = computed(() => {
     <!-- Tabla de Almacenes (Con Scroll Horizontal para Celulares) -->
     <div class="overflow-x-auto rounded-lg border border-slate-200">
       <DataTable
+        editMode="cell"
         :value="form.warehouse_product"
         size="small"
         striped-rows
@@ -97,24 +95,23 @@ const checkReorderLevel = computed(() => {
 
         <Column header="STOCK DISP." class="w-28">
           <template #body="{ data }: { data: WarehouseProductI }">
+            {{ data.available }}
+          </template>
+          <template #editor="{ data }: { data: WarehouseProductI }">
             <InputNumber fluid v-model="data.available" size="small" />
           </template>
         </Column>
 
         <Column header="COMPROMETIDO" class="w-28">
           <template #body="{ data }: { data: WarehouseProductI }">
-            <InputNumber readonly fluid v-model="data.committed" size="small" />
+            {{ data.committed }}
           </template>
         </Column>
-
-        <!--        <Column header="PEDIDO" class="w-28">-->
-        <!--          <template #body="{ data }: { data: WarehouseProductI }">-->
-        <!--            <InputNumber fluid v-model="data.available" size="small" />-->
-        <!--          </template>-->
-        <!--        </Column>-->
-
         <Column header="MÍNIMO" class="w-28">
           <template #body="{ data }: { data: WarehouseProductI }">
+            {{ data.min_stock }}
+          </template>
+          <template #editor="{ data }: { data: WarehouseProductI }">
             <InputNumber
               :readonly="!form.handle_warehouse"
               fluid
@@ -125,7 +122,8 @@ const checkReorderLevel = computed(() => {
         </Column>
 
         <Column header="MÁXIMO" class="w-28">
-          <template #body="{ data }: { data: WarehouseProductI }">
+          <template #body="{ data }: { data: WarehouseProductI }"> {{ data.max_stock }}</template>
+          <template #editor="{ data }: { data: WarehouseProductI }">
             <InputNumber
               :readonly="!form.handle_warehouse"
               fluid
@@ -136,7 +134,10 @@ const checkReorderLevel = computed(() => {
         </Column>
 
         <Column header="REORDEN" class="w-28">
-          <template #body="{ data }: { data: WarehouseProductI }">
+          <template #body="{ data }: { data: WarehouseProductI }"
+            >{{ data.reorder_level }}
+          </template>
+          <template #editor="{ data }: { data: WarehouseProductI }">
             <InputNumber
               :readonly="!form.handle_warehouse"
               :invalid="checkReorderLevel(data.min_stock || 0, data.reorder_level || 0)"

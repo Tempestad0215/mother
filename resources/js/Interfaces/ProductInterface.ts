@@ -157,6 +157,8 @@ export interface ProductFormI {
   warehouse_product?: Array<WarehouseProductI>;
   handle_warehouse?: boolean;
   price_list_uuid: string;
+  default_price_list?: string;
+  default_warehouse?: string;
 }
 
 export interface WarehouseProductI {
