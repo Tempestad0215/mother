@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { Column, DataTable, InputNumber, Checkbox, FloatLabel } from 'primevue';
+import {
+  Column,
+  DataTable,
+  InputNumber,
+  Checkbox,
+  FloatLabel,
+  DataTableCellEditCompleteEvent,
+} from 'primevue';
 import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
 import { computed, inject, onMounted, reactive, watch } from 'vue';
 import { formProductKey } from '@/Injections/InjectionKeys';
@@ -95,10 +102,14 @@ const checkReorderLevel = computed(() => {
 
         <Column header="STOCK DISP." class="w-28">
           <template #body="{ data }: { data: WarehouseProductI }">
-            {{ data.available }}
+            {{ data.stock_quantity }}
           </template>
-          <template #editor="{ data }: { data: WarehouseProductI }">
-            <InputNumber fluid v-model="data.available" size="small" />
+          <template #editor="{ index }">
+            <InputNumber
+              fluid
+              v-model="form.warehouse_product![index].stock_quantity"
+              size="small"
+            />
           </template>
         </Column>
 
@@ -111,11 +122,11 @@ const checkReorderLevel = computed(() => {
           <template #body="{ data }: { data: WarehouseProductI }">
             {{ data.min_stock }}
           </template>
-          <template #editor="{ data }: { data: WarehouseProductI }">
+          <template #editor="{ index }">
             <InputNumber
               :readonly="!form.handle_warehouse"
               fluid
-              v-model="data.min_stock"
+              v-model="form.warehouse_product![index].min_stock"
               size="small"
             />
           </template>
@@ -137,12 +148,12 @@ const checkReorderLevel = computed(() => {
           <template #body="{ data }: { data: WarehouseProductI }"
             >{{ data.reorder_level }}
           </template>
-          <template #editor="{ data }: { data: WarehouseProductI }">
+          <template #editor="{ data, index }: { data: WarehouseProductI; index: number }">
             <InputNumber
               :readonly="!form.handle_warehouse"
               :invalid="checkReorderLevel(data.min_stock || 0, data.reorder_level || 0)"
               fluid
-              v-model="data.reorder_level"
+              v-model="form.warehouse_product![index].reorder_level"
               size="small"
             />
           </template>

@@ -18,6 +18,7 @@ class WarehouseProductHelper
     public static function upSert(array $data, Product $product, bool $is_service = false):void
     {
 
+
 //        Convertir a una Collection
         $info = WarehouseDto::formArrayCollection($data);
         // No hacer nada si es servicios

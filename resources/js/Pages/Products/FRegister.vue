@@ -2,7 +2,7 @@
 import { ProductFormI, ProductTableI, ProductTypeEnumI } from '@/Interfaces/ProductInterface';
 import { SupplierI } from '@/Interfaces/SupplierInterface';
 import { useForm } from '@inertiajs/vue3';
-import { onMounted, provide } from 'vue';
+import { computed, onMounted, provide, ref } from 'vue';
 import { categoryBaseI } from '@/Interfaces/CategoriesInterface';
 import { PaymentTypeEnumI } from '@/Interfaces/GlobalInterface';
 import ProductExtra from '@/Pages/Products/ProductExtra.vue';
@@ -19,14 +19,14 @@ import ProductSaleValue from '@/Pages/Products/ProductSaleValue.vue';
 import { PriceListWTI } from '@/Interfaces/PriceListInterface';
 import InventoryDetail from '@/Pages/Products/Inventory/InventoryDetail.vue';
 import { Eraser, Send } from '@lucide/vue';
+import { useProductDialog } from '@/Composable/useProductDialog';
 
 const route = useRoute();
 const toast = useToast();
+const { selectedProduct, createProduct } = useProductDialog();
 
 const propsW = withDefaults(
   defineProps<{
-    productEdit: ProductTableI | null;
-    update?: boolean;
     categories: categoryBaseI[];
     suppliers: SupplierI[];
     paymentTypes: PaymentTypeEnumI;
@@ -51,6 +51,7 @@ const propsW = withDefaults(
 );
 
 const emit = defineEmits(['showSupplier', 'close']);
+const isUpdate = computed(() => !!selectedProduct.value);
 
 const form = useForm<ProductFormI>({
   uuid: '',
@@ -90,28 +91,30 @@ const form = useForm<ProductFormI>({
 provide(formProductKey, form);
 
 onMounted(() => {
-  if (propsW.productEdit) {
-    form.uuid = propsW.productEdit.uuid;
-    form.name = propsW.productEdit.name;
-    form.is_service = propsW.productEdit.is_service;
-    form.description = propsW.productEdit.description || '';
-    form.bar_code = propsW.productEdit.bar_code || '';
-    form.category_uuid = propsW.productEdit.category_uuid!!;
-    form.supplier_uuid = propsW.productEdit.supplier_uuid;
-    form.tax_uuid = propsW.productEdit.tax.uuid;
-    form.sku = propsW.productEdit.sku || '';
-    form.unit_uuid = propsW.productEdit.unit_uuid;
-    form.brand_uuid = propsW.productEdit?.brand?.uuid ?? null;
-    form.cost = Number(propsW.productEdit.cost);
-    form.price_list_uuid = propsW.productEdit.default_price_list;
-    form.handle_warehouse = propsW.productEdit.handle_warehouse;
-    form.warehouse_uuid = propsW.productEdit.default_warehouse;
-    form.warehouse_product = propsW.productEdit.warehouses;
+  if (selectedProduct.value) {
+    form.uuid = selectedProduct.value.uuid;
+    form.name = selectedProduct.value.name;
+    form.is_service = selectedProduct.value.is_service;
+    form.description = selectedProduct.value.description || '';
+    form.bar_code = selectedProduct.value.bar_code || '';
+    form.category_uuid = selectedProduct.value.category_uuid!!;
+    form.supplier_uuid = selectedProduct.value.supplier_uuid;
+    form.tax_uuid = selectedProduct.value.tax.uuid;
+    form.sku = selectedProduct.value.sku || '';
+    form.unit_uuid = selectedProduct.value.unit_uuid;
+    form.brand_uuid = selectedProduct.value?.brand?.uuid ?? null;
+    form.cost = Number(selectedProduct.value.cost);
+    form.price_list_uuid = selectedProduct.value.default_price_list;
+    form.handle_warehouse = selectedProduct.value.handle_warehouse;
+    form.warehouse_uuid = selectedProduct.value.default_warehouse;
+    form.warehouse_product = selectedProduct.value.warehouses;
+    form.default_price_list = selectedProduct.value.default_price_list;
+    form.default_warehouse = selectedProduct.value.default_warehouse;
   }
 });
 
 const submit = () => {
-  if (propsW.update || form.update) {
+  if (createProduct.value || form.update) {
     form.patch(route('product.update', form.uuid), {
       onSuccess: () => {
         toast.add({
@@ -168,8 +171,8 @@ function setCalculateData(productNoTax: string, benefits: string, benefitsMargin
       <form @submit.prevent="submit" class="space-y-4">
         <!-- Información Principal -->
         <ProductInformation
-          :update="propsW.update"
-          :code="propsW.productEdit?.code"
+          :update="isUpdate"
+          :code="selectedProduct?.code"
           :paymentTypes="propsW.paymentTypes"
           :categories="propsW.categories"
           :suppliers="propsW.suppliers"
@@ -206,7 +209,7 @@ function setCalculateData(productNoTax: string, benefits: string, benefitsMargin
 
             <TabPanel value="1">
               <ProductSaleValue
-                :isUpdate="propsW.update"
+                :isUpdate="isUpdate"
                 :units="propsW.units"
                 :priceLists="propsW.priceLists"
                 :warehouses="propsW.warehouses"
@@ -223,7 +226,7 @@ function setCalculateData(productNoTax: string, benefits: string, benefitsMargin
         <!-- Botones de Acción Adaptativos -->
         <div class="pt-4 flex flex-col-reverse sm:flex-row justify-end gap-3">
           <Button
-            v-if="!propsW.update"
+            v-if="!isUpdate"
             label="Limpiar"
             severity="warn"
             type="button"
@@ -239,7 +242,7 @@ function setCalculateData(productNoTax: string, benefits: string, benefitsMargin
           <Button
             :disabled="form.processing"
             type="submit"
-            :label="propsW.update ? 'Actualizar' : 'Registrar'"
+            :label="isUpdate ? 'Actualizar' : 'Registrar'"
             class="w-full sm:w-auto h-10 bg-emerald-600 hover:bg-emerald-700 border-none"
           >
             <template #icon>

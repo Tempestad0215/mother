@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { computed, inject, onMounted, provide, ref, watch } from 'vue';
+import { computed, onMounted, provide, ref } from 'vue';
 import { SupplierI } from '@/Interfaces/SupplierInterface';
 import { ProductTableI, ProductTypeEnumI } from '@/Interfaces/ProductInterface';
 import { categoryBaseI } from '@/Interfaces/CategoriesInterface';
@@ -103,8 +103,6 @@ const isUpdate = computed(() => !!selectedProduct.value);
             :paymentTypes="paymentTypes"
             :categories="propsW.categories"
             :suppliers="propsW.suppliers"
-            :productEdit="selectedProduct"
-            :update="isUpdate"
             @close="createProduct = false"
           />
         </div>
