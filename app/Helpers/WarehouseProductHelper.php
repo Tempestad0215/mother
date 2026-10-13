@@ -28,6 +28,8 @@ class WarehouseProductHelper
 
         $pivotData = [];
 
+        $productMovement = [];
+
         // Recorrder los datos
         foreach ($info as $item){
 

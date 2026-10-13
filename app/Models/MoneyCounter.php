@@ -6,37 +6,38 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Scout\Searchable;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 
 /**
- * @property int id
- * @property string code
- * @property string from
- * @property string to
- * @property float coin_first
- * @property float coin_second
- * @property float coin_third
- * @property float coin_fourth
- * @property float coin_fifth
- * @property float coin_sixth
- * @property float coin_seventh
- * @property float coin_eighth
- * @property float coin_ninth
- * @property float coin_tenth
- * @property float card
- * @property float transfer
- * @property float check
- * @property float other_income
- * @property float expenses
- * @property float cash_withdrawals
- * @property float refund
- * @property float other_expenses
- * @property float opening_balance
- * @property float total_coin
- * @property float total_other_coin
- * @property float total_expenses
- * @property float diff
- * @property float total_neto
+ * @property string $uuid
+ * @property string $code
+ * @property string $from
+ * @property string $to
+ * @property float $coin_first
+ * @property float $coin_second
+ * @property float $coin_third
+ * @property float $coin_fourth
+ * @property float $coin_fifth
+ * @property float $coin_sixth
+ * @property float $coin_seventh
+ * @property float $coin_eighth
+ * @property float $coin_ninth
+ * @property float $coin_tenth
+ * @property float $card
+ * @property float $transfer
+ * @property float $check
+ * @property float $other_income
+ * @property float $expenses
+ * @property float $cash_withdrawals
+ * @property float $refund
+ * @property float $other_expenses
+ * @property float $opening_balance
+ * @property float $total_coin
+ * @property float $total_other_coin
+ * @property float $total_expenses
+ * @property float $diff
+ * @property float $total_neto
  *
  */
 class MoneyCounter extends Model
@@ -80,6 +81,12 @@ class MoneyCounter extends Model
     ];
 
 
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable()
+            ->logOnlyDirty();
+    }
 
     /**
      * @return void

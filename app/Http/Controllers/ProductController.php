@@ -79,7 +79,7 @@ class ProductController extends Controller implements HasMiddleware
                    $subQuery->where('name', 'ILIKE', '%' . $search . '%')
                        ->orWhere('description', 'ILIKE', '%' . $search . '%');
                });
-        })->latest()
+        })->latest('created_at')
             ->paginate($perPage)
             ->withQueryString();
 

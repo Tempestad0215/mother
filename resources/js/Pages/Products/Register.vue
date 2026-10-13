@@ -5,7 +5,7 @@ import { SupplierI } from '@/Interfaces/SupplierInterface';
 import { ProductTableI, ProductTypeEnumI } from '@/Interfaces/ProductInterface';
 import { categoryBaseI } from '@/Interfaces/CategoriesInterface';
 import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
-import { Dialog } from 'primevue';
+import { Button, Dialog } from 'primevue';
 import { PaginationI, PaymentTypeEnumI } from '@/Interfaces/GlobalInterface';
 import FRegister from '@/Pages/Products/FRegister.vue';
 import {
@@ -19,6 +19,8 @@ import { UnitInterfaceI } from '@/Interfaces/UnitInterface';
 import { TaxBaseI } from '@/Interfaces/TaxInterface';
 import FShowProduct from '@/Pages/Products/FShowProduct.vue';
 import { PriceListWTI } from '@/Interfaces/PriceListInterface';
+import { useProductDelete } from '@/Composable/useProductDelete';
+import { PackagePlus, SquarePen, Trash } from '@lucide/vue';
 
 // Propiedades de la ventana
 const propsW = withDefaults(
@@ -60,6 +62,8 @@ provide(taxCurrentValueKey, taxCurrentValue);
 provide(productEditKey, selectedProduct);
 provide(createProductKey, createProduct);
 
+const { deleteProduct } = useProductDelete();
+
 onMounted(() => {});
 
 const clearCreate = () => {
@@ -68,18 +72,49 @@ const clearCreate = () => {
 };
 
 const isUpdate = computed(() => !!selectedProduct.value);
+
+const openEdit = (product: ProductTableI) => {
+  selectedProduct.value = product;
+  createProduct.value = true;
+};
 </script>
 
 <template>
   <AppLayout>
+    <template #header>
+      <div class="flex justify-between items-center mb-4">
+        <h1 class="text-2xl font-semibold tracking-tight">Productos</h1>
+        <Button
+          @click="createProduct = true"
+          class="bg-emerald-600 hover:bg-emerald-700 border-none h-10 px-4"
+        >
+          <template #icon><PackagePlus class="w-5 h-5 mr-1" /></template>
+        </Button>
+      </div>
+    </template>
     <div class="w-full px-2 sm:px-4 py-4 max-w-7xl mx-auto">
       <!-- Tabla / Vista Principal de Productos -->
       <div class="shadow-sm rounded-lg overflow-hidden border border-slate-200 bg-white">
+        <!-- Header de la página -->
+
         <FShowProduct
           search-route="product.index"
           :searchOnly="['products']"
           :products="propsW.products"
-        />
+        >
+          <template #actions="{ data }: { data: ProductTableI }">
+            <div class="space-x-3">
+              <Button outlined @click="openEdit(data)">
+                <template #icon> <SquarePen /> </template>
+              </Button>
+              <Button outlined severity="danger" @click="deleteProduct(data, $event)">
+                <template #icon>
+                  <Trash />
+                </template>
+              </Button>
+            </div>
+          </template>
+        </FShowProduct>
       </div>
 
       <!-- Modal de Registro / Edición Adaptativo -->

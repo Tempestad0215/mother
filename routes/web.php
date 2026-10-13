@@ -137,6 +137,11 @@ Route::middleware([
         Route::get('/convert/{sale}','convert')->name('convert');
     });
 
+
+    Route::prefix('warehouse')->controller(WarehouseController::class)->group(function () {
+        Route::get('/product/{product}','warehouseProduct')->name('warehouse.product');
+    });
+
     /*
      * Resources principales
      *

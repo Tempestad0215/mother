@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\WarehouseRequest;
+use App\Http\Resources\WarehouseProductResource;
+use App\Models\Product;
 use App\Models\Warehouse;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
@@ -91,6 +93,15 @@ class WarehouseController extends Controller implements HasMiddleware
 
         //Devolver la vista
         return back();
+    }
+
+
+
+    public function warehouseProduct(Product $product)
+    {
+        $product->load('warehouses');
+
+        return new WarehouseProductResource($product->warehouses);
     }
 
 

@@ -1,6 +1,5 @@
 import { inject } from 'vue';
 import { createProductKey, productEditKey } from '@/Injections/InjectionKeys';
-import { ProductTableI } from '@/Interfaces/ProductInterface';
 
 export function useProductDialog() {
   const createProduct = inject(createProductKey);
@@ -9,10 +8,6 @@ export function useProductDialog() {
   if (!createProduct || !selectedProduct) {
     throw new Error('[useProductDialog] Falta provide. ¿Estás dentro de <Products/Register>?');
   }
-  const openEdit = (product: ProductTableI) => {
-    selectedProduct.value = product;
-    createProduct.value = true;
-  };
 
   const openCreate = () => {
     selectedProduct.value = null;
@@ -24,5 +19,5 @@ export function useProductDialog() {
     createProduct.value = false;
   };
 
-  return { createProduct, selectedProduct, openEdit, openCreate, close };
+  return { createProduct, selectedProduct, openCreate, close };
 }

@@ -62,31 +62,32 @@ const checkReorderLevel = computed(() => {
 <template>
   <div class="space-y-4">
     <!-- Controles de Manejo por Almacén -->
-    <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 space-y-3">
-      <div class="flex items-center gap-2">
-        <Checkbox binary inputId="handleWarehouse" v-model="form.handle_warehouse" />
-        <label for="handleWarehouse" class="text-sm font-medium text-slate-700 cursor-pointer">
-          Manejar Stock Individual por Almacén
-        </label>
-      </div>
+    <!--    TODO: esto se se debe revisa para implementar en el futuro-->
+    <!--    <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 space-y-3">-->
+    <!--      <div class="flex items-center gap-2">-->
+    <!--        <Checkbox binary inputId="handleWarehouse" v-model="form.handle_warehouse" />-->
+    <!--        <label for="handleWarehouse" class="text-sm font-medium text-slate-700 cursor-pointer">-->
+    <!--          Manejar Stock Individual por Almacén-->
+    <!--        </label>-->
+    <!--      </div>-->
 
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1" v-if="!form.handle_warehouse">
-        <FloatLabel variant="on" class="w-full">
-          <InputNumber :min="0" v-model="handleStockValue.min_stock" fluid />
-          <label for="min_stock">Stock Mínimo Global</label>
-        </FloatLabel>
+    <!--      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1" v-if="!form.handle_warehouse">-->
+    <!--        <FloatLabel variant="on" class="w-full">-->
+    <!--          <InputNumber :min="0" v-model="handleStockValue.min_stock" fluid />-->
+    <!--          <label for="min_stock">Stock Mínimo Global</label>-->
+    <!--        </FloatLabel>-->
 
-        <FloatLabel variant="on" class="w-full">
-          <InputNumber :min="0" v-model="handleStockValue.max_stock" fluid />
-          <label for="max_stock">Stock Máximo Global</label>
-        </FloatLabel>
+    <!--        <FloatLabel variant="on" class="w-full">-->
+    <!--          <InputNumber :min="0" v-model="handleStockValue.max_stock" fluid />-->
+    <!--          <label for="max_stock">Stock Máximo Global</label>-->
+    <!--        </FloatLabel>-->
 
-        <FloatLabel variant="on" class="w-full">
-          <InputNumber :min="0" v-model="handleStockValue.reorder_level" fluid />
-          <label for="reorder">Nivel de Reorden Global</label>
-        </FloatLabel>
-      </div>
-    </div>
+    <!--        <FloatLabel variant="on" class="w-full">-->
+    <!--          <InputNumber :min="0" v-model="handleStockValue.reorder_level" fluid />-->
+    <!--          <label for="reorder">Nivel de Reorden Global</label>-->
+    <!--        </FloatLabel>-->
+    <!--      </div>-->
+    <!--    </div>-->
 
     <!-- Tabla de Almacenes (Con Scroll Horizontal para Celulares) -->
     <div class="overflow-x-auto rounded-lg border border-slate-200">

@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 /**
  * @property string $uuid
@@ -79,6 +80,7 @@ class Product extends Model
         'code',
         'name',
         'description',
+        'sku',
         'unit_uuid',
         'cost',
         'supplier_uuid',
@@ -136,14 +138,11 @@ class Product extends Model
     ];
 
 
-    /**
-     * @return void
-     */
-    protected static function boot(): void
+    public function getActivitylogOptions(): LogOptions
     {
-        // Llamar el metodo principal
-        parent::boot();
-
+        return LogOptions::defaults()
+            ->logFillable()
+            ->logOnlyDirty();
     }
 
 

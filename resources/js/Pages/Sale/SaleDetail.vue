@@ -8,6 +8,7 @@ import { saleKey } from '@/utils/keys';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
 import { createSequence, getSequenceType } from '@/Global/Helpers';
 import {
+  Button,
   Card,
   Dialog,
   FloatLabel,
@@ -19,7 +20,7 @@ import {
 } from 'primevue';
 import FShowProduct from '@/Pages/Products/FShowProduct.vue';
 import { PreciseCalculator } from '@/utils/Decimal';
-import { Grid2X2Plus, ShoppingCart, Undo2 } from '@lucide/vue';
+import { CircleCheckBig, Grid2X2Plus, ShoppingCart, Undo2 } from '@lucide/vue';
 import { getInfoFromPriceList } from '@/Helpers/ProductHelper';
 import SaleOpenShow from './SaleOpenShow.vue';
 import ReturnForm from '@components/ReturnForm.vue';
@@ -304,7 +305,7 @@ defineExpose({
       >
         <ShoppingCart
           v-tooltip.bottom="'Productos Disponibles'"
-          @click="showProducts = !showProducts"
+          @click="showProducts = true"
           class="cursor-pointer hover:scale-110 transition text-slate-700 hover:text-emerald-600"
           :size="26"
         />
@@ -372,7 +373,6 @@ defineExpose({
       </div>
     </div>
   </div>
-
   <!-- Diálogo Catálogo de Productos -->
   <Dialog
     v-model:visible="showProducts"
@@ -391,7 +391,13 @@ defineExpose({
         :stock="true"
         :isProduct="false"
         :products="propsW.products"
-      />
+      >
+        <template #actions="{ data }: { data: ProductTableI }">
+          <Button outlined>
+            <template #icon> <CircleCheckBig /></template>
+          </Button>
+        </template>
+      </FShowProduct>
     </div>
   </Dialog>
 

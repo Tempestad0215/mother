@@ -1,8 +1,13 @@
 <?php
 
-namespace App\Models;
+namespace App\Observers;
 
 use App\Enums\InventoryMovementTypeEnum;
+use App\Models\CreditNote;
+use App\Models\CreditNoteItem;
+use App\Models\InventoryMovement;
+use App\Models\SaleItem;
+use App\Models\WarehouseProduct;
 use Exception;
 use Laravel\Octane\Exceptions\DdException;
 

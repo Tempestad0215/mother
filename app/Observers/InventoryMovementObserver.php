@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Models;
+namespace App\Observers;
 
 use App\Enums\InventoryMovementTypeEnum;
+use App\Models\InventoryMovement;
+use App\Models\WarehouseProduct;
 
 class InventoryMovementObserver
 {

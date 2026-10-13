@@ -2,7 +2,7 @@
 import { ProductFormI, ProductTableI, ProductTypeEnumI } from '@/Interfaces/ProductInterface';
 import { SupplierI } from '@/Interfaces/SupplierInterface';
 import { useForm } from '@inertiajs/vue3';
-import { computed, onMounted, provide, ref } from 'vue';
+import { computed, onMounted, provide, ref, watch } from 'vue';
 import { categoryBaseI } from '@/Interfaces/CategoriesInterface';
 import { PaymentTypeEnumI } from '@/Interfaces/GlobalInterface';
 import ProductExtra from '@/Pages/Products/ProductExtra.vue';
@@ -20,6 +20,8 @@ import { PriceListWTI } from '@/Interfaces/PriceListInterface';
 import InventoryDetail from '@/Pages/Products/Inventory/InventoryDetail.vue';
 import { Eraser, Send } from '@lucide/vue';
 import { useProductDialog } from '@/Composable/useProductDialog';
+import { mergeProductWarehouses } from '@/Helpers/ProductHelper';
+import { useProductWarehouses } from '@/Composable/useProductWarehouses';
 
 const route = useRoute();
 const toast = useToast();
@@ -53,6 +55,8 @@ const propsW = withDefaults(
 const emit = defineEmits(['showSupplier', 'close']);
 const isUpdate = computed(() => !!selectedProduct.value);
 
+const { getWarehouses } = useProductWarehouses();
+
 const form = useForm<ProductFormI>({
   uuid: '',
   name: '',
@@ -85,7 +89,7 @@ const form = useForm<ProductFormI>({
   update: false,
   warehouse_product: [],
   price_list_uuid: '',
-  handle_warehouse: false,
+  handle_warehouse: true,
 });
 
 provide(formProductKey, form);
@@ -107,11 +111,32 @@ onMounted(() => {
     form.price_list_uuid = selectedProduct.value.default_price_list;
     form.handle_warehouse = selectedProduct.value.handle_warehouse;
     form.warehouse_uuid = selectedProduct.value.default_warehouse;
-    form.warehouse_product = selectedProduct.value.warehouses;
+    // form.warehouse_product = selectedProduct.value.warehouses;
     form.default_price_list = selectedProduct.value.default_price_list;
     form.default_warehouse = selectedProduct.value.default_warehouse;
   }
 });
+
+watch(
+  () => selectedProduct.value,
+  async (product) => {
+    if (!product) {
+      form.reset();
+      return;
+    }
+
+    // Rellenar campos básicos
+    form.uuid = product.uuid;
+    form.name = product.name;
+
+    const warehouses = await getWarehouses(form.uuid);
+    // ...
+
+    // ✅ Fusionar almacenes
+    form.warehouse_product = mergeProductWarehouses(warehouses ?? [], propsW.warehouses);
+  },
+  { immediate: true }
+);
 
 const submit = () => {
   if (createProduct.value || form.update) {
