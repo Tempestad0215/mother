@@ -72,7 +72,7 @@ class Warehouse extends Model
 
 
     /**
-     * Summary of products
+     * Summary of Products
      * @return BelongsToMany<Product, Warehouse, Pivot>
      */
     public function products():BelongsToMany

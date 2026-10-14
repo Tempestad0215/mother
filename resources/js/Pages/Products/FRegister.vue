@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ProductFormI, ProductTableI, ProductTypeEnumI } from '@/Interfaces/ProductInterface';
+import { ProductFormI, ProductTypeEnumI } from '@/Interfaces/ProductInterface';
 import { SupplierI } from '@/Interfaces/SupplierInterface';
 import { useForm } from '@inertiajs/vue3';
-import { computed, onMounted, provide, ref, watch } from 'vue';
+import { computed, onMounted, provide, watch } from 'vue';
 import { categoryBaseI } from '@/Interfaces/CategoriesInterface';
 import { PaymentTypeEnumI } from '@/Interfaces/GlobalInterface';
 import ProductExtra from '@/Pages/Products/ProductExtra.vue';
@@ -13,15 +13,15 @@ import { useRoute } from 'ziggy-js';
 import { formProductKey } from '@/Injections/InjectionKeys';
 import { BranchInterfaceI } from '@/Interfaces/BranchInterface';
 import { UnitInterfaceI } from '@/Interfaces/UnitInterface';
-import { Button, Tab, TabList, TabPanel, TabPanels, Tabs, useToast, Card, Divider } from 'primevue';
+import { Button, Card, Divider, Tab, TabList, TabPanel, TabPanels, Tabs, useToast } from 'primevue';
 import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
 import ProductSaleValue from '@/Pages/Products/ProductSaleValue.vue';
 import { PriceListWTI } from '@/Interfaces/PriceListInterface';
 import InventoryDetail from '@/Pages/Products/Inventory/InventoryDetail.vue';
 import { Eraser, Send } from '@lucide/vue';
-import { useProductDialog } from '@/Composable/useProductDialog';
+import { useProductDialog } from '@/Composable/Products/useProductDialog';
 import { mergeProductWarehouses } from '@/Helpers/ProductHelper';
-import { useProductWarehouses } from '@/Composable/useProductWarehouses';
+import { useProductWarehouses } from '@/Composable/Products/useProductWarehouses';
 
 const route = useRoute();
 const toast = useToast();
@@ -279,9 +279,3 @@ function setCalculateData(productNoTax: string, benefits: string, benefitsMargin
     </template>
   </Card>
 </template>
-
-<style scoped>
-:deep(.p-card-body) {
-  padding: 0 !important;
-}
-</style>

@@ -26,7 +26,7 @@ use Spatie\Activitylog\Support\LogOptions;
  * @property Carbon $deleted_at
  * @property Carbon $updated_at
  *
- * @property-read Sale[] $sales
+ * @property-read Sale[] $Sales
  * @property-read User $user
  */
 class CashRegister extends Model

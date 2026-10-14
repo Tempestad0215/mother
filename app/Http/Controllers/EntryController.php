@@ -48,7 +48,7 @@ class EntryController extends Controller
 
         //Devolver la vista con los datos
         return Inertia::render('ProductsIn/ProductIn', [
-            'products' => $productResource,
+            'Products' => $productResource,
             'warehouses' => Warehouse::all(),
         ]);
     }
@@ -64,7 +64,7 @@ class EntryController extends Controller
 
         // Validar los datos
         $validated = $request->validate([
-            'product_uuid'   => ['required','uuid','exists:products,uuid'],
+            'product_uuid'   => ['required','uuid','exists:Products,uuid'],
             'warehouse_uuid' => ['required','uuid','exists:warehouses,uuid'],
             'quantity'       => ['required','numeric','min:0.0001'],
             'cost'           => ['required','numeric','min:0'], // Con qué costo entra al almacén
@@ -79,7 +79,7 @@ class EntryController extends Controller
 
             // Tomar el producto
             $product = Product::with(['warehouses'])
-                ->where('products.uuid','=',$entryDto->product_uuid)->first();
+                ->where('Products.uuid','=',$entryDto->product_uuid)->first();
 
             // Incremental el stock
             $product->cost = $entryDto->cost;
@@ -137,7 +137,7 @@ class EntryController extends Controller
 
         // Devolver la vista con los datos
         return Inertia::render('ProductsIn/ProductIn', [
-            'products' => $data,
+            'Products' => $data,
             'productEntrance' => $productIn,
         ]);
 
@@ -157,7 +157,7 @@ class EntryController extends Controller
         //Devolver la vista con los datos
         return Inertia::render('ProductsIn/ProductIn', [
             'trans' => new ProductTransResource($trans),
-            'products' => $data,
+            'Products' => $data,
             'update' => true
         ]);
     }

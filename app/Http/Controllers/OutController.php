@@ -30,7 +30,7 @@ class OutController extends Controller
 
         // Devolver la vista con los datos
         return Inertia::render('ProductsIn/ProductIn', [
-            'products' => $productResource,
+            'Products' => $productResource,
             'warehouses' => $warehouses
         ]);
     }
@@ -50,7 +50,7 @@ class OutController extends Controller
     {
         // Validar los datos
         $validated = $request->validate([
-            'product_uuid'   => ['required','uuid','exists:products,uuid'],
+            'product_uuid'   => ['required','uuid','exists:Products,uuid'],
             'warehouse_uuid' => ['required','uuid','exists:warehouses,uuid'],
             'quantity'       => ['required','numeric','min:0.0001'],
             'cost'           => ['required','numeric','min:0'], // Con qué costo entra al almacén
@@ -65,7 +65,7 @@ class OutController extends Controller
 
             // Tomar el producto
             $product = Product::with(['warehouses'])
-                ->where('products.uuid','=',$entryDto->product_uuid)->first();
+                ->where('Products.uuid','=',$entryDto->product_uuid)->first();
 
 
             // Tomar el warehouse por el id
@@ -78,7 +78,7 @@ class OutController extends Controller
              * @var WarehouseProduct $pivot
              */
             $pivot = $warehouse->pivot;
-            
+
             /**
              * @var float $oldStock
              */

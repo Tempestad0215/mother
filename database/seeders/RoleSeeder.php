@@ -36,7 +36,7 @@ class RoleSeeder extends Seeder
             'name' => 'sequence',
             ]);
         $products = Permission::create([
-            'name' => 'products',
+            'name' => 'Products',
             ]);
         $categories = Permission::create([
             'name' => 'categories',

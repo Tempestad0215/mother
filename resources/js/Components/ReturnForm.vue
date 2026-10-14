@@ -15,8 +15,9 @@ import {
   useToast,
 } from 'primevue';
 import axios, { AxiosError } from 'axios';
-import { saleKey } from '@/utils/keys';
+
 import { LaravelErrorResponse } from '@/Interfaces/GlobalInterface';
+import { saleKey } from '@/Injections/saleKeys';
 
 const toast = useToast();
 const route = useRoute();

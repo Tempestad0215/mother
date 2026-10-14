@@ -1,4 +1,5 @@
 import { CreditNoteBalance } from '@/Interfaces/CreditNoteInterface';
+import { Ref } from 'vue';
 
 export interface SaleTypeEnumI {
   venta: string;
@@ -184,4 +185,25 @@ export interface SaleSoldFilterI {
   to: Date;
   sale_type: string;
   payment_type: string;
+}
+
+export interface SaleUIStateI {
+  showProducts: Ref<boolean>;
+  showSaleOpen: Ref<boolean>;
+  showFormReturn: Ref<boolean>;
+  showPayment: Ref<boolean>;
+  showClient: Ref<boolean>;
+}
+
+export interface SaleUIActionsI {
+  openProducts: () => boolean;
+  closeProducts: () => boolean;
+  openSaleOpen: () => boolean;
+  closeSaleOpen: () => boolean;
+  openFormReturn: () => boolean;
+  closeFormReturn: () => boolean;
+  openPayment: () => boolean;
+  closePayment: () => boolean;
+  openClient: () => boolean;
+  closeClient: () => boolean;
 }

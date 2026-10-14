@@ -81,7 +81,7 @@ class SaleController extends Controller
 
         //Devolver la vista y los datos
         return Inertia::render('Sale/SaleCreate', [
-            'products' => $dataSale['products'],
+            'Products' => $dataSale['Products'],
             'clients' => $dataSale['clients'],
             'saleOpen' => $dataSale['saleOpen'],
             'invoiceType' => config('appconfig.invoiceType'),
@@ -201,7 +201,7 @@ class SaleController extends Controller
         $sales = $saleHelper->getSalePagination($request);
 
         return Inertia::render('Sale/SaleShow', [
-            'sales' => $sales
+            'Sales' => $sales
         ]);
     }
 
@@ -271,7 +271,7 @@ class SaleController extends Controller
 
         // Devolver los datos
         return [
-            'products' => $products,
+            'Products' => $products,
             'clients' => $clients,
             'saleOpen' => $saleOpen
         ];
@@ -307,7 +307,7 @@ class SaleController extends Controller
         $sale = Sale::whereHas('audits', function ($query) use ($user) {
             $query->where('user_id', $user);
         })->whereDate('sales.created_at', Carbon::today()->format("Y-m-d"))
-            ->join('pro_trans as tr', 'sales.id', '=', 'tr.sale_id')
+            ->join('pro_trans as tr', 'Sales.id', '=', 'tr.sale_id')
             ->join('products as p', 'tr.product_id', '=', 'p.id')
             ->select([
                 'tr.tax',
@@ -373,7 +373,7 @@ class SaleController extends Controller
     public function showSold(Request $request):Response
     {
         return Inertia::render('Sale/Sold/SaleSold',[
-            'sales' => [],
+            'Sales' => [],
             'saleTypes' => SaleTypeEnum::options(),
             'paymentTypes' => PaymentTypeEnum::options()
         ]);
@@ -429,7 +429,7 @@ class SaleController extends Controller
 
         // 4. VOLVEMOS A RENDERIZAR el mismo componente, pasándole los datos de las ventas
         return Inertia::render('Sale/Sold/SaleSold', [
-            'sales' => SaleInfoResource::collection($sales),
+            'Sales' => SaleInfoResource::collection($sales),
             'filters' => $request->all(), // Opcional: para mantener los campos llenos tras la búsqueda
             'saleTypes' => SaleTypeEnum::options(),
             'paymentTypes' => PaymentTypeEnum::options()

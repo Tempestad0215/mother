@@ -26,7 +26,7 @@ class StorePurchaseReceivingRequest extends FormRequest
 
             'items' => 'required|array|min:1',
             'items.*.uuid' => 'nullable|uuid|exists:purchase_items,uuid',
-            'items.*.product_uuid' => 'required|uuid|exists:products,uuid',
+            'items.*.product_uuid' => 'required|uuid|exists:Products,uuid',
             'items.*.purchase_item_uuid' => 'nullable|uuid|exists:purchase_items,uuid',
             'items.*.product_name' => 'nullable|string',
             'items.*.quantity' => 'required|numeric|min:0.01',

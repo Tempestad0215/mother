@@ -78,7 +78,7 @@ class ReportController extends Controller
 
         //Devolver la vista con los datos
         return Inertia::render('Reports/Product/Low',[
-            'products' => $data['products'],
+            'Products' => $data['Products'],
             'amount' => $data['amount'],
 
         ]);

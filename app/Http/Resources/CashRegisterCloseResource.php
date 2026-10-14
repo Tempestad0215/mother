@@ -13,7 +13,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
 
 /**
- * @property-read Collection<int, Sale> $sales
+ * @property-read Collection<int, Sale> $Sales
  * @property-read Collection<int, CashMovement> $movements
  * @mixin CashRegister MSV4A1A-L1R
  */

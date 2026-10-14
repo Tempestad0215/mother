@@ -32,7 +32,7 @@ return new class extends Migration
 
             // Llaves foráneas e índices
             // $table->foreign('credit_note_id')->references('id')->on('credit_notes')->onDelete('cascade');
-            // $table->foreign('product_uuid')->references('uuid')->on('products'); // Asumiendo que tu tabla es 'products'
+            // $table->foreign('product_uuid')->references('uuid')->on('Products'); // Asumiendo que tu tabla es 'Products'
 
             $table->index(['credit_note_uuid', 'product_uuid']);
         });

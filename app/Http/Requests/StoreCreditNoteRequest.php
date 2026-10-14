@@ -51,7 +51,7 @@ class StoreCreditNoteRequest extends FormRequest
             'client_rnc' => ['nullable','string','max:20'],
             'info_sale' => ['required','array'],
             'info_sale.*.uuid' => ['nullable','uuid','exists:sale_items,uuid'],
-            'info_sale.*.product_uuid' => ['required','uuid','exists:products,uuid'],
+            'info_sale.*.product_uuid' => ['required','uuid','exists:Products,uuid'],
             'info_sale.*.code' => ['nullable','string','min:4','max:50'],
             'info_sale.*.product_name' => ['required','string','min:3','max:75'],
             'info_sale.*.stock' => ['required','numeric'],

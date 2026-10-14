@@ -2,7 +2,7 @@
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { FloatLabel, InputNumber, RadioButton } from 'primevue';
 import { computed, inject, onMounted, ref, watch } from 'vue';
-import { saleKey } from '@/utils/keys';
+import { saleKey } from '@/Injections/saleKeys';
 import { faArrowAltCircleDown, faArrowAltCircleUp } from '@fortawesome/free-solid-svg-icons';
 import { editFormI, infoSaleI } from '@/Interfaces/SaleInterface';
 import { truncateText } from '@/Global/Helpers';

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { getMoney } from '@/Global/Helpers';
-import { saleKey } from '@/utils/keys';
+import { saleKey } from '@/Injections/saleKeys';
 import { inject } from 'vue';
 import { Textarea, FloatLabel } from 'primevue';
 
@@ -14,7 +14,7 @@ const form = inject(saleKey)!;
       <FloatLabel variant="on" class="w-full">
         <Textarea
           id="comment"
-          class="w-full min-h-[80px] max-h-[120px]"
+          class="w-full min-h-20 max-h-30"
           rows="3"
           v-model.trim="form.comment"
           autoResize

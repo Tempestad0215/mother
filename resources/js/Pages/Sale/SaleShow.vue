@@ -117,10 +117,10 @@ const printFact = (item: saleI) => {
       <!--        :field="form.field"-->
       <!--        :per-page="form.per_page"-->
       <!--        :search="form.search"-->
-      <!--        :current-page="propsW.sales.current_page"-->
-      <!--        :total-page="propsW.sales.to"-->
-      <!--        :prev="propsW.sales.prev_page_url"-->
-      <!--        :next="propsW.sales.prev_page_url"-->
+      <!--        :current-page="propsW.Sales.current_page"-->
+      <!--        :total-page="propsW.Sales.to"-->
+      <!--        :prev="propsW.Sales.prev_page_url"-->
+      <!--        :next="propsW.Sales.prev_page_url"-->
       <!--      />-->
 
       <!--           Mensajke de error-->

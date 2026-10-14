@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { saleKey } from '@/utils/keys';
 import { computed, inject } from 'vue';
 import { infoSaleI, WarehouseMapType } from '@/Interfaces/SaleInterface';
 import { PreciseCalculator } from '@/utils/Decimal';
@@ -7,6 +6,7 @@ import { Column, DataTable, DataTableCellEditCompleteEvent, InputNumber, Select 
 import { getMoney, truncateText } from '@/Global/Helpers';
 import { EnumValueI } from '@/Interfaces/GeneralInterface';
 import { SaleTypeEnum } from '@/Helpers/SaleHelper';
+import { saleKey } from '@/Injections/saleKeys';
 
 // Para eliminar un item de la venta
 const propsW = defineProps<{

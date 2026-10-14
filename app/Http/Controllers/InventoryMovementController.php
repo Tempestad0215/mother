@@ -51,7 +51,7 @@ class InventoryMovementController extends Controller implements HasMiddleware
 
         // DEvolver la vista con el mensaje
         return Inertia::render('Products/Inventory/Register',[
-            'products' => Product::take(50)->get(),
+            'Products' => Product::take(50)->get(),
             'productTable' => $productTable,
             'entries' => $productsTrans,
             'client' => fn() => ClientCommentResource::collection($clients),
@@ -67,7 +67,7 @@ class InventoryMovementController extends Controller implements HasMiddleware
     {
         //Validar los datos
         $request->validate([
-            'product_id' => ['required','numeric','exists:products,id'],
+            'product_id' => ['required','numeric','exists:Products,id'],
             'quantity' => ['required','numeric', Rule::notIn(0.00)],
             'cost' => ['required','numeric', Rule::notIn(0.00)],
             'description' => ['nullable','string','max:255'],
@@ -112,7 +112,7 @@ class InventoryMovementController extends Controller implements HasMiddleware
 
         // DEvolver la vista con el mensaje
 //        return Inertia::render('Products/Inventory/EntryCreate',[
-//            'products' => Product::take(50)->get(),
+//            'Products' => Product::take(50)->get(),
 //            'productTable' => $productTable,
 //            'entry_edit' => new InventoryProductResource($entry),
 //        ]);
@@ -126,7 +126,7 @@ class InventoryMovementController extends Controller implements HasMiddleware
         //Validar los datos
         $request->validate([
             'id' => ['required','numeric','exists:inventory_movements,id'],
-            'product_id' => ['required','numeric','exists:products,id'],
+            'product_id' => ['required','numeric','exists:Products,id'],
             'quantity' => ['required','numeric', Rule::notIn(0.00)],
             'cost' => ['required','numeric', Rule::notIn(0.00)],
             'description' => ['nullable','string','max:255'],
@@ -203,9 +203,9 @@ class InventoryMovementController extends Controller implements HasMiddleware
         //Enviar los datos
         $data = InventoryMovement::whereHas("product",
             function($query) use($search){
-            $query->where("products.name","LIKE","%$search%")
-            ->orWhere("products.description","LIKE","%".$search."%")
-            ->orWhere("products.sku","LIKE","%".$search."%");
+            $query->where("Products.name","LIKE","%$search%")
+            ->orWhere("Products.description","LIKE","%".$search."%")
+            ->orWhere("Products.sku","LIKE","%".$search."%");
         })->where("status",'=',true)
             ->simplePaginate($perPage);
 

@@ -84,7 +84,7 @@ class WarehouseProduct extends Model
 
 
     /**
-     * Summary of products
+     * Summary of Products
      * @return BelongsTo<Product, WarehouseProduct>
      */
     public function products():BelongsTo

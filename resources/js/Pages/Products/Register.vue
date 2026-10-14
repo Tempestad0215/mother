@@ -19,7 +19,7 @@ import { UnitInterfaceI } from '@/Interfaces/UnitInterface';
 import { TaxBaseI } from '@/Interfaces/TaxInterface';
 import FShowProduct from '@/Pages/Products/FShowProduct.vue';
 import { PriceListWTI } from '@/Interfaces/PriceListInterface';
-import { useProductDelete } from '@/Composable/useProductDelete';
+import { useProductDelete } from '@/Composable/Products/useProductDelete';
 import { PackagePlus, SquarePen, Trash } from '@lucide/vue';
 
 // Propiedades de la ventana
@@ -145,18 +145,3 @@ const openEdit = (product: ProductTableI) => {
     </div>
   </AppLayout>
 </template>
-
-<style scoped>
-:deep(.p-dialog-content) {
-  padding: 1rem;
-  max-height: 80vh;
-  overflow-y: auto;
-}
-
-@media (max-width: 640px) {
-  :deep(.p-dialog-content) {
-    padding: 0.75rem;
-    max-height: 85vh;
-  }
-}
-</style>

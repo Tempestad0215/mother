@@ -17,22 +17,27 @@ import { invoiceTypeI } from '@/Interfaces/SettingInterface';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
 import SaleInfo from '@/Pages/Sale/SaleInfo.vue';
 import SaleDetail from '@/Pages/Sale/SaleDetail.vue';
-import { saleKey } from '@/utils/keys';
 import SaleFooter from '@/Pages/Sale/SaleFooter.vue';
 import SaleTable from '@/Pages/Sale/SaleTable.vue';
 import PaymentInvoice from '@components/PaymentInvoice.vue';
-import { useRoute } from 'ziggy-js';
-import { Button, Card, Dialog, Divider, useToast } from 'primevue';
+import { Button, Card, Dialog, Divider } from 'primevue';
 import { CreditNoteBalance } from '@/Interfaces/CreditNoteInterface';
 import { PreciseCalculator } from '@/utils/Decimal';
 import { SaleBreadCrumbs } from '@/Helpers/SaleHelper';
 import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
 import { CreditCard, Eraser, Send } from '@lucide/vue';
 import { EnumValueI } from '@/Interfaces/GeneralInterface';
+import { saleKey } from '@/Injections/saleKeys';
+import { useSaleSubmit } from '@/Composable/Sales/useSaleSubmit';
+import { useSaleSequence } from '@/Composable/Sales/useSaleSequence';
+import { useSaleCreditNote } from '@/Composable/Sales/useSaleCreditNote';
 
-// Datos de la ventana
-const toast = useToast();
-const route = useRoute();
+const { createCreditNotes } = useSaleCreditNote({
+  onSuccess: () => (paymentBox.value = false),
+});
+const { sendData } = useSaleSubmit({
+  createCreditNotes,
+});
 
 // Datos del back end
 const page = usePage();
@@ -55,7 +60,6 @@ const showReturn: Ref<boolean> = ref(false);
 const showFormReturn: Ref<boolean> = ref(false);
 const paymentBox = ref(false);
 const saleInfoRef = ref<InstanceType<typeof SaleInfo>>()!;
-const saleDetailRef = ref<InstanceType<typeof SaleDetail>>()!;
 const saleTableRef = ref<InstanceType<typeof SaleTable>>()!;
 const salePaymentRef = ref<InstanceType<typeof PaymentInvoice>>()!;
 const returnInfo = ref(false);
@@ -95,10 +99,12 @@ const form = useForm<CreateSaleI>({
   pending: 0,
 });
 
+const { getSequence } = useSaleSequence();
+
 // Al momento de cargar el componente
 onMounted(() => {
   setDataForm();
-  if (page.props.setting.sequence) saleInfoRef.value?.getSequence(form.invoice_type);
+  if (page.props.setting.sequence) getSequence(form.invoice_type);
 
   let msjError = 'Este Codigo No es Validos, Introduzca Uno Validado';
   if (page.props.errors.general === msjError) {
@@ -121,7 +127,7 @@ onMounted(() => {
 // Obtener los datos de las cuentas abiertas
 onUpdated(() => {
   setTimeout(() => {
-    if (page.props.setting.sequence) saleInfoRef.value?.getSequence(form.invoice_type);
+    if (page.props.setting.sequence) getSequence(form.invoice_type);
   }, 200);
 
   let msjError = 'Este Codigo No es Validos, Introduzca Uno Validado';
@@ -183,103 +189,6 @@ const setDataForm = () => {
   }
 };
 
-const createCreditNotes = () => {
-  form.post(route('credit-note.store', { sale: form.uuid }), {
-    onSuccess: () => {
-      toast.add({
-        summary: 'Registro Creado',
-        detail: 'Nota de crédito creada correctamente.',
-        severity: 'success',
-        life: 3000,
-      });
-      printPdf(route('invoice.credit-note', { creditNote: page.flash.credit_uuid }));
-      form.reset();
-      paymentBox.value = false;
-      saleInfoRef.value?.resetData();
-    },
-    onError: (err) => {
-      const errors = Object.values(err);
-      toast.add({
-        summary: 'Error',
-        detail: errors[0],
-        life: 3500,
-        severity: 'error',
-      });
-    },
-  });
-};
-
-const sendData = async () => {
-  if (form.pending > 0) {
-    toast.add({
-      summary: 'Advertencia',
-      detail: 'Por favor, verifique el monto pendiente antes de continuar.',
-      severity: 'warn',
-      life: 3500,
-    });
-  } else {
-    if (form.type === 'DEVOLUCION' && form.info_sale.length > 0) {
-      createCreditNotes();
-    } else {
-      if (form.update) {
-        await updateSale();
-      } else {
-        createSale();
-      }
-    }
-  }
-};
-
-const createSale = () => {
-  form.post(route('sale.store'), {
-    onSuccess: () => {
-      toast.add({
-        summary: 'Registro Creado',
-        detail: 'Venta procesada correctamente.',
-        severity: 'success',
-        life: 3000,
-      });
-      form.reset();
-      paymentBox.value = false;
-      saleInfoRef.value?.resetData();
-    },
-    onError: (err) => {
-      const errors = Object.values(err);
-      toast.add({
-        summary: 'Error',
-        detail: errors[0],
-        life: 3500,
-        severity: 'error',
-      });
-    },
-  });
-};
-
-const updateSale = async () => {
-  form.patch(route('sale.update', { sale: form.uuid }), {
-    onSuccess: () => {
-      toast.add({
-        summary: 'Registro Actualizado',
-        detail: 'Venta actualizada correctamente.',
-        severity: 'success',
-        life: 3000,
-      });
-      form.reset();
-      paymentBox.value = false;
-      saleInfoRef.value?.resetData();
-    },
-    onError: (err) => {
-      const errors = Object.values(err);
-      toast.add({
-        summary: 'Error',
-        detail: errors[0],
-        life: 3500,
-        severity: 'error',
-      });
-    },
-  });
-};
-
 const registerSale = () => {
   if (form.type === 'Cotizacion' || !form.close_table || form.type === 'DEVOLUCION') {
     sendData();
@@ -287,46 +196,6 @@ const registerSale = () => {
     paymentBox.value = true;
     salePaymentRef.value?.checkSale();
   }
-};
-
-const getInfoCreditNote = (data: CreditNoteBalance): void => {
-  const exist = form.credit_notes.find((item) => item.uuid === data.uuid);
-
-  if (exist)
-    return toast.add({
-      summary: 'Error',
-      detail: 'Esta nota de crédito ya fue registrada.',
-      severity: 'error',
-      life: 3500,
-    });
-
-  if (form.credit_notes_amount >= form.amount) {
-    return toast.add({
-      summary: 'Advertencia',
-      detail: 'El monto de la nota de crédito supera el total de la venta.',
-      severity: 'warn',
-      life: 3500,
-    });
-  }
-
-  const availableNew = parseFloat(
-    PreciseCalculator.subtract(data.n_available, form.amount).toString()
-  );
-
-  form.credit_notes.push({
-    dayRemaining: data.dayRemaining,
-    expireSoon: data.expireSoon,
-    uuid: data.uuid,
-    code: data.code,
-    n_available: parseFloat(data.n_available.toString()).toFixed(2),
-    n_available_new: availableNew,
-    ncf: data.ncf,
-    created_at: data.created_at,
-  });
-};
-
-const setName = (name: string) => {
-  client.value = name;
 };
 
 const cleanAllForm = () => {
@@ -350,13 +219,7 @@ provide(saleKey, form);
         <template #content>
           <form @submit.prevent class="space-y-4">
             <!-- Información del Cliente y Facturación -->
-            <SaleInfo
-              v-model:client="client"
-              ref="saleInfoRef"
-              :clients="propsW.clients"
-              @getSequenceType="(type: string) => saleDetailRef?.getSequenceType(type)"
-              :invoice-type="form.invoice_type"
-            />
+            <SaleInfo ref="saleInfoRef" :clients="propsW.clients" />
 
             <!-- Búsqueda y Selección de Productos -->
             <SaleDetail
@@ -367,7 +230,6 @@ provide(saleKey, form);
               :sale-open="propsW.saleOpen"
               :invoice-type="propsW.invoiceType"
               :refund="form.type === 'DEVOLUCION'"
-              @sendClientName="setName"
               @total-sale=""
               @total-amount="saleTableRef?.calculateItemRow($event)"
               @totalSale="saleTableRef?.calculateTotals()"
@@ -424,28 +286,8 @@ provide(saleKey, form);
       class="p-dialog-responsive mx-2 sm:mx-0"
     >
       <div class="py-2">
-        <PaymentInvoice
-          @sendCreditData="getInfoCreditNote"
-          @senData="sendData"
-          v-model:show-return="showReturn"
-          ref="salePaymentRef"
-        />
+        <PaymentInvoice @senData="sendData" v-model:show-return="showReturn" ref="salePaymentRef" />
       </div>
     </Dialog>
   </AppLayout>
 </template>
-
-<style scoped>
-:deep(.p-dialog-content) {
-  padding: 1rem;
-  max-height: 80vh;
-  overflow-y: auto;
-}
-
-@media (max-width: 640px) {
-  :deep(.p-dialog-content) {
-    padding: 0.75rem;
-    max-height: 85vh;
-  }
-}
-</style>

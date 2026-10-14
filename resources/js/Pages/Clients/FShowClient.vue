@@ -42,13 +42,6 @@ const updateClient = defineModel<boolean>('updateClient', {
 });
 
 /**
- * Para emitir los eventos
- */
-// const emit = defineEmits<{
-//     (e: 'getData', item:clientBaseI):void
-// }>();
-
-/**
  * Formulario
  */
 const form = useForm({

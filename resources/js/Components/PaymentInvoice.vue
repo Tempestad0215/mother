@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { typePaymentData } from '@/Global/ShareData';
 import { getMoney } from '@/Global/Helpers';
-import axios from 'axios';
 import { inject, onMounted, ref } from 'vue';
-import { saleKey } from '@/utils/keys';
 import { PreciseCalculator } from '@/utils/Decimal';
 import { useRoute } from 'ziggy-js';
 import {
@@ -22,6 +20,8 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { Search } from '@lucide/vue';
 import { CreditNoteBalance } from '@/Interfaces/CreditNoteInterface';
+import { saleKey } from '@/Injections/saleKeys';
+import { useSaleCreditNote } from '@/Composable/Sales/useSaleCreditNote';
 
 const toast = useToast();
 const route = useRoute();
@@ -33,12 +33,8 @@ const emit = defineEmits<{
 const form = inject(saleKey)!;
 const loadingCreditNote = ref(false);
 
-const creditNote = defineModel<string>('creditNote', {
-  default: '',
-});
-const showReturn = defineModel<boolean>('showReturn', {
-  default: false,
-});
+const { amountCreditNote, getCreditNoteInfo, deleteCreditNote } = useSaleCreditNote();
+const code = ref('');
 
 // Obtener los datos de las cuentas abiertas
 onMounted(() => {
@@ -46,73 +42,7 @@ onMounted(() => {
 });
 
 // Obtener los datos de las cuentas abiertas
-// const getCreditNote = async () => {
-//   //Si no hay suficiente caracateres
-//   if (creditNote?.value.length < 5) {
-//     form.setError('credit_notes_value', 'Por Favor, Introduzca Valores Valido');
-//     return false;
-//   }
-//
-//   //Verificar si ya esta en positivo no puede colocar nota de credito
-//   if (form.returned > 0) {
-//     form.setError('credit_notes_value', 'Existe Suficiente Balance Para Cerrar La Cuenta');
-//     return false;
-//   }
-//
-//   //Verificar si exsite alguna igual
-//   const exist: boolean = form.credit_notes.some(
-//     (el) => el.code == creditNote.value || el.ncf == creditNote.value
-//   );
-//
-//   //Verificar si existe la misma nota de credito
-//   if (exist) {
-//     form.setError('credit_notes_value', 'Esta Nota De Credito, Esta Agregada');
-//   } else {
-//     //Buscar la nota de credito
-//     const { data } = await axios.get(route('credit-note.get', { code: creditNote.value }));
-//
-//     //Verifciar los datos
-//     if (data.hasOwnProperty('code')) {
-//       //Pasar los datos al formulario
-//       form.credit_notes.push(data);
-//       //Calcular los datos
-//       amountCreditNote();
-//       //Limpiar los errores
-//       form.clearErrors('credit_notes_value');
-//       //Limpiar el campo para agreagr otros
-//       form.reset('credit_notes_value');
-//     } else {
-//       //Poner el mensaje de error
-//       form.setError('credit_notes_value', data.error);
-//     }
-//   }
-// };
-
-//  Eliminar una nota de credito
-const deleteCreditNote = (index: number) => {
-  //Eliminar solo el dato seleccionado
-  form.credit_notes.splice(index, 1);
-  //Realizar el calculo
-  amountCreditNote();
-};
-
-// Obtener los datos de las cuentas abiertas
-const amountCreditNote = () => {
-  //REalizar el cálculo de notas de credito
-  form.credit_notes_amount = form.credit_notes.reduce(
-    (acc, cur) => acc + Number(cur.n_available),
-    0
-  );
-
-  //Datos pendientes por pagar
-  form.returned = form.credit_notes_amount - form.amount;
-  form.pending =
-    form.credit_notes_amount - form.amount < 0 ? form.credit_notes_amount - form.amount : 0;
-};
-
-// Obtener los datos de las cuentas abiertas
 const checkSale = () => {
-  showReturn.value = true;
   //Verificar si se puede mostrar los datos
   if (form.close_table && form.info_sale.length > 0) {
     //REalizar calculo si existe
@@ -159,32 +89,16 @@ const returnedBlur = () => {
 };
 
 // Obtener los datos de las cuentas abiertas
-const getCreditNoteInfo = async () => {
-  loadingCreditNote.value = true;
-  try {
-    const res = await axios.get(route('credit-note.get', { code: creditNote.value }));
-    // Tranformar los datos en un objeto
-    const data = res.data as CreditNoteBalance;
-    // Emitir el evento con los datos
-    emit('sendCreditData', data);
-    creditNote.value = '';
-  } catch (error) {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: 'No se encontro la nota de credito1124',
-      life: 5000,
-    });
-  } finally {
-    loadingCreditNote.value = false;
-  }
-};
 
 // Exponer los metodos para el componente padre
 defineExpose({
   checkSale,
   returnedBlur,
 });
+
+const getCreditNote = async () => {
+  await getCreditNoteInfo(code.value);
+};
 </script>
 
 <template>
@@ -204,12 +118,12 @@ defineExpose({
         </FloatLabel>
       </div>
       <div class="flex-1">
-        <form @submit.prevent="getCreditNoteInfo" action="">
+        <form @submit.prevent="getCreditNote" action="">
           <FloatLabel variant="on">
             <InputGroup>
-              <InputText v-model="creditNote" />
+              <InputText v-model="code" />
               <InputGroupAddon>
-                <Button @click="getCreditNoteInfo" :loading="loadingCreditNote">
+                <Button @click="getCreditNote" :loading="loadingCreditNote">
                   <Search />
                 </Button>
               </InputGroupAddon>

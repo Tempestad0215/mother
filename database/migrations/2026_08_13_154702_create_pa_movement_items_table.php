@@ -10,7 +10,7 @@ return new class extends Migration {
         Schema::create('pa_movement_items', function (Blueprint $table) {
             $table->uuid()->primary()->unique();
             $table->string('code',30)->unique();
-            $table->foreignUuid('product_uuid')->constrained('products','uuid')->cascadeOnDelete();
+            $table->foreignUuid('product_uuid')->constrained('Products','uuid')->cascadeOnDelete();
             $table->foreignUuid('tax_uuid')->constrained('taxes','uuid')->cascadeOnDelete();
             $table->foreignUuid('warehouse_uuid')->constrained('warehouses','uuid')->cascadeOnDelete();
             $table->decimal('cost', 19,4);

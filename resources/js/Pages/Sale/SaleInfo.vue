@@ -1,197 +1,28 @@
 <script setup lang="ts">
-import { computed, inject, ref } from 'vue';
+import { inject, ref } from 'vue';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
-import { clientBaseI, ClientRncI } from '@/Interfaces/ClientInterface';
+import { clientBaseI } from '@/Interfaces/ClientInterface';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-import { saleKey } from '@/utils/keys';
 import { usePage } from '@inertiajs/vue3';
-import axios from 'axios';
-import { sequenceDataI } from '@/Interfaces/SettingInterface';
-import { useRoute } from 'ziggy-js';
 import { Search, UserPlus } from '@lucide/vue';
-import {
-  AutoComplete,
-  AutoCompleteCompleteEvent,
-  AutoCompleteOptionSelectEvent,
-  Dialog,
-  FloatLabel,
-  InputGroup,
-  InputGroupAddon,
-  InputText,
-  useToast,
-} from 'primevue';
+import { AutoComplete, Dialog, FloatLabel, InputGroup, InputGroupAddon, InputText } from 'primevue';
 import FShowClient from '@/Pages/Clients/FShowClient.vue';
-import { urlRNC } from '@/Global/Helpers';
-import { SaleTypeEnum } from '@/Helpers/SaleHelper';
+import { useSaleInfo } from '@/Composable/Sales/useSaleInfo';
+import { saleKey } from '@/Injections/saleKeys';
 
-const route = useRoute();
 const page = usePage();
-const toast = useToast();
 
 const propsW = defineProps<{
-  invoiceType: string;
   clients: PaginationI<clientBaseI>;
-}>();
-
-const emit = defineEmits<{
-  (e: 'getSequenceType', type: string): void;
 }>();
 
 const form = inject(saleKey)!;
 
+const { searchClient, getClient, clientName, getClientRnc, hasRnc, isRefund, clientFiltered } =
+  useSaleInfo();
+
 const showClient = ref<boolean>(false);
-const clientFiltered = ref<Array<clientBaseI>>([]);
-const showClientRnc = ref<boolean>(false);
-const client = defineModel<string>('client', {
-  default: '',
-});
-
-const sequenceData = defineModel<sequenceDataI | null>('sequenceData', {
-  default: null,
-});
-
-const hasRnc = computed(() => {
-  return form.invoice_type.toUpperCase() !== 'B02';
-});
-
-const isRefund = computed((): boolean => {
-  return form.type === SaleTypeEnum.DEVOLUCION;
-});
-
-// Conseguir el cliente
-const searchClient = async (event: AutoCompleteCompleteEvent) => {
-  const value = event.query as string;
-  if (value.length <= 0) return;
-
-  try {
-    const response = await axios.get(route('client.get.json', { search: value }));
-    clientFiltered.value = response.data as Array<clientBaseI>;
-
-    if (clientFiltered.value.length <= 0) {
-      form.client_name = value;
-    }
-  } catch (err) {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: 'Error al obtener los datos del cliente',
-      life: 3000,
-    });
-  }
-};
-
-/**
- * Obtener el cliente seleccionado
- */
-const getClient = (data: AutoCompleteOptionSelectEvent) => {
-  const item = data.value as clientBaseI;
-  form.client_name = item.name;
-  form.client_uuid = item.uuid;
-  form.client_rnc = item.type_rnc;
-
-  if (form.invoice_type !== 'B02') {
-    form.client_rnc = item.personal_id || '';
-    showClientRnc.value = true;
-  }
-
-  getSequence(item.type_rnc);
-  showClient.value = false;
-};
-
-const resetData = () => {
-  client.value = '';
-};
-
-/**
- * Obtener los comprobantes / secuencia
- */
-async function getSequence(type: string) {
-  try {
-    if (page.props.setting.sequence) {
-      const result = await axios.get(route('sequence.get', { type: type }));
-
-      if (result.status === 200 && typeof result.data === 'object') {
-        sequenceData.value = result.data || null;
-
-        emit('getSequenceType', type);
-
-        if (sequenceData.value && sequenceData.value.type && sequenceData.value.next != null) {
-          form.clearErrors('ncf');
-          form.ncf = sequenceData.value.type + sequenceData.value.next.toString().padStart(8, '0');
-        }
-      } else {
-        toast.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Error al obtener la secuencia',
-          life: 3000,
-        });
-      }
-    }
-  } catch (err) {
-    form.ncf = '';
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: 'Error al obtener la secuencia',
-      life: 3000,
-    });
-  }
-}
-
-/**
- * Conseguir el RNC del cliente
- */
-const getRncClient = async () => {
-  if (form.client_rnc.length < 7) {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: 'El RNC debe tener al menos 7 caracteres',
-      life: 3000,
-    });
-  } else {
-    try {
-      const dataClean = form.client_rnc.trim();
-      const result = await axios.get(`${urlRNC}${dataClean}`);
-      const data = result.data as ClientRncI;
-
-      if (data.status === 'SUSPENDIDO') {
-        toast.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Este Contribuyente Esta Suspendido, Por Favor Elegir Otro',
-          life: 3000,
-        });
-      } else {
-        client.value = data.razon_social ?? '';
-        form.client_name = data.razon_social;
-        form.client_social = data.razon_social;
-        form.client_rnc_status = data.status;
-
-        toast.add({
-          severity: 'success',
-          summary: 'Éxito',
-          detail: 'RNC Cargado Correctamente',
-          life: 3000,
-        });
-      }
-    } catch (err) {
-      toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Error al obtener el RNC',
-        life: 3000,
-      });
-    }
-  }
-};
-
-defineExpose({
-  getSequence,
-  resetData,
-});
 </script>
 
 <template>
@@ -203,7 +34,7 @@ defineExpose({
           <FloatLabel variant="on" class="w-full">
             <AutoComplete
               :disabled="isRefund"
-              v-model="client"
+              v-model="clientName"
               @option-select="getClient"
               :suggestions="clientFiltered"
               optionLabel="name"
@@ -214,7 +45,7 @@ defineExpose({
             <label for="client">Cliente</label>
           </FloatLabel>
           <InputGroupAddon
-            v-if="propsW.invoiceType !== 'B04'"
+            v-if="form.sequence_type !== 'B04'"
             title="Buscar Cliente"
             @click="showClient = !showClient"
             class="cursor-pointer hover:bg-slate-100 transition px-3"
@@ -232,7 +63,7 @@ defineExpose({
             <label for="client_rnc">RNC / Cédula</label>
           </FloatLabel>
           <InputGroupAddon
-            @click="getRncClient"
+            @click="getClientRnc"
             class="cursor-pointer hover:bg-slate-100 transition px-3"
           >
             <Search class="w-5 h-5 text-slate-700" />
@@ -257,7 +88,7 @@ defineExpose({
           <strong class="text-slate-900">NCF:</strong>
           <span class="font-mono font-bold ml-1 text-emerald-700">{{ form.ncf || 'Sin NCF' }}</span>
         </p>
-        <p v-if="invoiceType === 'B04'" class="truncate text-slate-800">
+        <p v-if="form.sequence_type === 'B04'" class="truncate text-slate-800">
           <strong class="text-slate-900">NCF Modificado:</strong>
           <span class="font-mono ml-1">{{ form.ncf_m || 'N/A' }}</span>
         </p>
@@ -293,18 +124,3 @@ defineExpose({
     </div>
   </Dialog>
 </template>
-
-<style scoped>
-:deep(.p-dialog-content) {
-  padding: 1rem;
-  max-height: 80vh;
-  overflow-y: auto;
-}
-
-@media (max-width: 640px) {
-  :deep(.p-dialog-content) {
-    padding: 0.75rem;
-    max-height: 85vh;
-  }
-}
-</style>

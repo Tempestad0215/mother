@@ -1,34 +1,22 @@
 <script setup lang="ts">
-import { invoiceTypeI, sequenceDataI } from '@/Interfaces/SettingInterface';
+import { invoiceTypeI } from '@/Interfaces/SettingInterface';
 import { usePage } from '@inertiajs/vue3';
 import { ProductTableI } from '@/Interfaces/ProductInterface';
 import { computed, inject, ref } from 'vue';
 import { infoSaleI, saleDataI } from '@/Interfaces/SaleInterface';
-import { saleKey } from '@/utils/keys';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
-import { createSequence, getSequenceType } from '@/Global/Helpers';
-import {
-  Button,
-  Card,
-  Dialog,
-  FloatLabel,
-  InputText,
-  Select,
-  SelectChangeEvent,
-  ToggleButton,
-  useToast,
-} from 'primevue';
+import { getSequenceType } from '@/Global/Helpers';
+import { Button, Card, Dialog, FloatLabel, InputText, Select, ToggleButton } from 'primevue';
 import FShowProduct from '@/Pages/Products/FShowProduct.vue';
-import { PreciseCalculator } from '@/utils/Decimal';
 import { CircleCheckBig, Grid2X2Plus, ShoppingCart, Undo2 } from '@lucide/vue';
-import { getInfoFromPriceList } from '@/Helpers/ProductHelper';
 import SaleOpenShow from './SaleOpenShow.vue';
 import ReturnForm from '@components/ReturnForm.vue';
-import axios from 'axios';
 import { EnumValueI } from '@/Interfaces/GeneralInterface';
+import { useSaleSequence } from '@/Composable/Sales/useSaleSequence';
+import { saleKey } from '@/Injections/saleKeys';
+import { useSaleCart } from '@/Composable/Sales/useSaleCart';
+import { useSaleOpen } from '@/Composable/Sales/useSaleOpen';
 
-// Datos de la ventana
-const toast = useToast();
 const page = usePage();
 
 // Datos del back end
@@ -51,12 +39,15 @@ const emit = defineEmits<{
 // Formulario
 const form = inject(saleKey)!;
 
+const { getSaleOpen } = useSaleOpen();
+const { getProductCode, getDataProduct } = useSaleCart();
+const { getNextSequence, loadingNextSequence } = useSaleSequence();
+
 // Ventanas
 const showProducts = ref(false);
 const showSaleOpen = ref(false);
 const showReturn = ref(false);
 const showFormReturn = ref(false);
-const loadingNextSequence = ref(false);
 const sendReturnInfo = defineModel('sendReturnInfo', {
   type: Boolean,
   default: false,
@@ -105,136 +96,11 @@ const getSequenceFiltered = computed(() => {
 /**
  * Obtener el producto por código
  */
-const getProductCode = () => {
-  if (form.code_value.length > 0) {
-    axios
-      .get(route('product.get.code', { search: form.code_value }))
-      .then((res) => {
-        const info = res.data as ProductTableI;
-        const getIndex = form.info_sale.findIndex((el) => el.product_uuid === info.uuid);
-
-        if (getIndex >= 0) {
-          const infoCurrent = form.info_sale[getIndex];
-          infoCurrent.stock += 1.0;
-          emit('totalAmount', infoCurrent);
-          toast.add({
-            severity: 'success',
-            summary: `Producto: ${infoCurrent.product_name}`,
-            detail: `Se agregó ${infoCurrent.stock} unidad(es)`,
-            life: 3000,
-          });
-        } else {
-          const taxRate = PreciseCalculator.divide(info.tax.rate, 100) ?? 0;
-          const taxAmount = PreciseCalculator.multiply(taxRate.toString(), info.price);
-
-          form.info_sale.push({
-            amount: info.price,
-            price: info.price,
-            price_type: 'price',
-            product_name: info.name,
-            product_uuid: info.uuid,
-            discount: 0,
-            discount_amount: 0,
-            reserved: 0,
-            stock: 1,
-            tax_amount: parseFloat(taxAmount.toString()),
-            tax_rate: parseFloat(taxRate.toString()),
-            tax_uuid: info.tax_uuid,
-            temp_price: 0,
-            warehouse_uuid: info.default_warehouse,
-          });
-        }
-        form.code_value = '';
-      })
-      .catch(() => {
-        toast.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: `El código: ${form.code_value} no existe o no tiene stock.`,
-          life: 3000,
-        });
-      });
-  }
-};
 
 // Obtener los datos de las cuentas abiertas
-const getSaleOpen = (item: saleDataI) => {
-  form.info_sale = [];
-  form.uuid = item.uuid;
-  form.update = true;
-
-  setTimeout(() => {
-    item.info_sale.map((el, _) => {
-      form.info_sale.push({
-        ...el,
-        price_type: el.price_type ?? 'price',
-        temp_price: el.price,
-        tax_amount: parseFloat(PreciseCalculator.multiply(el.price, el.tax_rate).toFixed(2)),
-      });
-
-      emit('totalAmount', el);
-    });
-  }, 2);
-
-  emit('totalSale');
-
-  form.client_uuid = item.client_uuid;
-  form.client_rnc = item.client_document ?? '';
-  form.ncf = item.ncf;
-  form.invoice_type = item.invoice_type;
-  form.client_name = item.client_name;
-  form.close_table = item.close_table;
-  form.comment = item.comment ?? '';
-
-  showSaleOpen.value = false;
-};
 
 const openReturn = () => {
   showReturn.value = !showReturn.value;
-};
-
-const getDataProduct = (data: ProductTableI) => {
-  showProducts.value = false;
-  const getIndex = form.info_sale.findIndex((el) => el.product_uuid === data.uuid);
-
-  if (getIndex >= 0) {
-    form.info_sale[getIndex].stock += 1.0;
-  } else {
-    const taxRate = PreciseCalculator.divide(data.tax.rate, 100) ?? 0;
-    const taxPlus = Number(PreciseCalculator.multiply(taxRate.toString(), data.price));
-
-    let taxForProduct: number;
-
-    if (taxPlus === 0) {
-      taxForProduct = 0;
-    } else {
-      taxForProduct = Number(PreciseCalculator.multiply(taxPlus, 1));
-    }
-
-    const priceList = getInfoFromPriceList(data.price_lists, data.default_price_list);
-
-    form.info_sale.push({
-      product_uuid: data.uuid,
-      product_name: data.name,
-      code: data.code,
-      stock: 1,
-      price: priceList?.price ?? 0,
-      price_type: 'price',
-      min_price: priceList?.min_price ?? 0,
-      promotional_price: priceList?.promotional_price ?? 0,
-      tax_uuid: data.tax.uuid,
-      tax_amount: taxForProduct,
-      warehouse_uuid: data.default_warehouse,
-      tax_rate: parseFloat(PreciseCalculator.divide(data.tax.rate, 100).toString()),
-      discount: 0,
-      discount_amount: 0,
-      reserved: 0,
-      amount: data.price,
-      is_service: Boolean(data.is_service),
-      temp_price: data.price,
-    });
-  }
-  emit('totalSale');
 };
 
 const closeFormReturn = (isReturn: boolean) => {
@@ -250,36 +116,6 @@ const closeFormReturn = (isReturn: boolean) => {
   });
 };
 
-const getNextSequence = async (event: SelectChangeEvent) => {
-  loadingNextSequence.value = true;
-  const info = event.value as string;
-  try {
-    const res = await axios.get(route('sequence.get', { type: info }));
-    const data = res.data as sequenceDataI;
-    const restante = parseFloat(PreciseCalculator.subtract(data.to, data.next).toString());
-
-    if (restante <= data.advise) {
-      toast.add({
-        severity: 'warn',
-        summary: 'Advertencia',
-        detail: `El número de factura se encuentra a ${restante} de los ${data.advise} disponibles.`,
-        life: 3000,
-      });
-    }
-
-    form.ncf = createSequence(data.type, data.next);
-  } catch (err) {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: 'No fue posible obtener el siguiente número de factura.',
-      life: 3000,
-    });
-  } finally {
-    loadingNextSequence.value = false;
-  }
-};
-
 defineExpose({
   showReturn,
   getSequenceType,
@@ -291,9 +127,9 @@ defineExpose({
   <div class="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4 mt-3">
     <!-- Entrada de Código de Barras y Accesos Rápidos -->
     <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
-      <form v-if="!refund" class="w-full sm:w-60" @submit.prevent>
+      <form v-if="!refund" class="w-full sm:w-60" @submit.prevent="getProductCode()">
         <FloatLabel variant="on" class="w-full">
-          <InputText v-model="form.code_value" @blur="getProductCode" class="w-full" />
+          <InputText v-model="form.code_value" @blur="getProductCode()" class="w-full" />
           <label for="code">Código de Barra</label>
         </FloatLabel>
       </form>
@@ -387,13 +223,13 @@ defineExpose({
       <FShowProduct
         searchRoute="sale.index"
         :searchOnly="['products']"
-        @select-data="getDataProduct"
+        @select-data="getDataProduct($event)"
         :stock="true"
         :isProduct="false"
         :products="propsW.products"
       >
         <template #actions="{ data }: { data: ProductTableI }">
-          <Button outlined>
+          <Button @click="" outlined>
             <template #icon> <CircleCheckBig /></template>
           </Button>
         </template>

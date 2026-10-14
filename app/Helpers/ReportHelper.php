@@ -78,7 +78,7 @@ class ReportHelper
 
         //Vista con los datos
         return [
-            'products' => $products,
+            'Products' => $products,
             'amount' => $products->sum('price'),
         ];
 
