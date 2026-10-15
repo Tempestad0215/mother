@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed, inject } from 'vue';
 import { infoSaleI, WarehouseMapType } from '@/Interfaces/SaleInterface';
-import { PreciseCalculator } from '@/utils/Decimal';
 import { Column, DataTable, DataTableCellEditCompleteEvent, InputNumber, Select } from 'primevue';
 import { getMoney, truncateText } from '@/Global/Helpers';
 import { EnumValueI } from '@/Interfaces/GeneralInterface';
 import { SaleTypeEnum } from '@/Helpers/SaleHelper';
 import { saleKey } from '@/Injections/saleKeys';
+import { useSaleCalculation } from '@/Composable/Sales/useSaleCalculation';
 
 // Para eliminar un item de la venta
 const propsW = defineProps<{
@@ -16,6 +16,8 @@ const propsW = defineProps<{
 
 // Para eliminar un item de la venta
 const form = inject(saleKey)!;
+
+const { calculateItemRow } = useSaleCalculation();
 
 const isReturn = computed(() => {
   return form.type === SaleTypeEnum.DEVOLUCION;
@@ -35,80 +37,11 @@ const getWarehouses = (): EnumValueI[] | [] => {
   }
 };
 
-// Para calcular los totales de la venta
-const calculateTotals = () => {
-  // 1) Totales base
-  const subTotal = form.info_sale.reduce(
-    (acc: number, currentValue: infoSaleI): number =>
-      Number(PreciseCalculator.add(acc, currentValue.amount)),
-    0
-  );
-
-  // 1.1) Totales de impuestos y descuentos
-  const taxTotal = form.info_sale.reduce(
-    (acc: number, currentValue: infoSaleI): number =>
-      Number(PreciseCalculator.add(acc, currentValue.tax_amount)),
-    0
-  );
-
-  // 1.2) Totales de descuentos
-  const discountTotal = form.info_sale.reduce(
-    (acc: number, currentValue: infoSaleI): number =>
-      Number(PreciseCalculator.add(acc, currentValue.discount_amount || 0)),
-    0
-  );
-
-  // 2) Subtotal sin impuestos (si ese es tu concepto)
-  form.sub_total = Number(PreciseCalculator.subtract(subTotal, taxTotal));
-
-  // 3) Guardar tax y descuento
-  form.tax = taxTotal;
-  form.discount_amount = discountTotal;
-
-  // 4) Total final
-  const subTotalNoTax = Number(PreciseCalculator.add(form.sub_total, taxTotal));
-
-  form.amount = Number(PreciseCalculator.subtract(subTotalNoTax, discountTotal));
-};
-
-// Para eliminar un item de la venta
-const calculateItemRow = (item: infoSaleI) => {
-  if (!item.stock || !item.price) return;
-
-  // Calcular el porcentaje de descuento
-  const discountRate = PreciseCalculator.divide(item.discount || 0, 100);
-
-  // Calcular Importe Bruto (Precio * Stock)
-  item.amount = parseFloat(
-    PreciseCalculator.multiply(item.price.toString(), item.stock.toString()).toFixed(2)
-  );
-
-  // Calcular monto deducido por el descuento
-  item.discount_amount = parseFloat(
-    PreciseCalculator.multiply(item.amount.toString(), discountRate.toString()).toFixed(2)
-  );
-
-  // Calcular ITBIS basado en el importe bruto
-  item.tax_amount = parseFloat(
-    PreciseCalculator.multiply(item.amount.toString(), (item.tax_rate || 0).toString()).toFixed(2)
-  );
-
-  // Recalcular los totales de la factura global
-  calculateTotals();
-};
-
-// Exponer funciones al componente padre
-defineExpose({
-  // totalAmount,
-  calculateItemRow,
-  calculateTotals,
-});
-
 const onCellEditComplete = (event: DataTableCellEditCompleteEvent) => {
   const index = event.index;
   const info = event.newData;
-  calculateItemRow(info);
-  Object.assign(form.info_sale[index], info);
+
+  calculateItemRow(info, index);
 };
 
 const getLabelName = (uuid: string): string => {

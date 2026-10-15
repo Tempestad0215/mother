@@ -22,10 +22,6 @@ class CheckConfigExitsMiddleware
                 }
             }
         }
-////        Si la configuracion no existe y no estamos en la ruta de configuracion por favor, redirige a la ventana
-//        if(!$config && !Route::is('setting.index') && $request->isMethod('get' && !Route::is('login')) ){
-//            return redirect()->route('setting.index');
-//        }
 
 
         return $next($request);

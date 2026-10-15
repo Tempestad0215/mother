@@ -11,7 +11,7 @@ export function useSaleInfo(onNeedRnc?: () => void) {
   const form = inject(saleKey)!;
   const toast = useToast();
 
-  const { getSequence } = useSaleSequence();
+  const { getSequence } = useSaleSequence(form);
 
   const clientFiltered = ref<clientBaseI[]>([]);
 

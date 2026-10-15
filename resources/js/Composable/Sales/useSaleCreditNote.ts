@@ -1,43 +1,34 @@
-import { inject } from 'vue';
-import { saleKey } from '@/Injections/saleKeys';
-import { useToast } from 'primevue';
+import { watch } from 'vue';
 import { printPdf } from '@/Global/Helpers';
-import { usePage } from '@inertiajs/vue3';
+import { InertiaForm, usePage } from '@inertiajs/vue3';
 import { CreditNoteBalance } from '@/Interfaces/CreditNoteInterface';
 import { PreciseCalculator } from '@/utils/Decimal';
 import axios from 'axios';
+import { CreateSaleI } from '@/Interfaces/SaleInterface';
+import { useNotify } from '@/Composable/Shared/useNotify';
 
 export interface UseSaleCreditNoteOptions {
   onSuccess?: () => void;
 }
 
-export function useSaleCreditNote(options: UseSaleCreditNoteOptions = {}) {
-  const toast = useToast();
+export function useSaleCreditNote(
+  form: InertiaForm<CreateSaleI>,
+  options: UseSaleCreditNoteOptions = {}
+) {
+  const notify = useNotify();
   const page = usePage();
-
-  const form = inject(saleKey)!;
 
   const createCreditNotes = () => {
     form.post(route('credit-note.store', { sale: form.uuid }), {
       onSuccess: () => {
-        toast.add({
-          summary: 'Registro Creado',
-          detail: 'Nota de crédito creada correctamente.',
-          severity: 'success',
-          life: 3000,
-        });
+        notify.success('Nota de Credito Creada Correctamente');
         printPdf(route('invoice.credit-note', { creditNote: page.flash.credit_uuid }));
         form.reset();
         options.onSuccess?.();
       },
       onError: (err) => {
         const errors = Object.values(err);
-        toast.add({
-          summary: 'Error',
-          detail: errors[0],
-          life: 3500,
-          severity: 'error',
-        });
+        notify.error(errors[0]);
       },
     });
   };
@@ -45,21 +36,14 @@ export function useSaleCreditNote(options: UseSaleCreditNoteOptions = {}) {
   const getInfoCreditNote = (data: CreditNoteBalance): void => {
     const exist = form.credit_notes.find((item) => item.uuid === data.uuid);
 
-    if (exist)
-      return toast.add({
-        summary: 'Error',
-        detail: 'Esta nota de crédito ya fue registrada.',
-        severity: 'error',
-        life: 3500,
-      });
+    if (exist) {
+      notify.error('Esta Nota de Credito Fue Registrada');
+      return;
+    }
 
     if (form.credit_notes_amount >= form.amount) {
-      return toast.add({
-        summary: 'Advertencia',
-        detail: 'El monto de la nota de crédito supera el total de la venta.',
-        severity: 'warn',
-        life: 3500,
-      });
+      notify.warn('El monto de la nota de crédito supera el total de la venta.');
+      return;
     }
 
     const availableNew = parseFloat(
@@ -87,12 +71,7 @@ export function useSaleCreditNote(options: UseSaleCreditNoteOptions = {}) {
 
       console.log(data);
     } catch (error) {
-      toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'No se encontro la nota de credito1124',
-        life: 5000,
-      });
+      notify.error('No se encontro la nota de credito');
     }
   };
 
@@ -112,8 +91,37 @@ export function useSaleCreditNote(options: UseSaleCreditNoteOptions = {}) {
   const deleteCreditNote = (index: number) => {
     //Eliminar solo el dato seleccionado
     form.credit_notes.splice(index, 1);
-    //Realizar el calculo
+    //Realizar el cálculo
     amountCreditNote();
+  };
+
+  const setupCreditNotesWatch = () => {
+    watch(
+      () => form.credit_notes,
+      (_) => {
+        form.credit_notes_amount = 0;
+
+        form.credit_notes.forEach((item) => {
+          form.credit_notes_amount = parseFloat(
+            PreciseCalculator.add(form.credit_notes_amount, item.n_available || 0).toString()
+          );
+        });
+
+        const result = parseFloat(
+          PreciseCalculator.subtract(form.pending, form.credit_notes_amount).toString()
+        );
+
+        if (result <= 0.0) {
+          form.pending = 0;
+          form.returned = 0;
+        } else {
+          form.pending = result;
+        }
+      },
+      {
+        deep: true,
+      }
+    );
   };
 
   return {
@@ -122,5 +130,6 @@ export function useSaleCreditNote(options: UseSaleCreditNoteOptions = {}) {
     getCreditNoteInfo,
     amountCreditNote,
     deleteCreditNote,
+    setupCreditNotesWatch,
   };
 }

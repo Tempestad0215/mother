@@ -1,17 +1,17 @@
 import axios from 'axios';
-import { SelectChangeEvent, useToast } from 'primevue';
-import { usePage } from '@inertiajs/vue3';
-import { inject, ref } from 'vue';
+import { SelectChangeEvent } from 'primevue';
+import { InertiaForm, usePage } from '@inertiajs/vue3';
+import { ref } from 'vue';
 import { sequenceDataI } from '@/Interfaces/SettingInterface';
 import { PreciseCalculator } from '@/utils/Decimal';
 import { createSequence } from '@/Global/Helpers';
-import { saleKey } from '@/Injections/saleKeys';
+import { CreateSaleI } from '@/Interfaces/SaleInterface';
+import { useNotify } from '@/Composable/Shared/useNotify';
 
-export function useSaleSequence() {
-  const toast = useToast();
+export function useSaleSequence(form: InertiaForm<CreateSaleI>) {
   const page = usePage();
 
-  const form = inject(saleKey)!;
+  const notify = useNotify();
 
   const loadingNextSequence = ref<boolean>(false);
 
@@ -32,22 +32,12 @@ export function useSaleSequence() {
             form.ncf = createSequence(sequenceData.value.type, sequenceData.value.next);
           }
         } else {
-          toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Error al obtener la secuencia',
-            life: 3000,
-          });
+          notify.error('Error al obtener la secuencia');
         }
       }
     } catch (err) {
       form.ncf = '';
-      toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Error al obtener la secuencia',
-        life: 3000,
-      });
+      notify.error('Error al obtener la secuencia');
     }
   };
 
@@ -60,22 +50,14 @@ export function useSaleSequence() {
       const restante = parseFloat(PreciseCalculator.subtract(data.to, data.next).toString());
 
       if (restante <= data.advise) {
-        toast.add({
-          severity: 'warn',
-          summary: 'Advertencia',
-          detail: `El número de factura se encuentra a ${restante} de los ${data.advise} disponibles.`,
-          life: 3000,
-        });
+        notify.warn(
+          `El número de factura se encuentra a ${restante} de los ${data.advise} disponibles.`
+        );
       }
 
       form.ncf = createSequence(data.type, data.next);
     } catch (err) {
-      toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'No fue posible obtener el siguiente número de factura.',
-        life: 3000,
-      });
+      notify.error('No fue posible obtener el siguiente número de factura.');
     } finally {
       loadingNextSequence.value = false;
     }

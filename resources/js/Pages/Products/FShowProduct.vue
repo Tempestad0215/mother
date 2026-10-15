@@ -35,10 +35,6 @@ const propsW = withDefaults(defineProps<PropsI>(), {
   searchOnly: () => ['products'],
 });
 
-defineEmits<{
-  (e: 'selectData', data: ProductTableI): void;
-}>();
-
 const searchValue = ref('');
 
 const searchData = () => {

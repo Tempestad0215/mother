@@ -81,7 +81,7 @@ class SaleController extends Controller
 
         //Devolver la vista y los datos
         return Inertia::render('Sale/SaleCreate', [
-            'Products' => $dataSale['Products'],
+            'products' => $dataSale['products'],
             'clients' => $dataSale['clients'],
             'saleOpen' => $dataSale['saleOpen'],
             'invoiceType' => config('appconfig.invoiceType'),
@@ -271,7 +271,7 @@ class SaleController extends Controller
 
         // Devolver los datos
         return [
-            'Products' => $products,
+            'products' => $products,
             'clients' => $clients,
             'saleOpen' => $saleOpen
         ];
@@ -429,7 +429,7 @@ class SaleController extends Controller
 
         // 4. VOLVEMOS A RENDERIZAR el mismo componente, pasándole los datos de las ventas
         return Inertia::render('Sale/Sold/SaleSold', [
-            'Sales' => SaleInfoResource::collection($sales),
+            'sales' => SaleInfoResource::collection($sales),
             'filters' => $request->all(), // Opcional: para mantener los campos llenos tras la búsqueda
             'saleTypes' => SaleTypeEnum::options(),
             'paymentTypes' => PaymentTypeEnum::options()

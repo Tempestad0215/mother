@@ -9,7 +9,7 @@ class PriceListProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'product_uuid' => ['required', 'exists:Products'],
+            'product_uuid' => ['required', 'exists:products'],
             'price_list_uuid' => ['required', 'exists:price_lists'],
             'warehouse_uuid' => ['required', 'exists:warehouses'],
             'price' => ['required'],

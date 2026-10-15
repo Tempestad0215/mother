@@ -57,7 +57,7 @@ const taxCurrentValue = ref(0);
 const selectedProduct = ref<ProductTableI | null>(null);
 const createProduct = ref<boolean>(false);
 
-provide(productDataKey, propsW.products.data ?? []);
+// provide(productDataKey, propsW.products.data ?? []);
 provide(taxCurrentValueKey, taxCurrentValue);
 provide(productEditKey, selectedProduct);
 provide(createProductKey, createProduct);

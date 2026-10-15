@@ -18,6 +18,8 @@ import axios, { AxiosError } from 'axios';
 
 import { LaravelErrorResponse } from '@/Interfaces/GlobalInterface';
 import { saleKey } from '@/Injections/saleKeys';
+import { useSaleInfo } from '@/Composable/Sales/useSaleInfo';
+import { useNotify } from '@/Composable/Shared/useNotify';
 
 const toast = useToast();
 const route = useRoute();
@@ -30,6 +32,9 @@ defineProps<{
 // Datos de la ventana
 const formInject = inject(saleKey)!;
 const loadingData = ref(false);
+
+const { clientName } = useSaleInfo();
+const notify = useNotify();
 
 // Formulario
 const form = useForm({
@@ -55,21 +60,21 @@ const emit = defineEmits<{
 /*
 Funciones
  */
-const submit = () => {
-  if (form.type) {
-  } else {
-    //Enviar los datos
-    form.get(route('credit-note.index'), {
-      preserveState: true,
-      onError: () => {
-        emit('hasError');
-      },
-      onSuccess: () => {
-        emit('closeFormReturn', true);
-      },
-    });
-  }
-};
+// const submit = () => {
+//   if (form.type) {
+//   } else {
+//     //Enviar los datos
+//     form.get(route('credit-note.index'), {
+//       preserveState: true,
+//       onError: () => {
+//         emit('hasError');
+//       },
+//       onSuccess: () => {
+//         emit('closeFormReturn', true);
+//       },
+//     });
+//   }
+// };
 
 // Obtener los datos de las cuentas abiertas
 const saleGet = async () => {
@@ -79,12 +84,7 @@ const saleGet = async () => {
 
     // Validar que el campo no este vacio
     if (!formGet.saleCode) {
-      toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'El campo no puede estar vacio',
-        life: 3000,
-      });
+      notify.error('El campo no puede estar vacio');
       return;
     }
 
@@ -101,24 +101,17 @@ const saleGet = async () => {
     formInject.client_uuid = res.data.client_uuid;
 
     emit('closeFormReturn', true);
-    emit('sendClientName', res.data.client_name);
+    clientName.value = res.data.client_name;
   } catch (error) {
     const err = error as AxiosError<LaravelErrorResponse>;
 
     if (err.response?.status == 409) {
-      toast.add({
-        severity: 'error',
-        summary: `Conflicto en documento, Codigo: ${err.status}`,
-        detail: `Error en Nota de Credito, detalle: ${err.response.data.message}`,
-        life: 5000,
-      });
+      notify.error(
+        `Error en Nota de Credito, detalle: ${err.response.data.message}`,
+        `Conflicto en documento, Codigo: ${err.status}`
+      );
     } else {
-      toast.add({
-        severity: 'error',
-        summary: `Error ${err.status}`,
-        detail: `No se encontro la venta`,
-        life: 3000,
-      });
+      notify.error(`Error ${err.status}`, `No se encontro la venta`);
     }
   } finally {
     loadingData.value = false;

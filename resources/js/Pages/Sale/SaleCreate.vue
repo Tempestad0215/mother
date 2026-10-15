@@ -22,7 +22,6 @@ import SaleTable from '@/Pages/Sale/SaleTable.vue';
 import PaymentInvoice from '@components/PaymentInvoice.vue';
 import { Button, Card, Dialog, Divider } from 'primevue';
 import { CreditNoteBalance } from '@/Interfaces/CreditNoteInterface';
-import { PreciseCalculator } from '@/utils/Decimal';
 import { SaleBreadCrumbs } from '@/Helpers/SaleHelper';
 import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
 import { CreditCard, Eraser, Send } from '@lucide/vue';
@@ -31,13 +30,6 @@ import { saleKey } from '@/Injections/saleKeys';
 import { useSaleSubmit } from '@/Composable/Sales/useSaleSubmit';
 import { useSaleSequence } from '@/Composable/Sales/useSaleSequence';
 import { useSaleCreditNote } from '@/Composable/Sales/useSaleCreditNote';
-
-const { createCreditNotes } = useSaleCreditNote({
-  onSuccess: () => (paymentBox.value = false),
-});
-const { sendData } = useSaleSubmit({
-  createCreditNotes,
-});
 
 // Datos del back end
 const page = usePage();
@@ -59,7 +51,6 @@ const propsW = defineProps<{
 const showReturn: Ref<boolean> = ref(false);
 const showFormReturn: Ref<boolean> = ref(false);
 const paymentBox = ref(false);
-const saleInfoRef = ref<InstanceType<typeof SaleInfo>>()!;
 const saleTableRef = ref<InstanceType<typeof SaleTable>>()!;
 const salePaymentRef = ref<InstanceType<typeof PaymentInvoice>>()!;
 const returnInfo = ref(false);
@@ -99,7 +90,18 @@ const form = useForm<CreateSaleI>({
   pending: 0,
 });
 
-const { getSequence } = useSaleSequence();
+provide(saleKey, form);
+
+const { createCreditNotes, setupCreditNotesWatch } = useSaleCreditNote(form, {
+  onSuccess: () => (paymentBox.value = false),
+});
+const { sendData } = useSaleSubmit(form, {
+  createCreditNotes,
+});
+
+const { getSequence } = useSaleSequence(form);
+
+setupCreditNotesWatch();
 
 // Al momento de cargar el componente
 onMounted(() => {
@@ -149,33 +151,6 @@ watch(
   }
 );
 
-watch(
-  () => form.credit_notes,
-  (_) => {
-    form.credit_notes_amount = 0;
-
-    form.credit_notes.forEach((item) => {
-      form.credit_notes_amount = parseFloat(
-        PreciseCalculator.add(form.credit_notes_amount, item.n_available || 0).toString()
-      );
-    });
-
-    const result = parseFloat(
-      PreciseCalculator.subtract(form.pending, form.credit_notes_amount).toString()
-    );
-
-    if (result <= 0.0) {
-      form.pending = 0;
-      form.returned = 0;
-    } else {
-      form.pending = result;
-    }
-  },
-  {
-    deep: true,
-  }
-);
-
 const setDataForm = () => {
   if (form.type === 'DEVOLUCION' && propsW.saleInfo) {
     form.uuid = propsW.saleInfo.uuid;
@@ -201,8 +176,6 @@ const registerSale = () => {
 const cleanAllForm = () => {
   form.reset();
 };
-
-provide(saleKey, form);
 </script>
 
 <template>
@@ -230,9 +203,6 @@ provide(saleKey, form);
               :sale-open="propsW.saleOpen"
               :invoice-type="propsW.invoiceType"
               :refund="form.type === 'DEVOLUCION'"
-              @total-sale=""
-              @total-amount="saleTableRef?.calculateItemRow($event)"
-              @totalSale="saleTableRef?.calculateTotals()"
             />
 
             <!-- Tabla del Carrito/Detalle de Venta -->

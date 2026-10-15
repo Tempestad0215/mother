@@ -16,6 +16,7 @@ import { useSaleSequence } from '@/Composable/Sales/useSaleSequence';
 import { saleKey } from '@/Injections/saleKeys';
 import { useSaleCart } from '@/Composable/Sales/useSaleCart';
 import { useSaleOpen } from '@/Composable/Sales/useSaleOpen';
+import { useSaleCalculation } from '@/Composable/Sales/useSaleCalculation';
 
 const page = usePage();
 
@@ -31,9 +32,6 @@ const propsW = defineProps<{
 // Emitir eventos para el componente de devoluciones
 const emit = defineEmits<{
   (e: 'retunedBlur'): void;
-  (e: 'totalAmount', info: infoSaleI): void;
-  (e: 'totalSale'): void;
-  (e: 'sendClientName', name: string): void;
 }>();
 
 // Formulario
@@ -41,7 +39,8 @@ const form = inject(saleKey)!;
 
 const { getSaleOpen } = useSaleOpen();
 const { getProductCode, getDataProduct } = useSaleCart();
-const { getNextSequence, loadingNextSequence } = useSaleSequence();
+const { getNextSequence, loadingNextSequence } = useSaleSequence(form);
+const { calculateItemRow } = useSaleCalculation();
 
 // Ventanas
 const showProducts = ref(false);
@@ -111,9 +110,14 @@ const closeFormReturn = (isReturn: boolean) => {
   }
 
   sendReturnInfo.value = isReturn;
-  form.info_sale.forEach((el) => {
-    emit('totalAmount', el);
+  form.info_sale.forEach((el, index) => {
+    calculateItemRow(el, index);
   });
+};
+
+const getInfoProduct = (data: ProductTableI) => {
+  getDataProduct(data);
+  showProducts.value = false;
 };
 
 defineExpose({
@@ -223,13 +227,12 @@ defineExpose({
       <FShowProduct
         searchRoute="sale.index"
         :searchOnly="['products']"
-        @select-data="getDataProduct($event)"
         :stock="true"
         :isProduct="false"
         :products="propsW.products"
       >
         <template #actions="{ data }: { data: ProductTableI }">
-          <Button @click="" outlined>
+          <Button @click="getInfoProduct(data)" outlined>
             <template #icon> <CircleCheckBig /></template>
           </Button>
         </template>
@@ -273,7 +276,6 @@ defineExpose({
     <div class="py-2">
       <ReturnForm
         class="w-full mx-auto"
-        @sendClientName="emit('sendClientName', $event)"
         @closeFormReturn="closeFormReturn"
         :error="page.props.errors.general"
       />
