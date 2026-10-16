@@ -57,7 +57,7 @@ class PurchaseController extends Controller
         //Repuesta con datos
         return Inertia::render('Purchase/FRegisterPurchase',[
             'suppliers' => Supplier::all(),
-            'Products' => $products,
+            'products' => $products,
             'taxes'=>Tax::all(),
             'warehouses'=>Warehouse::all(),
         ]);

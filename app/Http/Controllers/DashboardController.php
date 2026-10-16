@@ -46,6 +46,7 @@ class DashboardController extends Controller
             ->with(['products' => function ($query) {
                 // Cargamos solo los productos que cumplen la condición de stock bajo
                 $query->where('warehouse_products.stock_quantity', '<=', 10)
+                    ->where('products.is_service', false)
                     ->where('products.status', true);
             }])
             ->get();

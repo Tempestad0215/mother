@@ -92,7 +92,7 @@ class ProductController extends Controller implements HasMiddleware
 
         //Devolver correctamente
         return Inertia::render('Products/Register', [
-            'Products' => $products,
+            'products' => $products,
             'paymentTypes' => GeneralHelper::getPaymentTypes(),
             'productType' => $productType,
 
@@ -178,7 +178,7 @@ class ProductController extends Controller implements HasMiddleware
 
         return Inertia::render('Products/Register', [
             'productEdit' => $dataEdit,
-            'Products' => $dataProducts,
+            'products' => $dataProducts,
             'update' => true,
             'categories' => Category::all(),
             'suppliers' => Supplier::all(),

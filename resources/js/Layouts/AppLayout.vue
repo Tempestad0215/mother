@@ -238,7 +238,7 @@ onUnmounted(() => {
       <ScrollPanel class="flex-1 p-4 md:p-6 bg-slate-50 h-full">
         <div>
           <!-- Contenedor adaptativo para tablas y componentes del POS -->
-          <div class="bg-white py-3 rounded-md shadow-lg px-5 max-w-7xl">
+          <div v-if="$slots.header" class="bg-white py-3 rounded-md shadow-lg px-5 max-w-7xl">
             <slot name="header" />
           </div>
           <div class="max-w-7xl mx-auto">
