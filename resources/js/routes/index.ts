@@ -221,6 +221,45 @@ telescope.head = (args?: { view?: string | number } | [view: string | number ] |
 })
 
 /**
+ * @see routes/web.php:44
+ * @route '/'
+ */
+export const home = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: home.url(options),
+    method: 'get',
+})
+
+home.definition = {
+    methods: ["get","head"],
+    url: '/',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+ * @see routes/web.php:44
+ * @route '/'
+ */
+home.url = (options?: RouteQueryOptions) => {
+    return home.definition.url + queryParams(options)
+}
+
+/**
+ * @see routes/web.php:44
+ * @route '/'
+ */
+home.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: home.url(options),
+    method: 'get',
+})
+/**
+ * @see routes/web.php:44
+ * @route '/'
+ */
+home.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: home.url(options),
+    method: 'head',
+})
+
+/**
 * @see \App\Http\Controllers\DashboardController::dashboard
  * @see app/Http/Controllers/DashboardController.php:24
  * @route '/dashboard'

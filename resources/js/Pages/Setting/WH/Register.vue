@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AppLayout from '@layout/AppLayout.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import FRegister from '@/Pages/Setting/WH/FRegister.vue';
 import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
 import { reactive, ref } from 'vue';

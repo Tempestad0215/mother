@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import AppLayout from '@layout/AppLayout.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import {
   Card,
   DataTable,

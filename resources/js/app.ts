@@ -1,18 +1,19 @@
-import './bootstrap';
 import '../css/app.css';
+import './bootstrap';
 // If you don't need the styles, do not connect
 // import 'vue-final-modal/style.css'
 import 'primeicons/primeicons.css'; // THEME (elige uno)
 
-import { createApp, DefineComponent, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
-import { ZiggyVue } from 'ziggy-js';
-import VueTheMask from 'vue-the-mask';
-import money from 'v-money';
 
-import { createVfm } from 'vue-final-modal';
+import { initializeTheme } from '@/composable/useAppearance';
+import AppLayout from '@layout/AppLayout.vue';
+import AuthLayout from '@layout/AuthLayout.vue';
+import SettingsLayout from '@layout/setting/Layout.vue';
 import { createPinia } from 'pinia';
-import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import { createVfm } from 'vue-final-modal';
+
+import 'vue-sonner/style.css';
 
 const vfm = createVfm();
 const pinia = createPinia();
@@ -21,22 +22,23 @@ const appName = import.meta.env.VITE_APP_NAME || 'laravel';
 
 createInertiaApp({
   title: (title) => (title ? `${title} - ${appName}` : appName),
-  resolve: (name) =>
-    resolvePageComponent(
-      `./Pages/${name}.vue`,
-      import.meta.glob<DefineComponent>('./Pages/**/*.vue')
-    ),
-  layout: (name: string) => {
-    console.log(name);
+  // 1. Add the resolve function to load pages
+  layout: (name) => {
+    switch (true) {
+      case name === 'Welcome':
+        return null;
+      case name.startsWith('auth/'):
+        return AuthLayout;
+      case name.startsWith('settings/'):
+        return [AppLayout, SettingsLayout];
+      default:
+        return AppLayout;
+    }
   },
-  setup({ el, App, props, plugin }) {
-    createApp({ render: () => h(App, props) })
-      .use(plugin)
-      .use(VueTheMask)
-      .use(vfm)
-      .use(pinia)
-      .use(money as any)
-      .use(ZiggyVue, Ziggy)
-      .mount(el);
+
+  progress: {
+    color: '#4B5563',
   },
-}).then(() => {});
+});
+
+initializeTheme();

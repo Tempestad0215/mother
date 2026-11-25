@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import AppLayout from '@layout/AppLayout.vue';
-import { Breadcrumb, Card, Column, DataTable, DatePicker, FloatLabel, Textarea } from 'primevue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { purchaseBreadCrumb } from '@/Helpers/PurchaseHelper';
 </script>
 

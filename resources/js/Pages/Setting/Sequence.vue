@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { router, useForm } from '@inertiajs/vue3';
-import AppLayout from '@layout/AppLayout.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { sequenceDataI } from '@/Interfaces/SettingInterface';
 import { onMounted, reactive } from 'vue';
 import { useRoute } from 'ziggy-js';

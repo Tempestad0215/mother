@@ -2,9 +2,9 @@
 import { CashRegisterCloseDataI } from '@/Interfaces/CashRegisterInterface';
 import { useForm } from '@inertiajs/vue3';
 import { SaleBreadCrumbs } from '@/Helpers/SaleHelper';
-import { Card, useToast, Button, Toast, InputNumber, Divider, FloatLabel } from 'primevue';
+
 import { computed, onMounted } from 'vue';
-import AppLayout from '@layout/AppLayout.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
 import { getMoney, printPdf } from '@/Global/Helpers';
 import { Lock, CheckCircle2, AlertTriangle, AlertCircle } from '@lucide/vue';

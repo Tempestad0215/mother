@@ -2,6 +2,7 @@
 
 @import 'tailwindcss';
 @import 'tailwindcss-primeui';
+@import "tw-animate-css";
 /*@import 'tw-animate-css';*/
 
 @custom-variant dark (&:is(.dark *));
@@ -183,5 +184,14 @@
 
   body {
     @apply bg-background text-foreground font-sans;
+  }
+}
+/*---break---*/
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }

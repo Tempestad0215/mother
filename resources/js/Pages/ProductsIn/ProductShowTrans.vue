@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
-import AppLayout from '@layout/AppLayout.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { productTransI } from '@/Interfaces/ProductInterface';
 import FormSearch from '@components/FormSearch.vue';
 import InputError from '@components/InputError.vue';

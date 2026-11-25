@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AppLayout from '@layout/AppLayout.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import TabLink from '@components/TabLink.vue';
 import FloatBox from '@components/FloatBox.vue';
 import { ref } from 'vue';

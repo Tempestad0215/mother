@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ProductBaseI, productI } from '@/Interfaces/ProductInterface';
-import AppLayout from '@layout/AppLayout.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { ref, watch } from 'vue';
 import { entryBaseI, entryProductI } from '@/Interfaces/EntryTransInterface';
 import axios from 'axios';

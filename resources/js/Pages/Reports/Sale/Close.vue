@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
-import AppLayout from '@layout/AppLayout.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import TabLink from '@components/TabLink.vue';
 import PrimaryButton from '@components/PrimaryButton.vue';
 import { UserI } from '@/Interfaces/UserInterface';

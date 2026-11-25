@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import AppLayout from '@/Layouts/AppLayout.vue';
-import { CriticalProduct, KPI, ProductLowStock, TopProduct } from '@/Interfaces/DashboardInterface';
-import Chart from 'primevue/chart';
-import { Card, Column, DataTable, Tag } from 'primevue';
+import { ProductLowStock, TopProduct } from '@/interfaces/DashboardInterface';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { onMounted, ref } from 'vue';
 
 const propsW = defineProps<{

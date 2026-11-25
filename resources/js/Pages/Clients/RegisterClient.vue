@@ -18,7 +18,7 @@ import { getSearchTable } from '@/Global/SearchTable';
 import { clientBaseI } from '@/Interfaces/ClientInterface';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
 import { FilePenLine, Shredder, UserPlus } from '@lucide/vue';
-import AppLayout from '@layout/AppLayout.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import FRegister from '@/Pages/Clients/FRegister.vue';
 import { EnumValueI } from '@/Interfaces/GeneralInterface';
 import { paginationOptions } from '@/Global/Helpers';

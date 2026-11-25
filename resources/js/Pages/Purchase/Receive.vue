@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import AppLayout from '@/Layouts/AppLayout.vue';
-import {
-  Breadcrumb,
+import AppLayout from '@/layouts/AppLayout.vue';
   Button,
   Card,
   Column,

@@ -47,7 +47,7 @@ Route::middleware([
             'laravelVersion' => Application::VERSION,
             'phpVersion' => PHP_VERSION,
         ]);
-    });
+    })->name('home');
 
     // Dashboard
     Route::get('/dashboard',[DashboardController::class,'index'])->name('dashboard');

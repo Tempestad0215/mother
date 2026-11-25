@@ -15,16 +15,16 @@
     "types": ["vite/client"],
     "baseUrl": ".",
     "paths": {
-      "@components/*": ["resources/js/Components/*"],
-      "@layout/*": ["resources/js/Layouts/*"],
-      "@/*": ["resources/js/*"]
-    }
+      "@components/*": ["resources/js/components/*"],
+      "@layout/*": ["resources/js/layouts/*"],
+      "@/*": ["resources/js/*"],
+    },
   },
   "include": [
     "resources/js/**/*.ts",
     "resources/js/**/*.d.ts",
     "resources/js/**/*.vue",
     "env.d.ts", // ← añade tu archivo de shims aquí
-    "global.d.ts"
-  ]
+    "global.d.ts",
+  ],
 }

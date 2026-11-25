@@ -1,23 +1,5 @@
 <script setup lang="ts">
-import {
-  InputText,
-  Breadcrumb,
-  Button,
-  Card,
-  Column,
-  DataTable,
-  DatePicker,
-  Dialog,
-  FloatLabel,
-  InputGroup,
-  InputGroupAddon,
-  InputNumber,
-  Select,
-  Textarea,
-  useConfirm,
-  useToast,
-} from 'primevue';
-import AppLayout from '@layout/AppLayout.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import {
   faArrowAltCircleDown,
@@ -39,9 +21,6 @@ import { PurchaseStatusEnum } from '@/Enums/PurchaseEnum';
 import { getMoney } from '@/Global/Helpers';
 import { PreciseCalculator } from '@/utils/Decimal';
 import { purchaseBreadCrumb } from '@/Helpers/PurchaseHelper';
-
-const toast = useToast();
-const confirm = useConfirm();
 
 interface PropsI {
   purchases: PaginationI<PurchaseSupplierI>;

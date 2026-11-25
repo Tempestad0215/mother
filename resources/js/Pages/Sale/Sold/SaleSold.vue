@@ -15,7 +15,7 @@ import { saleDataI, SaleSoldFilterI, SaleTypeEnum } from '@/Interfaces/SaleInter
 import { Printer, ReceiptText, Search } from '@lucide/vue';
 import { getMoney, printPdf } from '@/Global/Helpers';
 import { router, useForm } from '@inertiajs/vue3';
-import AppLayout from '@layout/AppLayout.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
 import { EnumValueI } from '@/Interfaces/GeneralInterface';
 import { onMounted } from 'vue';

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AppLayout from '@layout/AppLayout.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import InputLabel from '@components/InputLabel.vue';
 import { useForm } from '@inertiajs/vue3';
 import InputError from '@components/InputError.vue';

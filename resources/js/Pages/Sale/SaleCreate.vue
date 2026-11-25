@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useForm, usePage } from '@inertiajs/vue3';
-import AppLayout from '@layout/AppLayout.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { onMounted, onUpdated, provide, Ref, ref, watch } from 'vue';
 import { ProductTableI } from '@/Interfaces/ProductInterface';
 import { printPdf } from '@/Global/Helpers';

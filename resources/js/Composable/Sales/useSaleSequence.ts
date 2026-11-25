@@ -1,17 +1,14 @@
 import axios from 'axios';
-import { SelectChangeEvent } from 'primevue';
 import { InertiaForm, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
-import { sequenceDataI } from '@/Interfaces/SettingInterface';
 import { PreciseCalculator } from '@/utils/Decimal';
 import { createSequence } from '@/Global/Helpers';
 import { CreateSaleI } from '@/Interfaces/SaleInterface';
-import { useNotify } from '@/Composable/Shared/useNotify';
+import { sequenceDataI } from '@/interfaces/SettingInterface';
 
 export function useSaleSequence(form: InertiaForm<CreateSaleI>) {
   const page = usePage();
 
-  const notify = useNotify();
 
   const loadingNextSequence = ref<boolean>(false);
 
@@ -57,7 +54,6 @@ export function useSaleSequence(form: InertiaForm<CreateSaleI>) {
 
       form.ncf = createSequence(data.type, data.next);
     } catch (err) {
-      notify.error('No fue posible obtener el siguiente número de factura.');
     } finally {
       loadingNextSequence.value = false;
     }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AppLayout from '@layout/AppLayout.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { Head, router } from '@inertiajs/vue3';
 import { reportDayI } from '@/Interfaces/ReportInterface';
 import { getMoney } from '@/Global/Helpers';

@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { Head, useForm, usePage } from '@inertiajs/vue3';
-import AppLayout from '@layout/AppLayout.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { useRoute } from 'ziggy-js';
-import { onMounted, onUpdated, ref } from 'vue';
-import { itemsSettings } from '@/Helpers/SettingHelpers';
-import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
+import { ref } from 'vue';
 
 const route = useRoute();
 const page = usePage();
@@ -42,44 +40,44 @@ const form = useForm({
 });
 /*
 Al momento de cargar
- */
-onMounted(() => {
-  //Verificar si existe correctamente
-  if (page.props.setting) {
-    form.name = page.props.setting.name;
-    form.email = page.props.setting.email;
-    form.phone = page.props.setting.phone ?? '';
-    form.address = page.props.setting.address ?? '';
-    form.website = page.props.setting.website ?? '';
-    form.company_id = page.props.setting.company_id ?? '';
-    form.cost = page.props.setting.save_cost;
-    form.sequence = page.props.setting.sequence;
-    imgName.value = page.props.setting.logo ? page.props.setting.logo : 'logoexample.png';
-
-    isSequence.value = page.props.setting.sequence;
-  }
-});
+//  */
+// onMounted(() => {
+//   //Verificar si existe correctamente
+//   if (page.props.setting) {
+//     form.name = page.props.setting.name;
+//     form.email = page.props.setting.email;
+//     form.phone = page.props.setting.phone ?? '';
+//     form.address = page.props.setting.address ?? '';
+//     form.website = page.props.setting.website ?? '';
+//     form.company_id = page.props.setting.company_id ?? '';
+//     form.cost = page.props.setting.save_cost;
+//     form.sequence = page.props.setting.sequence;
+//     imgName.value = page.props.setting.logo ? page.props.setting.logo : 'logoexample.png';
+//
+//     isSequence.value = page.props.setting.sequence;
+//   }
+// });
 
 /*
 Al momento de actualizar
  */
-onUpdated(() => {
-  if (page.props.setting && page.props.setting.logo) {
-    //Actualizar la imagen registrad
-    imgName.value = page.props.setting.logo;
-  }
-});
-
-/*
-Datos de la ventana
- */
-const url = ref(window.origin);
-const imgName = ref('logoexample.png');
-
-/*
-const getFileInfo = (event: FileUploadSelectEvent) => {
-  form.image_path = event.files[0];
-};
+// onUpdated(() => {
+//   if (page.props.setting && page.props.setting.logo) {
+//     //Actualizar la imagen registrad
+//     imgName.value = page.props.setting.logo;
+//   }
+// });
+//
+// /*
+// Datos de la ventana
+//  */
+// const url = ref(window.origin);
+// const imgName = ref('logoexample.png');
+//
+// /*
+// const getFileInfo = (event: FileUploadSelectEvent) => {
+//   form.image_path = event.files[0];
+// };
 </script>
 
 <template>
@@ -88,7 +86,7 @@ const getFileInfo = (event: FileUploadSelectEvent) => {
     <Card class="w-full">
       <CardHeader class="space-y-3">
         <div>
-          <BreadCrumbComponent :itemOptions="itemsSettings" />
+          <!-- <BreadCrumbComponent :itemOptions="itemsSettings" /> -->
         </div>
         <div>
           <CardTitle class="text-2xl font-bold text-center">Configuración</CardTitle>
@@ -105,91 +103,50 @@ const getFileInfo = (event: FileUploadSelectEvent) => {
         >
           <div class="space-y-1.5">
             <Label for="name">Nombre</Label>
-            <Input
-              id="name"
-              name="name"
-              :default-value="setting?.name ?? ''"
-              placeholder="Nombre de la empresa"
-            />
+            <Input id="name" name="name" placeholder="Nombre de la empresa" />
             <p v-if="errors.name" class="text-sm text-destructive">{{ errors.name }}</p>
           </div>
 
           <div class="space-y-1.5">
             <Label for="company_id">Identificación/RNC</Label>
-            <Input
-              id="company_id"
-              name="company_id"
-              :default-value="setting?.company_id ?? ''"
-              placeholder="RNC o identificación"
-            />
+            <Input id="company_id" name="company_id" placeholder="RNC o identificación" />
             <p v-if="errors.company_id" class="text-sm text-destructive">{{ errors.company_id }}</p>
           </div>
 
           <div class="space-y-1.5">
             <Label for="email">Correo</Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              :default-value="setting?.email ?? ''"
-              placeholder="correo@empresa.com"
-            />
+            <Input id="email" name="email" type="email" placeholder="correo@empresa.com" />
             <p v-if="errors.email" class="text-sm text-destructive">{{ errors.email }}</p>
           </div>
 
           <div class="space-y-1.5">
             <Label for="phone">Teléfono</Label>
-            <Input
-              id="phone"
-              name="phone"
-              :default-value="setting?.phone ?? ''"
-              placeholder="Teléfono"
-            />
+            <Input id="phone" name="phone" placeholder="Teléfono" />
             <p v-if="errors.phone" class="text-sm text-destructive">{{ errors.phone }}</p>
           </div>
 
           <div class="space-y-1.5">
             <Label for="address">Dirección</Label>
-            <Input
-              id="address"
-              name="address"
-              :default-value="setting?.address ?? ''"
-              placeholder="Dirección"
-            />
+            <Input id="address" name="address" placeholder="Dirección" />
             <p v-if="errors.address" class="text-sm text-destructive">{{ errors.address }}</p>
           </div>
 
           <div class="space-y-1.5">
             <Label for="website">Pagina Web</Label>
-            <Input
-              id="website"
-              name="website"
-              :default-value="setting?.website ?? ''"
-              placeholder="https://..."
-            />
-            <p v-if="errors.website" class="text-sm text-destructive">{{ errors.website }}</p>
+            <Input id="website" name="website" placeholder="https://..." />
           </div>
 
           <div class="space-y-1.5">
             <Label for="fiscal_year">Año Fiscal</Label>
-            <Input
-              id="fiscal_year"
-              name="fiscal_year"
-              :default-value="setting?.fiscal_year ?? ''"
-              placeholder="2026"
-            />
-            <p v-if="errors.fiscal_year" class="text-sm text-destructive">
-              {{ errors.fiscal_year }}
-            </p>
+            <Input id="fiscal_year" name="fiscal_year" placeholder="2026" />
           </div>
 
           <div class="space-y-1.5">
             <Label for="image_path">Logo</Label>
             <Input id="image_path" name="image_path" type="file" accept="image/*" />
-            <p v-if="errors.image_path" class="text-sm text-destructive">{{ errors.image_path }}</p>
           </div>
 
-          <div class="flex flex-wrap items-center gap-6 pt-2">
+          <!-- <div class="flex flex-wrap items-center gap-6 pt-2">
             <input type="hidden" name="cost" :value="costChecked ? 1 : 0" />
             <div class="flex items-center gap-3">
               <Switch id="protect_cost" v-model:checked="costChecked" />
@@ -201,10 +158,10 @@ const getFileInfo = (event: FileUploadSelectEvent) => {
               <Switch id="sequence_ncf" v-model:checked="sequenceChecked" />
               <Label for="sequence_ncf">NCF</Label>
             </div>
-          </div>
+          </div> -->
 
           <div class="mt-4 text-right col-span-full">
-            <Button type="submit" :disabled="processing">
+            <Button type="submit">
               <Send class="w-4 h-4 mr-2" />
               Registrar
             </Button>

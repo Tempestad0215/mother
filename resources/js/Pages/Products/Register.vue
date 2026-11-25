@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AppLayout from '@/Layouts/AppLayout.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { computed, onMounted, provide, ref } from 'vue';
 import { SupplierI } from '@/Interfaces/SupplierInterface';
 import { ProductTableI, ProductTypeEnumI } from '@/Interfaces/ProductInterface';

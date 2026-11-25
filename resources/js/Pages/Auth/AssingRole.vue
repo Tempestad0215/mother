@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import AppLayout from '@layout/AppLayout.vue';
-import { Card, FloatLabel, Select, MultiSelect, Button, useToast } from 'primevue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
 import { itemsSettings } from '@/Helpers/SettingHelpers';
 import { RoleI, UserRoleI } from '@/Interfaces/UserInterface';

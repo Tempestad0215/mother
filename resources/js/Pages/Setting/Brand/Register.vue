@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AppLayout from '@layout/AppLayout.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { Button, Card, Column, DataTable, Dialog, useConfirm, useToast } from 'primevue';
 import { ref } from 'vue';
 import { router } from '@inertiajs/vue3';

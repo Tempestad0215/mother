@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
-import AppLayout from '@layout/AppLayout.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import TextInput from '@components/TextInput.vue';
 import { ref } from 'vue';
 import InputError from '@components/InputError.vue';

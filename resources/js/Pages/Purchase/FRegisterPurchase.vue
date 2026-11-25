@@ -19,7 +19,7 @@ import {
 import { useForm } from '@inertiajs/vue3';
 import { purchaseInfoI } from '@/Interfaces/PurchaseInterface';
 import { SupplierI } from '@/Interfaces/SupplierInterface';
-import AppLayout from '@layout/AppLayout.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { PreciseCalculator } from '@/utils/Decimal';
 import { ProductBaseI, ProductTableI } from '@/Interfaces/ProductInterface';
 import { TaxBaseI } from '@/Interfaces/TaxInterface';
