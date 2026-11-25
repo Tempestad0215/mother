@@ -2,22 +2,11 @@
 import { Head, useForm, usePage } from '@inertiajs/vue3';
 import AppLayout from '@layout/AppLayout.vue';
 import { useRoute } from 'ziggy-js';
-import {
-  Button,
-  Card,
-  FileUpload,
-  FileUploadSelectEvent,
-  FloatLabel,
-  InputText,
-  ToggleSwitch,
-  useToast,
-} from 'primevue';
 import { onMounted, onUpdated, ref } from 'vue';
 import { itemsSettings } from '@/Helpers/SettingHelpers';
 import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
 
 const route = useRoute();
-const toast = useToast();
 const page = usePage();
 
 /*
@@ -88,29 +77,6 @@ const url = ref(window.origin);
 const imgName = ref('logoexample.png');
 
 /*
-Funciones
- */
-//Enviar los datos
-const submit = () => {
-  form.post(route('setting.store'), {
-    onSuccess: () => {
-      toast.add({
-        severity: 'success',
-        summary: 'Exito en Registro',
-        detail: 'Registrado Correctamente',
-        life: 3000,
-      });
-    },
-    onError: (err) => {
-      toast.add({
-        severity: 'error',
-        summary: 'Error En Esta Peticion',
-        detail: `Hubo un Error. Detalle : ${Object.values(err)[0]}`,
-        life: 5000,
-      });
-    },
-  });
-};
 const getFileInfo = (event: FileUploadSelectEvent) => {
   form.image_path = event.files[0];
 };
@@ -119,67 +85,132 @@ const getFileInfo = (event: FileUploadSelectEvent) => {
 <template>
   <Head title="Ajustes" />
   <AppLayout>
-    <Card>
-      <template #title>
+    <Card class="w-full">
+      <CardHeader class="space-y-3">
         <div>
           <BreadCrumbComponent :itemOptions="itemsSettings" />
         </div>
         <div>
-          <h3 class="text-2xl font-bold text-center">Configuración</h3>
+          <CardTitle class="text-2xl font-bold text-center">Configuración</CardTitle>
         </div>
-      </template>
-      <template #content>
-        <form @submit.prevent="submit" class="grid grid-cols-2 gap-3">
-          <FloatLabel variant="on">
-            <InputText class="w-full" id="name" v-model="form.name" />
-            <label for="name">Nombre</label>
-          </FloatLabel>
-          <FloatLabel variant="on">
-            <InputText class="w-full" id="company_id" v-model="form.company_id" />
-            <label for="company_id">Identificación/RNC</label>
-          </FloatLabel>
-          <FloatLabel variant="on">
-            <InputText class="w-full" id="email" v-model="form.email" />
-            <label for="email">Correo</label>
-          </FloatLabel>
-          <FloatLabel variant="on">
-            <InputText class="w-full" id="phone" v-model="form.phone" />
-            <label for="phone">Teléfono</label>
-          </FloatLabel>
-          <FloatLabel variant="on">
-            <InputText class="w-full" id="address" v-model="form.address" />
-            <label for="address">Dirección</label>
-          </FloatLabel>
-          <FloatLabel variant="on">
-            <InputText class="w-full" id="website" v-model="form.website" />
-            <label for="website">Pagina Web</label>
-          </FloatLabel>
-          <FloatLabel variant="on">
-            <InputText class="w-full" id="fiscal_year" v-model="form.fiscal_year" />
-            <label for="fiscal_year">Año Fiscal</label>
-          </FloatLabel>
-          <FileUpload
-            @select="getFileInfo($event)"
-            ref="imagePath"
-            name="image_path[]"
-            mode="basic"
-            accept="image/*"
-          />
-          <div class="flex items-center">
-            <div class="flex items-center space-x-3 mr-5">
-              <ToggleSwitch v-model="form.cost" />
-              <label for="protect_cost">Proteger Costo</label>
+      </CardHeader>
+
+      <CardContent>
+        <Form
+          :action="route('setting.store')"
+          method="post"
+          enctype="multipart/form-data"
+          #default="{ processing, errors }"
+          class="grid grid-cols-1 md:grid-cols-2 gap-4"
+        >
+          <div class="space-y-1.5">
+            <Label for="name">Nombre</Label>
+            <Input
+              id="name"
+              name="name"
+              :default-value="setting?.name ?? ''"
+              placeholder="Nombre de la empresa"
+            />
+            <p v-if="errors.name" class="text-sm text-destructive">{{ errors.name }}</p>
+          </div>
+
+          <div class="space-y-1.5">
+            <Label for="company_id">Identificación/RNC</Label>
+            <Input
+              id="company_id"
+              name="company_id"
+              :default-value="setting?.company_id ?? ''"
+              placeholder="RNC o identificación"
+            />
+            <p v-if="errors.company_id" class="text-sm text-destructive">{{ errors.company_id }}</p>
+          </div>
+
+          <div class="space-y-1.5">
+            <Label for="email">Correo</Label>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              :default-value="setting?.email ?? ''"
+              placeholder="correo@empresa.com"
+            />
+            <p v-if="errors.email" class="text-sm text-destructive">{{ errors.email }}</p>
+          </div>
+
+          <div class="space-y-1.5">
+            <Label for="phone">Teléfono</Label>
+            <Input
+              id="phone"
+              name="phone"
+              :default-value="setting?.phone ?? ''"
+              placeholder="Teléfono"
+            />
+            <p v-if="errors.phone" class="text-sm text-destructive">{{ errors.phone }}</p>
+          </div>
+
+          <div class="space-y-1.5">
+            <Label for="address">Dirección</Label>
+            <Input
+              id="address"
+              name="address"
+              :default-value="setting?.address ?? ''"
+              placeholder="Dirección"
+            />
+            <p v-if="errors.address" class="text-sm text-destructive">{{ errors.address }}</p>
+          </div>
+
+          <div class="space-y-1.5">
+            <Label for="website">Pagina Web</Label>
+            <Input
+              id="website"
+              name="website"
+              :default-value="setting?.website ?? ''"
+              placeholder="https://..."
+            />
+            <p v-if="errors.website" class="text-sm text-destructive">{{ errors.website }}</p>
+          </div>
+
+          <div class="space-y-1.5">
+            <Label for="fiscal_year">Año Fiscal</Label>
+            <Input
+              id="fiscal_year"
+              name="fiscal_year"
+              :default-value="setting?.fiscal_year ?? ''"
+              placeholder="2026"
+            />
+            <p v-if="errors.fiscal_year" class="text-sm text-destructive">
+              {{ errors.fiscal_year }}
+            </p>
+          </div>
+
+          <div class="space-y-1.5">
+            <Label for="image_path">Logo</Label>
+            <Input id="image_path" name="image_path" type="file" accept="image/*" />
+            <p v-if="errors.image_path" class="text-sm text-destructive">{{ errors.image_path }}</p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-6 pt-2">
+            <input type="hidden" name="cost" :value="costChecked ? 1 : 0" />
+            <div class="flex items-center gap-3">
+              <Switch id="protect_cost" v-model:checked="costChecked" />
+              <Label for="protect_cost">Proteger Costo</Label>
             </div>
-            <div class="flex items-center space-x-3">
-              <ToggleSwitch v-model="form.sequence" />
-              <label for="protect_cost">NCF</label>
+
+            <input type="hidden" name="sequence" :value="sequenceChecked ? 1 : 0" />
+            <div class="flex items-center gap-3">
+              <Switch id="sequence_ncf" v-model:checked="sequenceChecked" />
+              <Label for="sequence_ncf">NCF</Label>
             </div>
           </div>
-          <div class="mt-5 text-right col-span-full">
-            <Button type="submit" icon="pi pi-send" label="Registrar" />
+
+          <div class="mt-4 text-right col-span-full">
+            <Button type="submit" :disabled="processing">
+              <Send class="w-4 h-4 mr-2" />
+              Registrar
+            </Button>
           </div>
-        </form>
-      </template>
+        </Form>
+      </CardContent>
     </Card>
   </AppLayout>
 </template>

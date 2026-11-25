@@ -1,8 +1,12 @@
-@import "tailwindcss";
-@import "tailwindcss-primeui";
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap');
+
+@import 'tailwindcss';
+@import 'tailwindcss-primeui';
+/*@import 'tw-animate-css';*/
+
+@custom-variant dark (&:is(.dark *));
 
 @tailwind utilities;
-
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -10,9 +14,8 @@
 @source '../**/*.js';
 
 [x-cloak] {
-    display: none;
+  display: none;
 }
-
 
 /* Estilo para la transition */
 .v-enter-active,
@@ -24,13 +27,6 @@
 .v-leave-to {
   opacity: 0;
 }
-
-
-
-
-
-
-
 
 /*Estilod e compoebntne*/
 /*@layer components{*/
@@ -64,11 +60,6 @@
 /*        @apply text-gray-50;*/
 /*    }*/
 
-
-
-
-
-
 /*    !*Estilo especifico*!*/
 /*    .icon-efect {*/
 /*        @apply hover:scale-125 duration-300 ease-out hover:animate-pulse text-xl;*/
@@ -86,8 +77,6 @@
 /*    .title{*/
 /*        @apply text-3xl font-bold italic underline ;*/
 /*    }*/
-
-
 
 /*    !**/
 /*    Input general*/
@@ -144,3 +133,55 @@
 /*        @apply block border-b rounded-md even:bg-blue-500 bg-blue-300 border-blue-800  hover:bg-blue-800 hover:text-white duration-300;*/
 /*    }*/
 /*}*/
+
+@theme inline {
+  --font-sans: 'Noto Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-sans);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+}
+
+:root {
+  --radius: 0.5rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+}

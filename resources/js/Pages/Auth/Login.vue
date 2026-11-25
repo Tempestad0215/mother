@@ -1,8 +1,15 @@
 <script setup lang="ts">
-import { Link, useForm } from '@inertiajs/vue3';
+import { Form, Link, useForm } from '@inertiajs/vue3';
 import { ref, Ref } from 'vue';
 import { useRoute } from 'ziggy-js';
-import { FloatLabel, InputText, Password, ToggleSwitch, Button, Image, Tag } from 'primevue';
+import { Label } from '@components/ui/label';
+import { Input } from '@components/ui/input';
+import Button from '@components/ui/button/Button.vue';
+import { Send } from '@lucide/vue';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@components/ui/card';
+import { Switch } from '@components/ui/switch';
+import InputError from '@components/InputError.vue';
+import { store } from '@/actions/Laravel/Fortify/Http/Controllers/AuthenticatedSessionController';
 
 const route = useRoute();
 /**
@@ -43,41 +50,55 @@ const submit = () => {
 </script>
 
 <template>
-  <div class="h-screen">
+  <div class="h-screen flex items-center justify-center p-4">
     <div v-if="status" class="mb-4 font-medium text-sm">
       {{ status }}
     </div>
+    <Card class="w-full max-w-xl mx-auto">
+      <CardHeader>
+        <CardTitle>Inicio de usuario</CardTitle>
+        <CardDescription></CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form :action="store()" class="max-w-xl space-y-3" #default="{ processing, errors }">
+          <div class="space-y-2">
+            <Label for="email">Correo electronico</Label>
+            <Input name="email" />
+            <InputError :message="errors.email" />
+          </div>
+          <div class="space-y-2">
+            <Label for="password">Contraseña</Label>
+            <Input name="password" />
+            <InputError :message="errors.password" />
+          </div>
+          <div class="mt-5 flex justify-between items-center">
+            <div class="flex gap-3">
+              <Switch name="rememberme" />
+              <Label>Recuerdame</Label>
+            </div>
+            <div>
+              <Link
+                v-if="canResetPassword"
+                :href="route('password.request')"
+                class="underline text-sm text-blue-400 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                Olvidó su contraseña?
+              </Link>
+            </div>
+          </div>
+          <div class="mt-5 text-right">
+            <Button :disable="processing"> <Send /> Iniciar</Button>
+          </div>
+        </Form>
+      </CardContent>
+    </Card>
+
     <!--        formulario de inicio-->
-    <form
+    <!-- <form
       class="max-w-150 mx-auto fondo p-10 rounded-md flex-col items-center shadow-md"
       @submit.prevent="submit"
     >
       <Image :src="`${urlImage}/logo.jpeg`" />
-
-      <FloatLabel class="mt-5" variant="on">
-        <InputText fluid v-model="form.email" />
-        <label for="email">Correo Electronico</label>
-      </FloatLabel>
-      <div class="text-center">
-        <Tag
-          severity="danger"
-          class="scale-75 text-center"
-          v-if="form.errors.email"
-          :value="form.errors.email"
-        />
-      </div>
-      <FloatLabel class="mt-3" variant="on">
-        <Password fluid toggleMask v-model="form.password" />
-        <label for="passowrd">Contraseña</label>
-      </FloatLabel>
-      <div class="text-center">
-        <Tag
-          severity="danger"
-          class="scale-75 text-center"
-          v-if="form.errors.password"
-          :value="form.errors.password"
-        />
-      </div>
 
       <div class="flex items-center mt-5 space-x-3">
         <ToggleSwitch id="remember" v-model="form.remember" />
@@ -94,6 +115,6 @@ const submit = () => {
         </Link>
         <Button :disabled="form.processing" label="Iniciar" icon="pi pi-send" type="submit" />
       </div>
-    </form>
+    </form> -->
   </div>
 </template>
