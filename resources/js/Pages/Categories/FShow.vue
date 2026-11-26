@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import Pagination from '@components/Pagination.vue';
-import FormSearch from '@components/FormSearch.vue';
+import FormSearch from '@/Components/FormSearch.vue';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
 import { categoryBaseI } from '@/Interfaces/CategoriesInterface';
 import { useForm } from '@inertiajs/vue3';
@@ -164,7 +163,7 @@ const download = async () => {
       </tbody>
     </table>
     <!--        Pagination-->
-    <Pagination
+    <!-- <Pagination
       :field="form.field"
       :per-page="form.per_page"
       :search="form.search"
@@ -173,7 +172,7 @@ const download = async () => {
       :prev="propsW.categories.links.prev"
       :current-page="propsW.categories.meta.current_page"
       :pag="propsW.categories"
-    />
+    /> -->
   </div>
 </template>
 

@@ -8,8 +8,8 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'resources/js'),
-      '@components': path.resolve(__dirname, 'resources/js/components'),
-      '@layout': path.resolve(__dirname, 'resources/js/layouts'),
+      '@components': path.resolve(__dirname, 'resources/js/Components'),
+      '@layout': path.resolve(__dirname, 'resources/js/Layouts'),
     },
   },
   plugins: [

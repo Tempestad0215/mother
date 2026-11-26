@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { ProductTableI } from '@/Interfaces/ProductInterface';
 import FShowProduct from '@/Pages/Products/FShowProduct.vue';

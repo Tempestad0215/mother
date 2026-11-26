@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { FloatLabel, InputGroup, InputGroupAddon, InputText } from 'primevue';
-import InputLabel from './InputLabel.vue';
-import { Search } from '@lucide/vue';
-
-const search = defineModel<string>('search');
+// import InputLabel from './InputLabel.vue';
+// import { Search } from '@lucide/vue';
+//
+// const search = defineModel<string>('search');
 </script>
 
 <template>
-  <div class=" ">
+  <!-- <div class=" ">
     <InputLabel for="search" value="Buscar" />
     <div class="relative w-100">
       <InputGroup>
@@ -20,5 +19,5 @@ const search = defineModel<string>('search');
       </InputGroup>
 
     </div>
-  </div>
+  </div> -->
 </template>

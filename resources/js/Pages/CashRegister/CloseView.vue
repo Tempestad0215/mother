@@ -4,12 +4,9 @@ import { useForm } from '@inertiajs/vue3';
 import { SaleBreadCrumbs } from '@/Helpers/SaleHelper';
 
 import { computed, onMounted } from 'vue';
-import AppLayout from '@/layouts/AppLayout.vue';
-import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
 import { getMoney, printPdf } from '@/Global/Helpers';
 import { Lock, CheckCircle2, AlertTriangle, AlertCircle } from '@lucide/vue';
-
-const toast = useToast();
 
 const propsW = defineProps<{
   cashRegister: CashRegisterCloseDataI;
@@ -68,7 +65,7 @@ const submitClose = () => {
       <Card class="shadow-sm rounded-lg border border-slate-200">
         <template #header>
           <div class="p-3 pb-0">
-            <BreadCrumbComponent :itemOptions="SaleBreadCrumbs" />
+            <!-- <BreadCrumbComponent :itemOptions="SaleBreadCrumbs" /> -->
           </div>
           <Divider class="my-2" />
         </template>

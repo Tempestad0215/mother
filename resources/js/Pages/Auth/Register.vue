@@ -4,13 +4,13 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import AppLayout from '@/layouts/AppLayout.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
 import ActionMessage from '@/Components/ActionMessage.vue';
 import { UserI, userPaginationI } from '@/Interfaces/UserInterface';
 import { computed } from 'vue';
-import FormSearch from '@components/FormSearch.vue';
-import ToggleButton from '@components/ToggleButton.vue';
-import TabLink from '@components/TabLink.vue';
+import FormSearch from '@/Components/FormSearch.vue';
+import ToggleButton from '@/Components/ToggleButton.vue';
+import TabLink from '@/Components/TabLink.vue';
 import { useRoute } from 'ziggy-js';
 
 const route = useRoute();

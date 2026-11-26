@@ -34,7 +34,7 @@ class User extends Authenticatable
     use HasProfilePhoto;
     use Notifiable;
     use TwoFactorAuthenticatable;
-    use softDeletes;
+    use SoftDeletes;
     use HasRoles;
     use HasUuids;
     use LogsActivity;
@@ -114,6 +114,9 @@ class User extends Authenticatable
     }
 
 
+    /**
+     * @@return HasMany<CashRegister,$this>
+     */
     public function cashRegister(): HasMany
     {
         return $this->hasMany(CashRegister::class, 'user_uuid','uuid');

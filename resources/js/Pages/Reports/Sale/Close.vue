@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
-import AppLayout from '@/layouts/AppLayout.vue';
-import TabLink from '@components/TabLink.vue';
-import PrimaryButton from '@components/PrimaryButton.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
+import TabLink from '@/Components/TabLink.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { UserI } from '@/Interfaces/UserInterface';
 import { totalSaleAmountI } from '@/Interfaces/ReportInterface';
 import axios from 'axios';
 import { ref } from 'vue';
 import { getMoney } from '@/Global/Helpers';
-import InputLabel from '@components/InputLabel.vue';
+import InputLabel from '@/Components/InputLabel.vue';
 import { useRoute } from 'ziggy-js';
 
 const route = useRoute();

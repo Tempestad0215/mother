@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { getMoney } from '@/Global/Helpers';
-import { saleKey } from '@/Injections/saleKeys';
-import { inject } from 'vue';
-import { Textarea, FloatLabel } from 'primevue';
-
-const form = inject(saleKey)!;
+// import { getMoney } from '@/Global/Helpers';
+// import { saleKey } from '@/Injections/saleKeys';
+// import { inject } from 'vue';
+// import { Textarea, FloatLabel } from 'primevue';
+//
+// const form = inject(saleKey)!;
 </script>
 
 <template>
+ <!--
   <div class="flex flex-col md:flex-row items-stretch md:items-end justify-between gap-4 pt-2">
-    <!-- Campo de Comentarios / Observaciones -->
     <div class="w-full md:w-80">
       <FloatLabel variant="on" class="w-full">
         <Textarea
@@ -23,7 +23,6 @@ const form = inject(saleKey)!;
       </FloatLabel>
     </div>
 
-    <!-- Desglose de Totales -->
     <div
       class="w-full md:w-80 bg-slate-50 text-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 text-sm space-y-2"
     >
@@ -48,6 +47,7 @@ const form = inject(saleKey)!;
       </div>
     </div>
   </div>
+   -->
 </template>
 
 <style scoped></style>

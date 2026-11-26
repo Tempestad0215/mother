@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
-import AppLayout from '@/layouts/AppLayout.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
 import { productFullI } from '@/Interfaces/ProductInterface';
 import { getMoney } from '@/Global/Helpers';
 import { useRoute } from 'ziggy-js';

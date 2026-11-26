@@ -1,150 +1,151 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
-import { ref } from 'vue';
-import {
-  Button,
-  Card,
-  Column,
-  DataTable,
-  Dialog,
-  Divider,
-  Fieldset,
-  Tag,
-  useConfirm,
-  useToast,
-} from 'primevue';
-import { PurchaseItemI, PurchaseSupplierI } from '@/Interfaces/PurchaseInterface';
-import { purchaseBreadCrumb, PurchaseStatusSeverity } from '@/Helpers/PurchaseHelper';
-import { getMoney, onPageChange, paginationOptions } from '@/Global/Helpers';
-import { PurchaseStatusEnum } from '@/Enums/PurchaseEnum';
-import { router } from '@inertiajs/vue3';
-import { CheckCircle, Eye, ShoppingBag, XCircle } from '@lucide/vue';
-import { PaginationI } from '@/Interfaces/GlobalInterface';
-import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
-
-const confirm = useConfirm();
-const toast = useToast();
-
-const propsW = defineProps<{
-  purchases: PaginationI<PurchaseSupplierI>;
-}>();
-
-const showPurchase = ref<boolean>(false);
-const purchaseSelected = ref<PurchaseSupplierI | null>(null);
-
-const getSeverityTag = (status: PurchaseStatusEnum) => {
-  return PurchaseStatusSeverity[status] ?? 'secondary';
-};
-
-const selectPurchase = (purchase: PurchaseSupplierI | null) => {
-  showPurchase.value = true;
-  purchaseSelected.value = purchase;
-};
-
-const clearAll = () => {
-  purchaseSelected.value = null;
-  showPurchase.value = false;
-};
-
-const approve = () => {
-  router.patch(
-    route('purchase.approve', { purchase: purchaseSelected.value?.uuid }),
-    {},
-    {
-      onSuccess: () => {
-        toast.add({
-          severity: 'success',
-          summary: 'Aprobado',
-          detail: 'Orden aprobada correctamente.',
-          life: 3000,
-        });
-        clearAll();
-      },
-      onError: (err) => {
-        toast.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: `Error en la solicitud: ${Object.values(err)[0]}`,
-          life: 5000,
-        });
-      },
-    }
-  );
-};
-
-const approveOrder = (event: Event) => {
-  confirm.require({
-    target: event.currentTarget as HTMLElement,
-    message: '¿Desea aprobar esta orden de compra?',
-    header: 'Aprobar Orden',
-    icon: 'pi pi-info-circle',
-    rejectProps: {
-      label: 'Cancelar',
-      severity: 'secondary',
-      outlined: true,
-    },
-    acceptProps: {
-      label: 'Aprobar',
-    },
-    accept: () => {
-      approve();
-    },
-  });
-};
-
-const cancel = () => {
-  router.patch(
-    route('purchase.cancel', { purchase: purchaseSelected.value?.uuid }),
-    {},
-    {
-      onSuccess: () => {
-        toast.add({
-          severity: 'success',
-          summary: 'Cancelado',
-          detail: 'Orden cancelada correctamente.',
-          life: 3000,
-        });
-        clearAll();
-      },
-      onError: (err) => {
-        toast.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: `Error en la solicitud: ${Object.values(err)[0]}`,
-          life: 5000,
-        });
-      },
-    }
-  );
-};
-
-const cancelOrder = (event: Event) => {
-  confirm.require({
-    target: event.currentTarget as HTMLElement,
-    message: '¿Desea cancelar esta orden? Los cambios son irreversibles.',
-    header: 'Cancelar Orden',
-    icon: 'pi pi-exclamation-triangle',
-    rejectProps: {
-      label: 'Regresar',
-      severity: 'secondary',
-      outlined: true,
-    },
-    acceptProps: {
-      severity: 'danger',
-      label: 'Sí, Cancelar',
-    },
-    accept: () => {
-      cancel();
-    },
-  });
-};
-
-const createReception = (data: PurchaseSupplierI) => {
-  router.get(route('purchase.receiving.index', { supplier: data.supplier_uuid }));
-};
+// import AppLayout from '@/Layouts/AppLayout.vue';
+// import { ref } from 'vue';
+// import {
+//   Button,
+//   Card,
+//   Column,
+//   DataTable,
+//   Dialog,
+//   Divider,
+//   Fieldset,
+//   Tag,
+//   useConfirm,
+//   useToast,
+// } from 'primevue';
+// import { PurchaseItemI, PurchaseSupplierI } from '@/Interfaces/PurchaseInterface';
+// import { purchaseBreadCrumb, PurchaseStatusSeverity } from '@/Helpers/PurchaseHelper';
+// import { getMoney, onPageChange, paginationOptions } from '@/Global/Helpers';
+// import { PurchaseStatusEnum } from '@/Enums/PurchaseEnum';
+// import { router } from '@inertiajs/vue3';
+// import { CheckCircle, Eye, ShoppingBag, XCircle } from '@lucide/vue';
+// import { PaginationI } from '@/Interfaces/GlobalInterface';
+// import BreadCrumbComponent from '@/Components/BreadCrumbComponent.vue';
+//
+// const confirm = useConfirm();
+// const toast = useToast();
+//
+// const propsW = defineProps<{
+//   purchases: PaginationI<PurchaseSupplierI>;
+// }>();
+//
+// const showPurchase = ref<boolean>(false);
+// const purchaseSelected = ref<PurchaseSupplierI | null>(null);
+//
+// const getSeverityTag = (status: PurchaseStatusEnum) => {
+//   return PurchaseStatusSeverity[status] ?? 'secondary';
+// };
+//
+// const selectPurchase = (purchase: PurchaseSupplierI | null) => {
+//   showPurchase.value = true;
+//   purchaseSelected.value = purchase;
+// };
+//
+// const clearAll = () => {
+//   purchaseSelected.value = null;
+//   showPurchase.value = false;
+// };
+//
+// const approve = () => {
+//   router.patch(
+//     route('purchase.approve', { purchase: purchaseSelected.value?.uuid }),
+//     {},
+//     {
+//       onSuccess: () => {
+//         toast.add({
+//           severity: 'success',
+//           summary: 'Aprobado',
+//           detail: 'Orden aprobada correctamente.',
+//           life: 3000,
+//         });
+//         clearAll();
+//       },
+//       onError: (err) => {
+//         toast.add({
+//           severity: 'error',
+//           summary: 'Error',
+//           detail: `Error en la solicitud: ${Object.values(err)[0]}`,
+//           life: 5000,
+//         });
+//       },
+//     }
+//   );
+// };
+//
+// const approveOrder = (event: Event) => {
+//   confirm.require({
+//     target: event.currentTarget as HTMLElement,
+//     message: '¿Desea aprobar esta orden de compra?',
+//     header: 'Aprobar Orden',
+//     icon: 'pi pi-info-circle',
+//     rejectProps: {
+//       label: 'Cancelar',
+//       severity: 'secondary',
+//       outlined: true,
+//     },
+//     acceptProps: {
+//       label: 'Aprobar',
+//     },
+//     accept: () => {
+//       approve();
+//     },
+//   });
+// };
+//
+// const cancel = () => {
+//   router.patch(
+//     route('purchase.cancel', { purchase: purchaseSelected.value?.uuid }),
+//     {},
+//     {
+//       onSuccess: () => {
+//         toast.add({
+//           severity: 'success',
+//           summary: 'Cancelado',
+//           detail: 'Orden cancelada correctamente.',
+//           life: 3000,
+//         });
+//         clearAll();
+//       },
+//       onError: (err) => {
+//         toast.add({
+//           severity: 'error',
+//           summary: 'Error',
+//           detail: `Error en la solicitud: ${Object.values(err)[0]}`,
+//           life: 5000,
+//         });
+//       },
+//     }
+//   );
+// };
+//
+// const cancelOrder = (event: Event) => {
+//   confirm.require({
+//     target: event.currentTarget as HTMLElement,
+//     message: '¿Desea cancelar esta orden? Los cambios son irreversibles.',
+//     header: 'Cancelar Orden',
+//     icon: 'pi pi-exclamation-triangle',
+//     rejectProps: {
+//       label: 'Regresar',
+//       severity: 'secondary',
+//       outlined: true,
+//     },
+//     acceptProps: {
+//       severity: 'danger',
+//       label: 'Sí, Cancelar',
+//     },
+//     accept: () => {
+//       cancel();
+//     },
+//   });
+// };
+//
+// const createReception = (data: PurchaseSupplierI) => {
+//   router.get(route('purchase.receiving.index', { supplier: data.supplier_uuid }));
+// };
 </script>
 
 <template>
+<!--
   <AppLayout>
     <div class="w-full px-2 sm:px-4 py-4 max-w-7xl mx-auto">
       <Card class="shadow-sm rounded-lg border border-slate-200">
@@ -250,7 +251,6 @@ const createReception = (data: PurchaseSupplierI) => {
       </Card>
     </div>
 
-    <!-- Modal Detalle de la Orden de Compra -->
     <Dialog
       v-model:visible="showPurchase"
       modal
@@ -262,7 +262,6 @@ const createReception = (data: PurchaseSupplierI) => {
       @hide="clearAll"
     >
       <div class="space-y-4 py-1">
-        <!-- Estado de la Orden -->
         <div class="flex items-center gap-3 bg-slate-50 p-3 rounded-lg border border-slate-200">
           <span class="font-semibold text-slate-700 text-sm">Estado de la Orden:</span>
           <Tag
@@ -271,7 +270,6 @@ const createReception = (data: PurchaseSupplierI) => {
           />
         </div>
 
-        <!-- Datos del Proveedor -->
         <Fieldset legend="Información del Proveedor" class="text-sm">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-slate-700">
             <p><strong>Empresa:</strong> {{ purchaseSelected?.supplier.company_name }}</p>
@@ -281,7 +279,6 @@ const createReception = (data: PurchaseSupplierI) => {
           </div>
         </Fieldset>
 
-        <!-- Tabla de Ítems (Con Scroll Horizontal para Móvil) -->
         <div class="overflow-x-auto rounded-lg border border-slate-200 mt-5">
           <DataTable
             :value="purchaseSelected?.items"
@@ -329,7 +326,6 @@ const createReception = (data: PurchaseSupplierI) => {
           </DataTable>
         </div>
 
-        <!-- Resumen de Totales y Botones de Acción -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 pt-2">
           <div
             class="w-full sm:w-72 bg-slate-50 text-slate-800 rounded-xl p-3 border border-slate-200 ml-auto text-sm space-y-1.5"
@@ -355,7 +351,6 @@ const createReception = (data: PurchaseSupplierI) => {
           </div>
         </div>
 
-        <!-- Botones de Acción del Modal -->
         <div class="pt-3 flex flex-col-reverse sm:flex-row justify-end gap-3">
           <Button
             @click="cancelOrder($event)"
@@ -383,6 +378,7 @@ const createReception = (data: PurchaseSupplierI) => {
       </div>
     </Dialog>
   </AppLayout>
+  -->
 </template>
 
 <style scoped>

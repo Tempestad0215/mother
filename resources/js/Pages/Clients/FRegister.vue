@@ -1,28 +1,34 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue';
-import { clientBaseI, ClientRncI } from '@/Interfaces/ClientInterface';
 import { useForm } from '@inertiajs/vue3';
 import { useRoute } from 'ziggy-js';
-import {
-  Button,
-  Card,
-  Divider,
-  FloatLabel,
-  InputMask,
-  InputText,
-  Select,
-  ToggleSwitch,
-  useConfirm,
-  useToast,
-} from 'primevue';
-import { Eraser, Forward } from '@lucide/vue';
 import axios from 'axios';
+import { Eraser, Forward, Loader2 } from 'lucide-vue-next';
+
+import { Button } from '@/Components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/Components/ui/card';
+import { Input } from '@/Components/ui/input';
+import { Label } from '@/Components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/Components/ui/select';
+import { Separator } from '@/Components/ui/separator';
+import { Switch } from '@/Components/ui/switch';
+
+import type { clientBaseI, ClientRncI } from '@/Interfaces/ClientInterface';
+import type { EnumValueI } from '@/Interfaces/GeneralInterface';
 import { urlRNC } from '@/Global/Helpers';
-import { EnumValueI } from '@/Interfaces/GeneralInterface';
 
 const route = useRoute();
-const toast = useToast();
-const confirm = useConfirm();
 
 const rncInvalid = ref(false);
 
@@ -35,33 +41,10 @@ const propsW = defineProps<{
   clientDocument: EnumValueI[];
 }>();
 
-const emit = defineEmits(['close']);
-
-onMounted(() => {
-  if (propsW.clientEdit) {
-    form.uuid = propsW.clientEdit.uuid;
-    form.name = propsW.clientEdit.name;
-    form.document = propsW.clientEdit.document;
-    form.personal_id = propsW.clientEdit.personal_id ? propsW.clientEdit.personal_id : '';
-    form.phone = propsW.clientEdit.phone ? propsW.clientEdit.phone : '';
-    form.email = propsW.clientEdit.email ? propsW.clientEdit.email : '';
-    form.address = propsW.clientEdit.address ? propsW.clientEdit.address : '';
-    form.comment = propsW.clientEdit?.comment || '';
-    form.status = propsW.clientEdit.status;
-    form.type = propsW.clientEdit.type;
-    form.type_price = propsW.clientEdit.type_price;
-  }
-});
-
-const masks = reactive<Record<string, string>>({
-  cedula: '999-9999999-9',
-  pasaporte: 'A99999999',
-  rnc: '999-999999',
-});
-
-const selectedMask = computed(() => {
-  return masks[form.document] || '';
-});
+const emit = defineEmits<{
+  (e: 'close'): void;
+  (e: 'rnc-found', data: ClientRncI): void;
+}>();
 
 const form = useForm({
   uuid: '',
@@ -80,235 +63,304 @@ const form = useForm({
   late_fee: 0,
   status: true,
   receive_email: false,
-  type_price: 1,
+  type_price: '1',
   comment: '',
   image: '',
 });
 
-const submit = (): void => {
-  if (propsW.update) {
-    form.patch(route('client.update', form.uuid), {
-      onSuccess: () => {
-        toast.add({
-          severity: 'success',
-          summary: 'Actualizado',
-          detail: 'Registro Actualizado Correctamente',
-          life: 3000,
-        });
-        emit('close');
-      },
-      onError: (er) => {
-        console.log(er);
-        toast.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: `Error Al Intentar Actualizar Los Datos, Detalle ${Object.values(er)[0]}`,
-          life: 5000,
-        });
-      },
-    });
+onMounted(() => {
+  if (propsW.clientEdit) {
+    form.uuid = propsW.clientEdit.uuid;
+    form.name = propsW.clientEdit.name;
+    form.document = propsW.clientEdit.document;
+    form.personal_id = propsW.clientEdit.personal_id ?? '';
+    form.phone = propsW.clientEdit.phone ?? '';
+    form.email = propsW.clientEdit.email ?? '';
+    form.address = propsW.clientEdit.address ?? '';
+    form.comment = propsW.clientEdit.comment ?? '';
+    form.status = propsW.clientEdit.status;
+    form.type = propsW.clientEdit.type;
+    form.type_price = String(propsW.clientEdit.type_price ?? 1);
+  }
+});
+
+const placeholders = reactive<Record<string, string>>({
+  cedula: '000-0000000-0',
+  pasaporte: 'A00000000',
+  rnc: '000-00000-0',
+});
+
+const selectedPlaceholder = computed(() => {
+  return placeholders[form.document] || 'Ingrese número de documento';
+});
+
+const formatDocumentInput = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  const raw = input.value;
+
+  if (form.document === 'cedula') {
+    const digits = raw.replace(/\D/g, '').slice(0, 11);
+    if (digits.length > 10) {
+      form.personal_id = `${digits.slice(0, 3)}-${digits.slice(3, 10)}-${digits.slice(10)}`;
+    } else if (digits.length > 3) {
+      form.personal_id = `${digits.slice(0, 3)}-${digits.slice(3)}`;
+    } else {
+      form.personal_id = digits;
+    }
+  } else if (form.document === 'rnc') {
+    const digits = raw.replace(/\D/g, '').slice(0, 9);
+    if (digits.length > 3) {
+      form.personal_id = `${digits.slice(0, 3)}-${digits.slice(3)}`;
+    } else {
+      form.personal_id = digits;
+    }
+  } else if (form.document === 'pasaporte') {
+    form.personal_id = raw.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 9);
   } else {
-    form.post(route('client.store'), {
-      onSuccess: () => {
-        form.reset();
-        toast.add({
-          severity: 'success',
-          summary: 'Registro Creado',
-          detail: 'Registro Creado Correctamente',
-          life: 3000,
-        });
-        emit('close');
-      },
-      onError: (er) => {
-        console.log(er);
-        toast.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: `Error, Detalle ${Object.values(er)[0]}`,
-          life: 5000,
-        });
-      },
-    });
+    form.personal_id = raw;
+  }
+};
+
+const cleanDocumentValue = (val: string) => val.replace(/-/g, '').trim();
+
+const submit = (): void => {
+  const payload = {
+    ...form.data(),
+    personal_id: cleanDocumentValue(form.personal_id),
+    type_price: Number(form.type_price),
+  };
+
+  if (propsW.update) {
+    form
+      .transform(() => payload)
+      .patch(route('client.update', form.uuid), {
+        onSuccess: () => {
+          emit('close');
+        },
+      });
+  } else {
+    form
+      .transform(() => payload)
+      .post(route('client.store'), {
+        onSuccess: () => {
+          form.reset();
+          emit('close');
+        },
+      });
   }
 };
 
 const searchRNC = async () => {
-  if (form.personal_id.length > 7) {
+  const cleanId = cleanDocumentValue(form.personal_id);
+
+  if (cleanId.length > 7) {
     try {
-      const res = await axios.get(`${urlRNC}${form.personal_id}`);
+      const res = await axios.get(`${urlRNC}${cleanId}`);
       const data = res.data as ClientRncI;
 
       if (data.status === 'SUSPENDIDO') {
         rncInvalid.value = true;
-        toast.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'El RNC es inactivo, No Puede Ser Usado.',
-          life: 5000,
-        });
-      } else {
-        confirm.require({
-          message: 'Este Cliente Tiene RNC Disponible, Desea Continuar?',
-          header: 'Confirmación',
-          icon: 'pi pi-exclamation-triangle',
-          rejectProps: {
-            label: 'Cancelar',
-            severity: 'secondary',
-            outlined: true,
-          },
-          acceptProps: {
-            label: 'Utilizar',
-          },
-          accept: () => {
-            rncInvalid.value = false;
-            form.name = data.razon_social;
-          },
-        });
+        return;
       }
-    } catch (e) {
-      toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Ha Ocurrido Un Error Al Buscar El RNC, Por Favor Intente Nuevamente.',
-        life: 5000,
-      });
+
+      rncInvalid.value = false;
+      form.name = data.razon_social;
+      emit('rnc-found', data);
+    } catch {
+      rncInvalid.value = true;
     }
   }
+};
+
+const handleReset = () => {
+  rncInvalid.value = false;
+  form.reset();
 };
 </script>
 
 <template>
-  <Card class="w-full max-w-4xl mx-auto border-none shadow-none sm:shadow-sm">
-    <template #header>
-      <h3 class="text-xl sm:text-2xl font-bold text-center text-slate-800">
+  <Card class="w-full max-w-4xl mx-auto border-none shadow-none sm:border sm:shadow-sm">
+    <CardHeader class="pb-2">
+      <CardTitle class="text-xl sm:text-2xl font-bold text-center text-foreground">
         {{ propsW.update ? 'Actualizar' : 'Crear' }} Cliente
-      </h3>
-      <Divider class="my-3" />
-    </template>
+      </CardTitle>
+      <Separator class="mt-3" />
+    </CardHeader>
 
-    <template #content>
-      <form @submit.prevent="submit" class="space-y-4">
-        <!-- Controles Superiores: Selects y Switches Adaptativos -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-center">
-          <FloatLabel variant="on" class="w-full">
-            <Select
-              id="type"
-              class="w-full"
-              placeholder="Tipo de Cliente"
-              v-model="form.type"
-              :options="propsW.clientType"
-              option-label="label"
-              option-value="value"
-            />
-            <label for="type">Tipo Cliente</label>
-          </FloatLabel>
+    <CardContent>
+      <form @submit.prevent="submit" @reset.prevent="handleReset" class="space-y-5">
+        <!-- Controles Superiores: Selects Adaptativos -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="space-y-1.5">
+            <Label for="type">Tipo Cliente</Label>
+            <Select v-model="form.type">
+              <SelectTrigger id="type" class="w-full">
+                <SelectValue placeholder="Tipo de Cliente" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem
+                  v-for="item in propsW.clientType"
+                  :key="String(item.value)"
+                  :value="String(item.value)"
+                >
+                  {{ item.label }}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-          <FloatLabel variant="on" class="w-full">
-            <Select
-              id="type_price"
-              class="w-full"
-              placeholder="Precio de Ventas"
-              v-model="form.type_price"
-              :options="propsW.clientPrice"
-              option-label="label"
-              option-value="value"
-            />
-            <label for="type_price">Precio</label>
-          </FloatLabel>
+          <div class="space-y-1.5">
+            <Label for="type_price">Precio</Label>
+            <Select v-model="form.type_price">
+              <SelectTrigger id="type_price" class="w-full">
+                <SelectValue placeholder="Precio de Ventas" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem
+                  v-for="item in propsW.clientPrice"
+                  :key="String(item.value)"
+                  :value="String(item.value)"
+                >
+                  {{ item.label }}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-          <FloatLabel variant="on" class="w-full">
-            <Select
-              id="document"
-              class="w-full"
-              placeholder="Documento"
-              v-model="form.document"
-              :options="propsW.clientDocument"
-              option-label="label"
-              option-value="value"
-            />
-            <label for="document">Documento</label>
-          </FloatLabel>
+          <div class="space-y-1.5">
+            <Label for="document">Documento</Label>
+            <Select v-model="form.document">
+              <SelectTrigger id="document" class="w-full">
+                <SelectValue placeholder="Documento" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem
+                  v-for="item in propsW.clientDocument"
+                  :key="String(item.value)"
+                  :value="String(item.value)"
+                >
+                  {{ item.label }}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         <!-- Switches de estado y email -->
-        <div class="flex flex-wrap items-center justify-start sm:justify-end gap-6 pt-2 px-1">
-          <div class="flex items-center gap-2">
-            <ToggleSwitch inputId="receive_email" v-model="form.receive_email" />
-            <label for="receive_email" class="text-sm font-medium text-slate-700 cursor-pointer">
+        <div class="flex flex-wrap items-center justify-start sm:justify-end gap-6 pt-1 px-1">
+          <div class="flex items-center space-x-2">
+            <Switch
+              id="receive_email"
+              :model-value="form.receive_email"
+              @update:model-value="(val: boolean) => (form.receive_email = val)"
+            />
+            <Label for="receive_email" class="cursor-pointer">
               Recibir Email
-            </label>
+            </Label>
           </div>
-          <div class="flex items-center gap-2">
-            <ToggleSwitch inputId="status" v-model="form.status" />
-            <label for="status" class="text-sm font-medium text-slate-700 cursor-pointer">
+
+          <div class="flex items-center space-x-2">
+            <Switch
+              id="status"
+              :model-value="form.status"
+              @update:model-value="(val: boolean) => (form.status = val)"
+            />
+            <Label for="status" class="cursor-pointer">
               Estado Activo
-            </label>
+            </Label>
           </div>
         </div>
 
-        <Divider class="my-4" />
+        <Separator />
 
-        <!-- Campos de Texto: 1 columna en móvil / 2 columnas en pantallas medianas -->
+        <!-- Campos de Texto -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FloatLabel variant="on" class="w-full">
-            <InputText id="name" class="w-full" v-model="form.name" required />
-            <label for="name">Nombre Completo <span class="text-red-500">*</span></label>
-          </FloatLabel>
-
-          <FloatLabel variant="on" class="w-full">
-            <InputMask
-              @blur="searchRNC"
-              :invalid="rncInvalid"
-              class="w-full"
-              unmask
-              id="personal_id"
-              v-model="form.personal_id"
-              :mask="selectedMask"
+          <div class="space-y-1.5">
+            <Label for="name">
+              Nombre Completo <span class="text-destructive">*</span>
+            </Label>
+            <Input
+              id="name"
+              v-model="form.name"
+              placeholder="Ej. Juan Pérez"
+              required
             />
-            <label for="personal_id">Identificación / RNC</label>
-          </FloatLabel>
+          </div>
 
-          <FloatLabel variant="on" class="w-full">
-            <InputText id="phone" class="w-full" v-model="form.phone" />
-            <label for="phone">Teléfono</label>
-          </FloatLabel>
+          <div class="space-y-1.5">
+            <Label for="personal_id">Identificación / RNC</Label>
+            <Input
+              id="personal_id"
+              :model-value="form.personal_id"
+              :placeholder="selectedPlaceholder"
+              :class="{
+                'border-destructive focus-visible:ring-destructive': rncInvalid,
+              }"
+              @input="formatDocumentInput"
+              @blur="searchRNC"
+            />
+          </div>
 
-          <FloatLabel variant="on" class="w-full">
-            <InputText type="email" id="email" class="w-full" v-model="form.email" />
-            <label for="email">Correo Electrónico</label>
-          </FloatLabel>
+          <div class="space-y-1.5">
+            <Label for="phone">Teléfono</Label>
+            <Input
+              id="phone"
+              v-model="form.phone"
+              placeholder="Ej. 809-555-0101"
+            />
+          </div>
 
-          <FloatLabel variant="on" class="w-full md:col-span-2">
-            <InputText id="address" class="w-full" v-model="form.address" />
-            <label for="address">Dirección</label>
-          </FloatLabel>
+          <div class="space-y-1.5">
+            <Label for="email">Correo Electrónico</Label>
+            <Input
+              id="email"
+              type="email"
+              v-model="form.email"
+              placeholder="correo@ejemplo.com"
+            />
+          </div>
 
-          <FloatLabel variant="on" class="w-full md:col-span-2">
-            <InputText id="comment" class="w-full" v-model="form.comment" />
-            <label for="comment">Comentario</label>
-          </FloatLabel>
+          <div class="space-y-1.5 md:col-span-2">
+            <Label for="address">Dirección</Label>
+            <Input
+              id="address"
+              v-model="form.address"
+              placeholder="Calle, sector, ciudad..."
+            />
+          </div>
+
+          <div class="space-y-1.5 md:col-span-2">
+            <Label for="comment">Comentario</Label>
+            <Input
+              id="comment"
+              v-model="form.comment"
+              placeholder="Notas adicionales sobre el cliente"
+            />
+          </div>
         </div>
 
         <!-- Botones de Acción -->
         <div class="mt-6 flex flex-col-reverse sm:flex-row justify-end gap-3 pt-2">
-          <Button severity="warn" type="reset" label="Limpiar" class="w-full sm:w-auto" outlined>
-            <template #icon>
-              <Eraser class="w-4 h-4 mr-1" />
-            </template>
+          <Button
+            type="reset"
+            variant="outline"
+            class="w-full sm:w-auto border-amber-500 text-amber-600 hover:bg-amber-50 hover:text-amber-700 dark:hover:bg-amber-950/30"
+          >
+            <Eraser class="w-4 h-4 mr-2" />
+            Limpiar
           </Button>
 
           <Button
-            :label="propsW.update ? 'Actualizar' : 'Registrar'"
             type="submit"
-            :loading="form.processing"
+            :disabled="form.processing"
             class="w-full sm:w-auto"
           >
-            <template #icon>
-              <Forward class="w-4 h-4 mr-1" />
-            </template>
+            <Loader2 v-if="form.processing" class="w-4 h-4 mr-2 animate-spin" />
+            <Forward v-else class="w-4 h-4 mr-2" />
+            {{ propsW.update ? 'Actualizar' : 'Registrar' }}
           </Button>
         </div>
       </form>
-    </template>
+    </CardContent>
   </Card>
 </template>

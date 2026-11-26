@@ -1,94 +1,94 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import AppLayout from '@/layouts/AppLayout.vue';
-import {
-  Card,
-  DataTable,
-  Column,
-  Button,
-  Select,
-  DatePicker,
-  FloatLabel,
-  Divider,
-  Tag,
-  useToast,
-} from 'primevue';
-import {
-  Search,
-  FileSpreadsheet,
-  Printer,
-  TrendingUp,
-  DollarSign,
-  PackageCheck,
-} from '@lucide/vue';
-import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
-import { getMoney } from '@/Global/Helpers';
-
-const toast = useToast();
-
-// Métricas / KPIs del Reporte
-const metrics = ref({
-  totalSold: 125000.5,
-  totalCost: 78000.0,
-  netProfit: 47000.5,
-  totalItems: 340,
-});
-
-// Mock de datos para el reporte de productos más vendidos
-const reportData = ref([
-  {
-    code: 'PROD-001',
-    product_name: 'Pintura de Óxido 1G',
-    category: 'Pinturas',
-    units_sold: 120,
-    avg_cost: 350.0,
-    avg_price: 550.0,
-    total_revenue: 66000.0,
-    total_cost: 42000.0,
-    profit: 24000.0,
-  },
-  {
-    code: 'PROD-002',
-    product_name: 'Culata Doble HD',
-    category: 'Repuestos',
-    units_sold: 15,
-    avg_cost: 2400.0,
-    avg_price: 3800.0,
-    total_revenue: 57000.0,
-    total_cost: 36000.0,
-    profit: 21000.0,
-  },
-]);
-
-// Filtros
-const filters = ref({
-  from: new Date(),
-  to: new Date(),
-  category_uuid: null,
-  warehouse_uuid: null,
-});
-
-const searchReport = () => {
-  toast.add({
-    severity: 'info',
-    summary: 'Generando Reporte',
-    detail: 'Consultando la base de datos...',
-    life: 2500,
-  });
-};
-
-const exportExcel = () => {
-  toast.add({
-    severity: 'success',
-    summary: 'Exportación Exitosa',
-    detail: 'Descargando archivo Excel...',
-    life: 3000,
-  });
-};
-
-const printReport = () => {
-  window.print();
-};
+// import { ref } from 'vue';
+// import AppLayout from '@/Layouts/AppLayout.vue';
+// import {
+//   Card,
+//   DataTable,
+//   Column,
+//   Button,
+//   Select,
+//   DatePicker,
+//   FloatLabel,
+//   Divider,
+//   Tag,
+//   useToast,
+// } from 'primevue';
+// import {
+//   Search,
+//   FileSpreadsheet,
+//   Printer,
+//   TrendingUp,
+//   DollarSign,
+//   PackageCheck,
+// } from '@lucide/vue';
+// import BreadCrumbComponent from '@/Components/BreadCrumbComponent.vue';
+// import { getMoney } from '@/Global/Helpers';
+//
+// const toast = useToast();
+//
+// // Métricas / KPIs del Reporte
+// const metrics = ref({
+//   totalSold: 125000.5,
+//   totalCost: 78000.0,
+//   netProfit: 47000.5,
+//   totalItems: 340,
+// });
+//
+// // Mock de datos para el reporte de productos más vendidos
+// const reportData = ref([
+//   {
+//     code: 'PROD-001',
+//     product_name: 'Pintura de Óxido 1G',
+//     category: 'Pinturas',
+//     units_sold: 120,
+//     avg_cost: 350.0,
+//     avg_price: 550.0,
+//     total_revenue: 66000.0,
+//     total_cost: 42000.0,
+//     profit: 24000.0,
+//   },
+//   {
+//     code: 'PROD-002',
+//     product_name: 'Culata Doble HD',
+//     category: 'Repuestos',
+//     units_sold: 15,
+//     avg_cost: 2400.0,
+//     avg_price: 3800.0,
+//     total_revenue: 57000.0,
+//     total_cost: 36000.0,
+//     profit: 21000.0,
+//   },
+// ]);
+//
+// // Filtros
+// const filters = ref({
+//   from: new Date(),
+//   to: new Date(),
+//   category_uuid: null,
+//   warehouse_uuid: null,
+// });
+//
+// const searchReport = () => {
+//   toast.add({
+//     severity: 'info',
+//     summary: 'Generando Reporte',
+//     detail: 'Consultando la base de datos...',
+//     life: 2500,
+//   });
+// };
+//
+// const exportExcel = () => {
+//   toast.add({
+//     severity: 'success',
+//     summary: 'Exportación Exitosa',
+//     detail: 'Descargando archivo Excel...',
+//     life: 3000,
+//   });
+// };
+//
+// const printReport = () => {
+//   window.print();
+// };
 </script>
 
 <template>

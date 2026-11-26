@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
-import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
 import { itemsSettings } from '@/Helpers/SettingHelpers';
 import { RoleI, UserRoleI } from '@/Interfaces/UserInterface';
 import { useForm } from '@inertiajs/vue3';
 import { watch } from 'vue';
 
-const toast = useToast();
 
 const propsW = defineProps<{
   users: Array<UserRoleI>;
@@ -61,7 +59,7 @@ const submit = () => {
   <AppLayout>
     <Card>
       <template #title>
-        <BreadCrumbComponent :item-options="itemsSettings" />
+        <!-- <BreadCrumbComponent :item-options="itemsSettings" /> -->
       </template>
       <template #content>
         <form @submit.prevent="submit()" class="p-5">

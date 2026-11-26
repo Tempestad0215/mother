@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
-import TabLink from '@components/TabLink.vue';
-import FloatBox from '@components/FloatBox.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
+import TabLink from '@/Components/TabLink.vue';
+import FloatBox from '@/Components/FloatBox.vue';
 import { ref } from 'vue';
 import FShow from '@/Pages/Suppliers/FShow.vue';
 import { PaginationI } from '@/Interfaces/GlobalInterface';

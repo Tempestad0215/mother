@@ -1,57 +1,58 @@
 <script setup lang="ts">
-import { computed, inject } from 'vue';
-import { infoSaleI, WarehouseMapType } from '@/Interfaces/SaleInterface';
-import { Column, DataTable, DataTableCellEditCompleteEvent, InputNumber, Select } from 'primevue';
-import { getMoney, truncateText } from '@/Global/Helpers';
-import { EnumValueI } from '@/Interfaces/GeneralInterface';
-import { SaleTypeEnum } from '@/Helpers/SaleHelper';
-import { saleKey } from '@/Injections/saleKeys';
-import { useSaleCalculation } from '@/Composable/Sales/useSaleCalculation';
-
-// Para eliminar un item de la venta
-const propsW = defineProps<{
-  refund?: boolean;
-  warehouses?: WarehouseMapType;
-}>();
-
-// Para eliminar un item de la venta
-const form = inject(saleKey)!;
-
-const { calculateItemRow } = useSaleCalculation();
-
-const isReturn = computed(() => {
-  return form.type === SaleTypeEnum.DEVOLUCION;
-});
-
-// Obtener los almacenes para el select
-const getWarehouses = (): EnumValueI[] | [] => {
-  if (propsW.warehouses) {
-    return Object.entries(propsW.warehouses).map(([key, value]) => {
-      return {
-        label: key,
-        value: value,
-      };
-    });
-  } else {
-    return [];
-  }
-};
-
-const onCellEditComplete = (event: DataTableCellEditCompleteEvent) => {
-  const index = event.index;
-  const info = event.newData;
-
-  calculateItemRow(info, index);
-};
-
-const getLabelName = (uuid: string): string => {
-  const warehouseName = getWarehouses().find((el) => el.value === uuid);
-  if (warehouseName) return warehouseName.label;
-  return 'Almacen no encontrado';
-};
+// import { computed, inject } from 'vue';
+// import { infoSaleI, WarehouseMapType } from '@/Interfaces/SaleInterface';
+// import { Column, DataTable, DataTableCellEditCompleteEvent, InputNumber, Select } from 'primevue';
+// import { getMoney, truncateText } from '@/Global/Helpers';
+// import { EnumValueI } from '@/Interfaces/GeneralInterface';
+// import { SaleTypeEnum } from '@/Helpers/SaleHelper';
+// import { saleKey } from '@/Injections/saleKeys';
+// import { useSaleCalculation } from '@/Composable/Sales/useSaleCalculation';
+//
+// // Para eliminar un item de la venta
+// const propsW = defineProps<{
+//   refund?: boolean;
+//   warehouses?: WarehouseMapType;
+// }>();
+//
+// // Para eliminar un item de la venta
+// const form = inject(saleKey)!;
+//
+// const { calculateItemRow } = useSaleCalculation();
+//
+// const isReturn = computed(() => {
+//   return form.type === SaleTypeEnum.DEVOLUCION;
+// });
+//
+// // Obtener los almacenes para el select
+// const getWarehouses = (): EnumValueI[] | [] => {
+//   if (propsW.warehouses) {
+//     return Object.entries(propsW.warehouses).map(([key, value]) => {
+//       return {
+//         label: key,
+//         value: value,
+//       };
+//     });
+//   } else {
+//     return [];
+//   }
+// };
+//
+// const onCellEditComplete = (event: DataTableCellEditCompleteEvent) => {
+//   const index = event.index;
+//   const info = event.newData;
+//
+//   calculateItemRow(info, index);
+// };
+//
+// const getLabelName = (uuid: string): string => {
+//   const warehouseName = getWarehouses().find((el) => el.value === uuid);
+//   if (warehouseName) return warehouseName.label;
+//   return 'Almacen no encontrado';
+// };
 </script>
 
 <template>
+ <!--
   <DataTable @cellEditComplete="onCellEditComplete" editMode="cell" :value="form.info_sale">
     <Column style="width: 2%" header="#">
       <template #body="{ index }">
@@ -141,4 +142,5 @@ const getLabelName = (uuid: string): string => {
       :field="(data: infoSaleI) => `${getMoney(data.amount)}`"
     />
   </DataTable>
+  -->
 </template>

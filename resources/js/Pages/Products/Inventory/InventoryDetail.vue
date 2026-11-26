@@ -1,68 +1,68 @@
 <script setup lang="ts">
-import {
-  Column,
-  DataTable,
-  InputNumber,
-  Checkbox,
-  FloatLabel,
-  DataTableCellEditCompleteEvent,
-} from 'primevue';
-import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
-import { computed, inject, onMounted, reactive, watch } from 'vue';
-import { formProductKey } from '@/Injections/InjectionKeys';
-import { WarehouseProductI } from '@/Interfaces/ProductInterface';
-
-const propsW = defineProps<{
-  warehouses: Array<WarehouseBaseI>;
-}>();
-
-const form = inject(formProductKey)!!;
-
-const handleStockValue = reactive({
-  min_stock: 0,
-  max_stock: 0,
-  reorder_level: 0,
-});
-
-onMounted(() => {
-  if (!propsW.warehouses?.length) return;
-
-  form.warehouse_product = propsW.warehouses.map((warehouse) => ({
-    warehouse_uuid: warehouse.uuid,
-    prefix: warehouse.prefix,
-    name: warehouse.name,
-    available: 0,
-    stock_quantity: 0,
-    committed: 0,
-    min_stock: 0,
-    max_stock: 0,
-    reorder_level: 0,
-  }));
-});
-
-watch(
-  () => handleStockValue,
-  (newVal) => {
-    form.warehouse_product?.forEach((wh: WarehouseProductI) => {
-      wh.min_stock = newVal.min_stock;
-      wh.max_stock = newVal.max_stock;
-      wh.reorder_level = newVal.reorder_level;
-    });
-  },
-  { deep: true }
-);
-
-const checkReorderLevel = computed(() => {
-  return (minStock: number, reorderLevel: number) => {
-    return reorderLevel < minStock;
-  };
-});
+// import {
+//   Column,
+//   DataTable,
+//   InputNumber,
+//   Checkbox,
+//   FloatLabel,
+//   DataTableCellEditCompleteEvent,
+// } from 'primevue';
+// import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
+// import { computed, inject, onMounted, reactive, watch } from 'vue';
+// import { formProductKey } from '@/Injections/InjectionKeys';
+// import { WarehouseProductI } from '@/Interfaces/ProductInterface';
+//
+// const propsW = defineProps<{
+//   warehouses: Array<WarehouseBaseI>;
+// }>();
+//
+// const form = inject(formProductKey)!!;
+//
+// const handleStockValue = reactive({
+//   min_stock: 0,
+//   max_stock: 0,
+//   reorder_level: 0,
+// });
+//
+// onMounted(() => {
+//   if (!propsW.warehouses?.length) return;
+//
+//   form.warehouse_product = propsW.warehouses.map((warehouse) => ({
+//     warehouse_uuid: warehouse.uuid,
+//     prefix: warehouse.prefix,
+//     name: warehouse.name,
+//     available: 0,
+//     stock_quantity: 0,
+//     committed: 0,
+//     min_stock: 0,
+//     max_stock: 0,
+//     reorder_level: 0,
+//   }));
+// });
+//
+// watch(
+//   () => handleStockValue,
+//   (newVal) => {
+//     form.warehouse_product?.forEach((wh: WarehouseProductI) => {
+//       wh.min_stock = newVal.min_stock;
+//       wh.max_stock = newVal.max_stock;
+//       wh.reorder_level = newVal.reorder_level;
+//     });
+//   },
+//   { deep: true }
+// );
+//
+// const checkReorderLevel = computed(() => {
+//   return (minStock: number, reorderLevel: number) => {
+//     return reorderLevel < minStock;
+//   };
+// });
 </script>
 
 <template>
+ <!--
   <div class="space-y-4">
-    <!-- Controles de Manejo por Almacén -->
-    <!--    TODO: esto se se debe revisa para implementar en el futuro-->
+     Controles de Manejo por Almacén -->
     <!--    <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 space-y-3">-->
     <!--      <div class="flex items-center gap-2">-->
     <!--        <Checkbox binary inputId="handleWarehouse" v-model="form.handle_warehouse" />-->
@@ -87,9 +87,8 @@ const checkReorderLevel = computed(() => {
     <!--          <label for="reorder">Nivel de Reorden Global</label>-->
     <!--        </FloatLabel>-->
     <!--      </div>-->
-    <!--    </div>-->
+    <!--    </div>
 
-    <!-- Tabla de Almacenes (Con Scroll Horizontal para Celulares) -->
     <div class="overflow-x-auto rounded-lg border border-slate-200">
       <DataTable
         editMode="cell"
@@ -162,4 +161,5 @@ const checkReorderLevel = computed(() => {
       </DataTable>
     </div>
   </div>
+  -->
 </template>

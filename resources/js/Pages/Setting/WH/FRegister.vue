@@ -1,22 +1,27 @@
 <script setup lang="ts">
-import { useForm } from '@inertiajs/vue3';
-import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
 import { onMounted } from 'vue';
+import { useForm } from '@inertiajs/vue3';
 import { useRoute } from 'ziggy-js';
-import { FloatLabel, InputText, Button, Card, useToast } from 'primevue';
-import { Forward } from '@lucide/vue';
+import { Forward, Loader2 } from 'lucide-vue-next';
+
+import { Button } from '@/Components/ui/button';
+import { Card, CardContent } from '@/Components/ui/card';
+import { Input } from '@/Components/ui/input';
+import { Label } from '@/Components/ui/label';
+
+import type { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
 
 const route = useRoute();
-const toast = useToast();
 
 const propsW = defineProps<{
   editWareHouses: WarehouseBaseI | null;
   update: boolean;
 }>();
 
-/**
- * Formularios
- */
+const emit = defineEmits<{
+  (e: 'saved'): void;
+}>();
+
 const form = useForm({
   uuid: '',
   prefix: '',
@@ -28,56 +33,26 @@ const form = useForm({
 onMounted(() => {
   if (propsW.editWareHouses) {
     form.uuid = propsW.editWareHouses.uuid;
-    form.prefix = propsW.editWareHouses.prefix
+    form.prefix = propsW.editWareHouses.prefix;
     form.name = propsW.editWareHouses.name;
     form.description = propsW.editWareHouses.description;
     form.location = propsW.editWareHouses.location;
   }
 });
 
-/*
-funciones
- */
-/**
- * Enviar los datos
- */
-const submit = () => {
+const submit = (): void => {
   if (propsW.update) {
     form.put(route('warehouse.update', { wh: form.uuid }), {
       onSuccess: () => {
-        toast.add({
-          severity: 'success',
-          summary: 'Registro Actualizado',
-          life: 3000,
-        });
         form.reset();
-      },
-      onError: (err) => {
-        toast.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: `Error en esta solicitud. Detalle : ${Object.values(err)[0]}`,
-          life: 3000,
-        });
+        emit('saved');
       },
     });
   } else {
     form.post(route('warehouse.store'), {
       onSuccess: () => {
         form.reset();
-        toast.add({
-          severity: 'success',
-          summary: 'Registro Creado',
-          life: 3000,
-        });
-      },
-      onError: (err) => {
-        toast.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: `Error en esta solicitud. Detalle : ${Object.values(err)[0]}`,
-          life: 3000,
-        });
+        emit('saved');
       },
     });
   }
@@ -86,32 +61,36 @@ const submit = () => {
 
 <template>
   <Card>
-    <template #content>
-      <form class="w-80" @submit.prevent="submit">
-          <FloatLabel variant="on" class="mt-5">
-              <InputText fluid id="prefix" v-model="form.prefix" />
-              <label for="prefix">Prefix</label>
-          </FloatLabel>
-        <FloatLabel variant="on" class="mt-5">
-          <InputText fluid id="name" v-model="form.name" />
-          <label for="name">Nombre</label>
-        </FloatLabel>
-        <FloatLabel variant="on" class="mt-5">
-          <InputText fluid id="description" v-model="form.description" />
-          <label for="description">Descripcion</label>
-        </FloatLabel>
-        <FloatLabel variant="on" class="mt-5">
-          <InputText fluid id="location" v-model="form.location" />
-          <label for="location">Ubicacion</label>
-        </FloatLabel>
-        <div class="mt-5 text-right">
-          <Button type="submit" :label="propsW.update ? 'Actualizar' : 'Registrar'">
-            <template #icon>
-              <Forward />
-            </template>
+    <CardContent class="pt-6">
+      <form class="w-80 space-y-4" @submit.prevent="submit">
+        <div class="space-y-1.5">
+          <Label for="prefix">Prefix</Label>
+          <Input id="prefix" v-model="form.prefix" placeholder="Ej. ALM-01" />
+        </div>
+
+        <div class="space-y-1.5">
+          <Label for="name">Nombre</Label>
+          <Input id="name" v-model="form.name" placeholder="Nombre del almacén" />
+        </div>
+
+        <div class="space-y-1.5">
+          <Label for="description">Descripción</Label>
+          <Input id="description" v-model="form.description" placeholder="Descripción" />
+        </div>
+
+        <div class="space-y-1.5">
+          <Label for="location">Ubicación</Label>
+          <Input id="location" v-model="form.location" placeholder="Ubicación" />
+        </div>
+
+        <div class="pt-2 flex justify-end">
+          <Button type="submit" :disabled="form.processing">
+            <Loader2 v-if="form.processing" class="w-4 h-4 mr-2 animate-spin" />
+            <Forward v-else class="w-4 h-4 mr-2" />
+            {{ propsW.update ? 'Actualizar' : 'Registrar' }}
           </Button>
         </div>
       </form>
-    </template>
+    </CardContent>
   </Card>
 </template>

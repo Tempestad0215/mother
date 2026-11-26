@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import PrimaryButton from '@components/PrimaryButton.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { onMounted, ref } from 'vue';
 import axios from 'axios';
 import { currencyDayI, currencyI, monthDayI } from '@/Interfaces/CurrencyInterface';

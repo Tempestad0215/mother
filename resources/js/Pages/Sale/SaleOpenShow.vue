@@ -1,51 +1,52 @@
 <script setup lang="ts">
-import { saleDataI } from '@/Interfaces/SaleInterface';
-import FormSearch from '@components/FormSearch.vue';
-import { useForm } from '@inertiajs/vue3';
-import { PaginationI } from '@/Interfaces/GlobalInterface';
-import Pagination from '@components/Pagination.vue';
-import { Column, DataTable } from 'primevue';
-import { getMoney } from '@/Global/Helpers';
-import { MousePointerClick } from '@lucide/vue';
-
-/**
- * Propiedades de la ventana
- */
-const props = defineProps<{
-  saleOpen: PaginationI<saleDataI>;
-}>();
-
-/**
- * Formulario
- */
-
-const form = useForm({
-  search: '',
-  per_page: 15,
-  field: 'name',
-});
-
-/**
- * Emitir los datos al padre
- */
-const emit = defineEmits<{
-  (e: 'senData', item: saleDataI): void;
-}>();
-
-/**
- * Funciones
- */
-
-//Buscar los datos
-const submit = () => {
-  form.get(`?search=${form.search}`, {
-    preserveScroll: true,
-    preserveState: true,
-  });
-};
+// import { saleDataI } from '@/Interfaces/SaleInterface';
+// import FormSearch from '@/Components/FormSearch.vue';
+// import { useForm } from '@inertiajs/vue3';
+// import { PaginationI } from '@/Interfaces/GlobalInterface';
+// import Pagination from '@/Components/Pagination.vue';
+// import { Column, DataTable } from 'primevue';
+// import { getMoney } from '@/Global/Helpers';
+// import { MousePointerClick } from '@lucide/vue';
+//
+// /**
+//  * Propiedades de la ventana
+//  */
+// const props = defineProps<{
+//   saleOpen: PaginationI<saleDataI>;
+// }>();
+//
+// /**
+//  * Formulario
+//  */
+//
+// const form = useForm({
+//   search: '',
+//   per_page: 15,
+//   field: 'name',
+// });
+//
+// /**
+//  * Emitir los datos al padre
+//  */
+// const emit = defineEmits<{
+//   (e: 'senData', item: saleDataI): void;
+// }>();
+//
+// /**
+//  * Funciones
+//  */
+//
+// //Buscar los datos
+// const submit = () => {
+//   form.get(`?search=${form.search}`, {
+//     preserveScroll: true,
+//     preserveState: true,
+//   });
+// };
 </script>
 
 <template>
+ <!--
   <div class="">
     <div class="flex items-center justify-between">
       <form @submit.prevent="submit()">
@@ -63,7 +64,6 @@ const submit = () => {
       <Column header="Act">
         <template #body="{data}">
           <div>
-            <!-- dar estilo de hover scale de 125 -->
             <MousePointerClick
               @click="emit('senData', data)"
               class="hover:scale-125 duration-300 hover:text-green-400"
@@ -76,6 +76,7 @@ const submit = () => {
       </template>
     </DataTable>
   </div>
+  -->
 </template>
 
 <style scoped></style>

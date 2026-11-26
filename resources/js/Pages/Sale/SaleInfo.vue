@@ -1,33 +1,33 @@
 <script setup lang="ts">
-import { inject, ref } from 'vue';
-import { PaginationI } from '@/Interfaces/GlobalInterface';
-import { clientBaseI } from '@/Interfaces/ClientInterface';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-import { usePage } from '@inertiajs/vue3';
-import { Search, UserPlus } from '@lucide/vue';
-import { AutoComplete, Dialog, FloatLabel, InputGroup, InputGroupAddon, InputText } from 'primevue';
-import FShowClient from '@/Pages/Clients/FShowClient.vue';
-import { useSaleInfo } from '@/Composable/Sales/useSaleInfo';
-import { saleKey } from '@/Injections/saleKeys';
-
-const page = usePage();
-
-const propsW = defineProps<{
-  clients: PaginationI<clientBaseI>;
-}>();
-
-const form = inject(saleKey)!;
-
-const { searchClient, getClient, clientName, getClientRnc, hasRnc, isRefund, clientFiltered } =
-  useSaleInfo();
-
-const showClient = ref<boolean>(false);
+// import { inject, ref } from 'vue';
+// import { PaginationI } from '@/Interfaces/GlobalInterface';
+// import { clientBaseI } from '@/Interfaces/ClientInterface';
+// import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+// import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+// import { usePage } from '@inertiajs/vue3';
+// import { Search, UserPlus } from '@lucide/vue';
+// import { AutoComplete, Dialog, FloatLabel, InputGroup, InputGroupAddon, InputText } from 'primevue';
+// import FShowClient from '@/Pages/Clients/FShowClient.vue';
+// import { useSaleInfo } from '@/Composable/Sales/useSaleInfo';
+// import { saleKey } from '@/Injections/saleKeys';
+//
+// const page = usePage();
+//
+// const propsW = defineProps<{
+//   clients: PaginationI<clientBaseI>;
+// }>();
+//
+// const form = inject(saleKey)!;
+//
+// const { searchClient, getClient, clientName, getClientRnc, hasRnc, isRefund, clientFiltered } =
+//   useSaleInfo();
+//
+// const showClient = ref<boolean>(false);
 </script>
 
 <template>
+ <!--
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
-    <!-- Columna 1: Búsqueda de Cliente y RNC -->
     <div class="space-y-3 w-full">
       <div class="w-full">
         <InputGroup class="w-full">
@@ -55,7 +55,6 @@ const showClient = ref<boolean>(false);
         </InputGroup>
       </div>
 
-      <!-- RNC del cliente -->
       <div v-if="hasRnc" class="w-full">
         <InputGroup class="w-full">
           <FloatLabel variant="on" class="w-full">
@@ -72,7 +71,6 @@ const showClient = ref<boolean>(false);
       </div>
     </div>
 
-    <!-- Columna 2: Estado de Carga y Comprobante Fiscal NCF -->
     <div
       v-if="!form.invoice_type"
       class="flex flex-col justify-center space-y-1 bg-slate-50 p-3 rounded-lg border border-slate-200 text-sm"
@@ -95,7 +93,6 @@ const showClient = ref<boolean>(false);
       </div>
     </div>
 
-    <!-- Columna 3: Datos Tributarios del Cliente -->
     <div v-if="hasRnc" class="bg-slate-50 p-3 rounded-lg border border-slate-200 text-sm space-y-1">
       <h3 class="font-bold text-slate-800 border-b border-slate-200 pb-1 mb-1">
         Datos Tributarios
@@ -109,7 +106,6 @@ const showClient = ref<boolean>(false);
     </div>
   </div>
 
-  <!-- Diálogo Modal de Selección de Cliente -->
   <Dialog
     v-model:visible="showClient"
     modal
@@ -123,4 +119,5 @@ const showClient = ref<boolean>(false);
       <FShowClient :other-component="true" :client-data="propsW.clients" />
     </div>
   </Dialog>
+  -->
 </template>

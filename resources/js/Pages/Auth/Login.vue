@@ -1,17 +1,16 @@
 <script setup lang="ts">
 import { Form, Link, useForm } from '@inertiajs/vue3';
 import { ref, Ref } from 'vue';
-import { useRoute } from 'ziggy-js';
-import { Label } from '@components/ui/label';
-import { Input } from '@components/ui/input';
-import Button from '@components/ui/button/Button.vue';
+import { Label } from '@/Components/ui/label';
+import { Input } from '@/Components/ui/input';
+import Button from '@/Components/ui/button/Button.vue';
 import { Send } from '@lucide/vue';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@components/ui/card';
-import { Switch } from '@components/ui/switch';
-import InputError from '@components/InputError.vue';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Components/ui/card';
+import { Switch } from '@/Components/ui/switch';
+import InputError from '@/Components/InputError.vue';
 import { store } from '@/actions/Laravel/Fortify/Http/Controllers/AuthenticatedSessionController';
+import { request } from '@/routes/password';
 
-const route = useRoute();
 /**
  * Propiedades de la ventna
  */
@@ -79,7 +78,7 @@ const submit = () => {
             <div>
               <Link
                 v-if="canResetPassword"
-                :href="route('password.request')"
+                :href="request()"
                 class="underline text-sm text-blue-400 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
                 Olvidó su contraseña?

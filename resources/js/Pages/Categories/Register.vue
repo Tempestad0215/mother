@@ -1,29 +1,38 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
-import { PaginationI } from '@/Interfaces/GlobalInterface';
-import { categoryBaseI } from '@/Interfaces/CategoriesInterface';
-import {
-  Button,
-  Column,
-  DataTable,
-  Dialog,
-  InputGroup,
-  InputGroupAddon,
-  InputText,
-  useConfirm,
-  useToast,
-} from 'primevue';
-import { ref } from 'vue';
 import { router } from '@inertiajs/vue3';
+import {
+    FilePenLine,
+    ListFilterPlus,
+    Search,
+    Shredder
+} from 'lucide-vue-next';
+import { ref } from 'vue';
 import { useRoute } from 'ziggy-js';
+
+import { Button } from '@/Components/ui/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from '@/Components/ui/dialog';
+import { Input } from '@/Components/ui/input';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/Components/ui/table';
+import AppLayout from '@/Layouts/AppLayout.vue';
 import FRegister from '@/Pages/Categories/FRegister.vue';
+
 import { getSearchTable } from '@/Global/SearchTable';
-import { FilePenLine, ListFilterPlus, Shredder } from '@lucide/vue';
-import { onPageChange, paginationOptions } from '@/Global/Helpers';
+import type { categoryBaseI } from '@/Interfaces/CategoriesInterface';
+import type { PaginationI } from '@/Interfaces/GlobalInterface';
 
 const route = useRoute();
-const confirm = useConfirm();
-const toast = useToast();
 
 const propsW = defineProps<{
   categories: PaginationI<categoryBaseI>;
@@ -35,56 +44,45 @@ const createCategory = ref(false);
 const categorySelected = ref<categoryBaseI | null>(null);
 const isUpdate = ref<boolean>(false);
 
-const searchData = () => {
+const navigateWithParams = (page: number, perPage: number) => {
   getSearchTable(
-    route('category.create', {
-      search: searchValue.value,
-      per_page: propsW.categories.meta.per_page,
-      page: propsW.categories.meta.current_page,
+    route('category.index', {
+      search: searchValue.value || undefined,
+      per_page: perPage,
+      page,
     })
   );
 };
 
-const editData = (data: categoryBaseI) => {
-  categorySelected.value = data;
-  createCategory.value = true;
-  isUpdate.value = true;
+const searchData = () => {
+  navigateWithParams(1, Number(propsW.categories.meta.per_page) || 10);
 };
 
-const deleteData = (data: categoryBaseI, event: Event) => {
-  confirm.require({
-    target: event.currentTarget as HTMLElement,
-    message: '¿Desea eliminar este registro?',
-    header: 'Confirmar Eliminación',
-    icon: 'pi pi-exclamation-triangle',
-    rejectProps: {
-      label: 'Cancelar',
-      outlined: true,
-    },
-    acceptProps: {
-      severity: 'danger',
-      label: 'Eliminar',
-    },
-    accept: () => {
-      router.delete(route('category.destroy', { category: data.uuid }), {
-        onSuccess: () => {
-          toast.add({
-            severity: 'success',
-            summary: 'Registro Eliminado',
-            detail: 'La categoría fue eliminada correctamente.',
-            life: 3000,
-          });
-        },
-        onError: (err) => {
-          toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: `Error al intentar eliminar los datos: ${Object.values(err)[0]}`,
-            life: 5000,
-          });
-        },
-      });
-    },
+const goToPage = (page: number) => {
+  const lastPage = Number(propsW.categories.meta.last_page) || 1;
+  const clampedPage = Math.max(1, Math.min(page, lastPage));
+  navigateWithParams(clampedPage, Number(propsW.categories.meta.per_page) || 10);
+};
+
+const changePerPage = (value: string) => {
+  navigateWithParams(1, Number(value));
+};
+
+const openCreate = () => {
+  categorySelected.value = null;
+  isUpdate.value = false;
+  createCategory.value = true;
+};
+
+const editData = (data: categoryBaseI) => {
+  categorySelected.value = data;
+  isUpdate.value = true;
+  createCategory.value = true;
+};
+
+const deleteData = (data: categoryBaseI) => {
+  router.delete(route('category.destroy', { category: data.uuid }), {
+    preserveScroll: true,
   });
 };
 
@@ -92,132 +90,198 @@ const resetForm = () => {
   categorySelected.value = null;
   isUpdate.value = false;
 };
+
+const handleDialogOpenChange = (open: boolean) => {
+  createCategory.value = open;
+  if (!open) {
+    resetForm();
+  }
+};
 </script>
 
 <template>
+ <!--
   <AppLayout>
     <div class="w-full px-2 sm:px-4 py-4 max-w-7xl mx-auto">
-      <DataTable
-        @page="onPageChange($event, route('category.index'), ['categories'])"
-        lazy
-        paginator
-        responsiveLayout="stack"
-        breakpoint="768px"
-        :rowsPerPageOptions="paginationOptions"
-        :totalRecords="parseInt(propsW.categories.meta.total.toString())"
-        :rows="parseFloat(propsW.categories.meta.per_page.toString())"
-        :loading="!propsW.categories.data"
-        :value="propsW.categories.data"
-        class="shadow-sm rounded-lg overflow-hidden border border-slate-200"
-      >
-        <!-- Encabezado de la Tabla Adaptativo -->
-        <template #header>
-          <div
-            class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 p-1"
-          >
-            <form @submit.prevent="searchData" class="w-full sm:w-auto">
-              <InputGroup class="w-full sm:w-72">
-                <InputText
-                  v-model="searchValue"
-                  placeholder="Buscar categoría..."
-                  type="search"
-                  class="w-full"
-                />
-                <InputGroupAddon
-                  @click="searchData"
-                  class="cursor-pointer hover:bg-slate-100 transition"
-                >
-                  <i class="pi pi-search"></i>
-                </InputGroupAddon>
-              </InputGroup>
-            </form>
-
-            <Button
-              class="w-full sm:w-auto justify-center h-10 px-4"
-              @click="createCategory = true"
-              label="Nueva Categoría"
-            >
-              <template #icon>
-                <ListFilterPlus class="w-5 h-5 mr-1" />
-              </template>
+      <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm overflow-hidden">
+        <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 border-b p-3 sm:p-4">
+          <form @submit.prevent="searchData" class="flex w-full sm:w-80 items-center gap-2">
+            <Input
+              v-model="searchValue"
+              placeholder="Buscar categoría..."
+              type="search"
+              class="w-full"
+            />
+            <Button type="submit" variant="outline" size="icon" aria-label="Buscar categoría">
+              <Search class="h-4 w-4" />
             </Button>
+          </form>
+
+          <Button
+            class="w-full sm:w-auto justify-center h-10 px-4"
+            @click="openCreate"
+          >
+            <ListFilterPlus class="w-5 h-5 mr-2" />
+            Nueva Categoría
+          </Button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Código</TableHead>
+                <TableHead>Nombre</TableHead>
+                <TableHead>Descripción</TableHead>
+                <TableHead class="text-right">Acciones</TableHead>
+              </TableRow>
+            </TableHeader>
+
+            <TableBody>
+              <TableRow v-if="!propsW.categories.data || propsW.categories.data.length === 0">
+                <TableCell colspan="4" class="h-24 text-center text-muted-foreground">
+                  No se encontraron categorías.
+                </TableCell>
+              </TableRow>
+
+              <TableRow
+                v-for="data in propsW.categories.data"
+                :key="data.uuid ?? `${data.code}-${data.name}`"
+              >
+                <TableCell class="font-semibold">{{ data.code }}</TableCell>
+                <TableCell>{{ data.name }}</TableCell>
+                <TableCell>
+                  <span class="text-muted-foreground">
+                    {{ data.description || 'Sin descripción' }}
+                  </span>
+                </TableCell>
+                <TableCell class="text-right">
+                  <div class="flex items-center justify-end gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      class="h-9 w-9"
+                      title="Editar"
+                      aria-label="Editar categoría"
+                      @click="editData(data)"
+                    >
+                      <FilePenLine class="w-4 h-4 text-blue-600" />
+                    </Button>
+
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      class="h-9 w-9 border-destructive/40 hover:bg-destructive/10"
+                      title="Eliminar"
+                      aria-label="Eliminar categoría"
+                      @click="deleteData(data)"
+                    >
+                      <Shredder class="w-4 h-4 text-destructive" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </div>
+
+        <!-- Paginación -->
+        <!-- <div
+          v-if="propsW.categories.meta"
+          class="flex flex-col sm:flex-row items-center justify-between gap-3 border-t px-4 py-3 text-sm"
+        >
+          <div class="flex items-center gap-2 text-muted-foreground">
+            <span>Filas por página</span>
+            <Select
+              :model-value="String(propsW.categories.meta.per_page)"
+              @update:model-value="changePerPage"
+            >
+              <SelectTrigger class="h-8 w-[76px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem
+                  v-for="option in paginationOptions"
+                  :key="option"
+                  :value="String(option)"
+                >
+                  {{ option }}
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-        </template>
 
-        <!-- Columnas de Datos -->
-        <Column field="code" header="Código" class="font-semibold text-slate-700" />
-        <Column field="name" header="Nombre" />
-        <Column field="description" header="Descripción">
-          <template #body="{ data }">
-            <span class="text-slate-600">
-              {{ data.description || 'Sin descripción' }}
+          <div class="flex items-center gap-4">
+            <span class="text-muted-foreground">
+              Página {{ propsW.categories.meta.current_page }} de {{ propsW.categories.meta.last_page }}
+              ({{ propsW.categories.meta.total }} registros)
             </span>
-          </template>
-        </Column>
 
-        <Column header="Acciones">
-          <template #body="{ data }: { data: categoryBaseI }">
-            <div class="flex items-center gap-2 pt-1 sm:pt-0">
+            <div class="flex items-center gap-1">
               <Button
-                @click="editData(data)"
-                class="p-button-outlined p-button-sm h-9 w-9 p-0 flex items-center justify-center"
-                title="Editar"
+                variant="outline"
+                size="icon"
+                class="h-8 w-8"
+                :disabled="propsW.categories.meta.current_page <= 1"
+                @click="goToPage(1)"
               >
-                <template #icon>
-                  <FilePenLine class="w-4 h-4 text-blue-600" />
-                </template>
+                <ChevronsLeft class="h-4 w-4" />
               </Button>
-
               <Button
-                @click="deleteData(data, $event)"
-                class="p-button-outlined p-button-sm h-9 w-9 p-0 flex items-center justify-center"
-                title="Eliminar"
-                severity="danger"
+                variant="outline"
+                size="icon"
+                class="h-8 w-8"
+                :disabled="propsW.categories.meta.current_page <= 1"
+                @click="goToPage(propsW.categories.meta.current_page - 1)"
               >
-                <template #icon>
-                  <Shredder class="w-4 h-4 text-red-600" />
-                </template>
+                <ChevronLeft class="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                class="h-8 w-8"
+                :disabled="propsW.categories.meta.current_page >= propsW.categories.meta.last_page"
+                @click="goToPage(propsW.categories.meta.current_page + 1)"
+              >
+                <ChevronRight class="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                class="h-8 w-8"
+                :disabled="propsW.categories.meta.current_page >= propsW.categories.meta.last_page"
+                @click="goToPage(propsW.categories.meta.last_page)"
+              >
+                <ChevronsRight class="h-4 w-4" />
               </Button>
             </div>
-          </template>
-        </Column>
-      </DataTable>
-
-      <!-- Modal de Registro / Edición -->
-      <Dialog
-        v-model:visible="createCategory"
-        modal
-        dismissableMask
-        :header="isUpdate ? 'Editar Categoría' : 'Nueva Categoría'"
-        :breakpoints="{ '960px': '75vw', '641px': '95vw' }"
-        :style="{ width: '40vw' }"
-        class="p-dialog-responsive mx-2 sm:mx-0"
-        @hide="resetForm"
-      >
-        <div class="py-2">
-          <FRegister
-            :update="isUpdate"
-            :categoryEdit="categorySelected"
-            @close="createCategory = false"
-          />
+          </div>
         </div>
+
+
+      <Dialog
+        :open="createCategory"
+        @update:open="handleDialogOpenChange"
+      >
+        <DialogContent class="sm:max-w-[560px]">
+          <DialogHeader>
+            <DialogTitle>
+              {{ isUpdate ? 'Editar Categoría' : 'Nueva Categoría' }}
+            </DialogTitle>
+          </DialogHeader>
+
+          <div class="py-2">
+            <FRegister
+              :update="isUpdate"
+              :categoryEdit="categorySelected"
+              @close="handleDialogOpenChange(false)"
+            />
+          </div>
+        </DialogContent>
       </Dialog>
     </div>
   </AppLayout>
+  -->
 </template>
-
-<style scoped>
-/* Ajustes finos para PrimeVue DataTable responsive stack */
-:deep(.p-datatable-tbody > tr > td) {
-  padding: 0.75rem 1rem;
-}
-
-@media (max-width: 768px) {
-  :deep(.p-datatable-stacked .p-datatable-tbody > tr > td) {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #e2e8f0;
-  }
-}
-</style>

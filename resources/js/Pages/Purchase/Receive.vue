@@ -1,236 +1,237 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
-  Button,
-  Card,
-  Column,
-  DataTable,
-  DatePicker,
-  Divider,
-  FloatLabel,
-  InputNumber,
-  InputText,
-  Select,
-  Textarea,
-  AutoComplete,
-  AutoCompleteCompleteEvent,
-  AutoCompleteOptionSelectEvent,
-  useToast,
-} from 'primevue';
-import { purchaseBreadCrumb } from '@/Helpers/PurchaseHelper';
-import { Eraser, Plus, Send, Trash2 } from 'lucide-vue-next';
-import { useForm, usePage } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
-import axios from 'axios';
-import { FormReceiveItemI } from '@/Interfaces/ReceiveInterface';
-import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
-import { ProductBaseI } from '@/Interfaces/ProductInterface';
-import { TaxBaseI } from '@/Interfaces/TaxInterface';
-import { SupplierBaseI } from '@/Interfaces/SupplierInterface';
-import { getMoney } from '@/Global/Helpers';
-
-// Interfaces
-const toast = useToast();
-const page = usePage();
-
-// Props que vienen desde el Controller de Laravel
-const props = defineProps<{
-  warehouses: WarehouseBaseI[];
-  taxes: TaxBaseI[];
-}>();
-
-const productSuggestions = ref<ProductBaseI[]>([]);
-const supplierSuggestions = ref<SupplierBaseI[]>([]);
-
-// Formulario de Inertia
-const form = useForm({
-  receive_date: new Date() as Date | null,
-  supplier_uuid: '',
-  comment: '',
-  items: [
-    {
-      code: '',
-      product_name: '',
-      cost: 0,
-      quantity: 1,
-      warehouse_uuid: props.warehouses?.[0]?.uuid || '',
-      discount: 0,
-      tax_uuid: '',
-      amount: 0,
-      tax: 0,
-    },
-  ] as FormReceiveItemI[],
-});
-
-// Función para calcular el importe neto de una fila individual
-const calculateRowAmount = (index: number) => {
-  const item = form.items[index];
-
-  // 1. Buscar el objeto de impuesto correspondiente al tax_uuid del producto
-  let taxValue: TaxBaseI | undefined = undefined;
-
-  if (props.taxes && props.taxes.length > 0 && item.tax_uuid) {
-    taxValue = props.taxes.find((el) => el.uuid === item.tax_uuid);
-  }
-
-  const taxRate = taxValue ? Number(taxValue.rate) : 0;
-
-  const subtotal = item.cost * item.quantity;
-  const discountAmount = (subtotal * item.discount) / 100;
-  const subtotalWithDiscount = subtotal - discountAmount;
-
-  // 4. Calcular el monto del impuesto
-  let taxAmount = 0;
-
-  if (page.props.setting.add_tax) {
-    taxAmount = (subtotalWithDiscount * taxRate) / 100;
-  }
-
-  const finalAmount = subtotalWithDiscount + taxAmount;
-  form.items[index].amount = Number(finalAmount.toFixed(2));
-};
-
-// Agregar nueva fila limpia a la tabla
-const addRow = () => {
-  // 1. Obtener la última fila de la lista
-  const lastItem = form.items[form.items.length - 1];
-
-  // 2. Validar si existe y si tiene campos vacíos (código o nombre)
-  if (lastItem) {
-    const isCodeEmpty = !lastItem.code || lastItem.code.trim() === '';
-    const isNameEmpty = !lastItem.product_name || lastItem.product_name.trim() === '';
-
-    if (isCodeEmpty && isNameEmpty) {
-      toast.add({
-        severity: 'warn',
-        summary: 'Fila Vacía',
-        detail: 'Por favor, completa el producto actual antes de agregar uno nuevo.',
-        life: 3000,
-      });
-      return; // ⛔ Detiene la ejecución, no agrega la fila
-    }
-  }
-
-  // 3. Si la última fila está llena (o es el primer elemento), agrega una nueva
-  form.items.push({
-    code: '',
-    product_name: '',
-    cost: 0,
-    quantity: 1,
-    warehouse_uuid: props.warehouses?.[0]?.uuid || '',
-    discount: 0,
-    tax_uuid: '',
-    amount: 0,
-    tax: 0,
-  });
-};
-
-// Eliminar una fila específica
-const removeRow = (index: number) => {
-  if (form.items.length > 1) {
-    form.items.splice(index, 1);
-  }
-};
-
-// Total General acumulado de la entrada de mercancía
-const totalReceive = computed(() => {
-  return form.items.reduce((acc, item) => acc + (item.amount || 0), 0);
-});
-
-// Enviar formulario al backend
-const submit = () => {
-  form.post(route('purchase.receiveStore'), {
-    preserveScroll: true,
-    onSuccess: () => form.reset(),
-  });
-};
-
-const searchProductName = async (event: AutoCompleteCompleteEvent) => {
-  const value = event.query as string;
-
-  try {
-    const res = await axios.get(route('product.get.json'), {
-      params: {
-        search: value,
-      },
-    });
-
-    if (res.data && Array.isArray(res.data)) {
-      productSuggestions.value = res.data as ProductBaseI[];
-    } else {
-      productSuggestions.value = [];
-    }
-  } catch (er) {
-    console.log(er);
-  }
-};
-
-const selectProduct = (data: AutoCompleteOptionSelectEvent, index: number) => {
-  const infoData = data.value as ProductBaseI;
-  const info = form.items[index];
-
-  info.code = infoData.code;
-  info.product_name = infoData.name;
-};
-
-const searchSupplier = async (event: AutoCompleteCompleteEvent) => {
-  const value = event.query as string;
-
-  try {
-    const res = await axios.get(route('supplier.json'), {
-      params: {
-        search: value,
-      },
-    });
-
-    if (res.data && Array.isArray(res.data)) {
-      supplierSuggestions.value = res.data as SupplierBaseI[];
-    } else {
-      supplierSuggestions.value = [];
-    }
-  } catch (error) {}
-};
-
-const selectSupplier = (event: AutoCompleteOptionSelectEvent) => {
-  const dataInfo = event.value as SupplierBaseI;
-  form.supplier_uuid = dataInfo.uuid;
-};
-
-const searchByCode = async (index: number) => {
-  const item = form.items[index];
-
-  // Si el código está vacío o ya tiene un nombre asignado, no hace la petición
-  if (!item.code || item.code.trim() === '' || item.product_name !== '') {
-    return;
-  }
-
-  try {
-    const res = await axios.get(route('product.get.code'), {
-      params: {
-        search: item.code,
-      },
-    });
-
-    if (res.data && res.data.uuid) {
-      const infoData = res.data as ProductBaseI;
-
-      item.product_name = infoData.name;
-      item.tax_uuid = infoData.tax_uuid;
-      item.cost = Number(infoData.cost) || 0;
-
-      calculateRowAmount(index);
-    }
-  } catch (error) {
-    toast.add({
-      severity: 'warn',
-      summary: 'Aviso',
-      detail: 'No es posible encontrar este código',
-      life: 300,
-    });
-  }
-};
+// import AppLayout from '@/Layouts/AppLayout.vue';
+//   Button,
+//   Card,
+//   Column,
+//   DataTable,
+//   DatePicker,
+//   Divider,
+//   FloatLabel,
+//   InputNumber,
+//   InputText,
+//   Select,
+//   Textarea,
+//   AutoComplete,
+//   AutoCompleteCompleteEvent,
+//   AutoCompleteOptionSelectEvent,
+//   useToast,
+// } from 'primevue';
+// import { purchaseBreadCrumb } from '@/Helpers/PurchaseHelper';
+// import { Eraser, Plus, Send, Trash2 } from 'lucide-vue-next';
+// import { useForm, usePage } from '@inertiajs/vue3';
+// import { computed, ref } from 'vue';
+// import axios from 'axios';
+// import { FormReceiveItemI } from '@/Interfaces/ReceiveInterface';
+// import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
+// import { ProductBaseI } from '@/Interfaces/ProductInterface';
+// import { TaxBaseI } from '@/Interfaces/TaxInterface';
+// import { SupplierBaseI } from '@/Interfaces/SupplierInterface';
+// import { getMoney } from '@/Global/Helpers';
+//
+// // Interfaces
+// const toast = useToast();
+// const page = usePage();
+//
+// // Props que vienen desde el Controller de Laravel
+// const props = defineProps<{
+//   warehouses: WarehouseBaseI[];
+//   taxes: TaxBaseI[];
+// }>();
+//
+// const productSuggestions = ref<ProductBaseI[]>([]);
+// const supplierSuggestions = ref<SupplierBaseI[]>([]);
+//
+// // Formulario de Inertia
+// const form = useForm({
+//   receive_date: new Date() as Date | null,
+//   supplier_uuid: '',
+//   comment: '',
+//   items: [
+//     {
+//       code: '',
+//       product_name: '',
+//       cost: 0,
+//       quantity: 1,
+//       warehouse_uuid: props.warehouses?.[0]?.uuid || '',
+//       discount: 0,
+//       tax_uuid: '',
+//       amount: 0,
+//       tax: 0,
+//     },
+//   ] as FormReceiveItemI[],
+// });
+//
+// // Función para calcular el importe neto de una fila individual
+// const calculateRowAmount = (index: number) => {
+//   const item = form.items[index];
+//
+//   // 1. Buscar el objeto de impuesto correspondiente al tax_uuid del producto
+//   let taxValue: TaxBaseI | undefined = undefined;
+//
+//   if (props.taxes && props.taxes.length > 0 && item.tax_uuid) {
+//     taxValue = props.taxes.find((el) => el.uuid === item.tax_uuid);
+//   }
+//
+//   const taxRate = taxValue ? Number(taxValue.rate) : 0;
+//
+//   const subtotal = item.cost * item.quantity;
+//   const discountAmount = (subtotal * item.discount) / 100;
+//   const subtotalWithDiscount = subtotal - discountAmount;
+//
+//   // 4. Calcular el monto del impuesto
+//   let taxAmount = 0;
+//
+//   if (page.props.setting.add_tax) {
+//     taxAmount = (subtotalWithDiscount * taxRate) / 100;
+//   }
+//
+//   const finalAmount = subtotalWithDiscount + taxAmount;
+//   form.items[index].amount = Number(finalAmount.toFixed(2));
+// };
+//
+// // Agregar nueva fila limpia a la tabla
+// const addRow = () => {
+//   // 1. Obtener la última fila de la lista
+//   const lastItem = form.items[form.items.length - 1];
+//
+//   // 2. Validar si existe y si tiene campos vacíos (código o nombre)
+//   if (lastItem) {
+//     const isCodeEmpty = !lastItem.code || lastItem.code.trim() === '';
+//     const isNameEmpty = !lastItem.product_name || lastItem.product_name.trim() === '';
+//
+//     if (isCodeEmpty && isNameEmpty) {
+//       toast.add({
+//         severity: 'warn',
+//         summary: 'Fila Vacía',
+//         detail: 'Por favor, completa el producto actual antes de agregar uno nuevo.',
+//         life: 3000,
+//       });
+//       return; // ⛔ Detiene la ejecución, no agrega la fila
+//     }
+//   }
+//
+//   // 3. Si la última fila está llena (o es el primer elemento), agrega una nueva
+//   form.items.push({
+//     code: '',
+//     product_name: '',
+//     cost: 0,
+//     quantity: 1,
+//     warehouse_uuid: props.warehouses?.[0]?.uuid || '',
+//     discount: 0,
+//     tax_uuid: '',
+//     amount: 0,
+//     tax: 0,
+//   });
+// };
+//
+// // Eliminar una fila específica
+// const removeRow = (index: number) => {
+//   if (form.items.length > 1) {
+//     form.items.splice(index, 1);
+//   }
+// };
+//
+// // Total General acumulado de la entrada de mercancía
+// const totalReceive = computed(() => {
+//   return form.items.reduce((acc, item) => acc + (item.amount || 0), 0);
+// });
+//
+// // Enviar formulario al backend
+// const submit = () => {
+//   form.post(route('purchase.receiveStore'), {
+//     preserveScroll: true,
+//     onSuccess: () => form.reset(),
+//   });
+// };
+//
+// const searchProductName = async (event: AutoCompleteCompleteEvent) => {
+//   const value = event.query as string;
+//
+//   try {
+//     const res = await axios.get(route('product.get.json'), {
+//       params: {
+//         search: value,
+//       },
+//     });
+//
+//     if (res.data && Array.isArray(res.data)) {
+//       productSuggestions.value = res.data as ProductBaseI[];
+//     } else {
+//       productSuggestions.value = [];
+//     }
+//   } catch (er) {
+//     console.log(er);
+//   }
+// };
+//
+// const selectProduct = (data: AutoCompleteOptionSelectEvent, index: number) => {
+//   const infoData = data.value as ProductBaseI;
+//   const info = form.items[index];
+//
+//   info.code = infoData.code;
+//   info.product_name = infoData.name;
+// };
+//
+// const searchSupplier = async (event: AutoCompleteCompleteEvent) => {
+//   const value = event.query as string;
+//
+//   try {
+//     const res = await axios.get(route('supplier.json'), {
+//       params: {
+//         search: value,
+//       },
+//     });
+//
+//     if (res.data && Array.isArray(res.data)) {
+//       supplierSuggestions.value = res.data as SupplierBaseI[];
+//     } else {
+//       supplierSuggestions.value = [];
+//     }
+//   } catch (error) {}
+// };
+//
+// const selectSupplier = (event: AutoCompleteOptionSelectEvent) => {
+//   const dataInfo = event.value as SupplierBaseI;
+//   form.supplier_uuid = dataInfo.uuid;
+// };
+//
+// const searchByCode = async (index: number) => {
+//   const item = form.items[index];
+//
+//   // Si el código está vacío o ya tiene un nombre asignado, no hace la petición
+//   if (!item.code || item.code.trim() === '' || item.product_name !== '') {
+//     return;
+//   }
+//
+//   try {
+//     const res = await axios.get(route('product.get.code'), {
+//       params: {
+//         search: item.code,
+//       },
+//     });
+//
+//     if (res.data && res.data.uuid) {
+//       const infoData = res.data as ProductBaseI;
+//
+//       item.product_name = infoData.name;
+//       item.tax_uuid = infoData.tax_uuid;
+//       item.cost = Number(infoData.cost) || 0;
+//
+//       calculateRowAmount(index);
+//     }
+//   } catch (error) {
+//     toast.add({
+//       severity: 'warn',
+//       summary: 'Aviso',
+//       detail: 'No es posible encontrar este código',
+//       life: 300,
+//     });
+//   }
+// };
 </script>
 
 <template>
+ <!--
   <AppLayout title="Entrada de Mercancía">
     <div class="w-full px-2 sm:px-4 py-6 max-w-7xl mx-auto">
       <Card class="shadow-sm rounded-xl border border-slate-200">
@@ -438,7 +439,7 @@ const searchByCode = async (index: number) => {
               <!--                    getMoney(form.amount)-->
               <!--                  }}</span>-->
               <!--                </div>-->
-              <!--              </div>-->
+              <!--              </div>
             </div>
 
             <FloatLabel variant="on" class="w-full">
@@ -482,6 +483,7 @@ const searchByCode = async (index: number) => {
       </Card>
     </div>
   </AppLayout>
+  -->
 </template>
 
 <style scoped>

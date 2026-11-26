@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { Head, useForm, usePage } from '@inertiajs/vue3';
-import AppLayout from '@/layouts/AppLayout.vue';
-import FormSearch from '@components/FormSearch.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
+import FormSearch from '@/Components/FormSearch.vue';
 import { creditNotesSaleI, creditPaginationI } from '@/Interfaces/SaleInterface';
 import { getMoney, printPdf } from '@/Global/Helpers';
-import InputError from '@components/InputError.vue';
-import TabLink from '@components/TabLink.vue';
+import InputError from '@/Components/InputError.vue';
+import TabLink from '@/Components/TabLink.vue';
 import { useRoute } from 'ziggy-js';
 
 const route = useRoute();

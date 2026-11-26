@@ -1,4 +1,3 @@
-import { MenuItem } from 'primevue/menuitem';
 import { Component } from 'vue';
 
 export interface TaxI {
@@ -14,7 +13,7 @@ export interface LaravelErrorResponse {
   code?: number;
 }
 
-export interface MenuItemI extends MenuItem {
+export interface MenuItemI {
   iconComponent?: Component;
   activePath?: string;
 }

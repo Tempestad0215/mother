@@ -6,14 +6,14 @@ import 'primeicons/primeicons.css'; // THEME (elige uno)
 
 import { createInertiaApp } from '@inertiajs/vue3';
 
-import { initializeTheme } from '@/composable/useAppearance';
-import AppLayout from '@layout/AppLayout.vue';
-import AuthLayout from '@layout/AuthLayout.vue';
-import SettingsLayout from '@layout/setting/Layout.vue';
+import { initializeTheme } from '@/Composable/useAppearance';
 import { createPinia } from 'pinia';
 import { createVfm } from 'vue-final-modal';
 
 import 'vue-sonner/style.css';
+import AuthLayout from '@/Layouts/AuthLayout.vue';
+import SettingLayout from '@/Layouts/setting/Layout.vue'
+import AppLayout from '@layout/AppLayout.vue';
 
 const vfm = createVfm();
 const pinia = createPinia();
@@ -30,7 +30,7 @@ createInertiaApp({
       case name.startsWith('auth/'):
         return AuthLayout;
       case name.startsWith('settings/'):
-        return [AppLayout, SettingsLayout];
+        return [AppLayout, SettingLayout];
       default:
         return AppLayout;
     }

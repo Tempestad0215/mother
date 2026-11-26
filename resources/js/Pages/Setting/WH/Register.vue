@@ -1,76 +1,88 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
-import FRegister from '@/Pages/Setting/WH/FRegister.vue';
-import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
-import { reactive, ref } from 'vue';
-import { useRoute } from 'ziggy-js';
-import { Button, Card, Column, DataTable, Dialog, useConfirm, useToast } from 'primevue';
-import { itemsSettings } from '@/Helpers/SettingHelpers';
-import { router } from '@inertiajs/vue3';
-import { FilePenLine, HousePlus, Shredder } from '@lucide/vue';
-import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
-
-const route = useRoute();
-const confirm = useConfirm();
-const toast = useToast();
-/*
-Propiedades
- */
-const propsW = defineProps<{
-  warehouses: WarehouseBaseI[];
-}>();
-
-const createWarehouse = ref(false);
-const selectedWarehouses = ref<WarehouseBaseI | null>(null);
-const isUpdate = ref(false);
-
-const state = reactive({
-  editWareHouse: null as WarehouseBaseI | null,
-});
-
-const editData = (data: WarehouseBaseI) => {
-  selectedWarehouses.value = data;
-  isUpdate.value = true;
-  createWarehouse.value = true;
-};
-
-const deleteData = (data: WarehouseBaseI, event: Event) => {
-  confirm.require({
-    target: event.currentTarget as HTMLElement,
-    message: 'Desea eliminar este registro, los cambios son irreversible',
-    rejectProps: {
-      label: 'Cancelar',
-      severity: 'secondary',
-      outlined: true,
-    },
-    acceptProps: {
-      label: 'Eliminar',
-      severity: 'danger',
-    },
-    accept: () => {
-      router.delete(route('warehouse.destroy', { wh: data.uuid }), {
-        onSuccess: () => {
-          toast.add({
-            severity: 'success',
-            summary: 'Eliminado ',
-            detail: 'El Registro Eliminado Correctamente.',
-            life: 3000,
-          });
-        },
-      });
-    },
-  });
-};
-
-const hideCreate = () => {
-  selectedWarehouses.value = null;
-  isUpdate.value = false;
-};
+// import AppLayout from '@/Layouts/AppLayout.vue';
+// import FRegister from '@/Pages/Setting/WH/FRegister.vue';
+// import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
+// import { reactive, ref } from 'vue';
+// import { useRoute } from 'ziggy-js';
+// import { itemsSettings } from '@/Helpers/SettingHelpers';
+// import { router } from '@inertiajs/vue3';
+// import { FilePenLine, HousePlus, Shredder } from '@lucide/vue';
+// import BreadCrumbComponent from '@/Components/BreadCrumbComponent.vue';
+// import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@components/ui/card';
+//
+// const route = useRoute();
+// const confirm = useConfirm();
+// const toast = useToast();
+// /*
+// Propiedades
+//  */
+// const propsW = defineProps<{
+//   warehouses: WarehouseBaseI[];
+// }>();
+//
+// const createWarehouse = ref(false);
+// const selectedWarehouses = ref<WarehouseBaseI | null>(null);
+// const isUpdate = ref(false);
+//
+// const state = reactive({
+//   editWareHouse: null as WarehouseBaseI | null,
+// });
+//
+// const editData = (data: WarehouseBaseI) => {
+//   selectedWarehouses.value = data;
+//   isUpdate.value = true;
+//   createWarehouse.value = true;
+// };
+//
+// const deleteData = (data: WarehouseBaseI, event: Event) => {
+//   confirm.require({
+//     target: event.currentTarget as HTMLElement,
+//     message: 'Desea eliminar este registro, los cambios son irreversible',
+//     rejectProps: {
+//       label: 'Cancelar',
+//       severity: 'secondary',
+//       outlined: true,
+//     },
+//     acceptProps: {
+//       label: 'Eliminar',
+//       severity: 'danger',
+//     },
+//     accept: () => {
+//       router.delete(route('warehouse.destroy', { wh: data.uuid }), {
+//         onSuccess: () => {
+//           toast.add({
+//             severity: 'success',
+//             summary: 'Eliminado ',
+//             detail: 'El Registro Eliminado Correctamente.',
+//             life: 3000,
+//           });
+//         },
+//       });
+//     },
+//   });
+// };
+//
+// const hideCreate = () => {
+//   selectedWarehouses.value = null;
+//   isUpdate.value = false;
+// };
 </script>
 
 <template>
-  <AppLayout>
+  <!-- <AppLayout>
     <Card>
+      <CardHeader>
+        <CardTitle>
+
+        </CardTitle>
+        <CardDescription>
+
+        </CardDescription>
+
+      </CardHeader>
+      <CardContent>
+
+      </CardContent>
       <template #title>
         <div>
           <BreadCrumbComponent :itemOptions="itemsSettings" />
@@ -115,5 +127,5 @@ const hideCreate = () => {
     <Dialog modal @hide="hideCreate" v-model:visible="createWarehouse" header="Registro Almacen">
       <FRegister :update="isUpdate" :editWareHouses="selectedWarehouses" />
     </Dialog>
-  </AppLayout>
+  </AppLayout> -->
 </template>

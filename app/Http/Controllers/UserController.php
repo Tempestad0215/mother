@@ -35,7 +35,7 @@ class UserController extends Controller implements HasMiddleware
      * @param Request $request
      * @return RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
 
         // crear la validacion
@@ -61,7 +61,7 @@ class UserController extends Controller implements HasMiddleware
         return back();
     }
 
-    public function update(Request $request, User $user)
+    public function update(Request $request, User $user): RedirectResponse
     {
 
         //Validar de esta forma si se va a colocar la password
@@ -93,7 +93,7 @@ class UserController extends Controller implements HasMiddleware
      * @param User $user
      * @return RedirectResponse
      */
-    public function destroy(User $user)
+    public function destroy(User $user): RedirectResponse
     {
         //Eliminar los datos
         $user->status = true;
@@ -107,7 +107,7 @@ class UserController extends Controller implements HasMiddleware
     /**
      * @return Response
      */
-    public function assingRoleIndex()
+    public function assingRoleIndex(): void
     {
 
         return Inertia::render('Auth/AssingRole',[
@@ -117,7 +117,7 @@ class UserController extends Controller implements HasMiddleware
 
     }
 
-    public function assingRole(Request $request, User $user)
+    public function assingRole(Request $request, User $user): RedirectResponse
     {
       $validated = $request->validate([
           'roles' => ['present','array'],

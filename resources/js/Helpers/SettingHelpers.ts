@@ -1,7 +1,6 @@
-import type { MenuItem } from 'primevue/menuitem';
 import { UserRoundKey } from '@lucide/vue';
 
-export const itemsSettings: MenuItem[] = [
+export const itemsSettings: any[] = [
   {
     label: 'Configuracion',
     url: route('setting.index'),

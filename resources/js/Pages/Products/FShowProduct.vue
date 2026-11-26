@@ -1,19 +1,42 @@
 <script setup lang="ts">
-import { ProductTableI } from '@/Interfaces/ProductInterface';
-import { router, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import { router, usePage } from '@inertiajs/vue3';
 import { useRoute } from 'ziggy-js';
-import { Column, DataTable, InputGroup, InputGroupAddon, InputText, Tag, useToast } from 'primevue';
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  Search,
+} from 'lucide-vue-next';
+
+import { Badge } from '@/Components/ui/badge';
+import { Button } from '@/Components/ui/button';
+import { Input } from '@/Components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/Components/ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/Components/ui/table';
+
+import type { ProductTableI } from '@/Interfaces/ProductInterface';
+import type { PaginationI } from '@/Interfaces/GlobalInterface';
+import type { PriceListProducts } from '@/Interfaces/PriceListInterface';
 import { getInfoFromWarehouse, productBreadCrumb } from '@/Helpers/ProductHelper';
 import { PreciseCalculator } from '@/utils/Decimal';
-import { PaginationI } from '@/Interfaces/GlobalInterface';
-import { onPageChange, paginationOptions } from '@/Global/Helpers';
-import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
-import { PriceListBaseI, PriceListProducts } from '@/Interfaces/PriceListInterface';
+import { paginationOptions } from '@/Global/Helpers';
 
-const toast = useToast();
 const route = useRoute();
-
 const { component } = usePage();
 
 interface PropsI {
@@ -21,8 +44,8 @@ interface PropsI {
   stock?: boolean;
   isProduct?: boolean;
   mode?: 'CRUD' | 'SELECT';
-  searchRoute?: string; // nombre de la ruta Ziggy a la que buscar
-  searchRouteParams?: Record<string, unknown>; // params extra opcionales
+  searchRoute?: string;
+  searchRouteParams?: Record<string, unknown>;
   searchOnly?: string[];
 }
 
@@ -37,22 +60,31 @@ const propsW = withDefaults(defineProps<PropsI>(), {
 
 const searchValue = ref('');
 
-const searchData = () => {
-  if (!propsW.searchRoute) {
-    toast.add({
-      severity: 'warn',
-      summary: 'Please enter a valid search route',
-      life: 3500,
-    });
+const navigateWithParams = (page: number, perPage: number) => {
+  const targetRoute = propsW.searchRoute;
+  if (!targetRoute) {
+    router.get(
+      window.location.pathname,
+      {
+        search: searchValue.value || undefined,
+        per_page: perPage,
+        page,
+      },
+      {
+        preserveState: true,
+        preserveScroll: true,
+        only: propsW.searchOnly,
+      }
+    );
     return;
   }
 
   router.get(
-    route(propsW.searchRoute, {
+    route(targetRoute, {
       ...propsW.searchRouteParams,
       search: searchValue.value,
-      per_page: propsW.products.meta.per_page,
-      page: 1, // 🔑 al buscar, volver siempre a la página 1
+      per_page: perPage,
+      page,
     }),
     {},
     {
@@ -63,116 +95,192 @@ const searchData = () => {
   );
 };
 
+const searchData = () => {
+  navigateWithParams(1, Number(propsW.products.meta.per_page) || 10);
+};
+
+const goToPage = (page: number) => {
+  const lastPage = Number(propsW.products.meta.last_page) || 1;
+  const clampedPage = Math.max(1, Math.min(page, lastPage));
+  navigateWithParams(clampedPage, Number(propsW.products.meta.per_page) || 10);
+};
+
+const changePerPage = (value: string) => {
+  navigateWithParams(1, Number(value));
+};
+
 const getPrice = (uuid: string, priceLists: PriceListProducts[]): number => {
   return priceLists.find((el) => el.uuid === uuid)?.price ?? 0.0;
 };
 </script>
 
 <template>
-  <DataTable
-    lazy
-    @page="onPageChange($event, '', ['products'])"
-    paginator
-    responsiveLayout="stack"
-    breakpoint="768px"
-    :rowsPerPageOptions="paginationOptions"
-    :total-records="Number(propsW.products.meta.total)"
-    :first="(propsW.products.meta.current_page - 1) * Number(propsW.products.meta.per_page)"
-    :rows="Number(propsW.products.meta.per_page) ?? 0"
-    :loading="!propsW.products.data"
-    :value="propsW.products.data"
-    class="shadow-sm rounded-lg overflow-hidden border border-slate-200"
-  >
+  <div class="rounded-lg border border-border bg-card text-card-foreground shadow-sm overflow-hidden">
     <!-- Encabezado Adaptativo -->
-    <template #header>
-      <div class="space-y-3 p-1">
-        <!-- Breadcrumb opcional -->
-        <div v-if="propsW.isProduct" class="overflow-x-auto">
-          <BreadCrumbComponent
-            :itemOptions="productBreadCrumb"
-            class="text-xs sm:text-sm p-0 bg-transparent"
-          />
-        </div>
+    <div class="border-b p-3 sm:p-4 space-y-3">
+      <div v-if="propsW.isProduct" class="overflow-x-auto">
+        <!-- <BreadCrumbComponent
+          :itemOptions="productBreadCrumb"
+          class="text-xs sm:text-sm p-0 bg-transparent"
+        /> -->
+      </div>
 
-        <!-- Buscador y Botón Nuevo -->
-        <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
-          <form @submit.prevent="searchData" class="w-full sm:w-auto">
-            <InputGroup class="w-full sm:w-72">
-              <InputText
-                v-model="searchValue"
-                placeholder="Buscar producto..."
-                type="search"
-                class="w-full"
-              />
-              <InputGroupAddon
-                @click="searchData"
-                class="cursor-pointer hover:bg-slate-100 transition"
-              >
-                <i class="pi pi-search"></i>
-              </InputGroupAddon>
-            </InputGroup>
-          </form>
+      <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
+        <form @submit.prevent="searchData" class="flex w-full sm:w-80 items-center gap-2">
+          <Input
+            v-model="searchValue"
+            placeholder="Buscar producto..."
+            type="search"
+            class="w-full"
+          />
+          <Button type="submit" variant="outline" size="icon" aria-label="Buscar producto">
+            <Search class="h-4 w-4" />
+          </Button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="overflow-x-auto">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Código</TableHead>
+            <TableHead>Nombre</TableHead>
+            <TableHead v-if="component === 'Products/Register'">Costo</TableHead>
+            <TableHead>Precio</TableHead>
+            <TableHead>Tipo</TableHead>
+            <TableHead v-if="propsW.stock">Stock</TableHead>
+            <TableHead class="text-right">Acciones</TableHead>
+          </TableRow>
+        </TableHeader>
+
+        <TableBody>
+          <TableRow v-if="!propsW.products.data || propsW.products.data.length === 0">
+            <TableCell
+              :colspan="
+                5 +
+                (component === 'Products/Register' ? 1 : 0) +
+                (propsW.stock ? 1 : 0)
+              "
+              class="h-24 text-center text-muted-foreground"
+            >
+              No se encontraron productos.
+            </TableCell>
+          </TableRow>
+
+          <TableRow
+            v-for="data in propsW.products.data"
+            :key="data.uuid ?? `${data.code}-${data.name}`"
+          >
+            <TableCell class="font-semibold">{{ data.code }}</TableCell>
+            <TableCell>{{ data.name }}</TableCell>
+
+            <TableCell v-if="component === 'Products/Register'">
+              <span>{{ PreciseCalculator.formatCurrency(data.cost) }}</span>
+            </TableCell>
+
+            <TableCell>
+              <span class="font-bold">
+                {{
+                  PreciseCalculator.formatCurrency(
+                    getPrice(data.default_price_list, data.price_lists)
+                  )
+                }}
+              </span>
+            </TableCell>
+
+            <TableCell>
+              <Badge :variant="data.is_service ? 'secondary' : 'default'">
+                {{ data.is_service ? 'Servicio' : 'Producto' }}
+              </Badge>
+            </TableCell>
+
+            <TableCell v-if="propsW.stock">
+              <span class="font-medium">
+                {{ getInfoFromWarehouse(data.warehouses, data.default_warehouse)?.available ?? 0 }}
+              </span>
+            </TableCell>
+
+            <TableCell class="text-right">
+              <slot name="actions" :data="data" />
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+    </div>
+
+    <!-- Paginación -->
+    <div
+      v-if="propsW.products.meta"
+      class="flex flex-col sm:flex-row items-center justify-between gap-3 border-t px-4 py-3 text-sm"
+    >
+      <div class="flex items-center gap-2 text-muted-foreground">
+        <span>Filas por página</span>
+        <Select
+          :model-value="String(propsW.products.meta.per_page)"
+          @update:model-value="changePerPage"
+        >
+          <SelectTrigger class="h-8 w-[76px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem
+              v-for="option in paginationOptions"
+              :key="option"
+              :value="String(option)"
+            >
+              {{ option }}
+            </SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <span class="text-muted-foreground">
+          Página {{ propsW.products.meta.current_page }} de {{ propsW.products.meta.last_page }}
+          ({{ propsW.products.meta.total }} registros)
+        </span>
+
+        <div class="flex items-center gap-1">
+          <Button
+            variant="outline"
+            size="icon"
+            class="h-8 w-8"
+            :disabled="propsW.products.meta.current_page <= 1"
+            @click="goToPage(1)"
+          >
+            <ChevronsLeft class="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            class="h-8 w-8"
+            :disabled="propsW.products.meta.current_page <= 1"
+            @click="goToPage(propsW.products.meta.current_page - 1)"
+          >
+            <ChevronLeft class="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            class="h-8 w-8"
+            :disabled="propsW.products.meta.current_page >= propsW.products.meta.last_page"
+            @click="goToPage(propsW.products.meta.current_page + 1)"
+          >
+            <ChevronRight class="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            class="h-8 w-8"
+            :disabled="propsW.products.meta.current_page >= propsW.products.meta.last_page"
+            @click="goToPage(propsW.products.meta.last_page)"
+          >
+            <ChevronsRight class="h-4 w-4" />
+          </Button>
         </div>
       </div>
-    </template>
-
-    <!-- Columnas -->
-    <Column field="code" header="Código" class="font-semibold text-slate-700" />
-    <Column field="name" header="Nombre" />
-
-    <Column v-if="component === 'Products/Register'" header="Costo">
-      <template #body="{ data }: { data: ProductTableI }">
-        <span>{{ PreciseCalculator.formatCurrency(data.cost) }}</span>
-      </template>
-    </Column>
-
-    <Column header="Precio">
-      <template #body="{ data }: { data: ProductTableI }">
-        <span class="font-bold text-slate-900">
-          {{
-            PreciseCalculator.formatCurrency(getPrice(data.default_price_list, data.price_lists))
-          }}
-        </span>
-      </template>
-    </Column>
-
-    <Column header="Tipo">
-      <template #body="{ data }: { data: ProductTableI }">
-        <Tag
-          :severity="data.is_service ? 'warn' : 'info'"
-          :value="data.is_service ? 'Servicio' : 'Producto'"
-        />
-      </template>
-    </Column>
-
-    <Column v-if="propsW.stock" header="Stock">
-      <template #body="{ data }: { data: ProductTableI }">
-        <span class="font-medium">
-          {{ getInfoFromWarehouse(data.warehouses, data.default_warehouse)?.available ?? 0 }}
-        </span>
-      </template>
-    </Column>
-
-    <!-- Acciones -->
-    <Column header="Acciones">
-      <template #body="{ data }: { data: ProductTableI }">
-        <slot name="actions" :data="data" />
-      </template>
-    </Column>
-  </DataTable>
+    </div>
+  </div>
 </template>
-
-<style scoped>
-:deep(.p-datatable-tbody > tr > td) {
-  padding: 0.75rem 1rem;
-}
-
-@media (max-width: 768px) {
-  :deep(.p-datatable-stacked .p-datatable-tbody > tr > td) {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #e2e8f0;
-  }
-}
-</style>

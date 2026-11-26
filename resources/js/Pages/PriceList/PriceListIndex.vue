@@ -2,20 +2,19 @@
 import { Form } from '@inertiajs/vue3';
 import { Eraser, FilePenLine, Plus, RotateCcw } from 'lucide-vue-next';
 import { ref } from 'vue';
-import AppLayout from '@/layouts/AppLayout.vue';
-import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
-import { itemsSettings } from '@/helpers/SettingHelpers';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
+import AppLayout from '@/Layouts/AppLayout.vue';
+import { itemsSettings } from '@/Helpers/SettingHelpers';
+import { Button } from '@//Components/ui/button';
+import { Card, CardContent, CardHeader } from '@/Components/ui/card';
+import { Checkbox } from '@/Components/ui/checkbox';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+} from '@/Components/ui/dialog';
+import { Input } from '@/Components/ui/input';
+import { Label } from '@/Components/ui/label';
 import {
   Table,
   TableBody,
@@ -23,7 +22,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from '@/Components/ui/table';
 
 export interface PriceList {
   id: number | string;
@@ -59,7 +58,7 @@ const handleDelete = (item: PriceList) => {
   <AppLayout>
     <Card>
       <CardHeader>
-        <BreadCrumbComponent :itemOptions="itemsSettings" />
+        <!-- <BreadCrumbComponent :itemOptions="itemsSettings" /> -->
       </CardHeader>
 
       <CardContent>

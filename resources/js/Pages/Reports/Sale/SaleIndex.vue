@@ -5,7 +5,7 @@ import { FileSearchIcon } from '@lucide/vue';
 import { useForm } from '@inertiajs/vue3';
 import { onMounted, reactive } from 'vue';
 import { saleTypeOptions } from '@/Helpers/SaleHelper';
-import AppLayout from '@/layouts/AppLayout.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
 
 //Propiedades de la ventana
 const propsW = defineProps<{

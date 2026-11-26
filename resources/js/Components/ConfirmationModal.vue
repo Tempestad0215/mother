@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import SecondaryButton from '@components/SecondaryButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
 
 // const emit = defineEmits<{
 //     (e: 'close')

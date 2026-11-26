@@ -1,25 +1,33 @@
 <script setup lang="ts">
-import { useForm } from '@inertiajs/vue3';
-import { SupplierI } from '@/Interfaces/SupplierInterface';
 import { computed, onMounted } from 'vue';
-import { getMoney } from '@/Global/Helpers';
+import { useForm } from '@inertiajs/vue3';
 import { useRoute } from 'ziggy-js';
-import { PaymentTypeEnumI } from '@/Interfaces/GlobalInterface';
+import { Eraser, Forward, Loader2 } from 'lucide-vue-next';
+
+import { Button } from '@/Components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/Components/ui/card';
+import { Input } from '@/Components/ui/input';
+import { Label } from '@/Components/ui/label';
 import {
   Select,
-  Card,
-  FloatLabel,
-  InputText,
-  ToggleSwitch,
-  Button,
-  useToast,
-  InputNumber,
-  Divider,
-} from 'primevue';
-import { Eraser, Forward } from '@lucide/vue';
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/Components/ui/select';
+import { Separator } from '@/Components/ui/separator';
+import { Switch } from '@/Components/ui/switch';
+
+import type { SupplierI } from '@/Interfaces/SupplierInterface';
+import type { PaymentTypeEnumI } from '@/Interfaces/GlobalInterface';
+import { getMoney } from '@/Global/Helpers';
 
 const route = useRoute();
-const toast = useToast();
 
 const propsW = defineProps<{
   supplierEdit: SupplierI | null;
@@ -27,11 +35,28 @@ const propsW = defineProps<{
   paymentTypes: PaymentTypeEnumI;
 }>();
 
-const emit = defineEmits(['close']);
+const emit = defineEmits<{
+  (e: 'close'): void;
+}>();
 
-/*
-Al momento de cargar
- */
+const form = useForm({
+  uuid: '',
+  contact: '',
+  company_name: '',
+  phone: '',
+  email: '',
+  type_payment: 'CONTADO',
+  receive_email: false,
+  is_recurring: false,
+  payment_day: null as number | null,
+  account_bank: '',
+  comment: '',
+  amount: 0,
+  due_date: 0,
+  late_fee: 0,
+  consumed: 0,
+});
+
 onMounted(() => {
   if (propsW.supplierEdit) {
     form.uuid = propsW.supplierEdit.uuid;
@@ -43,30 +68,6 @@ onMounted(() => {
   }
 });
 
-/*
-Formulario
- */
-const form = useForm({
-  uuid: '',
-  contact: '',
-  company_name: '',
-  phone: '',
-  email: '',
-  type_payment: 'CONTADO',
-  receive_email: false,
-  is_recurring: false,
-  payment_day: null,
-  account_bank: '',
-  comment: '',
-  amount: 0,
-  due_date: 0,
-  late_fee: 0,
-  consumed: 0,
-});
-
-/*
-Propiedades computadas
- */
 const balance = computed(() => {
   return getMoney(form.amount - form.consumed);
 });
@@ -74,53 +75,28 @@ const balance = computed(() => {
 const getPaymentTypes = computed(() => {
   return Object.entries(propsW.paymentTypes).map(([key, value]) => ({
     label: key,
-    value: value,
+    value: String(value),
   }));
 });
 
-/**
- * Enviar los datos
- */
-const submit = () => {
+const handlePaymentDayInput = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const numeric = target.value.replace(/\D/g, '');
+  form.payment_day = numeric === '' ? null : Number(numeric);
+};
+
+const submit = (): void => {
   if (propsW.update) {
     form.patch(route('supplier.update', { supplier: form.uuid }), {
       onSuccess: () => {
-        toast.add({
-          severity: 'success',
-          summary: 'Registro Actualizado',
-          detail: 'Proveedor actualizado correctamente.',
-          life: 3000,
-        });
         emit('close');
-      },
-      onError: (err) => {
-        toast.add({
-          severity: 'error',
-          summary: 'Error al actualizar',
-          detail: `Detalle: ${Object.values(err)[0]}`,
-          life: 5000,
-        });
       },
     });
   } else {
     form.post(route('supplier.store'), {
       onSuccess: () => {
-        toast.add({
-          severity: 'success',
-          summary: 'Registro Creado',
-          detail: 'Proveedor creado correctamente.',
-          life: 3000,
-        });
         form.reset();
         emit('close');
-      },
-      onError: (err) => {
-        toast.add({
-          severity: 'error',
-          summary: 'Error al crear',
-          detail: `Detalle: ${Object.values(err)[0]}`,
-          life: 5000,
-        });
       },
     });
   }
@@ -128,121 +104,162 @@ const submit = () => {
 </script>
 
 <template>
-  <Card class="w-full max-w-2xl mx-auto border-none shadow-none sm:shadow-sm">
-    <template #header>
-      <h3 class="text-xl sm:text-2xl font-bold text-center text-slate-800">
+  <Card class="w-full max-w-2xl mx-auto border-none shadow-none sm:border sm:shadow-sm">
+    <CardHeader class="pb-2">
+      <CardTitle class="text-xl sm:text-2xl font-bold text-center text-foreground">
         {{ propsW.update ? 'Actualizar' : 'Crear' }} Proveedor
-      </h3>
-      <Divider class="my-3" />
-    </template>
+      </CardTitle>
+      <Separator class="mt-3" />
+    </CardHeader>
 
-    <template #content>
+    <CardContent>
       <form @submit.prevent="submit" class="w-full space-y-4">
         <!-- Rejilla de Campos de Texto -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FloatLabel variant="on" class="w-full">
-            <InputText id="company_name" class="w-full" v-model="form.company_name" required />
-            <label for="company_name">Nombre Comercial <span class="text-red-500">*</span></label>
-          </FloatLabel>
-
-          <FloatLabel variant="on" class="w-full">
-            <InputText id="contact" class="w-full" v-model="form.contact" />
-            <label for="contact">Representante / Contacto</label>
-          </FloatLabel>
-
-          <FloatLabel variant="on" class="w-full">
-            <InputText id="phone" class="w-full" v-model="form.phone" />
-            <label for="phone">Teléfono</label>
-          </FloatLabel>
-
-          <FloatLabel variant="on" class="w-full">
-            <InputText type="email" id="email" class="w-full" v-model="form.email" />
-            <label for="email">Correo Electrónico</label>
-          </FloatLabel>
-
-          <FloatLabel variant="on" class="w-full">
-            <InputText id="account_bank" class="w-full" v-model="form.account_bank" />
-            <label for="account_bank">Cuenta de Banco</label>
-          </FloatLabel>
-
-          <FloatLabel variant="on" class="w-full">
-            <InputNumber
-              id="payment_day"
-              class="w-full"
-              inputClass="w-full"
-              v-model="form.payment_day"
+          <div class="space-y-1.5">
+            <Label for="company_name">
+              Nombre Comercial <span class="text-destructive">*</span>
+            </Label>
+            <Input
+              id="company_name"
+              v-model="form.company_name"
+              placeholder="Ej. Distribuidora Central"
+              required
             />
-            <label for="payment_day">Día de pago</label>
-          </FloatLabel>
+          </div>
 
-          <FloatLabel variant="on" class="w-full md:col-span-2">
-            <InputText id="comment" class="w-full" v-model="form.comment" />
-            <label for="comment">Comentario</label>
-          </FloatLabel>
+          <div class="space-y-1.5">
+            <Label for="contact">Representante / Contacto</Label>
+            <Input
+              id="contact"
+              v-model="form.contact"
+              placeholder="Nombre del contacto"
+            />
+          </div>
+
+          <div class="space-y-1.5">
+            <Label for="phone">Teléfono</Label>
+            <Input
+              id="phone"
+              v-model="form.phone"
+              placeholder="Ej. 809-555-0199"
+            />
+          </div>
+
+          <div class="space-y-1.5">
+            <Label for="email">Correo Electrónico</Label>
+            <Input
+              id="email"
+              type="email"
+              v-model="form.email"
+              placeholder="correo@proveedor.com"
+            />
+          </div>
+
+          <div class="space-y-1.5">
+            <Label for="account_bank">Cuenta de Banco</Label>
+            <Input
+              id="account_bank"
+              v-model="form.account_bank"
+              placeholder="Número de cuenta"
+            />
+          </div>
+
+          <div class="space-y-1.5">
+            <Label for="payment_day">Día de pago</Label>
+            <Input
+              id="payment_day"
+              type="number"
+              min="1"
+              max="31"
+              :model-value="form.payment_day ?? ''"
+              placeholder="1 - 31"
+              @input="handlePaymentDayInput"
+            />
+          </div>
+
+          <div class="space-y-1.5 md:col-span-2">
+            <Label for="comment">Comentario</Label>
+            <Input
+              id="comment"
+              v-model="form.comment"
+              placeholder="Notas adicionales"
+            />
+          </div>
         </div>
 
-        <Divider class="my-4" />
+        <Separator class="my-4" />
 
         <!-- Opciones y Tipo de Pago -->
         <div
-          class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-slate-50 p-3 rounded-lg border border-slate-200"
+          class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-muted/40 p-3 rounded-lg border"
         >
           <div class="flex flex-wrap items-center gap-6">
-            <div class="flex items-center gap-2">
-              <ToggleSwitch inputId="receive_email" v-model="form.receive_email" />
-              <label for="receive_email" class="text-sm font-medium text-slate-700 cursor-pointer">
+            <div class="flex items-center space-x-2">
+              <Switch
+                id="receive_email"
+                :model-value="form.receive_email"
+                @update:model-value="(val: boolean) => (form.receive_email = val)"
+              />
+              <Label for="receive_email" class="cursor-pointer">
                 Recibir Correo
-              </label>
+              </Label>
             </div>
 
-            <div class="flex items-center gap-2">
-              <ToggleSwitch inputId="is_recurring" v-model="form.is_recurring" />
-              <label for="is_recurring" class="text-sm font-medium text-slate-700 cursor-pointer">
+            <div class="flex items-center space-x-2">
+              <Switch
+                id="is_recurring"
+                :model-value="form.is_recurring"
+                @update:model-value="(val: boolean) => (form.is_recurring = val)"
+              />
+              <Label for="is_recurring" class="cursor-pointer">
                 Pago Recurrente
-              </label>
+              </Label>
             </div>
           </div>
 
-          <FloatLabel variant="on" class="w-full sm:w-56">
-            <Select
-              id="type_payment"
-              class="w-full"
-              v-model="form.type_payment"
-              option-label="label"
-              option-value="value"
-              :options="getPaymentTypes"
-            />
-            <label for="type_payment">Condición de Pago</label>
-          </FloatLabel>
+          <div class="space-y-1.5 w-full sm:w-56">
+            <Label for="type_payment">Condición de Pago</Label>
+            <Select v-model="form.type_payment">
+              <SelectTrigger id="type_payment" class="w-full">
+                <SelectValue placeholder="Condición de Pago" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem
+                  v-for="item in getPaymentTypes"
+                  :key="item.value"
+                  :value="item.value"
+                >
+                  {{ item.label }}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         <!-- Botones de Acción -->
         <div class="pt-4 flex flex-col-reverse sm:flex-row justify-end gap-3">
           <Button
-            @click="form.reset()"
             type="reset"
-            severity="warn"
-            label="Limpiar"
-            class="w-full sm:w-auto h-10"
-            outlined
+            variant="outline"
+            class="w-full sm:w-auto border-amber-500 text-amber-600 hover:bg-amber-50 hover:text-amber-700 dark:hover:bg-amber-950/30"
+            @click="form.reset()"
           >
-            <template #icon>
-              <Eraser class="w-4 h-4 mr-1" />
-            </template>
+            <Eraser class="w-4 h-4 mr-2" />
+            Limpiar
           </Button>
 
           <Button
             type="submit"
-            :label="propsW.update ? 'Actualizar' : 'Registrar'"
-            :loading="form.processing"
-            class="w-full sm:w-auto h-10"
+            :disabled="form.processing"
+            class="w-full sm:w-auto"
           >
-            <template #icon>
-              <Forward class="w-4 h-4 mr-1" />
-            </template>
+            <Loader2 v-if="form.processing" class="w-4 h-4 mr-2 animate-spin" />
+            <Forward v-else class="w-4 h-4 mr-2" />
+            {{ propsW.update ? 'Actualizar' : 'Registrar' }}
           </Button>
         </div>
       </form>
-    </template>
+    </CardContent>
   </Card>
 </template>

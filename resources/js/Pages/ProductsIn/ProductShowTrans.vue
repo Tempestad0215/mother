@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
-import AppLayout from '@/layouts/AppLayout.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
 import { productTransI } from '@/Interfaces/ProductInterface';
-import FormSearch from '@components/FormSearch.vue';
-import InputError from '@components/InputError.vue';
+import FormSearch from '@/Components/FormSearch.vue';
+import InputError from '@/Components/InputError.vue';
 import { useRoute } from 'ziggy-js';
 
 const route = useRoute();

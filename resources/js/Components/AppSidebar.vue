@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import NavUser from '@/components/NavUser.vue';
+import NavUser from '@/Components/NavUser.vue';
 import { dashboard } from '@/routes';
 import { NavItem } from '@/types/navigation';
 import {
@@ -10,10 +10,10 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@/components/ui/sidebar';
+} from '@/Components/ui/sidebar';
 import { Link } from '@inertiajs/vue3';
 import { BookOpen, FolderGit2, LayoutGrid } from '@lucide/vue';
-import NavFooter from '@/components/NavFooter.vue';
+import NavFooter from '@/Components/NavFooter.vue';
 
 const mainNavItems: NavItem[] = [
   {

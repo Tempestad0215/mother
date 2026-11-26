@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import SidebarInset from '@components/ui/sidebar/SidebarInset.vue';
+import SidebarInset from '@/Components/ui/sidebar/SidebarInset.vue';
 import { AppVariant } from '@/types/ui';
 
 type Props = {

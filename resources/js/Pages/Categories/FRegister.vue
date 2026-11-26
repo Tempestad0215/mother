@@ -4,12 +4,12 @@ import { Eraser, Forward } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { toast } from 'vue-sonner';
 import { useRoute } from 'ziggy-js';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
 import type { categoryBaseI } from '@/Interfaces/CategoriesInterface';
+import { CardHeader, CardTitle } from '@/Components/ui/card';
+import { Separator } from '@/Components/ui/separator';
+import { Input } from '@/Components/ui/input';
+import { Label } from '@/Components/ui/label';
+import { Button } from '@/Components/ui/button';
 
 const route = useRoute();
 
@@ -62,10 +62,9 @@ const handleError = (err: Record<string, string>) => {
         :method="propsW.update ? 'patch' : 'post'"
         class="w-full space-y-5"
         #default="{ processing, errors, reset }"
-        @success="handleSuccess(reset)"
         @error="handleError"
       >
-        <input
+        <Input
           v-if="propsW.categoryEdit?.uuid"
           type="hidden"
           name="uuid"

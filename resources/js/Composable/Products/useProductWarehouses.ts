@@ -1,12 +1,8 @@
 import axios from 'axios';
-import { useToast } from 'primevue';
 import { WarehouseProductI } from '@/Interfaces/ProductInterface';
-import { useNotify } from '@/Composable/Shared/useNotify';
 
 export function useProductWarehouses() {
-  const toast = useToast();
 
-  const notify = useNotify();
 
   const getWarehouses = async (product: string): Promise<WarehouseProductI[]> => {
     try {
@@ -18,7 +14,6 @@ export function useProductWarehouses() {
         return [];
       }
     } catch (_) {
-      notify.error('No se Ha Podido Obtener Los datos');
       return [];
     }
   };

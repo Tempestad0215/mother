@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { moneyConfig } from '@/Global/Helpers';
-import TextInput from '@components/TextInput.vue';
-import PrimaryButton from '@components/PrimaryButton.vue';
-import InputError from '@components/InputError.vue';
+import TextInput from '@/Components/TextInput.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import InputError from '@/Components/InputError.vue';
 import { Money } from 'v-money3';
 import { ProductBaseI, ProductTableI } from '@/Interfaces/ProductInterface';
 import { ref, watch } from 'vue';
@@ -10,8 +10,8 @@ import axios from 'axios';
 import { useForm } from '@inertiajs/vue3';
 import { entryBaseI, entryProductI } from '@/Interfaces/EntryTransInterface';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
-import InputLabel from '@components/InputLabel.vue';
-import FloatBox from '@components/FloatBox.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import FloatBox from '@/Components/FloatBox.vue';
 import FShowProduct from '@/Pages/Products/FShowProduct.vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';

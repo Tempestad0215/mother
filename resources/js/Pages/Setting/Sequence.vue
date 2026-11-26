@@ -1,160 +1,160 @@
 <script setup lang="ts">
-import { router, useForm } from '@inertiajs/vue3';
-import AppLayout from '@/layouts/AppLayout.vue';
-import { sequenceDataI } from '@/Interfaces/SettingInterface';
-import { onMounted, reactive } from 'vue';
-import { useRoute } from 'ziggy-js';
-import {
-  Breadcrumb,
-  Button,
-  Card,
-  Column,
-  DataTable,
-  DatePicker,
-  FloatLabel,
-  InputMask,
-  InputNumber,
-  Select,
-  useConfirm,
-  useToast,
-} from 'primevue';
-import { itemsSettings } from '@/Helpers/SettingHelpers';
-
-const route = useRoute();
-const toast = useToast();
-const confirm = useConfirm();
-/*
-Propiedades
- */
-const propsW = defineProps<{
-  sequenceType: string[];
-  sequencesData: sequenceDataI[];
-  sequenceEdit?: sequenceDataI;
-}>();
-
-const state = reactive({
-  first_error: '',
-});
-
-/*
-Al momentod de cargar
- */
-onMounted(() => {
-  //Verificar si existe la secuencia para editar
-  if (propsW.sequenceEdit) {
-    form.uuid = propsW.sequenceEdit.uuid;
-    form.code = propsW.sequenceEdit.code;
-    form.type = propsW.sequenceEdit.type;
-    form.from = propsW.sequenceEdit.from;
-    form.to = propsW.sequenceEdit.to;
-    form.next = propsW.sequenceEdit.next;
-    form.advise = propsW.sequenceEdit.advise;
-    form.num_request = propsW.sequenceEdit.num_request;
-    form.num_authorization = propsW.sequenceEdit.num_authorization;
-    form.date_request = propsW.sequenceEdit.date_request
-      ? new Date(propsW.sequenceEdit.date_request)
-      : new Date();
-    form.date_expire = propsW.sequenceEdit.date_expire
-      ? new Date(propsW.sequenceEdit.date_expire)
-      : new Date();
-  }
-});
-
-/*
-Formulario
- */
-const form = useForm({
-  uuid: '',
-  code: '',
-  type: 'B01',
-  from: 1,
-  next: 0,
-  to: 0,
-  advise: 0,
-  num_request: '',
-  num_authorization: '',
-  date_request: null as Date | null,
-  date_expire: null as Date | null,
-  status: true,
-  general: '',
-});
-
-/**
- * Enviar los datos
- */
-const submit = (): void => {
-  form.post(route('sequence.store'), {
-    onSuccess: () => {
-      //Mensjae de exito
-      // successHttp('Registro Guiardado Correctamente');
-      toast.add({
-        severity: 'success',
-        summary: 'Registro Exitoso',
-        life: 3500,
-      });
-      //Limpiar el formulario
-      form.reset();
-      state.first_error = '';
-    },
-    onFinish: () => {
-      Object.entries(form.errors).forEach(([key, value]) => {
-        if (!state.first_error) {
-          state.first_error = `El Campo ${key}, Mensaje: ${value}`;
-        }
-      });
-    },
-  });
-};
-
-/**
- * Editar las secuncia
- */
-const edit = (uuid: string): void => {
-  router.get(route('sequence.edit', { sequence: uuid }));
-};
-
-/**
- * Eliminar la secuencia
- */
-const destroy = (uuid: string): void => {
-  confirm.require({
-    message: 'Desea Eliminar este registro, los cambios son irreversibles?',
-    header: 'Confirmation',
-    icon: 'pi pi-exclamation-triangle',
-    rejectProps: {
-      label: 'Cancelar',
-      severity: 'secondary',
-      outlined: true,
-    },
-    acceptProps: {
-      label: 'Eliminar',
-    },
-    accept: () => {
-      router.delete(route('sequence.destroy', { sequence: uuid }), {
-        onSuccess: () => {
-          toast.add({
-            severity: 'success',
-            summary: 'Eliminado ',
-            detail: 'El Registro Eliminado Correctamente.',
-            life: 3000,
-          });
-        },
-        onError: () => {
-          toast.add({
-            severity: 'error',
-            summary: 'Ha Surgido un Error',
-            detail: 'No se pudo eliminar el registro.',
-          });
-        },
-      });
-    },
-  });
-};
+// import { router, useForm } from '@inertiajs/vue3';
+// import AppLayout from '@/Layouts/AppLayout.vue';
+// import { sequenceDataI } from '@/Interfaces/SettingInterface';
+// import { onMounted, reactive } from 'vue';
+// import { useRoute } from 'ziggy-js';
+// import {
+//   Breadcrumb,
+//   Button,
+//   Card,
+//   Column,
+//   DataTable,
+//   DatePicker,
+//   FloatLabel,
+//   InputMask,
+//   InputNumber,
+//   Select,
+//   useConfirm,
+//   useToast,
+// } from 'primevue';
+// import { itemsSettings } from '@/Helpers/SettingHelpers';
+//
+// const route = useRoute();
+// const toast = useToast();
+// const confirm = useConfirm();
+// /*
+// Propiedades
+//  */
+// const propsW = defineProps<{
+//   sequenceType: string[];
+//   sequencesData: sequenceDataI[];
+//   sequenceEdit?: sequenceDataI;
+// }>();
+//
+// const state = reactive({
+//   first_error: '',
+// });
+//
+// /*
+// Al momentod de cargar
+//  */
+// onMounted(() => {
+//   //Verificar si existe la secuencia para editar
+//   if (propsW.sequenceEdit) {
+//     form.uuid = propsW.sequenceEdit.uuid;
+//     form.code = propsW.sequenceEdit.code;
+//     form.type = propsW.sequenceEdit.type;
+//     form.from = propsW.sequenceEdit.from;
+//     form.to = propsW.sequenceEdit.to;
+//     form.next = propsW.sequenceEdit.next;
+//     form.advise = propsW.sequenceEdit.advise;
+//     form.num_request = propsW.sequenceEdit.num_request;
+//     form.num_authorization = propsW.sequenceEdit.num_authorization;
+//     form.date_request = propsW.sequenceEdit.date_request
+//       ? new Date(propsW.sequenceEdit.date_request)
+//       : new Date();
+//     form.date_expire = propsW.sequenceEdit.date_expire
+//       ? new Date(propsW.sequenceEdit.date_expire)
+//       : new Date();
+//   }
+// });
+//
+// /*
+// Formulario
+//  */
+// const form = useForm({
+//   uuid: '',
+//   code: '',
+//   type: 'B01',
+//   from: 1,
+//   next: 0,
+//   to: 0,
+//   advise: 0,
+//   num_request: '',
+//   num_authorization: '',
+//   date_request: null as Date | null,
+//   date_expire: null as Date | null,
+//   status: true,
+//   general: '',
+// });
+//
+// /**
+//  * Enviar los datos
+//  */
+// const submit = (): void => {
+//   form.post(route('sequence.store'), {
+//     onSuccess: () => {
+//       //Mensjae de exito
+//       // successHttp('Registro Guiardado Correctamente');
+//       toast.add({
+//         severity: 'success',
+//         summary: 'Registro Exitoso',
+//         life: 3500,
+//       });
+//       //Limpiar el formulario
+//       form.reset();
+//       state.first_error = '';
+//     },
+//     onFinish: () => {
+//       Object.entries(form.errors).forEach(([key, value]) => {
+//         if (!state.first_error) {
+//           state.first_error = `El Campo ${key}, Mensaje: ${value}`;
+//         }
+//       });
+//     },
+//   });
+// };
+//
+// /**
+//  * Editar las secuncia
+//  */
+// const edit = (uuid: string): void => {
+//   router.get(route('sequence.edit', { sequence: uuid }));
+// };
+//
+// /**
+//  * Eliminar la secuencia
+//  */
+// const destroy = (uuid: string): void => {
+//   confirm.require({
+//     message: 'Desea Eliminar este registro, los cambios son irreversibles?',
+//     header: 'Confirmation',
+//     icon: 'pi pi-exclamation-triangle',
+//     rejectProps: {
+//       label: 'Cancelar',
+//       severity: 'secondary',
+//       outlined: true,
+//     },
+//     acceptProps: {
+//       label: 'Eliminar',
+//     },
+//     accept: () => {
+//       router.delete(route('sequence.destroy', { sequence: uuid }), {
+//         onSuccess: () => {
+//           toast.add({
+//             severity: 'success',
+//             summary: 'Eliminado ',
+//             detail: 'El Registro Eliminado Correctamente.',
+//             life: 3000,
+//           });
+//         },
+//         onError: () => {
+//           toast.add({
+//             severity: 'error',
+//             summary: 'Ha Surgido un Error',
+//             detail: 'No se pudo eliminar el registro.',
+//           });
+//         },
+//       });
+//     },
+//   });
+// };
 </script>
 
 <template>
   <!--  Contenido general-->
-  <AppLayout>
+  <!-- <AppLayout>
     <Card>
       <template #title>
         <div>
@@ -178,12 +178,11 @@ const destroy = (uuid: string): void => {
                 </template>
               </Column>
             </DataTable>
-            <!--            Tabla de las secuencias registrada-->
+            <!--            Tabla de las secuencias registrada
           </div>
 
           <form @submit.prevent="submit" class="space-y-3">
             <h3 class="text-2xl font-bold text-center">Registro de Secuencia</h3>
-            <!--                    Tipo de sequencia-->
             <div>
               <FloatLabel variant="on">
                 <Select
@@ -196,7 +195,6 @@ const destroy = (uuid: string): void => {
               </FloatLabel>
             </div>
 
-            <!-- From-->
             <div>
               <FloatLabel variant="on">
                 <InputNumber fluid v-model="form.from" />
@@ -204,7 +202,6 @@ const destroy = (uuid: string): void => {
               </FloatLabel>
             </div>
 
-            <!-- From-->
             <div>
               <FloatLabel variant="on">
                 <InputNumber fluid v-model="form.to" />
@@ -212,7 +209,6 @@ const destroy = (uuid: string): void => {
               </FloatLabel>
             </div>
 
-            <!-- From-->
             <div>
               <FloatLabel variant="on">
                 <InputNumber :min="form.from + 1" fluid v-model="form.advise" />
@@ -220,7 +216,6 @@ const destroy = (uuid: string): void => {
               </FloatLabel>
             </div>
 
-            <!-- From-->
             <div>
               <FloatLabel variant="on">
                 <InputMask mask="9999?99999999" fluid v-model="form.num_request" />
@@ -228,21 +223,18 @@ const destroy = (uuid: string): void => {
               </FloatLabel>
             </div>
 
-            <!-- From-->
             <div>
               <FloatLabel variant="on">
                 <InputMask mask="9999?99999999" fluid v-model="form.num_authorization" />
                 <label for="authorizacion">N. Aprobacion</label>
               </FloatLabel>
             </div>
-            <!-- From-->
             <div>
               <FloatLabel variant="on">
                 <DatePicker fluid v-model="form.date_expire" />
                 <label for="date_expire">Fecha Vencimiento</label>
               </FloatLabel>
             </div>
-            <!-- From-->
             <div>
               <FloatLabel variant="on">
                 <DatePicker fluid v-model="form.date_request" />
@@ -250,7 +242,6 @@ const destroy = (uuid: string): void => {
               </FloatLabel>
             </div>
 
-            <!--                Botones para enviar-->
             <div class="mt-5 text-right space-x-3">
               <Button :disabled="form.processing" type="reset" severity="warn" label="Limpiar" />
               <Button :disabled="form.processing" type="submit" label="Registrar" />
@@ -259,6 +250,5 @@ const destroy = (uuid: string): void => {
         </div>
       </template>
     </Card>
-    <!--        Conteneido de la ventana-->
-  </AppLayout>
+  </AppLayout> -->
 </template>

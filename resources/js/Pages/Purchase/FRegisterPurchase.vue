@@ -1,242 +1,243 @@
 <script setup lang="ts">
-import {
-  AutoComplete,
-  AutoCompleteCompleteEvent,
-  AutoCompleteOptionSelectEvent,
-  Button,
-  Card,
-  Column,
-  DataTable,
-  DataTableCellEditCompleteEvent,
-  DatePicker,
-  Divider,
-  FloatLabel,
-  InputNumber,
-  Select,
-  useConfirm,
-  useToast,
-} from 'primevue';
-import { useForm } from '@inertiajs/vue3';
-import { purchaseInfoI } from '@/Interfaces/PurchaseInterface';
-import { SupplierI } from '@/Interfaces/SupplierInterface';
-import AppLayout from '@/layouts/AppLayout.vue';
-import { PreciseCalculator } from '@/utils/Decimal';
-import { ProductBaseI, ProductTableI } from '@/Interfaces/ProductInterface';
-import { TaxBaseI } from '@/Interfaces/TaxInterface';
-import { useProductStore } from '@/stores/ProductStore';
-import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
-import { purchaseBreadCrumb } from '@/Helpers/PurchaseHelper';
-import { Plus, Send, Trash2 } from '@lucide/vue';
-import axios from 'axios';
-import { ref } from 'vue';
-import { getDataFromArray, getMoney, truncateText } from '@/Global/Helpers';
-import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
-
-const toast = useToast();
-const confirm = useConfirm();
-
-const propsW = defineProps<{
-  suppliers: SupplierI[];
-  products: ProductBaseI[];
-  taxes: TaxBaseI[];
-  warehouses: WarehouseBaseI[];
-}>();
-
-const productStore = useProductStore();
-const productOptions = ref<ProductTableI[]>([]);
-
-/*
-   Formulario
- */
-const form = useForm({
-  uuid: 0,
-  supplier_uuid: 0,
-  doc_date: new Date(),
-  info: [
-    {
-      uuid: '',
-      code: '',
-      name: '',
-      quantity: 0,
-      cost: 0,
-      warehouse_uuid: '',
-      tax_uuid: '',
-      tax: 0,
-      discount_rate: 0,
-      discount_amount: 0,
-      amount: 0,
-    },
-  ] as purchaseInfoI[],
-  tax: 0,
-  discount: 0,
-  sub_total: 0,
-  amount: 0,
-  comment: '',
-});
-
-const searchProduct = async (event: AutoCompleteCompleteEvent) => {
-  try {
-    const search = event.query.toString().trim().toUpperCase();
-
-    const res = await axios.get(
-      route('product.get.json', {
-        search: search,
-      })
-    );
-
-    if (res.status === 200 && res.data) {
-      productOptions.value = res.data;
-    }
-  } catch (err) {
-    toast.add({
-      severity: 'error',
-      summary: 'Error al intentar obtener producto',
-      life: 3000,
-    });
-  }
-};
-
-const getInfoName = (event: AutoCompleteOptionSelectEvent, index: number) => {
-  const info = event.value as purchaseInfoI;
-  const currentLine = form.info[index];
-  const existsIndex = form.info.findIndex((el) => el.code === info.code);
-
-  if (existsIndex === -1) {
-    currentLine.uuid = info.uuid;
-    currentLine.code = info.code;
-    currentLine.name = info.name;
-    currentLine.quantity += 1;
-    currentLine.cost = info.cost;
-    return;
-  } else {
-    form.info[existsIndex].quantity += 1;
-  }
-};
-
-const submit = () => {
-  form.post(route('purchase.store'), {
-    onSuccess: () => {
-      toast.add({
-        severity: 'success',
-        summary: 'Registro Completado',
-        detail: 'Orden de compra registrada correctamente.',
-        life: 3000,
-      });
-      form.reset();
-      form.clearErrors();
-    },
-    onError: (err) => {
-      toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: `Error en la petición: ${Object.values(err)[0]}`,
-        life: 5000,
-      });
-    },
-  });
-};
-
-const sumSubTotalByLine = () => {
-  const discountTotal = form.info.reduce(
-    (acc: number, curr: purchaseInfoI) => acc + curr.discount_amount,
-    0
-  );
-  const subTotal = form.info.reduce((acc: number, curr: purchaseInfoI) => acc + curr.amount, 0);
-  const taxTotal = form.info.reduce((acc: number, curr: purchaseInfoI) => acc + curr.tax, 0);
-
-  form.tax = taxTotal;
-  form.discount = discountTotal;
-  form.sub_total = Number(PreciseCalculator.subtract(subTotal, taxTotal));
-  form.amount = Number(PreciseCalculator.add(taxTotal, form.sub_total));
-};
-
-const calculateAmount = (index: number) => {
-  const taxPercent = productStore.taxRate;
-  const info = form.info[index];
-  const cost = info.cost;
-  const quantity = info.quantity;
-  const discountRate = Number(PreciseCalculator.divide(info.discount_rate, 100));
-  const taxPerProduct = PreciseCalculator.multiply(cost, taxPercent);
-
-  form.info[index].tax = Number(PreciseCalculator.multiply(taxPerProduct.toString(), quantity));
-  const base = PreciseCalculator.multiply(quantity, cost);
-  const discountAmount = Number(PreciseCalculator.multiply(base.toString(), discountRate));
-
-  form.info[index].discount_amount = discountAmount;
-  form.info[index].amount = Number(PreciseCalculator.subtract(base.toString(), discountAmount));
-
-  sumSubTotalByLine();
-};
-
-const addLine = () => {
-  const info = form.info[form.info.length - 1];
-  if (info.name === '' || info.amount === 0) {
-    toast.add({
-      severity: 'warn',
-      summary: 'Información incompleta',
-      detail: 'Por favor, complete la línea actual antes de agregar otra.',
-      life: 5000,
-    });
-    return false;
-  }
-  form.info.push({
-    uuid: '',
-    code: '',
-    name: '',
-    quantity: 0,
-    cost: 0,
-    warehouse_uuid: '',
-    tax_uuid: '',
-    tax: 0,
-    discount_rate: 0,
-    amount: 0,
-    discount_amount: 0,
-  });
-};
-
-const destroy = (event: Event, index: number) => {
-  if (form.info.length === 1) {
-    toast.add({
-      severity: 'info',
-      summary: 'No se puede eliminar',
-      detail: 'Debe haber al menos un elemento en la orden.',
-      life: 3000,
-    });
-    return false;
-  } else {
-    confirm.require({
-      target: event.currentTarget as HTMLElement,
-      message: '¿Desea eliminar esta línea?',
-      header: 'Confirmar Eliminación',
-      icon: 'pi pi-exclamation-triangle',
-      rejectProps: {
-        label: 'Cancelar',
-        severity: 'secondary',
-        outlined: true,
-      },
-      acceptProps: {
-        label: 'Eliminar',
-        severity: 'danger',
-      },
-      accept: () => {
-        form.info.splice(index, 1);
-        sumSubTotalByLine();
-        toast.add({
-          severity: 'success',
-          summary: 'Fila Eliminada',
-          life: 3000,
-        });
-      },
-    });
-  }
-};
-
-const onCellEditComplete = async (event: DataTableCellEditCompleteEvent) => {
-  calculateAmount(event.index);
-};
+// import {
+//   AutoComplete,
+//   AutoCompleteCompleteEvent,
+//   AutoCompleteOptionSelectEvent,
+//   Button,
+//   Card,
+//   Column,
+//   DataTable,
+//   DataTableCellEditCompleteEvent,
+//   DatePicker,
+//   Divider,
+//   FloatLabel,
+//   InputNumber,
+//   Select,
+//   useConfirm,
+//   useToast,
+// } from 'primevue';
+// import { useForm } from '@inertiajs/vue3';
+// import { purchaseInfoI } from '@/Interfaces/PurchaseInterface';
+// import { SupplierI } from '@/Interfaces/SupplierInterface';
+// import AppLayout from '@/Layouts/AppLayout.vue';
+// import { PreciseCalculator } from '@/utils/Decimal';
+// import { ProductBaseI, ProductTableI } from '@/Interfaces/ProductInterface';
+// import { TaxBaseI } from '@/Interfaces/TaxInterface';
+// import { useProductStore } from '@/stores/ProductStore';
+// import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
+// import { purchaseBreadCrumb } from '@/Helpers/PurchaseHelper';
+// import { Plus, Send, Trash2 } from '@lucide/vue';
+// import axios from 'axios';
+// import { ref } from 'vue';
+// import { getDataFromArray, getMoney, truncateText } from '@/Global/Helpers';
+// import BreadCrumbComponent from '@/Components/BreadCrumbComponent.vue';
+//
+// const toast = useToast();
+// const confirm = useConfirm();
+//
+// const propsW = defineProps<{
+//   suppliers: SupplierI[];
+//   products: ProductBaseI[];
+//   taxes: TaxBaseI[];
+//   warehouses: WarehouseBaseI[];
+// }>();
+//
+// const productStore = useProductStore();
+// const productOptions = ref<ProductTableI[]>([]);
+//
+// /*
+//    Formulario
+//  */
+// const form = useForm({
+//   uuid: 0,
+//   supplier_uuid: 0,
+//   doc_date: new Date(),
+//   info: [
+//     {
+//       uuid: '',
+//       code: '',
+//       name: '',
+//       quantity: 0,
+//       cost: 0,
+//       warehouse_uuid: '',
+//       tax_uuid: '',
+//       tax: 0,
+//       discount_rate: 0,
+//       discount_amount: 0,
+//       amount: 0,
+//     },
+//   ] as purchaseInfoI[],
+//   tax: 0,
+//   discount: 0,
+//   sub_total: 0,
+//   amount: 0,
+//   comment: '',
+// });
+//
+// const searchProduct = async (event: AutoCompleteCompleteEvent) => {
+//   try {
+//     const search = event.query.toString().trim().toUpperCase();
+//
+//     const res = await axios.get(
+//       route('product.get.json', {
+//         search: search,
+//       })
+//     );
+//
+//     if (res.status === 200 && res.data) {
+//       productOptions.value = res.data;
+//     }
+//   } catch (err) {
+//     toast.add({
+//       severity: 'error',
+//       summary: 'Error al intentar obtener producto',
+//       life: 3000,
+//     });
+//   }
+// };
+//
+// const getInfoName = (event: AutoCompleteOptionSelectEvent, index: number) => {
+//   const info = event.value as purchaseInfoI;
+//   const currentLine = form.info[index];
+//   const existsIndex = form.info.findIndex((el) => el.code === info.code);
+//
+//   if (existsIndex === -1) {
+//     currentLine.uuid = info.uuid;
+//     currentLine.code = info.code;
+//     currentLine.name = info.name;
+//     currentLine.quantity += 1;
+//     currentLine.cost = info.cost;
+//     return;
+//   } else {
+//     form.info[existsIndex].quantity += 1;
+//   }
+// };
+//
+// const submit = () => {
+//   form.post(route('purchase.store'), {
+//     onSuccess: () => {
+//       toast.add({
+//         severity: 'success',
+//         summary: 'Registro Completado',
+//         detail: 'Orden de compra registrada correctamente.',
+//         life: 3000,
+//       });
+//       form.reset();
+//       form.clearErrors();
+//     },
+//     onError: (err) => {
+//       toast.add({
+//         severity: 'error',
+//         summary: 'Error',
+//         detail: `Error en la petición: ${Object.values(err)[0]}`,
+//         life: 5000,
+//       });
+//     },
+//   });
+// };
+//
+// const sumSubTotalByLine = () => {
+//   const discountTotal = form.info.reduce(
+//     (acc: number, curr: purchaseInfoI) => acc + curr.discount_amount,
+//     0
+//   );
+//   const subTotal = form.info.reduce((acc: number, curr: purchaseInfoI) => acc + curr.amount, 0);
+//   const taxTotal = form.info.reduce((acc: number, curr: purchaseInfoI) => acc + curr.tax, 0);
+//
+//   form.tax = taxTotal;
+//   form.discount = discountTotal;
+//   form.sub_total = Number(PreciseCalculator.subtract(subTotal, taxTotal));
+//   form.amount = Number(PreciseCalculator.add(taxTotal, form.sub_total));
+// };
+//
+// const calculateAmount = (index: number) => {
+//   const taxPercent = productStore.taxRate;
+//   const info = form.info[index];
+//   const cost = info.cost;
+//   const quantity = info.quantity;
+//   const discountRate = Number(PreciseCalculator.divide(info.discount_rate, 100));
+//   const taxPerProduct = PreciseCalculator.multiply(cost, taxPercent);
+//
+//   form.info[index].tax = Number(PreciseCalculator.multiply(taxPerProduct.toString(), quantity));
+//   const base = PreciseCalculator.multiply(quantity, cost);
+//   const discountAmount = Number(PreciseCalculator.multiply(base.toString(), discountRate));
+//
+//   form.info[index].discount_amount = discountAmount;
+//   form.info[index].amount = Number(PreciseCalculator.subtract(base.toString(), discountAmount));
+//
+//   sumSubTotalByLine();
+// };
+//
+// const addLine = () => {
+//   const info = form.info[form.info.length - 1];
+//   if (info.name === '' || info.amount === 0) {
+//     toast.add({
+//       severity: 'warn',
+//       summary: 'Información incompleta',
+//       detail: 'Por favor, complete la línea actual antes de agregar otra.',
+//       life: 5000,
+//     });
+//     return false;
+//   }
+//   form.info.push({
+//     uuid: '',
+//     code: '',
+//     name: '',
+//     quantity: 0,
+//     cost: 0,
+//     warehouse_uuid: '',
+//     tax_uuid: '',
+//     tax: 0,
+//     discount_rate: 0,
+//     amount: 0,
+//     discount_amount: 0,
+//   });
+// };
+//
+// const destroy = (event: Event, index: number) => {
+//   if (form.info.length === 1) {
+//     toast.add({
+//       severity: 'info',
+//       summary: 'No se puede eliminar',
+//       detail: 'Debe haber al menos un elemento en la orden.',
+//       life: 3000,
+//     });
+//     return false;
+//   } else {
+//     confirm.require({
+//       target: event.currentTarget as HTMLElement,
+//       message: '¿Desea eliminar esta línea?',
+//       header: 'Confirmar Eliminación',
+//       icon: 'pi pi-exclamation-triangle',
+//       rejectProps: {
+//         label: 'Cancelar',
+//         severity: 'secondary',
+//         outlined: true,
+//       },
+//       acceptProps: {
+//         label: 'Eliminar',
+//         severity: 'danger',
+//       },
+//       accept: () => {
+//         form.info.splice(index, 1);
+//         sumSubTotalByLine();
+//         toast.add({
+//           severity: 'success',
+//           summary: 'Fila Eliminada',
+//           life: 3000,
+//         });
+//       },
+//     });
+//   }
+// };
+//
+// const onCellEditComplete = async (event: DataTableCellEditCompleteEvent) => {
+//   calculateAmount(event.index);
+// };
 </script>
 
 <template>
+<!--
   <AppLayout>
     <div class="w-full px-2 sm:px-4 py-4 max-w-7xl mx-auto">
       <Card class="shadow-sm rounded-lg border border-slate-200">
@@ -255,7 +256,6 @@ const onCellEditComplete = async (event: DataTableCellEditCompleteEvent) => {
 
         <template #content>
           <form @submit.prevent="submit" class="space-y-6">
-            <!-- Selección de Proveedor y Fecha -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FloatLabel variant="on" class="w-full">
                 <Select
@@ -281,7 +281,6 @@ const onCellEditComplete = async (event: DataTableCellEditCompleteEvent) => {
               </FloatLabel>
             </div>
 
-            <!-- Tabla de Ítems (Con Scroll Horizontal Suave en Móviles) -->
             <div class="overflow-x-auto rounded-lg border border-slate-200 shadow-sm">
               <DataTable
                 @cellEditComplete="onCellEditComplete"
@@ -441,7 +440,6 @@ const onCellEditComplete = async (event: DataTableCellEditCompleteEvent) => {
               </DataTable>
             </div>
 
-            <!-- Resumen de Totales y Registrar -->
             <div
               class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 pt-2"
             >
@@ -475,7 +473,6 @@ const onCellEditComplete = async (event: DataTableCellEditCompleteEvent) => {
               </div>
             </div>
 
-            <!-- Botón Final de Envío -->
             <div class="pt-4 flex justify-end">
               <Button
                 :disabled="form.processing"
@@ -493,6 +490,7 @@ const onCellEditComplete = async (event: DataTableCellEditCompleteEvent) => {
       </Card>
     </div>
   </AppLayout>
+  -->
 </template>
 
 <style scoped>

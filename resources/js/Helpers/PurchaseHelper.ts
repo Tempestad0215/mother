@@ -1,7 +1,7 @@
-import { MenuItem } from 'primevue/menuitem';
+
 import { PurchaseStatusEnum, TagSeverity } from '@/Enums/PurchaseEnum';
 
-export const purchaseBreadCrumb: MenuItem[] = [
+export const purchaseBreadCrumb = [
   {
     label: 'Compra',
     icon: 'pi pi-shopping-card',

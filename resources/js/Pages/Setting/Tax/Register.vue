@@ -1,126 +1,126 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
-import {
-  Button,
-  Card,
-  Column,
-  DataTable,
-  Dialog,
-  FloatLabel,
-  InputNumber,
-  InputText,
-  useConfirm,
-  useToast,
-} from 'primevue';
-import { ref } from 'vue';
-import { router, useForm } from '@inertiajs/vue3';
-import { itemsSettings } from '@/Helpers/SettingHelpers';
-import { TaxBaseI } from '@/Interfaces/TaxInterface';
-import { Forward, SquarePlus } from '@lucide/vue';
-import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
-
-const confirm = useConfirm();
-const toast = useToast();
-
-defineProps<{
-  taxes: TaxBaseI[];
-}>();
-
-const createTax = ref(false);
-const isUpdate = ref(false);
-
-const form = useForm({
-  uuid: '',
-  name: '',
-  description: '',
-  rate: 0,
-});
-
-const formReset = () => {
-  form.reset('name', 'description', 'uuid', 'rate');
-};
-
-const submit = () => {
-  if (isUpdate.value) {
-    form.put(route('tax.update', { tax: form.uuid }), {
-      onSuccess: () => {
-        toast.add({
-          severity: 'success',
-          summary: 'Actualizado',
-          life: 3000,
-        });
-        formReset();
-      },
-      onError: (err) => {
-        toast.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: `Error en esta peticion. Detalle : ${Object.values(err)[0]}`,
-          life: 5000,
-        });
-      },
-    });
-  } else {
-    form.post(route('tax.store'), {
-      onSuccess: () => {
-        toast.add({
-          severity: 'success',
-          summary: 'Registrado',
-          life: 3000,
-        });
-        formReset();
-      },
-      onError: (err) => {
-        toast.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: `Error en esta peticion. Detalle : ${Object.values(err)[0]}`,
-          life: 5000,
-        });
-      },
-    });
-  }
-};
-
-const editData = (data: TaxBaseI) => {
-  form.uuid = data.uuid!!;
-  form.name = data.name;
-  form.description = data.description ?? '';
-  form.rate = Number(data.rate) ?? 0;
-  createTax.value = true;
-  isUpdate.value = true;
-};
-
-const deleteData = (data: TaxBaseI, event: Event) => {
-  confirm.require({
-    target: event.currentTarget as HTMLElement,
-    message: 'Desea eliminar este registro, los cambios son irreversible',
-    rejectProps: {
-      label: 'Cancelar',
-      severity: 'secondary',
-      outlined: true,
-    },
-    acceptProps: {
-      label: 'Eliminar',
-    },
-    accept: () => {
-      router.delete(route('unit.destroy', { unit: data.uuid }), {
-        onSuccess: () => {
-          toast.add({
-            severity: 'success',
-            summary: 'Eliminado ',
-            detail: 'El Registro Fue Eliminado Correctamente.',
-            life: 3000,
-          });
-        },
-      });
-    },
-  });
-};
+// import AppLayout from '@/Layouts/AppLayout.vue';
+// import {
+//   Button,
+//   Card,
+//   Column,
+//   DataTable,
+//   Dialog,
+//   FloatLabel,
+//   InputNumber,
+//   InputText,
+//   useConfirm,
+//   useToast,
+// } from 'primevue';
+// import { ref } from 'vue';
+// import { router, useForm } from '@inertiajs/vue3';
+// import { itemsSettings } from '@/Helpers/SettingHelpers';
+// import { TaxBaseI } from '@/Interfaces/TaxInterface';
+// import { Forward, SquarePlus } from '@lucide/vue';
+// import BreadCrumbComponent from '@/Components/BreadCrumbComponent.vue';
+//
+// const confirm = useConfirm();
+// const toast = useToast();
+//
+// defineProps<{
+//   taxes: TaxBaseI[];
+// }>();
+//
+// const createTax = ref(false);
+// const isUpdate = ref(false);
+//
+// const form = useForm({
+//   uuid: '',
+//   name: '',
+//   description: '',
+//   rate: 0,
+// });
+//
+// const formReset = () => {
+//   form.reset('name', 'description', 'uuid', 'rate');
+// };
+//
+// const submit = () => {
+//   if (isUpdate.value) {
+//     form.put(route('tax.update', { tax: form.uuid }), {
+//       onSuccess: () => {
+//         toast.add({
+//           severity: 'success',
+//           summary: 'Actualizado',
+//           life: 3000,
+//         });
+//         formReset();
+//       },
+//       onError: (err) => {
+//         toast.add({
+//           severity: 'error',
+//           summary: 'Error',
+//           detail: `Error en esta peticion. Detalle : ${Object.values(err)[0]}`,
+//           life: 5000,
+//         });
+//       },
+//     });
+//   } else {
+//     form.post(route('tax.store'), {
+//       onSuccess: () => {
+//         toast.add({
+//           severity: 'success',
+//           summary: 'Registrado',
+//           life: 3000,
+//         });
+//         formReset();
+//       },
+//       onError: (err) => {
+//         toast.add({
+//           severity: 'error',
+//           summary: 'Error',
+//           detail: `Error en esta peticion. Detalle : ${Object.values(err)[0]}`,
+//           life: 5000,
+//         });
+//       },
+//     });
+//   }
+// };
+//
+// const editData = (data: TaxBaseI) => {
+//   form.uuid = data.uuid!!;
+//   form.name = data.name;
+//   form.description = data.description ?? '';
+//   form.rate = Number(data.rate) ?? 0;
+//   createTax.value = true;
+//   isUpdate.value = true;
+// };
+//
+// const deleteData = (data: TaxBaseI, event: Event) => {
+//   confirm.require({
+//     target: event.currentTarget as HTMLElement,
+//     message: 'Desea eliminar este registro, los cambios son irreversible',
+//     rejectProps: {
+//       label: 'Cancelar',
+//       severity: 'secondary',
+//       outlined: true,
+//     },
+//     acceptProps: {
+//       label: 'Eliminar',
+//     },
+//     accept: () => {
+//       router.delete(route('unit.destroy', { unit: data.uuid }), {
+//         onSuccess: () => {
+//           toast.add({
+//             severity: 'success',
+//             summary: 'Eliminado ',
+//             detail: 'El Registro Fue Eliminado Correctamente.',
+//             life: 3000,
+//           });
+//         },
+//       });
+//     },
+//   });
+// };
 </script>
 
 <template>
-  <AppLayout>
+  <!-- <AppLayout>
     <Card>
       <template #title>
         <div>
@@ -192,5 +192,5 @@ const deleteData = (data: TaxBaseI, event: Event) => {
         </div>
       </form>
     </Dialog>
-  </AppLayout>
+  </AppLayout> -->
 </template>

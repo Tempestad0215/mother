@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import Pagination from '@components/Pagination.vue';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
 import { entryProductI } from '@/Interfaces/EntryTransInterface';
-import FormSearch from '@components/FormSearch.vue';
+import FormSearch from '@/Components/FormSearch.vue';
 import { router, useForm } from '@inertiajs/vue3';
 import { useRoute } from 'ziggy-js';
 
@@ -110,7 +109,7 @@ const search = () => {
         </tr>
       </tbody>
     </table>
-    <Pagination
+    <!-- <Pagination
       :field="formSearch.field"
       :search="formSearch.search"
       :per-page="formSearch.per_page"
@@ -119,7 +118,7 @@ const search = () => {
       :prev="propsW.entries.links.prev || ''"
       :total-page="propsW.entries.meta.total"
       :pag="propsW.entries"
-    />
+    /> -->
   </div>
 </template>
 

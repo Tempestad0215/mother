@@ -6,15 +6,15 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@/Components/ui/dropdown-menu';
 import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
     useSidebar,
-} from '@/components/ui/sidebar';
-import UserInfo from '@/components/UserInfo.vue';
-import UserMenuContent from '@/components/UserMenuContent.vue';
+} from '@/Components/ui/sidebar';
+import UserInfo from '@/Components/UserInfo.vue';
+import UserMenuContent from '@/Components/UserMenuContent.vue';
 import { Auth } from '@/types/auth';
 
 const page = usePage<{auth: Auth}>();

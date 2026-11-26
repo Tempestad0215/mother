@@ -5,22 +5,21 @@ import { RotateCcw, Search } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
 import { toast } from 'vue-sonner';
 import { useRoute } from 'ziggy-js';
-import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Button } from '@//Components/ui/button';
+import { Card, CardContent, CardHeader } from '@//Components/ui/card';
+import { Input } from '@/Components/ui/input';
+import { Label } from '@/Components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@/Components/ui/select';
 import { productBreadCrumb } from '@/Helpers/ProductHelper';
 import type { productI, ProductTableI } from '@/Interfaces/ProductInterface';
 import type { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
-import AppLayout from '@/layouts/AppLayout.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
 
 const route = useRoute();
 const page = usePage();
@@ -105,7 +104,7 @@ const handleError = () => {
   <AppLayout>
     <Card>
       <CardHeader>
-        <BreadCrumbComponent :itemOptions="productBreadCrumb" />
+        <!-- <BreadCrumbComponent :itemOptions="productBreadCrumb" /> -->
       </CardHeader>
 
       <CardContent>
@@ -115,7 +114,6 @@ const handleError = () => {
           method="post"
           class="grid grid-cols-1 gap-4 md:grid-cols-2"
           #default="{ processing, errors, reset }"
-          @success="handleSuccess(reset)"
           @error="handleError"
         >
           <div class="col-span-full">

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import AppContent from '@components/AppContent.vue';
-import AppHeader from '@components/AppHeader.vue';
-import AppShell from '@components/AppShell.vue';
+import AppContent from '@/Components/AppContent.vue';
+import AppHeader from '@/Components/AppHeader.vue';
+import AppShell from '@/Components/AppShell.vue';
 import { BreadcrumbItem } from '@/types/navigation';
-import { Toaster } from '@components/ui/sonner';
+import { Toaster } from '@/Components/ui/sonner';
 
 type Props = {
   breadcrumbs?: BreadcrumbItem[];

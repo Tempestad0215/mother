@@ -1,65 +1,65 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
-import { Button, Card, Column, DataTable, Dialog, useConfirm, useToast } from 'primevue';
-import { ref } from 'vue';
-import { router } from '@inertiajs/vue3';
-import { itemsSettings } from '@/Helpers/SettingHelpers';
-import { BranchInterfaceI } from '@/Interfaces/BranchInterface';
-import FRegisterBranch from '@/Pages/Setting/Brand/FRegisterBranch.vue';
-import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
-
-const confirm = useConfirm();
-const toast = useToast();
-
-defineProps<{
-  branches: BranchInterfaceI[];
-}>();
-
-const createBranch = ref(false);
-const selectedBranch = ref<BranchInterfaceI | null>(null);
-const isUpdate = ref(false);
-
-const editData = (data: BranchInterfaceI) => {
-  selectedBranch.value = data;
-  createBranch.value = true;
-  isUpdate.value = true;
-};
-
-const hideCreate = () => {
-  selectedBranch.value = null;
-  isUpdate.value = false;
-};
-
-const deleteData = (data: BranchInterfaceI, event: Event) => {
-  confirm.require({
-    target: event.currentTarget as HTMLElement,
-    message: 'Desea eliminar este registro, los cambios son irreversible',
-    rejectProps: {
-      label: 'Cancelar',
-      severity: 'secondary',
-      outlined: true,
-    },
-    acceptProps: {
-      label: 'Eliminar',
-    },
-    accept: () => {
-      router.delete(route('branch.destroy', { branch: data.id }), {
-        onSuccess: () => {
-          toast.add({
-            severity: 'success',
-            summary: 'Eliminado ',
-            detail: 'El Registro Fue Eliminado Correctamente.',
-            life: 3000,
-          });
-        },
-      });
-    },
-  });
-};
+// import AppLayout from '@/Layouts/AppLayout.vue';
+// import { Button, Card, Column, DataTable, Dialog, useConfirm, useToast } from 'primevue';
+// import { ref } from 'vue';
+// import { router } from '@inertiajs/vue3';
+// import { itemsSettings } from '@/Helpers/SettingHelpers';
+// import { BranchInterfaceI } from '@/Interfaces/BranchInterface';
+// import FRegisterBranch from '@/Pages/Setting/Brand/FRegisterBranch.vue';
+// import BreadCrumbComponent from '@/Components/BreadCrumbComponent.vue';
+//
+// const confirm = useConfirm();
+// const toast = useToast();
+//
+// defineProps<{
+//   branches: BranchInterfaceI[];
+// }>();
+//
+// const createBranch = ref(false);
+// const selectedBranch = ref<BranchInterfaceI | null>(null);
+// const isUpdate = ref(false);
+//
+// const editData = (data: BranchInterfaceI) => {
+//   selectedBranch.value = data;
+//   createBranch.value = true;
+//   isUpdate.value = true;
+// };
+//
+// const hideCreate = () => {
+//   selectedBranch.value = null;
+//   isUpdate.value = false;
+// };
+//
+// const deleteData = (data: BranchInterfaceI, event: Event) => {
+//   confirm.require({
+//     target: event.currentTarget as HTMLElement,
+//     message: 'Desea eliminar este registro, los cambios son irreversible',
+//     rejectProps: {
+//       label: 'Cancelar',
+//       severity: 'secondary',
+//       outlined: true,
+//     },
+//     acceptProps: {
+//       label: 'Eliminar',
+//     },
+//     accept: () => {
+//       router.delete(route('branch.destroy', { branch: data.id }), {
+//         onSuccess: () => {
+//           toast.add({
+//             severity: 'success',
+//             summary: 'Eliminado ',
+//             detail: 'El Registro Fue Eliminado Correctamente.',
+//             life: 3000,
+//           });
+//         },
+//       });
+//     },
+//   });
+// };
 </script>
 
 <template>
-  <AppLayout>
+  <!-- <AppLayout>
     <Card>
       <template #title>
         <BreadCrumbComponent :itemOptions="itemsSettings" />
@@ -99,5 +99,5 @@ const deleteData = (data: BranchInterfaceI, event: Event) => {
     <Dialog modal @hide="hideCreate" v-model:visible="createBranch" header="Registro de Unidad">
       <FRegisterBranch :branch-edit="selectedBranch" :is-update="isUpdate" />
     </Dialog>
-  </AppLayout>
+  </AppLayout> -->
 </template>

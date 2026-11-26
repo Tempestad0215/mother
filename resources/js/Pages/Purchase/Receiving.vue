@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import {
   faArrowAltCircleDown,

@@ -1,85 +1,86 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
-import { computed, onMounted, provide, ref } from 'vue';
-import { SupplierI } from '@/Interfaces/SupplierInterface';
-import { ProductTableI, ProductTypeEnumI } from '@/Interfaces/ProductInterface';
-import { categoryBaseI } from '@/Interfaces/CategoriesInterface';
-import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
-import { Button, Dialog } from 'primevue';
-import { PaginationI, PaymentTypeEnumI } from '@/Interfaces/GlobalInterface';
-import FRegister from '@/Pages/Products/FRegister.vue';
-import {
-  createProductKey,
-  productDataKey,
-  productEditKey,
-  taxCurrentValueKey,
-} from '@/Injections/InjectionKeys';
-import { BranchInterfaceI } from '@/Interfaces/BranchInterface';
-import { UnitInterfaceI } from '@/Interfaces/UnitInterface';
-import { TaxBaseI } from '@/Interfaces/TaxInterface';
-import FShowProduct from '@/Pages/Products/FShowProduct.vue';
-import { PriceListWTI } from '@/Interfaces/PriceListInterface';
-import { useProductDelete } from '@/Composable/Products/useProductDelete';
-import { PackagePlus, SquarePen, Trash } from '@lucide/vue';
-
-// Propiedades de la ventana
-const propsW = withDefaults(
-  defineProps<{
-    products: PaginationI<ProductTableI>;
-    productEdit?: ProductTableI;
-    update?: boolean;
-    categories: categoryBaseI[];
-    suppliers: SupplierI[];
-    warehouses: WarehouseBaseI[];
-    paymentTypes: PaymentTypeEnumI;
-    productType: ProductTypeEnumI;
-    branches: BranchInterfaceI[];
-    units: UnitInterfaceI[];
-    taxes: TaxBaseI[];
-    priceLists: Array<PriceListWTI>;
-  }>(),
-  {
-    update: false,
-    categories: () => [],
-    suppliers: () => [],
-    warehouses: () => [],
-    branches: () => [],
-    units: () => [],
-    taxes: () => [],
-    priceLists: () => [],
-    paymentTypes: () => ({}) as PaymentTypeEnumI,
-    productType: () => ({}) as ProductTypeEnumI,
-  }
-);
-
-const taxCurrentValue = ref(0);
-
-const selectedProduct = ref<ProductTableI | null>(null);
-const createProduct = ref<boolean>(false);
-
-// provide(productDataKey, propsW.products.data ?? []);
-provide(taxCurrentValueKey, taxCurrentValue);
-provide(productEditKey, selectedProduct);
-provide(createProductKey, createProduct);
-
-const { deleteProduct } = useProductDelete();
-
-onMounted(() => {});
-
-const clearCreate = () => {
-  selectedProduct.value = null;
-  createProduct.value = false;
-};
-
-const isUpdate = computed(() => !!selectedProduct.value);
-
-const openEdit = (product: ProductTableI) => {
-  selectedProduct.value = product;
-  createProduct.value = true;
-};
+// import AppLayout from '@/Layouts/AppLayout.vue';
+// import { computed, onMounted, provide, ref } from 'vue';
+// import { SupplierI } from '@/Interfaces/SupplierInterface';
+// import { ProductTableI, ProductTypeEnumI } from '@/Interfaces/ProductInterface';
+// import { categoryBaseI } from '@/Interfaces/CategoriesInterface';
+// import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
+// import { Button, Dialog } from 'primevue';
+// import { PaginationI, PaymentTypeEnumI } from '@/Interfaces/GlobalInterface';
+// import FRegister from '@/Pages/Products/FRegister.vue';
+// import {
+//   createProductKey,
+//   productDataKey,
+//   productEditKey,
+//   taxCurrentValueKey,
+// } from '@/Injections/InjectionKeys';
+// import { BranchInterfaceI } from '@/Interfaces/BranchInterface';
+// import { UnitInterfaceI } from '@/Interfaces/UnitInterface';
+// import { TaxBaseI } from '@/Interfaces/TaxInterface';
+// import FShowProduct from '@/Pages/Products/FShowProduct.vue';
+// import { PriceListWTI } from '@/Interfaces/PriceListInterface';
+// import { useProductDelete } from '@/Composable/Products/useProductDelete';
+// import { PackagePlus, SquarePen, Trash } from '@lucide/vue';
+//
+// // Propiedades de la ventana
+// const propsW = withDefaults(
+//   defineProps<{
+//     products: PaginationI<ProductTableI>;
+//     productEdit?: ProductTableI;
+//     update?: boolean;
+//     categories: categoryBaseI[];
+//     suppliers: SupplierI[];
+//     warehouses: WarehouseBaseI[];
+//     paymentTypes: PaymentTypeEnumI;
+//     productType: ProductTypeEnumI;
+//     branches: BranchInterfaceI[];
+//     units: UnitInterfaceI[];
+//     taxes: TaxBaseI[];
+//     priceLists: Array<PriceListWTI>;
+//   }>(),
+//   {
+//     update: false,
+//     categories: () => [],
+//     suppliers: () => [],
+//     warehouses: () => [],
+//     branches: () => [],
+//     units: () => [],
+//     taxes: () => [],
+//     priceLists: () => [],
+//     paymentTypes: () => ({}) as PaymentTypeEnumI,
+//     productType: () => ({}) as ProductTypeEnumI,
+//   }
+// );
+//
+// const taxCurrentValue = ref(0);
+//
+// const selectedProduct = ref<ProductTableI | null>(null);
+// const createProduct = ref<boolean>(false);
+//
+// // provide(productDataKey, propsW.products.data ?? []);
+// provide(taxCurrentValueKey, taxCurrentValue);
+// provide(productEditKey, selectedProduct);
+// provide(createProductKey, createProduct);
+//
+// const { deleteProduct } = useProductDelete();
+//
+// onMounted(() => {});
+//
+// const clearCreate = () => {
+//   selectedProduct.value = null;
+//   createProduct.value = false;
+// };
+//
+// const isUpdate = computed(() => !!selectedProduct.value);
+//
+// const openEdit = (product: ProductTableI) => {
+//   selectedProduct.value = product;
+//   createProduct.value = true;
+// };
 </script>
 
 <template>
+ <!--
   <AppLayout>
     <template #header>
       <div class="flex justify-between items-center mb-4">
@@ -93,9 +94,7 @@ const openEdit = (product: ProductTableI) => {
       </div>
     </template>
     <div class="w-full px-2 sm:px-4 py-4 max-w-7xl mx-auto">
-      <!-- Tabla / Vista Principal de Productos -->
       <div class="shadow-sm rounded-lg overflow-hidden border border-slate-200 bg-white">
-        <!-- Header de la página -->
 
         <FShowProduct
           search-route="product.index"
@@ -117,7 +116,6 @@ const openEdit = (product: ProductTableI) => {
         </FShowProduct>
       </div>
 
-      <!-- Modal de Registro / Edición Adaptativo -->
       <Dialog
         v-model:visible="createProduct"
         modal
@@ -144,4 +142,5 @@ const openEdit = (product: ProductTableI) => {
       </Dialog>
     </div>
   </AppLayout>
+  -->
 </template>

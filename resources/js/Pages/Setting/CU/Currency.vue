@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
-import AppLayout from '@/layouts/AppLayout.vue';
-import TabLink from '@components/TabLink.vue';
-import InputLabel from '@components/InputLabel.vue';
-import TextInput from '@components/TextInput.vue';
-import ToggleButton from '@components/ToggleButton.vue';
-import PrimaryButton from '@components/PrimaryButton.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
+import TabLink from '@/Components/TabLink.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import TextInput from '@/Components/TextInput.vue';
+import ToggleButton from '@/Components/ToggleButton.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { currencyI } from '@/Interfaces/CurrencyInterface';
 import { useRoute } from 'ziggy-js';
 

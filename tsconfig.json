@@ -15,8 +15,8 @@
     "types": ["vite/client"],
     "baseUrl": ".",
     "paths": {
-      "@components/*": ["resources/js/components/*"],
-      "@layout/*": ["resources/js/layouts/*"],
+      "@components/*": ["resources/js/Components/*"],
+      "@layout/*": ["resources/js/Layouts/*"],
       "@/*": ["resources/js/*"],
     },
   },

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ProductLowStock, TopProduct } from '@/interfaces/DashboardInterface';
-import AppLayout from '@/layouts/AppLayout.vue';
+import { CriticalProduct, KPI, ProductLowStock, TopProduct } from '@/Interfaces/DashboardInterface';
+import AppLayout from '@/Layouts/AppLayout.vue';
 import { onMounted, ref } from 'vue';
 
 const propsW = defineProps<{
@@ -94,7 +94,7 @@ const setChartOptions = () => {
                   </Column>
                   <Column header="PRODUCTO" field="product_name">
                     <template #body="{ data }">
-                      <span class="font-medium text-gray-800 truncate block max-w-[120px]">{{
+                      <span class="font-medium text-gray-800 truncate block max-w-30">{{
                         data.product_name
                       }}</span>
                     </template>
@@ -137,7 +137,7 @@ const setChartOptions = () => {
               </Column>
               <Column header="NOMBRE" field="name">
                 <template #body="{ data }">
-                  <span class="font-semibold text-gray-700 truncate block max-w-[140px]">{{
+                  <span class="font-semibold text-gray-700 truncate block max-w-35">{{
                     data.name
                   }}</span>
                 </template>
@@ -170,7 +170,7 @@ const setChartOptions = () => {
               v-if="Object.values(propsW.kpis || {}).some((val) => val > 0)"
               class="flex flex-col items-center justify-center p-2"
             >
-              <div class="w-full h-[260px] flex justify-center items-center">
+              <div class="w-full h-65 flex justify-center items-center">
                 <Chart
                   type="doughnut"
                   :data="chartData"

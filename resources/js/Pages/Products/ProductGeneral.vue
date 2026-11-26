@@ -1,22 +1,23 @@
 <script setup lang="ts">
-import { ToggleSwitch, Fieldset } from 'primevue';
-import { computed, inject } from 'vue';
-import { formProductKey } from '@/Injections/InjectionKeys';
-
-const form = inject(formProductKey)!!;
-
-const isService = computed(() => {
-  if (form.is_service) {
-    form.inventoried = false;
-    form.has_fraction = false;
-    return true;
-  } else {
-    return false;
-  }
-});
+// import { ToggleSwitch, Fieldset } from 'primevue';
+// import { computed, inject } from 'vue';
+// import { formProductKey } from '@/Injections/InjectionKeys';
+//
+// const form = inject(formProductKey)!!;
+//
+// const isService = computed(() => {
+//   if (form.is_service) {
+//     form.inventoried = false;
+//     form.has_fraction = false;
+//     return true;
+//   } else {
+//     return false;
+//   }
+// });
 </script>
 
 <template>
+<!--
   <Fieldset legend="Configuración de Estado" class="w-full border border-slate-200 rounded-lg p-3">
     <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-1 text-sm">
       <div class="flex items-center gap-2">
@@ -65,4 +66,5 @@ const isService = computed(() => {
       </div>
     </div>
   </Fieldset>
+  -->
 </template>

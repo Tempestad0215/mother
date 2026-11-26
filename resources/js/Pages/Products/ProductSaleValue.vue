@@ -1,82 +1,82 @@
 <script setup lang="ts">
-import { inject, onMounted, watch } from 'vue';
-import { PreciseCalculator } from '@/utils/Decimal';
-import { InputNumber, FloatLabel, Select, useToast } from 'primevue';
-import { formProductKey } from '@/Injections/InjectionKeys';
-import { useProductStore } from '@/stores/ProductStore';
-import { storeToRefs } from 'pinia';
-import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
-import { PriceListProducts, PriceListWTI } from '@/Interfaces/PriceListInterface';
-import { UnitInterfaceI } from '@/Interfaces/UnitInterface';
-import axios from 'axios';
-
-const toast = useToast();
-
-const propsW = defineProps<{
-  warehouses: Array<WarehouseBaseI>;
-  priceLists: Array<PriceListWTI>;
-  units: Array<UnitInterfaceI>;
-  isUpdate: boolean;
-}>();
-
-const form = inject(formProductKey)!!;
-const productStore = storeToRefs(useProductStore());
-
-onMounted(() => {
-  if (propsW.isUpdate) {
-    setTimeout(async () => {
-      await getInfoFromPriceList();
-    }, 300);
-  }
-});
-
-watch(
-  () => [form.tax_uuid, form.cost, form.price, form.tax_uuid],
-  () => {
-    const tax = PreciseCalculator.multiply(form.price, productStore.taxRate.value);
-
-    if (Number(tax) === 0) {
-      form.product_no_tax = form.price;
-    } else {
-      form.product_no_tax = Number(PreciseCalculator.subtract(form.price, tax.toString()));
-    }
-
-    form.benefits = Number(PreciseCalculator.subtract(form.price, form.cost));
-    const benefitsRate = PreciseCalculator.divide(Number(form.benefits), form.price || 1);
-    form.benefits_rate = Number(
-      Number(PreciseCalculator.multiply(String(benefitsRate), 100)).toFixed(2)
-    );
-  }
-);
-
-const getInfoFromPriceList = async () => {
-  try {
-    const res = await axios.get(route('price-list.product.show', form.uuid));
-    const data = res.data as Array<PriceListProducts>;
-    const infoPriceList = data.find((el) => el.uuid === form.price_list_uuid);
-
-    if (infoPriceList) {
-      form.price = infoPriceList.price;
-      form.min_price = infoPriceList.min_price;
-      form.promotional_price = infoPriceList.promotional_price;
-    } else {
-      form.price = 0;
-      form.min_price = 0;
-      form.promotional_price = 0;
-    }
-  } catch (error) {
-    toast.add({
-      severity: 'error',
-      detail: 'Error al obtener la lista de precios',
-      life: 3000,
-    });
-  }
-};
+// import { inject, onMounted, watch } from 'vue';
+// import { PreciseCalculator } from '@/utils/Decimal';
+// import { InputNumber, FloatLabel, Select, useToast } from 'primevue';
+// import { formProductKey } from '@/Injections/InjectionKeys';
+// import { useProductStore } from '@/stores/ProductStore';
+// import { storeToRefs } from 'pinia';
+// import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
+// import { PriceListProducts, PriceListWTI } from '@/Interfaces/PriceListInterface';
+// import { UnitInterfaceI } from '@/Interfaces/UnitInterface';
+// import axios from 'axios';
+//
+// const toast = useToast();
+//
+// const propsW = defineProps<{
+//   warehouses: Array<WarehouseBaseI>;
+//   priceLists: Array<PriceListWTI>;
+//   units: Array<UnitInterfaceI>;
+//   isUpdate: boolean;
+// }>();
+//
+// const form = inject(formProductKey)!!;
+// const productStore = storeToRefs(useProductStore());
+//
+// onMounted(() => {
+//   if (propsW.isUpdate) {
+//     setTimeout(async () => {
+//       await getInfoFromPriceList();
+//     }, 300);
+//   }
+// });
+//
+// watch(
+//   () => [form.tax_uuid, form.cost, form.price, form.tax_uuid],
+//   () => {
+//     const tax = PreciseCalculator.multiply(form.price, productStore.taxRate.value);
+//
+//     if (Number(tax) === 0) {
+//       form.product_no_tax = form.price;
+//     } else {
+//       form.product_no_tax = Number(PreciseCalculator.subtract(form.price, tax.toString()));
+//     }
+//
+//     form.benefits = Number(PreciseCalculator.subtract(form.price, form.cost));
+//     const benefitsRate = PreciseCalculator.divide(Number(form.benefits), form.price || 1);
+//     form.benefits_rate = Number(
+//       Number(PreciseCalculator.multiply(String(benefitsRate), 100)).toFixed(2)
+//     );
+//   }
+// );
+//
+// const getInfoFromPriceList = async () => {
+//   try {
+//     const res = await axios.get(route('price-list.product.show', form.uuid));
+//     const data = res.data as Array<PriceListProducts>;
+//     const infoPriceList = data.find((el) => el.uuid === form.price_list_uuid);
+//
+//     if (infoPriceList) {
+//       form.price = infoPriceList.price;
+//       form.min_price = infoPriceList.min_price;
+//       form.promotional_price = infoPriceList.promotional_price;
+//     } else {
+//       form.price = 0;
+//       form.min_price = 0;
+//       form.promotional_price = 0;
+//     }
+//   } catch (error) {
+//     toast.add({
+//       severity: 'error',
+//       detail: 'Error al obtener la lista de precios',
+//       life: 3000,
+//     });
+//   }
+// };
 </script>
 
 <template>
+ <!--
   <div class="space-y-5">
-    <!-- Selección de Almacén, Lista de Precio y Unidad -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
       <FloatLabel variant="on" class="w-full">
         <Select
@@ -115,7 +115,6 @@ const getInfoFromPriceList = async () => {
       </FloatLabel>
     </div>
 
-    <!-- Valores de Costo y Precios -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <FloatLabel variant="on" class="w-full">
         <InputNumber
@@ -168,7 +167,6 @@ const getInfoFromPriceList = async () => {
       </FloatLabel>
     </div>
 
-    <!-- Resumen Calculado -->
     <div
       class="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200 text-sm"
     >
@@ -200,4 +198,5 @@ const getInfoFromPriceList = async () => {
       </div>
     </div>
   </div>
+  -->
 </template>

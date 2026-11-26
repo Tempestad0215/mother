@@ -1,10 +1,10 @@
-import type { MenuItem } from 'primevue/menuitem';
+
 import { PriceListProducts } from '@/Interfaces/PriceListInterface';
 import { WarehouseProductI } from '@/Interfaces/ProductInterface';
 import { WarehouseBaseI } from '@/Interfaces/WarehouseInterface';
 import { PreciseCalculator } from '@/utils/Decimal';
 
-export const productBreadCrumb: MenuItem[] = [
+export const productBreadCrumb: any[] = [
   {
     label: 'Producto',
     url: route('product.index'),

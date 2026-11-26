@@ -1,4 +1,3 @@
-import { AutoCompleteCompleteEvent, AutoCompleteOptionSelectEvent, useToast } from 'primevue';
 import axios from 'axios';
 import { clientBaseI, ClientRncI } from '@/Interfaces/ClientInterface';
 import { computed, inject, ref } from 'vue';
@@ -9,7 +8,7 @@ import { useSaleSequence } from '@/Composable/Sales/useSaleSequence';
 
 export function useSaleInfo(onNeedRnc?: () => void) {
   const form = inject(saleKey)!;
-  const toast = useToast();
+
 
   const { getSequence } = useSaleSequence(form);
 
@@ -28,7 +27,7 @@ export function useSaleInfo(onNeedRnc?: () => void) {
     set: (v) => (form.client_name = v),
   });
 
-  const getClient = async (data: AutoCompleteOptionSelectEvent): Promise<void> => {
+  const getClient = async (data:): Promise<void> => {
     const item = data.value as clientBaseI;
 
     form.client_name = item.name;
@@ -44,7 +43,7 @@ export function useSaleInfo(onNeedRnc?: () => void) {
     await getSequence(item.type_rnc);
   };
 
-  const searchClient = async (event: AutoCompleteCompleteEvent): Promise<void> => {
+  const searchClient = async (event: any): Promise<void> => {
     const value = event.query as string;
     if (value.length <= 0) return;
 
@@ -60,23 +59,11 @@ export function useSaleInfo(onNeedRnc?: () => void) {
 
       // clientFiltered.value = response.data as Array<clientBaseI>;
     } catch (err) {
-      toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Error al obtener los datos del cliente',
-        life: 3000,
-      });
     }
   };
 
   const getClientRnc = async (): Promise<void> => {
     if (form.client_rnc.length < 7) {
-      toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'El RNC debe tener al menos 7 caracteres',
-        life: 3000,
-      });
     } else {
       try {
         const dataClean = form.client_rnc.trim();
@@ -84,31 +71,13 @@ export function useSaleInfo(onNeedRnc?: () => void) {
         const data = result.data as ClientRncI;
 
         if (data.status === 'SUSPENDIDO') {
-          toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Este Contribuyente Esta Suspendido, Por Favor Elegir Otro',
-            life: 3000,
-          });
         } else {
           form.client_name = data.razon_social;
           form.client_social = data.razon_social;
           form.client_rnc_status = data.status;
 
-          toast.add({
-            severity: 'success',
-            summary: 'Éxito',
-            detail: 'RNC Cargado Correctamente',
-            life: 3000,
-          });
         }
       } catch (err) {
-        toast.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Error al obtener el RNC',
-          life: 3000,
-        });
       }
     }
   };

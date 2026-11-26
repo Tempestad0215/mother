@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import Breadcrumbs from '@/components/Breadcrumbs.vue';
 import { BreadcrumbItem } from '@/types/navigation';
-import { SidebarTrigger } from '@components/ui/sidebar';
+import { BreadcrumbList } from '@/Components/ui/breadcrumb';
+import SidebarTrigger from '@/Components/ui/sidebar/SidebarTrigger.vue';
 
 withDefaults(
   defineProps<{
@@ -20,7 +20,7 @@ withDefaults(
     <div class="flex items-center gap-2">
       <SidebarTrigger class="-ml-1" />
       <template v-if="breadcrumbs && breadcrumbs.length > 0">
-        <Breadcrumbs :breadcrumbs="breadcrumbs" />
+        <BreadcrumbList :breadcrumbs="breadcrumbs" />
       </template>
     </div>
   </header>

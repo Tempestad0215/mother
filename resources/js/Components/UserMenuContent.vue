@@ -6,8 +6,8 @@ import {
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu';
-import UserInfo from '@/components/UserInfo.vue';
+} from '@/Components/ui/dropdown-menu';
+import UserInfo from '@/Components/UserInfo.vue';
 import { logout } from '@/routes';
 import type { User } from '@/types/auth';
 import profile from '@/routes/profile';

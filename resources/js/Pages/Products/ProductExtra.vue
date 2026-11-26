@@ -1,19 +1,20 @@
 <script setup lang="ts">
-import { ProductTypeEnumI } from '@/Interfaces/ProductInterface';
-import FRegisterWarehouse from '@/Pages/Setting/WH/FRegister.vue';
-import { inject, ref } from 'vue';
-import { formProductKey } from '@/Injections/InjectionKeys';
-import { Dialog, Fieldset, FloatLabel, InputText } from 'primevue';
-
-const propsW = defineProps<{
-  productType: ProductTypeEnumI;
-}>();
-
-const form = inject(formProductKey)!!;
-const createWarehouse = ref<boolean>(false);
+// import { ProductTypeEnumI } from '@/Interfaces/ProductInterface';
+// import FRegisterWarehouse from '@/Pages/Setting/WH/FRegister.vue';
+// import { inject, ref } from 'vue';
+// import { formProductKey } from '@/Injections/InjectionKeys';
+// import { Dialog, Fieldset, FloatLabel, InputText } from 'primevue';
+//
+// const propsW = defineProps<{
+//   productType: ProductTypeEnumI;
+// }>();
+//
+// const form = inject(formProductKey)!!;
+// const createWarehouse = ref<boolean>(false);
 </script>
 
 <template>
+ <!--
   <Fieldset
     legend="Códigos de Identificación"
     class="w-full border border-slate-200 rounded-lg p-3"
@@ -41,4 +42,5 @@ const createWarehouse = ref<boolean>(false);
       <FRegisterWarehouse :edit-ware-houses="null" :update="false" />
     </Dialog>
   </Fieldset>
+  -->
 </template>

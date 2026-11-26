@@ -2,7 +2,7 @@
 import { toUrl } from '@/lib/utils';
 import UserProfileController from '@/actions/Laravel/Jetstream/Http/Controllers/Inertia/UserProfileController';
 import { NavItem } from '@/types/navigation';
-import { useCurrentUrl } from '@/composable/useCurrentUrl';
+import { useCurrentUrl } from '@/Composable/useCurrentUrl';
 
 const sidebarNavItems: NavItem[] = [
     {

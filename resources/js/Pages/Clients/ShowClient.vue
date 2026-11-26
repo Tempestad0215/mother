@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import FShowClient from '@/Pages/Clients/FShowClient.vue';
-import TabLink from '@components/TabLink.vue';
+import TabLink from '@/Components/TabLink.vue';
 import { PaginationI } from '@/Interfaces/GlobalInterface';
 import { clientBaseI } from '@/Interfaces/ClientInterface';
 import { useRoute } from 'ziggy-js';

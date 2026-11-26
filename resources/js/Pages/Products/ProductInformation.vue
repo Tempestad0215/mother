@@ -1,85 +1,85 @@
 <script setup lang="ts">
-import { inject, ref } from 'vue';
-import { categoryBaseI } from '@/Interfaces/CategoriesInterface';
-import { SupplierI } from '@/Interfaces/SupplierInterface';
-import { useRoute } from 'ziggy-js';
-import { formProductKey } from '@/Injections/InjectionKeys';
-import {
-  AutoComplete,
-  AutoCompleteCompleteEvent,
-  Button,
-  Dialog,
-  FloatLabel,
-  InputText,
-  Select,
-  useToast,
-} from 'primevue';
-import FRegisterCategory from '@/Pages/Categories/FRegister.vue';
-import FRegisterSupplier from '@/Pages/Suppliers/FRegister.vue';
-import { PaymentTypeEnumI } from '@/Interfaces/GlobalInterface';
-import { CirclePlus } from '@lucide/vue';
-import axios from 'axios';
-import { printPdf } from '@/Global/Helpers';
-import { ProductTableI } from '@/Interfaces/ProductInterface';
-
-const route = useRoute();
-const toast = useToast();
-
-const propsW = defineProps<{
-  categories: categoryBaseI[];
-  suppliers: SupplierI[];
-  paymentTypes: PaymentTypeEnumI;
-  code?: string;
-  update: boolean;
-}>();
-
-const form = inject(formProductKey)!!;
-const productDataOption = ref<ProductTableI[]>([]);
-const createCategory = ref(false);
-const createSupplier = ref(false);
-const loadingLabel = ref(false);
-
-const searchProduct = async (event: AutoCompleteCompleteEvent) => {
-  try {
-    const res = await axios.get(
-      route('product.get.json', {
-        search: event.query,
-      })
-    );
-
-    if (Array.isArray(res.data) && res.data.length > 0) {
-      productDataOption.value = res.data;
-    } else {
-      productDataOption.value = [];
-    }
-  } catch (e) {
-    console.log(e);
-  }
-};
-
-const printLabel = async () => {
-  if (propsW.code) {
-    loadingLabel.value = true;
-
-    try {
-      printPdf(route('product.get-label', { code: propsW.code }));
-    } catch (_) {
-      toast.add({
-        summary: 'Error',
-        detail: 'No se pudo imprimir el label del producto',
-        severity: 'error',
-        life: 3000,
-      });
-    } finally {
-      loadingLabel.value = false;
-    }
-  }
-};
+// import { inject, ref } from 'vue';
+// import { categoryBaseI } from '@/Interfaces/CategoriesInterface';
+// import { SupplierI } from '@/Interfaces/SupplierInterface';
+// import { useRoute } from 'ziggy-js';
+// import { formProductKey } from '@/Injections/InjectionKeys';
+// import {
+//   AutoComplete,
+//   AutoCompleteCompleteEvent,
+//   Button,
+//   Dialog,
+//   FloatLabel,
+//   InputText,
+//   Select,
+//   useToast,
+// } from 'primevue';
+// import FRegisterCategory from '@/Pages/Categories/FRegister.vue';
+// import FRegisterSupplier from '@/Pages/Suppliers/FRegister.vue';
+// import { PaymentTypeEnumI } from '@/Interfaces/GlobalInterface';
+// import { CirclePlus } from '@lucide/vue';
+// import axios from 'axios';
+// import { printPdf } from '@/Global/Helpers';
+// import { ProductTableI } from '@/Interfaces/ProductInterface';
+//
+// const route = useRoute();
+// const toast = useToast();
+//
+// const propsW = defineProps<{
+//   categories: categoryBaseI[];
+//   suppliers: SupplierI[];
+//   paymentTypes: PaymentTypeEnumI;
+//   code?: string;
+//   update: boolean;
+// }>();
+//
+// const form = inject(formProductKey)!!;
+// const productDataOption = ref<ProductTableI[]>([]);
+// const createCategory = ref(false);
+// const createSupplier = ref(false);
+// const loadingLabel = ref(false);
+//
+// const searchProduct = async (event: AutoCompleteCompleteEvent) => {
+//   try {
+//     const res = await axios.get(
+//       route('product.get.json', {
+//         search: event.query,
+//       })
+//     );
+//
+//     if (Array.isArray(res.data) && res.data.length > 0) {
+//       productDataOption.value = res.data;
+//     } else {
+//       productDataOption.value = [];
+//     }
+//   } catch (e) {
+//     console.log(e);
+//   }
+// };
+//
+// const printLabel = async () => {
+//   if (propsW.code) {
+//     loadingLabel.value = true;
+//
+//     try {
+//       printPdf(route('product.get-label', { code: propsW.code }));
+//     } catch (_) {
+//       toast.add({
+//         summary: 'Error',
+//         detail: 'No se pudo imprimir el label del producto',
+//         severity: 'error',
+//         life: 3000,
+//       });
+//     } finally {
+//       loadingLabel.value = false;
+//     }
+//   }
+// };
 </script>
 
 <template>
+ <!--
   <div class="space-y-4">
-    <!-- Barra Superior de Acciones (Botones Crear / Imprimir) -->
     <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
       <div class="flex w-30">
         <Button
@@ -125,7 +125,6 @@ const printLabel = async () => {
       </div>
     </div>
 
-    <!-- Campos de Texto y Selects -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
       <FloatLabel variant="on" class="w-full">
         <AutoComplete
@@ -171,7 +170,6 @@ const printLabel = async () => {
     </div>
   </div>
 
-  <!-- Diálogos Auxiliares -->
   <Dialog
     v-model:visible="createCategory"
     modal
@@ -198,4 +196,5 @@ const printLabel = async () => {
       @close="createSupplier = false"
     />
   </Dialog>
+  -->
 </template>

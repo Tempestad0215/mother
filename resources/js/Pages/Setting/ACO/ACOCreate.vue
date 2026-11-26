@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
-import AppLayout from '@/layouts/AppLayout.vue';
-import TextInput from '@components/TextInput.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
+import TextInput from '@/Components/TextInput.vue';
 import { ref } from 'vue';
-import InputError from '@components/InputError.vue';
-import PrimaryButton from '@components/PrimaryButton.vue';
+import InputError from '@/Components/InputError.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { acoBaseI } from '@/Interfaces/AccountCounterInterface';
-import TabLink from '@components/TabLink.vue';
+import TabLink from '@/Components/TabLink.vue';
 import { useRoute } from 'ziggy-js';
 
 const route = useRoute();

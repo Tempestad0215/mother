@@ -1,60 +1,60 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
-import { Button, Card, Column, DataTable, Dialog, useConfirm, useToast } from 'primevue';
-import type { UnitInterfaceI } from '@/Interfaces/UnitInterface';
-import { ref } from 'vue';
-import { router } from '@inertiajs/vue3';
-import { itemsSettings } from '@/Helpers/SettingHelpers';
-import FRegisterUnit from '@/Pages/Setting/Unit/FRegisterUnit.vue';
-import BreadCrumbComponent from '@components/BreadCrumbComponent.vue';
-
-const confirm = useConfirm();
-const toast = useToast();
-
-const propsW = defineProps<{
-  units: UnitInterfaceI[];
-}>();
-
-const createUnit = ref(false);
-const selectedUnit = ref<UnitInterfaceI | null>(null);
-const isUpdate = ref(false);
-
-const editData = (data: UnitInterfaceI) => {
-  selectedUnit.value = data;
-  createUnit.value = true;
-  isUpdate.value = true;
-};
-
-const deleteData = (data: UnitInterfaceI, event: Event) => {
-  confirm.require({
-    target: event.currentTarget as HTMLElement,
-    message: 'Desea eliminar este registro, los cambios son irreversible',
-    rejectProps: {
-      label: 'Cancelar',
-      severity: 'secondary',
-      outlined: true,
-    },
-    acceptProps: {
-      label: 'Eliminar',
-    },
-    accept: () => {
-      router.delete(route('unit.destroy', { unit: data.id }), {
-        onSuccess: () => {
-          toast.add({
-            severity: 'success',
-            summary: 'Eliminado ',
-            detail: 'El Registro Fue Eliminado Correctamente.',
-            life: 3000,
-          });
-        },
-      });
-    },
-  });
-};
+// import AppLayout from '@/Layouts/AppLayout.vue';
+// import { Button, Card, Column, DataTable, Dialog, useConfirm, useToast } from 'primevue';
+// import type { UnitInterfaceI } from '@/Interfaces/UnitInterface';
+// import { ref } from 'vue';
+// import { router } from '@inertiajs/vue3';
+// import { itemsSettings } from '@/Helpers/SettingHelpers';
+// import FRegisterUnit from '@/Pages/Setting/Unit/FRegisterUnit.vue';
+// import BreadCrumbComponent from '@/Components/BreadCrumbComponent.vue';
+//
+// const confirm = useConfirm();
+// const toast = useToast();
+//
+// const propsW = defineProps<{
+//   units: UnitInterfaceI[];
+// }>();
+//
+// const createUnit = ref(false);
+// const selectedUnit = ref<UnitInterfaceI | null>(null);
+// const isUpdate = ref(false);
+//
+// const editData = (data: UnitInterfaceI) => {
+//   selectedUnit.value = data;
+//   createUnit.value = true;
+//   isUpdate.value = true;
+// };
+//
+// const deleteData = (data: UnitInterfaceI, event: Event) => {
+//   confirm.require({
+//     target: event.currentTarget as HTMLElement,
+//     message: 'Desea eliminar este registro, los cambios son irreversible',
+//     rejectProps: {
+//       label: 'Cancelar',
+//       severity: 'secondary',
+//       outlined: true,
+//     },
+//     acceptProps: {
+//       label: 'Eliminar',
+//     },
+//     accept: () => {
+//       router.delete(route('unit.destroy', { unit: data.id }), {
+//         onSuccess: () => {
+//           toast.add({
+//             severity: 'success',
+//             summary: 'Eliminado ',
+//             detail: 'El Registro Fue Eliminado Correctamente.',
+//             life: 3000,
+//           });
+//         },
+//       });
+//     },
+//   });
+// };
 </script>
 
 <template>
-  <AppLayout>
+  <!-- <AppLayout>
     <Card>
       <template #title>
         <div>
@@ -99,5 +99,5 @@ const deleteData = (data: UnitInterfaceI, event: Event) => {
     >
       <FRegisterUnit :isUpdate="isUpdate" :unitEdit="selectedUnit" />
     </Dialog>
-  </AppLayout>
+  </AppLayout> -->
 </template>
