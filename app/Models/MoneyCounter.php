@@ -11,34 +11,70 @@ use Spatie\Activitylog\Support\LogOptions;
 
 /**
  * @property string $uuid
- * @property string $code
- * @property string $from
- * @property string $to
- * @property float $coin_first
- * @property float $coin_second
- * @property float $coin_third
- * @property float $coin_fourth
- * @property float $coin_fifth
- * @property float $coin_sixth
- * @property float $coin_seventh
- * @property float $coin_eighth
- * @property float $coin_ninth
- * @property float $coin_tenth
- * @property float $card
- * @property float $transfer
- * @property float $check
- * @property float $other_income
- * @property float $expenses
- * @property float $cash_withdrawals
- * @property float $refund
- * @property float $other_expenses
- * @property float $opening_balance
- * @property float $total_coin
- * @property float $total_other_coin
- * @property float $total_expenses
- * @property float $diff
- * @property float $total_neto
- *
+ * @property string $code Codigo
+ * @property numeric $coin_first
+ * @property numeric $coin_second
+ * @property numeric $coin_third
+ * @property numeric $coin_fourth
+ * @property numeric $coin_fifth
+ * @property numeric $coin_sixth
+ * @property numeric $coin_seventh
+ * @property numeric $coin_eighth
+ * @property numeric $coin_ninth
+ * @property numeric $coin_tenth
+ * @property numeric $card tarjetas
+ * @property numeric $transfer transfer
+ * @property numeric $check check
+ * @property numeric $other_income otro ingreso
+ * @property numeric $expenses gastos
+ * @property numeric $cash_withdrawals Dinero en Caja
+ * @property numeric $refund Devoluciones
+ * @property numeric $other_expenses otro gastos
+ * @property numeric $opening_balance BAlance inicial
+ * @property numeric $total_coin Total De moneda
+ * @property numeric $total_other_coin Total De Otras moneda
+ * @property numeric $total_expenses Total de Gastos
+ * @property numeric $diff Diferencia
+ * @property numeric $total_neto Total De Neto
+ * @property string|null $comment Comentario
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @method static \Database\Factories\MoneyCounterFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter whereCard($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter whereCashWithdrawals($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter whereCheck($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter whereCoinEighth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter whereCoinFifth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter whereCoinFirst($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter whereCoinFourth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter whereCoinNinth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter whereCoinSecond($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter whereCoinSeventh($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter whereCoinSixth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter whereCoinTenth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter whereCoinThird($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter whereComment($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter whereDiff($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter whereExpenses($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter whereOpeningBalance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter whereOtherExpenses($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter whereOtherIncome($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter whereRefund($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter whereTotalCoin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter whereTotalExpenses($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter whereTotalNeto($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter whereTotalOtherCoin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter whereTransfer($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|MoneyCounter whereUuid($value)
+ * @mixin \Eloquent
  */
 class MoneyCounter extends Model
 {

@@ -8,15 +8,33 @@ use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
 /**
- * @property int id
- * @property array rate_info
- * @property int month
- * @property int year
- * @property boolean status
- * @property string created_at
- * @property string updated_at
- * @property string deleted_at
- *
+ * @property string $uuid
+ * @property string $code Codigo
+ * @property array<array-key, mixed> $rate_info informacion de la tasa
+ * @property int $month mes
+ * @property int $year anio
+ * @property bool $status Estado del Item
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ExchangeRate newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ExchangeRate newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ExchangeRate onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ExchangeRate query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ExchangeRate whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ExchangeRate whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ExchangeRate whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ExchangeRate whereMonth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ExchangeRate whereRateInfo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ExchangeRate whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ExchangeRate whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ExchangeRate whereUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ExchangeRate whereYear($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ExchangeRate withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ExchangeRate withoutTrashed()
+ * @mixin \Eloquent
  */
 class ExchangeRate extends Model
 {

@@ -14,16 +14,37 @@ use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
 /**
- * @property integer id
- * @property string code
- * @property string name
- * @property string prefix
- * @property null|string description
- * @property boolean status
- * @property Carbon deleted_at
- * @property Carbon updated_at
- * @property Carbon created_at
-*/
+ * @property string $uuid
+ * @property string $code codigo unico
+ * @property string $prefix
+ * @property string $name nombre
+ * @property string|null $description descripcion
+ * @property bool $status estado
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Product> $product
+ * @property-read int|null $product_count
+ * @method static \Database\Factories\CategoryFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Category newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Category newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Category onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Category query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Category whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Category whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Category whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Category whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Category whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Category wherePrefix($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Category whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Category whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Category whereUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Category withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Category withoutTrashed()
+ * @mixin \Eloquent
+ */
 class Category extends Model
 {
     use Searchable;

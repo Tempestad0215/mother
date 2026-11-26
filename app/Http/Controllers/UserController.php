@@ -107,7 +107,7 @@ class UserController extends Controller implements HasMiddleware
     /**
      * @return Response
      */
-    public function assingRoleIndex(): void
+    public function assingRoleIndex(): Response
     {
 
         return Inertia::render('Auth/AssingRole',[

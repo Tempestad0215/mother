@@ -1,9 +1,9 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\AccontCoController::index
- * @see app/Http/Controllers/AccontCoController.php:35
- * @route '/aco'
- */
+* @see app/Http/Controllers/AccontCoController.php:35
+* @route '/aco'
+*/
 const index75c9fd73fbeb89b284668fc4d6553a01 = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index75c9fd73fbeb89b284668fc4d6553a01.url(options),
     method: 'get',
@@ -16,37 +16,74 @@ index75c9fd73fbeb89b284668fc4d6553a01.definition = {
 
 /**
 * @see \App\Http\Controllers\AccontCoController::index
- * @see app/Http/Controllers/AccontCoController.php:35
- * @route '/aco'
- */
+* @see app/Http/Controllers/AccontCoController.php:35
+* @route '/aco'
+*/
 index75c9fd73fbeb89b284668fc4d6553a01.url = (options?: RouteQueryOptions) => {
     return index75c9fd73fbeb89b284668fc4d6553a01.definition.url + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\AccontCoController::index
- * @see app/Http/Controllers/AccontCoController.php:35
- * @route '/aco'
- */
+* @see app/Http/Controllers/AccontCoController.php:35
+* @route '/aco'
+*/
 index75c9fd73fbeb89b284668fc4d6553a01.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index75c9fd73fbeb89b284668fc4d6553a01.url(options),
     method: 'get',
 })
+
 /**
 * @see \App\Http\Controllers\AccontCoController::index
- * @see app/Http/Controllers/AccontCoController.php:35
- * @route '/aco'
- */
+* @see app/Http/Controllers/AccontCoController.php:35
+* @route '/aco'
+*/
 index75c9fd73fbeb89b284668fc4d6553a01.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: index75c9fd73fbeb89b284668fc4d6553a01.url(options),
     method: 'head',
 })
 
-    /**
+/**
 * @see \App\Http\Controllers\AccontCoController::index
- * @see app/Http/Controllers/AccontCoController.php:35
- * @route '/setting/currency'
- */
+* @see app/Http/Controllers/AccontCoController.php:35
+* @route '/aco'
+*/
+const index75c9fd73fbeb89b284668fc4d6553a01Form = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index75c9fd73fbeb89b284668fc4d6553a01.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AccontCoController::index
+* @see app/Http/Controllers/AccontCoController.php:35
+* @route '/aco'
+*/
+index75c9fd73fbeb89b284668fc4d6553a01Form.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index75c9fd73fbeb89b284668fc4d6553a01.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AccontCoController::index
+* @see app/Http/Controllers/AccontCoController.php:35
+* @route '/aco'
+*/
+index75c9fd73fbeb89b284668fc4d6553a01Form.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index75c9fd73fbeb89b284668fc4d6553a01.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+index75c9fd73fbeb89b284668fc4d6553a01.form = index75c9fd73fbeb89b284668fc4d6553a01Form
+/**
+* @see \App\Http\Controllers\AccontCoController::index
+* @see app/Http/Controllers/AccontCoController.php:35
+* @route '/setting/currency'
+*/
 const index4e300d9c7ca412757e6323826cf9bc2f = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index4e300d9c7ca412757e6323826cf9bc2f.url(options),
     method: 'get',
@@ -59,31 +96,69 @@ index4e300d9c7ca412757e6323826cf9bc2f.definition = {
 
 /**
 * @see \App\Http\Controllers\AccontCoController::index
- * @see app/Http/Controllers/AccontCoController.php:35
- * @route '/setting/currency'
- */
+* @see app/Http/Controllers/AccontCoController.php:35
+* @route '/setting/currency'
+*/
 index4e300d9c7ca412757e6323826cf9bc2f.url = (options?: RouteQueryOptions) => {
     return index4e300d9c7ca412757e6323826cf9bc2f.definition.url + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\AccontCoController::index
- * @see app/Http/Controllers/AccontCoController.php:35
- * @route '/setting/currency'
- */
+* @see app/Http/Controllers/AccontCoController.php:35
+* @route '/setting/currency'
+*/
 index4e300d9c7ca412757e6323826cf9bc2f.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index4e300d9c7ca412757e6323826cf9bc2f.url(options),
     method: 'get',
 })
+
 /**
 * @see \App\Http\Controllers\AccontCoController::index
- * @see app/Http/Controllers/AccontCoController.php:35
- * @route '/setting/currency'
- */
+* @see app/Http/Controllers/AccontCoController.php:35
+* @route '/setting/currency'
+*/
 index4e300d9c7ca412757e6323826cf9bc2f.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: index4e300d9c7ca412757e6323826cf9bc2f.url(options),
     method: 'head',
 })
+
+/**
+* @see \App\Http\Controllers\AccontCoController::index
+* @see app/Http/Controllers/AccontCoController.php:35
+* @route '/setting/currency'
+*/
+const index4e300d9c7ca412757e6323826cf9bc2fForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index4e300d9c7ca412757e6323826cf9bc2f.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AccontCoController::index
+* @see app/Http/Controllers/AccontCoController.php:35
+* @route '/setting/currency'
+*/
+index4e300d9c7ca412757e6323826cf9bc2fForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index4e300d9c7ca412757e6323826cf9bc2f.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AccontCoController::index
+* @see app/Http/Controllers/AccontCoController.php:35
+* @route '/setting/currency'
+*/
+index4e300d9c7ca412757e6323826cf9bc2fForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index4e300d9c7ca412757e6323826cf9bc2f.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+index4e300d9c7ca412757e6323826cf9bc2f.form = index4e300d9c7ca412757e6323826cf9bc2fForm
 
 /**
 * Multiple routes resolve to \App\Http\Controllers\AccontCoController::index, so this export is a
@@ -98,9 +173,9 @@ export const index = {
 
 /**
 * @see \App\Http\Controllers\AccontCoController::store
- * @see app/Http/Controllers/AccontCoController.php:49
- * @route '/aco'
- */
+* @see app/Http/Controllers/AccontCoController.php:49
+* @route '/aco'
+*/
 const store75c9fd73fbeb89b284668fc4d6553a01 = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store75c9fd73fbeb89b284668fc4d6553a01.url(options),
     method: 'post',
@@ -113,28 +188,49 @@ store75c9fd73fbeb89b284668fc4d6553a01.definition = {
 
 /**
 * @see \App\Http\Controllers\AccontCoController::store
- * @see app/Http/Controllers/AccontCoController.php:49
- * @route '/aco'
- */
+* @see app/Http/Controllers/AccontCoController.php:49
+* @route '/aco'
+*/
 store75c9fd73fbeb89b284668fc4d6553a01.url = (options?: RouteQueryOptions) => {
     return store75c9fd73fbeb89b284668fc4d6553a01.definition.url + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\AccontCoController::store
- * @see app/Http/Controllers/AccontCoController.php:49
- * @route '/aco'
- */
+* @see app/Http/Controllers/AccontCoController.php:49
+* @route '/aco'
+*/
 store75c9fd73fbeb89b284668fc4d6553a01.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store75c9fd73fbeb89b284668fc4d6553a01.url(options),
     method: 'post',
 })
 
-    /**
+/**
 * @see \App\Http\Controllers\AccontCoController::store
- * @see app/Http/Controllers/AccontCoController.php:49
- * @route '/setting/currency'
- */
+* @see app/Http/Controllers/AccontCoController.php:49
+* @route '/aco'
+*/
+const store75c9fd73fbeb89b284668fc4d6553a01Form = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store75c9fd73fbeb89b284668fc4d6553a01.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\AccontCoController::store
+* @see app/Http/Controllers/AccontCoController.php:49
+* @route '/aco'
+*/
+store75c9fd73fbeb89b284668fc4d6553a01Form.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store75c9fd73fbeb89b284668fc4d6553a01.url(options),
+    method: 'post',
+})
+
+store75c9fd73fbeb89b284668fc4d6553a01.form = store75c9fd73fbeb89b284668fc4d6553a01Form
+/**
+* @see \App\Http\Controllers\AccontCoController::store
+* @see app/Http/Controllers/AccontCoController.php:49
+* @route '/setting/currency'
+*/
 const store4e300d9c7ca412757e6323826cf9bc2f = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store4e300d9c7ca412757e6323826cf9bc2f.url(options),
     method: 'post',
@@ -147,22 +243,44 @@ store4e300d9c7ca412757e6323826cf9bc2f.definition = {
 
 /**
 * @see \App\Http\Controllers\AccontCoController::store
- * @see app/Http/Controllers/AccontCoController.php:49
- * @route '/setting/currency'
- */
+* @see app/Http/Controllers/AccontCoController.php:49
+* @route '/setting/currency'
+*/
 store4e300d9c7ca412757e6323826cf9bc2f.url = (options?: RouteQueryOptions) => {
     return store4e300d9c7ca412757e6323826cf9bc2f.definition.url + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\AccontCoController::store
- * @see app/Http/Controllers/AccontCoController.php:49
- * @route '/setting/currency'
- */
+* @see app/Http/Controllers/AccontCoController.php:49
+* @route '/setting/currency'
+*/
 store4e300d9c7ca412757e6323826cf9bc2f.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store4e300d9c7ca412757e6323826cf9bc2f.url(options),
     method: 'post',
 })
+
+/**
+* @see \App\Http\Controllers\AccontCoController::store
+* @see app/Http/Controllers/AccontCoController.php:49
+* @route '/setting/currency'
+*/
+const store4e300d9c7ca412757e6323826cf9bc2fForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store4e300d9c7ca412757e6323826cf9bc2f.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\AccontCoController::store
+* @see app/Http/Controllers/AccontCoController.php:49
+* @route '/setting/currency'
+*/
+store4e300d9c7ca412757e6323826cf9bc2fForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store4e300d9c7ca412757e6323826cf9bc2f.url(options),
+    method: 'post',
+})
+
+store4e300d9c7ca412757e6323826cf9bc2f.form = store4e300d9c7ca412757e6323826cf9bc2fForm
 
 /**
 * Multiple routes resolve to \App\Http\Controllers\AccontCoController::store, so this export is a
@@ -177,9 +295,9 @@ export const store = {
 
 /**
 * @see \App\Http\Controllers\AccontCoController::show
- * @see app/Http/Controllers/AccontCoController.php:0
- * @route '/aco/{aco}'
- */
+* @see app/Http/Controllers/AccontCoController.php:0
+* @route '/aco/{aco}'
+*/
 export const show = (args: { aco: string | number } | [aco: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
@@ -192,26 +310,25 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\AccontCoController::show
- * @see app/Http/Controllers/AccontCoController.php:0
- * @route '/aco/{aco}'
- */
+* @see app/Http/Controllers/AccontCoController.php:0
+* @route '/aco/{aco}'
+*/
 show.url = (args: { aco: string | number } | [aco: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { aco: args }
     }
 
-    
     if (Array.isArray(args)) {
         args = {
-                    aco: args[0],
-                }
+            aco: args[0],
+        }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        aco: args.aco,
-                }
+        aco: args.aco,
+    }
 
     return show.definition.url
             .replace('{aco}', parsedArgs.aco.toString())
@@ -220,28 +337,66 @@ show.url = (args: { aco: string | number } | [aco: string | number ] | string | 
 
 /**
 * @see \App\Http\Controllers\AccontCoController::show
- * @see app/Http/Controllers/AccontCoController.php:0
- * @route '/aco/{aco}'
- */
+* @see app/Http/Controllers/AccontCoController.php:0
+* @route '/aco/{aco}'
+*/
 show.get = (args: { aco: string | number } | [aco: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
+
 /**
 * @see \App\Http\Controllers\AccontCoController::show
- * @see app/Http/Controllers/AccontCoController.php:0
- * @route '/aco/{aco}'
- */
+* @see app/Http/Controllers/AccontCoController.php:0
+* @route '/aco/{aco}'
+*/
 show.head = (args: { aco: string | number } | [aco: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
 
 /**
+* @see \App\Http\Controllers\AccontCoController::show
+* @see app/Http/Controllers/AccontCoController.php:0
+* @route '/aco/{aco}'
+*/
+const showForm = (args: { aco: string | number } | [aco: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AccontCoController::show
+* @see app/Http/Controllers/AccontCoController.php:0
+* @route '/aco/{aco}'
+*/
+showForm.get = (args: { aco: string | number } | [aco: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AccontCoController::show
+* @see app/Http/Controllers/AccontCoController.php:0
+* @route '/aco/{aco}'
+*/
+showForm.head = (args: { aco: string | number } | [aco: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+show.form = showForm
+
+/**
 * @see \App\Http\Controllers\AccontCoController::update
- * @see app/Http/Controllers/AccontCoController.php:70
- * @route '/aco/{aco}'
- */
+* @see app/Http/Controllers/AccontCoController.php:70
+* @route '/aco/{aco}'
+*/
 export const update = (args: { aco: string | number | { id: string | number } } | [aco: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
@@ -254,31 +409,31 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\AccontCoController::update
- * @see app/Http/Controllers/AccontCoController.php:70
- * @route '/aco/{aco}'
- */
+* @see app/Http/Controllers/AccontCoController.php:70
+* @route '/aco/{aco}'
+*/
 update.url = (args: { aco: string | number | { id: string | number } } | [aco: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { aco: args }
     }
 
-            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-            args = { aco: args.id }
-        }
-    
+    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+        args = { aco: args.id }
+    }
+
     if (Array.isArray(args)) {
         args = {
-                    aco: args[0],
-                }
+            aco: args[0],
+        }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        aco: typeof args.aco === 'object'
-                ? args.aco.id
-                : args.aco,
-                }
+        aco: typeof args.aco === 'object'
+        ? args.aco.id
+        : args.aco,
+    }
 
     return update.definition.url
             .replace('{aco}', parsedArgs.aco.toString())
@@ -287,28 +442,76 @@ update.url = (args: { aco: string | number | { id: string | number } } | [aco: s
 
 /**
 * @see \App\Http\Controllers\AccontCoController::update
- * @see app/Http/Controllers/AccontCoController.php:70
- * @route '/aco/{aco}'
- */
+* @see app/Http/Controllers/AccontCoController.php:70
+* @route '/aco/{aco}'
+*/
 update.put = (args: { aco: string | number | { id: string | number } } | [aco: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
+
 /**
 * @see \App\Http\Controllers\AccontCoController::update
- * @see app/Http/Controllers/AccontCoController.php:70
- * @route '/aco/{aco}'
- */
+* @see app/Http/Controllers/AccontCoController.php:70
+* @route '/aco/{aco}'
+*/
 update.patch = (args: { aco: string | number | { id: string | number } } | [aco: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
 
 /**
+* @see \App\Http\Controllers\AccontCoController::update
+* @see app/Http/Controllers/AccontCoController.php:70
+* @route '/aco/{aco}'
+*/
+const updateForm = (args: { aco: string | number | { id: string | number } } | [aco: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PUT',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\AccontCoController::update
+* @see app/Http/Controllers/AccontCoController.php:70
+* @route '/aco/{aco}'
+*/
+updateForm.put = (args: { aco: string | number | { id: string | number } } | [aco: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PUT',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\AccontCoController::update
+* @see app/Http/Controllers/AccontCoController.php:70
+* @route '/aco/{aco}'
+*/
+updateForm.patch = (args: { aco: string | number | { id: string | number } } | [aco: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+update.form = updateForm
+
+/**
 * @see \App\Http\Controllers\AccontCoController::destroy
- * @see app/Http/Controllers/AccontCoController.php:92
- * @route '/aco/{aco}'
- */
+* @see app/Http/Controllers/AccontCoController.php:92
+* @route '/aco/{aco}'
+*/
 const destroy24de0827ff8bf2cad0fe1509aee1b08c = (args: { aco: string | number | { id: string | number } } | [aco: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy24de0827ff8bf2cad0fe1509aee1b08c.url(args, options),
     method: 'delete',
@@ -321,31 +524,31 @@ destroy24de0827ff8bf2cad0fe1509aee1b08c.definition = {
 
 /**
 * @see \App\Http\Controllers\AccontCoController::destroy
- * @see app/Http/Controllers/AccontCoController.php:92
- * @route '/aco/{aco}'
- */
+* @see app/Http/Controllers/AccontCoController.php:92
+* @route '/aco/{aco}'
+*/
 destroy24de0827ff8bf2cad0fe1509aee1b08c.url = (args: { aco: string | number | { id: string | number } } | [aco: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { aco: args }
     }
 
-            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
-            args = { aco: args.id }
-        }
-    
+    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+        args = { aco: args.id }
+    }
+
     if (Array.isArray(args)) {
         args = {
-                    aco: args[0],
-                }
+            aco: args[0],
+        }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        aco: typeof args.aco === 'object'
-                ? args.aco.id
-                : args.aco,
-                }
+        aco: typeof args.aco === 'object'
+        ? args.aco.id
+        : args.aco,
+    }
 
     return destroy24de0827ff8bf2cad0fe1509aee1b08c.definition.url
             .replace('{aco}', parsedArgs.aco.toString())
@@ -354,19 +557,50 @@ destroy24de0827ff8bf2cad0fe1509aee1b08c.url = (args: { aco: string | number | { 
 
 /**
 * @see \App\Http\Controllers\AccontCoController::destroy
- * @see app/Http/Controllers/AccontCoController.php:92
- * @route '/aco/{aco}'
- */
+* @see app/Http/Controllers/AccontCoController.php:92
+* @route '/aco/{aco}'
+*/
 destroy24de0827ff8bf2cad0fe1509aee1b08c.delete = (args: { aco: string | number | { id: string | number } } | [aco: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy24de0827ff8bf2cad0fe1509aee1b08c.url(args, options),
     method: 'delete',
 })
 
-    /**
+/**
 * @see \App\Http\Controllers\AccontCoController::destroy
- * @see app/Http/Controllers/AccontCoController.php:92
- * @route '/setting/currency/{currency}'
- */
+* @see app/Http/Controllers/AccontCoController.php:92
+* @route '/aco/{aco}'
+*/
+const destroy24de0827ff8bf2cad0fe1509aee1b08cForm = (args: { aco: string | number | { id: string | number } } | [aco: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy24de0827ff8bf2cad0fe1509aee1b08c.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\AccontCoController::destroy
+* @see app/Http/Controllers/AccontCoController.php:92
+* @route '/aco/{aco}'
+*/
+destroy24de0827ff8bf2cad0fe1509aee1b08cForm.delete = (args: { aco: string | number | { id: string | number } } | [aco: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy24de0827ff8bf2cad0fe1509aee1b08c.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+destroy24de0827ff8bf2cad0fe1509aee1b08c.form = destroy24de0827ff8bf2cad0fe1509aee1b08cForm
+/**
+* @see \App\Http\Controllers\AccontCoController::destroy
+* @see app/Http/Controllers/AccontCoController.php:92
+* @route '/setting/currency/{currency}'
+*/
 const destroy80432f2f7f8e810604b67b2ffb3e339a = (args: { currency: string | number } | [currency: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy80432f2f7f8e810604b67b2ffb3e339a.url(args, options),
     method: 'delete',
@@ -379,26 +613,25 @@ destroy80432f2f7f8e810604b67b2ffb3e339a.definition = {
 
 /**
 * @see \App\Http\Controllers\AccontCoController::destroy
- * @see app/Http/Controllers/AccontCoController.php:92
- * @route '/setting/currency/{currency}'
- */
+* @see app/Http/Controllers/AccontCoController.php:92
+* @route '/setting/currency/{currency}'
+*/
 destroy80432f2f7f8e810604b67b2ffb3e339a.url = (args: { currency: string | number } | [currency: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { currency: args }
     }
 
-    
     if (Array.isArray(args)) {
         args = {
-                    currency: args[0],
-                }
+            currency: args[0],
+        }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        currency: args.currency,
-                }
+        currency: args.currency,
+    }
 
     return destroy80432f2f7f8e810604b67b2ffb3e339a.definition.url
             .replace('{currency}', parsedArgs.currency.toString())
@@ -407,13 +640,45 @@ destroy80432f2f7f8e810604b67b2ffb3e339a.url = (args: { currency: string | number
 
 /**
 * @see \App\Http\Controllers\AccontCoController::destroy
- * @see app/Http/Controllers/AccontCoController.php:92
- * @route '/setting/currency/{currency}'
- */
+* @see app/Http/Controllers/AccontCoController.php:92
+* @route '/setting/currency/{currency}'
+*/
 destroy80432f2f7f8e810604b67b2ffb3e339a.delete = (args: { currency: string | number } | [currency: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy80432f2f7f8e810604b67b2ffb3e339a.url(args, options),
     method: 'delete',
 })
+
+/**
+* @see \App\Http\Controllers\AccontCoController::destroy
+* @see app/Http/Controllers/AccontCoController.php:92
+* @route '/setting/currency/{currency}'
+*/
+const destroy80432f2f7f8e810604b67b2ffb3e339aForm = (args: { currency: string | number } | [currency: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy80432f2f7f8e810604b67b2ffb3e339a.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\AccontCoController::destroy
+* @see app/Http/Controllers/AccontCoController.php:92
+* @route '/setting/currency/{currency}'
+*/
+destroy80432f2f7f8e810604b67b2ffb3e339aForm.delete = (args: { currency: string | number } | [currency: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy80432f2f7f8e810604b67b2ffb3e339a.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+destroy80432f2f7f8e810604b67b2ffb3e339a.form = destroy80432f2f7f8e810604b67b2ffb3e339aForm
 
 /**
 * Multiple routes resolve to \App\Http\Controllers\AccontCoController::destroy, so this export is a
@@ -428,9 +693,9 @@ export const destroy = {
 
 /**
 * @see \App\Http\Controllers\AccontCoController::checkExchange
- * @see app/Http/Controllers/AccontCoController.php:0
- * @route '/setting/currency/check-exchange'
- */
+* @see app/Http/Controllers/AccontCoController.php:0
+* @route '/setting/currency/check-exchange'
+*/
 export const checkExchange = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: checkExchange.url(options),
     method: 'get',
@@ -443,37 +708,75 @@ checkExchange.definition = {
 
 /**
 * @see \App\Http\Controllers\AccontCoController::checkExchange
- * @see app/Http/Controllers/AccontCoController.php:0
- * @route '/setting/currency/check-exchange'
- */
+* @see app/Http/Controllers/AccontCoController.php:0
+* @route '/setting/currency/check-exchange'
+*/
 checkExchange.url = (options?: RouteQueryOptions) => {
     return checkExchange.definition.url + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\AccontCoController::checkExchange
- * @see app/Http/Controllers/AccontCoController.php:0
- * @route '/setting/currency/check-exchange'
- */
+* @see app/Http/Controllers/AccontCoController.php:0
+* @route '/setting/currency/check-exchange'
+*/
 checkExchange.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: checkExchange.url(options),
     method: 'get',
 })
+
 /**
 * @see \App\Http\Controllers\AccontCoController::checkExchange
- * @see app/Http/Controllers/AccontCoController.php:0
- * @route '/setting/currency/check-exchange'
- */
+* @see app/Http/Controllers/AccontCoController.php:0
+* @route '/setting/currency/check-exchange'
+*/
 checkExchange.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: checkExchange.url(options),
     method: 'head',
 })
 
 /**
+* @see \App\Http\Controllers\AccontCoController::checkExchange
+* @see app/Http/Controllers/AccontCoController.php:0
+* @route '/setting/currency/check-exchange'
+*/
+const checkExchangeForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: checkExchange.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AccontCoController::checkExchange
+* @see app/Http/Controllers/AccontCoController.php:0
+* @route '/setting/currency/check-exchange'
+*/
+checkExchangeForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: checkExchange.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AccontCoController::checkExchange
+* @see app/Http/Controllers/AccontCoController.php:0
+* @route '/setting/currency/check-exchange'
+*/
+checkExchangeForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: checkExchange.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+checkExchange.form = checkExchangeForm
+
+/**
 * @see \App\Http\Controllers\AccontCoController::getExchange
- * @see app/Http/Controllers/AccontCoController.php:0
- * @route '/setting/currency/getExchange/{month}/{year}'
- */
+* @see app/Http/Controllers/AccontCoController.php:0
+* @route '/setting/currency/getExchange/{month}/{year}'
+*/
 export const getExchange = (args: { month: string | number, year: string | number } | [month: string | number, year: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: getExchange.url(args, options),
     method: 'get',
@@ -486,23 +789,23 @@ getExchange.definition = {
 
 /**
 * @see \App\Http\Controllers\AccontCoController::getExchange
- * @see app/Http/Controllers/AccontCoController.php:0
- * @route '/setting/currency/getExchange/{month}/{year}'
- */
+* @see app/Http/Controllers/AccontCoController.php:0
+* @route '/setting/currency/getExchange/{month}/{year}'
+*/
 getExchange.url = (args: { month: string | number, year: string | number } | [month: string | number, year: string | number ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
-                    month: args[0],
-                    year: args[1],
-                }
+            month: args[0],
+            year: args[1],
+        }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        month: args.month,
-                                year: args.year,
-                }
+        month: args.month,
+        year: args.year,
+    }
 
     return getExchange.definition.url
             .replace('{month}', parsedArgs.month.toString())
@@ -512,28 +815,66 @@ getExchange.url = (args: { month: string | number, year: string | number } | [mo
 
 /**
 * @see \App\Http\Controllers\AccontCoController::getExchange
- * @see app/Http/Controllers/AccontCoController.php:0
- * @route '/setting/currency/getExchange/{month}/{year}'
- */
+* @see app/Http/Controllers/AccontCoController.php:0
+* @route '/setting/currency/getExchange/{month}/{year}'
+*/
 getExchange.get = (args: { month: string | number, year: string | number } | [month: string | number, year: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: getExchange.url(args, options),
     method: 'get',
 })
+
 /**
 * @see \App\Http\Controllers\AccontCoController::getExchange
- * @see app/Http/Controllers/AccontCoController.php:0
- * @route '/setting/currency/getExchange/{month}/{year}'
- */
+* @see app/Http/Controllers/AccontCoController.php:0
+* @route '/setting/currency/getExchange/{month}/{year}'
+*/
 getExchange.head = (args: { month: string | number, year: string | number } | [month: string | number, year: string | number ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: getExchange.url(args, options),
     method: 'head',
 })
 
 /**
+* @see \App\Http\Controllers\AccontCoController::getExchange
+* @see app/Http/Controllers/AccontCoController.php:0
+* @route '/setting/currency/getExchange/{month}/{year}'
+*/
+const getExchangeForm = (args: { month: string | number, year: string | number } | [month: string | number, year: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: getExchange.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AccontCoController::getExchange
+* @see app/Http/Controllers/AccontCoController.php:0
+* @route '/setting/currency/getExchange/{month}/{year}'
+*/
+getExchangeForm.get = (args: { month: string | number, year: string | number } | [month: string | number, year: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: getExchange.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\AccontCoController::getExchange
+* @see app/Http/Controllers/AccontCoController.php:0
+* @route '/setting/currency/getExchange/{month}/{year}'
+*/
+getExchangeForm.head = (args: { month: string | number, year: string | number } | [month: string | number, year: string | number ], options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: getExchange.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+getExchange.form = getExchangeForm
+
+/**
 * @see \App\Http\Controllers\AccontCoController::exchangeStore
- * @see app/Http/Controllers/AccontCoController.php:0
- * @route '/setting/currency/exchange'
- */
+* @see app/Http/Controllers/AccontCoController.php:0
+* @route '/setting/currency/exchange'
+*/
 export const exchangeStore = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: exchangeStore.url(options),
     method: 'post',
@@ -546,28 +887,50 @@ exchangeStore.definition = {
 
 /**
 * @see \App\Http\Controllers\AccontCoController::exchangeStore
- * @see app/Http/Controllers/AccontCoController.php:0
- * @route '/setting/currency/exchange'
- */
+* @see app/Http/Controllers/AccontCoController.php:0
+* @route '/setting/currency/exchange'
+*/
 exchangeStore.url = (options?: RouteQueryOptions) => {
     return exchangeStore.definition.url + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\AccontCoController::exchangeStore
- * @see app/Http/Controllers/AccontCoController.php:0
- * @route '/setting/currency/exchange'
- */
+* @see app/Http/Controllers/AccontCoController.php:0
+* @route '/setting/currency/exchange'
+*/
 exchangeStore.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: exchangeStore.url(options),
     method: 'post',
 })
 
 /**
+* @see \App\Http\Controllers\AccontCoController::exchangeStore
+* @see app/Http/Controllers/AccontCoController.php:0
+* @route '/setting/currency/exchange'
+*/
+const exchangeStoreForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: exchangeStore.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\AccontCoController::exchangeStore
+* @see app/Http/Controllers/AccontCoController.php:0
+* @route '/setting/currency/exchange'
+*/
+exchangeStoreForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: exchangeStore.url(options),
+    method: 'post',
+})
+
+exchangeStore.form = exchangeStoreForm
+
+/**
 * @see \App\Http\Controllers\AccontCoController::restore
- * @see app/Http/Controllers/AccontCoController.php:0
- * @route '/setting/currency/restore/{currency}'
- */
+* @see app/Http/Controllers/AccontCoController.php:0
+* @route '/setting/currency/restore/{currency}'
+*/
 export const restore = (args: { currency: string | number } | [currency: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: restore.url(args, options),
     method: 'put',
@@ -580,26 +943,25 @@ restore.definition = {
 
 /**
 * @see \App\Http\Controllers\AccontCoController::restore
- * @see app/Http/Controllers/AccontCoController.php:0
- * @route '/setting/currency/restore/{currency}'
- */
+* @see app/Http/Controllers/AccontCoController.php:0
+* @route '/setting/currency/restore/{currency}'
+*/
 restore.url = (args: { currency: string | number } | [currency: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { currency: args }
     }
 
-    
     if (Array.isArray(args)) {
         args = {
-                    currency: args[0],
-                }
+            currency: args[0],
+        }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        currency: args.currency,
-                }
+        currency: args.currency,
+    }
 
     return restore.definition.url
             .replace('{currency}', parsedArgs.currency.toString())
@@ -608,13 +970,46 @@ restore.url = (args: { currency: string | number } | [currency: string | number 
 
 /**
 * @see \App\Http\Controllers\AccontCoController::restore
- * @see app/Http/Controllers/AccontCoController.php:0
- * @route '/setting/currency/restore/{currency}'
- */
+* @see app/Http/Controllers/AccontCoController.php:0
+* @route '/setting/currency/restore/{currency}'
+*/
 restore.put = (args: { currency: string | number } | [currency: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: restore.url(args, options),
     method: 'put',
 })
+
+/**
+* @see \App\Http\Controllers\AccontCoController::restore
+* @see app/Http/Controllers/AccontCoController.php:0
+* @route '/setting/currency/restore/{currency}'
+*/
+const restoreForm = (args: { currency: string | number } | [currency: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: restore.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PUT',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\AccontCoController::restore
+* @see app/Http/Controllers/AccontCoController.php:0
+* @route '/setting/currency/restore/{currency}'
+*/
+restoreForm.put = (args: { currency: string | number } | [currency: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: restore.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PUT',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+restore.form = restoreForm
+
 const AccontCoController = { index, store, show, update, destroy, checkExchange, getExchange, exchangeStore, restore }
 
 export default AccontCoController

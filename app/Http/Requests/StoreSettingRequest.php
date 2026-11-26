@@ -47,7 +47,7 @@ class StoreSettingRequest extends FormRequest
             'image' => ['nullable', 'image', 'mimes:jpg,png,jpeg', 'max:2048'],
             'company_id' => ['nullable', 'string', 'max:30'],
             'fiscal_year' => ['nullable','date'],
-            'cost' => ['required','boolean'],
+            'save_cost' => ['required','boolean'],
             'sequence' => ['required','boolean'],
             'image_path' => ['nullable', 'file', 'mimes:jpg,png,jpeg', 'max:2048'],
         ];

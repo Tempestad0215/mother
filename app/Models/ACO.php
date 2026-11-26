@@ -11,13 +11,29 @@ use Spatie\Activitylog\Support\LogOptions;
 
 
 /**
- * @property integer id
- * @property string code
- * @property string name
- * @property AccountCountEnum type
- * @property Carbon deleted_at
- * @property Carbon created_at
- * @property Carbon updated_at
+ * @property string $uuid
+ * @property string $code Codigo
+ * @property string $name Nombre
+ * @property string $type Tipo cuenta
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ACO newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ACO newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ACO onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ACO query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ACO whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ACO whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ACO whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ACO whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ACO whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ACO whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ACO whereUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ACO withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ACO withoutTrashed()
+ * @mixin \Eloquent
  */
 class ACO extends Model
 {

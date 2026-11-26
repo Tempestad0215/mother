@@ -14,18 +14,44 @@ use Spatie\Activitylog\Support\LogOptions;
 
 /**
  * @property string $uuid
- * @property string $code
- * @property SequenceSaleTypeEnum $type
- * @property int $from
- * @property int $next
- * @property int $to
- * @property int $advise
- * @property string $num_request
- * @property string $num_authorization
- * @property Date $date_request
- * @property Date $date_expire
- * @property boolean $status
- * @property Date $deleted_at
+ * @property string $code codigo unido para cada registro
+ * @property SequenceSaleTypeEnum $type Tipo de registro
+ * @property int $from numero inicial
+ * @property int $next numero siguiente
+ * @property int $to numero final
+ * @property int $advise mensaje de alerta segun la cantidad prestablecida
+ * @property string $num_request numero de solicitud
+ * @property string $num_authorization numero de autorizacion
+ * @property string $date_request Fecha de solicitud
+ * @property string|null $date_expire Fecha de expiracion
+ * @property bool $status Estado del Item
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sequence newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sequence newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sequence onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sequence query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sequence whereAdvise($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sequence whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sequence whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sequence whereDateExpire($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sequence whereDateRequest($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sequence whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sequence whereFrom($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sequence whereNext($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sequence whereNumAuthorization($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sequence whereNumRequest($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sequence whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sequence whereTo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sequence whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sequence whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sequence whereUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sequence withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sequence withoutTrashed()
+ * @mixin \Eloquent
  */
 
 class Sequence extends Model

@@ -11,15 +11,35 @@ use Spatie\Activitylog\Support\LogOptions;
 
 
 /**
- * @property int id
- * @property ACO account_co_id
- * @property float debit
- * @property float credit
- * @property TransCountEnum type
- * @property Carbon date
- * @property Carbon deleted_at
- * @property Carbon created_at
- * @property Carbon updated_at
+ * @property string $uuid
+ * @property string $account_co_id Relacion de cuenta
+ * @property numeric $amount Monto
+ * @property string $type Tipo cuenta
+ * @property numeric $debit Monto de debito
+ * @property numeric $credit Monto de credito
+ * @property string $date Fecha y hora
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TransCo newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TransCo newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TransCo onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TransCo query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TransCo whereAccountCoId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TransCo whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TransCo whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TransCo whereCredit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TransCo whereDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TransCo whereDebit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TransCo whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TransCo whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TransCo whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TransCo whereUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TransCo withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|TransCo withoutTrashed()
+ * @mixin \Eloquent
  */
 class TransCo extends Model
 {

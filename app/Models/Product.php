@@ -18,43 +18,104 @@ use Spatie\Activitylog\Support\LogOptions;
 
 /**
  * @property string $uuid
- * @property string $type
- * @property string $code
- * @property string $name
- * @property string $description
- * @property string $unit_uuid
- * @property float $cost
- * @property string $sku
- * @property string $bar_code
- * @property float $weight
- * @property string $dimensions
- * @property string $brand_uuid
- * @property float $discount
- * @property float $discount_amount
- * @property float $benefits
- * @property float $benefits_rate
- * @property string $comment
+ * @property string $code Codigo
+ * @property string $name nombre
+ * @property string|null $description descripcion
+ * @property string|null $location ubicacion
+ * @property string|null $sku codigo unico
+ * @property string|null $bar_code codigo de barra
+ * @property float $weight peso
+ * @property string|null $dimensions dimensiones
+ * @property numeric $cost costo
+ * @property numeric $benefits Beneficios del producto
+ * @property numeric $benefits_rate Porcentaje de Margen
+ * @property numeric $discount Porcentaje de descuento
+ * @property numeric $discount_amount Descuento Total
+ * @property string $default_warehouse
  * @property string $default_price_list
- * @property bool $inventoried
- * @property bool $status
- * @property bool $has_fraction
- * @property bool $has_special
- * @property bool $has_promotion
- * @property bool $has_tax
- * @property bool $handle_warehouse
- * @property string $supplier_uuid
- * @property string $category_uuid
- * @property Carbon $created_at
- * @property Carbon $updated_at
+ * @property string $category_uuid Categoria Item
+ * @property string $supplier_uuid Suplidor del Item
+ * @property bool $is_service Tipo de Servicio
+ * @property bool $inventoried Maneja Inventario
+ * @property bool $status Estado del Item
+ * @property bool $has_fraction Se Puede Fraccionar
+ * @property bool $has_special Precio Special Activado
+ * @property bool $has_discount Aplica para descuento
+ * @property bool $has_promotion Aplica para comisiones
+ * @property bool $has_tax Aplica para impuestos
+ * @property bool $handle_warehouse Aplica para impuestos
  * @property Carbon|null $deleted_at
- *
- * @property-read Collection<int, PriceList> $price_list
- * @property-read Collection<int, SaleItem> $saleItem
- * @property-read Brand $brand
- * @property-read Tax $tax
- * @property-read WarehouseProduct $pivot
- * @property-read PurchaseReceiptsItem $receiptsItem
- * @method static create(mixed $validated)
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property string $tax_uuid
+ * @property string|null $unit_uuid
+ * @property string|null $brand_uuid
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CreditNoteItem> $CreditNoteItem
+ * @property-read int|null $credit_note_item_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \App\Models\Brand|null $brand
+ * @property-read \App\Models\Category|null $category
+ * @property-read mixed $total
+ * @property-read mixed $total_available
+ * @property-read \App\Models\Inventory|null $inventory
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\InventoryMovement> $movement
+ * @property-read int|null $movement_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\InventoryMovement> $movements
+ * @property-read int|null $movements_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PriceList> $priceList
+ * @property-read int|null $price_list_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PurchaseReceiptsItem> $receiptsItem
+ * @property-read int|null $receipts_item_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SaleItem> $saleItem
+ * @property-read int|null $sale_item_count
+ * @property-read \App\Models\Supplier|null $supplier
+ * @property-read \App\Models\Tax|null $tax
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ProductTransaction> $trans
+ * @property-read int|null $trans_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Warehouse> $warehouses
+ * @property-read int|null $warehouses_count
+ * @method static \Database\Factories\ProductFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereBarCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereBenefits($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereBenefitsRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereBrandUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereCategoryUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereCost($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereDefaultPriceList($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereDefaultWarehouse($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereDimensions($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereDiscount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereDiscountAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereHandleWarehouse($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereHasDiscount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereHasFraction($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereHasPromotion($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereHasSpecial($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereHasTax($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereInventoried($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereIsService($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereLocation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereSku($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereSupplierUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereTaxUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereUnitUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product whereWeight($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Product withoutTrashed()
+ * @mixin \Eloquent
  */
 class Product extends Model
 {

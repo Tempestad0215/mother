@@ -9,8 +9,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 
-
-
 class SettingHelper
 {
 
@@ -38,10 +36,8 @@ class SettingHelper
                     'address' => $request->address,
                     'website' => $request->website,
                     'company_id' => $request->company_id,
-                    'tax' => $request->tax,
-                    'unit' => $request->unit,
                     'fiscal_year' => $request->fiscal_year,
-                    'save_cost' => $request->cost,
+                    'save_cost' => $request->save_cost,
                     'sequence' => $request->sequence
                 ]);
             }else{
@@ -53,10 +49,8 @@ class SettingHelper
                     'address' => $request->address,
                     'website' => $request->website,
                     'company_id' => $request->company_id,
-                    'tax' => $request->tax,
-                    'unit' => $request->unit,
                     'fiscal_year' => $request->fiscal_year,
-                    'save_cost' => $request->cost,
+                    'save_cost' => $request->save_cost,
                     'sequence' => $request->sequence
                 ]);
             }
@@ -68,7 +62,7 @@ class SettingHelper
 
 
 
-    public function savePhoto(?UploadedFile $file)
+    public function savePhoto(?UploadedFile $file): string
     {
         //Obtener la foto guardada por el id
         $fileName = Setting::first()->logo ?? "";

@@ -15,16 +15,39 @@ use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
 /**
- * @property int $id
+ * @property string $uuid
  * @property string $name
- * @property string $description
- * @property float $rate
- * @property ModelStatusEnum $status
- *
- *
- * @property-read PurchaseItem $purchaseItem
- * @property-read PurchaseReceiptsItem $receiptsItem
- *
+ * @property string|null $description
+ * @property numeric $rate
+ * @property ModelStatusEnum $model_status
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SaleItem> $SaleItem
+ * @property-read int|null $sale_item_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Product> $products
+ * @property-read int|null $products_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PurchaseItem> $purchaseItem
+ * @property-read int|null $purchase_item_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PurchaseReceiptsItem> $receiptsItem
+ * @property-read int|null $receipts_item_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tax newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tax newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tax onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tax query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tax whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tax whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tax whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tax whereModelStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tax whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tax whereRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tax whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tax whereUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tax withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tax withoutTrashed()
+ * @mixin \Eloquent
  */
 
 class Tax extends Model

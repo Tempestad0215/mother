@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Enums\CacheKeyEnum;
-use App\Enums\CompanyTypeEnum;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -11,34 +10,53 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Query\Builder as QueryBuilder;
-use Illuminate\Support\Facades\Date;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
 
 /**
- *
- * @mixin EloquentBuilder
- * @mixin QueryBuilder
- *
- * @property int id
- * @property string $name
- * @property string $email
- * @property string $phone
- * @property string $address
- * @property string $logo
- * @property string $website
- * @property string $company_id
- * @property array $tax
- * @property array $unit
- * @property CompanyTypeEnum $company_type
- * @property string $fiscal_year
- * @property boolean $status
- * @property boolean $save_cost
- * @property boolean $sequence
- * @property boolean $add_tax
- * @property Date $deleted_at
+ * @property string $uuid
+ * @property string $name Nombre de la empresa
+ * @property string $email Correo electronico
+ * @property string|null $phone Telefono
+ * @property string|null $address Direccion
+ * @property string|null $website Sitio web
+ * @property string|null $company_id ID de empresa
+ * @property bool $save_cost Proteger el costo
+ * @property bool $sequence Manejar comprobante
+ * @property string|null $image_path
+ * @property string|null $fiscal_year Año Fiscal
+ * @property bool $status Estado
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \App\Models\Image|null $image
+ * @property-read mixed $tax
+ * @method static \Database\Factories\SettingFactory factory($count = null, $state = [])
+ * @method static EloquentBuilder<static>|Setting newModelQuery()
+ * @method static EloquentBuilder<static>|Setting newQuery()
+ * @method static EloquentBuilder<static>|Setting onlyTrashed()
+ * @method static EloquentBuilder<static>|Setting query()
+ * @method static EloquentBuilder<static>|Setting whereAddress($value)
+ * @method static EloquentBuilder<static>|Setting whereCompanyId($value)
+ * @method static EloquentBuilder<static>|Setting whereCreatedAt($value)
+ * @method static EloquentBuilder<static>|Setting whereDeletedAt($value)
+ * @method static EloquentBuilder<static>|Setting whereEmail($value)
+ * @method static EloquentBuilder<static>|Setting whereFiscalYear($value)
+ * @method static EloquentBuilder<static>|Setting whereImagePath($value)
+ * @method static EloquentBuilder<static>|Setting whereName($value)
+ * @method static EloquentBuilder<static>|Setting wherePhone($value)
+ * @method static EloquentBuilder<static>|Setting whereSaveCost($value)
+ * @method static EloquentBuilder<static>|Setting whereSequence($value)
+ * @method static EloquentBuilder<static>|Setting whereStatus($value)
+ * @method static EloquentBuilder<static>|Setting whereUpdatedAt($value)
+ * @method static EloquentBuilder<static>|Setting whereUuid($value)
+ * @method static EloquentBuilder<static>|Setting whereWebsite($value)
+ * @method static EloquentBuilder<static>|Setting withTrashed(bool $withTrashed = true)
+ * @method static EloquentBuilder<static>|Setting withoutTrashed()
+ * @mixin \Eloquent
  */
 
 
@@ -46,7 +64,7 @@ use Spatie\Activitylog\Support\LogOptions;
 class Setting extends Model
 {
     use HasFactory;
-    use softDeletes;
+    use SoftDeletes;
     use HasFactory;
     use HasUuids;
     use LogsActivity;
@@ -98,12 +116,6 @@ class Setting extends Model
     }
 
 
-    public function tax():Attribute
-    {
-        return Attribute::make(
-            get: fn (array $value) => "funciona"
-        );
-    }
 
 
     /**

@@ -4,16 +4,15 @@ namespace App\Exports;
 
 use App\Models\Client;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Enumerable;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\WithMapping;
 
-class ClientExport implements FromCollection, WithHeadings, WithMapping
+class ClientExport implements FromCollection
 {
     /**
-    * @return Collection
+    * @return Enumerable
     */
-    public function collection()
+    public function collection(): Collection
     {
         return Client::all();
     }

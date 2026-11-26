@@ -31,7 +31,7 @@ class SettingController extends Controller implements HasMiddleware
     /**
      * @return Response
      */
-    public function index()
+    public function index(): Response
     {
         return Inertia::render('Setting/SettingIndex',[
             'setting' => Setting::first('*'),
@@ -49,12 +49,14 @@ class SettingController extends Controller implements HasMiddleware
         //Verificar si existe venta con la cuenta abierta
         $sale = Sale::where('close_table', false)->exists();
 
+    
+
         //Verificar si existe para devolver el mensaje
-        if ($sale && $request->get('sequence'))
+        if ($sale && $request->input('sequence'))
         {
             //Enviar mensaje de error, hasta cerrar las cuentas no se puede cambiar la sequence
             throw ValidationException::withMessages([
-                'general' => 'Por Favor, Antes De Cambiar El Modo (Manejar Comprobante) Debes Cerrar Todas Las Cuentas.'
+                'general' => 'Por Favor, Antes De Cambiar El Modo (Maneja Comprobante) Debes Cerrar Todas Las Cuentas.'
             ]);
         }
 

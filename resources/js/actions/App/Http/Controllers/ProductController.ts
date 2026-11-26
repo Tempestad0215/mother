@@ -1,9 +1,9 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\ProductController::index
- * @see app/Http/Controllers/ProductController.php:58
- * @route '/product'
- */
+* @see app/Http/Controllers/ProductController.php:58
+* @route '/product'
+*/
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(options),
     method: 'get',
@@ -16,37 +16,75 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\ProductController::index
- * @see app/Http/Controllers/ProductController.php:58
- * @route '/product'
- */
+* @see app/Http/Controllers/ProductController.php:58
+* @route '/product'
+*/
 index.url = (options?: RouteQueryOptions) => {
     return index.definition.url + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\ProductController::index
- * @see app/Http/Controllers/ProductController.php:58
- * @route '/product'
- */
+* @see app/Http/Controllers/ProductController.php:58
+* @route '/product'
+*/
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: index.url(options),
     method: 'get',
 })
+
 /**
 * @see \App\Http\Controllers\ProductController::index
- * @see app/Http/Controllers/ProductController.php:58
- * @route '/product'
- */
+* @see app/Http/Controllers/ProductController.php:58
+* @route '/product'
+*/
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: index.url(options),
     method: 'head',
 })
 
 /**
+* @see \App\Http\Controllers\ProductController::index
+* @see app/Http/Controllers/ProductController.php:58
+* @route '/product'
+*/
+const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\ProductController::index
+* @see app/Http/Controllers/ProductController.php:58
+* @route '/product'
+*/
+indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\ProductController::index
+* @see app/Http/Controllers/ProductController.php:58
+* @route '/product'
+*/
+indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: index.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+index.form = indexForm
+
+/**
 * @see \App\Http\Controllers\ProductController::store
- * @see app/Http/Controllers/ProductController.php:118
- * @route '/product'
- */
+* @see app/Http/Controllers/ProductController.php:118
+* @route '/product'
+*/
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
@@ -59,28 +97,50 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\ProductController::store
- * @see app/Http/Controllers/ProductController.php:118
- * @route '/product'
- */
+* @see app/Http/Controllers/ProductController.php:118
+* @route '/product'
+*/
 store.url = (options?: RouteQueryOptions) => {
     return store.definition.url + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\ProductController::store
- * @see app/Http/Controllers/ProductController.php:118
- * @route '/product'
- */
+* @see app/Http/Controllers/ProductController.php:118
+* @route '/product'
+*/
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: store.url(options),
     method: 'post',
 })
 
 /**
+* @see \App\Http\Controllers\ProductController::store
+* @see app/Http/Controllers/ProductController.php:118
+* @route '/product'
+*/
+const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\ProductController::store
+* @see app/Http/Controllers/ProductController.php:118
+* @route '/product'
+*/
+storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: store.url(options),
+    method: 'post',
+})
+
+store.form = storeForm
+
+/**
 * @see \App\Http\Controllers\ProductController::show
- * @see app/Http/Controllers/ProductController.php:155
- * @route '/product/{product}'
- */
+* @see app/Http/Controllers/ProductController.php:155
+* @route '/product/{product}'
+*/
 export const show = (args: { product: string | number } | [product: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
@@ -93,26 +153,25 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\ProductController::show
- * @see app/Http/Controllers/ProductController.php:155
- * @route '/product/{product}'
- */
+* @see app/Http/Controllers/ProductController.php:155
+* @route '/product/{product}'
+*/
 show.url = (args: { product: string | number } | [product: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { product: args }
     }
 
-    
     if (Array.isArray(args)) {
         args = {
-                    product: args[0],
-                }
+            product: args[0],
+        }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        product: args.product,
-                }
+        product: args.product,
+    }
 
     return show.definition.url
             .replace('{product}', parsedArgs.product.toString())
@@ -121,28 +180,66 @@ show.url = (args: { product: string | number } | [product: string | number ] | s
 
 /**
 * @see \App\Http\Controllers\ProductController::show
- * @see app/Http/Controllers/ProductController.php:155
- * @route '/product/{product}'
- */
+* @see app/Http/Controllers/ProductController.php:155
+* @route '/product/{product}'
+*/
 show.get = (args: { product: string | number } | [product: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
+
 /**
 * @see \App\Http\Controllers\ProductController::show
- * @see app/Http/Controllers/ProductController.php:155
- * @route '/product/{product}'
- */
+* @see app/Http/Controllers/ProductController.php:155
+* @route '/product/{product}'
+*/
 show.head = (args: { product: string | number } | [product: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
 
 /**
+* @see \App\Http\Controllers\ProductController::show
+* @see app/Http/Controllers/ProductController.php:155
+* @route '/product/{product}'
+*/
+const showForm = (args: { product: string | number } | [product: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\ProductController::show
+* @see app/Http/Controllers/ProductController.php:155
+* @route '/product/{product}'
+*/
+showForm.get = (args: { product: string | number } | [product: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\ProductController::show
+* @see app/Http/Controllers/ProductController.php:155
+* @route '/product/{product}'
+*/
+showForm.head = (args: { product: string | number } | [product: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: show.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+show.form = showForm
+
+/**
 * @see \App\Http\Controllers\ProductController::update
- * @see app/Http/Controllers/ProductController.php:196
- * @route '/product/{product}'
- */
+* @see app/Http/Controllers/ProductController.php:196
+* @route '/product/{product}'
+*/
 export const update = (args: { product: string | { uuid: string } } | [product: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
@@ -155,31 +252,31 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\ProductController::update
- * @see app/Http/Controllers/ProductController.php:196
- * @route '/product/{product}'
- */
+* @see app/Http/Controllers/ProductController.php:196
+* @route '/product/{product}'
+*/
 update.url = (args: { product: string | { uuid: string } } | [product: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { product: args }
     }
 
-            if (typeof args === 'object' && !Array.isArray(args) && 'uuid' in args) {
-            args = { product: args.uuid }
-        }
-    
+    if (typeof args === 'object' && !Array.isArray(args) && 'uuid' in args) {
+        args = { product: args.uuid }
+    }
+
     if (Array.isArray(args)) {
         args = {
-                    product: args[0],
-                }
+            product: args[0],
+        }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        product: typeof args.product === 'object'
-                ? args.product.uuid
-                : args.product,
-                }
+        product: typeof args.product === 'object'
+        ? args.product.uuid
+        : args.product,
+    }
 
     return update.definition.url
             .replace('{product}', parsedArgs.product.toString())
@@ -188,28 +285,76 @@ update.url = (args: { product: string | { uuid: string } } | [product: string | 
 
 /**
 * @see \App\Http\Controllers\ProductController::update
- * @see app/Http/Controllers/ProductController.php:196
- * @route '/product/{product}'
- */
+* @see app/Http/Controllers/ProductController.php:196
+* @route '/product/{product}'
+*/
 update.put = (args: { product: string | { uuid: string } } | [product: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
+
 /**
 * @see \App\Http\Controllers\ProductController::update
- * @see app/Http/Controllers/ProductController.php:196
- * @route '/product/{product}'
- */
+* @see app/Http/Controllers/ProductController.php:196
+* @route '/product/{product}'
+*/
 update.patch = (args: { product: string | { uuid: string } } | [product: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: update.url(args, options),
     method: 'patch',
 })
 
 /**
+* @see \App\Http\Controllers\ProductController::update
+* @see app/Http/Controllers/ProductController.php:196
+* @route '/product/{product}'
+*/
+const updateForm = (args: { product: string | { uuid: string } } | [product: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PUT',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\ProductController::update
+* @see app/Http/Controllers/ProductController.php:196
+* @route '/product/{product}'
+*/
+updateForm.put = (args: { product: string | { uuid: string } } | [product: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PUT',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\ProductController::update
+* @see app/Http/Controllers/ProductController.php:196
+* @route '/product/{product}'
+*/
+updateForm.patch = (args: { product: string | { uuid: string } } | [product: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: update.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+update.form = updateForm
+
+/**
 * @see \App\Http\Controllers\ProductController::destroy
- * @see app/Http/Controllers/ProductController.php:233
- * @route '/product/{product}'
- */
+* @see app/Http/Controllers/ProductController.php:233
+* @route '/product/{product}'
+*/
 const destroye04c4004272af485914746e670103bde = (args: { product: string | { uuid: string } } | [product: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroye04c4004272af485914746e670103bde.url(args, options),
     method: 'delete',
@@ -222,31 +367,31 @@ destroye04c4004272af485914746e670103bde.definition = {
 
 /**
 * @see \App\Http\Controllers\ProductController::destroy
- * @see app/Http/Controllers/ProductController.php:233
- * @route '/product/{product}'
- */
+* @see app/Http/Controllers/ProductController.php:233
+* @route '/product/{product}'
+*/
 destroye04c4004272af485914746e670103bde.url = (args: { product: string | { uuid: string } } | [product: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { product: args }
     }
 
-            if (typeof args === 'object' && !Array.isArray(args) && 'uuid' in args) {
-            args = { product: args.uuid }
-        }
-    
+    if (typeof args === 'object' && !Array.isArray(args) && 'uuid' in args) {
+        args = { product: args.uuid }
+    }
+
     if (Array.isArray(args)) {
         args = {
-                    product: args[0],
-                }
+            product: args[0],
+        }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        product: typeof args.product === 'object'
-                ? args.product.uuid
-                : args.product,
-                }
+        product: typeof args.product === 'object'
+        ? args.product.uuid
+        : args.product,
+    }
 
     return destroye04c4004272af485914746e670103bde.definition.url
             .replace('{product}', parsedArgs.product.toString())
@@ -255,19 +400,50 @@ destroye04c4004272af485914746e670103bde.url = (args: { product: string | { uuid:
 
 /**
 * @see \App\Http\Controllers\ProductController::destroy
- * @see app/Http/Controllers/ProductController.php:233
- * @route '/product/{product}'
- */
+* @see app/Http/Controllers/ProductController.php:233
+* @route '/product/{product}'
+*/
 destroye04c4004272af485914746e670103bde.delete = (args: { product: string | { uuid: string } } | [product: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroye04c4004272af485914746e670103bde.url(args, options),
     method: 'delete',
 })
 
-    /**
+/**
 * @see \App\Http\Controllers\ProductController::destroy
- * @see app/Http/Controllers/ProductController.php:233
- * @route '/product/delete/{product}'
- */
+* @see app/Http/Controllers/ProductController.php:233
+* @route '/product/{product}'
+*/
+const destroye04c4004272af485914746e670103bdeForm = (args: { product: string | { uuid: string } } | [product: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroye04c4004272af485914746e670103bde.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\ProductController::destroy
+* @see app/Http/Controllers/ProductController.php:233
+* @route '/product/{product}'
+*/
+destroye04c4004272af485914746e670103bdeForm.delete = (args: { product: string | { uuid: string } } | [product: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroye04c4004272af485914746e670103bde.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+destroye04c4004272af485914746e670103bde.form = destroye04c4004272af485914746e670103bdeForm
+/**
+* @see \App\Http\Controllers\ProductController::destroy
+* @see app/Http/Controllers/ProductController.php:233
+* @route '/product/delete/{product}'
+*/
 const destroyf3615e78e35aebc6dc5ffde0d6c5f536 = (args: { product: string | { uuid: string } } | [product: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: destroyf3615e78e35aebc6dc5ffde0d6c5f536.url(args, options),
     method: 'patch',
@@ -280,31 +456,31 @@ destroyf3615e78e35aebc6dc5ffde0d6c5f536.definition = {
 
 /**
 * @see \App\Http\Controllers\ProductController::destroy
- * @see app/Http/Controllers/ProductController.php:233
- * @route '/product/delete/{product}'
- */
+* @see app/Http/Controllers/ProductController.php:233
+* @route '/product/delete/{product}'
+*/
 destroyf3615e78e35aebc6dc5ffde0d6c5f536.url = (args: { product: string | { uuid: string } } | [product: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { product: args }
     }
 
-            if (typeof args === 'object' && !Array.isArray(args) && 'uuid' in args) {
-            args = { product: args.uuid }
-        }
-    
+    if (typeof args === 'object' && !Array.isArray(args) && 'uuid' in args) {
+        args = { product: args.uuid }
+    }
+
     if (Array.isArray(args)) {
         args = {
-                    product: args[0],
-                }
+            product: args[0],
+        }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        product: typeof args.product === 'object'
-                ? args.product.uuid
-                : args.product,
-                }
+        product: typeof args.product === 'object'
+        ? args.product.uuid
+        : args.product,
+    }
 
     return destroyf3615e78e35aebc6dc5ffde0d6c5f536.definition.url
             .replace('{product}', parsedArgs.product.toString())
@@ -313,13 +489,45 @@ destroyf3615e78e35aebc6dc5ffde0d6c5f536.url = (args: { product: string | { uuid:
 
 /**
 * @see \App\Http\Controllers\ProductController::destroy
- * @see app/Http/Controllers/ProductController.php:233
- * @route '/product/delete/{product}'
- */
+* @see app/Http/Controllers/ProductController.php:233
+* @route '/product/delete/{product}'
+*/
 destroyf3615e78e35aebc6dc5ffde0d6c5f536.patch = (args: { product: string | { uuid: string } } | [product: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
     url: destroyf3615e78e35aebc6dc5ffde0d6c5f536.url(args, options),
     method: 'patch',
 })
+
+/**
+* @see \App\Http\Controllers\ProductController::destroy
+* @see app/Http/Controllers/ProductController.php:233
+* @route '/product/delete/{product}'
+*/
+const destroyf3615e78e35aebc6dc5ffde0d6c5f536Form = (args: { product: string | { uuid: string } } | [product: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroyf3615e78e35aebc6dc5ffde0d6c5f536.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\ProductController::destroy
+* @see app/Http/Controllers/ProductController.php:233
+* @route '/product/delete/{product}'
+*/
+destroyf3615e78e35aebc6dc5ffde0d6c5f536Form.patch = (args: { product: string | { uuid: string } } | [product: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroyf3615e78e35aebc6dc5ffde0d6c5f536.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'PATCH',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+destroyf3615e78e35aebc6dc5ffde0d6c5f536.form = destroyf3615e78e35aebc6dc5ffde0d6c5f536Form
 
 /**
 * Multiple routes resolve to \App\Http\Controllers\ProductController::destroy, so this export is a
@@ -334,9 +542,9 @@ export const destroy = {
 
 /**
 * @see \App\Http\Controllers\ProductController::createLabel
- * @see app/Http/Controllers/ProductController.php:342
- * @route '/product/get-label/{code}'
- */
+* @see app/Http/Controllers/ProductController.php:342
+* @route '/product/get-label/{code}'
+*/
 export const createLabel = (args: { code: string | number } | [code: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: createLabel.url(args, options),
     method: 'get',
@@ -349,26 +557,25 @@ createLabel.definition = {
 
 /**
 * @see \App\Http\Controllers\ProductController::createLabel
- * @see app/Http/Controllers/ProductController.php:342
- * @route '/product/get-label/{code}'
- */
+* @see app/Http/Controllers/ProductController.php:342
+* @route '/product/get-label/{code}'
+*/
 createLabel.url = (args: { code: string | number } | [code: string | number ] | string | number, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { code: args }
     }
 
-    
     if (Array.isArray(args)) {
         args = {
-                    code: args[0],
-                }
+            code: args[0],
+        }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        code: args.code,
-                }
+        code: args.code,
+    }
 
     return createLabel.definition.url
             .replace('{code}', parsedArgs.code.toString())
@@ -377,28 +584,66 @@ createLabel.url = (args: { code: string | number } | [code: string | number ] | 
 
 /**
 * @see \App\Http\Controllers\ProductController::createLabel
- * @see app/Http/Controllers/ProductController.php:342
- * @route '/product/get-label/{code}'
- */
+* @see app/Http/Controllers/ProductController.php:342
+* @route '/product/get-label/{code}'
+*/
 createLabel.get = (args: { code: string | number } | [code: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: createLabel.url(args, options),
     method: 'get',
 })
+
 /**
 * @see \App\Http\Controllers\ProductController::createLabel
- * @see app/Http/Controllers/ProductController.php:342
- * @route '/product/get-label/{code}'
- */
+* @see app/Http/Controllers/ProductController.php:342
+* @route '/product/get-label/{code}'
+*/
 createLabel.head = (args: { code: string | number } | [code: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: createLabel.url(args, options),
     method: 'head',
 })
 
 /**
+* @see \App\Http\Controllers\ProductController::createLabel
+* @see app/Http/Controllers/ProductController.php:342
+* @route '/product/get-label/{code}'
+*/
+const createLabelForm = (args: { code: string | number } | [code: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: createLabel.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\ProductController::createLabel
+* @see app/Http/Controllers/ProductController.php:342
+* @route '/product/get-label/{code}'
+*/
+createLabelForm.get = (args: { code: string | number } | [code: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: createLabel.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\ProductController::createLabel
+* @see app/Http/Controllers/ProductController.php:342
+* @route '/product/get-label/{code}'
+*/
+createLabelForm.head = (args: { code: string | number } | [code: string | number ] | string | number, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: createLabel.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+createLabel.form = createLabelForm
+
+/**
 * @see \App\Http\Controllers\ProductController::get
- * @see app/Http/Controllers/ProductController.php:314
- * @route '/product/get'
- */
+* @see app/Http/Controllers/ProductController.php:314
+* @route '/product/get'
+*/
 export const get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: get.url(options),
     method: 'get',
@@ -411,37 +656,75 @@ get.definition = {
 
 /**
 * @see \App\Http\Controllers\ProductController::get
- * @see app/Http/Controllers/ProductController.php:314
- * @route '/product/get'
- */
+* @see app/Http/Controllers/ProductController.php:314
+* @route '/product/get'
+*/
 get.url = (options?: RouteQueryOptions) => {
     return get.definition.url + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\ProductController::get
- * @see app/Http/Controllers/ProductController.php:314
- * @route '/product/get'
- */
+* @see app/Http/Controllers/ProductController.php:314
+* @route '/product/get'
+*/
 get.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: get.url(options),
     method: 'get',
 })
+
 /**
 * @see \App\Http\Controllers\ProductController::get
- * @see app/Http/Controllers/ProductController.php:314
- * @route '/product/get'
- */
+* @see app/Http/Controllers/ProductController.php:314
+* @route '/product/get'
+*/
 get.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: get.url(options),
     method: 'head',
 })
 
 /**
+* @see \App\Http\Controllers\ProductController::get
+* @see app/Http/Controllers/ProductController.php:314
+* @route '/product/get'
+*/
+const getForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: get.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\ProductController::get
+* @see app/Http/Controllers/ProductController.php:314
+* @route '/product/get'
+*/
+getForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: get.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\ProductController::get
+* @see app/Http/Controllers/ProductController.php:314
+* @route '/product/get'
+*/
+getForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: get.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+get.form = getForm
+
+/**
 * @see \App\Http\Controllers\ProductController::getJson
- * @see app/Http/Controllers/ProductController.php:383
- * @route '/product/get/json'
- */
+* @see app/Http/Controllers/ProductController.php:383
+* @route '/product/get/json'
+*/
 export const getJson = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: getJson.url(options),
     method: 'get',
@@ -454,37 +737,75 @@ getJson.definition = {
 
 /**
 * @see \App\Http\Controllers\ProductController::getJson
- * @see app/Http/Controllers/ProductController.php:383
- * @route '/product/get/json'
- */
+* @see app/Http/Controllers/ProductController.php:383
+* @route '/product/get/json'
+*/
 getJson.url = (options?: RouteQueryOptions) => {
     return getJson.definition.url + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\ProductController::getJson
- * @see app/Http/Controllers/ProductController.php:383
- * @route '/product/get/json'
- */
+* @see app/Http/Controllers/ProductController.php:383
+* @route '/product/get/json'
+*/
 getJson.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: getJson.url(options),
     method: 'get',
 })
+
 /**
 * @see \App\Http\Controllers\ProductController::getJson
- * @see app/Http/Controllers/ProductController.php:383
- * @route '/product/get/json'
- */
+* @see app/Http/Controllers/ProductController.php:383
+* @route '/product/get/json'
+*/
 getJson.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: getJson.url(options),
     method: 'head',
 })
 
 /**
+* @see \App\Http\Controllers\ProductController::getJson
+* @see app/Http/Controllers/ProductController.php:383
+* @route '/product/get/json'
+*/
+const getJsonForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: getJson.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\ProductController::getJson
+* @see app/Http/Controllers/ProductController.php:383
+* @route '/product/get/json'
+*/
+getJsonForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: getJson.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\ProductController::getJson
+* @see app/Http/Controllers/ProductController.php:383
+* @route '/product/get/json'
+*/
+getJsonForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: getJson.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+getJson.form = getJsonForm
+
+/**
 * @see \App\Http\Controllers\ProductController::getByCode
- * @see app/Http/Controllers/ProductController.php:261
- * @route '/product/get/code'
- */
+* @see app/Http/Controllers/ProductController.php:261
+* @route '/product/get/code'
+*/
 export const getByCode = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: getByCode.url(options),
     method: 'get',
@@ -497,31 +818,70 @@ getByCode.definition = {
 
 /**
 * @see \App\Http\Controllers\ProductController::getByCode
- * @see app/Http/Controllers/ProductController.php:261
- * @route '/product/get/code'
- */
+* @see app/Http/Controllers/ProductController.php:261
+* @route '/product/get/code'
+*/
 getByCode.url = (options?: RouteQueryOptions) => {
     return getByCode.definition.url + queryParams(options)
 }
 
 /**
 * @see \App\Http\Controllers\ProductController::getByCode
- * @see app/Http/Controllers/ProductController.php:261
- * @route '/product/get/code'
- */
+* @see app/Http/Controllers/ProductController.php:261
+* @route '/product/get/code'
+*/
 getByCode.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: getByCode.url(options),
     method: 'get',
 })
+
 /**
 * @see \App\Http\Controllers\ProductController::getByCode
- * @see app/Http/Controllers/ProductController.php:261
- * @route '/product/get/code'
- */
+* @see app/Http/Controllers/ProductController.php:261
+* @route '/product/get/code'
+*/
 getByCode.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: getByCode.url(options),
     method: 'head',
 })
+
+/**
+* @see \App\Http\Controllers\ProductController::getByCode
+* @see app/Http/Controllers/ProductController.php:261
+* @route '/product/get/code'
+*/
+const getByCodeForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: getByCode.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\ProductController::getByCode
+* @see app/Http/Controllers/ProductController.php:261
+* @route '/product/get/code'
+*/
+getByCodeForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: getByCode.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\ProductController::getByCode
+* @see app/Http/Controllers/ProductController.php:261
+* @route '/product/get/code'
+*/
+getByCodeForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: getByCode.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+getByCode.form = getByCodeForm
+
 const ProductController = { index, store, show, update, destroy, createLabel, get, getJson, getByCode }
 
 export default ProductController

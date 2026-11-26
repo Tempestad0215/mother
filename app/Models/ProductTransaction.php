@@ -12,32 +12,66 @@ use Spatie\Activitylog\Support\LogOptions;
 
 /**
  * @property string $uuid
- * @property string $code
- * @property string $product_uuid
- * @property string $sale_uuid
- * @property string $credit_note_uuid
- * @property float $quantity
- * @property float $price
- * @property float $cost
- * @property float $discount
- * @property float $discount_amount
- * @property float $tax_rate
- * @property float $tax
- * @property float $tax_amount
- * @property float $min_price
- * @property float $promotional_price
- * @property float $subtotal
- * @property float $amount
+ * @property string|null $code
+ * @property string|null $product_uuid
+ * @property int|null $sale_id
+ * @property string|null $credit_note_uuid
+ * @property numeric $quantity
+ * @property numeric $price
+ * @property numeric $cost
+ * @property numeric $discount
+ * @property numeric $discount_amount
+ * @property numeric $tax_rate
+ * @property numeric $tax
+ * @property numeric $tax_amount
+ * @property numeric $min_price
+ * @property numeric $promotional_price
+ * @property numeric $subtotal
+ * @property numeric $amount
  * @property bool $status
  * @property ProductTransactionTypeEnum $type
- * @property float $reserved_quantity
- * @property string $product_name
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \Carbon\Carbon|null $deleted_at
- * @property-read Product $product
- * @property-read Sale $sale
- * @property-read CreditNote $creditNote
+ * @property numeric $reserved_quantity
+ * @property string|null $product_name
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \App\Models\CreditNote|null $creditNote
+ * @property-read \App\Models\Product|null $product
+ * @property-read \App\Models\Sale|null $sale
+ * @method static \Database\Factories\ProductTransactionFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductTransaction newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductTransaction newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductTransaction onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductTransaction query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductTransaction whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductTransaction whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductTransaction whereCost($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductTransaction whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductTransaction whereCreditNoteUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductTransaction whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductTransaction whereDiscount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductTransaction whereDiscountAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductTransaction whereMinPrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductTransaction wherePrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductTransaction whereProductName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductTransaction whereProductUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductTransaction wherePromotionalPrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductTransaction whereQuantity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductTransaction whereReservedQuantity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductTransaction whereSaleId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductTransaction whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductTransaction whereSubtotal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductTransaction whereTax($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductTransaction whereTaxAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductTransaction whereTaxRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductTransaction whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductTransaction whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductTransaction whereUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductTransaction withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ProductTransaction withoutTrashed()
+ * @mixin \Eloquent
  */
 class ProductTransaction extends Model
 {

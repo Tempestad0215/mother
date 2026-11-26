@@ -3,6 +3,8 @@
 namespace App\Exports;
 
 use App\Models\Supplier;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Enumerable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -10,9 +12,9 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 class SupplierExport implements FromCollection, WithHeadings, WithMapping
 {
     /**
-    * @return \Illuminate\Support\Collection
+    * @return Enumerable
     */
-    public function collection()
+    public function collection():Collection
     {
         return Supplier::all();
     }

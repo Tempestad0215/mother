@@ -16,26 +16,56 @@ use Spatie\Activitylog\Support\LogOptions;
 
 
 /**
- * @property int id
- * @property string|null contact
- * @property string company_name
- * @property string|null phone
- * @property PaymentTypeEnum type_payment
- * @property string|null email
- * @property bool receive_email
- * @property string account_bank
- * @property bool is_recurring
- * @property integer payment_day
- * @property boolean status
- * @property string comment
- * @property string created_at
- * @property string updated_at
- * @property string deleted_at
- *
- *
- * @property-read Purchase[] purchase
- * @property-read Product[] product
-*/
+ * @property string $uuid
+ * @property string $code codigo unido para cada registro
+ * @property string|null $contact Nombre del representante
+ * @property string $company_name nombre completo
+ * @property PaymentTypeEnum $type_payment
+ * @property string|null $phone Telefono
+ * @property string|null $email Correo electronico
+ * @property bool $receive_email Email Recibido
+ * @property string|null $account_bank Cuenta de Banco
+ * @property bool $is_recurring Pago Recurrente
+ * @property int|null $payment_day Dia de pago del mes
+ * @property bool $status Estado
+ * @property \App\Models\Comment|null $comment Comentario
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Account|null $account
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Product> $product
+ * @property-read int|null $product_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Purchase> $purchase
+ * @property-read int|null $purchase_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PurchaseReceipts> $receipts
+ * @property-read int|null $receipts_count
+ * @method static \Database\Factories\SupplierFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier whereAccountBank($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier whereComment($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier whereCompanyName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier whereContact($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier whereIsRecurring($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier wherePaymentDay($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier wherePhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier whereReceiveEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier whereTypePayment($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier whereUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Supplier withoutTrashed()
+ * @mixin \Eloquent
+ */
 
 class Supplier extends Model
 {

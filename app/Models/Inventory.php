@@ -8,6 +8,19 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
+/**
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \App\Models\Product|null $product
+ * @property-read \App\Models\Warehouse|null $warehouse
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Inventory newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Inventory newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Inventory onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Inventory query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Inventory withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Inventory withoutTrashed()
+ * @mixin \Eloquent
+ */
 class Inventory extends Model
 {
     use SoftDeletes;

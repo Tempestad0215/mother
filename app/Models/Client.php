@@ -22,27 +22,52 @@ use Spatie\Activitylog\Support\LogOptions;
 
 /**
  * @property string $uuid
- * @property string $code
- * @property string $name
- * @property SequenceSaleTypeEnum $type_rnc
- * @property string $phone
- * @property string $personal_id
- * @property string $email
- * @property ClientDocumentEnum $document
- * @property string $address
- * @property boolean $status
- * @property float $limit
- * @property integer $due_date
- * @property ClientTypeEnum $type
- * @property float $late_fee_interest
- * @property float $balance
- * @property float $consumed
- * @property ClientTypePriceEnum $type_price
- * @property boolean $receive_email
- * @property string $comment
- * @property Date $deleted_at
- * @property Date $created_at
- * @property Date $updated_at
+ * @property string $code Codigo
+ * @property SequenceSaleTypeEnum $type_rnc Tipo de RNC
+ * @property string $name Nombre
+ * @property ClientDocumentEnum $document Documento
+ * @property string|null $phone Telefono
+ * @property string|null $personal_id ID Personal
+ * @property string|null $email Email
+ * @property string|null $address Direccion
+ * @property ClientTypeEnum $type Tipo
+ * @property ClientTypePriceEnum $type_price Tipo precio
+ * @property bool $receive_email Recibir email
+ * @property string|null $comment Comentario
+ * @property bool $status Estado
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Account|null $account
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \App\Models\Image|null $image
+ * @property-read \App\Models\Sale|null $sale
+ * @method static \Database\Factories\ClientFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Client newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Client newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Client onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Client query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereComment($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereDocument($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Client wherePersonalId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Client wherePhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereReceiveEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereTypePrice($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereTypeRnc($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Client withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Client withoutTrashed()
+ * @mixin \Eloquent
  */
 
 class Client extends Model

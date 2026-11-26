@@ -11,19 +11,42 @@ use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
 /**
- * @property integer id;
- * @property string accountable_type;
- * @property string accountable_id;
- * @property AccountTypeEnum type;
- * @property float amount;
- * @property float balance ;
- * @property int due_date;
- * @property float late_fee
- * @property StatusAccountEnum status;
- * @property string created_at;
- * @property string updated_at;
- * @property string deleted_at;
- *
+ * @property string $uuid
+ * @property string $code Codigo
+ * @property string $accountable_type
+ * @property int $accountable_id
+ * @property AccountTypeEnum $type Tipo de cuenta
+ * @property numeric $amount Total
+ * @property numeric $balance Saldo
+ * @property int $due_date Fecha vencimiento
+ * @property numeric $late_fee Interes por pago vencido
+ * @property bool $status Estado del Item
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read Model|\Eloquent $auditable
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Account newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Account newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Account onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Account query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Account whereAccountableId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Account whereAccountableType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Account whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Account whereBalance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Account whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Account whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Account whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Account whereDueDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Account whereLateFee($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Account whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Account whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Account whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Account whereUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Account withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Account withoutTrashed()
+ * @mixin \Eloquent
  */
 class Account extends Model
 {

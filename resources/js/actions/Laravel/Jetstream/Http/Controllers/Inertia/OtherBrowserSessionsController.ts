@@ -1,9 +1,9 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition } from './../../../../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition } from './../../../../../../wayfinder'
 /**
 * @see \Laravel\Jetstream\Http\Controllers\Inertia\OtherBrowserSessionsController::destroy
- * @see vendor/laravel/jetstream/src/Http/Controllers/Inertia/OtherBrowserSessionsController.php:21
- * @route '/user/other-browser-sessions'
- */
+* @see vendor/laravel/jetstream/src/Http/Controllers/Inertia/OtherBrowserSessionsController.php:21
+* @route '/user/other-browser-sessions'
+*/
 export const destroy = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(options),
     method: 'delete',
@@ -16,22 +16,55 @@ destroy.definition = {
 
 /**
 * @see \Laravel\Jetstream\Http\Controllers\Inertia\OtherBrowserSessionsController::destroy
- * @see vendor/laravel/jetstream/src/Http/Controllers/Inertia/OtherBrowserSessionsController.php:21
- * @route '/user/other-browser-sessions'
- */
+* @see vendor/laravel/jetstream/src/Http/Controllers/Inertia/OtherBrowserSessionsController.php:21
+* @route '/user/other-browser-sessions'
+*/
 destroy.url = (options?: RouteQueryOptions) => {
     return destroy.definition.url + queryParams(options)
 }
 
 /**
 * @see \Laravel\Jetstream\Http\Controllers\Inertia\OtherBrowserSessionsController::destroy
- * @see vendor/laravel/jetstream/src/Http/Controllers/Inertia/OtherBrowserSessionsController.php:21
- * @route '/user/other-browser-sessions'
- */
+* @see vendor/laravel/jetstream/src/Http/Controllers/Inertia/OtherBrowserSessionsController.php:21
+* @route '/user/other-browser-sessions'
+*/
 destroy.delete = (options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(options),
     method: 'delete',
 })
+
+/**
+* @see \Laravel\Jetstream\Http\Controllers\Inertia\OtherBrowserSessionsController::destroy
+* @see vendor/laravel/jetstream/src/Http/Controllers/Inertia/OtherBrowserSessionsController.php:21
+* @route '/user/other-browser-sessions'
+*/
+const destroyForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+/**
+* @see \Laravel\Jetstream\Http\Controllers\Inertia\OtherBrowserSessionsController::destroy
+* @see vendor/laravel/jetstream/src/Http/Controllers/Inertia/OtherBrowserSessionsController.php:21
+* @route '/user/other-browser-sessions'
+*/
+destroyForm.delete = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+    action: destroy.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'DELETE',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'post',
+})
+
+destroy.form = destroyForm
+
 const OtherBrowserSessionsController = { destroy }
 
 export default OtherBrowserSessionsController

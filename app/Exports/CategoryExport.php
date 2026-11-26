@@ -3,16 +3,20 @@
 namespace App\Exports;
 
 use App\Models\Category;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Enumerable;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\WithMapping;
 
-class CategoryExport implements FromCollection, WithHeadings, WithMapping
+
+/**
+ * @@implements FromCollection<int, mixed>
+ */
+class CategoryExport implements FromCollection
 {
     /**
-    * @return \Illuminate\Support\Collection
+    * @return Enumerable
     */
-    public function collection()
+    public function collection():Collection
     {
         return Category::all();
     }

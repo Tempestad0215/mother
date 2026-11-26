@@ -16,18 +16,42 @@ use Spatie\Activitylog\Support\LogOptions;
 /**
  * @property string $uuid
  * @property string $user_uuid
- * @property float $opening_balance
- * @property float $closing_balance
- * @property float $expected_balance
- * @property array $summary
+ * @property numeric $opening_balance
+ * @property numeric $closing_balance
+ * @property numeric $expected_balance
  * @property bool $status
- * @property Carbon $opened_at
- * @property Carbon $closed_at
- * @property Carbon $deleted_at
- * @property Carbon $updated_at
- *
- * @property-read Sale[] $Sales
- * @property-read User $user
+ * @property int $opened_at
+ * @property int|null $closed_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property array<array-key, mixed>|null $summary
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CashMovement> $movements
+ * @property-read int|null $movements_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Sale> $sales
+ * @property-read int|null $sales_count
+ * @property-read \App\Models\User|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CashRegister newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CashRegister newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CashRegister onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CashRegister query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CashRegister whereClosedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CashRegister whereClosingBalance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CashRegister whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CashRegister whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CashRegister whereExpectedBalance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CashRegister whereOpenedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CashRegister whereOpeningBalance($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CashRegister whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CashRegister whereSummary($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CashRegister whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CashRegister whereUserUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CashRegister whereUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CashRegister withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CashRegister withoutTrashed()
+ * @mixin \Eloquent
  */
 class CashRegister extends Model
 {

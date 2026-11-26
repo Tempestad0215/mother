@@ -16,21 +16,49 @@ use Spatie\Activitylog\Support\LogOptions;
 
 
 /**
- * @property string $id
- * @property string $supplier_uuid
- * @property object $info
- * @property float $amount
- * @property float $tax
- * @property float $sub_total
- * @property PurchaseStatusEnum $process
- * @property bool $status
- * @property string $created_at
- * @property string $updated_at
- * @property string $deleted_at
- *
- *
- * @property-read Supplier $supplier
- * @property-read PurchaseItem[] $items
+ * @property string $uuid
+ * @property string $code codigo unido para cada registro
+ * @property string $supplier_uuid Relacion con el suplidor de la orden
+ * @property string $user_uuid Relacion para el usuario
+ * @property string $doc_date
+ * @property numeric $amount valor total de la compra
+ * @property numeric $tax impuesto de la compra
+ * @property numeric $sub_total Sub total de la compra
+ * @property numeric $discount Descuento Global
+ * @property string $status Estado de la orden de compra
+ * @property string|null $comment Comentario
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\InventoryMovement> $itemMovements
+ * @property-read int|null $item_movements_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PurchaseItem> $items
+ * @property-read int|null $items_count
+ * @property-read \App\Models\Supplier|null $supplier
+ * @method static \Database\Factories\PurchaseFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase whereComment($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase whereDiscount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase whereDocDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase whereSubTotal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase whereSupplierUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase whereTax($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase whereUserUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase whereUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Purchase withoutTrashed()
+ * @mixin \Eloquent
  */
 class Purchase extends Model
 {

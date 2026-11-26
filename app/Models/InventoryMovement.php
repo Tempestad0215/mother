@@ -14,23 +14,44 @@ use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
 /**
- *
  * @property string $uuid
- * @property string $warehouse_uuid
  * @property string $product_uuid
+ * @property string $warehouse_uuid
  * @property string $type
  * @property string $concept
- * @property int $quantity
- * @property float $cost
- * @property float $stock_before
- * @property float $stock_after
+ * @property numeric $quantity
+ * @property numeric $cost
+ * @property numeric $stock_before
+ * @property numeric $stock_after
  * @property string $inventoryable_type
  * @property string $inventoryable_id
- *
- * @property string|null $description
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
- * @property Carbon|null $deleted_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read Model|\Eloquent $iventoryable
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|InventoryMovement newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|InventoryMovement newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|InventoryMovement onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|InventoryMovement query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|InventoryMovement whereConcept($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|InventoryMovement whereCost($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|InventoryMovement whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|InventoryMovement whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|InventoryMovement whereInventoryableId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|InventoryMovement whereInventoryableType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|InventoryMovement whereProductUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|InventoryMovement whereQuantity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|InventoryMovement whereStockAfter($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|InventoryMovement whereStockBefore($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|InventoryMovement whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|InventoryMovement whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|InventoryMovement whereUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|InventoryMovement whereWarehouseUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|InventoryMovement withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|InventoryMovement withoutTrashed()
+ * @mixin \Eloquent
  */
 #[ObservedBy([InventoryMovementObserver::class])]
 class InventoryMovement extends Model

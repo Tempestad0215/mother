@@ -21,42 +21,78 @@ use Spatie\Activitylog\Support\LogOptions;
 
 /**
  * @property string $uuid
- * @property string $code
- * @property string $invoice_type
- * @property string $ncf
- * @property string $ncf_m
- * @property string $client_rnc
- * @property string $client_name
- * @property string $client_uuid
- * @property float $discount_amount
- * @property float $tax
- * @property float $sub_total
- * @property float $amount
- * @property boolean $status
- * @property SaleTypeEnum $type
- * @property bool $close_table
- * @property Carbon $created_at
- * @property Carbon $updated_at
- * @property Carbon $deleted_at
- * @property ProductTransaction[] $infoSale
- * @property PaymentTypeEnum $type_payment
- * @property float $received
- * @property float $returned
- * @property string[] $credit_notes
- * @property float $credit_notes_amount
- * @property string $comment
- * @property string $cash_register_uuid
- *
- *
- * @property-read Collection<int, SaleItem> $items
- * @property-read Collection<int, CreditNote> $creditNotes
- * @property-read Collection<int, CreditNoteSale> $creditNoteSales
+ * @property string $code codigo
+ * @property string|null $ncf ncf
+ * @property string|null $invoice_type tipo de factura
+ * @property string|null $client_name nombre del cliente
+ * @property string|null $client_rnc rnc del cliente
+ * @property string|null $client_id relacion de cliente
+ * @property numeric $discount_amount Cantidad en descuento
+ * @property numeric $tax Impuesto
+ * @property numeric $sub_total Subtotal
+ * @property numeric $amount Cantidad Total
+ * @property Carbon|null $deleted_at
+ * @property string $created_at
+ * @property string $updated_at
+ * @property SaleTypeEnum $type Tipo de Ventas
+ * @property PaymentTypeEnum $type_payment Tipo de Pago
+ * @property numeric $received Valor Recibido
+ * @property numeric $returned Valor Devuelto
+ * @property bool|null $status Estado
+ * @property bool $close_table Cuentas abierto o cerrada
+ * @property string|null $credit_notes Pago por nota de credito
+ * @property float $credit_notes_amount Monto de todas las notas de creditos
+ * @property string|null $comment Comentario
+ * @property string|null $cash_register_uuid
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \App\Models\CashRegister|null $cashRegister
+ * @property-read \App\Models\Client|null $client
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CreditNote> $creditNotes
+ * @property-read int|null $credit_notes_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ProductTransaction> $credit_trans
+ * @property-read int|null $credit_trans_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SaleItem> $items
+ * @property-read int|null $items_count
+ * @method static \Database\Factories\SaleFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale searchByCode($search)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereCashRegisterUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereClientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereClientName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereClientRnc($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereCloseTable($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereComment($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereCreditNotes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereCreditNotesAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereDiscountAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereInvoiceType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereNcf($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereReceived($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereReturned($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereSubTotal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereTax($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereTypePayment($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale whereUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Sale withoutTrashed()
+ * @mixin \Eloquent
  */
 #[ObservedBy([SaleObserver::class])]
 class Sale extends Model
 {
     use HasFactory;
-    use softDeletes;
+    use SoftDeletes;
     use HasUuids;
     use LogsActivity;
     use HasCode;

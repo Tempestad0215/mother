@@ -18,31 +18,64 @@ use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
 /**
- * @property integer $uuid
- * @property string $code
- * @property string $ncf
- * @property string $ncf_m
- * @property string $client_rnc
- * @property string $client_name
- * @property int $client_uuid
- * @property float $discount_amount
- * @property float $tax
- * @property float $sub_total
- * @property float $amount
- * @property float $n_available
- * @property float $n_used
- * @property boolean $status
- * @property Carbon $created_at,
- * @property Carbon $updated_at
- * @property Carbon $deleted_at
- * @property Collection<int, ProductTransaction> $trans
- * @property Sale $sale_uuid,
- * @property PaymentTypeEnum $type_payment,
- * @property-read Collection<int, CreditNoteItem> $items
- * @property-read Sale $sale
- * @property float $received
- * @property float $returned
- * @property string $comment
+ * @property string $uuid
+ * @property string $code codigo
+ * @property string|null $ncf ncf
+ * @property string|null $invoice_type tipo de factura
+ * @property string|null $client_name nombre del cliente
+ * @property string|null $client_rnc rnc del cliente
+ * @property string|null $client_id relacion de cliente
+ * @property numeric $discount_amount Cantidad en descuento
+ * @property numeric $tax Impuesto
+ * @property numeric $sub_total Subtotal
+ * @property numeric $amount Cantidad Total
+ * @property Carbon|null $deleted_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property string $sale_uuid Relacion con la venta
+ * @property string|null $ncf_m ncf modificado
+ * @property numeric $n_available cantiad nota de credito disponible
+ * @property string $type Tipo Devolucion
+ * @property bool $status Estado
+ * @property \App\Models\Comment|null $comment Comentario
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read CreditNote|null $credit
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CreditNoteItem> $items
+ * @property-read int|null $items_count
+ * @property-read \App\Models\Sale|null $sale
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Sale> $saleCreditNote
+ * @property-read int|null $sale_credit_note_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\ProductTransaction> $trans
+ * @property-read int|null $trans_count
+ * @method static \Database\Factories\CreditNoteFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditNote newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditNote newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditNote onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditNote query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditNote whereAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditNote whereClientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditNote whereClientName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditNote whereClientRnc($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditNote whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditNote whereComment($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditNote whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditNote whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditNote whereDiscountAmount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditNote whereInvoiceType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditNote whereNAvailable($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditNote whereNcf($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditNote whereNcfM($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditNote whereSaleUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditNote whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditNote whereSubTotal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditNote whereTax($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditNote whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditNote whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditNote whereUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditNote withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CreditNote withoutTrashed()
+ * @mixin \Eloquent
  */
 class CreditNote extends Model{
 

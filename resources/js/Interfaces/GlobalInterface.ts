@@ -1,102 +1,104 @@
 import { Component } from 'vue';
 
 export interface TaxI {
-  amount: number;
-  name: string;
-  rate: string;
+    amount: number;
+    name: string;
+    rate: string;
 }
 
 export interface LaravelErrorResponse {
-  message: string;
-  errors?: Record<string, string[]>;
-  exception?: string;
-  code?: number;
+    message: string;
+    errors?: Record<string, string[]>;
+    exception?: string;
+    code?: number;
 }
 
 export interface MenuItemI {
-  iconComponent?: Component;
-  activePath?: string;
+    iconComponent?: Component;
+    activePath?: string;
 }
 
 export type MoveDirectionEdit = 'UP' | 'DOWN';
 
 export interface ValidationErrors {
-  [fielName: string]: string;
+    [fielName: string]: string;
 }
 
-export interface AppSettingI {
-  uuid: number;
-  name: string;
-  email: string;
-  phone: string | null;
-  address: string | null;
-  logo: string | null;
-  website: string | null;
-  company_id: string | null;
-  tax: TaxI[] | [];
-  add_tax: boolean;
-  unit: string[] | [];
-  fiscal_year: string | null;
-  company_type: string | null;
-  status: boolean;
-  save_cost: boolean;
-  sequence: boolean;
-  created_at: string;
-  updated_at: string;
+export interface TimeStampI {
+    created_at: string;
+    updated_at: string;
+    deleted_at?: string | null;
 }
 
-export interface UserAuthI {
-  id: number;
-  name: string;
-  email: string;
-  email_verified_at: string;
-  two_factor_confirmed_at: null | string;
-  status: boolean;
-  role: string;
-  current_team_id: null | string;
-  profile_photo_path: null | string;
-  created_at: string;
-  updated_at: string;
-  profile_photo_url: string;
-  two_factor_enabled: boolean;
+export interface AppSettingI extends TimeStampI {
+    uuid: number;
+    name: string;
+    email: string;
+    phone: string | null;
+    address: string | null;
+    logo: string | null;
+    website: string | null;
+    company_id: string | null;
+    tax: TaxI[] | [];
+    add_tax: boolean;
+    unit: string[] | [];
+    fiscal_year: string | null;
+    company_type: string | null;
+    status: boolean;
+    save_cost: boolean;
+    sequence: boolean;
+}
+
+export interface UserAuthI extends TimeStampI {
+    id: number;
+    name: string;
+    email: string;
+    email_verified_at: string;
+    two_factor_confirmed_at: null | string;
+    status: boolean;
+    role: string;
+    current_team_id: null | string;
+    profile_photo_path: null | string;
+    profile_photo_url: string;
+    two_factor_enabled: boolean;
 }
 
 interface LinksI {
-  active: boolean;
-  label: string;
-  page: number | null;
-  url: string | null;
+    active: boolean;
+    label: string;
+    page: number | null;
+    url: string | null;
 }
 
 // Pagination
 export interface PaginationI<T> {
-  links: LinksI;
-  meta: MetaI;
-  data: T[];
+    links: LinksI;
+    meta: MetaI;
+    data: T[];
 }
 
 interface LinksI {
-  first: string;
-  last: string;
-  prev: string | null;
-  next: string | null;
+    first: string;
+    last: string;
+    prev: string | null;
+    next: string | null;
 }
 
 interface MetaI {
-  current_page: number;
-  current_page_url: string;
-  from: number;
-  path: string;
-  per_page: number | string;
-  to: number;
-  total: number;
+    current_page: number;
+    current_page_url: string;
+    from: number;
+    path: string;
+    per_page: number | string;
+    to: number;
+    total: number;
 }
 
 export interface PaymentTypeEnumI {
-  contado: string;
-  tarjeta: string;
-  credito: string;
-  transferencia: string;
-  anticipo: string;
-  cheque: string;
+    contado: string;
+    tarjeta: string;
+    credito: string;
+    transferencia: string;
+    anticipo: string;
+    cheque: string;
 }

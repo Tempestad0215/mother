@@ -1,9 +1,9 @@
-import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../wayfinder'
+import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\InvoiceController::sale
- * @see app/Http/Controllers/InvoiceController.php:137
- * @route '/invoice/belt/sale/{sale}'
- */
+* @see app/Http/Controllers/InvoiceController.php:137
+* @route '/invoice/belt/sale/{sale}'
+*/
 export const sale = (args: { sale: string | { uuid: string } } | [sale: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: sale.url(args, options),
     method: 'get',
@@ -16,31 +16,31 @@ sale.definition = {
 
 /**
 * @see \App\Http\Controllers\InvoiceController::sale
- * @see app/Http/Controllers/InvoiceController.php:137
- * @route '/invoice/belt/sale/{sale}'
- */
+* @see app/Http/Controllers/InvoiceController.php:137
+* @route '/invoice/belt/sale/{sale}'
+*/
 sale.url = (args: { sale: string | { uuid: string } } | [sale: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { sale: args }
     }
 
-            if (typeof args === 'object' && !Array.isArray(args) && 'uuid' in args) {
-            args = { sale: args.uuid }
-        }
-    
+    if (typeof args === 'object' && !Array.isArray(args) && 'uuid' in args) {
+        args = { sale: args.uuid }
+    }
+
     if (Array.isArray(args)) {
         args = {
-                    sale: args[0],
-                }
+            sale: args[0],
+        }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        sale: typeof args.sale === 'object'
-                ? args.sale.uuid
-                : args.sale,
-                }
+        sale: typeof args.sale === 'object'
+        ? args.sale.uuid
+        : args.sale,
+    }
 
     return sale.definition.url
             .replace('{sale}', parsedArgs.sale.toString())
@@ -49,28 +49,66 @@ sale.url = (args: { sale: string | { uuid: string } } | [sale: string | { uuid: 
 
 /**
 * @see \App\Http\Controllers\InvoiceController::sale
- * @see app/Http/Controllers/InvoiceController.php:137
- * @route '/invoice/belt/sale/{sale}'
- */
+* @see app/Http/Controllers/InvoiceController.php:137
+* @route '/invoice/belt/sale/{sale}'
+*/
 sale.get = (args: { sale: string | { uuid: string } } | [sale: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: sale.url(args, options),
     method: 'get',
 })
+
 /**
 * @see \App\Http\Controllers\InvoiceController::sale
- * @see app/Http/Controllers/InvoiceController.php:137
- * @route '/invoice/belt/sale/{sale}'
- */
+* @see app/Http/Controllers/InvoiceController.php:137
+* @route '/invoice/belt/sale/{sale}'
+*/
 sale.head = (args: { sale: string | { uuid: string } } | [sale: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: sale.url(args, options),
     method: 'head',
 })
 
 /**
+* @see \App\Http\Controllers\InvoiceController::sale
+* @see app/Http/Controllers/InvoiceController.php:137
+* @route '/invoice/belt/sale/{sale}'
+*/
+const saleForm = (args: { sale: string | { uuid: string } } | [sale: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: sale.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\InvoiceController::sale
+* @see app/Http/Controllers/InvoiceController.php:137
+* @route '/invoice/belt/sale/{sale}'
+*/
+saleForm.get = (args: { sale: string | { uuid: string } } | [sale: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: sale.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\InvoiceController::sale
+* @see app/Http/Controllers/InvoiceController.php:137
+* @route '/invoice/belt/sale/{sale}'
+*/
+saleForm.head = (args: { sale: string | { uuid: string } } | [sale: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: sale.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+sale.form = saleForm
+
+/**
 * @see \App\Http\Controllers\InvoiceController::note
- * @see app/Http/Controllers/InvoiceController.php:145
- * @route '/invoice/belt/note/{creditNote}'
- */
+* @see app/Http/Controllers/InvoiceController.php:145
+* @route '/invoice/belt/note/{creditNote}'
+*/
 export const note = (args: { creditNote: string | { uuid: string } } | [creditNote: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: note.url(args, options),
     method: 'get',
@@ -83,31 +121,31 @@ note.definition = {
 
 /**
 * @see \App\Http\Controllers\InvoiceController::note
- * @see app/Http/Controllers/InvoiceController.php:145
- * @route '/invoice/belt/note/{creditNote}'
- */
+* @see app/Http/Controllers/InvoiceController.php:145
+* @route '/invoice/belt/note/{creditNote}'
+*/
 note.url = (args: { creditNote: string | { uuid: string } } | [creditNote: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { creditNote: args }
     }
 
-            if (typeof args === 'object' && !Array.isArray(args) && 'uuid' in args) {
-            args = { creditNote: args.uuid }
-        }
-    
+    if (typeof args === 'object' && !Array.isArray(args) && 'uuid' in args) {
+        args = { creditNote: args.uuid }
+    }
+
     if (Array.isArray(args)) {
         args = {
-                    creditNote: args[0],
-                }
+            creditNote: args[0],
+        }
     }
 
     args = applyUrlDefaults(args)
 
     const parsedArgs = {
-                        creditNote: typeof args.creditNote === 'object'
-                ? args.creditNote.uuid
-                : args.creditNote,
-                }
+        creditNote: typeof args.creditNote === 'object'
+        ? args.creditNote.uuid
+        : args.creditNote,
+    }
 
     return note.definition.url
             .replace('{creditNote}', parsedArgs.creditNote.toString())
@@ -116,25 +154,64 @@ note.url = (args: { creditNote: string | { uuid: string } } | [creditNote: strin
 
 /**
 * @see \App\Http\Controllers\InvoiceController::note
- * @see app/Http/Controllers/InvoiceController.php:145
- * @route '/invoice/belt/note/{creditNote}'
- */
+* @see app/Http/Controllers/InvoiceController.php:145
+* @route '/invoice/belt/note/{creditNote}'
+*/
 note.get = (args: { creditNote: string | { uuid: string } } | [creditNote: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: note.url(args, options),
     method: 'get',
 })
+
 /**
 * @see \App\Http\Controllers\InvoiceController::note
- * @see app/Http/Controllers/InvoiceController.php:145
- * @route '/invoice/belt/note/{creditNote}'
- */
+* @see app/Http/Controllers/InvoiceController.php:145
+* @route '/invoice/belt/note/{creditNote}'
+*/
 note.head = (args: { creditNote: string | { uuid: string } } | [creditNote: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: note.url(args, options),
     method: 'head',
 })
+
+/**
+* @see \App\Http\Controllers\InvoiceController::note
+* @see app/Http/Controllers/InvoiceController.php:145
+* @route '/invoice/belt/note/{creditNote}'
+*/
+const noteForm = (args: { creditNote: string | { uuid: string } } | [creditNote: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: note.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\InvoiceController::note
+* @see app/Http/Controllers/InvoiceController.php:145
+* @route '/invoice/belt/note/{creditNote}'
+*/
+noteForm.get = (args: { creditNote: string | { uuid: string } } | [creditNote: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: note.url(args, options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\InvoiceController::note
+* @see app/Http/Controllers/InvoiceController.php:145
+* @route '/invoice/belt/note/{creditNote}'
+*/
+noteForm.head = (args: { creditNote: string | { uuid: string } } | [creditNote: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: note.url(args, {
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        }
+    }),
+    method: 'get',
+})
+
+note.form = noteForm
+
 const belt = {
     sale: Object.assign(sale, sale),
-note: Object.assign(note, note),
+    note: Object.assign(note, note),
 }
 
 export default belt

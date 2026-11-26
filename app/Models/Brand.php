@@ -13,10 +13,31 @@ use Spatie\Activitylog\Support\LogOptions;
 
 
 /**
- *
- * @property Date $deleted_at
- * @property string $updated_at
- * @property string $created_at
+ * @property string $uuid
+ * @property string $name
+ * @property string|null $description
+ * @property ModelStatusEnum $model_status
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Product> $products
+ * @property-read int|null $products_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Brand newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Brand newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Brand onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Brand query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Brand whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Brand whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Brand whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Brand whereModelStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Brand whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Brand whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Brand whereUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Brand withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Brand withoutTrashed()
+ * @mixin \Eloquent
  */
 
 class Brand extends Model

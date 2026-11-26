@@ -9,6 +9,29 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
+/**
+ * @property string $uuid
+ * @property string $name
+ * @property string|null $description
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Unit newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Unit newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Unit onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Unit query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Unit whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Unit whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Unit whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Unit whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Unit whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Unit whereUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Unit withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Unit withoutTrashed()
+ * @mixin \Eloquent
+ */
 class Unit extends Model
 {
     use SoftDeletes;

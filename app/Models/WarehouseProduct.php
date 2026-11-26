@@ -13,22 +13,45 @@ use Spatie\Activitylog\Support\LogOptions;
 
 /**
  * Summary of WarehouseProduct
- * @property string $uuid
+ *
  * @property string $product_uuid
  * @property string $warehouse_uuid
- * @property float $stock_quantity
- * @property float $commited
- * @property float $min_stock
- * @property float $max_stock
+ * @property numeric $stock_quantity
+ * @property numeric|null $committed
+ * @property numeric|null $min_stock
+ * @property numeric|null $max_stock
+ * @property numeric|null $reorder_level
+ * @property string|null $last_counted_at
+ * @property numeric|null $purchase_pending
  * @property bool $is_active
- * @property float $reorder_level
- * @property float $purchase_pending
- *
- *
- * @property-read Product $product
- * @property Carbon $created_at
- * @property Carbon $updated_at
- * @property Carbon $deleted_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read float $available_stock
+ * @property-read \App\Models\Product|null $products
+ * @property-read \App\Models\Warehouse|null $warehouses
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WarehouseProduct newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WarehouseProduct newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WarehouseProduct onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WarehouseProduct query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WarehouseProduct whereCommitted($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WarehouseProduct whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WarehouseProduct whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WarehouseProduct whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WarehouseProduct whereLastCountedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WarehouseProduct whereMaxStock($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WarehouseProduct whereMinStock($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WarehouseProduct whereProductUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WarehouseProduct wherePurchasePending($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WarehouseProduct whereReorderLevel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WarehouseProduct whereStockQuantity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WarehouseProduct whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WarehouseProduct whereWarehouseUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WarehouseProduct withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WarehouseProduct withoutTrashed()
+ * @mixin \Eloquent
  */
 class WarehouseProduct extends Model
 {

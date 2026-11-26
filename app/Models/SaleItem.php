@@ -14,23 +14,50 @@ use Spatie\Activitylog\Support\LogOptions;
 /**
  * @property string $uuid
  * @property string $product_uuid
- * @property string $tax_uuid
- * @property float $stock
- * @property float $price
- * @property float $tax_rate
- * @property float $discount
- * @property float $discount_amount
- * @property float $reserved
- * @property float $amount
+ * @property string $sale_uuid
+ * @property numeric $stock
+ * @property numeric $price
+ * @property numeric $tax_rate
  * @property string $price_type
- * @property boolean $is_service
- *
- *
- *
- * @property-read Product $product
- * @property-read Tax $tax
- *
- * @mixin Builder
+ * @property string $tax_uuid
+ * @property numeric|null $discount
+ * @property numeric|null $discount_amount
+ * @property numeric|null $reserved
+ * @property numeric $amount
+ * @property bool $is_service
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property string|null $warehouse_uuid
+ * @property-read \App\Models\Sale|null $Sale
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \App\Models\Product|null $product
+ * @property-read \App\Models\Warehouse|null $warehouse
+ * @method static Builder<static>|SaleItem newModelQuery()
+ * @method static Builder<static>|SaleItem newQuery()
+ * @method static Builder<static>|SaleItem onlyTrashed()
+ * @method static Builder<static>|SaleItem query()
+ * @method static Builder<static>|SaleItem whereAmount($value)
+ * @method static Builder<static>|SaleItem whereCreatedAt($value)
+ * @method static Builder<static>|SaleItem whereDeletedAt($value)
+ * @method static Builder<static>|SaleItem whereDiscount($value)
+ * @method static Builder<static>|SaleItem whereDiscountAmount($value)
+ * @method static Builder<static>|SaleItem whereIsService($value)
+ * @method static Builder<static>|SaleItem wherePrice($value)
+ * @method static Builder<static>|SaleItem wherePriceType($value)
+ * @method static Builder<static>|SaleItem whereProductUuid($value)
+ * @method static Builder<static>|SaleItem whereReserved($value)
+ * @method static Builder<static>|SaleItem whereSaleUuid($value)
+ * @method static Builder<static>|SaleItem whereStock($value)
+ * @method static Builder<static>|SaleItem whereTaxRate($value)
+ * @method static Builder<static>|SaleItem whereTaxUuid($value)
+ * @method static Builder<static>|SaleItem whereUpdatedAt($value)
+ * @method static Builder<static>|SaleItem whereUuid($value)
+ * @method static Builder<static>|SaleItem whereWarehouseUuid($value)
+ * @method static Builder<static>|SaleItem withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|SaleItem withoutTrashed()
+ * @mixin \Eloquent
  */
 class SaleItem extends Model
 {

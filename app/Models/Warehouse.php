@@ -19,16 +19,40 @@ use Spatie\Activitylog\Support\LogOptions;
 /**
  * @property string $uuid
  * @property string $prefix
- * @property string $name
- * @property string $description
- * @property string $location
- * @property Carbon $deleted_at
- * @property Carbon $updated_at
- * @property Carbon $created_at
- *
- *
- * @property-read WarehouseProduct $pivot
- * @property-read PurchaseReceiptsItem $receiptsItem
+ * @property string $name Nombre
+ * @property string|null $description Descripcion
+ * @property string|null $location Ubicacion
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CreditNoteItem> $creditItem
+ * @property-read int|null $credit_item_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Product> $products
+ * @property-read int|null $products_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PurchaseItem> $purchaseItem
+ * @property-read int|null $purchase_item_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PurchaseReceiptsItem> $receiptItem
+ * @property-read int|null $receipt_item_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\SaleItem> $saleItem
+ * @property-read int|null $sale_item_count
+ * @method static \Database\Factories\WarehouseFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Warehouse newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Warehouse newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Warehouse onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Warehouse query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Warehouse whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Warehouse whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Warehouse whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Warehouse whereLocation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Warehouse whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Warehouse wherePrefix($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Warehouse whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Warehouse whereUuid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Warehouse withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Warehouse withoutTrashed()
+ * @mixin \Eloquent
  */
 class Warehouse extends Model
 {

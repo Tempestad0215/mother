@@ -14,13 +14,19 @@ use Spatie\Activitylog\Support\LogOptions;
 
 
 /**
- * @property integer id
- * @property string $content
- * @property int $commentable_id
- * @property string $commentable_type
- * @property string $created_at
- * @property string $updated_at
- * @property Date $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activitiesAsSubject
+ * @property-read int|null $activities_as_subject_count
+ * @property-read Model|\Eloquent $commentable
+ * @property-read mixed $content
+ * @property-read mixed $created_at
+ * @method static \Database\Factories\CommentFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment withoutTrashed()
+ * @mixin \Eloquent
  */
 class Comment extends Model
 {

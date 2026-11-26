@@ -57,7 +57,6 @@ const setChartOptions = () => {
 </script>
 
 <template>
-  <AppLayout title="Dashboard">
     <div class="py-8 px-4 sm:px-6 lg:px-8 bg-gray-50/50 min-h-screen space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         <Card class="shadow-sm border border-gray-100 rounded-xl overflow-hidden">
