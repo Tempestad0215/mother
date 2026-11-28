@@ -17,7 +17,7 @@ import UserInfo from '@/Components/UserInfo.vue';
 import UserMenuContent from '@/Components/UserMenuContent.vue';
 import { Auth } from '@/types/auth';
 
-const page = usePage<{auth: Auth}>();
+const page = usePage();
 const user = computed(() => page.props.auth.user);
 const { isMobile, state } = useSidebar();
 </script>
@@ -38,13 +38,7 @@ const { isMobile, state } = useSidebar();
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                     class="w-(--reka-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-                    :side="
-                        isMobile
-                            ? 'bottom'
-                            : state === 'collapsed'
-                              ? 'left'
-                              : 'bottom'
-                    "
+                    :side="isMobile ? 'bottom' : state === 'collapsed' ? 'left' : 'bottom'"
                     align="end"
                     :side-offset="4"
                 >

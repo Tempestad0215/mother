@@ -10,7 +10,7 @@ import {
 import UserInfo from '@/Components/UserInfo.vue';
 import { logout } from '@/routes';
 import type { User } from '@/types/auth';
-import profile from '@/routes/profile';
+import UserProfileController from '@/actions/Laravel/Jetstream/Http/Controllers/Inertia/UserProfileController';
 
 type Props = {
     user: User;
@@ -32,7 +32,7 @@ defineProps<Props>();
     <DropdownMenuSeparator />
     <DropdownMenuGroup>
         <DropdownMenuItem :as-child="true">
-            <Link class="block w-full cursor-pointer" :href="profile()" prefetch>
+            <Link class="block w-full cursor-pointer" :href="UserProfileController.show()" prefetch>
                 <Settings class="mr-2 h-4 w-4" />
                 Settings
             </Link>

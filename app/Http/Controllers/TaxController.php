@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ToastMessageEnum;
 use App\Models\Tax;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use function App\Helpers\flashToast;
 
 class TaxController extends Controller
 {
@@ -22,12 +24,12 @@ class TaxController extends Controller
         $validated = $request->validate([
             'name' => ['required','string','min:2','max:50','unique:taxes,name'],
             'description' => ['nullable','string','max:150'],
-            'rate' => ['nullable','numeric','min:0'],
+            'rate' => ['required','numeric','min:0'],
         ]);
 
         Tax::create($validated);
 
-        return back();
+        return flashToast(ToastMessageEnum::CREATED);
     }
 
     public function update(Request $request, Tax $tax)

@@ -3,11 +3,22 @@ import { toUrl } from '@/lib/utils';
 import UserProfileController from '@/actions/Laravel/Jetstream/Http/Controllers/Inertia/UserProfileController';
 import { NavItem } from '@/types/navigation';
 import { useCurrentUrl } from '@/Composable/useCurrentUrl';
+import { Button } from '@components/ui/button';
+import { Link } from '@inertiajs/vue3';
+import { Separator } from '@components/ui/separator';
+import TaxController from '@/actions/App/Http/Controllers/TaxController';
+import { HandCoins, UserSearch } from '@lucide/vue';
 
 const sidebarNavItems: NavItem[] = [
     {
         title: 'Profile',
         href: UserProfileController.show(),
+        icon: UserSearch,
+    },
+    {
+        href: TaxController.index(),
+        title: 'Impuesto',
+        icon: HandCoins,
     },
     // {
     //     title: 'Security',
@@ -24,17 +35,14 @@ const { isCurrentOrParentUrl } = useCurrentUrl();
 
 <template>
     <div class="px-4 py-6">
-        <Heading
+        <!-- <Heading
             title="Settings"
             description="Manage your profile and account settings"
-        />
+        /> -->
 
         <div class="flex flex-col lg:flex-row lg:space-x-12">
             <aside class="w-full max-w-xl lg:w-48">
-                <nav
-                    class="flex flex-col space-y-1 space-x-0"
-                    aria-label="Settings"
-                >
+                <nav class="flex flex-col space-y-1 space-x-0" aria-label="Settings">
                     <Button
                         v-for="item in sidebarNavItems"
                         :key="toUrl(item.href)"

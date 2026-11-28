@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, type RouteFormDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\TaxController::index
-* @see app/Http/Controllers/TaxController.php:12
+* @see app/Http/Controllers/TaxController.php:14
 * @route '/tax'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\TaxController::index
-* @see app/Http/Controllers/TaxController.php:12
+* @see app/Http/Controllers/TaxController.php:14
 * @route '/tax'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\TaxController::index
-* @see app/Http/Controllers/TaxController.php:12
+* @see app/Http/Controllers/TaxController.php:14
 * @route '/tax'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\TaxController::index
-* @see app/Http/Controllers/TaxController.php:12
+* @see app/Http/Controllers/TaxController.php:14
 * @route '/tax'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,7 +45,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\TaxController::index
-* @see app/Http/Controllers/TaxController.php:12
+* @see app/Http/Controllers/TaxController.php:14
 * @route '/tax'
 */
 const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -55,7 +55,7 @@ const indexForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => (
 
 /**
 * @see \App\Http\Controllers\TaxController::index
-* @see app/Http/Controllers/TaxController.php:12
+* @see app/Http/Controllers/TaxController.php:14
 * @route '/tax'
 */
 indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -65,7 +65,7 @@ indexForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\TaxController::index
-* @see app/Http/Controllers/TaxController.php:12
+* @see app/Http/Controllers/TaxController.php:14
 * @route '/tax'
 */
 indexForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
@@ -82,7 +82,7 @@ index.form = indexForm
 
 /**
 * @see \App\Http\Controllers\TaxController::store
-* @see app/Http/Controllers/TaxController.php:20
+* @see app/Http/Controllers/TaxController.php:22
 * @route '/tax'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -97,7 +97,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\TaxController::store
-* @see app/Http/Controllers/TaxController.php:20
+* @see app/Http/Controllers/TaxController.php:22
 * @route '/tax'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -106,7 +106,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\TaxController::store
-* @see app/Http/Controllers/TaxController.php:20
+* @see app/Http/Controllers/TaxController.php:22
 * @route '/tax'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -116,7 +116,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\TaxController::store
-* @see app/Http/Controllers/TaxController.php:20
+* @see app/Http/Controllers/TaxController.php:22
 * @route '/tax'
 */
 const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -126,7 +126,7 @@ const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => 
 
 /**
 * @see \App\Http\Controllers\TaxController::store
-* @see app/Http/Controllers/TaxController.php:20
+* @see app/Http/Controllers/TaxController.php:22
 * @route '/tax'
 */
 storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -237,7 +237,7 @@ show.form = showForm
 
 /**
 * @see \App\Http\Controllers\TaxController::update
-* @see app/Http/Controllers/TaxController.php:33
+* @see app/Http/Controllers/TaxController.php:35
 * @route '/tax/{tax}'
 */
 export const update = (args: { tax: string | { uuid: string } } | [tax: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -252,7 +252,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\TaxController::update
-* @see app/Http/Controllers/TaxController.php:33
+* @see app/Http/Controllers/TaxController.php:35
 * @route '/tax/{tax}'
 */
 update.url = (args: { tax: string | { uuid: string } } | [tax: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions) => {
@@ -285,7 +285,7 @@ update.url = (args: { tax: string | { uuid: string } } | [tax: string | { uuid: 
 
 /**
 * @see \App\Http\Controllers\TaxController::update
-* @see app/Http/Controllers/TaxController.php:33
+* @see app/Http/Controllers/TaxController.php:35
 * @route '/tax/{tax}'
 */
 update.put = (args: { tax: string | { uuid: string } } | [tax: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -295,7 +295,7 @@ update.put = (args: { tax: string | { uuid: string } } | [tax: string | { uuid: 
 
 /**
 * @see \App\Http\Controllers\TaxController::update
-* @see app/Http/Controllers/TaxController.php:33
+* @see app/Http/Controllers/TaxController.php:35
 * @route '/tax/{tax}'
 */
 update.patch = (args: { tax: string | { uuid: string } } | [tax: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -305,7 +305,7 @@ update.patch = (args: { tax: string | { uuid: string } } | [tax: string | { uuid
 
 /**
 * @see \App\Http\Controllers\TaxController::update
-* @see app/Http/Controllers/TaxController.php:33
+* @see app/Http/Controllers/TaxController.php:35
 * @route '/tax/{tax}'
 */
 const updateForm = (args: { tax: string | { uuid: string } } | [tax: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -320,7 +320,7 @@ const updateForm = (args: { tax: string | { uuid: string } } | [tax: string | { 
 
 /**
 * @see \App\Http\Controllers\TaxController::update
-* @see app/Http/Controllers/TaxController.php:33
+* @see app/Http/Controllers/TaxController.php:35
 * @route '/tax/{tax}'
 */
 updateForm.put = (args: { tax: string | { uuid: string } } | [tax: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -335,7 +335,7 @@ updateForm.put = (args: { tax: string | { uuid: string } } | [tax: string | { uu
 
 /**
 * @see \App\Http\Controllers\TaxController::update
-* @see app/Http/Controllers/TaxController.php:33
+* @see app/Http/Controllers/TaxController.php:35
 * @route '/tax/{tax}'
 */
 updateForm.patch = (args: { tax: string | { uuid: string } } | [tax: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -352,7 +352,7 @@ update.form = updateForm
 
 /**
 * @see \App\Http\Controllers\TaxController::destroy
-* @see app/Http/Controllers/TaxController.php:46
+* @see app/Http/Controllers/TaxController.php:48
 * @route '/tax/{tax}'
 */
 export const destroy = (args: { tax: string | { uuid: string } } | [tax: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -367,7 +367,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\TaxController::destroy
-* @see app/Http/Controllers/TaxController.php:46
+* @see app/Http/Controllers/TaxController.php:48
 * @route '/tax/{tax}'
 */
 destroy.url = (args: { tax: string | { uuid: string } } | [tax: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions) => {
@@ -400,7 +400,7 @@ destroy.url = (args: { tax: string | { uuid: string } } | [tax: string | { uuid:
 
 /**
 * @see \App\Http\Controllers\TaxController::destroy
-* @see app/Http/Controllers/TaxController.php:46
+* @see app/Http/Controllers/TaxController.php:48
 * @route '/tax/{tax}'
 */
 destroy.delete = (args: { tax: string | { uuid: string } } | [tax: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -410,7 +410,7 @@ destroy.delete = (args: { tax: string | { uuid: string } } | [tax: string | { uu
 
 /**
 * @see \App\Http\Controllers\TaxController::destroy
-* @see app/Http/Controllers/TaxController.php:46
+* @see app/Http/Controllers/TaxController.php:48
 * @route '/tax/{tax}'
 */
 const destroyForm = (args: { tax: string | { uuid: string } } | [tax: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -425,7 +425,7 @@ const destroyForm = (args: { tax: string | { uuid: string } } | [tax: string | {
 
 /**
 * @see \App\Http\Controllers\TaxController::destroy
-* @see app/Http/Controllers/TaxController.php:46
+* @see app/Http/Controllers/TaxController.php:48
 * @route '/tax/{tax}'
 */
 destroyForm.delete = (args: { tax: string | { uuid: string } } | [tax: string | { uuid: string } ] | string | { uuid: string }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
